@@ -1,5 +1,5 @@
 #
-#	robomatic @(#)Makefile	1.3 10/17/85
+#	robomatic @(#)Makefile	1.4 10/17/85
 #
 SHELL	= /bin/sh
 LIBS	= -lcurses -ltermcap -lx
