@@ -3,7 +3,7 @@ OPTIONS	= -O -DUXIII -DDEBUG -DTLOG
 MODEL	= -i
 include ../../CONFIG
 kermit:	wermit
-	mv $? $@
+	ln $? $@
 install: $(ALL)
 	cp $(ALL) $(BINDIR)
 	cd $(BINDIR); chmod 711 $(ALL)
