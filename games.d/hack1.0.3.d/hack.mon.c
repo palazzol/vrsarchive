@@ -123,7 +123,7 @@ char *name;
 	if(mtmp != u.ustuck) return;
 	kludge("%s digests you!",name);
 	u.uhp -= dam;
-	if(u.uswldtim++ >= die){	/* a3 */
+	if ((u.uswldtim=u.uswldtim+1) > die){	/* a3 */
 		pline("It totally digests you!");
 		u.uhp = -1;
 	}
@@ -719,7 +719,7 @@ register struct monst *mtmp;
 	more_experienced(tmp,0);
 	flags.botl = 1;
 	while(u.ulevel < 14 && u.uexp >= newuexp()){
-		pline("Welcome to experience level %u.", ++u.ulevel);
+		pline("Welcome to experience level %u.", u.ulevel=u.ulevel+1);
 		tmp = rnd(10);
 		if(tmp < 3) tmp = rnd(10);
 		u.uhpmax += tmp;
