@@ -6,35 +6,47 @@
 #include <curses.h>
 #include "globals.h"
 
+extern void done();
 extern char *malloc();
 
 struct screen {
 	short vstate;			/* State of the virtual display	*/
+	short cm_col;			/* Col for incomplete cursor mv	*/
 	short cm_row;			/* Row for incomplete cursor mv	*/
 	WINDOW *display;		/* Current screen contents	*/
+	char *tstop;			/* Current tab stops		*/
 } screen[MAXVDISP];
 
 #define V_NORM		0		/* Normal state			*/
 #define V_ESC		1		/* Just got an escape		*/
-#define V_CM1		2		/* Expecting column		*/
-#define V_CM2		3		/* Expecting row		*/
+#define V_ANSII		2		/* ANSII escape sequence	*/
+#define V_CM		3		/* Expecting column		*/
+#define V_FLAG		4		/* Expecting flag value		*/
 
 /*
  *	Loop over all virtual screens, allocating and initializing
  *	resources.  Initialize the physical display.
 */
 vdisp_init()
-{
+{	int i;
+
 	pdisp_init();
 	for (curvdsp = 0; curvdsp < MAXVDISP; curvdsp++) {
 		screen[curvdsp].vstate = V_NORM;
 		screen[curvdsp].display = newwin(LINES, COLS, 0, 0);
 		if (screen[curvdsp].display == NULL) {
-			perror("newwin");
+			perror("vdisp_init newwin");
 			done(1);
 		}
 		scrollok(screen[curvdsp].display, TRUE);
 		werase(screen[curvdsp].display);
+		screen[curvdsp].tstop = malloc((unsigned)COLS);
+		if (screen[curvdsp].tstop == NULL) {
+			perror("vdisp_init malloc");
+			done(1);
+		}
+		for (i = 0; i < COLS; i++)
+			screen[curvdsp].tstop[i] = (i%8 == 0);
 	}
 	curvdsp = 0;
 }
@@ -80,6 +92,14 @@ register char c;
 			if (x)
 				wmove(vd, y, x-1);
 			break;
+		case '\t':
+			while (++x < COLS)
+				if (screen[vdisp].tstop[x])
+					break;
+			if (x++ >= COLS)
+				x = COLS-1;
+			wmove(vd, y, x);
+			break;
 		case '\07':
 			beep();		/* Beep even if not current	*/
 			break;
@@ -89,31 +109,163 @@ register char c;
 		}
 		break;
 	case V_ESC:
-		screen[vdisp].vstate = V_NORM;
-		switch(c) {
-		case 'A': if (y) wmove(vd, y-1, x); break;
-		case 'B': if (y+1 < LINES) wmove(vd, y+1, x); break;
-		case 'C': if (x+1 < COLS)  wmove(vd, y, x+1); break;
-		case 'D': if (y) wmove(vd, y, x-1); break;
-		case 'Y': screen[vdisp].vstate = V_CM1; break;
-		case 'J': werase(vd); break;
-		case 'K': wclrtoeol(vd); break;
-		case 'L': wclrtobot(vd); break;
-		case 'N': wdeleteln(vd); break;
-		case 'O': winsch(vd, ' '); break;
-		case 'P': winsertln(vd); break;
-		case 'a': wstandout(vd); break;
-		case 'b': wstandend(vd); break;
+		/*
+		 *	ESC 'H'			Set tab stop
+		 *	ESC 'M'			Scroll up
+		 *	ESC '['			See Below
+		 *	ESC <other>		Error (ignore)
+		*/
+		switch (c) {
+		    case '[':
+			screen[vdisp].vstate = V_ANSII;
+			screen[vdisp].cm_col = 0;
+			break;
+		    case 'H':
+			screen[vdisp].vstate = V_NORM;
+			screen[vdisp].tstop[x] = 1;
+			break;
+		    case 'M':
+			screen[vdisp].vstate = V_NORM;
+			if (y == 0)
+				winsertln(vd);
+			break;
+		    default:
+			screen[vdisp].vstate = V_NORM;
 		}
 		break;
-	case V_CM1:
-		screen[vdisp].vstate = V_CM2;
-		screen[vdisp].cm_row = c-' ';
-		break;
-	case V_CM2:
+	case V_ANSII:
+		/*
+		 *	ESC '[' 'A'			{ cursor_up(); }
+		 *	ESC '[' 'B'			{ cursor_down(); }
+		 *	ESC '[' 'C'			{ cursor_right(); }
+		 *	ESC '[' 'D'			{ cursor_left(); }
+		 *	ESC '[' number ';' number 'H'	{ move ($1, $2); }
+		 *	ESC '[' number 'J'		{ clear_screen($1); }
+		 *	ESC '[' 'K'			{ clear_to_eol(); }
+		 *	ESC '[' number 'g'		{ clear_tab_stops(); }
+		 *	ESC '[' number 'm'		{ set_attributes($1); }
+		 *	ESC '[' '?' number 'l'		;
+		 *	ESC '[' '?' number 'h'		;
+		*/
 		screen[vdisp].vstate = V_NORM;
-		wmove(vd, screen[vdisp].cm_row, c-' ');
+		switch (c) {
+		    case '0':
+		    case '1':
+		    case '2':
+		    case '3':
+		    case '4':
+		    case '5':
+		    case '6':
+		    case '7':
+		    case '8':
+		    case '9':
+			screen[vdisp].vstate = V_ANSII;
+			screen[vdisp].cm_col = screen[vdisp].cm_col*10 + c-'0';
+			break;
+		    case 'A':
+			y -= screen[vdisp].cm_col;
+			if (y < 0)
+			    y = 0;
+			break;
+		    case 'B':
+			y += screen[vdisp].cm_col;
+			if (y >= LINES)
+			    y = LINES-1;
+			break;
+		    case 'C':
+			x += screen[vdisp].cm_col;
+			if (x >= COLS)
+			    x = COLS-1;
+			break;
+		    case 'D':
+			x -= screen[vdisp].cm_col;
+			if (x < 0)
+			    x = 0;
+			break;
+		    case 'J':
+			if (screen[vdisp].cm_col)
+			    werase(vd);
+			else
+			    wclrtobot(vd);
+			wmove(vd, y, x);
+			break;
+		    case 'K':
+			wclrtoeol(vd);
+			break;
+		    case 'g':
+			{   int i;
+			    for (i = 0; i < COLS; i++)
+				screen[vdisp].tstop[i] = 0;
+			}
+			break;
+		    case 'm':
+			if (screen[vdisp].cm_col == 0)
+			    wstandend(vd);
+			else
+			    wstandout(vd);
+			break;
+		    case ';':
+			screen[vdisp].vstate = V_CM;
+			screen[vdisp].cm_row = screen[vdisp].cm_col;
+			screen[vdisp].cm_col = 0;
+			break;
+		    case '?':
+			screen[vdisp].vstate = V_FLAG;
+			break;
+		}
+		wmove(vd, y, x);
 		break;
+	case V_CM:
+		/*
+		 *	ESC '[' number ';' number 'H'	cursor move
+		*/
+		screen[vdisp].vstate = V_NORM;
+		switch (c) {
+		    case '0':
+		    case '1':
+		    case '2':
+		    case '3':
+		    case '4':
+		    case '5':
+		    case '6':
+		    case '7':
+		    case '8':
+		    case '9':
+			screen[vdisp].vstate = V_CM;
+			screen[vdisp].cm_col = screen[vdisp].cm_col*10 + c-'0';
+			break;
+		    case 'H':
+			if (screen[vdisp].cm_row)
+			    screen[vdisp].cm_row--;
+			if (screen[vdisp].cm_col)
+			    screen[vdisp].cm_col--;
+			wmove(vd, screen[vdisp].cm_row, screen[vdisp].cm_col);
+			break;
+		}
+		break;
+	case V_FLAG:
+		/*
+		 *	ESC '[' '?' number 'l'		no-op
+		 *	ESC '[' '?' number 'h'		no-op
+		*/
+		screen[vdisp].vstate = V_NORM;
+		switch (c) {
+		    case '0':
+		    case '1':
+		    case '2':
+		    case '3':
+		    case '4':
+		    case '5':
+		    case '6':
+		    case '7':
+		    case '8':
+		    case '9':
+			screen[vdisp].vstate = V_FLAG;
+			break;
+		    case 'l':
+		    case 'h':
+			break;
+		}
 	}
 	wrefresh(screen[curvdsp].display);
 }
