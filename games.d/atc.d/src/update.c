@@ -253,6 +253,7 @@ next_plane()
 }
 
 #ifndef BSD
+#ifndef CYGWIN
 bzero(p, s)
 register char *p;
 register unsigned s;
@@ -268,6 +269,7 @@ register unsigned s;
 	while (s--)
 		*to++ = *from++;
 }
+#endif
 #endif
 
 addplane()
