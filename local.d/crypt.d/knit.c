@@ -371,7 +371,7 @@ gwindow	*knt;
 
 	knti = ((kntinfo *) knt->wprivate);
 	knti->ustkp = knti->savedustkp;
-	kntclrlast();
+	kntclrlast(knti);
 	dbsundo(&dbstore);
 
 	sprintf(statmsg, UNDOMSG, zeecount(knti));
