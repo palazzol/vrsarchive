@@ -1,8 +1,8 @@
-char *copyright = "Top, version 1.6, copyright (c) 1984, William LeFebvre";
+char *copyright = "@(#)top.c	1.2, copyright (c) 1984, William LeFebvre";
 
 /*
  *  Top users display for Berkeley Unix
- *  Version 1.6
+ *  Version 1.2
  *
  *  This program may be freely redistributed to other Unix sites, but this
  *  entire comment MUST remain intact.
