@@ -94,7 +94,7 @@ boolean ghostly;
 
 	mread(fd, (genericptr_t)&monbegin, sizeof(monbegin));
 #ifndef MSDOS
-	differ = (genericptr_t)(&mons[0]) - (genericptr_t)(monbegin);
+	differ = (char *)(&mons[0]) - (char *)(monbegin);
 #else
 	differ = (long)(&mons[0]) - (long)(monbegin);
 #endif
@@ -122,7 +122,7 @@ boolean ghostly;
 /*		if (differ) mtmp->data = NULL;*/
 /*#else*/
 		mtmp->data = (struct permonst *)
-			((genericptr_t)mtmp->data + differ);
+			((char *)mtmp->data + differ);
 /*#endif	/*LINT*/
 #else
 		mtmp->data = (struct permonst *)
@@ -351,11 +351,16 @@ register int fd;
 	return(1);
 }
 
+#ifdef __STDC__
+void
+getlev(int fd,int pid,xchar lev,boolean ghostly)
+#else
 void
 getlev(fd, pid, lev, ghostly)
 int fd, pid;
 xchar lev;
 boolean ghostly;
+#endif
 {
 	register struct gold *gold;
 	register struct trap *trap;
@@ -702,7 +707,7 @@ minit()
 int
 mread(fd, buf, len)
 int fd;
-register genericptr_t buf;
+register char *buf;
 register unsigned len;
 {
     /*register int readlen = 0;*/
@@ -710,11 +715,11 @@ register unsigned len;
     while (len--) {
       if (inrunlength > 0) {
 	  inrunlength--;
-	  *((char *)buf)++ = '\0';
+	  *buf++ = '\0';
       } else {
 	  register short ch = mgetc();
 	  if (ch < 0) return -1; /*readlen;*/
-	  if ((*((char *)buf)++ = ch) == RLESC) {
+	  if ((*buf++ = ch) == RLESC) {
 	      inrunlength = mgetc();
 	  }
       }
