@@ -67,6 +67,8 @@ int s;
 		fscanf(File, "%s", buf);
 		pclose(File);
 	}
+	if (*buf == '\0')
+		strncpy(buf, "unknown", s);
 }
 #endif
 
