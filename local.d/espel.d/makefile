@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.4 2002-11-23 07:49:06 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.5 2002-11-24 05:27:12 Vincent Exp $
 #
-ALL	= espel espel.hi spellin
+ALL	= espel espel.hi$(EXE) spellin$(EXE)
 OPTIONS	= -DLIB=\"$(LIBDIR)\"
 include $(HOME)/CONFIG
 #
@@ -13,17 +13,17 @@ OFILES	= copy.o correct.o hashtab.o hi.o main.o minigrep.o
 espel:	espel.sh
 	sed '/^LIB/,/^PUBLIC/c\
 LIB=$(LIBDIR)\
-SPELLIN=$(LIBDIR)/spellin\
+SPELLIN=$(LIBDIR)/spellin$(EXE)\
 PUBLIC=$(PUBLIC)' $? > $@
 
-espel.hi: $(OFILES)
-	$(CC) $(CFLAGS) $(OFILES) -o espel.hi
+espel.hi$(EXE): $(OFILES)
+	$(CC) $(CFLAGS) $(OFILES) -o $@
 
 install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
 	cp espel $(BINDIR)
 	chmod 755 $(BINDIR)/espel
-	cp espel.help espel.hi spellin $(LIBDIR)
-	cd $(LIBDIR); chmod 711 espel.hi spellin
+	cp espel.help espel.hi$(EXE) spellin$(EXE) $(LIBDIR)
+	cd $(LIBDIR); chmod 711 espel.hi$(EXE) spellin$(EXE)
 	cd $(LIBDIR); chmod 644 espel.help
 	cp /usr/lib/spell/hlista $(PUBLIC)/.spellht
 	touch $(PUBLIC)/.spellwd
@@ -34,7 +34,7 @@ install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
 	chmod 644 $(MAN1)/espel.l
 
 clean:
-	rm -f $(ALL) $(OFILES)
+	rm -f $(ALL) $(OFILES) spellin.o
 
 spellin.o: spell.h
 main.o: espel.h

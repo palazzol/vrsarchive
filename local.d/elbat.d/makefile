@@ -6,7 +6,7 @@
 #	March 6, 1985.
 #
 TABLES	= tab1340 tab1340-ps
-ALL	= $(TABLES) elbat
+ALL	= $(TABLES) elbat$(EXE)
 TERMDIR	= $(ROOT)/usr/lib/term
 LINTTAB	= $(TABLES)
 OPTIONS	= -O
@@ -21,14 +21,14 @@ $(TABLES):: table.o
 	rm -f ./$(DEFEXE) $@.o
 
 # This dummy_file should never exist -- it is a kludge to get Make to
-elbat:	elbat.c
+elbat$(EXE):	elbat.c
 	$(CC) $(CFLAGS) elbat.c -o $@
 	rm -f elbat.o
 
 install: $(ALL) $(TERMDIR) $(BINDIR) $(MAN5)
 	cp $(TABLES) $(TERMDIR)/
 	cd $(TERMDIR); chmod 644 $(TABLES)
-	cp elbat $(BINDIR)/
+	cp elbat$(EXE) $(BINDIR)/
 	cd $(BINDIR); chmod 711 elbat
 	cp term.5 $(MAN5)/
 	cd $(MAN5); chmod 644 term.5
@@ -41,4 +41,4 @@ lint:	table.c
 	lint $(LFLAGS) table.c $(LINTTAB).c
 
 clean:
-	rm -f $(ALL) table.o
+	rm -f $(ALL) table.o $(TABLES:=.o)
