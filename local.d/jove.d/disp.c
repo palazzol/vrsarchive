@@ -109,7 +109,11 @@ dobell(n)
 			putstr(VB);
 		else
 #ifdef SYSV	/* release 2, at least */
+#ifdef M_XENIX
+			putpad("20\007", 1);
+#else
 			putpad("$<20>\007", 1) ;
+#endif
 #else
 			putpad("20\007", 1);
 #endif SYSV
