@@ -364,4 +364,4 @@ random()
 	return( i );
 }
 
-#endif	NO_RANDOM
+#endif

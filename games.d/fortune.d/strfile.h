@@ -25,4 +25,4 @@ typedef struct {		/* information table */
 # define REGCMP
 #endif
 
-# endif		__STRFILE__
+# endif
