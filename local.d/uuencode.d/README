@@ -1,0 +1,93 @@
+From littlei!omepd!mipos3!intelca!oliveb!pyramid!amdahl!ames!sdcsvax!ucbvax!ucbcad!zen!hoser.berkeley.edu!bryce Sat Sep 12 10:20:49 PDT 1987
+Status: R
+
+Article 1223 of comp.sources.d:
+Path: littlei!omepd!mipos3!intelca!oliveb!pyramid!amdahl!ames!sdcsvax!ucbvax!ucbcad!zen!hoser.berkeley.edu!bryce
+>From: bryce@hoser.berkeley.edu (Bryce Nesbitt)
+Newsgroups: comp.sources.d,comp.sys.amiga
+Subject: Re: Question about uu*code
+Summary: Yup!
+Keywords: BITNET, uuencode, uudecode, security, checksums, BSD 4.4
+Message-ID: <3687@zen.berkeley.edu>
+Date: 11 Sep 87 09:06:19 GMT
+References: <241@n8emr.UUCP>
+Sender: news@zen.berkeley.edu
+Reply-To: bryce@hoser.berkeley.edu.UUCP (Bryce Nesbitt)
+Distribution: usa
+Organization: Tubular Transport Devices, Ltd.
+Lines: 71
+Xref: littlei comp.sources.d:1223 comp.sys.amiga:8029
+
+In article <241@n8emr.UUCP> lwv@n8emr.UUCP (Larry W. Virden) writes:
+
+)I noticed that we just recieved two 'new' versions of uu*code which are VERY
+)similar.  The one in the Amiga group claims that it is the most compatible
+)with others.  The one from comp.sources.misc (??) was almost identical...
+)...Even the comment wording is VERY VERY similar.
+
+That's because they are the same program.  Four people have worked on those
+programs...  Mark, Alan, Fred and Bryce. (see the source for full names
+and net addresses).  I'm Bryce, the latest.
+
+
+>Is the one dated Sept 7 a 'more correct' version?...
+>I dont want to generate incorrect encodings... 
+
+Both versions produce identical encodings.  The comp.sources.misc version
+has a new uudecode that handles BITNET.  This is the only difference.
+
+These uu*codes where designed to be totally forward *and* backward compatible.
+The decode can use old encoded files, and the encode will produce files that
+an old decode can deal with.  Works real slick.
+
+The new features are; checksums on each line, and a file size check
+(in case an entire line got deleted, or you run AmigaDOS which cares
+how large a file is).  Old uudecodes could have an error or three...
+but you may never find out (until too late).
+
+The version posted to comp.sys.amiga is old.  j.cc.purdue was down the
+same day I sent the new version and Craig decided to post the old one.
+(Murphy and his laws!!)
+(It has been about two months since I sent the old one to him... he had
+another "better" uu*code from the ST group that turned out to be vapor;
+full of bugs, sloppy code and hard to convert back to an Amiga/UNIX
+style interface. It also did not do checksums or filesize.)
+
+BITNET has an incorrect ASCII<->EBCDIC table!!  I finally talked to
+such a site, thus the upgrade.
+
+
+>Also, I notice that an occasional encoded program has some sort of little
+>printable ASCII table before the begin.  It looks like it is intended to
+>be either a visual or perhaps auto-check for bad ASCII translations - 
+>is this the case and does anyone know what code needs to be added...
+
+The theory is that the table will get mangled the exact same way the file
+was mangled.  It knows that the table *should* have, can compare with the
+file, and can fix it up.  Only works on files encoded by it.
+
+This is not in my uuencode/uudecode.  I do not plan to add it.  I do,
+however, have code in my uudecode that checks for mangled files.  It can
+even decode a damaged *old* file.
+Common damage is spaces get changed to tabs, spaces get truncated at the
+end of a line, BITNET hosts mangle the ASCII, etc.  The first is solved
+by encoding space as "`", the rest are checks in the decode and thus
+apply to any file, new or old.
+
+The uudecode will report "Checksum error" to stderr only if the file was
+encode with checksums.  It will report "file size mismatch" only if the
+file has a file size encoded in it.  The space truncate and ASCII checks
+are always active.  100% forward and back compatible.
+
+My contributions to the code are free for all to use... use 'em, abuse 'em,
+even put them on the BSD 4.4 tapes.  I'd like that, since I would then
+have the security of receiving checksumed files, instead of just sending
+them out!!!
+
+
+|\ /|  . Ack! (NAK, EOT, SOH)
+{O o} . 
+ (")	bryce@hoser.berkeley.EDU -or- ucbvax!hoser!bryce
+  U	
+
+

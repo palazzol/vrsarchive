@@ -1,0 +1,90 @@
+.TH UUENCODE 1 "1 Sep 1987"
+.UC 4
+.SH NAME
+uuencode,uudecode \- encode/decode a binary file for transmission via
+(plain text) mail
+.SH SYNOPSIS
+.B uuencode
+[source] remotedest |
+.B mail
+sys1!sys2!..!decode
+.br
+.B uuencode
+>outfile.uue source remotedest
+.br
+.B uuencode
+>outfile.uue <source remotedest
+.br
+.B uudecode
+[file]
+.SH DESCRIPTION
+.I Uuencode
+and
+.I uudecode
+are used to send a binary file via uucp (or other) mail.  This combination can
+be used over indirect mail links even when
+.IR uusend (1C)
+or other direct binary transmission methods are not available.
+.PP
+.I Uuencode
+takes the named source file (default standard input) and produces an encoded
+version on the standard output.  The encoding uses only printing ASCII
+characters, and includes the mode of the file and the
+.I remotedest
+for recreation on the remote system.
+.PP
+.I Uudecode
+reads an encoded file, strips off any leading lines added by mailers,
+and recreates the original file with the specified mode and name.  If
+there are other uuencoded files in the same input, they will be decoded
+as well.
+.PP
+The intent is that all mail to the user ``decode'' should be filtered
+through the uudecode program.  This way the file is created automatically
+without human intervention.  This is possible on the uucp network by either
+using
+.I sendmail
+or by making
+.I rmail
+be a link to
+.I Mail
+instead of
+.I mail.
+In each case, an alias must be created in a master file to get
+the automatic invocation of uudecode.
+.PP
+If these facilities are not available, the file can be uudecoded manually.
+.PP
+The encode file has an ordinary text form and can be edited by any text editor
+to change the mode or remote name.
+.PP
+This version of uuencode automatically adds checksums to each line, and
+an overall file size to the end.  Old versions of uudecode will ignore this
+extra information, new versions will check it and complain if it is in
+error.
+.PP
+Care has been taken with these versions to compensate for most of the nasty
+things editors and networks can do to files.  In particular, lines that
+have had trailing spaces truncated are handled, as are files that have
+passed through
+.I BITNET
+hosts.
+.SH SEE\ ALSO
+uuencode(5), uusend(1C), uucp(1C), uux(1C), mail(1)
+.SH AUTHOR
+Mark Horton
+.br
+Checksums and Amiga port by Alan J. Rosenthal
+.br
+File compatability added back in by Fred Fish
+.br
+File size check and various refinements by Bryce Nesbitt
+.SH BUGS
+The file is expanded by 35% (3 bytes become 4, plus control information)
+causing it to take longer to transmit.
+.PP
+The user on the remote system who is invoking
+.I uudecode
+(often
+.I uucp)
+must have write permission on the specified file
