@@ -1,0 +1,107 @@
+.TH GETOPT 1 local
+.DA 12 April 1984
+.SH NAME
+getopt \- parse command options
+.SH SYNOPSIS
+.B set \-\- \`getopt
+optstring
+.B $*\`
+.SH DESCRIPTION
+.I Getopt
+is used to break up options in command lines for easy parsing by
+shell procedures, and to check for legal options.
+.I Optstring
+is a string of recognized option letters (see
+.IR getopt (3));
+if a letter is followed by a colon, the option
+is expected to have an argument which may or may not be
+separated from it by white space.
+The special option
+.B \-\-
+is used to delimit the end of the options.
+.I Getopt
+will place
+.B \-\-
+in the arguments at the end of the options,
+or recognize it if used explicitly.
+The shell arguments
+(\fB$1 $2\fR ...) are reset so that each option is
+preceded by a
+.B \-
+and in its own shell argument;
+each option argument is also in its own shell argument.
+.SH EXAMPLE
+The following code fragment shows how one might process the arguments
+for a command that can take the options
+.B a
+and
+.BR b ,
+and the option
+.BR o ,
+which requires an argument.
+.PP
+.RS
+.nf
+set \-\- \`getopt abo: $*\`
+if test $? != 0
+then
+	echo 'Usage: ...'
+	exit 2
+fi
+for i
+do
+	case "$i"
+	in
+		\-a|\-b)
+			flag=$i; shift;;
+		\-o)
+			oarg=$2; shift; shift;;
+		\-\-)
+			shift; break;;
+	esac
+done
+.fi
+.RE
+.PP
+This code will accept any of the following as equivalent:
+.PP
+.RS
+.nf
+cmd \-aoarg file file
+cmd \-a \-o arg file file
+cmd \-oarg -a file file
+cmd \-a \-oarg \-\- file file
+.RE
+.PP
+A program template similar to this example can be found in
+.IR /usr/pub/template.sh .
+.SH SEE ALSO
+sh(1), getopt(3)
+.SH DIAGNOSTICS
+.I Getopt
+prints an error message on the standard error output when it
+encounters an option letter not included in
+.IR optstring .
+.SH HISTORY
+Written by Henry Spencer, working from a Bell Labs manual page.
+Behavior believed identical to the Bell version.
+.SH BUGS
+Whatever
+.IR getopt (3)
+has.
+.PP
+Arguments containing white space or imbedded shell metacharacters
+generally will not survive intact;  this looks easy to fix but isn't.
+.PP
+The error message for an invalid option is identified as coming
+from
+.I getopt
+rather than from the shell procedure containing the invocation
+of
+.IR getopt ;
+this again is hard to fix.
+.PP
+The precise best way to use the
+.I set
+command to set the arguments without disrupting the value(s) of
+shell options varies from one shell version to another.
