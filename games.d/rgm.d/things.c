@@ -76,7 +76,7 @@ int obj;
   if (inven[obj].count < 1) return (0);
 
   /* read unknown scrolls rather than dropping them */
-  if (inven[obj].type == scroll && !itemis (obj, KNOWN) && reads (obj))
+  if (inven[obj].type == Scroll && !itemis (obj, KNOWN) && reads (obj))
   { prepareident (pickident (), obj);
     return (1);
   }
@@ -116,7 +116,7 @@ int obj;
 reads (obj)
 int obj;
 {
-  if (inven[obj].type != scroll)
+  if (inven[obj].type != Scroll)
   { dwait (D_ERROR, "Trying to read %c", LETTER (obj)); 
     usesynch = 0;
     return (0); 
@@ -281,9 +281,9 @@ int pickident ()
 
   if      ((obj=unknown      (ring))   != NONE);
   else if ((obj=unidentified (wand))   != NONE);
-  else if ((obj=unidentified (scroll)) != NONE);
+  else if ((obj=unidentified (Scroll)) != NONE);
   else if ((obj=unidentified (potion)) != NONE);
-  else if ((obj=unknown      (scroll)) != NONE);
+  else if ((obj=unknown      (Scroll)) != NONE);
   else if ((obj=unknown      (potion)) != NONE);
   else if ((obj=unknown      (hitter)) != NONE);
   else obj = 0;

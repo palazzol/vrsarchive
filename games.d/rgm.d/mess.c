@@ -24,7 +24,7 @@ static int sumgold=0, sumsqgold=0, numgold=0;
 static mhit=0, mmiss=0, mtarget= NONE;
 
 /* Other local data */
-identifying = 0;		/* Next message is from identify scroll */
+int identifying = 0;		/* Next message is from identify scroll */
 static int justreadid = 0;	/* True if just read identify scroll */
 static int gushed = 0;		/* True ==> water on the head msg recently */
 static int echoit;		/* True ==> echo this message to the user */
@@ -491,7 +491,7 @@ char *name;
   }
   else				/* Rogue 5.3 */
   { if (streq (name, "identify scroll"))
-    { if ((obj = unknown (scroll)) != NONE || (obj = have (scroll)) != NONE)
+    { if ((obj = unknown (Scroll)) != NONE || (obj = have (Scroll)) != NONE)
         id = LETTER (obj);
     }
     else if (streq (name, "identify potion"))

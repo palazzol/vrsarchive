@@ -13,6 +13,16 @@ static char *sc_prompt;
 static char *sc_buf;
 static int sc_line;
 
+#ifdef SIGTSTP
+SIG_T
+susp(dummy)
+{
+	blockalarm();
+	(void) signal(SIGTSTP, susp);
+	unblockalarm();
+}
+#endif
+
 initscreen()
 {
 	/* initscr() already done in SCREENTEST() */
@@ -28,7 +38,6 @@ initscreen()
 	leaveok(turn_w, 1);
 #ifdef SIGTSTP
 	{
-		int susp();
 		(void) signal(SIGTSTP, susp);
 	}
 #endif
@@ -47,7 +56,8 @@ cleanupscreen()
 	}
 }
 
-newturn()
+SIG_T
+newturn(dummy)
 {
 	repaired = loaded = fired = changed = 0;
 	movebuf[0] = '\0';
@@ -432,13 +442,3 @@ adjustview()
 	else if (mf->col > viewcol + (VIEW_X - VIEW_X/8))
 		viewcol = mf->col - VIEW_X/8;
 }
-
-#ifdef SIGTSTP
-susp()
-{
-	blockalarm();
-	tstp();
-	(void) signal(SIGTSTP, susp);
-	unblockalarm();
-}
-#endif

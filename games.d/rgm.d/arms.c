@@ -90,7 +90,7 @@ int i;
     class -= inven[i].phit;
 
   /* Can remove curse, so assume it is +2 armor */
-  else if (havenamed (scroll, "remove curse") != NONE)
+  else if (havenamed (Scroll, "remove curse") != NONE)
     class -= 2;
 
   /* Can't remove curse, assume it is -2 armor */
