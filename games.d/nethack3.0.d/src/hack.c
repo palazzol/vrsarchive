@@ -199,10 +199,15 @@ nopushmsg:
 	return (0);
 }
 
+#ifdef __STDC__
+void
+movobj(struct obj *obj,xchar ox,xchar oy)
+#else
 void
 movobj(obj, ox, oy)
 register struct obj *obj;
 register xchar ox, oy;
+#endif
 {
 	register xchar ox2 = obj->ox, oy2= obj->oy;
 
@@ -276,10 +281,14 @@ register xchar x,y;
 	       (y == rooms[roomno].ly - 1) || (y == rooms[roomno].hy + 1));
 }
 
+#ifdef __STDC__
 boolean
-may_dig(x,y)
+may_dig(xchar x,xchar y) /* intended to be called only on ROCKs */
+#else
+boolean
+may_dig(x,y) /* intended to be called only on ROCKs */
 register xchar x,y;
-/* intended to be called only on ROCKs */
+#endif
 {
 return (!(IS_STWALL(levl[x][y].typ) && (levl[x][y].diggable & W_NONDIGGABLE)));
 }
@@ -799,9 +808,14 @@ monster_nearby() {
 	return(0);
 }
 
+#ifdef __STDC__
+int
+cansee(xchar x,xchar y)
+#else
 int
 cansee(x,y)
 xchar x,y;
+#endif
 {
 	if(Blind || u.uswallow) return(0);
 	if(dist(x,y) < 3) return(1);
@@ -916,8 +930,8 @@ nomul(nval)
 
 void
 losehp(n, knam)
-	register int n;
-	register char *knam;
+register int n;
+register const char *knam;
 {
 #ifdef POLYSELF
 	if (u.mtimedone) {
