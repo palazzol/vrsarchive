@@ -224,11 +224,11 @@ extern int
 
 #	define WIRED_CMD(c)	c
 
-#else TXT_TO_C
+#else /*TXT_TO_C*/
 
 #	define WIRED_CMD(c)	0
 
-#endif TXT_TO_C
+#endif /*TXT_TO_C*/
 
 struct cmd	commands[] = {
 #ifdef LISP
@@ -339,7 +339,7 @@ struct cmd	commands[] = {
 	FUNCTION, "exit-jove", WIRED_CMD(Leave),
 #ifdef CMT_FMT
  	FUNCTION, "fill-comment", WIRED_CMD(Comment),
-#endif CMT_FMT
+#endif /*CMT_FMT*/
 	FUNCTION, "fill-paragraph", WIRED_CMD(Justify),
 	FUNCTION, "fill-region", WIRED_CMD(RegJustify),
 	FUNCTION, "filter-region", WIRED_CMD(FilterRegion),

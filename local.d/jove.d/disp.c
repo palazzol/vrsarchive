@@ -116,7 +116,7 @@ dobell(n)
 #endif
 #else
 			putpad("20\007", 1);
-#endif SYSV
+#endif /*SYSV*/
 	}
 	flusho();
 }
@@ -434,7 +434,7 @@ register int	linenum;
 			else
 				PhysScreen[linenum].s_id = -1;
 		} else
-#endif ID_CHAR
+#endif /*ID_CHAR*/
 		    if (BufSwrite(linenum))
 			do_cl_eol(linenum);
 		else
@@ -726,7 +726,7 @@ char	*new;
 	CapCol += num;
 }
 
-#endif ID_CHAR
+#endif /*ID_CHAR*/
 
 /* chkmail() returns nonzero if there is new mail since the
    last time we checked. */

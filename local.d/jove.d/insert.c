@@ -685,4 +685,4 @@ lisp_indent()
 
 	return bp;
 }
-#endif LISP
+#endif /*LISP*/

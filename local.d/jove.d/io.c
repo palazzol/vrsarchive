@@ -375,7 +375,7 @@ char	*file,
 	} while (sp != 0);
 }
 
-#endif CHDIR
+#endif /*CHDIR*/
 
 get_hdir(user, buf)
 register char	*user,

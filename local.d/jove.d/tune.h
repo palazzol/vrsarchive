@@ -32,7 +32,7 @@
 #	    define NBUF	48
 #	else
 #	    define NBUF	64	/* number of disk buffers */
-#	endif iAPX286
+#	endif /*iAPX286*/
 #   else
 #	define SMALL
 #	define BUFSIZ	512	/* or 1024 */
@@ -51,7 +51,7 @@
 #   endif
 #
 #   define SUBPROCS	/* only on UNIX systems (NOT INCORPORATED YET) */
-#endif MSDOS
+#endif /*MSDOS*/
 
 #ifdef SMALL
     typedef	short	disk_line;
@@ -60,8 +60,8 @@
 	typedef long	disk_line;
 #   else
 	typedef	int	disk_line;
-#   endif iAPX286
-#endif SMALL
+#   endif /*iAPX286*/
+#endif /*SMALL*/
 
 #ifndef SMALL
 #   define ABBREV		/* word abbreviation mode */
@@ -78,7 +78,7 @@
 #   endif
 /*#   define LISP			/* include the code for Lisp Mode */
 #   define CMT_FMT		/* include the comment formatting routines */
-#endif SMALL
+#endif /*SMALL*/
 
 #if !sun && !iAPX286
 #   define MY_MALLOC	/* use more memory efficient malloc (not on suns) */
@@ -128,4 +128,4 @@ extern char
 
 	Shell[],
 	ShFlags[];
-#endif NOEXTERNS
+#endif /*NOEXTERNS*/

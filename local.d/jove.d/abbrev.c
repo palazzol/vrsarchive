@@ -285,4 +285,4 @@ BindMtoW()
 	ap->a_cmdhook = hook;
 }
 
-#endif ABBREV
+#endif /*ABBREV*/

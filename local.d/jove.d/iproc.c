@@ -326,4 +326,4 @@ data_obj	**map,
 	}
 }
 
-#endif IPROCS
+#endif /*IPROCS*/
