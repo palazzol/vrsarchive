@@ -6,10 +6,10 @@
 #	-DWIZARD	Compile in "wizard mode" (reguires large machine)
 #	-DDUMP		Allow core dumps (bad idea for production)
 #
-ALL	= rogue scedit
+ALL	= rogue$(EXE) scedit$(EXE)
 OPTIONS	= -UWIZARD -UDUMP -O
 MODEL	= -M2m -F 1800 $(STRIP)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 #
 #	Where the scoreboard should be kept.
 #
@@ -75,9 +75,9 @@ BINARY	= distr.out
 #	$(CC) $(CFLAGS) xs.o $(OBJS) $(LIBS) -o $@
 #	size rogue
 
-rogue: $(HDRS) $(OBJS)
+rogue$(EXE): $(HDRS) $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
-	size rogue
+	size $@
 
 vers.o:
 	$(CC) $(CFLAGS) -c vers.c
@@ -90,11 +90,11 @@ xs.o: strings
 	$(CC) $(CFLAGS) -c xs.c
 
 install: $(ALL)
-	cp rogue $(GAMDIR)/rogue
-	chown $(SAFEUID) $(GAMDIR)/rogue
-	chmod 4711 $(GAMDIR)/rogue
+	cp rogue$(EXE) $(GAMDIR)/rogue$(EXE)
+	chown $(SAFEUID) $(GAMDIR)/rogue$(EXE)
+	chmod 4711 $(GAMDIR)/rogue$(EXE)
 	touch $(SCOREFILE)
-	(echo "w"; echo "q") | ./scedit >/dev/null
+	(echo "w"; echo "q") | ./scedit$(EXE) >/dev/null
 	chown $(SAFEUID) $(SCOREFILE)
 
 distr: rmmach distmod.o mach_dep.o
@@ -118,7 +118,7 @@ prob: prob.o extern.o xs.o
 prob.o: prob.c rogue.h
 	$(CC) $(CFLAGS) -c prob.c
 
-scedit: scedit.o scmisc.o vers.o
+scedit$(EXE): scedit.o scmisc.o vers.o
 	$(CC) $(CFLAGS) -o scedit vers.o scedit.o scmisc.o -lcurses
 
 scmisc.o scedit.o:
