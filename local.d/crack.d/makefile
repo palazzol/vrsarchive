@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.9 2002-11-23 07:49:03 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.10 2002-11-24 04:59:21 Vincent Exp $
 #
-ALL		= crack
+ALL	= crack$(EXE)
 MODEL	= -i -K
-OPTION = -DTRYEASY
+OPTION	= -DTRYEASY
 #OPTION	= -DTRYHARD
 #OPTION	= -DTRYEASY -DTRYHARD
 OPTIONS = -O $(OPTION)
@@ -13,10 +13,10 @@ crack:	crack.o
 	$(CC) $(CFLAGS) -o $@ crack.o $(LIBS)
 
 clean:
-	rm -f crack crack.o
+	rm -f $(ALL) crack.o
 
 install: $(ALL) $(BINDIR)
 	cp crack $(BINDIR)
-	chmod 711 $(BINDIR)/crack
+	chmod 711 $(BINDIR)/crack$(EXE)
 
 crack.o: crack.c primo.h crack.h

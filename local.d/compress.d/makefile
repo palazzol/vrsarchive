@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/compress.d/makefile,v 1.4 2002-11-23 07:49:03 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/compress.d/makefile,v 1.5 2002-11-24 04:57:36 Vincent Exp $
 #
 MODEL	= -i -F 3000
 OPTIONS	= -O -DSHORT_INT
-ALL	= compress
+ALL	= compress$(EXE)
 include $(HOME)/CONFIG
 
 compress.o: compress.c USERMEM
@@ -25,4 +25,4 @@ install: $(ALL) $(BINDIR) $(MAN1)
 #	cd $(MAN1); chmod 644 compress.1
 
 clean:
-	rm -f $(ALL) uncompress zcat core
+	rm -f compress.o $(ALL) uncompress$(EXE) zcat$(EXE) core

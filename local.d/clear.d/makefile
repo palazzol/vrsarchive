@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/clear.d/makefile,v 1.4 2002-11-23 07:49:02 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/clear.d/makefile,v 1.5 2002-11-24 04:55:37 Vincent Exp $
 #
-ALL	= clear
+ALL	= clear$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG

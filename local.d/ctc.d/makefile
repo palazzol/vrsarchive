@@ -1,4 +1,4 @@
-ALL	= ctc
+ALL	= ctc$(EXE)
 MODEL	= -i -F 2000
 OPTIONS	= -O
 include $(HOME)/CONFIG
@@ -10,7 +10,7 @@ install: $(ALL) $(BINDIR) $(MAN1)
 	cp ctc.1 $(MAN1)
 	cd $(MAN1); chmod 644 ctc.1
 
-ctc:    $(OBJ)
+ctc$(EXE):    $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LIBS)
 
 clean:

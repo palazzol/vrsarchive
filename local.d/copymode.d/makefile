@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/copymode.d/makefile,v 1.3 2002-11-23 07:49:03 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/copymode.d/makefile,v 1.4 2002-11-24 04:58:03 Vincent Exp $
 #
-ALL	= copymode
+ALL	= copymode$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG
