@@ -594,12 +594,12 @@ hitmu(mtmp, mattk)
 			pline("The fire doesn't feel hot!");
 			dmg = 0;
 		    }
-		    if(mtmp->m_lev > rn2(20))
+		    if(mtmp->m_lev > (unsigned)rn2(20))
 			destroy_item(SCROLL_SYM, AD_FIRE);
-		    if(mtmp->m_lev > rn2(20))
+		    if(mtmp->m_lev > (unsigned)rn2(20))
 			destroy_item(POTION_SYM, AD_FIRE);
 #ifdef SPELLS
-		    if(mtmp->m_lev > rn2(25))
+		    if(mtmp->m_lev > (unsigned)rn2(25))
 			destroy_item(SPBOOK_SYM, AD_FIRE);
 #endif
 		}
@@ -612,7 +612,7 @@ hitmu(mtmp, mattk)
 			pline("The frost doesn't seem cold!");
 			dmg = 0;
 		    }
-		    if(mtmp->m_lev > rn2(20))
+		    if(mtmp->m_lev > (unsigned)rn2(20))
 			destroy_item(POTION_SYM, AD_COLD);
 		}
 		break;
@@ -624,9 +624,9 @@ hitmu(mtmp, mattk)
 			pline("The zap doesn't shock you!");
 			dmg = 0;
 		    }
-		    if(mtmp->m_lev > rn2(20))
+		    if(mtmp->m_lev > (unsigned)rn2(20))
 			destroy_item(WAND_SYM, AD_ELEC);
-		    if(mtmp->m_lev > rn2(20))
+		    if(mtmp->m_lev > (unsigned)rn2(20))
 			destroy_item(RING_SYM, AD_ELEC);
 		}
 		break;

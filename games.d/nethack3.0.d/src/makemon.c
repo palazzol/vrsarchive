@@ -574,10 +574,15 @@ register int	x, y;
 	return(mtmp);
 }
 
+#ifdef __STDC__
+void
+enexto(coord *cc,xchar xx,xchar yy)
+#else
 void
 enexto(cc, xx,yy)
 coord *cc;
 register xchar xx, yy;
+#endif
 {
 	register xchar x,y;
 	coord foo[15], *tfoo;
@@ -746,7 +751,7 @@ struct permonst *ptr;
 	    tmp2 = ptr->mattk[i].adtyp;
 	    if((tmp2 == AD_DRLI) || (tmp2 == AD_STON)) n += 2;
 	    else n += (tmp2 != AD_PHYS);
-	    n += ((ptr->mattk[i].damd * ptr->mattk[i].damn) > 23);
+	    n += ((ptr->mattk[i].damd * ptr->mattk[i].damn) > (unsigned)23);
 	}
 
 /*	Finally, adjust the monster level  0 <= n <= 24 (approx.) */
@@ -830,10 +835,14 @@ rndmonst() {		/* select a random monster */
  *	of a given monster class.  It will return 0 if no monsters
  *	in that class can be made.
  */
-
+#ifdef __STDC__
+struct permonst *
+mkclass(char mlet)
+#else
 struct permonst *
 mkclass(mlet)
 char	mlet;
+#endif
 {
 	register int	first, last, num = 0;
 
@@ -892,10 +901,10 @@ register struct monst *mtmp;
 	register int newtype;
 	register struct permonst *ptr = mtmp->data;
 
-	if (ptr->mlevel >= 50 || mtmp->mhpmax <= 8*mtmp->m_lev)
+	if (ptr->mlevel >= 50 || mtmp->mhpmax <= (unsigned)(8*mtmp->m_lev))
 	    return ptr;
 	newtype = little_to_big(monsndx(ptr));
-	if (++mtmp->m_lev >= mons[newtype].mlevel) {
+	if (++mtmp->m_lev >= (unsigned)mons[newtype].mlevel) {
 		if (mons[newtype].geno & G_GENOD) {
 			pline("As %s grows up into a%s %s, %s dies!",
 				mon_nam(mtmp),
@@ -908,7 +917,7 @@ register struct monst *mtmp;
 		mtmp->data = &mons[newtype];
 		mtmp->m_lev = mons[newtype].mlevel;
 	}
-	if (mtmp->m_lev > 3*mtmp->data->mlevel / 2)
+	if (mtmp->m_lev > (unsigned)(3*mtmp->data->mlevel / 2))
 		mtmp->m_lev = 3*mtmp->data->mlevel / 2;
 	return(mtmp->data);
 }

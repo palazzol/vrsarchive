@@ -241,7 +241,7 @@ castmu(mtmp, mattk)	/* monster casts spell at you */
 			/* Try for insects, and if there are none
 			   left, go for (sticks to) snakes.  -3. */
 			{
-			int i;
+			unsigned int i;
 			struct permonst *pm = mkclass(S_ANT);
 			struct monst *mtmp2;
 			char let = (pm ? S_ANT : S_SNAKE);
@@ -251,7 +251,7 @@ castmu(mtmp, mattk)	/* monster casts spell at you */
 					(mtmp2 = makemon(pm, u.ux, u.uy)))
 				mtmp2->msleep = mtmp2->mpeaceful =
 					mtmp2->mtame = 0;
-			}			
+			}
 			dmg = 0;
 			break;
 		    case 6:
