@@ -108,7 +108,7 @@ FILE *fd;
   int x,y;
   clear();
   refresh();
-  c = fgetc(fd);
+  c = getc(fd);
   while ((c != EOF)&&(d != 'q')&&(d!=ESCAPE)) {
     getyx(stdscr,y,x);
     if (y > 20) {
@@ -117,8 +117,8 @@ FILE *fd;
       d = wgetch(stdscr);
       clear();
     }
-    printw("%c",c);
-    c = fgetc(fd);
+    addch(c);
+    c = getc(fd);
   }
   if ((d != 'q')&&(d!=ESCAPE)) {
     printw("\n-Done-");
