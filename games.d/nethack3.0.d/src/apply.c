@@ -203,9 +203,13 @@ struct obj *obj; {
 	}
 }
 
+#ifdef __STDC__
 boolean
+um_dist(xchar x,xchar y,xchar n)
+#else
 um_dist(x,y,n)
-register xchar x, y, n;
+xchar x, y, n;
+#endif
 {
 	return(abs(u.ux - x) > n  || abs(u.uy - y) > n);
 }
@@ -365,9 +369,14 @@ register struct monst *mtmp;
 	return((struct obj *)0);
 }
 
+#ifdef __STDC__
+void
+check_leash(xchar x,xchar y)
+#else
 void
 check_leash(x, y)
-register xchar x, y;
+xchar x, y;
+#endif
 {
 	register struct obj *otmp;
 	register struct monst *mtmp = fmon;
@@ -626,7 +635,8 @@ use_pick_axe(obj)
 struct obj *obj;
 {
 	char dirsyms[12];
-	register char *dsp = dirsyms, *sdp = flags.num_pad ? ndir : sdir;
+	register char *dsp = dirsyms;
+	register const char *sdp = flags.num_pad ? ndir : sdir;
 	register struct rm *lev;
 	register int rx, ry, res = 0;
 	register boolean isclosedoor = FALSE;
