@@ -118,7 +118,7 @@ in_ice_box(obj) register struct obj *obj; {
 		pline("You cannot refrigerate something you are wearing.");
 		return(0);
 	}
-	if(obj->owt + current_ice_box->owt > 70) {
+	if(obj->owt + current_ice_box->owt > (unsigned)70) {
 		pline("It won't fit.");
 		return(1);	/* be careful! */
 	}
@@ -209,7 +209,7 @@ use_whistle(obj) struct obj *obj; {
 register struct monst *mtmp = fmon;
 	pline("You produce a high whistling sound.");
 	while(mtmp) {
-		if(dist(mtmp->mx,mtmp->my) < u.ulevel*20) {
+		if(dist(mtmp->mx,mtmp->my) < (unsigned)(u.ulevel*20)) {
 			if(mtmp->msleep)
 				mtmp->msleep = 0;
 			if(mtmp->mtame)

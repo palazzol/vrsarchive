@@ -363,7 +363,7 @@ dothrow()
 				if(hmon(mon,obj,1) == FALSE)
 					mon = 0;	/* he died */
 			} else miss("iron ball", mon);
-		} else if(obj->olet == POTION_SYM && u.ulevel > rn2(15)) {
+		} else if(obj->olet == POTION_SYM && u.ulevel > (unsigned)rn2(15)) {
 			potionhit(mon, obj);
 			return(1);
 		} else {
