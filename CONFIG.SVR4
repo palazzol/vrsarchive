@@ -41,6 +41,7 @@ DIRLIB	= #-ldir
 DPYLIB	= -ldpy
 PAGER	= pg
 RANLIB	= : # ranlib
+NROFF	= :
 TROFF	= :
 #
 #	This keeps USG make from trying to use the user's shell.  We want to
@@ -57,9 +58,10 @@ SHELL	= /bin/sh
 CCLIB	= /usr/lib
 NET	= $(ROOT)/usr/bin
 ETC	= $(ROOT)/etc
-BINDIR	= $(ROOT)/usr/local/bin
-LIBDIR	= $(ROOT)/usr/local/lib
-INCDIR	= $(ROOT)/usr/local/include
+LOCAL	= $(ROOT)/usr/local
+BINDIR	= $(LOCAL)/bin
+LIBDIR	= $(LOCAL)/lib
+INCDIR	= $(LOCAL)/include
 LIBUUCP	= $(ROOT)/usr/lib/uucp
 LIBMAIL	= $(ROOT)/usr/lib/mail
 LIBNEWS	= $(ROOT)/usr/lib/news
@@ -96,11 +98,19 @@ all:	$(ALL)
 #
 #	Directory rules
 #
-DIRS	= $(ROOT) $(NET) $(ETC) $(BINDIR) $(LIBDIR) $(INCDIR) $(LIBUUCP) \
-	  $(LIBMAIL) $(LIBTMAC) $(GAMDIR) $(GAMLIB) $(SPOOLN) $(USRMAN) \
-	  $(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8)
+DIRS	= $(ROOT) $(NET) $(ETC) $(LOCAL) $(LIBUUCP) $(LIBMAIL) $(LIBTMAC) \
+	  $(GAMDIR) $(SPOOLN) $(USRMAN)
 $(DIRS):
 	mkdir $@
+	chmod 755 $@
+$(BINDIR) $(LIBDIR) $(INCDIR): $(LOCAL)
+	if test ! -d $@; then mkdir $@; fi
+	chmod 755 $@
+$(GAMLIB): $(GAMDIR)
+	if test ! -d $@; then mkdir $@; fi
+	chmod 755 $@
+$(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8): $(USRMAN)
+	if test ! -d $@; then mkdir $@; fi
 	chmod 755 $@
 #
 #	Fix the default rule to link against libraries
