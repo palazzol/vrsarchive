@@ -318,9 +318,9 @@ delay_output() {
 #else
 	if(!flags.nonull)
 #ifdef TERMINFO
-		tputs("$<50>", 1, xputs);
+		tputs("$<50>", 1, xputc);
 #else
-		tputs("50", 1, xputs);
+		tputs("50", 1, xputc);
 #endif
 		/* cbosgd!cbcephus!pds for SYS V R2 */
 		/* is this terminfo, or what? */
