@@ -1,7 +1,7 @@
 #include "espel.h"
 
 extern	int	Debug;
-char	inline[ LNSIZE ];
+char	in_line[ LNSIZE ];
 
 FILE	*infile;
 
@@ -35,9 +35,9 @@ search( source, word )
 	char	*word;
 {
 	OPEN( infile, source, "r" );
-	while ( fgets( inline, LNSIZE, infile ) != NULL ) {
-		if ( find( word, inline ) )
-			printf( "%s", inline);
+	while ( fgets( in_line, LNSIZE, infile ) != NULL ) {
+		if ( find( word, in_line ) )
+			printf( "%s", in_line);
 	}
 	fclose( infile );
 }
