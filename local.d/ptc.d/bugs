@@ -313,6 +313,12 @@ Patch below:
   	defname(cint,		'int       ');
   	defname(cinclude,	'include   ');
 --- 9509,9514 ----
+  	defname(cfscanf,	'fscanf    ');	(* LIB *)
+  	defname(cfwrite,	'fwrite    ');	(* LIB *)
+  	defname(cgetc,		'getc      ');	(* OS *)
+  	defname(cgetpid,	'getpid    ');	(* OS *)
+  	defname(cint,		'int       ');
+  	defname(cinclude,	'include   ');
 ***************
 *** 9517,9527 ****
   	defname(cprintf,	'printf    ');	(* LIB *)
@@ -374,6 +380,11 @@ Patch below:
   
   (*	Action to take when an error is detected.			*)
   procedure error;
+
+
+
+
+
 -- 
 	-Mike Wescott
 	 wescott@ncrcae.Columbia.NCR.COM
