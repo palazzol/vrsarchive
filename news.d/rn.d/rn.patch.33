@@ -1,0 +1,138 @@
+System: rn version 4.3
+Patch #: 33
+Priority: MEDIUM? (depends on how many local newsgroups you have, actually)
+Subject: The net reorganization may make too many newsgroups for rn to handle
+From: csg@pyramid (Carl S. Gutekunst)
+
+Description:
+	Depending on how many local newsgroups you have in your active file,
+	and how many newsgroups you keep in your .newsrc (rn doesn't require
+	you to keep them all), you may exceed rn's limit of 500 newsgroups.
+	With the current massive newsgroup renaming, there are more newsgroups
+	that usual, at least until the old newsgroups are rmgrouped.
+
+Fix:	This is really an optional patch.  Sites with limited D space may
+	choose to forego this change, and hope nobody puts too many newsgroups
+	into their .newsrc.  You should increment the patchlevel anyway so
+	any subsequent patches get applied correctly.  You may wish to edit
+	your newsnews file to instruct people that they can delete unsubscribed
+	or uninteresting newsgroups from their .newsrc with an editor to keep
+	themselves under the limit.
+
+	Otherwise, install the following patch.
+
+	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+	If you are missing previous patches they can be obtained from me:
+
+	Larry Wall
+	{allegra,burdvax,cbosgd,hplabs,ihnp4,sdcsvax}!sdcrdcf!lwall
+
+	If you send a mail message of the following form it will greatly speed
+	processing:
+
+	Subject: Command
+	@SH mailpatch PATH rn 4.3 NUM ...
+
+	where PATH is a return path FROM ME TO YOU in bang notation, and NUM
+	is the number of one or more patches you need, separated by spaces.
+
+Index: patchlevel
+Prereq: 32
+1c1
+< Patch #: 32
+---
+> Patch #: 33
+
+Index: common.h
+Prereq: 4.3.1.3
+*** common.h.old	Fri Oct 31 15:48:38 1986
+--- common.h	Fri Oct 31 15:48:53 1986
+***************
+*** 1,4
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.33,v 1.1 1990-02-26 22:33:44 vrs Exp $
+   * 
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:42  vrs
+Initial version
+
+   * Revision 4.3.1.3  85/05/23  17:19:32  lwall
+
+--- 1,4 -----
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.33,v 1.1 1990-02-26 22:33:44 vrs Exp $
+   * 
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:42  vrs
+Initial version
+
+   * Revision 4.3.1.4  86/10/31  15:46:09  lwall
+***************
+*** 1,6
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.33,v 1.1 1990-02-26 22:33:44 vrs Exp $
+   * 
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:42  vrs
+Initial version
+
+   * Revision 4.3.1.3  85/05/23  17:19:32  lwall
+   * Now allows 'r' and 'f' on null articles.
+   * 
+
+--- 1,9 -----
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.33,v 1.1 1990-02-26 22:33:44 vrs Exp $
+   * 
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:42  vrs
+Initial version
+
++  * Revision 4.3.1.4  86/10/31  15:46:09  lwall
++  * Expanded maximum number of .newsrc lines for net reorganization.
++  * 
+   * Revision 4.3.1.3  85/05/23  17:19:32  lwall
+   * Now allows 'r' and 'f' on null articles.
+   * 
+***************
+*** 210,216
+  /* Space conservation section */
+  
+  /* To save D space, cut down size of MAXRCLINE, NGMAX, VARYSIZE. */
+! #define MAXRCLINE 500	/* number of lines allowed in .newsrc */
+  			/* several parallel arrays affected. */
+  			/* (You can have more lines in the active file, */
+  			/* just not in the .newsrc) */
+
+--- 222,228 -----
+  /* Space conservation section */
+  
+  /* To save D space, cut down size of MAXRCLINE, NGMAX, VARYSIZE. */
+! #define MAXRCLINE 1000	/* number of lines allowed in .newsrc */
+  			/* several parallel arrays affected. */
+  			/* (You can have more lines in the active file, */
+  			/* just not in the .newsrc) */
+***************
+*** 214,220
+  			/* several parallel arrays affected. */
+  			/* (You can have more lines in the active file, */
+  			/* just not in the .newsrc) */
+! #define HASHSIZ 547	/* should be prime, and at least MAXRCLINE + 10% */
+  #define NGMAX 100	/* number of newsgroups allowed on command line */
+  			/* undefine ONLY symbol to disable "only" feature */
+  #define VARYSIZE 256	/* this makes a block 1024 bytes long in DECville */
+
+--- 226,232 -----
+  			/* several parallel arrays affected. */
+  			/* (You can have more lines in the active file, */
+  			/* just not in the .newsrc) */
+! #define HASHSIZ 1103	/* should be prime, and at least MAXRCLINE + 10% */
+  #define NGMAX 100	/* number of newsgroups allowed on command line */
+  			/* undefine ONLY symbol to disable "only" feature */
+  #define VARYSIZE 256	/* this makes a block 1024 bytes long in DECville */
+
+

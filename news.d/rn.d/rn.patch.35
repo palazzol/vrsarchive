@@ -1,0 +1,111 @@
+System: rn version 4.3
+Patch #: 35
+Priority: MEDIUM
+Subject: rn -c can produce a memory fault
+From: jeffb@leia.GWD.TEK.COM (Jeff Beachy)
+
+Description:
+	Patch #14 attempted to speed up "rn -c" by using a static buffer
+	instead of an malloc'ed one.  Unfortunately, buried deep down in
+	a routine called checkexpired there was an unguarded call to
+	saferealloc(), which calls realloc().  This will confuse realloc()
+	to no end, since it doesn't know how large the area being realloc'ed
+	is to begin with.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+	If you are missing previous patches they can be obtained from me:
+
+	Larry Wall
+	{allegra,burdvax,cbosgd,hplabs,ihnp4,sdcsvax}!sdcrdcf!lwall
+
+	If you send a mail message of the following form it will greatly speed
+	processing:
+
+	Subject: Command
+	@SH mailpatch PATH rn 4.3 NUM ...
+
+	where PATH is a return path FROM ME TO YOU in bang notation, and NUM
+	is the number of one or more patches you need, separated by spaces.
+
+Index: patchlevel
+Prereq: 34
+1c1
+< Patch #: 34
+---
+> Patch #: 35
+
+Index: rcln.c
+Prereq: 4.3.1.2
+*** rcln.c.old	Tue Nov  4 15:58:18 1986
+--- rcln.c	Tue Nov  4 15:58:23 1986
+***************
+*** 1,4
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.35,v 1.1 1990-02-26 22:33:46 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:44  vrs
+Initial version
+
+   * Revision 4.3.1.2  85/07/23  17:39:08  lwall
+
+--- 1,4 -----
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.35,v 1.1 1990-02-26 22:33:46 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:44  vrs
+Initial version
+
+   * Revision 4.3.1.3  86/11/04  15:57:03  lwall
+***************
+*** 1,6
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.35,v 1.1 1990-02-26 22:33:46 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:44  vrs
+Initial version
+
+   * Revision 4.3.1.2  85/07/23  17:39:08  lwall
+   * Oops, was freeing a static buf on -c in checkexpired.
+   * 
+
+--- 1,9 -----
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.35,v 1.1 1990-02-26 22:33:46 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:44  vrs
+Initial version
+
++  * Revision 4.3.1.3  86/11/04  15:57:03  lwall
++  * realloc attempted on unalloced area.
++  * 
+   * Revision 4.3.1.2  85/07/23  17:39:08  lwall
+   * Oops, was freeing a static buf on -c in checkexpired.
+   * 
+***************
+*** 427,433
+  	*t++ = ',';
+  	strcpy(t,s);
+      }
+!     if (mbuf == rcline[ngnum]) {
+  	rcline[ngnum] = saferealloc(rcline[ngnum],
+  	    (MEM_SIZE)(rcnums[ngnum] + strlen(newnum) + 1));
+      }
+
+--- 430,436 -----
+  	*t++ = ',';
+  	strcpy(t,s);
+      }
+!     if (!checkflag && mbuf == rcline[ngnum]) {
+  	rcline[ngnum] = saferealloc(rcline[ngnum],
+  	    (MEM_SIZE)(rcnums[ngnum] + strlen(newnum) + 1));
+      }
+
+

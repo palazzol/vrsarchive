@@ -1,0 +1,403 @@
+System: rn version 4.3
+Patch #: 32
+Priority: MEDIUM to HIGH, depending on how many KILL files you use
+Subject: KILL on newly arrived articles can accidentally mark articles read
+From: tonyb@tektronix.com (Tony Birnseth)
+
+Description:
+	Under certain circumstances, if an article arrives in a newsgroup
+	while you are in that newsgroup, and there is a KILL file for that
+	newgroup, articles can accidentally be marked as read.
+
+Repeat-by:
+	Go to the last article in a newsgroup.  Then ^K to edit the KILL 
+	file to change the THRU number to, say, 10 less than the current 
+	number (to get rid on any articles of that subject the next time 
+	the kill file is run).  Do a followup to the last article. 
+	After the followup, the user is told "End of newsgroup...".  If 
+	the user types 'space' or 'n', rn will proceed to run the kill file
+	on the new article that has arrived.  Unfortunately, all articles
+	between the THRU number in the KILL file and new article will be 
+	marked as read.  This may not be true.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+	If you are missing previous patches they can be obtained from me:
+
+	Larry Wall
+	{allegra,burdvax,cbosgd,hplabs,ihnp4,sdcsvax}!sdcrdcf!lwall
+
+	If you send a mail message of the following form it will greatly speed
+	processing:
+
+	Subject: Command
+	@SH mailpatch PATH rn 4.3 NUM ...
+
+	where PATH is a return path FROM ME TO YOU in bang notation, and NUM
+	is the number of one or more patches you need, separated by spaces.
+	Yes, I've installed MEP.  And yes, I changed it so you can't break
+	security here.  So don't try.
+
+Index: patchlevel
+Prereq: 31
+1c1
+< Patch #: 31
+---
+> Patch #: 32
+
+Index: bits.c
+Prereq: 4.3.1.3
+*** bits.c.old	Fri Oct 31 15:27:01 1986
+--- bits.c	Fri Oct 31 15:27:17 1986
+***************
+*** 1,4
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.32,v 1.1 1990-02-26 22:33:42 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:40  vrs
+Initial version
+
+   * Revision 4.3.1.3  86/09/09  16:01:43  lwall
+
+--- 1,4 -----
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.32,v 1.1 1990-02-26 22:33:42 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:40  vrs
+Initial version
+
+   * Revision 4.3.1.4  86/10/31  15:23:53  lwall
+***************
+*** 1,6
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.32,v 1.1 1990-02-26 22:33:42 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:40  vrs
+Initial version
+
+   * Revision 4.3.1.3  86/09/09  16:01:43  lwall
+   * Fixed 'n more articles' bug.
+   * 
+
+--- 1,10 -----
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.32,v 1.1 1990-02-26 22:33:42 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:40  vrs
+Initial version
+
++  * Revision 4.3.1.4  86/10/31  15:23:53  lwall
++  * Separated firstart into two variables so KILL on new articles won't
++  * accidentally mark articles read.
++  * 
+   * Revision 4.3.1.3  86/09/09  16:01:43  lwall
+   * Fixed 'n more articles' bug.
+   * 
+***************
+*** 162,169
+  ART_NUM artnum;
+  {
+  #ifdef DEBUGGING
+!     if (debug && artnum < firstart) {
+! 	printf("onemore: %d < %d\n",artnum,firstart) FLUSH;
+  	return;
+      }
+  #endif
+
+--- 166,173 -----
+  ART_NUM artnum;
+  {
+  #ifdef DEBUGGING
+!     if (debug && artnum < firstbit) {
+! 	printf("onemore: %d < %d\n",artnum,firstbit) FLUSH;
+  	return;
+      }
+  #endif
+***************
+*** 180,187
+  ART_NUM artnum;
+  {
+  #ifdef DEBUGGING
+!     if (debug && artnum < firstart) {
+! 	printf("oneless: %d < %d\n",artnum,firstart) FLUSH;
+  	return;
+      }
+  #endif
+
+--- 184,191 -----
+  ART_NUM artnum;
+  {
+  #ifdef DEBUGGING
+!     if (debug && artnum < firstbit) {
+! 	printf("oneless: %d < %d\n",artnum,firstbit) FLUSH;
+  	return;
+      }
+  #endif
+***************
+*** 192,198
+      }
+  }
+  
+! /* mark an article as unread, making sure that firstart is properly handled */
+  /* cross-references are left as read in the other newsgroups */
+  
+  void
+
+--- 196,202 -----
+      }
+  }
+  
+! /* mark an article as unread, making sure that firstbit is properly handled */
+  /* cross-references are left as read in the other newsgroups */
+  
+  void
+***************
+*** 240,246
+      chase_xrefs(artnum,TRUE);
+  }
+  
+! /* make sure we have bits set correctly down to firstart */
+  
+  void
+  check_first(min)
+
+--- 244,250 -----
+      chase_xrefs(artnum,TRUE);
+  }
+  
+! /* make sure we have bits set correctly down to firstbit */
+  
+  void
+  check_first(min)
+***************
+*** 246,252
+  check_first(min)
+  ART_NUM min;
+  {
+!     register ART_NUM i = firstart;
+  
+      if (min < absfirst)
+  	min = absfirst;
+
+--- 250,256 -----
+  check_first(min)
+  ART_NUM min;
+  {
+!     register ART_NUM i = firstbit;
+  
+      if (min < absfirst)
+  	min = absfirst;
+***************
+*** 253,259
+      if (min < i) {
+  	for (i--; i>=min; i--)
+  	    ctl_set(i);		/* mark as read */
+! 	firstart = min;
+      }
+  }
+  
+
+--- 257,263 -----
+      if (min < i) {
+  	for (i--; i>=min; i--)
+  	    ctl_set(i);		/* mark as read */
+! 	firstart = firstbit = min;
+      }
+  }
+  
+***************
+*** 508,514
+      mybuf[i] = '\0';
+      s = mybuf;				/* initialize the for loop below */
+      if (strnEQ(s,"1-",2)) {		/* can we save some time here? */
+! 	firstart = atol(s+2)+1;		/* ignore first range thusly */
+  	s=index(s,',') + 1;
+      }
+      else
+
+--- 512,518 -----
+      mybuf[i] = '\0';
+      s = mybuf;				/* initialize the for loop below */
+      if (strnEQ(s,"1-",2)) {		/* can we save some time here? */
+! 	firstbit = atol(s+2)+1;		/* ignore first range thusly */
+  	s=index(s,',') + 1;
+      }
+      else
+***************
+*** 512,520
+  	s=index(s,',') + 1;
+      }
+      else
+! 	firstart = 1;			/* all the bits are valid for now */
+!     if (absfirst > firstart) {		/* do we know already? */
+! 	firstart = absfirst;		/* no point calling getngmin again */
+      }
+      else if (artopen(firstart) == Nullfp) {
+  					/* first unread article missing? */
+
+--- 516,524 -----
+  	s=index(s,',') + 1;
+      }
+      else
+! 	firstbit = 1;			/* all the bits are valid for now */
+!     if (absfirst > firstbit) {		/* do we know already? */
+! 	firstbit = absfirst;		/* no point calling getngmin again */
+      }
+      else if (artopen(firstbit) == Nullfp) {
+  					/* first unread article missing? */
+***************
+*** 516,522
+      if (absfirst > firstart) {		/* do we know already? */
+  	firstart = absfirst;		/* no point calling getngmin again */
+      }
+!     else if (artopen(firstart) == Nullfp) {
+  					/* first unread article missing? */
+  	i = getngmin(".",firstart);	/* see if expire has been busy */
+  	if (i) {			/* avoid a bunch of extra opens */
+
+--- 520,526 -----
+      if (absfirst > firstbit) {		/* do we know already? */
+  	firstbit = absfirst;		/* no point calling getngmin again */
+      }
+!     else if (artopen(firstbit) == Nullfp) {
+  					/* first unread article missing? */
+  	i = getngmin(".",firstbit);	/* see if expire has been busy */
+  	if (i) {			/* avoid a bunch of extra opens */
+***************
+*** 518,524
+      }
+      else if (artopen(firstart) == Nullfp) {
+  					/* first unread article missing? */
+! 	i = getngmin(".",firstart);	/* see if expire has been busy */
+  	if (i) {			/* avoid a bunch of extra opens */
+  	    firstart = i;
+  	}
+
+--- 522,528 -----
+      }
+      else if (artopen(firstbit) == Nullfp) {
+  					/* first unread article missing? */
+! 	i = getngmin(".",firstbit);	/* see if expire has been busy */
+  	if (i) {			/* avoid a bunch of extra opens */
+  	    firstbit = i;
+  	}
+***************
+*** 520,526
+  					/* first unread article missing? */
+  	i = getngmin(".",firstart);	/* see if expire has been busy */
+  	if (i) {			/* avoid a bunch of extra opens */
+! 	    firstart = i;
+  	}
+      }
+  #ifdef PENDING
+
+--- 524,530 -----
+  					/* first unread article missing? */
+  	i = getngmin(".",firstbit);	/* see if expire has been busy */
+  	if (i) {			/* avoid a bunch of extra opens */
+! 	    firstbit = i;
+  	}
+      }
+      firstart = firstbit;		/* firstart > firstbit in KILL */
+***************
+*** 523,528
+  	    firstart = i;
+  	}
+      }
+  #ifdef PENDING
+  #   ifdef CACHESUBJ
+  	subj_to_get = firstart;
+
+--- 527,533 -----
+  	    firstbit = i;
+  	}
+      }
++     firstart = firstbit;		/* firstart > firstbit in KILL */
+  #ifdef PENDING
+  #   ifdef CACHESUBJ
+  	subj_to_get = firstbit;
+***************
+*** 525,531
+      }
+  #ifdef PENDING
+  #   ifdef CACHESUBJ
+! 	subj_to_get = firstart;
+  #   endif
+  #endif
+      unread = lastart - firstart + 1;	/* assume this range unread */
+
+--- 530,536 -----
+      firstart = firstbit;		/* firstart > firstbit in KILL */
+  #ifdef PENDING
+  #   ifdef CACHESUBJ
+! 	subj_to_get = firstbit;
+  #   endif
+  #endif
+      unread = lastart - firstbit + 1;	/* assume this range unread */
+***************
+*** 528,535
+  	subj_to_get = firstart;
+  #   endif
+  #endif
+!     unread = lastart - firstart + 1;	/* assume this range unread */
+!     for (i=OFFSET(firstart)/BITSPERBYTE; i<ctlsize; i++)
+  	ctlarea[i] = 0;			/* assume unread */
+  #ifdef DEBUGGING
+      if (debug & DEB_CTLAREA_BITMAP) {
+
+--- 533,540 -----
+  	subj_to_get = firstbit;
+  #   endif
+  #endif
+!     unread = lastart - firstbit + 1;	/* assume this range unread */
+!     for (i=OFFSET(firstbit)/BITSPERBYTE; i<ctlsize; i++)
+  	ctlarea[i] = 0;			/* assume unread */
+  #ifdef DEBUGGING
+      if (debug & DEB_CTLAREA_BITMAP) {
+***************
+*** 547,554
+  	if ((h = index(s,'-')) != Nullch) {	/* is there a -? */
+  	    min = atol(s);
+  	    max = atol(h+1);
+! 	    if (min < firstart)		/* make sure range is in range */
+! 		min = firstart;
+  	    if (max > lastart)
+  		max = lastart;
+  	    if (min <= max)		/* non-null range? */
+
+--- 552,559 -----
+  	if ((h = index(s,'-')) != Nullch) {	/* is there a -? */
+  	    min = atol(s);
+  	    max = atol(h+1);
+! 	    if (min < firstbit)		/* make sure range is in range */
+! 		min = firstbit;
+  	    if (max > lastart)
+  		max = lastart;
+  	    if (min <= max)		/* non-null range? */
+***************
+*** 556,562
+  	    for (i=min; i<=max; i++)	/* for all articles in range */
+  		ctl_set(i);		/* mark them read */
+  	}
+! 	else if ((i = atol(s)) >= firstart && i <= lastart) {
+  					/* is single number reasonable? */
+  	    ctl_set(i);			/* mark it read */
+  	    unread--;			/* decrement articles to read */
+
+--- 561,567 -----
+  	    for (i=min; i<=max; i++)	/* for all articles in range */
+  		ctl_set(i);		/* mark them read */
+  	}
+! 	else if ((i = atol(s)) >= firstbit && i <= lastart) {
+  					/* is single number reasonable? */
+  	    ctl_set(i);			/* mark it read */
+  	    unread--;			/* decrement articles to read */
+
+

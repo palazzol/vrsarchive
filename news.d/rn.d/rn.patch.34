@@ -1,0 +1,133 @@
+System: rn version 4.3
+Patch #: 34
+Priority: HIGH, if you tried to install patch #32
+Subject: Patch #32 was incomplete.
+From: Lots of people.  I had .3 Meg of mail this morning.
+
+Description:
+	Due to terminal brainrot I didn't ship patch 32 in its entirety.
+	The variable firstbit is supposed to be declared in bits.h.  And
+	it was, here.  I even tested it.  Works great.  Unfortunately I
+	haven't converted rn to the newest version of my automatic patch
+	generator, which would have done it right.
+
+Repeat-By:
+	Install patch #32.  Compile.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+	If you are missing previous patches they can be obtained from me:
+
+	Larry Wall
+	{allegra,burdvax,cbosgd,hplabs,ihnp4,sdcsvax}!sdcrdcf!lwall
+
+	If you send a mail message of the following form it will greatly speed
+	processing:
+
+	Subject: Command
+	@SH mailpatch PATH rn 4.3 NUM ...
+
+	where PATH is a return path FROM ME TO YOU in bang notation, and NUM
+	is the number of one or more patches you need, separated by spaces.
+
+Index: patchlevel
+Prereq: 33
+1c1
+< Patch #: 33
+---
+> Patch #: 34
+
+Index: bits.h
+Prereq: 4.3
+*** bits.h.old	Mon Nov  3 09:51:07 1986
+--- bits.h	Mon Nov  3 09:51:18 1986
+***************
+*** 1,4
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.34,v 1.1 1990-02-26 22:33:45 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:43  vrs
+Initial version
+
+   * Revision 4.3  85/05/01  11:36:39  lwall
+
+--- 1,4 -----
+! /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.34,v 1.1 1990-02-26 22:33:45 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:43  vrs
+Initial version
+
+   * Revision 4.3.1.2  86/11/03  09:49:58  lwall
+***************
+*** 1,6
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.34,v 1.1 1990-02-26 22:33:45 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:43  vrs
+Initial version
+
+   * Revision 4.3  85/05/01  11:36:39  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: /home/Vince/cvs/news.d/rn.d/rn.patch.34,v 1.1 1990-02-26 22:33:45 vrs Exp $
+   *
+   * $Log: not supported by cvs2svn $
+Version 1.1  87/12/29  10:48:43  vrs
+Initial version
+
++  * Revision 4.3.1.2  86/11/03  09:49:58  lwall
++  * Added firstbit variable.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:31:52  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:36:39  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 31,37
+  #define ctl_clear(a) (ctlarea[(OFFSET(a)) / BITSPERBYTE] &= ~pow2((OFFSET(a)) % BITSPERBYTE))
+  #define ctl_read(a) ((ctlarea[(OFFSET(a)) / BITSPERBYTE] & pow2((OFFSET(a)) % BITSPERBYTE)) != 0)
+  
+! #define was_read(a) ((a)<firstart || ctl_read(a))
+  #endif lint
+  
+  EXT ART_NUM absfirst INIT(0);	/* 1st real article in current newsgroup */
+
+--- 37,43 -----
+  #define ctl_clear(a) (ctlarea[(OFFSET(a)) / BITSPERBYTE] &= ~pow2((OFFSET(a)) % BITSPERBYTE))
+  #define ctl_read(a) ((ctlarea[(OFFSET(a)) / BITSPERBYTE] & pow2((OFFSET(a)) % BITSPERBYTE)) != 0)
+  
+! #define was_read(a) ((a)<firstbit || ctl_read(a))
+  #endif lint
+  
+  EXT ART_NUM absfirst INIT(0);	/* 1st real article in current newsgroup */
+***************
+*** 36,41
+  
+  EXT ART_NUM absfirst INIT(0);	/* 1st real article in current newsgroup */
+  EXT ART_NUM firstart INIT(0);	/* minimum unread article number in newsgroup */
+  EXT ART_NUM lastart INIT(0);	/* maximum article number in newsgroup */
+  
+  #ifdef DELAYMARK
+
+--- 42,48 -----
+  
+  EXT ART_NUM absfirst INIT(0);	/* 1st real article in current newsgroup */
+  EXT ART_NUM firstart INIT(0);	/* minimum unread article number in newsgroup */
++ EXT ART_NUM firstbit INIT(0);	/* minimum valid bit, usually == firstart */
+  EXT ART_NUM lastart INIT(0);	/* maximum article number in newsgroup */
+  
+  #ifdef DELAYMARK
+
+

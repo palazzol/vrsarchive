@@ -1,0 +1,21 @@
+#!/bin/sh
+# $Header: /home/Vince/cvs/news.d/rn.d/manifake,v 1.1 1990-02-26 22:36:07 vrs Exp $
+#
+# $Log: not supported by cvs2svn $
+# Version 1.1  87/12/29  10:32:56  vrs
+# Initial version
+# 
+# Revision 4.3  85/05/01  11:42:41  lwall
+# Baseline for release with 4.3bsd.
+# 
+
+: make MANIFEST and MANIFEST.new say the same thing
+if test ! -f MANIFEST.new; then
+    if test -f MANIFEST; then
+	sed <MANIFEST >MANIFEST.new \
+	    -e '1,/---/d' \
+	    -e 's/\([ 	][ 	]*\)[0-9]*  */\1/'
+    else
+	echo "Make a MANIFEST.new file, with names and descriptions."
+    fi
+fi

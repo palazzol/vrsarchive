@@ -1,0 +1,31 @@
+#!/bin/sh
+# $Header: /home/Vince/cvs/news.d/rn.d/makekit,v 1.1 1990-02-26 22:36:06 vrs Exp $
+#
+# $Log: not supported by cvs2svn $
+# Version 1.1  87/12/29  10:32:54  vrs
+# Initial version
+# 
+# Revision 4.3  85/05/01  11:42:38  lwall
+# Baseline for release with 4.3bsd.
+# 
+
+numkits=$#
+for kitlist in $*; do
+    kit=`basename $kitlist .list`
+    kitnum=`expr "$kit" : 'kit\([0-9][0-9]*\)'`
+    echo "*** Making $kit ***"
+    kitleader "$kit" "$kitnum" "$numkits"
+    for file in `/bin/cat $kitlist`; do
+	echo $file
+	echo "echo Extracting $file" >> $kit
+	if egrep '^\.$' $file; then
+	    echo "sed >$file <<'!STUFFY!FUNK!' -e 's/X//'" >> $kit
+	    sed <$file >>$kit -e 's/^/X/'
+	else
+	    echo "cat >$file <<'!STUFFY!FUNK!'" >> $kit
+	    /bin/cat $file >> $kit
+	fi
+	echo "!STUFFY!FUNK!" >> $kit
+    done
+    kittrailer "$kit" "$kitnum" "$numkits"
+done
