@@ -22,10 +22,17 @@ const char obj_symbols[] = {
 int bases[sizeof(obj_symbols)] = DUMMY;
 static int disco[TOTAL_OBJS] = DUMMY;
 
+#ifdef __STDC__
 int
-letindex(let) register char let; {
-register int i = 0;
-register char ch;
+letindex(char let)
+#else
+int
+letindex(let)
+register char let;
+#endif
+{	register int i = 0;
+	register char ch;
+
 	while((ch = obj_symbols[i++]) != 0)
 		if(ch == let) return(i);
 	return(0);
@@ -220,7 +227,7 @@ register int fd;
 	mread(fd, (genericptr_t) disco, sizeof disco);
 	mread(fd, (genericptr_t) objects, sizeof(struct objclass) * TOTAL_OBJS);
 #ifndef MSDOS
-	differ = (genericptr_t)&objects[0] - (genericptr_t)then;
+	differ = (char *)&objects[0] - (char *)then;
 #else
 	differ = (long)&objects[0] - (long)then;
 #endif
