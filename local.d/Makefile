@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.11 1990-03-30 17:02:13 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.12 1990-04-13 14:20:05 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
@@ -43,4 +43,4 @@ install: $(ALL)
 
 clean:
 	for i in $(SUBDIR); do cd $$i.d; make clean; cd ..; done
-	rm -f $(ALL)
+	rm -f *.o $(ALL)

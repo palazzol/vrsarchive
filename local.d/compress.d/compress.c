@@ -160,8 +160,11 @@ char_type magic_header[] = { "\037\235" };	/* 1F 9D */
  *		James A. Woods		(decvax!ihnp4!ames!jaw)
  *		Joe Orost		(decvax!vax135!petsd!joe)
  *
- * $Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.2 1987-12-26 20:19:21 vrs Exp $
+ * $Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.3 1990-04-13 14:20:54 vrs Exp $
  * $Log: not supported by cvs2svn $
+ * Version 1.2  87/12/26  20:19:21  vrs
+ * Remove preprocessor line fluff
+ * 
  * Version 1.1  87/02/06  18:31:36  vrs
  * Initial version
  * 
@@ -244,7 +247,7 @@ char_type magic_header[] = { "\037\235" };	/* 1F 9D */
  *
  */
 #ifndef lint
-static char rcs_ident[] = "$Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.2 1987-12-26 20:19:21 vrs Exp $";
+static char rcs_ident[] = "$Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.3 1990-04-13 14:20:54 vrs Exp $";
 #endif /* !lint */
 
 #include <stdio.h>
@@ -332,6 +335,13 @@ int verbose = 0;
 #endif /* DEBUG */
 SIG_T (*bgnd_flag)();
 
+SIG_T
+onintr (dummy)
+{
+    unlink ( ofname );
+    exit ( 1 );
+}
+
 /*****************************************************************
  * TAG( main )
  *
@@ -382,8 +392,6 @@ register int argc; char **argv;
     char **filelist, **fileptr;
     char *cp, *rindex();
     struct stat statbuf;
-    extern onintr();
-
 
     if ( (bgnd_flag = signal ( SIGINT, SIG_IGN )) != SIG_IGN )
 	signal ( SIGINT, onintr );
@@ -1309,12 +1317,6 @@ foreground()
 			return(0);
 		}
 	}
-}
-
-onintr ( )
-{
-    unlink ( ofname );
-    exit ( 1 );
 }
 
 clear ()		/* table clear for block compress */
