@@ -147,7 +147,7 @@ dndstore()
   if (outstanding_taxes>0)
 	{
 	lprcat("\n\nThe Larn Revenue Service has ordered us to not do business with tax evaders.\n"); beep();
-	lprintf("They have also told us that you owe %d gp in back taxes, and as we must\n",(long)outstanding_taxes);
+	lprintf("They have also told us that you owe %d gp in back taxes, and as we must\n",outstanding_taxes);
 	lprcat("comply with the law, we cannot serve you at this time.  Soo Sorry.\n");
 	cursors();	
 	lprcat("\nPress "); standout("escape"); lprcat(" to leave: "); lflush();
@@ -159,7 +159,7 @@ dndstore()
   dnd_hed();
   while (1)
 	{
-	cursor(59,18); lprintf("%d gold pieces",(long)c[GOLD]);
+	cursor(59,18); lprintf("%d gold pieces",c[GOLD]);
 	cltoeoln(); cl_dn(1,20);	/* erase to eod */
 	lprcat("\nEnter your transaction ["); standout("space");
 	lprcat(" for more, "); standout("escape");
@@ -269,7 +269,7 @@ oschool()
 	sch_hed();
 	while (1)
 		{
-		cursor(57,18); lprintf("%d gold pieces.   ",(long)c[GOLD]); cursors();
+		cursor(57,18); lprintf("%d gold pieces.   ",c[GOLD]); cursors();
 		lprcat("\nWhat is your choice ["); standout("escape");
 		lprcat(" to leave] ? ");  yrepcount=0;
 		i=0;  while ((i<'a' || i>'h') && (i!='\33') && (i!=12)) i=getchar();
@@ -339,7 +339,7 @@ oschool()
 
 			  if (c[BLINDCOUNT])	c[BLINDCOUNT]=1;  /* cure blindness too!  */
 			  if (c[CONFUSE])		c[CONFUSE]=1;	/*	end confusion	*/
-			  adjtime((long)time_used);	/* adjust parameters for time change */
+			  adjtime(time_used);	/* adjust parameters for time change */
 			  }
 			nap(1000);
 			}
@@ -349,7 +349,7 @@ oschool()
 /*
  *	for the first national bank of Larn
  */
-int lasttime=0;	/* last time he was in bank */
+long lasttime=0;	/* last time he was in bank */
 obank()
 	{
 	banktitle("    Welcome to the First National Bank of Larn.");
@@ -367,7 +367,7 @@ static banktitle(str)
 		{
 		register int i;
 		lprcat("\n\nThe Larn Revenue Service has ordered that your account be frozen until all\n"); beep();
-		lprintf("levied taxes have been paid.  They have also told us that you owe %d gp in\n",(long)outstanding_taxes);
+		lprintf("levied taxes have been paid.  They have also told us that you owe %d gp in\n",outstanding_taxes);
 		lprcat("taxes, and we must comply with them. We cannot serve you at this time.  Sorry.\n");
 		lprcat("We suggest you go to the LRS office and pay your taxes.\n");
 		cursors();	
@@ -422,10 +422,10 @@ obanksub()
 					cursor( (k%2)*40+1 , (k>>1)+4 );
 					lprintf("%c) %s",i+'a',objectname[iven[i]]);
 					cursor( (k%2)*40+33 , (k>>1)+4 );
-					lprintf("%5d",(long)gemvalue[i]);  k++;
+					lprintf("%5d",gemvalue[i]);  k++;
 			};
-	cursor(31,17); lprintf("You have %8d gold pieces in the bank.",(long)c[BANKACCOUNT]);
-	cursor(40,18); lprintf("You have %8d gold pieces",(long)c[GOLD]);
+	cursor(31,17); lprintf("You have %8d gold pieces in the bank.",c[BANKACCOUNT]);
+	cursor(40,18); lprintf("You have %8d gold pieces",c[GOLD]);
 	if (c[BANKACCOUNT]+c[GOLD] >= 500000)
 		lprcat("\nNote:  Larndom law states that only deposits under 500,000gp  can earn interest.");
 	while (1)
@@ -438,14 +438,14 @@ obanksub()
 		i=0; while (i!='d' && i!='w' && i!='s' && i!='\33') i=getchar();
 		switch(i)
 			{
-			case 'd':	lprcat("deposit\nHow much? ");	amt = readnum((long)c[GOLD]);
+			case 'd':	lprcat("deposit\nHow much? ");	amt = readnum(c[GOLD]);
 						if (amt<0) { lprcat("\nSorry, but we can't take negative gold!"); nap(2000); amt=0; } else
 						if (amt>c[GOLD])
 						  { lprcat("  You don't have that much.");  nap(2000); }
 						else { c[GOLD] -= amt;  c[BANKACCOUNT] += amt; }
 						break;
 
-			case 'w':	lprcat("withdraw\nHow much? ");	amt = readnum((long)c[BANKACCOUNT]);
+			case 'w':	lprcat("withdraw\nHow much? ");	amt = readnum(c[BANKACCOUNT]);
 						if (amt<0) { lprcat("\nSorry, but we don't have any negative gold!");  nap(2000); amt=0; }
 						else if (amt > c[BANKACCOUNT])
 						  { lprcat("\nYou don't have that much in the bank!"); nap(2000); }
@@ -480,8 +480,8 @@ obanksub()
 
 			case '\33':	return;
 			};
-		cursor(40,17); lprintf("%8d",(long)c[BANKACCOUNT]);
-		cursor(49,18); lprintf("%8d",(long)c[GOLD]);
+		cursor(40,17); lprintf("%8d",c[BANKACCOUNT]);
+		cursor(49,18); lprintf("%8d",c[GOLD]);
 		}
 	}
 
@@ -491,7 +491,8 @@ obanksub()
 appraise(gemstone)
 	register int gemstone;
 	{
-	register int j,amt;
+	register int j;
+	long amt;
 	for (j=0; j<26; j++)
 	  if (iven[j]==gemstone)
 		{
@@ -507,7 +508,7 @@ appraise(gemstone)
 				if (amt<50000) amt=50000;
 				}
 			else amt = (255 & ivenarg[j]) * 100;
-			lprintf("\nI can see this is an excellent stone, It is worth %d",(long)amt);
+			lprintf("\nI can see this is an excellent stone, It is worth %d",amt);
 			lprcat("\nWould you like to sell it to us? ");  yrepcount=0;
 			if (getyn()=='y') { lprcat("yes\n"); c[GOLD]+=amt;  iven[j]=0; }
 			else lprcat("no thank you.\n");
@@ -568,7 +569,7 @@ otradepost()
 				if (izarg >= 0) value *= 2;
 				while ((izarg-- > 0) && ((value=14*(67+value)/10) < 500000));
 				}
-			lprintf("\nItem (%c) is worth %ld gold pieces to us.  Do you want to sell it? ",i,value);
+			lprintf("\nItem (%c) is worth %d gold pieces to us.  Do you want to sell it? ",i,value);
 			yrepcount=0;
 			if (getyn()=='y')
 				{
@@ -612,10 +613,10 @@ olrs()
 		i=0; while (i!='p' && i!='\33') i=getchar();
 		switch(i)
 			{
-			case 'p':	lprcat("pay taxes\nHow much? "); amt = readnum((long)c[GOLD]);
+			case 'p':	lprcat("pay taxes\nHow much? "); amt = readnum(c[GOLD]);
 						if (amt<0) { lprcat("\nSorry, but we can't take negative gold\n"); amt=0; } else
 						if (amt>c[GOLD])	lprcat("  You don't have that much.\n");
-						else  c[GOLD] -= paytaxes((long)amt);
+						else  c[GOLD] -= paytaxes(amt);
 						break;
 
 			case '\33':	nosignal = 0; /* enable signals */
@@ -624,12 +625,12 @@ olrs()
 
 nxt:	cursor(1,6);
 		if (outstanding_taxes>0)
-			lprintf("You presently owe %d gp in taxes.  ",(long)outstanding_taxes);
+			lprintf("You presently owe %d gp in taxes.  ",outstanding_taxes);
 		else
 			lprcat("You do not owe us any taxes.           ");
 		cursor(1,8);
 		if (c[GOLD]>0)
-			lprintf("You have %6d gp.    ",(long)c[GOLD]);
+			lprintf("You have %6d gp.    ",c[GOLD]);
 		else
 			lprcat("You have no gold pieces.  ");
 		}
