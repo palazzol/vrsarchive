@@ -4,7 +4,7 @@
     Written by John Stanback (hplabs!hpfcla!hpisla!hpltca!jhs)
 
     Patches for BSD Unix by Rich Salz (rs@mirror.TMC.COM) - 5/3/87
-
+		  and Bill Randle (billr@tekred.TEK.COM) - 5/22/87
 */ 
 
 #include <stdio.h>
@@ -52,7 +52,8 @@ short mate,post,xkillr,ykillr,opponent,computer,Sdepth;
 long time0;
 int response_time,extra_time,timeout,et,et0;
 short quit,reverse,bothsides,InChk,player;
-int NodeCnt,srate;
+long NodeCnt;
+int srate;
 short atak[3][64],PawnCnt[3][8];
 short ChkFlag[30],CptrFlag[30],PawnThreat[30],PPscore[30];
 short BookSize,BookDepth;
@@ -235,8 +236,8 @@ short i,alpha,beta,tempb,tempc;
       gotoXY(50,16); printw("My move is: %s",mvstr1); ClrEoln();
     }
   ElapsedTime(1);
-  gotoXY(18,23); printw("Nodes= %d",NodeCnt); ClrEoln();
-  gotoXY(18,24); printw("Nodes/Sec= %d",srate); ClrEoln();
+  gotoXY(18,23); printw("Nodes = %ld",NodeCnt); ClrEoln();
+  gotoXY(18,24); printw("Nodes/Sec = %d",srate); ClrEoln();
   gotoXY(50,13);
   if (root->flags & draw) printw("draw game!");
   if (root->score < -9000) printw("opponent will soon mate!");
@@ -453,7 +454,7 @@ GetOpenings()
 FILE *fd;
 int c,j;
 char s[80],*p;
-  fd = fopen("chess.opn","r");
+  fd = fopen(GAMLIB/chess.opn","r");
   BookSize = 0; BookDepth = 24; j = -1; c = '?';
   while (c != EOF)
     {
@@ -538,7 +539,7 @@ int minute,second;
         }
       minute = et/60; second = (et - 60*minute);
       if (player == computer) gotoXY(50,18); else gotoXY(50,23);
-      printw("%d:%d",minute,second); ClrEoln();
+      printw("%d:%02d",minute,second); ClrEoln();
       if (et > 0) srate = NodeCnt/et; else srate = 0;
       if (post)
         {
@@ -687,6 +688,7 @@ char buff[20];
   response_time = buff[0] ? atoi(buff) : DEF_TIME;
   ClrScreen(); PrintBoard(white,0,0,1);
   InitializeStats();
+  time0 = time(0);
   ElapsedTime(1);
   GetOpenings();
 }
@@ -813,11 +815,11 @@ register short i,f,t,c;
 short r,b[64];
 unsigned short m;
   r = c = 0;
-#ifdef	BSD
+#ifndef SYS5
   bzero((char *)b, sizeof b);
 #else
   memset(b,0,64*sizeof(short));
-#endif	/* BSD */
+#endif	/* SYS5 */
   for (i = GameCnt; i > Game50; i--)
     {
       m = GameList[i]; f = m>>8; t = m & 0xFF;
@@ -852,11 +854,11 @@ short side,a[];
 register short m,u,d,j;
 short piece,i,m0,*aloc,*s;
  
-#ifdef	BSD
-  bzero((char *)a, sizeof a);
+#ifndef SYS5
+  bzero((char *)a, 64*sizeof(short));
 #else
   a = (short *)memset(a,0,64*sizeof(short));
-#endif	/* BSD */
+#endif	/* SYS5 */
   Dstart[pawn] = Dstpwn[side]; Dstop[pawn] = Dstart[pawn] + 1;
   aloc = &PieceList[side][0];
   for (i = 0; i <= PieceCnt[side]; i++)
