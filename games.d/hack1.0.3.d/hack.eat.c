@@ -53,7 +53,7 @@ opentin(){
 
 	if(!carried(tin.tin))		/* perhaps it was stolen? */
 		return(0);		/* %% probably we should use tinoid */
-	if(tin.usedtime++ >= 50) {
+	if((tin.usedtime = tin.usedtime + 1) > 50) {
 		pline("You give up your attempt to open the tin.");
 		return(0);
 	}
@@ -221,7 +221,7 @@ gotit:
 			else
 #ifdef QUEST
 			if(otmp->otyp == CARROT && !Blind){
-				u.uhorizon++;
+				u.uhorizon = u.uhorizon + 1;
 				setsee();
 				pline("Your vision improves.");
 			} else
@@ -413,7 +413,7 @@ register tp = 0;
 		/* fall into next case */
 	case 'y':
 #ifdef QUEST
-		u.uhorizon++;
+		u.uhorizon = u.uhorizon + 1;
 #endif QUEST
 		/* fall into next case */
 	case 'B':
