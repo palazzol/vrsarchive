@@ -319,9 +319,9 @@ char *argv [];
     myname[strlen(myname)] = '\0';
   }
   savetty ();
+  initscr ();
   crmode ();
   noecho ();
-  initscr ();
   scr = newwin (LINES, COLS, 0, 0);
   scrollok (scr, FALSE);
   leaveok (scr, FALSE);
@@ -342,8 +342,8 @@ char *argv [];
   wclrtoeol (scr);
   wrefresh (scr);
   wstandend (scr);
+  echo ();
+  nocrmode ();
   endwin (scr);
   resetty ();
-  nocrmode ();
-  echo ();
 }
