@@ -1,17 +1,71 @@
-This is a much modified version of the public domain spread sheet vc,
-posted a year or two ago by Mark Weiser, orginally by James Gosling
+This is a much modified version of the public domain spread sheet sc,
+posted a year or two ago by Mark Weiser as vc, originally by James Gosling.
 
-I have completely reworked the user interface.  The save file format is
-different so I have included a sed script, cvt.sed, which will convert to
-the new file formats.  I have also added lots of new features and fixed
-lots of bugs.  Any bugs you find at this point are probably mine.
-I would love to hear from you if you have any problems.
+Changes since my last version (4.1):
 
-The code has been tested against a Vax running 4.2 and a National ICM-3216 
-with system V.2.  The ICM has a National Semi 32016.  Just check the makefile
-for the system flags.
+1)  Range and cursor reverse video highlighting.
 
-Good luck with the tax man.
+2)  QUICK #ifdefs changed to -n option.  (thanks to Dave Davey)
+
+3)  A shell escape. (more thanks to Dave) 
+
+4)  More things to toggle.
+
+5)  An "end" command which allows you to skip to the end of one
+    range or the start of another.
+
+6)  PRIMITIVE macro support.  Don't bug me about this.  I'll add to
+    it as I get the time.
+
+7)  A better /copy command.
+
+8)  String expressions in addition to constant labels - this includes
+    concatenation, substring and numeric to string and back functions.
+
+9)  Time and date functions.
+
+10) Better floating point error handling.  It no longer aborts on
+    fp errors.
+
+11) Fixed variable references such as $K$20.  This allows you to
+    fix one end of a range instead of the whole thing.
+
+12) File names can be kept in a cell as a label.  To access the
+    file, just use the variable name instead of the file name.
+
+13) Optional subranges on the file commands.
+
+14) "w", "b" and " " commands similar to those in vi.
+
+When you get it built, try "sc tutorial.sc" for a simple introduction
+to the basic commands.
+
+A new input parser program (psc) has been included.  This program
+formats ascii files for use in the spread sheet. 
+
+I have modified the makefile to make it easy for you to call the
+program what you want (I saw at least five different names in
+correspondence and on the net).  Just change "name=sc" and "NAME=SC" to
+"name=myfavoritename" and "NAME=MYFAVORITENAME" and try "make
+myfavoritename".
+
+Similarly, you can make the documentation with "make myfavoritename.man".
+"make install" will make and install the code in EXDIR.  The
+installation steps and documentation all key off of the name.  The
+makefile even changes the name in the nroffable man page.  If you don't
+have nroff, you will have to change sc.man yourself.
+
+The code has been tested against a Vax running 4.2 and 4.3 and a National
+ICM-3216 with system V.2 and V.3.  The ICM has a National Semi 32016.  Just
+check the makefile for the system flags.   I have heard reports of lots
+of other machines that work. If you have problems with lex.c, and don't
+care about arrow keys, define SIMPLE (-DSIMPLE in the makefile).  SIMPLE
+causes the arrow keys to not be used.
+
+Disclaimer:
+
+Sc is not a product of National Semiconductor.  It is supplied as is with
+no warranty, express or implied, as a service to Usenet readers.
 
 					Bob Bond
 

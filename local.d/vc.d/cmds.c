@@ -12,6 +12,14 @@
 #include <curses.h>
 #include "sc.h"
 
+#ifdef BSD42
+#include <strings.h>
+#else
+#ifndef SYSIII
+#include <string.h>
+#endif
+#endif
+
 duprow()
 {
     if (currow >= MAXROWS - 1 || maxrow >= MAXROWS - 1) {
@@ -32,8 +40,8 @@ duprow()
 	    n -> label = 0;
 	    if (p -> label) {
 		n -> label = (char *)
-			     malloc (strlen (p -> label) + 1);
-		strcpy (n -> label, p -> label);
+			     xmalloc ((unsigned)(strlen (p -> label) + 1));
+		(void) strcpy (n -> label, p -> label);
 	    }
 	}
     }
@@ -66,8 +74,8 @@ dupcol()
 	    n -> label = 0;
 	    if (p -> label) {
 		n -> label = (char *)
-			     malloc (strlen (p -> label) + 1);
-		strcpy (n -> label, p -> label);
+			     xmalloc ((unsigned) (strlen (p -> label) + 1));
+		(void) strcpy (n -> label, p -> label);
 	    }
 	}
     }
@@ -108,12 +116,12 @@ deletecol(arg)
     sync_refs();
 }
 
-valueizerow(arg)
+rowvalueize(arg)
 {
     valueize_area(currow, 0, currow + arg - 1, maxcol);
 }
 
-valueizecol(arg)
+colvalueize(arg)
 {
     valueize_area(0, curcol, maxrow, curcol + arg - 1);
 }
@@ -182,6 +190,7 @@ int sr, sc, er, ec;
 	    if (p && p->expr) {
 		efree(p->expr);
 		p->expr = 0;
+		p->flags &= ~is_strexpr;
 	    }
 	}
     }
@@ -193,7 +202,7 @@ pullcells(to_insert)
     register struct ent *p, *n;
     register int deltar, deltac;
     int minrow, mincol;
-    int maxrow, maxcol;
+    int mxrow, mxcol;
     int numrows, numcols;
 
     if (!to_fix)
@@ -205,27 +214,28 @@ pullcells(to_insert)
     case 'c':
 	break;
     default:
+	error("Invalid pull command");
 	return;
     }
 
     minrow = MAXROWS; 
     mincol = MAXCOLS;
-    maxrow = 0;
-    maxcol = 0;
+    mxrow = 0;
+    mxcol = 0;
 
     for (p = to_fix; p; p = p->next) {
 	if (p->row < minrow)
 	    minrow = p->row;
-	if (p->row > maxrow)
-	    maxrow = p->row;
+	if (p->row > mxrow)
+	    mxrow = p->row;
 	if (p->col < mincol)
 	    mincol = p->col;
-	if (p->col > maxcol)
-	    maxcol = p->col;
+	if (p->col > mxcol)
+	    mxcol = p->col;
     }
 
-    numrows = maxrow - minrow + 1;
-    numcols = maxcol - mincol + 1;
+    numrows = mxrow - minrow + 1;
+    numcols = mxcol - mincol + 1;
     deltar = currow - minrow;
     deltac = curcol - mincol;
 
@@ -242,49 +252,49 @@ pullcells(to_insert)
 
     for (p = to_fix; p; p = p->next) {
 	n = lookat (p->row + deltar, p->col + deltac);
-	clearent(n);
+	(void) clearent(n);
 	n -> flags = p -> flags & ~is_deleted;
 	n -> v = p -> v;
 	n -> expr = copye(p->expr, deltar, deltac);
 	n -> label = 0;
 	if (p -> label) {
 	    n -> label = (char *)
-			 malloc(strlen(p->label)+1);
-	    strcpy (n -> label, p -> label);
+			 xmalloc((unsigned)(strlen(p->label)+1));
+	    (void) strcpy (n -> label, p -> label);
 	}
     }
 }
 
-showcol_op()
+colshow_op()
 {
     register int i,j;
     for (i=0; i<MAXCOLS; i++)
-	if (hidden_col[i]) 
+	if (col_hidden[i]) 
 	    break;
     for(j=i; j<MAXCOLS; j++)
-	if (!hidden_col[j])
+	if (!col_hidden[j])
 	    break;
     j--;
     if (i<MAXCOLS) {
-	sprintf(line,"show %s:", coltoa(i));
-	sprintf(line + strlen(line),"%s",coltoa(j));
+	(void) sprintf(line,"show %s:", coltoa(i));
+	(void) sprintf(line + strlen(line),"%s",coltoa(j));
 	linelim = strlen (line);
     }
 }
 
-showrow_op()
+rowshow_op()
 {
     register int i,j;
     for (i=0; i<MAXROWS; i++)
-	if (hidden_row[i]) 
+	if (row_hidden[i]) 
 	    break;
     for(j=i; j<MAXROWS; j++)
-	if (!hidden_row[j]) {
+	if (!row_hidden[j]) {
 	    break;
 	}
     j--;
     if (i<MAXROWS) {
-	sprintf(line,"show %d:%d", i, j);
+	(void) sprintf(line,"show %d:%d", i, j);
         linelim = strlen (line);
     }
 }
@@ -301,18 +311,16 @@ get_qual()
     case ctl(p):
     case ctl(n):
 	return('c');
-	break;
     case 'r':
     case 'l':
     case 'h':
     case ctl(f):
     case ctl(b):
 	return('r');
-	break;
     default:
 	return(c);
-    	break;
     }
+    /*NOTREACHED*/
 }
 
 openrow (rs) {
@@ -327,7 +335,7 @@ openrow (rs) {
 	return;
     }
     for (i = maxrow+1; i > rs; i--) {
-	hidden_row[i] = hidden_row[i-1];
+	row_hidden[i] = row_hidden[i-1];
     }
     for (r = ++maxrow; r > rs; r--)
 	for (c = maxcol + 1, p = &tbl[r][0]; --c >= 0; p++)
@@ -356,7 +364,7 @@ register r; {
     }
 
     for (i = r; i < MAXROWS - 1; i++) {
-	hidden_row[i] = hidden_row[i+1];
+	row_hidden[i] = row_hidden[i+1];
     }
 
     while (r<maxrow) {
@@ -388,7 +396,7 @@ opencol (cs) {
     for (i = maxcol+1; i > cs; i--) {
 	fwidth[i] = fwidth[i-1];
 	precision[i] = precision[i-1];
-	hidden_col[i] = hidden_col[i-1];
+	col_hidden[i] = col_hidden[i-1];
     }
     /* fwidth[cs] = DEFWIDTH;
     precision[i] =  DEFPREC;  */
@@ -431,7 +439,7 @@ closecol (cs) {
     for (i = cs; i < MAXCOLS - 1; i++) {
 	fwidth[i] = fwidth[i+1];
 	precision[i] = precision[i+1];
-	hidden_col[i] = hidden_col[i+1];
+	col_hidden[i] = col_hidden[i+1];
     }
 
     maxcol--;
@@ -439,3 +447,94 @@ closecol (cs) {
     modflg++;
 }
 
+doend(rowinc, colinc)
+{
+    register struct ent *p;
+    int r, c;
+
+    if (VALID_CELL(p, currow, curcol)) {
+	r = currow + rowinc;
+	c = curcol + colinc;
+	if (r >= 0 && r < MAXROWS && 
+	    c >= 0 && c < MAXCOLS &&
+	    !VALID_CELL(p, r, c)) {
+		currow = r;
+		curcol = c;
+	}
+    }
+
+    if (!VALID_CELL(p, currow, curcol)) {
+        switch (rowinc) {
+        case -1:
+	    while (!VALID_CELL(p, currow, curcol) && currow > 0)
+		currow--;
+	    break;
+        case  1:
+	    while (!VALID_CELL(p, currow, curcol) && currow < MAXROWS-1)
+		currow++;
+	    break;
+        case  0:
+            switch (colinc) {
+ 	    case -1:
+	        while (!VALID_CELL(p, currow, curcol) && curcol > 0)
+		    curcol--;
+	        break;
+ 	    case  1:
+	        while (!VALID_CELL(p, currow, curcol) && curcol < MAXCOLS-1)
+		    curcol++;
+	        break;
+	    }
+            break;
+        }
+	return;
+    }
+
+    switch (rowinc) {
+    case -1:
+	while (VALID_CELL(p, currow, curcol) && currow > 0)
+	    currow--;
+	break;
+    case  1:
+	while (VALID_CELL(p, currow, curcol) && currow < MAXROWS-1)
+	    currow++;
+	break;
+    case  0:
+	switch (colinc) {
+	case -1:
+	    while (VALID_CELL(p, currow, curcol) && curcol > 0)
+		curcol--;
+	    break;
+	case  1:
+	    while (VALID_CELL(p, currow, curcol) && curcol < MAXCOLS-1)
+		curcol++;
+	    break;
+	}
+	break;
+    }
+    if (!VALID_CELL(p, currow, curcol)) {
+        currow -= rowinc;
+        curcol -= colinc;
+    }
+}
+
+doformat(c1,c2,w,p)
+int c1,c2,w,p;
+{
+    register int i;
+
+    if (w > COLS - RESCOL - 2) {
+	error("Format too large - Maximum = %d", COLS - RESCOL - 2);
+	w = COLS-RESCOL-2;
+    }
+
+    if (p > w) {
+	error("Precision too large");
+	p = w;
+    }
+
+    for(i = c1; i<=c2; i++)
+	fwidth[i] = w, precision[i] = p;
+
+    FullUpdate++;
+    modflg++;
+}
