@@ -1,58 +1,84 @@
-(Message news/tools:307)
-Path: littlei!intelhf!ichips!iWarp.intel.com!uunet!zaphod.mps.ohio-state.edu!mips!smsc.sony.com!tin
-From: tin@smsc.sony.com (Tin Le)
-Newsgroups: alt.sources
-Subject: tsys, similar to crashme, alpha release
-Keywords: crashme syscall
-Message-ID: <1991Sep20.232550.5013@smsc.sony.com>
-Date: Fri, 20 Sep 91 16:25:50 PDT
-Sender: tin@smsc.sony.com (Le Tin)
-Followup-To: alt.sources.d
-Organization: Sony Microsystems Corp, San Jose, CA
-Lines: 292
+Notes for release 1.8 of Crashme. 27-SEP-1991 GJC@MITECH.COM
+
+Many people have suggested that the output of previous versions was
+far too verbose, and that that was not only anoying but also
+effectively slowing down the program. Therefore there is a new argument
+available after the subprocess control argument, which is a verboseness
+level from 0 to 5. Using a level of 2 will print out only summary
+information about the runs. e.g.
+
+$ crashme +2000 666 50 00:30:00 2
+Crashme: (c) Copyright 1990, 1991 George J. Carrette
+Version: 1.7 25-SEP-1991
+Subprocess run for 1800 seconds (0 00:30:00)
+Test complete, total real time: 1801 seconds (0 00:30:01)
+exit status ... number of cases
+       1100 ...     2
+    3522652 ...     4
+       1036 ...     1
+       1084 ...     7
+       1108 ...    19
+          1 ...   432
+         12 ...   137
+
+The table of exit status codes and frequencies is a new interesting
+aspect of the test. This test was run on a VMS system, so that we have
+a normal process exit 432 times, access violation 137 times,
+and reserved operand fault 19 times, etc. As the number of tries goes
+up (50 in this case) we would expect that the number of normal process
+exits to go down.
+
+Here is some output supplied by nik@infonode.ingr.com on one of his machines.
+
+Processor : Intergraph Clipper C300 RISC processor
+            16Mb memory + 4k I cache and 4K D cache
+
+Operating System: CLIX Version c.5.3.2
+                  derived from AT&T SVR 3.1 with BSD enhancements.
+
+Crashme: (c) Copyright 1990, 1991 George J. Carrette
+Version: 1.7 25-SEP-1991
+Subprocess run for 9000 seconds (0 02:30:00)
+Test complete, total real time: 9004 seconds (0 02:30:04)
+exit status ... number of cases
+        136 ...     1
+      24576 ...     1
+         14 ...     1
+        138 ...    11
+        135 ...    27
+        140 ...    26
+        132 ...   430
+        139 ...    18
+      12800 ...   567
+
+The status values here could be decoded by reading the documentation
+for the "wait" system procedure, and looking up the correct part of
+the value in the sys_errlist[] array. That is left as an exersize for the 
+reader.
+
+------------------------------------------------------------------------
+
+To compile, some systems may need #include <sys/types.h>.
+
+Also, note the conditionalized code in bad_malloc. If your system
+only gets the signal "segmentation violation" then you may need
+to consider conditionalizations along this line. 
+
+However, on a machine with a segmented address space, that has
+"instructions" in one segment and "data" in another, it is highly
+unlikely that the code for setting up and invoking the "void (*badboy)()" 
+will have any interesting effect. Nothing other than an easily
+handled SIGSEGV will result in the inner testing loop.
+
+Some INTEL 80386 and DEC PDP-11 systems would be examples of this situation.
 
 
-  As a QA engineer (besides other hats I wear ;>) responsible for testing
-  our port of SVR4, I am always interested in tests that can "exercise" an
-  operating system.
 
-  Crashme gave me an idea to write a similar test program that exercises
-  the OS's protection against bad/invalid arguments to system calls.  So
-  I whipped one up in short order using some of the code from crashme.
-  The program is call tsys, short for "test syscall".  I tried it out on
-  a number of systems we have in our lab, and the results were quite inform-
-  ative.  I will have to check first to see if I can release the results.
-  Sorry, but I don't know much about legal mumbo-jumbo.
 
-  Anyway, here is an early alpha release of tsys.  You are welcome to try
-  it out and please email your results (post them too if you wish).  I will
-  collect and post the results on a regular basis for those interested.
 
-  I've exchanged email with George Carrette, the author of crashme, and he
-  has expressed an interest in integrating tsys into crashme.  I believe
-  that will be a useful tool for QA'ing OS.
 
-**** WARNING *****
 
-	Don't say that I have not WARNED you.  I know for a fact that
-	tsys (like crashme) can panic (crash) systems from several different
-	vendors.  Make sure you do NOT run this on a public machine, or a
-	server, or any machine with valuable data!
 
-	Use it at your own risks!
 
-******************
 
-  Once more for my own protection:
 
- * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
- * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
- * IN NO EVENT SHALL HE OR SONY MICROSYSTEMS BE LIABLE FOR ANY SPECIAL,
- * INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
- * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
- * NEGLIGENCE OR OTHER TORTOUS ACTION, ARISING OUT OF OR IN CONNECTION
- * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
--- Tin Le
-
-Email: tin@smsc.Sony.COM
