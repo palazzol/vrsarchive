@@ -17,13 +17,13 @@ LIBS = ${TERMLIB} -lc
 
 # make NetHack
 GAME = nethack
-GAMEUID = games
-GAMEGRP = bin
+GAMEUID = cron
+GAMEGRP = cron
 GAMEDIR = /usr/games/lib/$(GAME)dir
 SHELLDIR = /usr/games
-MANDIR  = /usr/catman/man6
-CFLAGS = -O -Ml -c
-LFLAGS = -Ml
+MANDIR  = /usr/man/man6
+CFLAGS = -O -M2lt100
+LFLAGS = -M2lt100
 HACKCSRC = apply.c bones.c decl.c\
 	cmd.c do.c dothrow.c do_name.c do_wear.c dog.c dogmove.c eat.c end.c\
 	engrave.c fight.c fountain.c hack.c invent.c ioctl.c lev.c main.c\
@@ -88,20 +88,11 @@ onames.h:	makedefs objects.h
 
 specifics:	main.o tty.o unix.o
 
-main.o: main.c
-	cc ${CFLAGS} -NT MAIN -ND DMAIN main.c
-
 main.c:	unixmain.c hack.h
 	cp ${MAIN} main.c
 
-tty.o:	tty.c
-	cc ${CFLAGS} -NT MAIN -ND DMAIN tty.c
-
 tty.c:	unixtty.c extern.h
 	cp ${TTY} tty.c
-
-unix.o:	unix.c
-	cc ${CFLAGS} -NT MAIN -ND DMAIN unix.c
 
 unix.c:	unixunix.c hack.h mkroom.h
 	cp ${UNIX} unix.c
@@ -159,133 +150,69 @@ spotless: clean
 	rm -f Makefile $(VARAUX) main.c tty.c unix.c
 
 alloc.o:
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c alloc.c
 bones.o:  hack.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c bones.c
 decl.o:  hack.h mkroom.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c decl.c
 end.o:  hack.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c end.c
 hack.o:  hack.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c hack.c
 ioctl.o:  config.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c ioctl.c
 o_init.o:  config.h objects.h onames.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c o_init.c
 objnam.o:  hack.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c objnam.c
 rnd.o:
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c rnd.c
 u_init.o:  hack.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c u_init.c
 version.o:  hack.h date.h
-	cc ${CFLAGS} -NT MAIN -ND DMAIN -c version.c
 apply.o:  hack.h edog.h mkroom.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c apply.c
 cmd.o:  hack.h func_tab.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c cmd.c
 do.o:  hack.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c do.c
 dothrow.o:  hack.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c dothrow.c
 do_name.o:  hack.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c do_name.c
 do_wear.o:  hack.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c do_wear.c
 dog.o:  hack.h edog.h mkroom.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c dog.c
 dogmove.o:  hack.h mfndpos.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c dogmove.c
 eat.o:  hack.h
-	cc ${CFLAGS} -NT AUX1 -ND DAUX1 -c eat.c
 engrave.o:  hack.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c engrave.c
 fight.o:  hack.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c fight.c
 fountain.o:  hack.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c fountain.c
 invent.o:  hack.h wseg.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c invent.c
 lev.o:  hack.h mkroom.h wseg.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c lev.c
 makemon.o:  hack.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c makemon.c
 mhitu.o:  hack.h
-	cc ${CFLAGS} -NT AUX2 -ND DAUX2 -c mhitu.c
 mklev.o:  hack.h mkroom.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c mklev.c
 mkmaze.o:  hack.h mkroom.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c mkmaze.c
 mkobj.o:  hack.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c mkobj.c
 mkshop.o:  hack.h mkroom.h eshk.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c mkshop.c
 mon.o:  hack.h mfndpos.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c mon.c
 monmove.o:  hack.h mfndpos.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c monmove.c
 monst.o:  hack.h eshk.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c monst.c
 options.o:  config.h hack.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c options.c
 pager.o:  hack.h
-	cc ${CFLAGS} -NT AUX3 -ND DAUX3 -c pager.c
 polyself.o: hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c polyself.c
 potion.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c potion.c
 pray.o: hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c pray.c
 pri.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c pri.c
 prisym.o:  hack.h wseg.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c prisym.c
 read.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c read.c
 rip.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c rip.c
 rumors.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c rumors.c
 save.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c save.c
 search.o:  hack.h
-	cc ${CFLAGS} -NT AUX4 -ND DAUX4 -c search.c
 shk.o:  hack.h mfndpos.h mkroom.h eshk.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c shk.c
 shknam.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c shknam.c
 sit.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c sit.c
 spell.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c spell.c
 steal.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c steal.c
 termcap.o:  config.h flag.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c termcap.c
 timeout.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c timeout.c
 topl.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c topl.c
 topten.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c topten.c
 track.o:  hack.h
-	cc ${CFLAGS} -NT AUX5 -ND DAUX5 -c track.c
 trap.o:  hack.h mkroom.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c trap.c
 vault.o:  hack.h mkroom.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c vault.c
 wield.o:  hack.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c wield.c
 wizard.o:  hack.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c wizard.c
 worm.o:  hack.h wseg.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c worm.c
 worn.o:  hack.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c worn.c
 write.o:  hack.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c write.c
 zap.o:  hack.h
-	cc ${CFLAGS} -NT AUX6 -ND DAUX6 -c zap.c
 extern.h: config.h
 	touch extern.h
 hack.h:  config.h objclass.h monst.h gold.h trap.h obj.h flag.h rm.h permonst.h spell.h onames.h extern.h you.h
