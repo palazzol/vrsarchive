@@ -10,10 +10,12 @@ static char *cpr[]={
 #endif
 #include <stdio.h>
 #include <ctype.h>
-#include <strings.h>
+#include <string.h>
 extern char *malloc();
 char *my_alloc();
 extern int atoi();
+extern char *strchr();
+extern char *strrchr();
 char *save();
 #define TRUE 1
 #define FALSE 0
@@ -227,9 +229,9 @@ int deftag;
 			return;
 		}
 	}
-	c = index(s,SLASH)[1];		/* get variant tag */
+	c = strchr(s,SLASH)[1];		/* get variant tag */
 	if( c != '&' ) deftag=c;	/* use given tag */
-	p = index(cp->tags, deftag);		/* look it up */
+	p = strchr(cp->tags, deftag);		/* look it up */
 	if(p == NULL ){
 		variant = 0;
 		printf("??/%c??", deftag );
@@ -320,9 +322,9 @@ readline(){
 		if( fgets( InLine, MAXLINE, InFile ) == NULL ){
 			InLine[0] = InLine[1] = '%';
 			InLine[2] = '\0';	/* create EOF */
-		}else if( (p=rindex( InLine, '\n'))!= NULL ) *p = '\0';
+		}else if( (p=strrchr( InLine, '\n'))!= NULL ) *p = '\0';
 		p = InLine;
-		while( (p = index( p, BSLASH )) != NULL ){
+		while( (p = strchr( p, BSLASH )) != NULL ){
 			if(p[1] == '*' ){
 				*p = 0;	/* kill comment */
 				break;
