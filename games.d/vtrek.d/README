@@ -16,3 +16,27 @@ as long as you don't sell it.
 
 				dug patrick
 				ihnp4!pur-ee!dug
+-----
+Here is a patched termio.c for the small visual trek game
+posted a little while back. 
+It originally would not work with a vt100 because vt100 termcap entries
+were too long and because the padding information wasn't being decoded.
+The "cl" and "cm" char arrays have been expanded to allow for
+longer termcap entries and tputs() is now being called instead
+of fputs() in the UNIX sections so as to allow the padding
+information in termcap entries to be decoded.
+It now works on 4.2BSD and Xenix 3.0
+I guess this is for those who haven't bothered to mess about already.
+(vtrek is made with -ltermcap OR -ltermlib depending on the system)
+Hope this helps.
+	Paul Kern
+          ..!{decvax,ihnp4}!utcs!pkern
+   ..!{allegra,linus}!utzoo!    "
+..!{uw-beaver,floyd}!utcsri!	"
+-----
+Paul's fix didn't do any padding after all, since he didn't set the variable
+ospeed equal to anything.  I fixed the handling of cl, cm, etc to handle any
+size that can be present in a termcap entry.  He had the right idea, but a
+weak understanding of how to use tgetstr and tputs.
+
+	Vincent R. Slyngstad
