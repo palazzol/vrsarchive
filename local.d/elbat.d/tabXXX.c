@@ -7,7 +7,8 @@
  * hack up your own.
  */
 
-#include	<termio.h>	/* Req'd only for bset, breset */
+#include <sys/types.h>
+#include <termio.h>	/* Req'd only for bset, breset */
 
 #define INCH 240
 
