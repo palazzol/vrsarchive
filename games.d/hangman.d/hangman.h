@@ -6,7 +6,7 @@
 
 # define	MINLEN	6
 # define	MAXERRS	7
-# define	DICT	"/usr/dict/words"
+# define	DICT	GAMLIB/words"
 
 # define	MESGY	12
 # define	MESGX	0
