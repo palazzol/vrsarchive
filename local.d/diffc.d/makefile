@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/diffc.d/makefile,v 1.3 2002-11-23 07:49:05 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/diffc.d/makefile,v 1.4 2002-11-24 05:09:10 Vincent Exp $
 #
 MODEL	= -i
 OPTIONS	= -O
-ALL	= diffc
+ALL	= diffc$(EXE)
 include $(HOME)/CONFIG
 
 install: $(ALL) $(BINDIR) $(MAN1)

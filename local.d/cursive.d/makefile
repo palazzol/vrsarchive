@@ -1,6 +1,6 @@
 MODEL	= -i
 OPTIONS	= -O
-ALL	= cursive
+ALL	= cursive$(EXE)
 include $(HOME)/CONFIG
 OBJ	= cursive.o font.o
 
