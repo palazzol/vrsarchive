@@ -15,7 +15,7 @@ update()
 {
 	int	i, dir_diff, mask, unclean;
 	PLANE	*pp, *p1, *p2, *p;
-	int	(*sig)();
+	void	(*sig)();
 
 	signal(SIGALRM, update);
 	sig = signal(SIGINT, SIG_IGN);
