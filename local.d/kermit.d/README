@@ -1,0 +1,43 @@
+These sources constitute a modified version of Ckermit release 4E(067),
+adapted to the builtin modem on AT&T 7300 and 3b1 computers.  I have left
+all other UNIX versions intact, as far as I know, but have removed the
+VMS, Macintosh, and other non-unix versions from this posting.  I have
+tested this version fairly extensively on my UNIX PC, and somewhat on a
+VAX running 4.3BSD to make sure I hadn't broken anything.
+
+This version has lots of neat features to speed up file transfers,
+especially when connected to another recent version.
+
+The documentation is a bit daunting, even though I have pared it down
+a lot to remove non UNIX PC stuff.  Here's the stuff you'll want to
+know first (I think):
+
+  - The diffs for this version from the official 4E(067) release have
+    been sent to Columbia, where they tell me they'll try to get UNIX PC
+    support into the released product.
+  - You make this on a UNIX PC with the command 'make upc'.
+  - I am not distributing binaries -- I hope that if you don't have
+    the distribution kit, you have a kindly net.neighbor who does.
+  - The makefile renames two symbols to make use of the shared library
+    easy.  It doesn't invoke the shared library itself, because I have
+    a 'cc' intercept shell-program that does that for me, and I recommend
+    this approach.
+  - The builtin modem is called 'internal'; I typically make a call by
+    this sequence:
+	C-kermit> set modem internal
+	C-kermit> set line /dev/ph1
+	C-kermit> set speed 1200
+	C-kermit> dial 555-0000
+	C-kermit> connect
+	[ fiddle with remote system and make it run kermit, or else
+	  just use this mode as a terminal emulator for a while, and then
+	  log off, but if I use kermit it continues thus: ]
+	Remote kermit> serve
+	[ type the local escape sequence - control-\ C ]
+	C-kermit> [ sequence of 'send' and 'get' commands ]
+	C-kermit> bye 
+	C-kermit> exit
+  - You can send complaints, requests, comments, and appreciations to me
+    at ...!nrcvax!kosman!kevin or ...!ihop3!kosman!kevin.  Please don't
+    use autorouting if you can avoid it -- in the current state of the
+    maps, my friend in St. Louis unfairly pays for all such mail.

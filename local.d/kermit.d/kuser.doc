@@ -1,0 +1,3166 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                               KERMIT USER GUIDE
+
+                           Sixth Edition, Revision 2
+
+
+
+                             Frank da Cruz, editor
+
+              Columbia University Center for Computing Activities
+                           New York, New York 10027
+
+
+                                 May 26, 1986
+
+
+
+
+
+
+
+
+
+                            Copyright (C) 1981,1986
+            Trustees of Columbia University in the City of New York
+
+     Permission is granted to any individual or institution to use, copy,
+    or redistribute this document so long as it is not sold for profit, and
+                  provided this copyright notice is retained.
+
+
+Kermit User Guide                                                        Page i
+
+
+                               Table of Contents
+
+How To Get Kermit                                                             4
+
+Organization of This Manual                                                   5
+
+1. Introduction                                                               6
+
+   1.1. Why Kermit?                                                           6
+   1.2. How Kermit Works                                                      7
+
+2. How to Use Kermit                                                          9
+
+   2.1. Transferring a File                                                  10
+   2.2. Basic Kermit Commands                                                10
+   2.3. Real Examples                                                        11
+       2.3.1. PC to Host                                                     12
+       2.3.2. Host to Host                                                   13
+       2.3.3. Micro to Micro                                                 15
+   2.4. Another Way -- The Kermit Server                                     16
+
+3. When Things Go Wrong                                                      19
+
+   3.1. Basic Connection Problems                                            19
+   3.2. Terminal Connection Works But The Transfer Won't Start               19
+   3.3. Special Characters                                                   21
+   3.4. 3270 Protocol Emulators                                              21
+   3.5. The Transfer Starts But Then Gets Stuck                              21
+       3.5.1. The Micro is Hung                                              22
+       3.5.2. The Connection is Broken                                       22
+       3.5.3. The Disk is Full                                               22
+       3.5.4. Message Interference                                           23
+       3.5.5. Transmission Delays                                            23
+       3.5.6. Noise Corruption                                               23
+       3.5.7. Host Errors                                                    23
+   3.6. File is Garbage                                                      23
+   3.7. Junk after End of File                                               24
+
+4. Kermit Commands                                                           25
+
+   4.1. Remote and Local Operation                                           25
+   4.2. The Command Dialog                                                   25
+   4.3. Notation                                                             27
+   4.4. Summary of Kermit Commands                                           28
+   4.5. The SEND Command                                                     29
+   4.6. The RECEIVE Command                                                  30
+   4.7. GET                                                                  31
+   4.8. SERVER                                                               32
+   4.9. BYE                                                                  32
+   4.10. FINISH                                                              32
+   4.11. REMOTE                                                              32
+Kermit User Guide                                                       Page ii
+
+
+   4.12. LOCAL                                                               33
+   4.13. CONNECT                                                             34
+   4.14. HELP                                                                35
+   4.15. TAKE                                                                35
+   4.16. EXIT, QUIT                                                          35
+   4.17. The SET Command                                                     35
+   4.18. DEFINE                                                              42
+   4.19. SHOW                                                                43
+   4.20. STATISTICS                                                          43
+   4.21. LOG                                                                 43
+   4.22. TRANSMIT                                                            44
+   4.23. INPUT                                                               44
+   4.24. OUTPUT                                                              44
+   4.25. PAUSE                                                               44
+   4.26. SCRIPT                                                              44
+
+5. Kermit Implementations                                                    45
+
+6. DECSYSTEM-20 KERMIT   (Deleted)                                           xx
+
+   6.1. The DEC-20 File System                                               xx
+   6.2. Program Operation                                                    xx
+   6.3. Remote and Local Operation                                           xx
+   6.4. Conditioning Your Job for Kermit                                     xx
+   6.5. Kermit-20 Commands                                                   xx
+       6.5.1. Commands for File Transfer                                     xx
+       6.5.2. Server Operation                                               xx
+       6.5.3. Commands for Local File Management                             xx
+       6.5.4. The CONNECT Command                                            xx
+       6.5.5. The SET, SHOW, and DEFINE Commands                             xx
+       6.5.6. Program Management Commands                                    xx
+   6.6. Login Scripts: The INPUT, OUTPUT, CLEAR, and PAUSE Commands          xx
+   6.7. Raw Download and Upload                                              xx
+   6.8. Kermit-20 Examples                                                   xx
+   6.9. Installation of Kermit-20                                            xx
+
+7. VAX/VMS KERMIT   (Deleted)                                                xx
+
+   7.1. The VAX/VMS File System                                              xx
+   7.2. Program Operation                                                    xx
+   7.3. Conditioning Your Job for Kermit                                     xx
+   7.4. Kermit-32 Commands                                                   xx
+       7.4.1. Commands for File Transfer                                     xx
+       7.4.2. Server Operation                                               xx
+       7.4.3. Commands for Local File Management                             xx
+       7.4.4. The CONNECT Command                                            xx
+       7.4.5. The SET and SHOW Commands                                      xx
+       7.4.6. Program Management Commands                                   xxx
+   7.5. Raw Download                                                        xxx
+   7.6. Installation of Kermit-32                                           xxx
+Kermit User Guide                                                      Page iii
+
+
+8. IBM VM/CMS KERMIT   (Deleted)                                            xxx
+
+   8.1. The VM/CMS File System                                              xxx
+       8.1.1. File Specifications                                           xxx
+       8.1.2. File Formats                                                  xxx
+   8.2. Program Operation                                                   xxx
+   8.3. Kermit-CMS Commands                                                 xxx
+   8.4. Before Connecting to the Mainframe                                  xxx
+   8.5. How to build an executable version of Kermit-CMS                    xxx
+   8.6. What's New                                                          xxx
+   8.7. What's Missing                                                      xxx
+
+9. UNIX KERMIT                                                              xxx
+
+   9.1. The Unix File System                                                xxx
+   9.2. File Transfer                                                       xxx
+   9.3. Command Line Operation                                              xxx
+   9.4. Interactive Operation                                               xxx
+   9.5. UUCP Lock Files                                                     xxx
+   9.6. C-Kermit under Berkeley or System III/V Unix:                       xxx
+   9.7. C-Kermit on the DEC Pro-3xx with Pro/Venix Version 1                xxx
+   9.8. C-Kermit under VAX/VMS                                              xxx
+   9.9. C-Kermit on the Macintosh                                           xxx
+   9.10. C-Kermit Restrictions and Known Bugs                               xxx
+   9.11. How to Build C-Kermit for a Unix System                            xxx
+   9.12. Adapting C-Kermit to Other Systems                                 xxx
+
+10. MACINTOSH KERMIT    (Deleted)                                           xxx
+
+   10.1. The Macintosh File System                                          xxx
+   10.2. File Transfer                                                      xxx
+   10.3. Remote Commands                                                    xxx
+   10.4. Settings                                                           xxx
+   10.5. Terminal Emulation                                                 xxx
+   10.6. Installation                                                       xxx
+   10.7. CKMKEY - Macintosh Kermit's Keyboard Configurator                  xxx
+       10.7.1. What is CKMKEY?                                              xxx
+       10.7.2. Modifier vs Normal Keys                                      xxx
+       10.7.3. Key Maps                                                     xxx
+       10.7.4. What's in CKMKEY's Keymaps                                   xxx
+       10.7.5. Menus                                                        xxx
+       10.7.6. MENU: Set                                                    xxx
+           10.7.6.1. DIALOG: Set Modifer Keys                               xxx
+           10.7.6.2. DIALOG: Set Function Definitions                       xxx
+           10.7.6.3. DIALOG: Set Keys                                       xxx
+       10.7.7. MENU: File                                                   xxx
+       10.7.8. CKMKEY Known Limitations, Restrictions, Bugs                 xxx
+       10.7.9. Unlocking CAPS LOCK                                          xxx
+
+11. MS-DOS KERMIT      (Deleted)                                            xxx
+Kermit User Guide                                                       Page iv
+
+
+   11.1. The MS-DOS File System                                             xxx
+       11.1.1. File Specifications                                          xxx
+       11.1.2. File Formats                                                 xxx
+   11.2. Program Invocation                                                 xxx
+   11.3. Kermit-MS Commands                                                 xxx
+       11.3.1. Commands for Terminal Connection                             xxx
+       11.3.2. Commands for File Transfer                                   xxx
+       11.3.3. Commands for Controlling Remote Kermit Servers               xxx
+       11.3.4. Commands for File Management                                 xxx
+       11.3.5. The SERVER Command                                           xxx
+       11.3.6. The SET Command                                              xxx
+       11.3.7. The SHOW Command                                             xxx
+       11.3.8. Command Macros                                               xxx
+   11.4. Terminal Emulation                                                 xxx
+   11.5. Installation of Kermit-MS                                          xxx
+       11.5.1. Try Again To Find A Kermit Disk                              xxx
+       11.5.2. Bootstrapping From the Communication Line                    xxx
+   11.6. Compatibility with Older Versions of MS-DOS Kermit                 xxx
+   11.7. What's Missing                                                     xxx
+   11.8. Program Organization                                               xxx
+   11.9. Running Kermit on New Systems                                      xxx
+   11.10. IBM-PC MS Kermit Terminal Emulator Summary                        xxx
+       11.10.1. Keyboard Layout and Characters Sent                         xxx
+       11.10.2. Responses To Characters Received By the Terminal Emulator   xxx
+       11.10.3. DEC VT102 functions while in VT52 mode                      xxx
+       11.10.4. Heath-19 functions while in non-ANSI mode                   xxx
+
+12. CP/M-80 KERMIT    (Deleted)                                             xxx
+
+   12.1. Summary of CP/M                                                    xxx
+   12.2. Kermit-80 Description                                              xxx
+   12.3. Kermit-80 Flavors                                                  xxx
+       12.3.1. Generic Kermit-80                                            xxx
+       12.3.2. CP/M 3 Kermit                                                xxx
+       12.3.3. System-Specific Versions                                     xxx
+   12.4. Installation of Kermit-80                                          xxx
+       12.4.1. Organization of Kermit-80                                    xxx
+       12.4.2. Downloading Kermit-80                                        xxx
+       12.4.3. Assembling Kermit-80 from the sources                        xxx
+   12.5. Adding Support For A New System                                    xxx
+   12.6. Notes on New Features in Kermit-80 Version 4                       xxx
+   12.7. Future Work                                                        xxx
+
+13. CP/M-86 KERMIT    (Deleted)                                             xxx
+
+   13.1. Kermit-86 Commands                                                 xxx
+   13.2. Installation:                                                      xxx
+   13.3. DEC Rainbow 100 Support                                            xxx
+   13.4. NEC Advanced Personal Computer Support                             xxx
+
+14. APPLE-DOS KERMIT    (Deleted)                                           xxx
+Kermit User Guide                                                        Page v
+
+
+   14.1. The DOS 3.3 File System                                            xxx
+   14.2. Program Operation                                                  xxx
+   14.3. Remote and Local Operation                                         xxx
+   14.4. KERMIT-65 Commands                                                 xxx
+   14.5. Customizing, Building, and Installing KERMIT-65                    xxx
+
+I. The ASCII Character Set                                                  262
+
+Index                                                                         i
+Kermit User Guide                                                       Page vi
+
+
+                                List of Figures
+
+   Figure 1-1:   A Kermit Packet                                              7
+   Figure 1-2:   Kermit File Transfer                                         8
+   Figure 4-1:   Local and Remote Kermits                                    26
+ 
+  
+   
+Kermit User Guide                                                      Page vii
+
+
+List of Tables
+
+
+
+
+
+
+
+Modifications to this version                                          
+
+This copy of the documentation has been brute-force pared down to remove the
+system-specific documentation.  This has been done by removing text, and
+without renumbering the pages or cleaning up the index.  This seemed
+necessary before sending this out on the unix-pc net, which is what I'm
+doing this for.
+
+System-specific information for UNIX systems can be found in ckuker.doc, and
+in the README file.
+
+					 Kevin O'Gorman
+					 October 2, 1987
+
+Preface to the 6th Edition, March 1985                                   Page 1
+
+
+                    Preface to the 6th Edition, March 1985
+
+Kermit  is  the  name of a protocol for transferring files from one computer to
+another over ordinary asynchronous terminal connections.  Kermit programs  have
+been  written  for  many  different computers, and in general any two computers
+that have Kermit programs can exchange  sequential  files  correctly  and  com-
+pletely.    This  manual  describes use and installation of Kermit programs.  A
+companion volume, the Kermit Protocol Manual, attempts to specify the  protocol
+sufficiently to allow new Kermit programs to be written.
+
+This manual describes an "ideal" Kermit program, one which has most of the fea-
+tures specified in the Kermit Protocol Manual, and then describes several  real
+Kermit  programs  in detail.  Most real Kermit programs fall short of the ideal
+in some ways; a few may surpass it.   The  system-dependent  portions  of  this
+manual  may  be  dated; current information about any particular Kermit program
+can be found in  the  accompanying  on-line  help  or  documentation  files  or
+built-in internal help text distributed with the Kermit programs.
+
+Since  the  publication  of  the Fifth Edition of the Kermit User Guide in July
+1984, there have been new  releases  of  most  of  the  Kermit  implementations
+described  in  this  manual.    The Sixth Edition includes new chapters for all
+these implementations.  In addition, some material has been added to the  front
+sections to describe some new facilities like login scripts, and to reflect new
+experiences as Kermit spreads to increasingly diverse environments.
+
+Revision 1 of the Sixth Edition (June 1985) includes a new chapter  for  Macin-
+tosh  Kermit,  and  replacement  chapters  for several other Kermits, including
+VAX/VMS, VM/CMS, UNIX, and MS-DOS.
+
+Revision 2 of the Sixth Edition (May 1986) includes  new  chapters  for  MS-DOS
+Kermit  2.29, VAX/VMS Kermit 3.2, and Macintosh Kermit 0.8(34), and an improved
+bootstrapping procedure for CP/M-80 Kermit.
+
+
+                         HISTORY AND ACKNOWLEDGEMENTS
+
+The Kermit file transfer protocol was designed at the Columbia University  Cen-
+ter  for  Computing  Activities (CUCCA) in 1981-82 mainly by Bill Catchings and
+Frank da Cruz.  Bill wrote the first two programs, one for the DECSYSTEM-20 and
+one for a CP/M-80 microcomputer.
+
+The initial objective was to allow users of our DEC-20 and IBM timesharing sys-
+tems to archive their files on microcomputer floppy disks.    The  design  owes
+much  to the ANSI and ISO models, and ideas were borrowed from similar projects
+at Stanford University and the University of Utah.  The protocol  was  designed
+to  accommodate  the  "sensitive"  communications  front end of the full-duplex
+DEC-20 system as well as the peculiarities of half-duplex  IBM  mainframe  com-
+munications.    The  protocol was soon implemented successfully on our IBM 4341
+systems under VM/CMS by Daphne Tzoar of CUCCA.
+
+Meanwhile it was becoming apparent that Kermit was useful for  more  than  just
+file  archiving;  IBM  PCs  were beginning to appear in the offices and depart-
+ments, and there arose a general need for file transfer among all our  systems.
+Daphne soon had prepared an IBM PC implementation.
+
+After  our  initial success with Kermit, we presented it at conferences of user
+Preface to the 6th Edition, March 1985                                   Page 2
+
+
+groups like DECUS and SHARE, and began to get requests for it from other sites.
+Since we had written down a description of the protocol, some sites wrote their
+own implementations for new computers, or adapted one of our implementations to
+run  on  additional  systems, and sent back these new versions to us so that we
+could share them with others.  In this way, Kermit has grown  to  support  more
+than  100 different systems; it has been sent on magnetic tape from Columbia to
+thousands of sites  in  dozens  of  countries,  and  has  reached  hundreds  or
+thousands more through various user groups and networks.
+
+Thanks  to the hundreds of individuals and institutions who have contributed to
+the Kermit storehouse over the years.
+
+The Kermit protocol was named after Kermit the Frog,  star  of  the  television
+series  THE  MUPPET  SHOW;  the name Kermit is used by permission of Henson As-
+sociates, Inc., New York.
+
+
+                                FURTHER READING
+
+   - A two-part article describing the Kermit  protocol  appeared  in  the
+     June and July 1984 issues of BYTE Magazine:  "Kermit, A File Transfer
+     Protocol For Universities", by Frank da Cruz and Bill Catchings.  The
+     title (chosen by the BYTE editors to fit the theme of the June issue)
+     is a bit misleading, because there's nothing about Kermit that's par-
+     ticular to universities.
+
+   - The  book "Kermit, A File Transfer Protocol," by Frank da Cruz, Digi-
+     tal Press, Bedford MA (1986), ISBN 0-932376-88-6,  DEC  order  number
+     EY-6705E-DP,  describes  Kermit in detail, from the points of view of
+     the user, of  computer  professionals  who  have  to  install  Kermit
+     programs  or  support their use, and of programmers who wish to write
+     new Kermit implementations, and also contains tutorials on data  com-
+     munications,  file  organization,  plus  a  detailed  troubleshooting
+     guide, bootstrapping hints, and many illustrations and tables.
+
+
+                                  DISCLAIMER
+
+Neither Columbia University, nor the editor, nor the authors of the  individual
+chapters,  nor  any  individual  or institution contributing Kermit programs or
+documentation to the Columbia University Kermit Distribution,  acknowledge  any
+liability  for  any claims arising from use or misuse of Kermit programs or for
+inaccuracies in the documentation or bugs in the programs.  Kermit programs are
+produced on a voluntary basis and contributed freely for public use in the hope
+that they will be useful, but without any kind of warranty or guarantee, or any
+commitment  to  address  or  fix  problems.    In practice, Kermit programs and
+documentation are contributed in good faith, and will be supported on  a  best-
+effort basis, time and other commitments permitting.
+Preface to the 6th Edition, March 1985                                   Page 3
+
+
+                            CUSTOMIZING THIS MANUAL
+
+Although  the  Kermit  User  Guide was produced at Columbia University, all at-
+tempts have been made to keep it free of site-specific information.    However,
+due  to  the  large  number of Kermit implementations, descriptions of each one
+would make the manual unnecessarily thick.  Therefore, the manual is sent  from
+Columbia  with  specific  documentation  about a selection of systems.  Some of
+these descriptions may not be of interest at your site, while others  that  are
+may be lacking.
+
+Each  site,  upon  receiving a Kermit tape, may decide which versions of Kermit
+are important to it, and include the appropriate documentation in this  manual.
+This is most conveniently done if your site has the Scribe text formatting sys-
+tem (from UNILOGIC Ltd in Pittsburgh PA,  USA),  with  which  this  manual  was
+produced.    Scribe  runs  on a wide variety of systems.  There are also Scribe
+subsets, such as Perfect Writer and Final Word, that run on  various  microcom-
+puters.
+
+The system-specific parts of the Kermit User Guide are included with "@INCLUDE"
+statements at the end of the Scribe source file for this manual, whose filename
+is  KUSER.MSS.    You may add or delete @INCLUDE statements to suit your needs,
+and run the result through the text formatter to produce a  customized  manual.
+If  you  do  this,  you should include an indication on the title page that the
+manual has been customized for your site.
+
+Not all system-specific documentation is provided in .MSS (Scribe  input)  for-
+mat, since some Kermit contributors do not have Scribe at their sites.  In that
+case, you will either have to add Scribe formatting commands, or  else  enclose
+the  whole  subfile  in @BEGIN(VERBATIM)...@END(VERBATIM) brackets (and replace
+all atsigns (@) in the text with double atsigns (@@)).
+
+If you do not have SCRIBE, you may still use an editor to delete  or  add  sec-
+tions  to  the  finished  documentation file, though the results will not be as
+satisfactory -- the table of contents, index, and  page  numbers  will  not  be
+automatically adjusted.
+
+If you are running a version of Kermit for which adequate documentation has not
+been provided (after all, this is a  distributed,  volunteer  effort!),  please
+feel free to write some, preferably in Scribe input format, and send it back to
+Columbia so that others may benefit from it.  Likewise if you produce a new im-
+plementation  of  Kermit.  If you don't know Scribe, you can use one of the ex-
+isting chapters as a model.
+How To Get Kermit                                                        Page 4
+
+
+How To Get Kermit
+
+Kermit is available to users of the BITNET network via a Kermit file server  at
+host  CUVMA.    BITNET  users may type ``SMSG RSCS MSG CUVMA KERMSRV HELP'' for
+further information.  Kermit is also available to users  of  the  Internet  via
+anonymous  FTP from host CU20B, in the area KER:, and to users of UNIX(tm) sys-
+tems via UUCP from host "okstate" at the  Oklahoma  State  University  Computer
+Science  department.    And Kermit is distributed regularly by various computer
+user groups such as DECUS and SHARE.  (This information  in  the  paragraph  is
+current as June 1985, but is subject to change.)
+
+The  Kermit  software  is  free  and  available  to  all.  Columbia University,
+however, cannot afford to distribute free software on the  scale  required  for
+Kermit.    Therefore,  to  defray  our  costs  for  media,  printing,  postage,
+materials, labor, and computing resources, we must request a moderate distribu-
+tion fee from sites that request Kermit directly from Columbia.
+
+Other  sites  are  free  to redistribute Kermit on their own terms, and are en-
+couraged to do so, with the following stipulations: Kermit should not  be  sold
+for  profit; credit should be given where it is due; and new material should be
+sent back to Columbia University at the address below so that we can maintain a
+definitive  and  comprehensive  set  of Kermit implementations for further dis-
+tribution.
+
+Please note that although Kermit is free, it is not in the public domain.   The
+Kermit  manuals,  and  most  Kermit  programs,  bear  copyright  notices.  This
+copyright notice is to protect Columbia University and the various contributors
+from having their work usurped by others and sold as a product.  This is not to
+say that the Kermit file transfer protocol can never be included as  a  feature
+of  a  commercial  product;  the  conditions  under  which this may be done are
+spelled out in a flyer POLICY ON COMMERCIAL USE AND DISTRIBUTION OF KERMIT.
+
+To inquire about obtaining the Kermit distribution, write to:
+
+    Kermit Distribution
+    Columbia University Center for Computing Activities
+    612 West 115th Street
+    New York, N.Y.  10025
+
+Since new Kermit programs are added -- and old ones improved -- so  frequently,
+sites  that  use  Kermit heavily are encouraged to contact Columbia for updates
+two or three times a year for news.
+
+
+
+
+
+         -- PLEASE USE KERMIT ONLY FOR PEACEFUL AND HUMANE PURPOSES --
+Organization of This Manual                                              Page 5
+
+
+Organization of This Manual
+
+Section 2, How to Use Kermit, tells all you need to know to transfer text files
+in most cases, and shows some specific examples.
+
+If  you  follow the examples in Section 2 but you can't make a terminal connec-
+tion or you can't transfer files successfully, consult Section 3,  When  Things
+Go Wrong.
+
+If  you  expect to be a heavy user of Kermit, you should read Section 4, Kermit
+Commands, which describes all the features of Kermit in detail.  You  may  find
+that  familiarity with the material in this section will help you get past dif-
+ficulties that can crop up when you are making  new  kinds  of  connections  or
+transferring  unusual  kinds of files.  You will also find descriptions of some
+advanced file management features that have been omitted from the earlier  sec-
+tions.
+
+Section  5,  Kermit Implementations, briefly lists the systems for which Kermit
+is available as of this writing.  The  subsequent  chapters  describe  selected
+particular  implementations.   You should read the appropriate section for each
+system with which you are using Kermit; each section describes the file  naming
+conventions  and  other system features that are important to Kermit users, and
+lists the Kermit commands for that system mainly in terms of their  differences
+from the "ideal" Kermit described in section 4.
+Introduction                                                             Page 6
+
+
+1. Introduction
+
+There  is  an  ever-increasing  need  to  move information from one computer to
+another.  Information can be exchanged using magnetic media -- tapes  or  disks
+--  or  over  networks.   Networks are expensive, and when your computer is not
+connected to one (or to the right one), you must find other means  to  transfer
+information.  In the early days of computing, magnetic media formats were rela-
+tively standardized,  but  with  the  arrival  of  microcomputers  things  have
+changed: most microcomputer users have no access to tapes, and disk formats are
+incompatible between most microcomputer makes and models.  Even when disk  for-
+mats  agree,  the disk must be physically moved from one system to the other in
+order for information to be exchanged -- the  effort  and  delay  can  be  sig-
+nificant if the systems are widely separated.
+
+The  telecommunication  line  provides  an alternative to networks and magnetic
+media.  Asynchronous telecommunication is the method used by most terminals  to
+connect  to  most  computers.   When dedicated "hardwired" connections, such as
+those found between a timesharing computer and its  local  terminals,  are  not
+available, computer users can create their own connections with a telephone and
+a modem.
+
+Most computers come equipped with asynchronous  telecommunications  interfaces,
+or  "serial ports", which allow them to act as, or communicate with, terminals.
+The question is how to use the serial port to exchange data.  Fortunately,  the
+standards  for  connecting  terminals  to computers are almost universally fol-
+lowed: connector configuration  (DB-25  or  DB-9),  transmission  signals  (EIA
+RS-232),  a  commonly  accepted  set of transmission speeds (baud rates), and a
+convention for encoding characters in storage and during transmission  (ASCII).
+These  standards  provide  the physical medium and the data format, but they do
+not specify a process for exchanging data.
+
+
+1.1. Why Kermit?
+
+When data is transmitted from one computer to another; the  receiving  computer
+has  to  be  instructed  to  take in the data and put it somewhere, and it also
+needs a way of ensuring that the data has  been  received  correctly  and  com-
+pletely  in  spite  of  several  factors  that will tend to interfere with this
+process:
+
+   1. Noise --  It is rarely safe to assume that there will be no electri-
+      cal  interference on a line; any long or switched data communication
+      line will have occasional interference, or  noise,  which  typically
+      results  in  garbled or extra characters.  Noise corrupts data, per-
+      haps in subtle ways that might not be noticed until it's too late.
+
+   2. Timing -- Data must not come in faster than  the  receiving  machine
+      can  handle it.  Although line speeds at the two ends of the connec-
+      tion must match before communication can take place,  the  receiving
+      machine  might  not  be  able to process a steady stream of input at
+      that speed.  Its central processor may be too slow  or  too  heavily
+      loaded,  or  its buffers too full or too small.  The typical symptom
+      of a timing problem is lost data; most operating systems will simply
+      discard incoming data they are not prepared to receive.
+
+   3. Line Outages -- A line may stop working for short periods because of
+Introduction                                                             Page 7
+
+
+      a faulty connector, loss of power, or similar reason.  On dialup  or
+      switched  connections,  such intermittent failures may cause carrier
+      to drop and the connection to be closed, but for any  connection  in
+      which the carrier signal is not used, the symptom will be lost data.
+
+To  prevent  corruption  of  data and to synchronize communication, cooperating
+computers can send special messages to one another along with the data.  Inter-
+mingling  of control information with data together requires a set of rules for
+distinguishing messages from data, and specifying what the messages are and the
+actions  associated  with  each  message.    Such  a  set  of rules is called a
+protocol.
+
+Kermit is a file transfer protocol.  It is specifically designed  for  transfer
+of  sequential  files  over ordinary serial telecommunication lines.  Kermit is
+not necessarily better than other terminal-oriented file transfer protocols but
+it  is free, it is well documented, and it has been implemented compatibly on a
+wide variety of microcomputers and mainframes.
+
+
+1.2. How Kermit Works
+
+Kermit transfers data by encapsulating it in  packets of  control  information.
+This information includes a synchronization marker, a packet sequence number to
+allow detection of lost packets, a length indicator, and a "block check" to al-
+low verification of the data, as shown in Figure 1-1.
+
+    +------+------+------+------+--------- - - - -+-------+
+    | MARK | LEN  | SEQ  | TYPE | DATA            | CHECK |
+    +------+------+------+------+--------- - - - -+-------+
+
+                         Figure 1-1:   A Kermit Packet
+
+The MARK (usually an ASCII Control-A character) appears at the beginning of the
+packet.  The next character is a length field (LEN), specifying  how  long  the
+rest  of  the  packet  is.  The sequence number (SEQ) is used to detect lost or
+duplicated packets; retransmission is requested for lost packets and  duplicate
+packets  are  discarded.   The TYPE field specifies whether the packet contains
+data or control information.  The CHECK field contains a quantity  obtained  by
+combining  all  the  other  characters in the packet together in one of several
+ways; the sender computes this value and sends it.  The  packet  receiver  also
+computes  the  value  and  checks it against the value sent; if they agree, the
+packet is accepted; if they disagree, then the packet has  been  corrupted  and
+retransmission  is  requested.   The DATA field contains up to 90 characters of
+data.  All fields except the mark are encoded as printable ASCII characters, to
+prevent  host  or  network  interference.   Figure 1-2 shows how a typical file
+transfer proceeds.  Figure 1-2 does not show how Kermit recovers  from  errors.
+Very briefly, here's how it works:
+
+   - If  a  packet is corrupted in transit by noise or loss of characters,
+     the block check will be wrong.  A file receiver will NAK ("negatively
+     acknowledge")   a  corrupted  packet,  which  causes  the  sender  to
+     retransmit the same packet.  A file sender  only  receives  ACKs  and
+     NAKs  from  the receiver; a corrupted ACK or NAK from the receiver is
+     treated exactly the same as a NAK.
+
+   - If the file sender does not receive  an  ACK  within  the  prescribed
+Introduction                                                             Page 8
+
+
+  Sender                 Receiver
+
+  Send-Init ------------->         Sender and Receiver exchange greetings
+       <-------------------- ACK
+
+  File-Header ----------->         Sender sends first file name to Receiver
+       <-------------------- ACK   Receiver acknowledges
+
+  File-Data ------------->         Sender sends first file data packet
+       <-------------------- ACK
+
+  File-Data ------------->         Sender sends second file data packet
+       <-------------------- ACK
+
+  File-Data --xx~~~p'''-->         Third data packet is corrupted by noise
+       <-------------------- NAK    and Receiver negatively acknowledges it
+
+  File-Data ------------->         Sender retransmits third packet
+       <-------------------- ACK
+
+  File-Data packets are sent and acknowledged until the whole file is sent
+
+  End-Of-File ----------->         Sender indicates first file is complete
+       <-------------------- ACK
+
+  File-Header ----------->         Name second of file 
+       <-------------------- ACK
+
+  File-Data ------------->         First data packet for second file
+       <-------------------- ACK
+
+  File-Data packets are sent and ack'd until the whole file is sent
+
+  End-Of-File ----------->         Sender indicates second file is complete
+       <-------------------- ACK
+
+  End-Of-Transaction ---->         Sender indicates no more files to come
+       <-------------------  ACK
+
+                      Figure 1-2:   Kermit File Transfer
+
+     timeout  interval,  it  retransmits  the  same  packet.   If the file
+     receiver does not receive an expected packet within the  timeout  in-
+     terval, it sends a NAK for the expected packet.
+
+Several  encoding, compression, and block check options are provided.  Very few
+assumptions are made about the capabilities of either computer, so  the  Kermit
+protocol  can  work  between  many different kinds of systems.  The protocol is
+described in detail in the Kermit Protocol Manual, and in the BYTE Magazine ar-
+ticle on Kermit, published in the June and July 1984 issues.
+How to Use Kermit                                                        Page 9
+
+
+2. How to Use Kermit
+
+Kermit embodies a set of rules for transferring files reliably between two com-
+puters.  In general, one computer is a large system (a  host,  for  instance  a
+timesharing  system  with many terminals), and the other is a personal computer
+(PC).  The host believes that the PC is an ordinary terminal.  In order for the
+Kermit  protocol  to occur, a Kermit program must be running on each end of the
+communication line -- one on the host, one on the PC.
+
+Your task is just to get the two Kermits started.  You have  to  use  a  single
+keyboard and screen to talk to two different computers, two different programs.
+Let's talk about a common case: you are sitting at a  personal  computer  (PC),
+which  has a serial communication port.  The serial port is connected to a host
+computer using, say, a dialup modem.
+
+Normally, when you use your PC, you are "talking" directly to it; your commands
+are  interpreted  directly  by  the  PC's operating system (CP/M, MS-DOS, UNIX,
+whatever), or by some program that runs on the PC (an editor, a text formatter,
+space  invaders...).    The  version of Kermit on your PC is a program like any
+other, but it has a special ability to either interpret your commands directly,
+like  other  programs,  or  to  pass  everything you type through to the other,
+remote computer.  When you tell Kermit to CONNECT, it sends every character you
+type  out the serial port, and it puts every character that comes in the serial
+port onto the screen.  This is called virtual terminal service -- one  computer
+acts  "virtually"  as  though  it  were  a  terminal  on  another.  You are now
+"talking" to the remote computer, and the PC is "vitually" ignoring you.
+
+Kermit, like most interactive programs, has a prompt.  The prompt is  a  string
+of  characters it types on the left margin to indicate that it is ready for you
+to type a command.  Kermit's prompt is normally "Kermit-xx>".    The  xx  iden-
+tifies  the  implementation  of  Kermit;  the Kermit that runs on the DEC-20 is
+called "Kermit-20" and its prompt is "Kermit-20>"; the Kermit that runs on  Z80
+and   8080-based  microcomputers  is  called  "Kermit-80"  and  its  prompt  is
+"Kermit-80>"; the Kermit that runs under CP/M-86 is "Kermit-86, and  so  forth.
+If you become confused about which Kermit you are talking to, the prompt should
+provide a clue.  In addition, most Kermits print an informative message like 
+
+  [Connecting to remote host, type CTRL-]C to return]
+
+when you CONNECT, and type another message like 
+
+  [Connection closed, back at PC]
+
+when you return.
+
+Having "connected" to the host, there must be a way for you to  "get  back"  to
+the  PC.    This  is accomplished by an escape sequence.  As Kermit passes your
+characters through to the host, it checks each one to see  if  it's  a  special
+predefined  escape character.  When the PC sees this character, it stops ignor-
+ing you -- you are once again "talking" to the PC, not the host.    The  escape
+character  is  normally  chosen  to be one that you will not need to type while
+talking to the host, and one that is hard to type by accident -- it's usually a
+control  character, such as Control-], which is entered by holding down the key
+marked CTRL or CONTROL and typing the indicated  character  (in  this  case,  a
+right bracket "]").  The CTRL key works just like a SHIFT key.  Control charac-
+ters are written either as CTRL-A or ^A, where A is the character to  be  typed
+How to Use Kermit                                                       Page 10
+
+
+while holding down CTRL.
+
+
+2.1. Transferring a File
+
+>From  system command level on your PC, first run the Kermit program.  Then tell
+Kermit to CONNECT you to the host.  Now you're talking to the remote host -- at
+this point you must log in, and then run Kermit on the host.
+
+Now  you  have a Kermit on each end of the wire.  The next step is to tell each
+Kermit what to do.  Suppose you want to transfer a file from the  host  to  the
+PC;  you  would first tell the host Kermit to SEND the file, then "escape" back
+to the PC Kermit and tell it to RECEIVE the file.  The transfer begins  --  you
+can  sit  back  and  watch, or go make yourself a sandwich.  The PC Kermit will
+produce a running display on your screen as the  transfer  proceeds,  and  will
+notify you when it is complete.
+
+The  desired  file  is  now on your PC's disk.  The Kermit protocol has ensured
+that the file arrived correctly and completely.  Now you must  clean  up  after
+yourself:  CONNECT back to the host, exit from Kermit on the host, log out from
+the host, "escape" back to PC Kermit and exit from it.  Now you can do whatever
+you  had  planned  for  your file -- edit it, print it on your PC printer, etc.
+Transferring a file in the other direction works the same  way,  but  with  the
+SEND and RECEIVE commands exchanged.
+
+The  Kermit  protocol, and most Kermit programs, allow you to send a file reli-
+ably from the host to the PC, from the PC to the host, from host to host, or PC
+to  PC,  usually  without  any  special regard for the nature of the particular
+machines involved.  Most implementations also allow files to be sent in groups,
+with a single command, such as "send *.*" The scenario for each of these is the
+same as above -- only the details of how to  establish  the  actual  connection
+differ.
+
+Kermit  works  best  with  "printable" files -- files composed only of letters,
+digits, punctuation marks, carriage returns, tabs, and so forth -- since  these
+can  be  represented  on  almost  any kind of computer.  Kermit is also able to
+transfer "binary" files -- files such as executable programs -- composed of ar-
+bitrary bit patterns, but binary files normally are meaningful only to the kind
+of computer on which they are generated.  Nevertheless, Kermit can usually move
+such  files from system A to system B (where they are not much use) and back to
+system A in their original condition, although in most cases  special  measures
+must be taken to accomplish this.
+
+Let's  look  at  some  more concrete examples.  First you need to know what the
+basic Kermit commands are.
+
+
+2.2. Basic Kermit Commands
+
+These are generic descriptions of the most basic  Kermit  commands.    Detailed
+descriptions  will come later.  In these descriptions, local refers to the sys-
+tem that you are using directly, remote refers to the system to which  you  are
+CONNECTed via Kermit.  Commands may take one or more operands on the same line,
+and are terminated by a carriage return.
+
+SEND filespec
+How to Use Kermit                                                       Page 11
+
+
+    Send  the  file or file group specified by filespec from this Kermit to the
+    other.  The name of each file is passed to the other Kermit  in  a  special
+    control packet, so it can be stored there with the same name.  A file group
+    is usually specified by including "wildcard" characters  like  "*"  in  the
+    file specification.  Examples:
+
+      send foo.txt
+      send *.for
+
+    Some  implementations  of  Kermit  may not support transfer of file groups;
+    these versions would require a separate SEND command for each  file  to  be
+    transferred.
+
+RECEIVE
+    Receive a file or file group from the other Kermit.  If  an  incoming  file
+    name  is  not  legal, then attempt to transform it to a similar legal name.
+    Options are be provided for handling filename collisions.
+
+CONNECT
+    Make  a  "virtual  terminal"  connection to the remote system.  To "escape"
+    from a virtual terminal connection, type Kermit's  escape character  (e.g.
+    CTRL-],  control-rightbracket),  followed  by  the  letter  "C"  for "Close
+    Connection".
+
+SET Establish various nonstandard settings, such as CONNECT  escape  character,
+    file  characteristics,  communication  line  number, speed, parity, or flow
+    control.  All of these are explained later.
+
+SHOW
+    Display the values of SET options.
+
+HELP
+    Type a summary of Kermit commands and what they do.
+
+EXIT
+    Exit from Kermit back to the host operating system.
+
+?   Typed almost anywhere within a Kermit command:  List the commands, options,
+    or operands that are possible at this point.  This command may or  may  not
+    require a carriage return, depending on the host operating system.
+
+
+2.3. Real Examples
+
+Kermit  can  be  used  in several ways: from a PC that is connected to a larger
+host computer; from a host computer which is connected to  another  host;  from
+one PC to another.
+How to Use Kermit                                                       Page 12
+
+
+2.3.1. PC to Host
+
+In this example, the user is sitting at an IBM Personal Computer (PC), which is
+connected through its serial port to a DECSYSTEM-20 host computer.  The IBM  PC
+is  local, the DEC-20 is remote.  This example will also apply almost literally
+to any other microcomputer implementation of Kermit.
+
+You have started up your PC and have the Kermit program on your disk.  Begin by
+running Kermit on the PC.  Use Kermit's CONNECT command to become a terminal to
+the DEC-20.  In fact, the PC emulates the popular Heath-19 (or VT52)  terminal,
+so  it  is  desirable  to  tell  the DEC-20 that your terminal is one of these.
+Login on the DEC-20 and run Kermit there.  Here is an example of this procedure
+with  commands  you type underlined; the material lined up on the right is com-
+mentary, not system typeout or part of a command:
+
+  A>Kermit                 Run Kermit on the PC.
+  Kermit-MS V2.27
+
+  Kermit-MS>               This is the Kermit prompt for the PC.
+  Kermit-MS>connect        Connect to the DEC-20.
+  [Connecting to host, type Control-] to return to PC]
+
+                           You are now connected to the DEC-20.
+  CU20B                    The system prints its herald.
+  @terminal heath-19       Set your terminal type (optional.)
+  @login my-id password    Login using normal login method.
+
+  (Various greeting or notice messages are displayed.)
+
+  @Kermit                  Run Kermit on the DEC-20.
+  TOPS-20 Kermit version 4.2(251)
+
+  Kermit-20>               This is Kermit-20's prompt.
+
+You are now ready to transfer files between the two machines.
+
+The following example illustrates how to send files from the DEC-20 to the  PC.
+Note the use of the "*" wildcard character to denote a file group.
+
+  Kermit-20>send *.for     Send all my FORTRAN files.
+  ^]c                      Now return back to the PC by
+                           typing the escape sequence, in this case
+                           ^]C (Control-] followed by "C")
+  [Back at PC.]
+  Kermit-MS>receive        Tell the PC that files are coming.
+
+If  you  take  more than about 5 seconds to get back to Kermit-MS and issue the
+RECEIVE command, the first packets from Kermit-20 may  arrive  prematurely  and
+appear  on  your  screen,  but  no harm will be done because the packet will be
+retransmitted by the DEC-20 until the PC acknowledges it.
+
+Once the connection is established, the PC will show you what is  happening  --
+it  first  clears the screen and waits for incoming packets; as packets arrive,
+the current file name and packet number will be continuously displayed  on  the
+screen.   When the PC's "Kermit-MS>" prompt returns to your screen (with an ac-
+companying beep to catch your attention) the transfer  is  done.    Notice  the
+How to Use Kermit                                                       Page 13
+
+
+screen display; the status should be indicated as "complete".  If not, an error
+has occurred and an appropriate message should be displayed to tell you why.
+
+After you're finished transferring files, you must CONNECT back to  the  DEC-20
+host,  EXIT  from  Kermit there, logout, and "escape back" to the PC as you did
+previously:
+
+  Kermit-MS>connect        Get back to the DEC-20.
+  [Connecting to host. Type CTRL-]C to return to PC.]
+  Kermit-20>               Here we are.
+  Kermit-20>exit           Get out of Kermit-20.
+  @logout                  Logout from the DEC-20.
+
+  Logged out Job 55, User MY-ID, Account MY-ACCOUNT, TTY 146,
+    at 24-Oct-84 15:18:56,  Used 0:00:17 in 0:21:55
+
+  ^]c                      Now "escape" back to the PC,
+  [Back at PC.]
+  Kermit-MS>exit           and exit from the PC's Kermit.
+
+The files you transferred should now be on your PC disk.
+
+To send files from the PC to the DEC-20, follow a  similar  procedure.    First
+follow the instructions in the previous section to log in to the DEC-20 through
+the PC.  Then in response to the host Kermit's  "Kermit-20>"  prompt  you  type
+RECEIVE  rather than SEND.  Now escape back to the PC and use the  SEND command
+to send the local PC files to DEC-20 host.  The PC will show you  the  progress
+of the transmission on its screen.
+
+When  the  "Kermit-MS>"  prompt indicates that the transmission is complete you
+should follow the procedure shown above to logout from the DEC-20 host,  except
+that you may first wish to confirm that the files have been stored correctly in
+your directory on the DEC-20.
+
+
+2.3.2. Host to Host
+
+This section describes use of Kermit between two host computers.  A  "host"  is
+considered  to  be  a  large or multi-user system, whose distinguishing charac-
+teristic is that it has multiple terminals.  Use  of  Kermit  for  host-to-host
+file  transfers differs from the PC-to-host case in that the line your terminal
+is connected to is not the same as the line over which the data is being trans-
+ferred,  and  that some special SET commands may have to be issued to allow one
+Kermit to conform to unusual requirements of the other host.
+
+In this example, you are already  logged  in  to  a  DEC-20,  and  you  use  an
+autodialer to connect to an IBM 370-series system running VM/CMS through DEC-20
+TTY port 12.  The autodialer, in this example, is invoked from  program  called
+DIAL  (idealized  here,  for  simplicity), to which you merely supply the phone
+number.
+
+  @dial 765-4321/baud:1200
+  Dialing your number, please hold...
+  Your party waiting is on TTY12:
+  @
+How to Use Kermit                                                       Page 14
+
+
+Other methods exist for connecting two hosts with a  serial  line.    Dedicated
+hookups can be made simply by running an EIA cable between TTY ports on the two
+        1
+systems.   For  connecting to remote systems when no autodialer is available, a
+                                                            2
+manual  dialup connection  is  also  possible,  but  tricky.   If  you  have  a
+microcomputer  that  supports  Kermit, you may find it easier to first transfer
+from host A to the micro, then from the micro to host B.
+
+The following procedure would be the same in any case,  once  a  connection  is
+made.
+
+  @
+  @Kermit                  Run Kermit on the DEC-20.
+  Kermit-20>set ibm        Turn on handshaking, parity, local echo.
+  Kermit-20>set line (to tty) 12 ! Indicate the line we'll use.
+  Kermit-20>connect        And connect to it.
+  [Kermit-20: Connecting over TTY12:, type <CTRL-Y>C to return.]
+
+  VM/370 ONLINE            The IBM system prints its herald.
+
+  .login myuserid mypassword                        Login to IBM system.
+
+  LOGON AT 20:49:21 EST THURSDAY 01/20/84
+  CUVMB SP/CMS PUT 8210 01/19/84
+  .
+  .Kermit
+  Kermit-CMS>.send profile exec ! Send a file.
+  ^\c                      Kermit-20's escape sequence typed here.
+  [Kermit-20: Connection Closed. Back at DEC-20.]
+  Kermit-20>receive        Tell Kermit-20 to RECEIVE.
+
+The transfer takes place now; Kermit-20 will print the names of incoming files,
+followed by dots or percents to indicate the packet traffic (a dot for every  5
+packets   successfully   transferred,   a   percent   for   every   timeout  or
+retransmission).  It is complete when when you see "[OK]", a beep  is  sounded,
+and  the  Kermit-20  prompt next appears.  At that point we connect back to the
+remote IBM system, exit from the remote Kermit and log out.
+
+  .
+  PROFILE.EXEC.1 ..%%.[OK]
+
+_______________
+
+  1
+   Such  a  connection,  by  the way, usually requires the receive and transmit
+leads (pins 2 and 3) be swapped in one of the RS-232 connectors; this is called
+a "null modem" cable.  Such cables may also require certain other modem signals
+such as DTR held high.
+
+  2
+   Here's one way: log in on port x on your system, and assign another port, y,
+to  which  you  have  physical  access.    Unplug the terminal from port y, and
+connect the terminal to a dialup modem.  Dial up the remote computer and log in
+on  it.    Now, using a null modem cable, connect the modem directly to port y.
+Go back to your terminal on port x, run Kermit from it, and CONNECT to port y.
+How to Use Kermit                                                       Page 15
+
+
+  Kermit-20>connect        Get back to IBM and clean up.
+  [Kermit-20: Connecting over TTY12:, type <CTRL-Y>C to return.]
+
+  Kermit-CMS>.
+  Kermit-CMS>.exit
+  R;
+  .
+  SP/CMS
+  .logout
+
+  CONNECT= 00:03:01 VIRTCPU= 000:00.12 TOTCPU= 000:00.60
+  LOGOFF AT 20:52:24 EST THURSDAY 01/20/84
+
+  ^\c                      Type Kermit-20's escape sequence
+  [Kermit-20: Connection Closed. Back at DEC-20.]
+  Kermit-20>exit           All done with Kermit.
+
+That's the whole procedure.  The file is in your DEC-20  directory,  completely
+readable,  as  PROFILE.EXEC  --  note  that  Kermit-CMS translated from the IBM
+EBCDIC character encoding into standard ASCII, and converted the space  between
+the file name and file type to a dot.
+
+To  send  a  file  from the local host to the remote host, we would merely have
+reversed the SEND and RECEIVE commands in the example above.
+
+
+2.3.3. Micro to Micro
+
+Kermit also works between personal  computers  (microcomputers,  workstations).
+The  difference here is that commands are typed on two keyboards, rather than a
+single one.  This is because a personal computer normally only accepts commands
+from  its  own keyboard.  If one PC Kermit CONNECTs to another, there will nor-
+mally be no program on the other side to listen.
+
+Making the physical connection between two micros is tricky.  If the two  units
+                        3
+are  in  close proximity , you can connect their serial ports with a null modem
+cable.  However, different micros have different requirements -- some may  want
+a  male connector on their serial port, others a female; many require that cer-
+                                                 4
+tain  of  the  RS-232 signals be held high or low .  In any case, you must also
+make sure the port speeds are the same at both ends.
+
+
+_______________
+
+  3
+   Why  would  you  want  to  run  Kermit between two PCs that are next to each
+other?  One good reason is that if they  are  different  models,  their  floppy
+disks are probably incompatible.
+
+  4
+   By wiring certain of the pins in the connector together; for instance,  some
+micros  want  DTR (Data Terminal Ready, pin 20) to be held high, and this might
+be accomplished by connecting it to CTS (Clear  To  Send,  pin  5).    See  EIA
+Standard RS-232-C, and the appropriate manuals for your micro.
+How to Use Kermit                                                       Page 16
+
+
+Connections at longer distances can be made via dialup, providing the  required
+modems  are available (one side needs autoanswer capability), or using any kind
+of dedicated or switched circuit that may be available -- PBX, port  contention
+unit, almost anything you can plug an EIA connector into.
+
+In  this  example, a DEC VT180 "Robin" CP/M microcomputer is connected to a In-
+tertec "SuperBrain" CP/M micro, using a female-to-male null modem cable.   Get-
+ting the cable right is the hard part.  The connection can be tested by running
+Kermit and issuing the CONNECT command on both ends:  typein  from  each  micro
+should appear on the screen of the other.
+
+Suppose  you  want  to  send  a  file FOO.HEX from the Robin to the SuperBrain.
+Proceed as follows:
+
+   1. Run Kermit on the SuperBrain, and give the RECEIVE command:
+
+        A>Kermit
+        Intertec SuperBrain Kermit-80 - V4.05
+        Kermit-80>receive
+
+   2. Run Kermit on the Robin, and give the SEND command for FOO.HEX.
+
+        A>Kermit
+        DEC VT18X Kermit-80 - V4.05
+        Kermit-80>send foo.hex
+
+      Watch the packets fly.  When you get the next Kermit-80> prompt, the
+      transfer is done, and you can EXIT from both Kermits.
+
+The key point is to start the receiving end first -- some microcomputer Kermits
+do not include a timeout facility, and if the receiver is not ready to  receive
+when the sender first sends, there will be a protocol deadlock.
+
+
+2.4. Another Way -- The Kermit Server
+
+So  far, we have been describing the bare-bones version of the Kermit protocol.
+An optional extension to the protocol includes the concept of a Kermit  server.
+A  Kermit  server  is a Kermit program that does not interact directly with the
+user, but only with another Kermit program.  You do not type commands to a Ker-
+mit server, you merely start it at one end of the connection, and then type all
+further commands at the other end.
+
+Not all implementations of Kermit can be servers, and not all know how to  talk
+to  servers -- but most of the major ones can and do.  The server is run on the
+remote computer, which would normally be a large host, such as the DEC-20.  You
+must  still  connect to the remote host to log in and start the server, but you
+no longer have to tell one side to SEND and the other to RECEIVE, nor must  you
+connect  back  to  the  remote  side  to clean up and log out when you're done.
+Using the server, you can do as many send and receive operations  as  you  like
+without  ever  having  to  connect  back to the remote host.  Some servers also
+provide additional services, such as directory listings, file deletion, or disk
+usage inquiries.
+
+A  Kermit  server  is  just a Kermit program running in a special say.  It acts
+much like ordinary Kermit does after you give it a RECEIVE command -- it  waits
+How to Use Kermit                                                       Page 17
+
+
+for  a message from the other Kermit, but in this case the message is a command
+saying what to do, normally to send or to receive a file  or  group  of  files.
+After escaping back to the local system, you can give as many SEND and GET com-
+mands as you like, and when you're finished transferring files,  you  can  give
+the  BYE  command, which sends a message to the remote Kermit server to log it-
+self out.  You don't have to connect back to the  remote  host  and  clean  up.
+However,  if  you want to connect back to the host, you can use the FINISH com-
+mand instead of BYE, to shut down the Kermit server on the remote host  without
+logging it off, allowing you to CONNECT back to your job there.
+
+Here's  an  example  of  the  use of a Kermit server.  The user is sitting at a
+CP/M-80 microcomputer and a DEC-20 is the remote host.
+
+  A>Kermit                 Run Kermit on the micro.
+  Kermit-80 V4.05
+
+  Kermit-80>               This is the micro Kermit's prompt.
+  Kermit-80>connect        Connect to the DEC-20.
+  [Connecting to remote host.  Type CTRL-]C to return to micro.]
+
+  CU20E                    The DEC-20 prints its herald.
+  @login my-id password    Log in normally.
+
+(The DEC-20 prints various login messages here.)
+
+  @Kermit                  Run Kermit-20 normally
+  Kermit-20>server         Tell it to be a server.
+
+  Kermit Server running on DEC-20 host.  Please type your escape
+  sequence to return to your local machine.  Shut down the server by
+  typing the Kermit BYE command on your local machine.
+
+  ^]c                      Now escape back to the micro.
+  [Connection closed, back at micro.]
+  Kermit-80>get *.pas      Get all my DEC-20 Pascal programs.
+  Kermit-80>send foo.*     Send all the "foo" files from my micro.
+  Kermit-80>exit           Exit from Kermit back to CP/M.
+  A>
+
+(Here you can do some work on the micro, edit files, whatever you like.)
+
+  A>Kermit                 Run Kermit-80 some more.
+  Kermit-80>send file.pas  Send another file.
+  Kermit-80>bye            That's all.  Shut down the Kermit server.
+  A>                       Back at CP/M automatically.
+
+This is much simpler.  Note that once you've started the Kermit Server  on  the
+remote end, you can run Kermit as often as you like on the micro without having
+to go back and forth any more; just make sure to  shut  the  server  down  when
+you're done by typing the BYE command.
+
+Here are the basic commands available for talking to servers.
+
+SEND filespec   Sends  a  file  or file group from the local host to the remote
+                host in the normal way.
+How to Use Kermit                                                       Page 18
+
+
+GET filespec    Ask the remote host to send a file or file group.  Example:  
+
+                  get *.c
+
+                This command is exactly equivalent to typing "send *.c" at  the
+                remote host followed by "receive" on the local host.  Note that
+                the local Kermit does not attempt to validate the filespec.  If
+                the  server  cannot  parse  it,  or cannot access the specified
+                file(s), it will send back an appropriate error message.
+
+REMOTE command [argument]
+                Ask  the  server to perform the specified command, and send the
+                results to your screen.  Not all servers are  capable  of  per-
+                forming  REMOTE  commands; those that can most commonly provide
+                REMOTE DIRECTORY, REMOTE DELETE, REMOTE SPACE, and similar file
+                management services.
+
+BYE             Shut  down  the  remote server and exit from Kermit.  This will
+                cause the job at the remote end to log itself out.    You  need
+                not  connect  back and clean up unless you get an error message
+                in response to this command (for instance, if  your  logged-out
+                disk quota is exceeded on the remote host).
+
+FINISH          Shut  down  the  server  without  having it log itself out, and
+                don't exit from Kermit.  A subsequent CONNECT command will  put
+                you  back  at  your  job  on the remote host, at system command
+                level.
+
+Server operation is not limited to mainframes.  Some PC Kermit  implementations
+can  also  act as servers, notably MS-DOS and Unix.  For instance, an IBM PC at
+the office with an autoanswer modem can be left in server mode at  the  end  of
+the day, and then dialed up from home in the evening for file transfer.
+When Things Go Wrong                                                    Page 19
+
+
+3. When Things Go Wrong
+
+Connecting  two  computers  can  be  a  tricky business, and many things can go
+wrong.  Before you can transfer files at all, you must first establish terminal
+communication.    But  successful terminal connection does not necessarily mean
+that file transfer will also work.  And even when file  transfer  seems  to  be
+working, things can happen to ruin it.
+
+
+3.1. Basic Connection Problems
+
+If  you have a version of Kermit on your microcomputer, but the CONNECT command
+doesn't seem to work at all, please:
+
+   - Make sure all the required physical connections have  been  made  and
+     have not wiggled loose.  If you are using a modem, make sure the car-
+     rier light is on.
+
+   - If you have more than one connector on your micro, make sure you  are
+     using the right one.
+
+   - Make  sure  that the port is set to the right communication speed, or
+     baud rate.  Some versions of Kermit have a built-in SET BAUD  or  SET
+     SPEED command, others require that you set the baud rate using a sys-
+     tem command or setup mode before you start the Kermit program.   Some
+     versions  of  Kermit  have SHOW or STATUS commands that will tell you
+     what the current baud rate is.
+
+   - Make sure that the other communication line parameters, like  parity,
+     bits per character, handshake, and flow control are set correctly.
+
+You  may  have to consult the appropriate manuals for the systems and equipment
+in question.
+
+If all settings and connections appear to be correct, and  communication  still
+does  not  take  place,  the fault may be in your modem.  Internal modems (i.e.
+those that plug in to a slot inside the microcomputer chassis) are  not  recom-
+mended  for  use  with Kermit unless they totally mimic the asynchronous serial
+port hardware they purport to replace.  Many microcomputer Kermit programs  are
+written  to  control the communication hardware explicitly; internal modems can
+interfere with that control.
+
+Even external modems can cause trouble -- the  "smarter"  they  are,  the  more
+potential  danger of disagreement between the modem and the microcomputer about
+settings of baud rate, character framing, echo, and so forth.  Make  sure  your
+modem is set up correctly.
+
+
+3.2. Terminal Connection Works But The Transfer Won't Start
+
+Once you've made a terminal connection to the remote system, you will generally
+also be able to transfer files.  But not always.  If Kermit's  terminal  emula-
+tion  seems  to work correctly, but a file transfer will not start at all, then
+something in the communication path is probably  interfering  with  the  packet
+data.
+When Things Go Wrong                                                    Page 20
+
+
+Kermit  normally  expects  to  have  full  control  of  the communication port.
+However, it is sometimes the case that some communications  equipment  controls
+the  line  between the two computers on either end.  In addition to modems, ex-
+amples include port contention or selection  units,  multiplexers,  local  net-
+works,  and  wide-area  networks.  Such equipment can interfere with the Kermit
+file transfer protocol in various ways:
+
+PARITY:
+    A  device  can  impose parity upon the communication line.  This means that
+    the 8th bit of each character is used by the equipment to check for correct
+    transmission.  Use of parity will:
+
+       - Cause  packet  checksums  to appear incorrect to the receiver and
+         foil any attempt at file transfer.  In most cases, not  even  the
+         first packet will get through.
+
+       - Prevent the use of the 8th bit for binary file data.
+
+    If terminal connection works but file transfer does not, parity is the most
+    likely culprit.  To overcome this impediment,  you  should  find  out  what
+    parity  is  being  used, and inform the Kermits on each side (using the SET
+    PARITY command) so that they can:
+
+       - Compose and interpret the checksums correctly.
+
+       - Employ a special encoding to allow 8-bit data to pass through the
+         7-bit communication channel.
+
+    Many  packet-switched  networks,  such as GTE TELENET, require parity to be
+    set.
+
+ECHOING:
+    Some  communication  processors,  typically  front  ends, echo their input.
+    When this happens, every Kermit packet that is sent to it will bounce right
+    back, causing no end of confusion.  Some Kermit programs have been designed
+    to ignore echoed packets, but  most  have  not.    If  you  encounter  this
+    problem, there are several possible solutions:
+
+       - Disable  the front end echoing by typing some special command, if
+         such a command is provided by the system.
+
+       - Some front ends respond to certain escape or control sequences as
+         commands  to  turn off echoing, either from that point onward, or
+         else on a per-line basis.  In this case, the appropriate  control
+         sequence  can  be inserted between packets by Kermit programs in-
+         structed to do so, for instance using the SET PAD command.
+
+       - If the echoing cannot be disabled, then the two  Kermit  programs
+         should be instructed to use differing packet start markers, using
+         the SET START-OF-PACKET command -- for instance, one Kermit  uses
+         Control-A  as usual, and the other uses Control-B.  This can only
+         be done if both Kermits have this SET command.
+When Things Go Wrong                                                    Page 21
+
+
+3.3. Special Characters
+
+There is one problem that can prevent a file transfer from starting at all,  or
+may  crop  up after the file transfer is underway.  For instance, during a file
+transfer operation you might find your smart modem  suddenly  hanging  up  your
+current  connection  and  placing  a  call to Tasmania.  Or you might find that
+packets containing a certain character like "@" cannot be transmitted  success-
+fully.
+
+This  is the problem of "special characters".  Some device in the communication
+path -- a front end, a port switcher, a multiplexer, a "smart" modem --  inter-
+prets  certain characters in the data stream as commands rather than as data to
+be passed them along to the other side.  Usually such equipment interferes only
+with  the  transmission  of  ASCII control characters; so long as Control-A and
+Carriage Return -- Kermit's normal packet start and end delimiters --  are  not
+molested, then Kermit can operate.  However, equipment may exist which swallows
+even printable characters.  Since  Kermit  assumes  that  ALL  printable  ASCII
+characters  (ASCII  40  through  176,  octal) can be transmitted without inter-
+ference or modification, such equipment will prevent Kermit file  transfer  un-
+less its printable-character-swallowing features can be disabled.
+
+
+3.4. 3270 Protocol Emulators
+
+Connections  to  IBM  mainframes  through  3270  protocol emulation hardware or
+software cannot be used for file transfer with Kermit or any  similar  program.
+Kermit  requires  an  asynchronous stream ASCII telecommunications environment.
+3270-style terminals operate in a block-mode bisynchronous EBCDIC  environment.
+Protocol  converters change the EBCDIC screen data blocks into streams of ASCII
+characters with imbedded terminal control sequences.  Packetized file  transfer
+is  impossible  under  these circumstances because the data is modified and the
+packet block check invalidated.
+
+The only exception  to  this  rule  occurs  on  IBM  mainframes  with  protocol
+emulators that can be put into transparent mode by a command from the host, and
+whose Kermit programs have been coded explicitly to do this.  For instance,  as
+of  this writing there are IBM mainframe Kermit programs that allow file trans-
+fer through the Series/1 or 7171 front ends.
+
+
+3.5. The Transfer Starts But Then Gets Stuck
+
+Once a Kermit file transfer has begun, there are certain conditions under which
+it can become stuck.  Since many hosts are capable of generating timeout inter-
+rupts when input doesn't appear within a reasonable interval, they  can  resend
+unacknowledged  packets  or request that missing packets be retransmitted.  But
+since not all Kermit programs are capable of timing out, a means for manual in-
+tervention is provided in the local Kermit -- you can type a carriage return on
+the keyboard of most micros to wake up and continue the transfer.
+
+The following sections discuss various reasons why a transfer in progress could
+become  stuck.   Before examining these, first make sure that you really have a
+Kermit on the other end of the line, and you have issued the  appropriate  com-
+mand:  SEND,  RECEIVE, or SERVER.  If the remote side is not a server, remember
+that you must connect back between each  transfer  and  issue  a  new  SEND  or
+RECEIVE command.
+When Things Go Wrong                                                    Page 22
+
+
+3.5.1. The Micro is Hung
+
+The  micro  itself  sometimes becomes hung for reasons beyond Kermit's control,
+such as power fluctuations.  If the micro's screen has not been updated  for  a
+long  time,  then  the  micro  may  be hung.  Try these steps (in the following
+order):
+
+   - Press RETURN to wake the micro up.  This should clear up any protocol
+     deadlock.  Several RETURNs might be necessary.
+
+   - If  the  problem  was not a deadlock, restart Kermit, CONNECT back to
+     the host, get back to your job or login again, and restart the trans-
+     fer.  You may have to stop and restart Kermit on the remote host.
+
+
+3.5.2. The Connection is Broken
+
+Check  the  connection.   Make sure no connectors have wiggled loose from their
+sockets.  If you're using a modem, make sure you still have a  carrier  signal.
+Reestablish your connection if you have to.
+
+If  upon  reconnection you get no response, maybe the remote host or the remote
+Kermit program  crashed.  Get back to command level on  the  local  Kermit  (on
+microcomputer  implementations, you may be able to do this by typing about five
+RETURNs, or one or more Control-C's).  Issue the CONNECT command  so  that  you
+can  see what happened.  If the remote system has crashed then you will have to
+wait for it to come back, and restart whatever file that was being  transferred
+at the time.
+
+
+3.5.3. The Disk is Full
+
+If  your  local  floppy  disk  or  remote directory fills up, the Kermit on the
+machine where this occurs will inform you and then terminate the transfer.  You
+can  continue the transfer by repeating the whole procedure either with a fresh
+floppy or after cleaning up your directory.  Some Kermit programs allow you  to
+continue  the  sequence  where it left off, for instance on the DEC-20 by using
+the  SEND command and including the  name  of  the  file  that  failed  in  the
+"(INITIAL)" field:  
+
+  Kermit-20>send *.for (initial) foo.for
+
+See  the  Kermit-20  command  summary for further information about the initial
+filespec.  Some Kermits also have a feature that  allows  you  to  keep  incom-
+pletely received files; this would allow you go back to the sending system, ex-
+tract the unsent portion of the file, and send it,  and  then  append  the  two
+received  portions  together  using  an editor or other system utility.  Kermit
+does not provide the ability to switch disks during a file transfer.
+When Things Go Wrong                                                    Page 23
+
+
+3.5.4. Message Interference
+
+You may find that file transfers fail occasionally and upredictably.   One  ex-
+planation could be that terminal messages are being mixed with your file packet
+data.  These could include system broadcast messages  (like  "System  is  going
+down  in  30 minutes"), messages from other users ("Hi Fred, what's that Kermit
+program you're always running?"), notifications that you have requested  ("It's
+7:30,  go  home!" or "You have mail from...").  Most Kermit programs attempt to
+disable intrusive messages automatically, but not all can be guaranteed  to  do
+so.    It  may be necessary for you to "turn off" such messages before starting
+Kermit.
+
+
+3.5.5. Transmission Delays
+
+Packet transmission can be delayed by  various  agents:  congested  timesharing
+systems  or  networks,  earth satellites, etc.  When transmission delay exceeds
+the per-packet timeout interval for a significant length of time, the  transfer
+could fail.  Most Kermit programs provide commands that allow you to adjust the
+timeout interval or the packet transmission retry threshhold in order to accom-
+modate to severe transmission delays.
+
+
+3.5.6. Noise Corruption
+
+If your connection is extremely noisy, packets will become corrupted -- and re-
+quire  retransmission  --  more  often.    The  probability   that   successive
+retransmissions  will fail because of corruption rises with the noise level un-
+til it exceeds the retry threshhold, at which point the  file  transfer  fails.
+There  are  several  recourses.   First, try to establish a new connection.  If
+that is impractical, then use SET  commands  (when  available)  to  reduce  the
+packet  length  and  increase the retry threshhold.  Shorter packets reduce the
+probability that a particular packet will be corrupted and  the  retransmission
+overhead  when  corruption  does  occur,  but  they  also  increase the overall
+protocol overhead.  In a noisy environment, you should also  request  a  higher
+level of error checking.
+
+
+3.5.7. Host Errors
+
+Various  error  conditions  can occur on the remote host that could effect file
+transmission.  Whenever any such error occurs, the remote Kermit  normally  at-
+tempts  to  send an informative error message to the local one, and then breaks
+transmission, putting you back at Kermit command level on the local system.
+
+
+3.6. File is Garbage
+
+There are certain conditions under which Kermit can believe  it  transferred  a
+file  correctly when in fact, it did not.  The most likely cause has to do with
+the tricky business of file attributes, such as text vs binary, 7-bit vs 8-bit,
+blocked  vs  stream,  and so forth.  Each system has its own peculiarities, and
+each Kermit has special commands to allow you to specify how a file  should  be
+sent  or stored.  However, these difficulties usually crop up only when sending
+binary files.  Textual files should normally present no problem between any two
+Kermit programs.
+When Things Go Wrong                                                    Page 24
+
+
+3.7. Junk after End of File
+
+When  transferring  a  text file from a microcomputer to a mainframe, sometimes
+you will find extraneous characters at the end of the file after it arrives  on
+the target system.  This is because many microcomputers don't have a consistent
+way of indicating the end of a file.  CP/M is a good example.  The minimum unit
+of  storage  on  a  CP/M floppy is a "block" of 128 bytes.  Binary files always
+consist of a whole number of blocks, but a text file can end anywhere within  a
+block.   Since CP/M does not record a file's byte count, it uses the convention
+of marking the end with an imbedded Control-Z character.  If your microcomputer
+version  of  Kermit  is not looking for this character, it will send the entire
+last block, which may contain arbitrary junk after the "real" end of the  file.
+To  circumvent  this problem, most microcomputer Kermits have commands like SET
+FILE ASCII or SET FILE TEXT to instruct Kermit to obey the  CTRL-Z  convention.
+Some  microcomputer  Kermits  operate  in  "text"  mode  by  default, others in
+"binary" or "block" mode.
+
+To complicate matters, certain software on other microcomputer systems, such as
+MS-DOS, follows the CP/M end-of-file convention.  Under MS-DOS, certain editors
+and other programs use Control-Z for end-of-file, and other  programs  do  not.
+MS-DOS Kermit provides a SET command to choose the desired format.
+Kermit Commands                                                         Page 25
+
+
+4. Kermit Commands
+
+An  "ideal"  Kermit  program will be described here, which has most of the fea-
+tures specified in the Kermit Protocol Manual.  No Kermit program will have all
+these  commands  or  support  all these options.  The exact form of some of the
+commands may differ from version to version.  Some Kermit programs may  support
+system-dependent options not described here.  The intention of this description
+is to provide a base from which specific Kermit programs can  be  described  in
+terms of their differences from the "ideal."
+
+
+4.1. Remote and Local Operation
+
+In  any  connection  between  two Kermit programs, one Kermit is remote and the
+other is local.  The remote Kermit is usually running on a mainframe, which you
+have  CONNECTed  to through a PC or other computer.  When Kermit runs remotely,
+all file transfer is done over the job's controlling terminal line -- the  same
+line  over  which  you  logged in, and to which you would type interactive com-
+mands.  What the system thinks is your terminal  is  really  another  computer,
+usually a microcomputer, running its own copy of Kermit.
+
+When  Kermit is in "local mode", file transfer is done over an external device,
+such as a microcomputer's serial communication port, or  an  assigned  terminal
+line on a mainframe.  The local Kermit is connected in some way (like a dialout
+mechanism) to another computer, again running its own copy of Kermit.  A  local
+Kermit is in control of the screen, a remote Kermit has no direct access to it.
+Microcomputer Kermits are  run  in  local  mode  unless  instructed  otherwise;
+mainframe Kermits run remotely unless some special command places them in local
+mode.  Some commands make sense only for remote Kermits, others only for local,
+still  others can be used with either.  Local and remote operation of Kermit is
+shown schematically here:  The Kermit program on the PC is a local Kermit.   It
+can  control the screen, the keyboard, and the port separately, thus it can up-
+date the screen with status information, watch for interrupt signals  from  the
+keyboard,  and  transfer  packets  on  the communications port, all at the same
+time.
+
+The Kermit program running on the mainframe is a remote Kermit.  The user  logs
+in  to  the  mainframe  through a terminal port.  The host computer cannot tell
+that the user is really coming in  through  a  microcomputer.    The  keyboard,
+screen,  and port functions are all combined in user's mainframe terminal line.
+Therefore a remote Kermit is cut off from your screen and keyboard during  file
+transfer.
+
+
+4.2. The Command Dialog
+
+Most  Kermit  programs  communicate  with you through interactive keyword-style
+command dialog.  The program issues a prompt, indicating that it is waiting for
+you to type a command.  The prompt is usually of the form 
+
+  Kermit-xx>
+
+where  xx  indicates  the  version  of  Kermit -- Kermit-MS> for MS-DOS Kermit,
+Kermit-86> for CP/M-86 Kermit, etc.
+
+In response to the program's prompt you may  type  a  keyword,  such  as  SEND,
+Kermit Commands                                                         Page 26
+
+
+PC is Local, Mainframe is Remote:
+
+             Communication
+             Line                    (Packets)
+             +---------------/  /-----------------+  Other terminals
+             |                                    |  |  |  |
+             |                                    |  |  |  |
+   PC        |     LOCAL              Mainframe   |  |  |  |  REMOTE
+  +----------+----------+            +------------+--+--+--+--------+
+  |   Serial Port       |            |            |                 |
+  |                     |            |            |                 |
+  |                     |            |            |                 |
+  |  +---------------+  |            |            Your job's        |
+  |  | Packets: 724  |  |            |            terminal line     |
+  |  | Retries:   7  |  |            |                              |
+  |  | File: FOO.BAR |  |            |                              |
+  |  +---------------+  |            |                              |
+  |   Screen            |            |                              |
+  |                     |            |                              |
+  +---------------+-----+            +------------------------------+
+                  |
+                  | (Commands)
+                  |
+     +------------+---------+
+      \       Keyboard       \
+       +----------------------+
+                  You
+
+                    Figure 4-1:   Local and Remote Kermits
+
+RECEIVE, or EXIT, possibly followed by additional keywords or operands, each of
+which is called a field.  You can abbreviate keywords (but not file  names)  to
+any  length  that  makes  them distinguishable from any other keyword valid for
+that field.  You can type a question mark at any time to get information  about
+what's expected or valid at that point.  The ESC and "?"  features work best on
+full duplex systems (all but the IBM mainframe, so far), where the program  can
+"wake  up"  immediately  and  perform the required function.  On half duplex or
+record-oriented systems, the ESC feature is not available, and  the  "?"    re-
+quires a carriage return to follow.
+
+In this example, the user types "set" and then a question mark to find out what
+the SET options are.  The user then continues the command at  the  point  where
+the question mark was typed, adding a "d" and another question mark to see what
+set options start with "d".  The user then adds a "u" to select  "duplex"  (the
+only SET option that starts with "du") followed by an ESC (shown here by a dol-
+lar sign) to complete the current field, then another question mark to see what
+the possibilities are for the next field, and so forth.  The command is finally
+terminated by a carriage return.  Before carriage return is typed, however, the
+command  can  be  edited  or erased using RUBOUT or other command editing keys.
+Finally, the same command is entered again with a minimum of  keystrokes,  with
+each  field  abbreviated  to  its  shortest unique length.  In the example, the
+parts the user types are underlined; all the rest is system typeout:
+
+
+  Kermit-20>set ? one of the following:
+   debugging        delay             duplex            escape
+Kermit Commands                                                         Page 27
+
+
+   file             handshake         IBM               line
+   parity           receive           send
+  Kermit-20>set d? one of the following:
+   debugging   delay        duplex
+  Kermit-20>set du$plex (to) ? one of the following:
+   full   half
+  Kermit-20>set duplex (to) h$alf
+  Kermit-20>set du h
+
+
+4.3. Notation
+
+In the command descriptions, the following notation is used:
+
+italics     A parameter - the symbol in italics is replaced by an  argument  of
+            the specified type (number, filename, etc).
+
+[anything]  A  field  enclosed in square brackets is optional.  If omitted, the
+            field defaults to an appropriate value.  You don't type the  brack-
+            ets.
+
+{x,y,z}     A list of alternatives is enclosed in curly braces; you type one of
+            the alternatives.
+
+number      A whole number, entered in prevailing notation of the system.
+
+character   A single character, entered literally, or as a number (perhaps  oc-
+            tal or hexadecimal) representing the ASCII value of the character.
+
+floating-point-number
+            A "real" number, possibly containing a decimal point  and  a  frac-
+            tional part.
+
+filespec    A file specification, i.e. the name of a file, possibly including a
+            search path, device or directory name, or other  qualifying  infor-
+            mation,  and  possibly  containing  "wildcard"  or pattern-matching
+            characters to denote a group of files.
+
+^X          A control character may be written using "uparrow" or "caret" nota-
+            tion, since many systems display control characters this way.  Con-
+            trol characters are produced by holding down the key marked CTRL or
+            Control and typing the appropriate character, e.g. X.
+
+Commands  are shown in upper case, but can be entered in any combination of up-
+per and lower case.
+Kermit Commands                                                         Page 28
+
+
+4.4. Summary of Kermit Commands
+
+Here is a brief list of Kermit commands as they are to be found in most  Kermit
+programs.  The following sections will describe these commands in detail.
+
+For exchanging files:
+    SEND, RECEIVE, GET
+
+For connecting to a remote host:
+    CONNECT,  SET  LINE,  SET  PARITY,  SET  DUPLEX, SET HANDSHAKE, SET ESCAPE,
+    SET FLOW-CONTROL, SET SPEED (or BAUD)
+
+For acting as a server:
+    SERVER
+
+For talking to a server:
+    BYE, FINISH, GET, SEND, REMOTE
+
+Setting nonstandard transmission and file parameters:
+    SET  BLOCK-CHECK,  SET  DEBUG,  SET  DELAY,  SET  FILE, SET INCOMPLETE, SET
+    PARITY, SET RETRY;
+    SET SEND (or RECEIVE) END-OF-LINE, START-OF-PACKET,  PACKET-LENGTH,  PAUSE,
+    TIMEOUT, PADDING
+
+For defining "macros" of commands:
+    DEFINE
+
+For interrupting transmission:
+    Control-X, Control-Z, Control-C, Control-E
+
+Getting information:
+    HELP, STATISTICS, SHOW
+
+Executing command files:
+    TAKE
+
+For recording the history of a file transfer operation:
+    LOG TRANSACTIONS
+
+For non-protocol file capture or transmission:
+    LOG SESSION, TRANSMIT, INPUT, OUTPUT, PAUSE, CLEAR, SCRIPT
+
+For closing log files:
+    CLOSE
+
+Leaving the program:
+    EXIT, QUIT
+
+If  you have a file called KERMIT.INI in your default or home disk, Kermit will
+execute an automatic TAKE command on it upon initial startup.   KERMIT.INI  may
+contain  any  Kermit commands, for instance SET commands, or DEFINEs for macros
+to configure Kermit to various systems or communications media.   Note:    Your
+particular implementation of Kermit may use a different name for this file.
+Kermit Commands                                                         Page 29
+
+
+4.5. The SEND Command
+
+Syntax:
+
+Sending a single file:  
+
+    SEND nonwild-filespec1 [filespec2]
+
+Sending multiple files:  
+
+    SEND wild-filespec1 [filespec2]
+
+The  SEND  command  causes a file or file group to be sent to the other system.
+There are two forms of the command, depending  on  whether  filespec1  contains
+"wildcard" characters.  Use of wildcard characters is the most common method of
+indicating a group of files in a single file specification.   For  instance  if
+FOO.FOR  is  a  single file, a FORTRAN program named FOO, then *.FOR might be a
+group of FORTRAN programs.
+
+
+    Sending a File Group --
+
+If filespec1 contains wildcard characters then all matching files will be sent,
+in directory-listing order (according to the ASCII collating sequence) by name.
+If a file can't be opened for read access, it will be  skipped.    Some  Kermit
+programs  allow  the  initial file in a wildcard group to be specified with the
+optional filespec2.  This allows a previously interrupted wildcard transfer  to
+continue  from  where  it  left  off, or it can be used to skip some files that
+would be transmitted first.
+
+
+    Sending a Single File --
+
+If filespec1 does not contain any wildcard characters,  then  the  single  file
+specified  by  filespec1  will  be  sent.  Optionally, filespec2 may be used to
+specify the name under which  the  file  will  arrive  at  the  target  system;
+filespec2  is  not parsed or validated locally in any way.  If filespec2 is not
+specified, the file will be sent with its own name.
+
+
+    SEND Command General Operation --
+
+Files will be sent with their filename and filetype (for instance  FOO.BAR,  no
+device  or directory field, no generation number or attributes).  If communica-
+tion line parity is being used (see SET PARITY), the sending  Kermit  will  re-
+quest that the other Kermit accept a special kind of prefix notation for binary
+files.  This is an advanced feature, and not all Kermits have it; if the  other
+Kermit  does  not  agree  to use this feature, binary files cannot be sent cor-
+rectly.
+
+The sending Kermit will also ask the other Kermit whether it can handle a  spe-
+cial  prefix encoding for repeated characters.  If it can, then files with long
+strings of repeated characters will be transmitted very efficiently.   Columnar
+data,  highly  indented  text,  and binary files are the major beneficiaries of
+this technique.
+Kermit Commands                                                         Page 30
+
+
+    SEND Remote Operation --
+
+If you are running Kermit remotely (for instance, from  a  microcomputer),  you
+should  "escape  back"  to your local Kermit within a reasonable amount of time
+and give the RECEIVE command.  Don't take more than a minute or two to complete
+the  switch, or Kermit may "time out" and give up (in that case, you'll have to
+CONNECT back to the remote system and reissue the SEND command).
+
+
+    SEND Local Operation --
+
+If you're running Kermit locally, for instance on a microcomputer,  you  should
+have  already  run Kermit on the remote system and issued either a RECEIVE or a
+SERVER command.
+
+Once you give Kermit the SEND command, the name of each file will be printed on
+your  screen  as  the transfer begins, and information will be displayed to in-
+dicate the packet traffic.  When  the  specified  operation  is  complete,  the
+program will sound a beep, and the status of the operation will be indicated by
+a message like OK, Complete, Interrupted, or Failed.
+
+If you see many packet retry indications, you are  probably  suffering  from  a
+noisy  connection.  You may be able to cut down on the retransmissions by using
+SET SEND PACKET-LENGTH to decrease the packet  length;  this  will  reduce  the
+probability that a given packet will be corrupted by noise, and reduce the time
+required to retransmit a corrupted packet.
+
+If you notice a file being sent which you do not really want to send,  you  may
+cancel  the  operation immediately by typing either Control-X or Control-Z.  If
+your are sending a file group, Control-X will cause  the  current  file  to  be
+skipped,  and Kermit will go on to the next file, whereas Control-Z will cancel
+sending the entire group and return you to Kermit-20 command level.
+
+
+4.6. The RECEIVE Command
+
+Syntax:  RECEIVE [filespec]
+
+The RECEIVE command tells Kermit to wait for the arrival a file or  file  group
+sent  by  a  SEND  command  from  the  other system.  If only one file is being
+received, you may include the optional filespec as the name to store the incom-
+ing file under; otherwise, the name is taken from the incoming file header.  If
+the name in the header is not a legal file name on  the  local  system,  Kermit
+will attempt to transform it to a legal name.
+
+If  an  incoming file has the same name as an existing file, Kermit will either
+overwrite the old file or else try to create a new unique  name,  depending  on
+the setting of FILE WARNING.
+
+If you have SET PARITY, then 8th-bit prefixing will be requested.  If the other
+side cannot do this, binary files cannot be transferred correctly.  The sending
+Kermit may also request that repeated characters be compressed.
+
+If  an incoming file does not arrive in its entirety, Kermit will normally dis-
+card it; it will not appear in your directory.  You may change this behavior by
+using  the command SET INCOMPLETE KEEP, which will cause as much of the file as
+Kermit Commands                                                         Page 31
+
+
+arrived to be saved in your directory.
+
+
+    RECEIVE Remote Operation --
+
+If your are running Kermit remotely, you should escape back to your local  Ker-
+mit and give the SEND command.  You should do this within about two minutes, or
+the protocol may time out and give up; if this happens, you can CONNECT back to
+the remote system and reissue the RECEIVE command.
+
+
+    RECEIVE Local Operation --
+
+If  you  are running Kermit locally, you should already have issued a SEND com-
+mand to the remote Kermit, and then escaped back to DEC-20 Kermit (you can  not
+issue  a  RECEIVE  command to a Kermit server, you must use the GET command for
+that).
+
+As files arrive, their names will be shown on your screen, along  with  a  con-
+tinuous display the packet traffic.
+
+If a file begins to arrives that you don't really want, you can attempt to can-
+cel it by typing Control-X; this sends a cancellation  request  to  the  remote
+Kermit.  If the remote Kermit understands this request (not all implementations
+of Kermit support this feature), it will comply; otherwise it will continue  to
+send.   If a file group is being sent, you can request the entire group be can-
+celled by typing Control-Z.
+
+
+4.7. GET
+
+LOCAL ONLY -- Syntax: GET [remote-filespec]
+
+The GET command requests a remote Kermit server to send the file or file  group
+specified by remote-filespec.  Note the distinction between the RECEIVE and GET
+commands: RECEIVE instructs the program to wait passively, whereas GET actively
+sends a request to a server.
+
+The  GET command can be used only when Kermit is local, with a Kermit server on
+the other end of the line.  This means that you  must  have  CONNECTed  to  the
+other  system,  logged in, run Kermit there, issued the SERVER command, and es-
+caped back to the local Kermit.
+
+The remote filespec is any string that can be a legal  file  specification  for
+the  remote  system;  it  is not parsed or validated locally.  As files arrive,
+their names will be displayed on your screen, along with a  continuous  indica-
+tion  of the packet traffic.  As in the RECEIVE command, you may type Control-X
+to request that the current incoming file be cancelled,  Control-Z  to  request
+that the entire incoming batch be cancelled.
+
+Optional Syntax: If you are requesting a single file, you may type the GET com-
+mand without a filespec.  In that case, Kermit programs that implement the  op-
+tional  GET  syntax  will  prompt you for the remote filespec on the subsequent
+line, and the name to store it under when it arrives on the line after that:
+
+  Kermit-MS>get
+Kermit Commands                                                         Page 32
+
+
+   Remote Source File: aux.txt
+   Local Destination File: auxfile.txt
+
+
+4.8. SERVER
+
+Syntax: SERVER
+
+The SERVER command instructs Kermit to cease taking commands from the  keyboard
+and  to  receive  all  further  instructions in the form of Kermit packets from
+another system.  The other Kermit must have  commands  for  communicating  with
+remote servers; these include GET, SEND, FINISH, and BYE.
+
+After  issuing this command, return to the "client" system and issue SEND, GET,
+BYE, FINISH, or other server-directed commands from there.  If your local  Ker-
+mit does not have a BYE command, then it does not have the full ability to com-
+municate with a Kermit server and you should not put  the  remote  Kermit  into
+SERVER mode.  If your local Kermit does have a BYE command, use it to shut down
+and log out the Kermit server when you are done with it.
+
+Any nonstandard parameters should be selected with SET commands before  putting
+Kermit in server mode.
+
+
+4.9. BYE
+
+LOCAL ONLY -- Syntax: BYE
+
+When  running as a local Kermit talking to a Kermit server, use the BYE command
+to shut down and log out the server.  This will also close  any  debugging  log
+files and exit from the local Kermit.
+
+
+4.10. FINISH
+
+LOCAL ONLY -- Syntax: FINISH
+
+When running as a local Kermit talking to a remote Kermit server use the FINISH
+command to shut down the server without logging out the remote job, so that you
+can CONNECT back to it.  Also, close any local debugging log file.
+
+
+4.11. REMOTE
+
+LOCAL ONLY -- Syntax: REMOTE command
+
+When  running  as  a  local  Kermit  talking to a remote Kermit server, use the
+REMOTE command to request special functions of the remote server.  If the serv-
+er does not understand the command or offer the requested service (all of these
+commands and services are optional features of the Kermit  protocol),  it  will
+reply with a message like "Unknown Kermit server command".  If does understand,
+it will send the results back, and they will be displayed on the screen.    The
+REMOTE commands are:
+
+REMOTE CWD [directory]
+    Change Working Directory.  If no directory name  is  provided,  the  server
+Kermit Commands                                                         Page 33
+
+
+    will  change to the default directory.  Otherwise, you will be prompted for
+    a password, and the server will attempt to change to the  specified  direc-
+    tory.   If access is not granted, the server will provide a message to that
+    effect.
+
+REMOTE DELETE filespec
+    Delete  the  specified  file  or  files.    The names of the files that are
+    deleted should be displayed on your screen.
+
+REMOTE DIRECTORY [filespec]
+    The names of the files that match the given file specification will be dis-
+    played on your screen, possibly along  with  additional  information  about
+    file  sizes  and  dates.  If no file specification is given, all files from
+    the current directory will be listed.
+
+REMOTE SPACE [directory]
+    Information about disk usage in the current remote directory -- quota, cur-
+    rent storage, or amount of remaining free space --  is  displayed  on  your
+    screen.
+
+REMOTE HELP
+    A list of available server functions is displayed.
+
+REMOTE HOST [command]
+    The given command is passed to the server's host command processor, and the
+    resulting output is displayed on your screen.
+
+REMOTE KERMIT [command]
+    The   given  command,  which  is  expressed  in  the  server  Kermit's  own
+    interactive-mode command syntax, is passed to  the  server  for  execution.
+    This is useful for changing settings, logging, and other functions.
+
+REMOTE RUN program-name [command-line-argument]
+    The remote Kermit is asked to run the indicated program with the  indicated
+    command line; the program's terminal output is sent back to your screen.
+
+REMOTE PROGRAM [command]
+    The command is sent to the  program  started  by  most  recent  REMOTE  RUN
+    program, and the program's response is displayed on the screen.  If no com-
+    mand is given, a newline character is sent.
+
+REMOTE TYPE filespec
+    The contents of the specified file is displayed on your screen.
+
+
+4.12. LOCAL
+
+Syntax: LOCAL command
+
+Execute the specified command on the local system -- on the system where Kermit
+to which your are typing this command is running.  These commands provide  some
+local  file  management  capability without having to leave the Kermit program,
+which is particularly useful on microcomputers.  The  LOCAL  prefix  for  these
+commands can be omitted.
+
+CWD [directory]
+Kermit Commands                                                         Page 34
+
+
+    "Change Working Directory" to the specified directory.
+
+DELETE filespec
+    Delete the specified file or files.
+
+DIRECTORY [filespec]
+    Provide a directory listing of the specified files.
+
+SPACE
+    Display local disk usage and/or free space.
+
+RUN filespec [operands]
+    Run the indicated program with the supplied command-line operands.
+
+PUSH  Invoke the local system command interpreter in such a  way  that  it  can
+    return (or "pop" or "exit") back to Kermit.
+
+Some  Kermit  programs may provide commands for these or other functions in the
+syntax of their own system, when this would cause no confusion.  For  instance,
+CP/M Kermit may use ERA in place of LOCAL DELETE.
+
+
+4.13. CONNECT
+
+LOCAL ONLY -- Syntax: CONNECT [terminal-designator]
+
+Establish  a  terminal  connection  to  the system at the other end of the com-
+munication line.  On a microcomputer, this is normally the serial port.   On  a
+mainframe, you will have to specify a terminal line number or other identifier,
+either in the CONNECT command itself, or in a SET LINE command.   Get  back  to
+the  local Kermit by typing the escape character followed by a single character
+"command".  Several single-character commands are possible:
+
+  C   Close the connection and return to the local Kermit.
+  S   Show status of the connection.
+  B   Send a BREAK signal.
+  0   (zero) Send a NUL (0) character.
+  D   Drop the line, hangup the modem.
+  P   Push to the local system command processor without breaking  the  connec-
+      tion.
+  Q   Quit logging session transcript.
+  R   Resume logging session transcript.
+  ?   List all the possible single-character arguments.
+  ^] (or whatever you have set the escape character to be)
+      Typing the escape character twice sends one copy of it to  the  connected
+      host.
+
+You  can use the SET ESCAPE command to define a different escape character, and
+SET PARITY, SET DUPLEX, SET FLOW-CONTROL, SET HANDSHAKE to establish or  change
+those parameters.
+Kermit Commands                                                         Page 35
+
+
+4.14. HELP
+
+Syntax: HELP
+
+Typing  HELP  alone prints a brief summary of Kermit and its commands, and pos-
+sibly instructions for obtaining more detailed help on particular topics.  Most
+Kermit  implementations also allow the use of "?" within a command to produce a
+short help message.
+
+
+4.15. TAKE
+
+Syntax: TAKE filespec
+
+Execute Kermit commands from the specified file.  The file may contain  contain
+any valid Kermit commands, including other TAKE commands.
+
+
+4.16. EXIT, QUIT
+
+Exit from Kermit.  QUIT is a synonym for EXIT.
+
+
+4.17. The SET Command
+
+Syntax: SET parameter [option] [value]
+
+Establish  or  modify  various parameters for file transfer or terminal connec-
+tion.
+
+When a file transfer operation begins, the two Kermits  automatically  exchange
+special  initialization messages, in which each program provides the other with
+certain information about itself.  This information includes the maximum packet
+size  it  wants  to  receive, the timeout interval it wants the other Kermit to
+use, the number and type  of  padding  characters  it  needs,  the  end-of-line
+character it needs to terminate each packet (if any), the block check type, the
+desired prefixes for control characters, characters with the  "high  bit"  set,
+and  repeated  characters.    Each  Kermit program has its own preset "default"
+values for these parameters, and you normally need not  concern  yourself  with
+them.    You can examine their values with the SHOW command; the SET command is
+provided to allow you to change them in order to adapt to unusual conditions.
+
+The following parameters may be SET:
+
+    BAUD-RATE  Set the speed of the current communications port
+  BLOCK-CHECK  Packet transmission error detection method
+    DEBUGGING  Mode or log file
+        DELAY  How long to wait before starting to send
+       DUPLEX  For terminal connection, full (remote echo) or half (local echo)
+       ESCAPE  Character for terminal connection
+         FILE  For setting file parameters like name conversion and byte size
+ FLOW-CONTROL  Selecting flow control method, like XON/XOFF
+    HANDSHAKE  For turning around half duplex communication line
+          IBM  Set things up for communicating with an IBM mainframe
+   INCOMPLETE  What to do with an incomplete file
+         LINE  Terminal line to use for terminal connection or file transfer
+Kermit Commands                                                         Page 36
+
+
+        MODEM  Modem type or characteristics
+       PARITY  Character parity to use
+         PORT  For switching communication ports
+       PROMPT  For changing the program's command prompt
+      RECEIVE  Various parameters for receiving files
+        RETRY  How many times to retry a packet before giving up
+         SEND  Various parameters for sending files
+        TIMER  Enable/disable timeouts
+
+The DEFINE command may be used to compose "macros" by combining  SET  commands.
+The SET commands are now described in detail.
+
+
+SET BAUD-RATE
+
+Set  or  change  the  baud rate (approximate translation: transmission speed in
+bits per second) on the currently selected communications device.  Ten bits per
+second  is  equivalent to one character per second; 300 baud = 30 cps.  The way
+of specifying the baud rate varies from system to system; in  most  cases,  the
+actual  number  (such  as  1200 or 9600) is typed.  Systems that do not provide
+this command generally expect that the speed of the line has already  been  set
+appropriately  outside  of  Kermit.    Common values are 300, 1200, 2400, 4800,
+9600.
+
+
+SET BLOCK-CHECK {1, 2, 3}
+
+Kermit normally uses a 1-character block check, or "checksum", on each  packet.
+The sender of the packet computes the block check based on the other characters
+in the packet, and the receiver recomputes it the same way.    If  these  quan-
+tities  agree,  the packet is accepted and transmission proceeds.  If they dis-
+agree, the packet is rejected and retransmission is requsted.
+
+However, the block check is not a foolproof method of  error  detection.    The
+normal  single-character  Kermit  block check is only a 6-bit quantity (the low
+order 8 bits of the arithmetic sum folded upon itself).  With only six bits  of
+                                  6
+accuracy, the chances are one in 2  -- that is, 1/64 -- that an error can occur
+which will not be detected in  the  checksum,  assuming  that  all  errors  are
+equally likely.
+
+You can decrease the probability that an error can slip through, at the expense
+of transmission efficiency, by using the SET BLOCK-CHECK command to select more
+rigorous  block  check  methods.    Note that all three methods will detect any
+single-bit error, or any error in an odd number of bits.  The options are:
+
+1-CHARACTER-CHECKSUM:
+    The normal single-character 6-bit checksum.
+
+2-CHARACTER-CHECKSUM:
+    A 2-character, 12-bit checksum.  Reduces the probability of an error  going
+    undetected to 1/4096, but adds an extra character to each packet.
+
+3-CHARACTER-CRC:
+    A 3-character, 16-bit Cyclic Redundancy Check, CCITT format.   In  addition
+    to errors in any odd number of bits, this method detects double bit errors,
+Kermit Commands                                                         Page 37
+
+
+    all error bursts of length 16 or less, and more than 99.99% of all possible
+    longer bursts.  Adds two extra characters to each packet.
+
+The single character checksum has proven to be quite adequate in practice, much
+more effective than straightforward analysis would indicate, since  all  errors
+are  not  equally  likely, and a simple checksum is well suited to catching the
+kinds of errors that are typical of telecommunication lines.  The other methods
+should  be requested only when the connection is very noisy and/or when sending
+binary files.
+
+Note that the 2- and 3-character block checks are not available in all versions
+of  Kermit;  if the other Kermit is not capable of performing the higher-preci-
+sion block checks, the transfer will automatically  use  the  standard  single-
+character method.
+
+
+SET DEBUG {ON, OFF}
+
+Syntax: SET DEBUG options
+
+Record  debugging  information,  either on your terminal or in a file.  Options
+are:
+
+  ON  Turn on debugging.
+
+  OFF Don't display debugging information (this is the default).  If  debugging
+      was in effect, turn it off and close any log file.
+
+Some Kermit programs may control debugging by use of the LOG DEBUG command.
+
+
+SET DELAY
+
+Syntax: SET DELAY number
+
+Specify  how  many seconds to wait before sending the first packet after a SEND
+command.  Use when remote and SENDing files back to your local  Kermit.    This
+gives  you time to "escape" back and issue a RECEIVE command.  The normal delay
+is 5 seconds.  In local mode or server mode, Kermit does not delay before send-
+ing the first packet.
+
+
+SET DUPLEX
+
+Syntax: SET DUPLEX {FULL, HALF}
+
+For  use  when  CONNECTed to a remote system.  The keyword choices are FULL and
+HALF.  FULL means the remote system echoes the characters you type, HALF  means
+the  local system echoes them.  FULL is the default, and is used by most hosts.
+HALF is necessary when connecting to IBM  mainframes.    Half  duplex  is  also
+called "local echo".
+Kermit Commands                                                         Page 38
+
+
+SET ESCAPE
+
+Syntax: SET ESCAPE character
+
+Specify or change the character you want to use to "escape" from remote connec-
+tions back to Kermit.  This would normally be a character you don't  expect  to
+be  using on the remote system, perhaps a control character like ^\, ^], ^^, or
+^_.  Most versions of Kermit use one of these by default.  After you  type  the
+escape  character, you must follow it by a single-character "argument", such as
+"C" for Close Connection.  The arguments are listed above, under  the  descrip-
+tion of the CONNECT command.
+
+
+SET FILE
+
+Syntax: SET FILE parameter value
+
+Establish  file-related  parameters.    Depending on the characteristics of the
+system, it may be necessary to tell Kermit how to fetch an outbound  file  from
+the  disk,  or  how  to  store an incoming file.  The actual parameters you can
+specify in this command will vary from system to system, and you should consult
+the  documentation  for your particular version of Kermit.  Some examples would
+be file type (text or binary), byte size (PDP-10 architecture),  record  length
+or  block  size  (record  oriented  systems),  end-of-file detection method (on
+microcomputers), file naming conversion option.
+
+This can be a very important command if you intend to  transfer  binary  files,
+but is normally unecessary for transmitting textual files.
+
+
+SET FLOW-CONTROL
+
+Syntax: SET FLOW-CONTROL {XON/XOFF,NONE}
+
+For  communicating  with full duplex systems.  System-level flow control is not
+necessary to the Kermit protocol, but it can help to use it if the same  method
+is  available  on  both  systems.  The most common type of flow control on full
+duplex systems is XON/XOFF.  When a system's input buffer comes close to  being
+full, it will send an XOFF character (Control-S) to request the other system to
+stop sending.  When it has emptied sufficient characters from its input buffer,
+it  signals the other system to resume sending by transmitting an XON character
+(Control-Q).  This process operates in both directions simultaneously.  The op-
+tions  for  the  Kermit SET FLOW command are usually restricted to XON/XOFF and
+NONE, which is used to disable this feature.
+
+
+SET HANDSHAKE
+
+Syntax: SET HANDSHAKE option
+
+For communicating with half duplex systems.  This lets  you  specify  the  line
+turnaround  character sent by the half duplex host to indicate it has ended its
+transmission and is granting you permission to transmit.  When a  handshake  is
+set,  Kermit  will  not  send  a packet until the half duplex host has sent the
+specified character (or a timeout has occurred).  The options may include:
+Kermit Commands                                                         Page 39
+
+
+    NONE    No handshake; undo the effect of any previous SET HANDSHAKE.
+    XOFF    Control-S.
+    XON     Control-Q.
+    BELL    Control-G.
+    CR      Carriage Return, Control-M.
+    LF      Linefeed, Control-J.
+    ESC     Escape, Control-[.
+
+Some Kermit programs may require the option  to  be  specified  by  typing  the
+character  literally or entering its numeric ASCII value.  If you use this com-
+mand to enable handshaking, you should also SET FLOW OFF.
+
+
+SET INCOMPLETE
+
+Syntax: SET INCOMPLETE {KEEP, DISCARD}
+
+Specify what to do when a file transfer fails before it is completed.  The  op-
+tions are DISCARD (the default) and KEEP.  If you choose KEEP, then if a trans-
+fer fails to complete successfully, you will be able  to  keep  the  incomplete
+part that was received.
+
+
+SET LINE
+
+Syntax: SET LINE [terminal-designator]
+
+Specify the terminal line to use for file transfer or CONNECT.  This command is
+found on mainframe Kermits, which normally run in "remote mode" using their own
+controlling  terminal  for  file transfer.  Specifying a separate line puts the
+program in "local mode."  If no line is specified, revert  to  the  job's  con-
+trolling terminal, i.e. go back to "remote mode."
+
+
+SET PORT
+
+Syntax: SET PORT terminal-designator
+
+Specify  the communications port for file transfer or CONNECT.  This command is
+found on microcomputer Kermits that run in "local" mode.   SET  PORT  does  not
+change  the  remote/local  status but simply selects a different port for local
+operation.
+
+
+SET PARITY
+
+Syntax: SET PARITY {EVEN, ODD, MARK, SPACE, NONE}
+
+Parity is a technique used by communications equipment for detecting errors  on
+a  per-character basis; the "8th bit" of each character acts as a check bit for
+the other seven bits.  Kermit uses block checks to  detect  errors  on  a  per-
+packet basis, and it does not use character parity.  However, some systems that
+Kermit runs on, or equipment through which these systems  communicate,  may  be
+using character parity.  If Kermit does not know about this, arriving data will
+have been modified and the block check will appear to  be  wrong,  and  packets
+will be rejected.
+Kermit Commands                                                         Page 40
+
+
+If  parity  is  being used on the communication line, you must inform both Ker-
+mits, so the desired parity can be added to outgoing characters,  and  stripped
+from  incoming  ones.    SET PARITY should be used for communicating with hosts
+that require character parity (IBM mainframes are typical examples) or  through
+devices  or networks (like GTE TELENET) that add parity to characters that pass
+through them.  Both Kermits should be set to the same parity.    The  specified
+parity  is used both for terminal connection (CONNECT) and file transfer (SEND,
+RECEIVE, GET).
+
+The choices for SET PARITY are:
+
+  NONE  (the default) eight data bits and no parity bit.
+  MARK  seven data bits with the parity bit set to one.
+  SPACE seven data bits with the parity bit set to zero.
+  EVEN  seven data bits with the parity bit set  to  make  the  overall  parity
+        even.
+  ODD   seven data bits with the parity bit set to make the overall parity odd.
+
+NONE  means no parity processing is done, and the 8th bit of each character can
+be used for data when transmitting binary files.
+
+If you have set parity to ODD, EVEN, MARK, or SPACE, then advanced versions  of
+Kermit   will   request   that   binary   files   will   be  transferred  using
+8th-bit-prefixing.    If  the  Kermit  on  the  other  side  knows  how  to  do
+8th-bit-prefixing  (this is an optional feature of the Kermit protocol, and not
+all implementations of Kermit have it), then binary files  can  be  transmitted
+successfully.  If NONE is specified, 8th-bit-prefixing will not be requested.
+
+
+SET PROMPT
+
+Syntax: SET PROMPT string
+
+This allows you to change the program's prompt.  This is particularly useful if
+you are using Kermit to transfer files between two systems of the same kind, in
+which  case  you  can change the prompts of the Kermit programs involved to in-
+clude appropriate distinguishing information.
+
+
+SET SEND
+
+SET SEND parameter value
+
+Parameters for outgoing packets, as follows:
+
+END-OF-LINE character
+        The  ASCII character to be used as a line terminator for outbound pack-
+        ets, if one is  required  by  the  other  system,  carriage  return  by
+        default.    You will only have to use this command for systems that re-
+        quire a line terminator other than carriage return.
+
+PACKET-LENGTH number
+        Maximum  packet length to send between 10 and 94 (decimal).  Shortening
+        the packets might allow more of them to get through through without er-
+        ror  on  noisy  communication lines.  Lengthening the packets increases
+        the throughput on clean lines.
+Kermit Commands                                                         Page 41
+
+
+TIMEOUT number
+        How  many seconds to wait for a packet before trying again.  A value of
+        zero means don't time out -- wait forever.
+
+PAUSE floating-point-number
+        How  many  seconds  to  pause before sending each data packet.  Setting
+        this to a nonzero value may allow a slow system  enough  time  to  con-
+        solidate   itself  before  the  next  packet  arrives.    Normally,  no
+        per-packet pausing is done.
+
+PADDING number, PADCHAR character
+        How  much padding to send before a packet, if the other side needs pad-
+        ding, and what character to use for padding.  Defaults are no  padding,
+        and  NUL (0) for the padding character.  This command is also handy for
+        inserting special characters that may  be  required  by  communications
+        equipment.
+
+QUOTE character
+        What printable character to use for quoting of control characters,  "#"
+        (43) by default.  There should be no reason to change this.
+
+START-OF-PACKET character
+        The start-of-packet character is the only control character used "bare"
+        by  the  Kermit  protocol.    It  is  Control-A  by default.  If a bare
+        Control-A causes problems for your communication hardware or  software,
+        you  can  use  this  command to select a different control character to
+        mark the start of a packet.  You must also issue the reciprocal command
+        (SET  RECEIVE  START-OF-PACKET)  to  the  Kermit  on  the  other system
+        (providing it has such a command).
+
+
+SET RECEIVE
+
+Syntax: SET RECEIVE parameter value
+
+Parameters to request or expect for incoming packets, as follows:
+
+END-OF-LINE character
+        Carriage return (15) by default.
+
+PACKET-LENGTH number
+        Maximum length packet for the other side to send, decimal  number,  be-
+        tween 10 and 94, decimal.
+
+TIMEOUT number
+        How many seconds the other Kermit should wait for a packet  before  as-
+        king for retransmission.
+
+PAUSE floating-point-number
+        How many seconds to pause before acknowledging a packet.  Setting  this
+        to  a  nonzero  value will slow down the rate at which data packets ar-
+        rive, which may be necessary for systems that  have  "sensitive"  front
+        ends and cannot accept input at a high rate.
+
+PADDING number, PADCHAR character
+        How many padding characters to request before each incoming packet, and
+Kermit Commands                                                         Page 42
+
+
+        what  the  padding  character  should be.  No Kermits are known to need
+        padding, and if one did, it would request it  without  your  having  to
+        tell it to do so.  This command would only be necessary, therefore, un-
+        der very unusual circumstances.
+
+QUOTE character
+        What  printable character to use for quoting of control characters, "#"
+        (43) by default.  There should be no reason to change this.
+
+START-OF-PACKET character
+        The  control character to mark the beginning of incoming packets.  Nor-
+        mally SOH (Control-A, ASCII 1) (see SET SEND START-OF-PACKET, above).
+
+
+SET RETRY
+
+SET RETRY option number
+
+Set the maximum number of retries allowed for:
+
+INITIAL-CONNECTION
+        How  many times to try establishing the initial protocol connection be-
+        fore giving up, normally something like 15.
+
+PACKETS How many times to try sending a particular  packet  before  giving  up,
+        normally  5.   If a line is very noisy, you might want to increase this
+        number.
+
+
+4.18. DEFINE
+
+DEFINE macroname [set-parameters]
+
+Define a "SET macro" to  allow  convenient  association  of  one  or  more  SET
+parameters  with  a  mnemonic keyword of your choice.  The SET parameters are a
+list of one or more SET options, separated by commas.  If  you  use  Kermit  to
+communicate with several different kinds of systems, you may set up a macro for
+each, for instance:
+
+ DEFINE IBM PARITY MARK, DUPLEX HALF, HANDSHAKE XON
+ DEFINE UNIX PARITY NONE, DUPLEX FULL, HANDSHAKE NONE
+ DEFINE TELENET PARITY MARK, RECEIVE TIMEOUT 20
+
+You may then type SET IBM, SET UNIX, and  so  forth  to  set  all  the  desired
+parameters  with  a  single command.  It is convenient to include these defini-
+tions in your KERMIT.INI file.
+
+Another other handy use for SET macros would be for rapid  adaptation  to  dif-
+ferent conditions of line noise:
+
+ DEFINE CLEAN BLOCK-CHECK 1, SEND PACKET-LENGTH 94, RETRY PACKET 5
+ DEFINE NOISY BLOCK-CHECK 2, SEND PACKET-LENGTH 60, RETRY PACKET 10
+ DEFINE VERY-NOISY BLOCK 3, SEND PACKET 40, RETRY PACKET 20
+
+You  may  redefine an existing macro in the same manner as you defined it.  You
+can undefine an existing macro by typing an empty DEFINE command  for  it,  for
+Kermit Commands                                                         Page 43
+
+
+instance:
+
+ DEFINE IBM
+
+You  can  list  all your macros and their definitions with the SHOW MACROS com-
+mand.  Some Kermit programs allow macro definitions to include any Kermit  com-
+mand, not just SET commands.
+
+
+4.19. SHOW
+
+Syntax: SHOW [option]
+
+The SHOW command displays the values of the parameters settable by the SET com-
+mand.  If a particular option is not requested,  a  complete  display  will  be
+provided.
+
+
+4.20. STATISTICS
+
+Give  statistics  about the most recent file transfer, such as the total number
+of characters transmitted, the effective baud rate, and so forth.
+
+
+4.21. LOG
+
+Syntax: LOG [option] [filespec]
+
+Log the specified entity to the specified log file.
+
+TRANSACTIONS    Direct Kermit to log transactions, such as  files  successfully
+                sent  or  received or files that could not be successfully sent
+                or received.  A transaction is useful recording the progress of
+                a long, unattended multifile transfer.
+
+SESSION         Create  a transcript of a CONNECT session, when running a local
+                Kermit connected to a remote system,  in  the  specified  file.
+                The log is closed when connection is closed.  In some implemen-
+                tations, logging can be "toggled" by typing the connect  escape
+                character followed by Q (Quit logging) or R (Resume logging) or
+                similar single-character commands.  Session-logging  is  useful
+                for  recording  dialog  with  an  interactive  system,  and for
+                "capturing"  from systems that don't have Kermit.  No guarantee
+                can  be made that the file will arrive correctly or completely,
+                since no error checking takes place.
+
+DEBUGGING       Record debugging information in the specified file.  There  may
+                be  several options to select the desired information -- entire
+                packets, state transitions,  internal  program  trace,  etc  --
+                available via the SET DEBUGGING command.
+
+PACKETS         Record packets, and all communication line traffice during file
+                transfer, in the specified file.
+Kermit Commands                                                         Page 44
+
+
+4.22. TRANSMIT
+
+Syntax: TRANSMIT filespec
+
+Send the contents of the specified file to the  other  system  "bare",  without
+protocol,  packets,  error checking, or retransmission.  This command is useful
+for sending standard logon or connection sequences, and for  sending  files  to
+systems  that don't have Kermit.  No guarantee can be made that the target sys-
+tem will receive the file correctly and completely.  When receiving a file, the
+target system would normally be running a text editor in text collection mode.
+
+
+4.23. INPUT
+
+Syntax: INPUT [interval] [string]
+
+Input characters from the remote system for the specified interval, looking for
+the specified string.  Terminate when the string is found or when the  interval
+has  expired, whichever comes first.  Useful for synchronizing with remote sys-
+tem prompts.
+
+
+4.24. OUTPUT
+
+Syntax: OUTPUT [string]
+
+Send the specified string to the remote system.  Useful in conjunction with the
+INPUT command to form "login scripts".
+
+
+4.25. PAUSE
+
+Syntax: PAUSE [interval]
+
+Pause for the specified interval.  Useful in login scripts.
+
+
+4.26. SCRIPT
+
+Syntax: SCRIPT [string]
+
+The string is a "login script" in some system- or implementation-dependent for-
+mat, such as the UNIX(tm) UUCP "expect-send" format.
+Kermit Implementations                                                  Page 45
+
+
+5. Kermit Implementations
+
+Kermit has been written for a wide variety  of  systems,  both  mainframes  and
+microcomputers.  Kermit is not written in a portable language; rather, each im-
+plementation is written in a language suited for the particular machine.    The
+specification, given in the Kermit Protocol Manual, is quite general and allows
+implementation on almost any machine.
+
+Here's a brief table summarizing the known Kermit implementations, as  of  this
+writing.    This  list is constantly growing, and may be far out of date by the
+time you read it.
+
+Versions for "Portable Operating Systems": OS; Language (Machines)
+  CP/M-80; ASM (Kaypro, H/Z-89, H/Z-100, Osborne, DEC VT180, many others)
+  CP/M-86; ASM86 (DEC Rainbow, NEC APC, others)
+  MS-DOS; MASM (IBM PC,XT,AT, DEC Rainbow, HP-150, NEC APC, others...)
+  MUMPS (PDP-11)
+  Software Tools; Ratfor (HP3000, Sperry-Univac 1100)
+  UCSD p-System; Pascal (IBM PC, Terak, HP98x6, Pascal Microengine)
+  UNIX v7,4.xBSD,Sys III/V,Venix,Xenix,PC/IX; C (VAX, PDP-11, SUN, many more)
+Host Versions: Machine (OS; Language)
+  Burroughs B6800 (Algol)
+  Cray-1, Cray-XMP (CTSS; Fortran-77)
+  CDC Cyber 170 (NOS, NOS/BE; Fortran-77)
+  Data General Nova (RDOS; Fortran-5)
+  Data General Eclipse (AOS; Fortran-5), MV Series (AOS/VS; Pascal)
+  DEC PDP-11 (RT11, RSX11M(+), RSTS, P/OS, TSX+; Macro-11)
+  DEC VAX-11 (VMS; Bliss-32 or Macro-32 or Pascal/Fortran)
+  DECsystem-10 (TOPS-10; Bliss-36, Macro-10), DECSYSTEM-20 (TOPS-20; Macro-20)
+  Harris 800 (VOS; Pascal)
+  Honeywell (MULTICS; PL/I), DPS-6,8 (GCOS; C)
+  Hewlett-Packard 1000 (RTE-6/VM; Fortran), HP3000 (MPE; SPL or Ratfor)
+  IBM 370 Series (VM/CMS, MVS/TSO, MVS/GUTS, MUSIC, MTS; Assembler)
+  Perkin Elmer 3200 Series (OS/32; Fortran)
+  PRIME (PRIMOS; PL/P)
+  Tandem (Nonstop; TAL)
+  Sperry/Univac-1100 (EXEC; Assembler or Ratfor or Pascal)
+PC Versions: Machine (OS; Language)
+  Alpha Micro 68000 (Assembler)
+  Apollo (Aegis; Fortran or Pascal)
+  Apple II 6502 (Apple DOS; DEC-10/20 CROSS or Apple Assembler)
+  Apple Macintosh (SUMACC C)
+  Atari (DOS; Action!)
+  Commodore 64 (DEC-10/20 CROSS or FORTH)
+  DEC Pro-300 Series (P/OS; Bliss-16 or Macro-11), (Pro/RT; Macro), (Venix; C)
+  Intel Development System (ISIS; PL/M)
+  Perq (Pascal)
+  TRS80 I, III, Model 4 (TRSDOS; ASM)
+  TRS-80 Color Computer (Radio Shack DOS)
+
+The remainder of the Kermit User Guide is devoted to descriptions  of  selected
+Kermit  implementations.    If a description of your version of Kermit does not
+appear, look in the Kermit area on your mainframe for an on-line  documentation
+file.    Even if your version is described below, the version of the manual you
+are reading may be out of date and the online information may be more current.
+Kermit User Guide                                                      Page 262
+
+
+I. The ASCII Character Set
+
+ASCII Code (ANSI X3.4-1968)
+
+There  are 128 characters in the ASCII (American national Standard Code for In-
+formation Interchange) "alphabet".  The characters are listed in order of ASCII
+value; the columns are labeled as follows:
+
+Bit             Even parity bit for ASCII character.
+ASCII Dec       Decimal (base 10) representation.
+ASCII Oct       Octal (base 8) representation.
+ASCII Hex       Hexadecimal (base 16) representation.
+EBCDIC Hex      EBCDIC hexadecimal equivalent for Kermit translate tables.
+Char            Name or graphical representation of character.
+Remark          Description of character.
+
+The first group consists of nonprintable 'control' characters:
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 0   000   000   00   00    NUL   ^@, Null, Idle
+ 1   001   001   01   01    SOH   ^A, Start of heading
+ 1   002   002   02   02    STX   ^B, Start of text
+ 0   003   003   03   03    ETX   ^C, End of text
+ 1   004   004   04   37    EOT   ^D, End of transmission
+ 0   005   005   05   2D    ENQ   ^E, Enquiry
+ 0   006   006   06   2E    ACK   ^F, Acknowledge
+ 1   007   007   07   2F    BEL   ^G, Bell, beep, or fleep
+ 1   008   010   08   16    BS    ^H, Backspace
+ 0   009   011   09   05    HT    ^I, Horizontal tab
+ 0   010   012   0A   25    LF    ^J, Line feed
+ 1   011   013   0B   0B    VT    ^K, Vertical tab
+ 0   012   014   0C   0C    FF    ^L, Form feed (top of page)
+ 1   013   015   0D   0D    CR    ^M, Carriage return
+ 1   014   016   0E   0E    SO    ^N, Shift out
+ 0   015   017   0F   0F    SI    ^O, Shift in
+ 1   016   020   10   10    DLE   ^P, Data link escape
+ 0   017   021   11   11    DC1   ^Q, Device control 1, XON
+ 0   018   022   12   12    DC2   ^R, Device control 2
+ 1   019   023   13   13    DC3   ^S, Device control 3, XOFF
+ 0   020   024   14   3C    DC4   ^T, Device control 4
+ 1   021   025   15   3D    NAK   ^U, Negative acknowledge
+ 1   022   026   16   32    SYN   ^V, Synchronous idle
+ 0   023   027   17   26    ETB   ^W, End of transmission block
+ 0   024   030   18   18    CAN   ^X, Cancel
+ 1   025   031   19   19    EM    ^Y, End of medium
+ 1   026   032   1A   3F    SUB   ^Z, Substitute
+ 0   027   033   1B   27    ESC   ^[, Escape, prefix, altmode
+ 1   028   034   1C   1C    FS    ^\, File separator
+ 0   029   035   1D   1D    GS    ^], Group separator
+ 0   030   036   1E   1E    RS    ^^, Record separator
+ 1   031   037   1F   1F    US    ^_, Unit separator
+
+The  last  four  are  usually associated with the control version of backslash,
+right square bracket, uparrow (or circumflex),  and  underscore,  respectively,
+but some terminals do not transmit these control characters.
+Kermit User Guide                                                      Page 263
+
+
+The following characters are printable:
+
+First, some punctuation characters.
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 1   032   040   20   40    SP    Space, blank
+ 0   033   041   21   5A    !     Exclamation mark
+ 0   034   042   22   7F    "     Doublequote
+ 1   035   043   23   7B    #     Number sign, pound sign
+ 0   036   044   24   5B    $     Dollar sign
+ 1   037   045   25   6C    %     Percent sign
+ 1   038   046   26   50    &     Ampersand
+ 0   039   047   27   7D    '     Apostrophe, accent acute
+ 0   040   050   28   4D    (     Left parenthesis
+ 1   041   051   29   5D    )     Right parenthesis
+ 1   042   052   2A   5C    *     Asterisk, star
+ 0   043   053   2B   4E    +     Plus sign
+ 1   044   054   2C   6B    ,     Comma
+ 0   045   055   2D   60    -     Dash, hyphen, minus sign
+ 0   046   056   2E   4B    .     Period, dot
+ 1   047   057   2F   61    /     Slash
+
+Numeric characters:
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 0   048   060   30   F0    0     Zero
+ 1   049   061   31   F1    1     One
+ 1   050   062   32   F2    2     Two
+ 0   051   063   33   F3    3     Three
+ 1   052   064   34   F4    4     Four
+ 0   053   065   35   F5    5     Five
+ 0   054   066   36   F6    6     Six
+ 1   055   067   37   F7    7     Seven
+ 1   056   070   38   F8    8     Eight
+ 0   057   071   39   F9    9     Nine
+
+More punctuation characters:
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 0   058   072   3A   7A    :     Colon
+ 1   059   073   3B   5E    ;     Semicolon
+ 0   060   074   3C   4C    <     Left angle bracket
+ 1   061   075   3D   7E    =     Equal sign
+ 1   062   076   3E   6E    >     Right angle bracket
+ 0   063   077   3F   6F    ?     Question mark
+ 1   064   100   40   7C    @     "At" sign
+Kermit User Guide                                                      Page 264
+
+
+Upper-case alphabetic characters (letters):
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 0   065   101   41   C1    A
+ 0   066   102   42   C2    B
+ 1   067   103   43   C3    C
+ 0   068   104   44   C4    D
+ 1   069   105   45   C5    E
+ 1   070   106   46   C6    F
+ 0   071   107   47   C7    G
+ 0   072   110   48   C8    H
+ 1   073   111   49   C9    I
+ 1   074   112   4A   D1    J
+ 0   075   113   4B   D2    K
+ 1   076   114   4C   D3    L
+ 0   077   115   4D   D4    M
+ 0   078   116   4E   D5    N
+ 1   079   117   4F   D6    O
+ 0   080   120   50   D7    P
+ 1   081   121   51   D8    Q
+ 1   082   122   52   D9    R
+ 0   083   123   53   E2    S
+ 1   084   124   54   E3    T
+ 0   085   125   55   E4    U
+ 0   086   126   56   E5    V
+ 1   087   127   57   E6    W
+ 1   088   130   58   E7    X
+ 0   089   131   59   E8    Y
+ 0   090   132   5A   E9    Z
+
+More punctuation characters:
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 1   091   133   5B   AD    [     Left square bracket
+ 0   092   134   5C   E0    \     Backslash
+ 1   093   135   5D   BD    ]     Right square bracket
+ 1   094   136   5E   5F    ^     Circumflex, up arrow
+ 0   095   137   5F   6D    _     Underscore, left arrow
+ 0   096   140   60   79    `     Accent grave
+Kermit User Guide                                                      Page 265
+
+
+Lower-case alphabetic characters (letters):
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 1   097   141   61   81    a
+ 1   098   142   62   82    b
+ 0   099   143   63   83    c
+ 1   100   144   64   84    d
+ 0   101   145   65   85    e
+ 0   102   146   66   86    f
+ 1   103   147   67   87    g
+ 1   104   150   68   88    h
+ 0   105   151   69   89    i
+ 0   106   152   6A   91    j
+ 1   107   153   6B   92    k
+ 0   108   154   6C   93    l
+ 1   109   155   6D   94    m
+ 1   110   156   6E   95    n
+ 0   111   157   6F   96    o
+ 1   112   160   70   97    p
+ 0   113   161   71   98    q
+ 0   114   162   72   99    r
+ 1   115   163   73   A2    s
+ 0   116   164   74   A3    t
+ 1   117   165   75   A4    u
+ 1   118   166   76   A5    v
+ 0   119   167   77   A6    w
+ 0   120   170   78   A7    x
+ 1   121   171   79   A8    y
+ 1   122   172   7A   A9    z
+
+More punctuation characters:
+
+     .....ASCII.... EBCDIC
+Bit  Dec   Oct  Hex  Hex    Char  Remarks
+ 0   123   173   7B   C0     {    Left brace (curly bracket)
+ 1   124   174   7C   4F     |    Vertical bar
+ 0   125   175   7D   D0     }    Right brace (curly bracket)
+ 0   126   176   7E   A1     ~    Tilde
+
+
+Finally, one more nonprintable character:
+
+ 0    127   177  7F   07    DEL   Delete, rubout
+,Kermit User Guide                                                  Page cclxvi
+
+
+Index
+
+                                     1
+          3270 Protocol Emulation   2Completion   171, 173
+                                     CONNECT    9,  11,  175,  195,
+          8080   221, 223                    217, 237, 249
+                                     CONTINUE   35, 67, 100
+          ?-prompting   247          Control Characters   9, 262
+                                     Control-A   56, 90
+          ANSI.SYS   191             Control-C   35, 67, 100
+          APC   242                  Control-V   56
+          Apple ][   244             Control-X      30, 31, 56, 57,
+          APPLESOFT   253                    90, 91, 176, 177
+          ARPANET   65, 234          Control-Z   30,  31,  56,  57,
+          ASCII   262                        90, 91, 176, 177
+          ASCII-to-EBCDIC   112      CP/M   50, 224
+          Attention Character   234  Crash   22
+          Autoanswer   16            CRC   184
+          Autodialer   13, 75, 195
+                                     Deadlock   22
+          Batch   64                 Debugging     37, 62, 96, 113,
+          Batch  Operation of Kermit-CMS     184, 239, 252
+                  109                DEC Rainbow   241
+                                     -MS
+          Batch Operation  of  KermitDECSYSTEM-20   46
+                  173                DEFAULT-DISK   252
+          Baud   219, 238            DEFINE   66, 194
+          Baud Rate   36, 184        Define SET Macros   42
+          Beeper   184               Delay   37
+          Bell   184                 DELETE   56, 90
+          BINARY   253               DEVICE-DRIVER   252
+                                     55,
+          Binary Files   20, 29, 40, Dialout   75
+                  56, 90, 188        Dialout Modems   139
+          Binhex   158               Dialup   14
+          BIOS   221                 Diskette   22
+                                     84,
+          Block Check    36,  113,  1Display, File Transfer   185
+                  220                DO Command   195
+          Bootstrap   225            DOS 3.3   244
+                                     mit
+          Bootstrapping   MS-DOS  KerDownloading   225
+                  200                Duplex   37
+          BREAK Simulation   61, 65
+          BYE   17, 18, 218, 238     EBCDIC   262
+          Byte Size   48, 58, 62, 252EBCDIC-to-ASCII   113
+                                     Echo   20, 67
+          C-Kermit   118             Eighth-Bit Prefix     29,  30,
+          Cables   14, 15                    40,  55,  56,  90, 91,
+          Cancelling  a  File   Transfer     188, 219, 240
+                                     90,
+                  30,  31,  56,  57, EMACS   198
+                  91, 110, 176, 177  Emergency Exit   120
+          Capturing Files   43       End Of File   50, 170, 186
+          Checksum   184             End Of Line   40, 41
+          CKMKER   153               EOF   186
+          CKMKEY   158               Error Recovery   19
+          CLEAR   69                 Escape Character     11,  217,
+          CLOSE Command   182                219, 237, 239
+          Command Files   191        Escape  Character  for CONNECT
+          Command Macro   194                38, 62, 97, 186, 252
+          Command Parsing   25       Escape Sequence   9
+Kermit User Guide                                                       Page ii
+
+
+          EXIT   35, 67, 100, 251    Local Echoing   187
+                                     2
+          Expunging Deleted Files   6Local-Echo   219, 240
+                                     LOG   43, 218, 240
+          File Renaming   114, 193   LOG Command   182
+          File Type   97             Login Scripts   69
+                                     3
+          File Warning   114, 120, 19LOGOUT   218, 238
+          FILE-BYTE-SIZE   252
+          FILE-TYPE   253            Macintosh Kermit   153
+                                     3
+          File-Warning   218, 238, 25Macro   194
+          Filespec   248             Message Interference   52, 88
+          FINISH   17, 18, 219, 238  META Key   161, 198
+          Flow Control   38, 186, 239Mode Line   188, 196
+                                     Modem   195
+          Generation   56            Modems   139
+          Generic Kermit-80   221    MS-DOS   167
+          Generic MS-DOS Kermit     189,
+                  207                NAK   217, 237
+          GET   17, 218, 238, 249    NEC Advanced Personal Computer
+                                             242
+          Handicapped   185          Noise   6
+          Handshake   38, 78, 98, 187Normal  Form  for  File  Names
+          Hayes Modem   140                  55, 63, 89, 98
+                                     ion
+          Heath/Zenith-19      EmulatNull Modem   14, 15
+                  208
+          Help   51, 171, 247, 250   OUTPUT   69
+
+                                     20,
+          IBM   63, 98, 106,  137,  2Packet   7
+                  239, 253           Packet Length   40, 41
+          IBM PC   167               Padding   41
+                                     ion
+          Incomplete   File  DispositParity     29, 30, 39, 55, 56,
+                  30, 56, 91, 111,  177,     90, 91, 188, 219, 240,
+                  187                        262
+                                     39
+          Incomplete File Transfer   Password   72
+          Indirect Command File   72 Passwords   72
+                                     54,
+          Initial Filespec   22, 29, PAUSE   69
+                  89                 Pause Between Packets   41
+          INPUT   64, 66, 69, 70, 72 PC-DOS   167
+                                     mit
+          Installation of MS-DOS  KerPCjr   195
+                  199                Printer   182, 185, 198
+          INTEGER   253              Prompt   9, 40
+          Intercept Character   234
+          Interference   52, 88      QUIT   35, 67, 101, 251
+          Internal Modem   19
+          ITS-Binary Format   63     Rainbow 100   241
+                                     Raw Download   76, 101
+          Kermit Commands   10       Raw Upload   73, 77
+          Kermit Protocol   7        RECEIVE    11, 12, 13, 30, 56,
+          Kermit server   16                 90,  111,  177,   218,
+          Key Redefinition   187             238, 249
+          Key Redefinitions   198    Recognition   51, 247
+          KEYBOARD   253             Remote   10, 18, 25
+                                     Repeated Character Compression
+          Line Sequence Numbers   55         29, 30, 55, 56, 90
+          Linefeed   78              Retry Limit   42
+          Local   10, 25, 216, 236   Rollback   197
+          Local Echo   37
+Kermit User Guide                                                      Page iii
+
+
+          Screen Dump   186, 197     Word Size   48
+          Screen Scroll   197
+                                     54,
+          SEND   10, 13, 17, 22, 29, XON/XOFF   38, 218, 262
+                  89, 175, 218, 238, 248
+          Series/1   114             Z80   223
+          Server   16, 18, 32, 58, 92
+          Server, MS-DOS   182
+          SET   11, 219, 238
+          SET INPUT   64, 73
+          SET TERMINAL   191
+          Setfile   158
+          SHOW      11, 43, 66, 99, 240,
+                  254
+          SLOT   254
+          Smart Modem   195
+          Speaking Device   185
+          Speed   65, 66
+          Start Of Packet   41, 42
+
+          TAC   234
+          TAC Binary Mode   65
+          TAKE   64, 240
+          TELENET   39, 42, 142, 188
+          Terminal   191
+          TERSE   252
+          TEXT   253
+          Timeout    40,  41,  70,  193,
+                  216,  217,  224,  236,
+                  237
+          TIMER   219, 240
+          TOPS-20   46
+          TopView   167
+          TRANSMIT   73, 77, 218
+          TVT-Binary   65
+          Typeahead   72
+
+          UNDELETE   56, 90
+          Unix Kermit   118
+          Upload   73
+
+          VAX/VMS   83
+          VERBOSE   252
+          Version   90, 219
+          Virtual Terminal   9, 11, 217,
+                  237
+          VM/CMS   13, 106
+          VT-102 Emulation   167
+          VT100   219
+          VT102 Emulation   192, 208
+          VT52   219
+          VT52 Emulation   208
+
+          Warning    114, 120, 193, 219,
+                  240
+          Wildcard    11,  12,  47,  84,
+                  107, 169, 172
