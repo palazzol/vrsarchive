@@ -8,27 +8,22 @@
 
 #include <signal.h>
 #include "pm.h"
+#include <sys/times.h>
 
-#define	BPBYTE	10	/* bits sent to termnal per character (byte) */
-#define	PAWS(x)	(unss) ((1000 * x * BPBYTE) / bauds[baud])
-#define	TIMEBS(x,y) (((unss) ((x)->time - (y)->time) * 1000) + \
-			(x)->millitm - (y)->millitm)
 /*
-** delay()	- coordinate with tty speed
-**     /                1000 ms.                            \
-**     | ------------------------------------ * delta(chars) | == delay in ms.
-**     \   (baud bits/sec)/(BPBYTE bits/char)               /
+** delay()	- coordinate with tty speed (let the driver do it)
 */
 void	delay ()
 {
-	unss	mlen, u;	/* how long it took to print */
-	auto	struct	timeb	tp;
-
-	ftime(&tp);
-	mlen = TIMEBS(&tp, &_tp);
-	if ((u = PAWS(chcnt)) >= mlen)
-		msleep(u - mlen);
-	chcnt = 0l;
+#ifdef TIOCGETP
+	struct sgttyb buf;
+	ioctl(1, TIOCGETP, &buf);
+	ioctl(1, TIOCSETP, &buf);
+#else
+	struct termio buf;
+	ioctl(1, TCGETA, &buf);
+	ioctl(1, TCSETAW, &buf);
+#endif
 }
 
 /*
@@ -58,15 +53,12 @@ reg	unss	u;
 	}
 	pause();
 #else
-	auto	struct	timeb	tp, tp2;
+	struct tms buf;
+	time_t end;
 
-	ftime(&tp);
-	while (TRUE)
-	{
-		ftime(&tp2);
-		if (TIMEBS(&tp2, &tp) >= u)
-			return;
-	}
+	end = times(&buf) + ((long)u*HZ+999)/1000;
+	while (times(&buf) < end)
+		;
 #endif
 }
 
@@ -106,19 +98,20 @@ static	int	rates[] =	/* these were `tuned' after much playing */
 void	slow (flag)
 reg	int	flag;
 {
-	reg	int	ms;
-	static	struct	timeb	tp;
-	auto	struct	timeb	tp2;
+	reg	time_t	ms;
+	auto	struct	tms	buf;
+	static	time_t	tp;
+	auto	time_t	tp2;
 
 	if (flag)
 	{
-		ftime(&tp);
+		tp = times(&buf);
 		return;
 	}
 	if (level > 59)
 		quitit();
-	ftime(&tp2);
-	ms = (int) TIMEBS(&tp2, &tp);
+	tp2 = times(&buf);
+	ms = (int) ((tp2-tp)*1000L)/HZ;
 	if (fast)
 	{
 		if (ms < rates[level]/2)
@@ -129,7 +122,7 @@ reg	int	flag;
 		if (ms < rates[level])
 			msleep(rates[level] - ms);
 	}
-	ftime(&tp);
+	tp = times(&buf);
 }
 
 /*
@@ -140,10 +133,10 @@ void	slowness ()
 {
 	auto	char	buf[BUFSIZ];
 
-	_puts(CL);
+	clear();
 	echo();
 	nocrmode();
-	printf("old delay: %d, new delay: ", rates[level]);
+	printw("old delay: %d, new delay: ", rates[level]);
 	if (!gets(buf))
 		msg("EOF in slowness");
 	if (buf[0])
