@@ -1,0 +1,24 @@
+-- posted 8/85
+Private hosts documented.
+Homegrown scanner -- it's true what they say about lex.
+Slight improvement in memory allocation.  More to come.
+Build dbm file with pathalias ... | makedb ...
+Don't print paths for private hosts, or anyone they collide with.
+Domain-style addresses.  See man page.
+Make links bidirectional by adding DEAD back link.  Dumb, expensive, and wrong.
+Gatewayed nets.  See man page.
+
+-- posted 1/85
+By popular request, no ! in dbm key.
+Network character must be one of !@%: -- dot is dead.
+Private hosts.  (Undocumented.  Goal is to support host name collisions.)
+Discourage mixing of left- (@) and right-associative (!) operators.  
+Magic @ <-> % rule in paths involving multiple @'s.
+
+-- from smb version
+Directed graph.
+Reverse the sense of the -c (cost) flag.
+Don't complain about duplicate links -- use cheapest.
+No network names in the output.
+
+-- epoch

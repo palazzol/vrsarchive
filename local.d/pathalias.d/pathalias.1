@@ -1,0 +1,274 @@
+.TH PATHALIAS 1 
+.SH NAME
+pathalias, makedb \- electronic address router
+.SH SYNOPSIS
+.B pathalias
+[
+.B \-vci
+] [
+.B \-l
+host
+] [
+.B \-d
+link
+] [
+.ig
+.\" the -g option is for pathparse.  it's not really used by pathalias.
+.B \-g
+file
+] [
+..
+inputfiles
+]
+.PP
+.B makedb
+[
+.B \-a
+] [
+.B \-o
+dbmfile
+] [
+files ...
+]
+.SH DESCRIPTION
+.I Pathalias
+computes the shortest paths and corresponding routes from one
+host to all other known, reachable hosts.
+\fIPathalias\fP expects as input host-to-host connectivity
+information, with
+a host name in column 1, followed by white space, followed by
+a comma-separated list of links (also host names),
+denoting a connection from the host to the links.
+Connections are assumed to be unidirectional.
+A link-name may be preceded or followed by a network character to use
+in the path name.
+Valid network characters are `!', `@', `:', and `%'.
+The link-name (and network character, if present) may be
+followed by a ``cost'' in parentheses.
+.PP
+For example,
+.RS
+.nf
+down	princeton!(DEDICATED)
+princeton	topaz!(DEMAND+LOW)
+topaz	@rutgers(LOCAL)
+.fi
+.RE
+Costs may be arbitrary
+arithmetic expressions involving numbers, parentheses, '+', '\-', '*',
+and '/'.  Several symbolic numbers are
+defined, as follows:
+.PP
+.RS
+.nf
+.ta 10m 20m
+LOCAL	25	(local-area network connection)
+DEDICATED	95	(high speed dedicated link)
+DIRECT	200	(toll-free call)
+DEMAND	300	(long-distance call)
+HOURLY	500	(hourly poll)
+EVENING	1800	(time restricted call)
+DAILY	5000	(daily poll)
+WEEKLY	30000	(irregular poll)
+.fi
+.RE
+.PP
+In addition,
+DEAD is a very large number (effectively infinite),
+and HIGH and LOW are \-5 and +5 respectively,
+for baud-rate or quality bonuses/penalties.
+.PP
+The numbers are intended to represent frequency
+of connection, which seems to be far more important than baud
+rates for this type of traffic.  There is an assumed
+high overhead for each hop; thus, e.g., HOURLY is far more than
+DAILY / 24.
+.PP
+For the most part, arithmetic expressions that mix symbolic constants
+other than HIGH and LOW make no sense.  Thus, \fIe.g.\fP, if a host
+calls a local neighbor whenever there is work,
+and additionally polls every evening, the cost is
+DIRECT, \fInot\fP DIRECT+EVENING.
+.PP
+Aliases may be indicated by including lines of the form
+.RS
+name = alias [ , alias...]
+.RE
+The primary name is used in the output.
+.PP
+Fully connected networks, such as the ARPANET or a LAN,
+are indicated by
+.RS
+net = {host, host, ...}
+.RE
+The host-list may be preceded or followed by a routing
+character, and may be followed by a cost:
+.RS
+.nf
+princeton-ethernet = {down, yoyo, flakey, quirky, princeton, ivy}!(LOCAL)
+ARPA = @{sri-unix, mit-ai, su-score}(DEDICATED)
+.fi
+.RE
+Also see the section on \fIgateways and domains\fP below.
+.PP
+Connection data may be given while hiding host names
+by declaring
+.RS
+private {host [, host ...]}
+.RE
+.PP
+.I Pathalias
+will not generate routes for private hosts or for any otherwise declared
+host with the same name, but may produce routes
+through them.
+The scope of a private declaration extends from the declaration to the end of
+the input file in which it appears.
+It is best to put private definitions at the beginning of the
+appropriate input file.
+.PP
+Anything following # on an input line is ignored.  A line that begins with white
+space is taken as a continuation of the previous line.
+.PP
+The output, which appears on the standard output,
+is a list of host\-route pairs,
+where route is a string appropriate for use with
+\fIprintf\fP(3), e.g.
+.RS
+.nf
+.ta 10m 20m
+rutgers	princeton!topaz!%s@rutgers
+.fi
+.RE
+The ``%s'' in the route string should be replaced by the
+user name at the destination host.
+(This task is normally performed by a mailer.)
+.PP
+Except in the case of \fidomains\fP (see below),
+the name of a network is never used in
+expansions; thus, in the above example, the path from sri-unix to
+mit-ai would be '%s@mit-ai', not '%s@ARPA@mit-ai'.
+.PP
+Options:
+.TP 6
+.B  \-i
+Map all host names to lower case.
+.TP 6
+.B  \-c
+Print the costs of paths.
+.TP 6
+.B  \-v
+Report some statistics on stderr.
+.ig
+.\" the -g option is for pathparse and is not for public consumption (yet!).
+.TP 6
+.BR \-g " file\^"
+Dump the edges of the graph into the named file.
+..
+.TP 6
+.BR  \-l " host\^"
+Use host as local host name.
+.TP 6
+.BR  \-d " link\^"
+Declares a dead link, host, or network.
+If link is of the form host1!host2, the link from host1 to host2
+is treated as an extremely high cost (i.e., dead) link.
+If link is a single host name, that
+host is treated as dead and will be used as an intermediate host of
+last resort on any path.
+If link is a network name, the network requires a gateway.
+.PP
+\fBGateways and domains.\fP\ \ A network is represented by
+a pseudo-host and a set of network members.
+Links from the network to the members have the weight given in
+the input, while
+links from the members to the network
+have zero cost.
+Networks that are declared dead on the command line show these
+latter weights as expensive ones,
+effectively prohibiting paths to members by way of the network.
+If the input also shows non-zero weight links from some members to the network,
+these hosts will act as gateways for the network.
+E.g., if csnet is declared dead on the command line (with
+the -d flag) and the input contains
+.RS
+.nf
+csnet = {...}
+csnet-relay	csnet
+.fi
+.RE
+then routes to csnet hosts will use csnet-relay as a gateway,
+rather than some other csnet host, one that might not
+be able or willing to act as a gateway.
+Furthermore, it is presumed that forwarding through
+gatewayed networks is to be discouraged.
+.PP
+Some intermediate nodes expect routes to specify domain names, e.g.,
+to get to bitnet host technion through the gateway at psuvax1,
+the appropriate route might be psuvax1!technion.bitnet!user.
+This syntax is generated if the routing character is repeated in
+the declaration of the gateway to the ``domain'', e.g.,
+.RS
+.nf
+bitnet = {..., technion, ...}!(DIRECT)
+psuvax1	bitnet!!(DIRECT)
+.fi
+.RE
+This syntax works with other routing characters as well, e.g.,
+.RS
+.nf
+csnet = @{...}
+csnet-relay @@csnet
+.fi
+.RE
+.PP
+.I Makedb
+builds a
+.IR dbm (3)
+database from the named input files, or from the standard input if
+no files are specified.
+(This replaces the obsolete 
+.I -b
+flag of
+.IR pathalias .)
+Normally, the database is truncated;
+if
+.B \-a
+is specified, the input records are appended to the existing database.
+The
+.B \-o
+flag specifies the base name of the dbm file.
+Input is expected to be sequence of ascii records
+each consisting of a key field and a data field, separated by a single tab.
+If the tab is missing, the data field is assumed to be empty.
+.SH FILES
+.ta \w'/usr/local/lib/palias.{dir,pag}     'u
+/usr/local/lib/palias.{dir,pag}	default dbm output
+.SH BUGS
+White space in options is mandatory;
+.I pathalias
+should use
+.IR getopt (3).
+.br
+The format string intended for
+.I printf
+is unable to anticipate the variety of addressing
+rules.
+In particular, if it contains an ``@'' and is given to
+.I printf
+along with an argument that also contains an ``@'', havoc is loosed.
+.br
+Domains constitute a futile attempt to defeat anarchy.
+.br
+The -i flag makes rice.rice impossible.
+.br
+.IR Dbm (3)
+wants a non-empty data field, forcing
+.I makedb
+to be imaginative.
+.SH COMPILE-TIME
+Edit config.h to accommodate \s-2UNIX\s0 variants.
+.SH AUTHORS
+Steve Bellovin (ulysses!smb)
+.br
+Peter Honeyman (princeton!honey)
+
