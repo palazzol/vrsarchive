@@ -1,0 +1,24 @@
+        Attached is a set of files that implement a rather macabre
+version of hangman (all you sickie netters should like it :-) including
+my own cursor control library.  If anyone gets really motivated, I
+imagine that translating it into Berkeley Curses (which I didn't have)
+and reposting it would be quite appreciated.
+
+        DON'T CHEAT AND LOOK AT THE .hang-words FILE TO SEE WHAT THE
+WORDS ARE!!!
+
+        Have fun with this, and all messages from the ACLU or whomever
+else complains about violent computer games should be routed to /dev/null!
+
+**** Any problems encountered, bugs fixed, or great words added should
+     be reported to the author (please) at either of the addresses:
+
+        ihnp4!hpfcla!d_taylor
+        hpcnof!dat@HPLABS
+        hplabs!hpcnof!dat
+
+     Thanks and good luck!
+
+                                        -- Dave Taylor
+                                        Hewlett-Packard (CNO)
+                                        ihnp4!hpfcla!d_taylor
