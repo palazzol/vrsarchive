@@ -237,7 +237,7 @@ genocide()
 	{
 		nmp = next(mp);
 		if (mp->t_type == c)
-			remove(&mp->t_pos, mp, FALSE);
+			mremove(&mp->t_pos, mp, FALSE);
 	}
 	for (i = 0; i < 26; i++)
 		if (lvl_mons[i] == c)

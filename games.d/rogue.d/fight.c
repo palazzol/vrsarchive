@@ -232,7 +232,7 @@ register THING *mp;
 						purse -= GOLDCALC + GOLDCALC + GOLDCALC + GOLDCALC;
 					if (purse < 0)
 						purse = 0;
-					remove(&mp->t_pos, mp, FALSE);
+					mremove(&mp->t_pos, mp, FALSE);
 					if (purse != lastpurse)
 						msg("Your purse feels lighter");
 				}
@@ -253,7 +253,7 @@ register THING *mp;
 								steal = obj;
 					if (steal != NULL)
 					{
-						remove(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
+						mremove(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
 						inpack--;
 						if (steal->o_count > 1 && steal->o_group == 0)
 						{
@@ -601,10 +601,10 @@ register char *mname;
 }
 
 /*
- * remove:
+ * mremove:
  *	Remove a monster from the screen
  */
-remove(mp, tp, waskill)
+mremove(mp, tp, waskill)
 register coord *mp;
 register THING *tp;
 bool waskill;
@@ -698,7 +698,7 @@ bool pr;
 	/*
 	 * Get rid of the monster.
 	 */
-	remove(&tp->t_pos, tp, TRUE);
+	mremove(&tp->t_pos, tp, TRUE);
 	if (pr)
 	{
 		addmsg("Defeated ");

@@ -101,7 +101,7 @@ command()
 					case 't': case 'C': case 'I': case '.':
 					case 'z': case 'F':
 #ifdef WIZARD
-					case CTRL(D): case CTRL(U):
+					case MYCTRL('D'): case MYCTRL('U'):
 #endif
 						break;
 					default:
@@ -184,8 +184,8 @@ command()
 					else
 						after = FALSE;
 				when 'D': after = FALSE; discovered();
-				when CTRL(R) : after = FALSE; msg(huh);
-				when CTRL(L) :
+				when MYCTRL('R') : after = FALSE; msg(huh);
+				when MYCTRL('L') :
 					after = FALSE;
 					clearok(curscr,TRUE);
 					wrefresh(curscr);
@@ -214,7 +214,7 @@ command()
 						}
 					}
 #ifdef WIZARD
-				when CTRL(P) :
+				when MYCTRL('P') :
 					after = FALSE;
 					if (wizard)
 					{
@@ -245,24 +245,24 @@ command()
 					{
 						when '@' : msg("@ %d,%d", hero.y, hero.x);
 						when 'C' : create_obj();
-						when CTRL(I) : inventory(lvl_obj, 0);
-						when CTRL(W) : whatis(FALSE);
-						when CTRL(D) : level++; new_level();
-						when CTRL(U) : level--; new_level();
-						when CTRL(F) : show_map();
-						when CTRL(T) : teleport();
-						when CTRL(E) : msg("Food left: %d", food_left);
-						when CTRL(A) : msg("%d things in your pack", inpack);
-						when CTRL(C) : add_pass();
-						when CTRL(X) : turn_see(on(player, SEEMONST));
-						when CTRL(N) :
+						when MYCTRL('I'):inventory(lvl_obj, 0);
+						when MYCTRL('W'):whatis(FALSE);
+						when MYCTRL('D'):level++; new_level();
+						when MYCTRL('U'):level--; new_level();
+						when MYCTRL('F'):show_map();
+						when MYCTRL('T'):teleport();
+						when MYCTRL('E'):msg("Food left: %d", food_left);
+						when MYCTRL('A'):msg("%d things in your pack", inpack);
+						when MYCTRL('C'):add_pass();
+						when MYCTRL('X'):turn_see(on(player, SEEMONST));
+						when MYCTRL('N'):
 						{
 							register THING *item;
 
 							if ((item = get_item("Charge", STICK)) != NULL)
 								item->o_charges = 10000;
 						}
-						when CTRL(H) :
+						when MYCTRL('H') :
 						{
 							register int i;
 							register THING *obj;
