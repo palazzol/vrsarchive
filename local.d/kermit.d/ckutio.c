@@ -950,7 +950,7 @@ ttdmode(ttname) char *ttname;
 	return (0);
 }
 
-#endif	UNIXPC
+#endif	/*UNIXPC*/
 
 /*  T T L O C K  */
 
@@ -1005,7 +1005,7 @@ ttunlck() {				/* kill uucp lock if possible */
     if (hasLock) savres = unlink( flfnam );
 #ifdef UNIXPC
     if (Offreslt == 512) Getonshl(savttnam);
-#endif UNIXPC
+#endif /*UNIXPC*/
     return( savres );
 }
 
@@ -1126,7 +1126,7 @@ ttpkt(speed,flow,parity) int speed, flow, parity; {
 		/* if we did, the phone would wait for an incoming call */
 		/* instead, this is about the last thing to do in dial() */
 		&& (!xlocal || strncmp(ttnmsv, "/dev/ph", sizeof("/dev/ph")-1))
-#endif UNIXPC
+#endif /*UNIXPC*/
 		) {
 #ifndef aegis
 	if (fcntl(ttyfd,F_SETFL, fcntl(ttyfd, F_GETFL, 0) & ~O_NDELAY) < 0 )
@@ -1199,7 +1199,7 @@ ttvt(speed,flow) int speed, flow; {
 		/* if we did, the phone would wait for an incoming call */
 		/* instead, this is about the last thing to do in dial() */
 		&& (!xlocal || strncmp(ttnmsv, "/dev/ph", sizeof("/dev/ph")-1))
-#endif UNIXPC
+#endif /*UNIXPC*/
     ) {
 #ifndef aegis
 	if (fcntl(ttyfd,F_SETFL, fcntl(ttyfd, F_GETFL, 0) & ~O_NDELAY) < 0 )

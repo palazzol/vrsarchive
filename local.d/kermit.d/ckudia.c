@@ -627,16 +627,16 @@ internal modem.\n");
 		printf("Sorry, you must 'set speed' to 300 or 1200 first\n");
 		return(-2);
 	    }
-#endif UNIXPC
+#endif /*UNIXPC*/
 	} else {
-#endif INTMEM
+#endif /*INTMEM*/
 	    if (speed < 0) {
 		printf("Sorry, you must 'set speed' first\n");
 		return(-2);
             }
 #ifdef INTMDM
 	}
-#endif INTMDM
+#endif /*INTMDM*/
 	if (ttopen(ttname,&local,mdmtyp) < 0) {/* Open, no wait for carrier */
 	    erp = errmsg;
 	    sprintf(erp,"Sorry, can't open %s",ttname);
@@ -837,7 +837,7 @@ switch (augmdmtyp) {
 	    reset();
 	    return(-2);
 	}
-#endif UNIXPC
+#endif /*UNIXPC*/
 	break;			/* nothing to do */
 #endif
 
@@ -879,9 +879,9 @@ switch (augmdmtyp) {
 		return(-2);
 	    }
 	}
-#endif UNIXPC
+#endif /*UNIXPC*/
     } else
-#endif INTMDM
+#endif /*INTMDM*/
     ttolSlow(lbuf,pmdminf->dial_rate);	/* send dialing string */
 
     debug(F110,"Dialing done",lbuf,0);
@@ -1024,9 +1024,9 @@ switch (augmdmtyp) {
 		status = CONNECTED;
 		break;
 	    }
-#endif UNIXPC
+#endif /*UNIXPC*/
 	    break;
-#endif INTMDM
+#endif /*INTMDM*/
 
 	case n_UNKNOWN:
 	    /** SHOULD WAIT FOR CARRIER OR TIMEOUT -- DS **/
