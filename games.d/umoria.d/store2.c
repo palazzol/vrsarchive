@@ -948,7 +948,7 @@ int store_num, cur_top;
       (void) sprintf(out_val, "Selling %s (%c)", tmp_str, item_val+97);
       msg_print(out_val);
       msg_print(" ");
-      if ((store_buy[store_num])(inventory[INVEN_MAX].tval))
+      if ((*store_buy[store_num])(inventory[INVEN_MAX].tval))
 	if (store_check_num(store_num)) 
 	  switch(sell_haggle(store_num, &price, inventory[INVEN_MAX]))
 	    {
