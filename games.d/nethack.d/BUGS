@@ -1,0 +1,408 @@
+From littlei!uunet!husc6!cca!mirror!rayssd!brunix!nancy!rph Wed Sep 30 14:19:02 PDT 1987
+Article 329 of comp.sources.bugs:
+Path: littlei!uunet!husc6!cca!mirror!rayssd!brunix!nancy!rph
+>From: rph@nancy (Richard Hughey)
+Newsgroups: comp.sources.bugs,rec.games.hack
+Subject: Nethack bugs
+Message-ID: <18831@brunix.UUCP>
+Date: 28 Sep 87 13:39:36 GMT
+Sender: root@brunix.UUCP
+Reply-To: rph@brunix.UUCP (Richard Hughey)
+Organization: Brown University Computer Science Dept.
+Lines: 149
+Xref: littlei comp.sources.bugs:329 rec.games.hack:1433
+
+Here are some nethack bug fixes I've attempted to mail to
+genat!mike with no luck.  The first two I poste awhile ago.
+
+
+9/15/87
+
+makemon.c:  makemon:  the mess picking a random monster was fixed,
+	    so now bats will exist in nethack, and kops won't be created.
+	    Also so that no error results from genociding the kops.
+
+*		} else {
+*			ct = CMNUM - strlen(fut_geno);
+*			if(index(fut_geno, 'm')) ct++; /*make only1minotaur */
+*			if(index(fut_geno, '@')) ct++;  /* CMNUM+1 and CMNUM */
+*	#ifdef KOPS	/* Don't create KOPS & DON'T count them twice. rph. */
+*			if(!index(fut_geno, 'K')) ct--;
+*	#endif		
+*			if(ct <= 0) return(0); 		/* no more monsters! */
+*			tmp = 7;
+*	#ifdef KOPS
+*			tmp--;
+*	#endif
+*	#ifdef ROCKMOLE
+*			if(dlevel<4) tmp--;
+*	#endif
+*			/* tmp was 7 in next line. rph */
+*			tmp = rn2(ct*dlevel/24 + tmp);
+*			if(tmp < dlevel - 4) tmp = rn2(ct*dlevel/24 + 12);
+*			if(tmp >= ct) tmp = rn1(ct - ct/2, ct/2);
+*	
+*			ct = 0;
+*			for(; ct < CMNUM; ct++){
+*				ptr = &mons[ct];
+*	#ifdef KOPS
+*				if(ptr->mlet == 'K') {
+*					continue;
+*				}
+*	#endif
+*				if(index(fut_geno, ptr->mlet)) continue;
+*				if(tmp-- <= 0) goto gotmon;
+*			}
+*			panic("makemon? %d %d %d", ct, tmp, CMNUM);
+
+ ------------------------------
+    Richard Hughey 		CSNET:  rph%cs.brown.edu@relay.cs.net
+    Brown University  		BITNET:  rph@browncs
+				(decvax, ihnp4, allegra)!brunix!rph
+
+
+From littlei!reed!tektronix!decvax!ucbvax!sdcsvax!ames!lll-tis!mordor!sri-spam!rutgers!iuvax!silver!creps Sun Oct  4 17:32:25 PDT 1987
+Article 1445 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!sdcsvax!ames!lll-tis!mordor!sri-spam!rutgers!iuvax!silver!creps
+>From: creps@silver.bacs.indiana.edu
+Newsgroups: rec.games.hack
+Subject: *COLOR* PC Nethack
+Message-ID: <18600044@silver>
+Date: 30 Sep 87 05:36:00 GMT
+Organization: Indiana University BACS, Bloomington
+Lines: 159
+Nf-ID: #N:silver:18600044:000:3137
+Nf-From: silver.bacs.indiana.edu!creps    Sep 30 00:36:00 1987
+
+
+   I have recently modified the termcap stuff in Nethack to allow you
+to use color in the MSDOS version. The diff files are below. Note that
+you should also add the line #define MSDOSCOLOR in your config.h file
+in order to get it to work. It's nothing spectacular, but it's still
+not too bad to look at.
+
+p.s. the line numbers may differ slightly from yours
+
+-	-	-	-	-	-	-	-	-
+Steve Creps on the VAX 8650 running Ultrix 2.0-1 at Indiana University.
+	creps@silver.bacs.indiana.edu
+Count De Monet: "Oh Bearnaise, do we have any more of those delicious raisons?"
+Bearnaise: "You ate yours! These are mine!"
+
+*** termcap.old	Wed Sep 30 00:23:35 1987
+--- termcap.c	Wed Sep 30 00:25:54 1987
+***************
+*** 43,48
+  	ND = "\033[1C";
+  	XD = "\033[1B";
+  	BC = "\033[1D";
+  	SO = "\033[7m";
+  	SE = "\033[0m";
+  	TI = TE = VS = VE = "";
+
+--- 43,56 -----
+  	ND = "\033[1C";
+  	XD = "\033[1B";
+  	BC = "\033[1D";
++ #ifdef MSDOSCOLOR	/* creps@silver.bacs.indiana.edu */
++ 	TI = "\033[44;37m";
++ 	TE = "\033[0m";
++ 	VS = VE = "";
++ 	SO = "\033[31m";
++ 	SE = "\033[44;37m";
++ #else
++ 	TI = TE = VS = VE = "";
+  	SO = "\033[7m";
+  	SE = "\033[0m";
+  #endif
+***************
+*** 45,51
+  	BC = "\033[1D";
+  	SO = "\033[7m";
+  	SE = "\033[0m";
+! 	TI = TE = VS = VE = "";
+  	CD = "\033";
+  	CO = COLNO;
+  	LI = ROWNO;
+
+--- 53,59 -----
+  	TI = TE = VS = VE = "";
+  	SO = "\033[7m";
+  	SE = "\033[0m";
+! #endif
+  	CD = "\033";
+  	CO = COLNO;
+  	LI = ROWNO;
+***************
+*** 55,60
+  	 * make HI and HE longer, you must also change the length of buf[]
+  	 * in let_to_name()
+  	 */
+  	HI = "\033[4m";
+  	HE = "\033[0m";
+  #endif
+
+--- 63,72 -----
+  	 * make HI and HE longer, you must also change the length of buf[]
+  	 * in let_to_name()
+  	 */
++ #ifdef MSDOSCOLOR
++ 	HI = "\033[32m";
++ 	HE = "\033[44;37m";
++ #else
+  	HI = "\033[4m";
+  	HE = "\033[0m";
+  #endif /* MSDOSCOLOR */
+***************
+*** 57,62
+  	 */
+  	HI = "\033[4m";
+  	HE = "\033[0m";
+  #endif
+  #else
+  	register char *term;
+
+--- 69,75 -----
+  #else
+  	HI = "\033[4m";
+  	HE = "\033[0m";
++ #endif /* MSDOSCOLOR */
+  #endif
+  #else
+  	register char *term;
+***************
+*** 245,250
+  cl_end() {
+  	if(CE)
+  		xputs(CE);
+  	else {	/* no-CE fix - free after Harold Rynes */
+  		/* this looks terrible, especially on a slow terminal
+  		   but is better than nothing */
+
+--- 258,267 -----
+  cl_end() {
+  	if(CE)
+  		xputs(CE);
++ /*#ifdef MSDOSCOLOR
++ /*		xputs(TI);
++ /*#endif
++ */
+  	else {	/* no-CE fix - free after Harold Rynes */
+  		/* this looks terrible, especially on a slow terminal
+  		   but is better than nothing */
+***************
+*** 260,265
+  
+  clear_screen() {
+  	xputs(CL);
+  	xputs(HO);
+  	curx = cury = 1;
+  }
+
+--- 277,285 -----
+  
+  clear_screen() {
+  	xputs(CL);
++ #ifdef MSDOSCOLOR
++ 	xputs(TI);
++ #endif
+  	xputs(HO);
+  	curx = cury = 1;
+  }
+
+
+*** end.old	Wed Sep 30 00:17:46 1987
+--- end.c	Wed Sep 30 00:21:20 1987
+***************
+*** 279,284
+  #ifdef APOLLO
+  	getret();
+  #endif
+  	exit(0);
+  }
+  clearlocks(){
+
+--- 279,288 -----
+  #ifdef APOLLO
+  	getret();
+  #endif
++ #ifdef MSDOSCOLOR
++ 	getret();
++ 	end_screen();
++ #endif
+  	exit(0);
+  }
+  clearlocks(){
+
+
+From littlei!uunet!husc6!mit-eddie!uw-beaver!cornell!svax!gil Mon Oct 19 18:59:16 PDT 1987
+Article 1526 of rec.games.hack:
+Path: littlei!uunet!husc6!mit-eddie!uw-beaver!cornell!svax!gil
+>From: gil@svax.cs.cornell.edu (Gil Neiger)
+Newsgroups: comp.sources.bugs,rec.games.hack
+Subject: Fix to (net)hack makemon bug
+Message-ID: <1725@svax.cs.cornell.edu>
+Date: 16 Oct 87 17:10:44 GMT
+Reply-To: gil@svax.cs.cornell.edu (Gil Neiger)
+Organization: Cornell Univ. CS Dept, Ithaca NY
+Lines: 74
+Xref: littlei comp.sources.bugs:368 rec.games.hack:1526
+
+Here is the beginning of my hack.makemon.c; modifying nethack's
+makemon.c in a similar way should fix the standard "makemon" panic.
+However, this will not generate bats if KOPS is turned on.  To fix
+this, in the file monst.c the monster "Keystone Kop" (bracketed by
+"#ifdef KOPS" and "#endif KOPS") should be make the FIRST monster in
+the array permonst; the monster "Kobold" (bracketed by "#ifndef KOPS"
+and "#endif KOPS") should be left where it is.
+
+
+					- Gil
+====================================
+/* $Header: /home/Vince/cvs/games.d/nethack.d/BUGS,v 1.1 1987-11-01 20:14:38 vrs Exp $ */
+
+/* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
+/* hack.makemon.c - version 1.0.2 */
+
+#include	"hack.h"
+extern char fut_geno[];
+extern char *index();
+extern struct obj *mkobj_at();
+struct monst zeromonst;
+
+/*
+ * called with [x,y] = coordinates;
+ *	[0,0] means anyplace
+ *	[u.ux,u.uy] means: call mnexto (if !in_mklev)
+ *
+ *	In case we make an Orc or killer bee, we make an entire horde (swarm);
+ *	note that in this case we return only one of them (the one at [x,y]).
+ */
+struct monst *
+makemon(ptr,x,y)
+register struct permonst *ptr;
+{
+	register struct monst *mtmp;
+	register tmp, ct;
+	boolean anything = (!ptr);
+#ifdef KOPS
+	int kopsoffset = 1;
+#else KOPS
+	int kopsoffset = 0;
+#endif KOPS
+
+	if(x != 0 || y != 0) if(m_at(x,y)) return((struct monst *) 0);
+	if(ptr){
+		if(index(fut_geno, ptr->mlet)) return((struct monst *) 0);
+	} else {
+		ct = CMNUM - strlen(fut_geno);
+		if(index(fut_geno, 'm')) ct++;  /* make only 1 minotaur */
+		if(index(fut_geno, '@')) ct++;
+		if(ct <= 0) return(0); 		  /* no more monsters! */
+		tmp = 7;		/* changed 3/31/87 as per mods */
+
+		tmp -= kopsoffset;
+#ifdef ROCKMOLE
+                if(dlevel<4)tmp--;
+#endif ROCKMOLE
+                tmp = rn2(ct*dlevel/24 + tmp);
+		if(tmp < dlevel - 4) tmp = rn2(ct*dlevel/24 + 12);
+		if(tmp >= ct - kopsoffset)
+			tmp = rn1(ct - ct/2, ct/2 - kopsoffset);
+		ct = kopsoffset;
+
+		for(; ct < CMNUM; ct++){
+			ptr = &mons[ct];
+			if(index(fut_geno, ptr->mlet))
+				continue;
+			if(!tmp--) goto gotmon;
+		}
+		impossible("Couldn't make a monster");
+		return((struct monst *) 0);
+	}
+gotmon:
+	...
+
+From littlei!uunet!husc6!rutgers!iuvax!silver!creps Sat Sep 26 20:06:06 PDT 1987
+Article 314 of comp.sources.bugs:
+Path: littlei!uunet!husc6!rutgers!iuvax!silver!creps
+>From: creps@silver.bacs.indiana.edu
+Newsgroups: comp.sources.bugs
+Subject: Graphics and poison bugs in Nethack
+Message-ID: <45700007@silver>
+Date: 24 Sep 87 23:20:00 GMT
+Organization: Indiana University BACS, Bloomington
+Lines: 127
+Nf-ID: #N:silver:45700007:000:4304
+Nf-From: silver.bacs.indiana.edu!creps    Sep 24 18:20:00 1987
+
+
+   I have fixed a couple of bugs in Nethack 1.4. Here they are:
+
+Bug:
+       When using the GRAPHICS option from the HACK.CNF file in the PC version
+of Nethack, most of the graphics characters defined are not read by the init
+routine. This caused an "at gets null" error when moving off an up stairway,
+and many symbols to be incorrectly defined.
+
+Fix:
+       The code in msdos.c had not been rewritten to handle more than the
+original nine GRAPHICS characters. I applied the necessary changes to let
+the rest of the characters be defined.
+
+Diffs:
+*** msdos.old  Thu Sep 24 03:13:25 1987
+--- msdos.c    Thu Sep 24 03:13:24 1987
+***************
+*** 507,515
+                       struct symbols s;
+  /*                   struct symbols s = defsyms;*/
+  
+!                      if (sscanf(bufp, "%u%u%u%u%u%u%u%u%u", &s.vwall,
+!                                  &s.hwall, &s.tlcorn, &s.trcorn, &s.blcorn,
+!                                  &s.brcorn, &s.door, &s.room, &s.corr) == 9)
+  /*                           symbol = s;*/
+                         showsyms = s;
+                       else {
+
+--- 507,518 -----
+                       struct symbols s;
+  /*                   struct symbols s = defsyms;*/
+  
+!                      if (sscanf(bufp, "%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u",
+!                                  &s.stone, &s.vwall, &s.hwall, &s.tlcorn,
+!                                  &s.trcorn, &s.blcorn, &s.brcorn, &s.door,
+!                                  &s.room, &s.corr, &s.upstair, &s.dnstair,
+!                                  &s.trap, &s.pool, &s.fountain, &s.throne,
+!                                  &s.web) == 17)
+  /*                           symbol = s;*/
+                         showsyms = s;
+                       else {
+***************
+*** 513,519
+  /*                           symbol = s;*/
+                         showsyms = s;
+                       else {
+!                              msmsg("GRAPHICS did not contain 9 values\n");
+                               getreturn("to continue");
+                       }
+               } else {
+
+--- 516,522 -----
+  /*                           symbol = s;*/
+                         showsyms = s;
+                       else {
+!                              msmsg("GRAPHICS did not contain 17 values\n");
+                               getreturn("to continue");
+                       }
+               } else {
+
+   Good luck, and I hope this gets into the 2.0 version in time.
+
+-	-	-	-	-	-	-	-	-
+Steve Creps on the VAX 8650 running Ultrix 2.0-1 at Indiana University.
+	creps@silver.bacs.indiana.edu
+Count De Monet: "Oh Bearnaise, do we have any more of those delicious raisons?"
+Bearnaise: "You ate yours! These are mine!"
+
+
