@@ -6,7 +6,12 @@ static char *sccsid = "@(#)clear.c	4.1 (Berkeley) 10/1/80";
 */
 
 #include <stdio.h>
+#include <termcap.h>
+#ifdef SYS5
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 
 char	*getenv();
 char	*tgetstr();
@@ -25,10 +30,17 @@ main()
 	char *clear;
 	char buf[1024];
 	char *pc;
+#ifdef SYS5
+	struct termios tty;
+
+	tcgetattr(1, &tty);
+	ospeed = tty.c_ospeed;
+#else
 	struct sgttyb tty;
 
 	gtty(1, &tty);
 	ospeed = tty.sg_ospeed;
+#endif
 	if (cp == (char *) 0)
 		exit(1);
 	if (tgetent(buf, cp) != 1)
