@@ -14,13 +14,19 @@
  * files EXCEPT ones in the BAD directory).
  *
 */
-
+#ifndef M_XENIX
+#include <sys/types.h>
+#define fs_fsize s_fsize
+#endif
 #include <sys/param.h>
 #include <stdio.h>
 #include <sys/dir.h>
 #include <sys/filsys.h>
 #include <sys/stat.h>
 #define TRUE 1
+#ifndef ROOTINO
+#define ROOTINO	S5ROOTINO
+#endif
 
 char name[DIRSIZ+6];		/* /dev/[DIRSIZ chars]\0		*/
 int errs;
