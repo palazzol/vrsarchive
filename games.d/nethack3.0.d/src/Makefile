@@ -1,7 +1,7 @@
 #	Hack Makefile.
 #	SCCS Id: @(#)Makefile.unix	3.0	88/10/17
 MODEL	= -Ml -Gt24
-OPTIONS	= -O -I../include -DHACKDIR=\"$(GAMLIB)/nethack3.0\"
+OPTIONS	= -O -I../include -DHACKDIR=\"$(GAMLIB)/nethack3.0\" $(WSTRINGS)
 GAME	= nethack3.0
 ALL		= $(GAME)
 include $(HOME)/CONFIG
@@ -173,13 +173,13 @@ all:	$(GAME)
 #			the dependency list would cause a dependency
 #			loop.
 #
-makedefs:	$(MAKEOBJS)
-	$(CC) $(LFLAGS) -o makedefs $(MAKEOBJS)
+makedefs$(EXE):	$(MAKEOBJS)
+	$(CC) $(LFLAGS) -o $@ $(MAKEOBJS)
 
 makedefs.o:  ../include/config.h ../include/permonst.h
 
-lev_comp:  $(SPLEVOBJS)
-	$(CC) $(LFLAGS) -o lev_comp $(SPLEVOBJS)
+lev_comp$(EXE):  $(SPLEVOBJS)
+	$(CC) $(LFLAGS) -o $@ $(SPLEVOBJS)
 
 lev_comp.o:  ../include/hack.h ../include/sp_lev.h
 
@@ -248,19 +248,19 @@ Spanic.o:	panic.c
 #	files, we kludge around this by making date.h dependent on hack.h,
 #	even though it doesn't include this file.
 #
-../include/date.h:	$(CSOURCES) ../include/hack.h makedefs
+../include/date.h:	$(CSOURCES) ../include/hack.h makedefs$(EXE)
 	chmod u+w $@
 	./makedefs -v
 
-../include/trap.h:	../include/config.h makedefs
+../include/trap.h:	../include/config.h makedefs$(EXE)
 	chmod u+w $@
 	./makedefs -t
 
-../include/onames.h:	makedefs
+../include/onames.h:	makedefs$(EXE)
 	chmod u+w $@
 	./makedefs -o
 
-../include/pm.h:	makedefs
+../include/pm.h:	makedefs$(EXE)
 	chmod u+w $@
 	./makedefs -p
 
@@ -302,7 +302,7 @@ tags: $(CSOURCES)
   
 clean:
 	rm -f *.o lev_comp.c ../include/lev_comp.h lev_lex.c
-	rm -f lev_comp makedefs $(ALL)
+	rm -f lev_comp$(EXE) makedefs$(EXE) $(ALL)
 	cd ../include; chmod a-w date.h onames.h pm.h trap.h
 
 spotless: clean
