@@ -25,7 +25,7 @@ CHMOD=/bin/chmod
 MKDIR=/bin/mkdir
 CP=/bin/cp
 CC=/bin/cc
-NROFF=/usr/bin/nroff
+NROFF=/usr/ucb/nroff
 
 # make all
 all:	$(EXECUTABLE) $(DOCS) $(MAN)
