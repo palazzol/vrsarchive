@@ -4,7 +4,7 @@
 #
 #	Edit History:
 #	09/09/86 vrs
-#		Created from 
+#		Created the thing.
 #
 #	Defines the site will probably need to set.
 #
@@ -31,14 +31,18 @@ SETUID	= root
 #	These vary by UNIX version, and shouldn't need fiddling for like
 #	systems:
 #	CFLAGS can be $(CBSD), $(CXENIX), or $(CSYS5).
-#	LFLAGS can be $(LBSD), $(LXENIX), or $(LSYS5).
-#	If you don't have readdir(), set DIRLIB = ../lib/libdir.a, else DIRLIB =
+#	LIBS   can be $(LBSD), $(LXENIX), or $(LSYS5).
+#	If you don't have readdir(), set DIRLIB = -ldir else DIRLIB =
 #	If you don't need ranlib, set RANLIB = :, else RANLIB = ranlib
 #
 CFLAGS	= $(CXENIX)
-LFLAGS	= $(LXENIX)
-DIRLIB	= lib/libdir.a
+LIBS	= $(LXENIX)
+BERKLIB	= -lberkeley
+DIRLIB	= -ldir
+DPYLIB	= -ldpy
+PAGER	= more
 RANLIB	= ranlib
+TROFF	= itroff
 #
 #	This keeps USG make from trying to use the user's shell.  We want to
 #	always use the Bourne Shell.
@@ -46,15 +50,32 @@ RANLIB	= ranlib
 SHELL	= /bin/sh
 #
 #	Set up directories and names.
+#	CCLIB must be a directory searched (for libraries) by the C compiler.
+#	Note that it is Host relative, not target relative.
 #	NET must be /bin or /usr/bin for UUCP.  It is used for binaries which
 #	may need to be remotely executed.
 #
+CCLIB	= /lib
 NET	= $(ROOT)/usr/bin
-ARCHDIR	= $(ROOT)/usr/spool/oldnotes
+ETC	= $(ROOT)/etc
 BINDIR	= $(ROOT)/usr/local/bin
 LIBDIR	= $(ROOT)/usr/local/lib
+INCDIR	= $(ROOT)/usr/local/include
+LIBUUCP	= $(ROOT)/usr/lib/uucp
+LIBMAIL	= $(ROOT)/usr/lib/mail
+LIBNEWS	= $(ROOT)/usr/lib/news
+LIBTMAC	= $(ROOT)/usr/lib/tmac
+GAMDIR	= $(ROOT)/usr/games
+GAMLIB	= $(ROOT)/usr/games/lib
+SPOOLN	= $(ROOT)/usr/spool/news
 USRMAN	= $(ROOT)/usr/man
 MAN1	= $(USRMAN)/man1
+MAN2	= $(USRMAN)/man2
+MAN3	= $(USRMAN)/man3
+MAN4	= $(USRMAN)/man4
+MAN5	= $(USRMAN)/man5
+MAN6	= $(USRMAN)/man6
+MAN7	= $(USRMAN)/man7
 MAN8	= $(USRMAN)/man8
 #
 #	The following probably won't need to be modified.
@@ -63,9 +84,34 @@ MAN8	= $(USRMAN)/man8
 # SYS5	- System 3/5 with System 3/5 tty drivers (NOT BRL)
 # XENIX	- XENIX 286, System 3/5, Large Model, Big Stack.
 #
-CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork
-CSYS5	= -DSYS5 -DPAGER=\"pg\" -O
-CXENIX	= -DSYS5 -DOLDUUX -M2l -F a000
-LBSD	= -ltermcap
-LSYS5	= -lcurses # $(DIRLIB)
-LXENIX	= -ltermcap $(DIRLIB) -lx
+CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
+CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" $(OPTIONS)
+CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
+LBSD	= -lcurses -ltermcap
+LSYS5	= -lcurses $(DIRLIB)
+LXENIX	= -lcurses -ltermcap $(DIRLIB) -lm -lx
+#
+#	Default to make $(ALL)
+#
+all:	$(ALL)
+#
+#	Directory rules
+#
+DIRS	= $(ROOT) $(NET) $(ETC) $(BINDIR) $(LIBDIR) $(INCDIR) $(LIBUUCP) \
+	  $(LIBMAIL) $(LIBTMAC) $(GAMDIR) $(GAMLIB) $(SPOOLN) $(USRMAN) \
+	  $(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8)
+$(DIRS):
+	mkdir $@
+	chmod 755 $@
+#
+#	Fix the default rule to link against libraries
+#
+.c:
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LIBS) -o $@
+	-rm -f $*.o
+#
+#	Do the recursion rule
+#
+.SUFFIXES: .d
+.d:
+	@cd $?; make
