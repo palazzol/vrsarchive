@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.5 2002-11-24 05:35:23 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.6 2002-11-24 18:12:45 vrs Exp $
 #
 ALL	= xmodrec$(EXE) xmodtran$(EXE) addcr$(EXE) delcr$(EXE) cr2lf$(EXE) \
 	  lf2cr$(EXE)
@@ -18,20 +18,20 @@ install:	$(ALL)
 clean:
 		rm -f $(OBJS) $(ALL)
 
-xmodrec:	receive.o del.o lf.o
+xmodrec$(EXE):	receive.o del.o lf.o
 		$(CC) $(CFLAGS) -o $@ del.o lf.o receive.o $(LIBS)
 
-xmodtran:	transmit.o add.o cr.o
+xmodtran$(EXE):	transmit.o add.o cr.o
 		$(CC) $(CFLAGS) -o $@ add.o cr.o transmit.o $(LIBS)
 
-addcr:		addcr.o add.o
+addcr$(EXE):	addcr.o add.o
 		$(CC) $(CFLAGS) -o $@ add.o addcr.o
 
-delcr:		delcr.o del.o
+delcr$(EXE):	delcr.o del.o
 		$(CC) $(CFLAGS) -o $@ del.o delcr.o
 
-lf2cr:		lf2cr.o cr.o
+lf2cr$(EXE):	lf2cr.o cr.o
 		$(CC) $(CFLAGS) -o $@ lf2cr.o cr.o
 
-cr2lf:		cr2lf.o lf.o
+cr2lf$(EXE):	cr2lf.o lf.o
 		$(CC) $(CFLAGS) -o $@ cr2lf.o lf.o
