@@ -83,8 +83,8 @@ bool wakeup;
 		diffhero = hero.y - hero.x;
 	}
 	index = INDEX(hero.y, hero.x);
-	pfl = _flags[index];
-	pch = _level[index];
+	pfl = s_flags[index];
+	pch = s_level[index];
 	for (y = sy; y <= ey; y++)
 		if (y > 0 && y < LINES - 1) for (x = sx; x <= ex; x++)
 		{
@@ -103,8 +103,8 @@ bool wakeup;
 			 * THIS REPLICATES THE moat() MACRO.  IF MOAT IS
 			 * CHANGED, THIS MUST BE CHANGED ALSO.
 			 */
-			fp = &_flags[index];
-			ch = _level[index];
+			fp = &s_flags[index];
+			ch = s_level[index];
 			if (pch != DOOR && ch != DOOR)
 				if ((pfl & F_PASS) != (*fp & F_PASS))
 					continue;
@@ -144,7 +144,7 @@ bool wakeup;
 						wake_monster(y, x);
 					if (tp->t_oldch != ' ' ||
 						(!(rp->r_flags & ISDARK) && !on(player, ISBLIND)))
-							tp->t_oldch = _level[index];
+							tp->t_oldch = s_level[index];
 					if (see_monst(tp))
 						ch = tp->t_disguise;
 				}

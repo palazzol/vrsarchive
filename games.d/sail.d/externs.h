@@ -179,7 +179,7 @@ struct scenario {
 	char *name;			/* 14 */
 	struct ship ship[NSHIP];	/* 16 */
 };
-struct scenario scene[];
+extern struct scenario scene[];
 int nscene;
 
 struct shipspecs {
@@ -203,7 +203,7 @@ struct shipspecs {
 	char rig4;
 	short pts;
 };
-struct shipspecs specs[];
+extern struct shipspecs specs[];
 
 struct scenario *cc;		/* the current scenario */
 struct ship *ls;		/* &cc->ship[cc->vessels] */
@@ -228,15 +228,15 @@ char HDTrake[9][10];
 char QUAL[9][5];
 char MT[9][3];
 
-char *countryname[];
-char *classname[];
-char *directionname[];
-char *qualname[];
-char loadname[];
+extern char *countryname[];
+extern char *classname[];
+extern char *directionname[];
+extern char *qualname[];
+extern char loadname[];
 
-char rangeofshot[];
+extern char rangeofshot[];
 
-char dr[], dc[];
+extern char dr[], dc[];
 
 int winddir;
 int windspeed;

@@ -24,7 +24,7 @@ extern bool	after, amulet, askme, door_stop, fight_flush,
 				playing, r_know[], running, s_know[], save_msg,
 				wizard, ws_know[];
 
-extern char	_flags[], _level[], *a_names[], file_name[], fruit[],
+extern char	s_flags[], s_level[], *a_names[], file_name[], fruit[],
 				home[], huh[], *inv_t_name[], outbuf[], *p_colors[],
 				*p_guess[], prbuf[], *r_guess[], *r_stones[], *release,
 				runch, *s_guess[], *s_names[], take, *w_names[],
@@ -48,11 +48,11 @@ char	*brk(), *charge_str(), *ctime(), *getenv(), *inv_name(),
 		*rnd_color(), *sbrk(), *strcat(), *strcpy(),
 		*tr_name(), *vowelstr();
 
-int	auto_save(), come_down(), doctor(), endit(), leave(),
+int	come_down(), doctor(),
 		nohaste(), rollwand(), runners(), sight(), stomach(),
-		swander(), tstp(), turn_see(), unconfuse(), unsee(), visuals();
+		swander(), turn_see(), unconfuse(), unsee(), visuals();
 
-void	quit();
+extern SIG_T auto_save(), endit(), leave(), quit(), tstp();
 
 #ifdef CHECKTIME
 int	checkout();

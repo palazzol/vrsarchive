@@ -69,8 +69,8 @@ char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
 char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
 char file_name[MAXSTR];			/* Save file name */
 char home[MAXSTR];			/* User's home directory */
-char _level[MAXLINES*MAXCOLS];		/* Level map */
-char _flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
+char s_level[MAXLINES*MAXCOLS];		/* Level map */
+char s_flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
 char *inv_t_name[] = {
 		"Overwrite",
 		"Slow",
@@ -316,8 +316,8 @@ struct h_list helpstr[] = {
 	'c',	"	Call object",
 	'D',	"	Recall what's been discovered",
 	'o',	"	Examine/set options",
-	CTRL(L),	"	Redraw screen",
-	CTRL(R),	"	Repeat last message",
+	MYCTRL('L'),	"	Redraw screen",
+	MYCTRL('R'),	"	Repeat last message",
 	ESCAPE,	"	Cancel command",
 	'!',	"	Shell escape",
 	'S',	"	Save game",

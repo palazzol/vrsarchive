@@ -195,7 +195,7 @@ turnref()
 	register int index;
 
 	index = INDEX(hero.y, hero.x);
-	if (!(_flags[index] & F_SEEN))
+	if (!(s_flags[index] & F_SEEN))
 	{
 		if (jump)
 		{
@@ -203,7 +203,7 @@ turnref()
 			refresh();
 			leaveok(stdscr, FALSE);
 		}
-		_flags[index] |= F_SEEN;
+		s_flags[index] |= F_SEEN;
 	}
 }
 
@@ -246,9 +246,9 @@ register coord *tc;
 
 	count = running = FALSE;
 	index = INDEX(tc->y, tc->x);
-	_level[index] = TRAP;
-	tr = _flags[index] & F_TMASK;
-	_flags[index] |= F_SEEN;
+	s_level[index] = TRAP;
+	tr = s_flags[index] & F_TMASK;
+	s_flags[index] |= F_SEEN;
 	switch (tr)
 	{
 		case T_DOOR:

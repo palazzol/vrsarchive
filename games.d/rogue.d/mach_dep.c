@@ -78,7 +78,6 @@ open_score()
  */
 setup()
 {
-		int  auto_save(), endit(), tstp();
 #ifdef CHECKTIME
 		int  checkout();
 #endif

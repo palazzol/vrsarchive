@@ -256,31 +256,31 @@ register int y, x; {
 			if (nextx - x < 0)
 			{
 				i = INDEX(nexty + Starty, nextx + Startx + 1);
-				_level[i] = PASSAGE;
-				_flags[i] |= F_PASS;
+				s_level[i] = PASSAGE;
+				s_flags[i] |= F_PASS;
 			}
 			else
 			{
 				i = INDEX(nexty + Starty, nextx + Startx - 1);
-				_level[i] = PASSAGE;
-				_flags[i] |= F_PASS;
+				s_level[i] = PASSAGE;
+				s_flags[i] |= F_PASS;
 			}
 		else
 			if (nexty - y < 0)
 			{
 				i = INDEX(nexty + Starty + 1, nextx + Startx);
-				_level[i] = PASSAGE;
-				_flags[i] |= F_PASS;
+				s_level[i] = PASSAGE;
+				s_flags[i] |= F_PASS;
 			}
 			else
 			{
 				i = INDEX(nexty + Starty - 1, nextx + Startx);
-				_level[i] = PASSAGE;
-				_flags[i] |= F_PASS;
+				s_level[i] = PASSAGE;
+				s_flags[i] |= F_PASS;
 			}
 		i = INDEX(nexty + Starty, nextx + Startx);
-		_level[i] = PASSAGE;
-		_flags[i] |= F_PASS;
+		s_level[i] = PASSAGE;
+		s_flags[i] |= F_PASS;
 		dig(nexty, nextx);
 	}
 }

@@ -157,17 +157,17 @@ read_scroll()
 				for (x = 0; x < COLS; x++)
 				{
 					index = INDEX(y, x);
-					switch (ch = _level[index])
+					switch (ch = s_level[index])
 					{
 						case '-':
 						case '|':
-							if (!(_flags[index] & F_REAL))
+							if (!(s_flags[index] & F_REAL))
 							{
-								ch = _level[index] = DOOR;
-								_flags[index] &= ~F_REAL;
+								ch = s_level[index] = DOOR;
+								s_flags[index] &= ~F_REAL;
 							}
 						case PASSAGE:
-							_flags[index] |= F_SEEN;
+							s_flags[index] |= F_SEEN;
 						case DOOR:
 						case STAIRS:
 							if ((op = moat(y, x)) != NULL)

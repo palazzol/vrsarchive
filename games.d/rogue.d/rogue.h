@@ -52,14 +52,14 @@
 #define free_list(a)	_free_list(&a)
 #define max(a,b)	((a) > (b) ? (a) : (b))
 #define on(thing,flag)	(((thing).t_flags & (flag)) != 0)
-#define CTRL(ch)	('ch' & 037)
+#define MYCTRL(ch)	(ch & 037)
 #define GOLDCALC	(rnd(50 + 10 * level) + 2)
 #define ISRING(h,r)	(cur_ring[h] != NULL && cur_ring[h]->o_which == r)
 #define ISWEARING(r)	(ISRING(LEFT, r) || ISRING(RIGHT, r))
 #define ISMULT(type) 	(type==POTION || type==SCROLL || type==FOOD || type==GOLD)
 #define INDEX(y,x)	(((x) * MAXLINES) + (y))
-#define chat(y,x)	(_level[((x) * MAXLINES) + (y)])
-#define flat(y,x)	(_flags[((x) * MAXLINES) + (y)])
+#define chat(y,x)	(s_level[((x) * MAXLINES) + (y)])
+#define flat(y,x)	(s_flags[((x) * MAXLINES) + (y)])
 #define moat(y,x)	(_monst[((x) * MAXLINES) + (y)])
 #define unc(cp)		(cp).y, (cp).x
 #ifdef WIZARD

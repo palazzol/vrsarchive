@@ -132,7 +132,7 @@ register bool pr;
 	if (fallpos(&obj->o_pos, &fpos, TRUE))
 	{
 		index = INDEX(fpos.y, fpos.x);
-		_level[index] = obj->o_type;
+		s_level[index] = obj->o_type;
 		obj->o_pos = fpos;
 		if (cansee(fpos.y, fpos.x))
 		{

@@ -218,16 +218,16 @@ int r1, r2;
 	else
 	{
 		index = INDEX(spos.y, spos.x);
-		_level[index] = PASSAGE;
-		_flags[index] |= F_PASS;
+		s_level[index] = PASSAGE;
+		s_flags[index] |= F_PASS;
 	}
 	if (!(rpt->r_flags & ISGONE))
 		door(rpt, &epos);
 	else
 	{
 		index = INDEX(epos.y, epos.x);
-		_level[index] = PASSAGE;
-		_flags[index] |= F_PASS;
+		s_level[index] = PASSAGE;
+		s_flags[index] |= F_PASS;
 	}
 	/*
 	 * Get ready to move...
@@ -248,8 +248,8 @@ int r1, r2;
 			while (turn_distance--)
 			{
 				index = INDEX(curr.y, curr.x);
-				_level[index] = PASSAGE;
-				_flags[index] |= F_PASS;
+				s_level[index] = PASSAGE;
+				s_flags[index] |= F_PASS;
 				curr.x += turn_delta.x;
 				curr.y += turn_delta.y;
 			}
@@ -257,8 +257,8 @@ int r1, r2;
 		 * Continue digging along
 		 */
 		index = INDEX(curr.y, curr.x);
-		_level[index] = PASSAGE;
-		_flags[index] |= F_PASS;
+		s_level[index] = PASSAGE;
+		s_flags[index] |= F_PASS;
 		distance--;
 	}
 	curr.x += del.x;
@@ -287,13 +287,13 @@ register coord *cp;
 	if (rnd(10) + 1 < level && rnd(5) == 0)
 	{
 		if (cp->y == rm->r_pos.y || cp->y == rm->r_pos.y + rm->r_max.y - 1)
-				_level[index] = '-';
+				s_level[index] = '-';
 		else
-				_level[index] = '|';
-		_flags[index] &= ~F_REAL;
+				s_level[index] = '|';
+		s_flags[index] &= ~F_REAL;
 	}
 	else
-		_level[index] = DOOR;
+		s_level[index] = DOOR;
 }
 
 #ifdef WIZARD
