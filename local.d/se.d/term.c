@@ -1,9 +1,12 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/term.c,v 1.2 1987-02-07 20:44:24 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/term.c,v 1.3 1987-12-26 20:57:33 vrs Exp $";
 #endif
 
 /*
  * $Log: not supported by cvs2svn $
+ * Version 1.2  87/02/07  20:44:24  vrs
+ * Fix for systems without WINIOCTL
+ * 
  * Revision 1.7  86/11/12  11:37:30  arnold
  * Fixed winsize() to verify that cols and rows not 0 before assigning
  * them to Nrows and Ncols.
@@ -92,8 +95,6 @@ static char *CE;	/* clear to end of line */
 static char *DL;	/* hardware delete line */
 static char *AL;	/* hardware add (insert) line */
 static char *CL;	/* clear screen */
-
-extern char PC;		/* Pad character, usually '\0' */
 
 static char *pcstr;
 extern char *tgoto (), *tgetstr ();	/* termlib routines */
@@ -2046,12 +2047,6 @@ char *type;
 #else
 	if (setcaps (type) == ERR)
 		error (NO, "se: could not find terminal in system database");
-
-
-	PC = pcstr ? pcstr[0] : EOS;
-
-	if (*tgoto (CM, 0, 0) == 'O')	/* OOPS returned.. */
-		error (NO, "se: terminal does not have cursor motion.");
 
 	/*
 	 * first, get it from the library. then check the
