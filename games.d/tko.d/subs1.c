@@ -16,7 +16,7 @@ in the file and remains intact.
 
 #include "def.h"
 #include "extern.h"
-
+extern char *strrchr();
 
 savegm()
 {
@@ -42,7 +42,7 @@ char str[LINE];
 			str[strlen(str)-1]='\0';
 		else break;
 	}
-	sscanf(rindex(str,' '),"%s",lname);
+	sscanf(strrchr(str,' '),"%s",lname);
 	*lname=toupper(*lname);
 	r = -1;
 	for(i=0; i < nboxers; i++)
