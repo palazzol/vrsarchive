@@ -363,7 +363,8 @@ char	*s;
 	dispError (s);
 }
 
-caught ()
+SIG_T
+caught (dummy)
 {
 	gotsignal++;
 	signal (SIGINT, caught);

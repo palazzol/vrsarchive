@@ -21,7 +21,7 @@ $(OFILES): reversi.h
 edges.o: edges.c edges.out
 	$(CC) $(CFLAGS) -c edges.c
 edges.out: makeedge genedge
-	genedge | makeedge > edges.out
+	./genedge | ./makeedge > edges.out
 
 makeedge.c: makeedge.y
 	yacc makeedge.y

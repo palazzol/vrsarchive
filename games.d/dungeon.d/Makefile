@@ -17,7 +17,7 @@ FFLAGS = -O -q # -Ddebug
 BIN = /usr/games
 # Directory path for data files - default is /usr/games/lib/dunlib
 DDIR = \'/usr/games/lib/dunlib
-DCDIR =\"/usr/games/lib/dunlib
+DCDIR =/usr/games/lib/dunlib
 # Directory path for man page - default /usr/manl/man6
 MDIR = /usr/manl/man6
 # userid for wizard - allows invoking game debugging tool - default 0

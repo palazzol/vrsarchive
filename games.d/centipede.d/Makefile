@@ -3,7 +3,7 @@
 # edit sys_dep.c to adjust pathnames for your system
 #
 ALL	= cent
-OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)/cent
+OPTIONS	= -O -DGAMLIB=$(GAMLIB)/cent
 MODEL	= -i -F 2000
 include /etc/CONFIG
 OBJECTS	= cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
