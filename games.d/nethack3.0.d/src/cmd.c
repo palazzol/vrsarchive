@@ -143,9 +143,14 @@ pgetchar() {		/* curtesy of aeb@cwi.nl */
 }
 
 /* A ch == 0 resets the pushq */
+#ifdef __STDC__
+void
+pushch(char ch)
+#else
 void
 pushch(ch)
 char ch;
+#endif
 {
 	if (!ch)
 		phead = ptail = 0;
@@ -157,9 +162,14 @@ char ch;
 /* A ch == 0 resets the saveq.  Only save keystrokes when not
  * replaying a previous command.
  */
+#ifdef __STDC__
+void
+savech(char ch)
+#else
 void
 savech(ch)
 char ch;
+#endif
 {
 	if (!in_doagain) {
 		if (!ch)
@@ -175,7 +185,7 @@ static int
 doextcmd()	/* here after # - now read a full-word command */
 {
 	char buf[BUFSZ];
-	register struct ext_func_tab *efp = extcmdlist;
+	register const struct ext_func_tab *efp = extcmdlist;
 again:
 	pline("# ");
 #ifdef COM_COMPL
@@ -202,7 +212,7 @@ again:
 int
 doextlist()	/* here after #? - now list all full-word commands */
 {
-	register struct ext_func_tab *efp = extcmdlist;
+	register const struct ext_func_tab *efp = extcmdlist;
 	char     buf[BUFSZ];
 
 	set_pager(0);
@@ -541,9 +551,14 @@ const struct ext_func_tab extcmdlist[] = {
 	NULL, NULL, donull
 };
 
+#ifdef __STDC__
+char
+unctrl(char sym)
+#else
 char
 unctrl(sym)
 char sym;
+#endif
 {
     return (sym >= ('A' & 037) && sym <= ('Z' & 037)) ? sym + 0140 : sym;
 }
@@ -552,7 +567,7 @@ void
 rhack(cmd)
 register char *cmd;
 {
-	register struct func_tab *tlist = cmdlist;
+	register const struct func_tab *tlist = cmdlist;
 	boolean firsttime = FALSE;
 	register int res;
 
@@ -655,9 +670,14 @@ register char *cmd;
 	return;
 }
 
+#ifdef __STDC__
+char
+lowc(char sym)
+#else
 char
 lowc(sym)
 char sym;
+#endif
 {
     return (sym >= 'A' && sym <= 'Z') ? sym+'a'-'A' : sym;
 }
@@ -670,9 +690,14 @@ const schar ydir[10] = {  0,-1,-1,-1, 0, 1, 1, 1, 0, 0 };
 const schar zdir[10] = {  0, 0, 0, 0, 0, 0, 0, 0, 1,-1 };
 
 #ifdef WALKIES
+#ifdef __STDC__
+int
+xytod(schar x,schar y)	/* convert an x,y pair into a direction code */
+#else
 int
 xytod(x, y)	/* convert an x,y pair into a direction code */
 schar x, y;
+#endif
 {
 	register int dd;
 
@@ -693,11 +718,16 @@ register int dd;
 }
 #endif /* WALKIES */
 
+#ifdef __STDC__
+int
+movecmd(char sym)	/* also sets u.dz, but returns false for <> */
+#else
 int
 movecmd(sym)	/* also sets u.dz, but returns false for <> */
 char sym;
+#endif
 {
-	register char *dp, *sdp = flags.num_pad ? ndir : sdir;
+	register const char *dp, *sdp = flags.num_pad ? ndir : sdir;
 
 	u.dz = 0;
 	if(!(dp = index(sdp, sym))) return 0;
@@ -707,9 +737,14 @@ char sym;
 	return !u.dz;
 }
 
+#ifdef __STDC__
+int
+getdir(boolean s)
+#else
 int
 getdir(s)
 boolean s;
+#endif
 {
 	char dirsym;
 

@@ -139,11 +139,15 @@ int *x,*y;
  *	dir is the direction.
  *	flag must be put to TRUE if we want the drawbridge to be opened.
  */
-
+#ifdef __STDC__
+boolean
+create_drawbridge(int x,int y,int dir,boolean flag)
+#else
 boolean
 create_drawbridge(x,y,dir,flag)
 int x,y,dir;
 boolean flag;
+#endif
 {
 	int x2,y2;
 	uchar wall;

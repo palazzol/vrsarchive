@@ -442,10 +442,15 @@ doup()
 	return(1);
 }
 
+#ifdef __STDC__
+void
+goto_level(int newlevel,boolean at_stairs)
+#else
 void
 goto_level(newlevel, at_stairs)
 register int newlevel;
 register boolean at_stairs;
+#endif
 {
 	register int fd;
 	register boolean up = (newlevel < dlevel);
