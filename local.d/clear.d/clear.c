@@ -6,7 +6,7 @@ static char *sccsid = "@(#)clear.c	4.1 (Berkeley) 10/1/80";
 */
 
 #include <stdio.h>
-#include <termcap.h>
+#include <curses.h>
 #ifdef SYS5
 #include <termios.h>
 #else
@@ -16,7 +16,11 @@ static char *sccsid = "@(#)clear.c	4.1 (Berkeley) 10/1/80";
 char	*getenv();
 char	*tgetstr();
 char	PC;
+#ifdef __STDC__
+speed_t	ospeed;
+#else
 short	ospeed;
+#endif
 #undef	putchar
 int	putchar();
 

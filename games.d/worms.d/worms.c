@@ -19,10 +19,11 @@
 #include <stdlib.h>
 #endif
 #include <stdio.h>
-#include <termcap.h>
 #ifdef __STDC__
 #include <termios.h>
+#include <curses.h>
 #else
+#include <termcap.h>
 #include <sgtty.h>
 #endif
 #define cursor(col,row) tputs(tgoto(CM,col,row),1,outc)
@@ -31,7 +32,11 @@ outc(c)
         putchar(c);
 }
 char *UP;
+#ifdef __STDC__
+speed_t ospeed;
+#else
 short ospeed;
+#endif
 int Wrap;
 short *ref[24];
 static char flavor[]={
