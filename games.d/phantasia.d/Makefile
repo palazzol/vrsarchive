@@ -1,11 +1,11 @@
 #
-# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.8 2002-11-23 04:09:43 Vincent Exp $
+# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.9 2002-11-24 02:16:35 Vincent Exp $
 #
 OPTIONS	= -DDEST=$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"$(SAFEUID)\" \
 	  -DUIDA=0 -DUIDB=500 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
 MODEL	= -M2m
 GAME	= phantasia$(EXE)
-ALL	= $(GAME) setup phant.help
+ALL	= $(GAME) setup$(EXE) phant.help
 include $(HOME)/CONFIG
 # To create the game:
 #
@@ -71,7 +71,7 @@ $(GAME):	$(OFILES)
 $(OFILES):	$(HFILES)
 
 # Make the initialization program.
-setup:		phantglobs.o setup.o monsters.asc
+setup$(EXE):	phantglobs.o setup.o monsters.asc
 		$(CC) $(CFLAGS) phantglobs.o setup.o $(LIBS) -o $@
 
 setup.o:	$(HFILES)
@@ -92,7 +92,7 @@ install:	$(ALL) $(GAMDIR) $(GAMLIB) $(LIBGAM)
 		cp $(GAME) $(GAMDIR)
 		chmod 4711 $(LIBGAM)/$(GAME) $(GAMDIR)/$(GAME)
 		chmod 644 $(LIBGAM)/phant.help
-		echo Phantasia 3.3.2 | ./setup > /dev/null
+		echo Phantasia 3.3.2 | ./setup$(EXE) > /dev/null
 
 # Make Phantasia map.
 # Change the map commands reflect your installation.
@@ -111,7 +111,7 @@ convert:	convert.c oldplayer.h phantstruct.h
 
 # Clean up directory after installation.
 clean:
-		$(RM) -f *.o $(GAME) phant.help phant.pt? setup
+		$(RM) -f *.o $(GAME) phant.help phant.pt? setup$(EXE)
 
 # Make 'shell archives'.
 # All source files barely fit into 5 archives, and must be
