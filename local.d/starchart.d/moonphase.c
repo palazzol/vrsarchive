@@ -28,6 +28,16 @@
 #define Pzero    111.481526     /* lunar mean long of perigee at EPOCH */
 #define Nzero     93.913033     /* lunar mean long of node at EPOCH */
 
+extern char *calloc();
+extern long time();
+
+#include <signal.h>
+#define SIG_T void
+SIG_T
+sigfpe() {
+signal(SIGFPE, sigfpe);	/* VRS */
+}
+
 main()  {
 
 double dtor();
@@ -42,6 +52,7 @@ double phase;  /* percent of lunar surface illuminated */
 double phase2; /* percent of lunar surface illuminated one day later */
 int i = EPOCH;
 
+signal(SIGFPE, sigfpe);	/* VRS */
 time (lo);  /* get system time */
 pt = gmtime(lo);  /* get ptr to gmt time struct */
 cfree(lo);
@@ -82,6 +93,7 @@ else if ((int)(phase + 0.5) < 50) {
       printf("Waning ");
    printf("Crescent (%1.0f%% of Full)\n", phase);
    }
+return(0);
 }
 
 double potm(days)
