@@ -10,6 +10,9 @@
  *	Crispin Goswell @ Rutherford Appleton Laboratory caag@uk.ac.rl.vd
  */
 #include "main.h"
+#ifdef SYS5
+#include <memory.h>
+#endif
 
 static Object OpForString, Make ();
 
@@ -161,7 +164,11 @@ Object MakeString (s, length) unsigned char *s; int length;
 	
  	res = MakeObject (String);
 	res.u.String = (unsigned char *) (new = Malloc ((unsigned) length));
+#ifdef SYS5
+ 	memcpy (new, s, length);
+#else
  	bcopy (s, new, length);
+#endif
  	res.Length = length;
  	
  	return res;
@@ -174,7 +181,11 @@ static Object Make (s, length) unsigned char *s; int length;
  	
  	res = MakeObject (String);
  	res.u.String = (unsigned char *) (new = Malloc ((unsigned) length));
+#ifdef SYS5
+ 	memcpy (new, s, length);
+#else
  	bcopy (s, new, length);
+#endif
  	res.Length = length;
  	
  	return res;
