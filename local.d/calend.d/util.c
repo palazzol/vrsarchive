@@ -203,12 +203,13 @@ run_remind() {
 	register char restmsg[BUFSIZ];
 	int tmp;
 
-	sscanf(message,"%s %[^\n]",time,restmsg);
+	time[0] = '0';	/* Force 24 hour clock from remind (vrs) */
+	sscanf(message,"%s %[^\n]",time+1,restmsg);
 
 	strcpy(message,restmsg);	/* get new message for other options */
 
 	if((tmp = fork()) == 0) {
-		execl(REMIND,"remind","-f",time,restmsg,0);
+		execl(REMIND,"remind","-f",time,restmsg,(char *)0);
 		_exit(-999);
 	}
 	if (tmp == -1) {
