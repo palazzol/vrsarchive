@@ -23,7 +23,7 @@
 
 /* THIS IS THE STRING TO MODIFY TO ADD OTHER LEADING/TRAILING CHARS */
 
-char trailing_chars[] = "123490!?";
+char trailing_chars[] = "123490!?.";
 
 /* These used to be enums. Oh well... non-portability rules OK */
 #define ORDER_LCF	0
