@@ -167,3 +167,6 @@ extern int xfree();
 
 #endif
 
+#ifdef SYS5
+#define SYSV3	1
+#endif
