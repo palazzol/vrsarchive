@@ -19,18 +19,14 @@ return( p );
 }
 
 int	readln( s, temp )
-
 int	s;		/* fd to read from	*/
 char	*temp;		/* area to read into	*/
-
-{
-do {
+{ do {
 	if (read( s, temp, 1) < 1)
 		return(0);
-   }
-while( *temp++ != '\n');
-*temp = NULL;
-return(1);
+  } while( *temp++ != '\n');
+  *temp = NULL;
+  return(1);
 }
 
 writeln( s, temp )
