@@ -56,12 +56,16 @@ ttychar()
 	long	n;			/* char count */
 	unsigned char	ch;		/* char to return */
 
+#ifdef FIONREAD
 	if (playing && (ioctl(STDIN, FIONREAD, &n) == 0) && (n <= 0)) {
+#else
+	if (playing && !rdchk(STDIN)) {
+#endif
 		scaneof();		/* no char available now */
 	}
 	do {
 		errno = 0;
-		n = read(STDIN, &ch, 1);	/* read one char */
+		n = read(STDIN, (char *)&ch, 1); /* read one char */
 	} while ((n < 0) && (errno == EINTR));
 	return((int)(ch &= 0x7f));
 }

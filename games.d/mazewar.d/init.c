@@ -11,6 +11,7 @@ char	*ask();				/* routine to ask a question */
 int	getaskchar();			/* routine to get chars */
 FILE	*opensetupfile();		/* open setup files */
 
+extern char *getenv();
 
 /*
  * Get commands from the user to initialize the board.
@@ -207,6 +208,7 @@ yesno(str)
  */
 char *
 ask(str)
+char *str;
 {
 	register char	*cp;		/* current character */
 	static	char	buf[100];	/* buffer */
@@ -595,7 +597,7 @@ opensetupfile(name, mode)
 	char	buf[200];		/* buffer for default name */
 
 	if ((name == NULL) || (*name == '\0')) {
-		name = (char *) getenv("HOME");
+		name = getenv("HOME");
 		if (name == NULL) return(NULL);
 		sprintf(buf, "%s/%s", name, SETUPFILE);
 		name = buf;
