@@ -1,6 +1,6 @@
 /* getbbent.c - subroutines for accessing the BBoards file */
 #ifndef	lint
-static char ident[] = "@(#)$Id: getbbent.c,v 1.1 1990-04-12 13:29:41 vrs Exp $";
+static char ident[] = "@(#)$Id: getbbent.c,v 1.2 1990-05-06 22:46:59 vrs Exp $";
 #endif	lint
 
 /* LINTLIBRARY */
@@ -618,7 +618,7 @@ register int     (*action) ();
 
 char    *getbberr () {
     return (BBErrors[0] ? BBErrors : NULL);
-};
+}
 
 /*  */
 
