@@ -72,10 +72,11 @@ corrode_weapon(){
 	if(!uwep || uwep->olet != WEAPON_SYM) return;	/* %% */
 	if(uwep->rustfree)
 		pline("Your %s not affected.", aobjnam(uwep, "are"));
-	else {
+	else if (uwep->spe > -6) {
 		pline("Your %s!", aobjnam(uwep, "corrode"));
 		uwep->spe--;
-	}
+	} else
+		pline("Your %s quite rusted now!", aobjnam(uwep, "look"));
 }
 
 chwepon(otmp,amount)
