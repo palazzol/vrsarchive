@@ -4,7 +4,6 @@
 /* This marks a change toward event-driven action */
 /* otime.c */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oscr */

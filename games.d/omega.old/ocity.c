@@ -3,7 +3,6 @@
 /* some functions to make the city level */
 
 #include <stdio.h>
-#include <strings.h>
 #include "oglob.h"
 
 

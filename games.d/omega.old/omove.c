@@ -2,7 +2,6 @@
 /* omove.c */
 /* general functions for player moving -- traps, etc. also p_movefunction */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oaux */

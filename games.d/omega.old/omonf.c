@@ -2,7 +2,6 @@
 /* omonf.c */
 /* monster: talk, move, melee, range, and special functions */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oscr */

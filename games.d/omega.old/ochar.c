@@ -3,7 +3,6 @@
 /* Player generation */
 
 #include <stdio.h>
-#include <strings.h>
 #include "oglob.h"
 
 /* from oscr */

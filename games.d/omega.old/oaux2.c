@@ -7,7 +7,6 @@
    oaux1 and o.c, as well as elsewhere. It is mainly here so oaux1.c
    is not huge */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from ospell */

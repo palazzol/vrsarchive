@@ -2,7 +2,6 @@
 /* oinv.c */
 /* functions having to do with player item inventory */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oitem */

@@ -4,7 +4,6 @@
 /* this file should only include p_process, and functions called by */
 /* p_process. functions called by those are in oaux */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from omovef */

@@ -5,7 +5,6 @@
 /* They are all l_ functions since they are basically activated*/
 /* at some site or other. */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from ospell */

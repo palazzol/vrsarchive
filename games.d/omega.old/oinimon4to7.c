@@ -2,7 +2,6 @@
 /* oinitmon4to7.c */
 /* monster levels 4 to 7 */
 
-#include <strings.h>
 #include "oglob.h"
 
 void initmon4to7()

@@ -2,7 +2,6 @@
 /* olev.c */
 
 #include <stdio.h>
-#include <strings.h>
 #include "oglob.h"
 
 

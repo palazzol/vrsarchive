@@ -2,7 +2,6 @@
 /* osite.c */
 /* L_ functions  */ 
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from ofile */

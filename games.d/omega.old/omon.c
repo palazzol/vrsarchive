@@ -3,7 +3,6 @@
 /* various functions to do with monsters */
 
 #include <stdio.h>
-#include <strings.h>
 #include "oglob.h"
 
 /* from oscr */

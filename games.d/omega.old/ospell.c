@@ -2,7 +2,6 @@
 /* ospell.c */
 /* functions having to do with spellcasting */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from outil */

@@ -5,7 +5,6 @@
 /* auxiliary functions for those in ocom.c, also see oaux2.c */ 
 /* Only functions called in ocom.c should be here */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oitem */

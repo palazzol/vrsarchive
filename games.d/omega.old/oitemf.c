@@ -4,7 +4,6 @@
 /* only i_ and weapon_ functions should be in this file. Auxiliary functions */
 /* in oitem */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from ocom */

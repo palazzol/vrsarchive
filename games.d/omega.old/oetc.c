@@ -2,7 +2,6 @@
 /* oetc.c */
 /* grab bag of random functions used in random places */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oscr */

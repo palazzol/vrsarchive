@@ -2,7 +2,6 @@
 /* oinitmon8to10.c */
 /* monster levels 8 to 10 */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oitem */

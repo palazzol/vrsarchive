@@ -1,7 +1,6 @@
 /* omega copyright (C) 1987 by Laurence Raphael Brothers */
 /* oinititem1.c */
 
-#include <strings.h>
 #include "oglob.h"
 
 /* from oitem */

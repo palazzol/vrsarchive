@@ -1,7 +1,6 @@
 /* omega copyright (C) by Laurence Raphael Brothers, 1987 */
 /* oeffect2.c */
 
-#include <strings.h>
 #include "oglob.h"
 
 
