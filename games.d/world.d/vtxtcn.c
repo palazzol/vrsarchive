@@ -22,7 +22,7 @@ main()
     qtext_inc = fopen("qtext.inc", "w");
     objdes_inc = fopen("objdes.inc", "w");
 
-    fprintf(objdes_inc, " short odistb[] = { 0 \n");
+    fprintf(objdes_inc, " short odistb[] = { 0 \n"); /*}*/
     for (i = 0; i < 2000; i++)
 	htext[i] = 0;
     z = 0;
@@ -92,7 +92,7 @@ main()
 		zbig++;
 		bi++;
 		z++;
-		if (chrbuf[kk - 1] == '{' || chrbuf[kk - 2] == '{')
+		if (chrbuf[kk - 1] == '{' || chrbuf[kk - 2] == '{') /*}}*/
 		    break;
 	    } else {
 		packch = (chrbuf[kk + 2] - 96) * 1024 + (chrbuf[kk + 1] - 96)
@@ -104,7 +104,7 @@ main()
 		    zbig++;
 		    bi++;
 		    z++;
-		    if (chrbuf[kk - 1] == '{' || chrbuf[kk - 2] == '{')
+		    if (chrbuf[kk - 1] == '{' || chrbuf[kk - 2] == '{') /*}}*/
 			break;
 		} else {
 		    buffer[bi] = packch;
@@ -113,13 +113,13 @@ main()
 		    bi++;
 		    z++;
 		    if (chrbuf[kk - 1] == '{' || chrbuf[kk - 2] == '{' ||
-			chrbuf[kk - 3] == '{')
+			chrbuf[kk - 3] == '{')	/*}}}*/
 			break;
 		}
 	    }
 	}
     } while (number != 9999);
-    dump_buf();
+    dump_buf(); /*{*/
     fprintf(objdes_inc, "  } ; \n");
     u = ((u + 2) / 3) * 3;
     fprintf(qtext_inc, "#define RTSIZE %6d \n", u + 1);
@@ -141,6 +141,7 @@ main()
 	    ,gtext[1], gtext[2], gtext[3], gtext[4]);
     fclose(gtext_inc);
     printf(" packed: %8ld unpacked: %8ld \n", zsmall, zbig);
+    return(0);
 }
 
 dump_buf()

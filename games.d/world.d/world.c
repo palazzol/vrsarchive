@@ -241,7 +241,7 @@ lab9000:
 lab9990:
     endsl();
 lab9999:
-    ;
+    return(0);
 }
 
 /* end of main program  */

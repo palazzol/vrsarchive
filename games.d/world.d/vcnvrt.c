@@ -391,7 +391,7 @@ lab1200:
 
 
     fclose(objdat_inc);
-
+    return(0);
 }
 
 
