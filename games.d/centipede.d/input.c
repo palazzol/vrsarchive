@@ -6,6 +6,8 @@
 #    define getchar cget
 #endif
 
+bool cready();
+
 move_guy()
 {
     register int y, x, changed = 0;
@@ -136,16 +138,12 @@ move_guy()
 
 static char cbuf = EMPTY;
 
-#define BOOLEAN int
-#define FALSE 0
-#define TRUE 1
-
 setblock (fd, on)
     int fd;
-    BOOLEAN on;
+    bool on;
 {
     static int blockf, nonblockf;
-    static BOOLEAN first = TRUE;
+    static bool first = TRUE;
     int flags;
 
     if (first)
@@ -160,7 +158,7 @@ setblock (fd, on)
 	perror("fcntl2");
 }
 
-BOOLEAN cready ()
+bool cready ()
 {
     if (cbuf != EMPTY)
 	return TRUE;
