@@ -13,7 +13,7 @@ include /etc/CONFIG
 #
 #	Where the scoreboard should be kept.
 #
-SCOREFILE= /usr/games/lib/rogue_roll
+SCOREFILE= $(GAMLIB)/rogue_roll
 SF	= -DSCOREFILE='"$(SCOREFILE)"'
 #
 #	Use the kernel to namelist to get load averages.  This works only
@@ -90,9 +90,9 @@ xs.o: strings
 	$(CC) $(CFLAGS) -c xs.c
 
 install: $(ALL)
-	cp rogue $(DESTDIR)/usr/games/rogue
-	chown $(SAFEUID) $(DESTDIR)/usr/games/rogue
-	chmod 4711 $(DESTDIR)/usr/games/rogue
+	cp rogue $(GAMDIR)/rogue
+	chown $(SAFEUID) $(GAMDIR)/rogue
+	chmod 4711 $(GAMDIR)/rogue
 	touch $(SCOREFILE)
 	(echo "w"; echo "q") | ./scedit >/dev/null
 	chown $(SAFEUID) $(SCOREFILE)
