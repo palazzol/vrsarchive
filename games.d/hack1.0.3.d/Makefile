@@ -92,7 +92,7 @@ distribution: Makefile
 		( echo cp $$i $D ; cp $$i $D ) ; done
 # the distribution directory also contains the empty files perm and record.
 
-$(GAMDIR) $(GAMLIB) $(LIBDIR):
+$(GAMDIR) $(GAMLIB) $(LIBDIR) $(SAVDIR):
 	mkdir $@
 	chmod 755 $@
 
