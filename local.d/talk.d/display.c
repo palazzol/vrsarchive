@@ -1,5 +1,5 @@
 /*
- *	@(#)display.c	1.2 12/2/84
+ *	@(#)display.c	1.3 12/3/84
  *
  *	The window 'manager', initializes curses and handles the actual
  *	displaying of text.

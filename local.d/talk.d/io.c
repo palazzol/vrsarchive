@@ -1,5 +1,5 @@
 /*
- *	@(#)io.c	1.2 12/2/84
+ *	@(#)io.c	1.3 12/3/84
  *
  *	This file contains the I/O handling and the exchange of edit
  *	characters. The connection itself is established in ctl.c.
@@ -52,8 +52,8 @@ talk()
 	nb = read(0, buf, 1);	/* Try to read the keyboard		*/
 	if (nb > 0) {		/* If we got a character		*/
 	    secs = alarm(0);	/* Don' take an AST while in curses	*/
-	    display(&my_win, buf, nb);
-	    (void) write(other, buf, nb);
+	    display(&my_win, buf, (unsigned)nb);
+	    (void) write(other, buf, (unsigned)nb);
 	    if (buf[0] == '\004') {
 		message("Connection closed. Exiting");
 		quit();

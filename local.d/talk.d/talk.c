@@ -1,24 +1,12 @@
 /*
- *	@(#)talk.c	1.2 12/2/84
+ *	@(#)talk.c	1.3 12/3/84
 */
-
+#define MAIN
 #include "talk.h"
 
-char *state;
-
-xwin_t my_win;
-xwin_t other_win;
-WINDOW *line_win;
-int curses_initialized;
-int line;
-
-char my_tty[];			/* My tty name			*/
-char my_name[];			/* My user name			*/
-int mine;			/* My pipe fd			*/
-
-char other_tty[];		/* Other tty name		*/
-char other_name[];		/* Other user name		*/
-int other;			/* Other pipe fd		*/
+#ifndef lint
+char sccsid[] = "@(#)talk.c	1.3 12/3/84";
+#endif
 
 /*
  * talk:	A visual form of write. Using named pipes, a two way 

@@ -1,5 +1,5 @@
 /*
- *	@(#)ctl.c	1.2 12/2/84
+ *	@(#)ctl.c	1.3 12/3/84
  *
  *	This file handles the creation of the named pipes for the
  *	communication.  Note that errors from mknod are fatal.

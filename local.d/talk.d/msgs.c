@@ -1,5 +1,5 @@
 /*
- *	@(#)msgs.c	1.2 12/2/84
+ *	@(#)msgs.c	1.3 12/3/84
  *
  *	A package to display what is happening every second if we are
  *	slow connecting.

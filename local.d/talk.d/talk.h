@@ -1,5 +1,5 @@
 /*
- *	@(#)talk.h	1.2 12/2/84
+ *	@(#)talk.h	1.3 12/3/84
 */
 
 #include <stdio.h>
@@ -25,10 +25,6 @@
 extern FILE *popen();
 extern int  quit();
 
-extern int curses_initialized;
-extern char *state;
-extern int line;
-
 typedef struct xwin {
 	WINDOW *x_win;
 	int x_nlines;
@@ -40,14 +36,24 @@ typedef struct xwin {
 	char werase;
 } xwin_t;
 
-extern xwin_t my_win;
-extern xwin_t other_win;
-extern WINDOW *line_win;
+#ifdef MAIN
+#  define _extern
+#else
+#  define _extern extern
+#endif
 
-extern char my_tty[];			/* My tty name			*/
-extern char my_name[];			/* My user name			*/
-extern int mine;			/* My pipe fd			*/
+_extern int curses_initialized;
+_extern char *state;
+_extern int line;
 
-extern char other_tty[];		/* Other tty name		*/
-extern char other_name[];		/* Other user name		*/
-extern int other;			/* Other pipe fd		*/
+_extern xwin_t my_win;
+_extern xwin_t other_win;
+_extern WINDOW *line_win;
+
+_extern char my_tty[TTY_SIZE];		/* My tty name			*/
+_extern char my_name[NAME_SIZE];	/* My user name			*/
+_extern int mine;			/* My pipe fd			*/
+
+_extern char other_tty[TTY_SIZE];	/* Other tty name		*/
+_extern char other_name[NAME_SIZE];	/* Other user name		*/
+_extern int other;			/* Other pipe fd		*/

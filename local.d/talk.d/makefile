@@ -1,5 +1,5 @@
 #
-#	@(#)Makefile	1.2 12/2/84
+#	@(#)Makefile	1.3 12/3/84
 #
 SHELL	= /bin/sh
 OBJECT	= talk.o announce.o ctl.o display.o get_names.o init_disp.o invite.o \
