@@ -1,7 +1,7 @@
 #
 #	@(#)Makefile	1.5 Date 87/05/09
 #
-CFLAGS	= -O
+CFLAGS	= -M2l # -O
 PFLAGS	= -O
 FILES	= makefile ptc.p ptc.c ptc doc.ms doc.out ptc.man man.out
 PAGELEN	= -rP70
@@ -12,16 +12,18 @@ BLK	= 126
 	$(GET) -p -s SCCS/s.$@ > $@
 
 # default version
-S	= p
-ptc:		ptc.$S
-		$Sc -O -o ptc ptc.$S
+S	= c
+OBJS	= xaa.o xab.o xac.o xad.o xae.o
+ptc:		$(OBJS)
+		$(CC) $(CFLAGS) -o ptc $(OBJS)
 
 # translated version
 cptc:		cptc.c
 		cc -O -o cptc cptc.c
 
 cptc.c:		ptc.p ptc
-		ptc < ptc.p > cptc.c
+		ptc < ptc.p > tmp.c
+		mv tmp.c cptc.c
 
 tests:	test0
 
@@ -52,7 +54,7 @@ man.out:	ptc.man
 #	Maintenance
 #
 cleanup:
-	rm -f cptc cptc.c tmp.c out
+	rm -f cptc cptc.c tmp.c out $(OBJS)
 
 clean::	cleanup
 
@@ -62,3 +64,5 @@ clobber:: cleanup
 
 tape:	$(FILES)
 	tar cvfb $(DEV) $(BLK) $(FILES)
+
+$(OBJS): globals.h
