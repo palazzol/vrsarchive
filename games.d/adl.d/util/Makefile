@@ -4,7 +4,7 @@ AR = post -c -v -p 9 17
 B = ..
 D = util/
 
-DFLAGS = -O
+DFLAGS = -M2l -O
 CFLAGS = -I${INC} ${DFLAGS}
 
 OBJS = vstring.o	virtmem.o 	  mytime.o
