@@ -10,6 +10,8 @@
 #else
 #ifdef BSD
 #include <sys/timeb.h>
+#else
+long times();
 #endif
 #endif
 
@@ -42,7 +44,7 @@ napms(x)	/* do nothing */
 napms(time)
 	int time;
 	{
-	long matchclock, times();
+	long matchclock;
 	struct tms stats;
 
 	if (time<=0) time=1; /* eliminate chance for infinite loop */
