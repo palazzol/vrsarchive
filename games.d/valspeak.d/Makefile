@@ -9,7 +9,7 @@ include ../../CONFIG
 .l:
 	lex $?
 	$(CC) $(CFLAGS) lex.yy.c -o $@ -ll
-	rm lex.yy.c lex.yy.o
+	rm -f lex.yy.c lex.yy.o
 
 clean:
 	rm -f $(ALL)
