@@ -846,9 +846,13 @@ blankpage()
 	line_no=0;
 }
 
+SIG_T
+nix(dummy)
+{}
+
 waitawhile()
 {
-	int nix(), oldflags;
+	int oldflags;
 	if (isatty(0)) {
 		oldflags=tty.sg_flags;
 		tty.sg_flags &= ~ECHO;	/* DON'T ECHO THE RUBOUT */
@@ -861,9 +865,6 @@ waitawhile()
 		stty(0,&tty);
 	}
 }
-
-nix()
-{}
 
 writetitle(t)
 char *t;

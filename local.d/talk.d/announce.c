@@ -6,8 +6,6 @@
 #include <time.h>
 #include <sys/stat.h>
 
-int sprintf();
-
 /*
  *	See if the user is accepting messages. If so, announce that 
  *	a talk is requested.

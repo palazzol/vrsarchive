@@ -87,7 +87,9 @@ char	*memset();
 #endif /*BZERO*/
 
 long	atol();
+#ifndef __STDC__
 char	*malloc();
+#endif
 char	*index();
 char	*rindex();
 FILE	*popen();

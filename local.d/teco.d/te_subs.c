@@ -416,12 +416,12 @@ char skipto(arg)
 					atsw = 1;
 					break;
 
-				case CTL (^):						/* ^^ is value of next char: skip that char */
+				case CTL ('^'):						/* ^^ is value of next char: skip that char */
 					getcmdc(0);
 					break;
 
-				case CTL (A):						/* type text */
-					term = (atsw) ? getcmdc(0) : CTL (A);
+				case CTL ('A'):						/* type text */
+					term = (atsw) ? getcmdc(0) : CTL ('A');
 					atsw = 0;
 					while (getcmdc(0) != term);		/* skip text */
 					break;

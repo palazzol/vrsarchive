@@ -33,22 +33,22 @@ int build_string(buff)
 				{
 				switch (c)
 					{
-					case CTL (Q):			/* take next char literally */
-					case CTL (R):
+					case CTL ('Q'):			/* take next char literally */
+					case CTL ('R'):
 						if ((c = getcmdc(trace_sw)) == term_char) ERROR((msp <= &mstack[0]) ? E_UTC : E_UTM);
 						break;				/* fetch character and go store */
 
-					case CTL (V):			/* take next char as lower case */
+					case CTL ('V'):			/* take next char as lower case */
 						if (getcmdc(trace_sw) == term_char) ERROR((msp <= &mstack[0]) ? E_UTC : E_UTM);
 						c = mapch_l[cmdc];
 						break;
 
-					case CTL (W):			/* take next char as upper case */
+					case CTL ('W'):			/* take next char as upper case */
 						if ((c = getcmdc(trace_sw)) == term_char) ERROR((msp <= &mstack[0]) ? E_UTC : E_UTM);
 						if (islower(c)) c = toupper(c);
 						break;
 
-					case CTL (E):			/* expanded constructs */
+					case CTL ('E'):			/* expanded constructs */
 						if (getcmdc(trace_sw) == term_char) ERROR((msp <= &mstack[0]) ? E_UTC : E_UTM);
 						switch (mapch_l[cmdc])
 							{
@@ -72,7 +72,7 @@ int build_string(buff)
 								continue;				/* repeat loop without storing */
 
 							default:
-								bb.p->ch[bb.c] = CTL (E);		/* not special: store the ^E */
+								bb.p->ch[bb.c] = CTL ('E');		/* not special: store the ^E */
 								fwdcx(&bb);
 								++count;
 								c = cmdc;						/* and go store the following char */
@@ -349,24 +349,24 @@ int srch_cmp()
 
 	switch (mapch_l[sm.p->ch[sm.c]])		/* what is search character */
 		{
-		case CTL (N):				/* match anything but following construct */
+		case CTL ('N'):				/* match anything but following construct */
 			if (sm.dot >= sm.z) ERROR(E_ISS);	/* don't read past end of string */
 			fwdc(&sm);				/* skip the ^N */
 			return(!srch_cmp());
 
-		case CTL (X):				/* match any character */
+		case CTL ('X'):				/* match any character */
 			return(1);
 
-		case CTL (Q):				/* take next char literally */
-		case CTL (R):
+		case CTL ('Q'):				/* take next char literally */
+		case CTL ('R'):
 			if (sm.dot >= sm.z) ERROR(E_ISS);	/* don't read past end of string */
 			fwdc(&sm);				/* skip the ^Q */
 			return(*(pmap + sb.p->ch[sb.c]) == *(pmap + sm.p->ch[sm.c]));
 
-		case CTL (S):				/* match any nonalphanumeric */
+		case CTL ('S'):				/* match any nonalphanumeric */
 			return(!isalnum(sb.p->ch[sb.c]));
 
-		case CTL (E):
+		case CTL ('E'):
 			if (sm.dot >= sm.z) ERROR(E_ISS);	/* don't read past end of string */
 			fwdc(&sm);				/* skip the ^E */
 			switch (mapch_l[sm.p->ch[sm.c]])

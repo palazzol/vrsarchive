@@ -67,7 +67,7 @@ reline:					/* continue reading */
 				continue;
 				}					/* end 'rubout' processing */
 
-			else if (c == CTL(U))			/* process "erase current line" */
+			else if (c == CTL('U'))			/* process "erase current line" */
 				{
 				type_char(CR);				/* erase line */
 				vt(VT_EEOL);
@@ -104,7 +104,7 @@ reline:					/* continue reading */
 						err = 0;				/* reset error switch */
 						goto restart;
 						}
-					else if ((c == LF) || (c == CTL (H)))	/* line feed, backspace */
+					else if ((c == LF) || (c == CTL ('H')))	/* line feed, backspace */
 						{
 						dot += lines( (c == LF) ? 1 : -1);	/* pointer up or down one line */
 						window(WIN_LINE);			/* display one line */
@@ -124,9 +124,9 @@ reline:					/* continue reading */
 
 /* check ^G-something */
 
-				if (lastc == CTL (G))
+				if (lastc == CTL ('G'))
 					{
-					if (c == CTL(G))
+					if (c == CTL('G'))
 						{
 						cbuf.z = ccount;	/* save count for possible "save in q-reg" */
 						goto restart;
@@ -185,7 +185,7 @@ reline:					/* continue reading */
 			fwdcx(&cmdstr);					/* next char pos'n; extend command string if nec */
 
 			if ((c == ESC) && (lastc == ESC)) break;	/* stop on 2nd ESC */
-			if ((c == CTL (C)) && (lastc == CTL (C))) return(-1);	/* immediate exit */
+			if ((c == CTL ('C')) && (lastc == CTL ('C'))) return(-1);	/* immediate exit */
 			lastc = c;								/* keep track of last char */
 			}					/* end of read-char loop */
 

@@ -16,7 +16,8 @@ extern int	sys_nerr;
 extern char	*sys_errlist[];
 extern unsigned alarm();
 
-check_pipe()
+SIG_T
+check_pipe(dummy)
 {   unsigned nb;
     char buf[1];
 

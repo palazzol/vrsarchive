@@ -13,7 +13,8 @@ extern unsigned alarm();
 char *state;
 int  line = 0;
 
-disp_msg()
+SIG_T
+disp_msg(dummy)
 {
     message(state);
     (void) alarm(15);

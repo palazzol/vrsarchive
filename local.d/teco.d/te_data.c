@@ -149,7 +149,7 @@ char mapch_l[] =
 /* table of special characters for "search," "skipto()," and "lines()"	*/
 /* see "te_defs.h for meaning of bits */
 
-char spec_chars[] =
+unsigned char spec_chars[] =
 {
 0,			A_S,		0,			0,				/* ^@ ^A ^B ^C */
 0,			A_A,		0,			0,				/* ^D ^E ^F ^G */

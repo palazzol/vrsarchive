@@ -21,7 +21,7 @@
 #endif
 #include <setjmp.h>
 
-#define CTL(x) (('x') & 0x1f)	/* for control chars					*/
+#define CTL(x) ((x) & 0x1f)	/* for control chars					*/
 #define ERROR(e) longjmp(xxx, (e))
 #define BLOCKSIZE ((int)(0x4000 - 8))	/* size of memory block to allocate		*/
 #define CELLSIZE 256			/* number of characters per cell		*/
@@ -323,7 +323,7 @@ extern int search_flag;					/* set nonzero by search			*/
 
 extern char *errors[];					/* error text						*/
 extern char mapch[], mapch_l[];			/* char mapping tables				*/
-extern char spec_chars[];				/* special character table			*/
+extern unsigned char spec_chars[];		/* special character table			*/
 
 extern char skipto(), find_endcond(), getcmdc(), getcmdc0();	/* routines that return chars */
 

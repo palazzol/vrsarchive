@@ -9,7 +9,8 @@
 /*
  *	Routine called on interrupt to re-invite the callee.
 */
-re_invite()
+SIG_T
+re_invite(dummy)
 {
     (void) signal(SIGALRM, re_invite);	/* Resend invite, update screen	*/
     message("Ringing your party");

@@ -12,7 +12,8 @@
 #define killchar()	_tty.sg_kill
 #endif /*!TERMCAP*/
 
-sig_sent()
+SIG_T
+sig_sent(dummy)
 {   static char eot = '\004';
 
     message("Connection closing. Exiting");

@@ -4,6 +4,7 @@ static char	*sccsid = "@(#)mem.c	7.1 (down!honey) 85/08/06";
 #endif /*lint*/
 
 #include "def.h"
+extern char *malloc();
 
 link	*
 newlink()
