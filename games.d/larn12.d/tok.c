@@ -72,7 +72,7 @@ yylex()
 
 		if (cc == 'Y'-64)	/* control Y -- shell escape */
 			{
-			resetscroll();  clear(); /* scrolling region, home, clear, no attributes */
+			clearvt100();	/* Reset the screen	*/
 			if ((ic=fork())==0) /* child */
 				{
 				setuid(getuid());
@@ -84,7 +84,7 @@ yylex()
 				write(2,"Can't fork off a shell!\n",25); sleep(2);
 				}
 
-			setscroll();
+			setupvt100();
 			return(lastok = 'L'-64);	/* redisplay screen */
 			}
 
