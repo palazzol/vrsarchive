@@ -340,11 +340,13 @@ int OpCheck (args, res) int args, res;
  		return TRUE;
  }
 
+#ifdef NO_OPTIM
 PanicIf (cond, s) int cond; char *s;
  {
  	if (cond)
  		Panic (s);
  }
+#endif
 
 Panic (s) char *s;
  {

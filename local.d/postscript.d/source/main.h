@@ -6,7 +6,11 @@
 #include <math.h>
 #include <assert.h>
 #include <setjmp.h>
+#ifdef SYS5
+#include <string.h>
+#else
 #include <strings.h>
+#endif
 
 #define NONE		(-2)
 #define EOS		'\0'
@@ -164,3 +168,7 @@ extern int getchbuf;
 	((getchbuf = getc (BodyFile(file)->f.f_ptr)), \
 		((getchbuf != EOF) ? getchbuf : ((BodyFile(file)->available = 0), Close (file), EOF))) \
 	: GeneralGetch (file))
+
+#ifndef NO_OPTIM
+#define PanicIf(cond, str)	if (cond) Panic(str)
+#endif
