@@ -118,17 +118,17 @@ pleased() {
 	    case 5:	pline("A voice booms out: We are pleased with your progress,");
 			pline("and grant you the gift of");
 			if (!(HTelepat & INTRINSIC))  {
-				HTelepat = HTelepat || INTRINSIC;
+				HTelepat |= INTRINSIC;
 				pline ("Telepathy,");
 			} else if (!(Fast & INTRINSIC))  {
-				Fast = Fast || INTRINSIC;
+				Fast |= INTRINSIC;
 				pline ("Speed,");
 			} else if (!(Stealth & INTRINSIC))  {
-				Stealth = Stealth || INTRINSIC;
+				Stealth |= INTRINSIC;
 				pline ("Stealth,");
 			} else {
 			    if (!(Protection & INTRINSIC))  {
-				Protection = Protection || INTRINSIC;
+				Protection |= INTRINSIC;
 				if (!u.ublessed)  u.ublessed = rnd(3) + 1;
 			    } else u.ublessed++;
 			    pline ("our protection,");
