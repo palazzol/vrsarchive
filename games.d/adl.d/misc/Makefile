@@ -16,6 +16,7 @@ D = misc/
 
 # Where adldebug and adltouch will be installed
 #BIN = /users/cunniff/bin
+BIN		= ${GAMLIB}
 
 # The utilities used by adldebug
 UTIL =	${UTL}/virtmem.o	${UTL}/vstring.o	${UTL}/mytime.o
