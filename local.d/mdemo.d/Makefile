@@ -2,7 +2,7 @@
 #	@(#)Makefile	1.3	3/16/85
 #
 BIN	= /usr/local
-CFLAGS	= -M2e
+CFLAGS	= -M2e -F 2000
 SHELL	= /bin/sh
 LFLAGS	= -lcurses -ltermcap # -lx
 
