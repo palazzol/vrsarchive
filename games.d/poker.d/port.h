@@ -9,4 +9,4 @@
 #  ifndef PORT
 #   define	PORT		"/usr/tmp/pokerd"
 #  endif
-#endif INET
+#endif

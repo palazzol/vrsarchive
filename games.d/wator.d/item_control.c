@@ -240,7 +240,7 @@ fill_adj(x, y, adj, ax, ay, num_type, type)
 		ay[count++] = ny;
 	}
 
-#endif CHECK8
+#endif
 
 	*num_type = count;
 }

@@ -61,7 +61,7 @@ int	j;		/* who to show them to */
         player[i].cards[c] = player[i].cards[c2];
         player[i].cards[c2] = t;
     }
-#endif UNSORTED
+#endif
   for (c = 0; c < 5; c++) {
     sprintf(temp, "%c%c ", rank(player[i].cards[c]), color(player[i].cards[c]));
     write( player[j].socket, temp, 3 );

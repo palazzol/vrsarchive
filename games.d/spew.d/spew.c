@@ -97,13 +97,13 @@ char **argv;
 	int i, c_flag = FALSE;
 #ifdef DUMP
 	int d_flag = FALSE;
-#endif DUMP
+#endif
 #ifdef ENVIRON
 	extern char *getenv();
 	fname = getenv( ENVIRON );
 #else
 	fname = NULL;
-#endif ENVIRON
+#endif
 
 	while( argc > 1 ){
 		if( isdigit(*argv[1]) ){
@@ -118,7 +118,7 @@ char **argv;
 			d_flag = TRUE;	/* 'dump' option */
 			--argc;
 			++argv;
-#endif DUMP
+#endif
 		}else break;
 	}
 	if( argc > 1 ) fname = argv[1];
@@ -134,7 +134,7 @@ char **argv;
 		dump();
 		exit(0);
 	}
-#endif DUMP
+#endif
 	if( c_flag ){
 		compress();
 	}else{
@@ -466,7 +466,7 @@ dump(){
 		}
 	}
 }
-#endif DUMP
+#endif
 
 char *my_alloc(n)
 unsigned n;

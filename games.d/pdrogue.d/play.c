@@ -124,7 +124,7 @@ CH:
 		case '\032':
 			tstp();
 			break;
-#endif SIGTSTP
+#endif
 		case '!':
 			shell();
 			break;

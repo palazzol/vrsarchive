@@ -19,16 +19,16 @@
 #     include <netinet/in.h>
 #  endif INET
 #    include <sys/time.h>
-#endif MASSCOMP
+#endif
 #include <stdio.h>
 #ifdef INET
 #include <netdb.h>
-#endif INET
+#endif
 #ifdef MASSCOMP
 extern char *strchr();
 #else
 #include <strings.h>
-#endif MASSCOMP
+#endif
 
 # define	TRUE		1
 # define	FALSE		0
@@ -57,16 +57,16 @@ int	block;		/* if nobody wants to join, wait on socket
 #ifdef MASSCOMP
   int	free_socket();		/* gets a free socket */
   int	new_socket;		/* file descriptor of socket gotten */
-#endif MASSCOMP
+#endif
 #ifdef INET
   struct	sockaddr_in	from;	/* connection acceptor */
-#else  INET
+#else
   struct	sockaddr_un	from;	/* connection acceptor */
-#endif INET
+#endif
   int	fromlen = sizeof(from);
 #ifndef MASSCOMP
   struct	timeval	t;		/* don't let select() run forever */
-#endif  MASSCOMP
+#endif
   int	i;
 
   umask(0);			/* Let everyone at socket	*/
@@ -76,7 +76,7 @@ int	block;		/* if nobody wants to join, wait on socket
 #ifndef MASSCOMP
   t.tv_sec = 1L;
   t.tv_usec = 0L;
-#endif MASSCOMP
+#endif
   /* see if people who were sitting out want to rejoin yet */
   for( i=1; i<*n_players; i++ ) {
     if ( player[i].sittingout ) {
@@ -85,7 +85,7 @@ int	block;		/* if nobody wants to join, wait on socket
       if ( select( 32, &readfds, 0, 1000 ) > 0 )	/* 1000 ms */
 #else
       if ( select( 32, &readfds, (long *)0, (long *)0, &t ) > 0 )
-#endif MASSCOMP
+#endif
       { readln( player[i].socket, temp );
       	if ( temp[0] == 'S' )
       		player[i].sittingout = FALSE;
@@ -121,10 +121,10 @@ int	block;		/* if nobody wants to join, wait on socket
 #ifdef INET
       	sprintf( temp, " from %d", ntohs( from.sin_port ) );
       	writeln( main_socket, temp );
-#else  INET
+#else
       	sprintf( temp, " from %d", from.sun_path );
       	writeln( main_socket, temp );
-#endif INET
+#endif
       	accept( new_socket, &from );
       	read( main_socket, temp, 1 );	/* eat the EOF ????? */
       	close( main_socket );
@@ -188,18 +188,18 @@ open_sock()
 #ifdef INET
 struct	sockaddr_in	sockaddr;
 struct	hostent		*host;
-#else  INET
+#else
 struct	sockaddr_un	sockaddr;
-#endif INET
+#endif
 
 # ifdef MASSCOMP
 #ifdef INET
 	sockaddr.sin_family = AF_INET;
 	sockaddr.sin_port = htons( PORT );
-#else  INET
+#else
 	sockaddr.sun_family = AF_UNIX;
 	strcpy(sockaddr.sun_path, PORT);
-#endif INET
+#endif
 	if ((host = gethostbyname( HOST )) == NULL)
 		{
 		perror( "gethostbyname" );
@@ -210,9 +210,9 @@ struct	sockaddr_un	sockaddr;
 # else
 #ifdef INET
 	s = socket( AF_INET, SOCK_STREAM, 0 );
-#else  INET
+#else
 	s = socket( AF_UNIX, SOCK_STREAM, 0 );
-#endif INET
+#endif
 # endif MASSCOMP
 if (s < 0)
 	{
@@ -223,11 +223,11 @@ if (s < 0)
 #ifdef INET
 sockaddr.sin_family = AF_INET;
 sockaddr.sin_port = htons( PORT );
-#else  INET
+#else
 sockaddr.sun_family = AF_UNIX;
 strcpy(sockaddr.sun_path, PORT);
 unlink(PORT);
-#endif INET
+#endif
 if (bind( s, &sockaddr, sizeof(sockaddr)) < 0)
 	{
 	perror("bind");

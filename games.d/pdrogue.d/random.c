@@ -11,9 +11,9 @@ int x, y;
 	*/
 #define random rand
 	unsigned r, random();
-#else !srandom
+#else
 	long r, random();
-#endif srandom
+#endif
 	int s;
 
 	two_sort(x, y);

@@ -11,7 +11,7 @@ extern short party_room;
 extern int byebye(), onintr();
 #ifdef SIGTSTP
 extern int tstp();
-#endif SIGTSTP
+#endif
 
 init()
 {
@@ -33,7 +33,7 @@ init()
 	start_window();
 #ifdef SIGTSTP
 	signal(SIGTSTP, tstp);
-#endif SIGTSTP
+#endif
 	signal(SIGINT, onintr);
 	signal(SIGQUIT, byebye);
 	if ((LINES < 24) || (COLS < 80)) {
@@ -150,31 +150,26 @@ onintr()
 edchars(mode)
 short mode;
 {
-	static short called_before = 0;
 #ifdef TIOCGLTC
+	static short called_before = 0;
 	static struct ltchars ltc_orig;
 	struct ltchars ltc_temp;
-#endif TIOCGLTC
 	static struct tchars tc_orig;
 	struct tchars tc_temp;
 
 	if (!called_before) {
 		called_before = 1;
 		ioctl(0, TIOCGETC, &tc_orig);
-#ifdef TIOCGLTC
 		ioctl(0, TIOCGLTC, &ltc_orig);
-#endif TIOCGLTC
 	}
 	tc_temp = tc_orig;
 
-#ifdef TIOCGLTC
 	ltc_temp = ltc_orig;
 	if (!mode) {
 		ltc_temp.t_suspc = ltc_temp.t_dsuspc = ltc_temp.t_rprntc =
 		ltc_temp.t_flushc = ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
 	}
 	ioctl(0, TIOCSLTC, &ltc_temp);
-#endif TIOCGLTC
-
 	ioctl(0, TIOCSETC, &tc_temp);
+#endif
 }

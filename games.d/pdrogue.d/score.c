@@ -7,11 +7,11 @@
 #include <sys/file.h>
 #ifndef O_RDWR
 #include <fcntl.h>
-#endif !O_RDWR
+#endif
 #ifndef R_OK
 #define R_OK	4
 #define W_OK	2
-#endif !R_OK
+#endif
 
 extern char *player_name;
 extern char *monster_names[];
