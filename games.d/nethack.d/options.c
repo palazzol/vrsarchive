@@ -237,7 +237,7 @@ boolean from_env;
 		if(!op)
 		    goto bad;
 		else
-		    opts++;
+		    opts = op + 1;
 /*
  * You could have problems here if you configure FOUNTAINS, SPIDERS or NEWCLASS
  * in or out and forget to change the tail entries in your graphics string.
