@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include "rogue.h"
 
-char *score_file = "rogue.scores";
+char *score_file = SCORE;
 
 extern char login_name[];
 extern char *m_names[];
@@ -295,7 +295,7 @@ object *monster;
 			}
 		}
 	}
-	sprintf(buf, "%2d    %6d   %s: ", rank+1, rogue.gold, login_name);
+	sprintf(buf, "%2d    %6ld   %s: ", rank+1, rogue.gold, login_name);
 
 	if (other) {
 		switch(other) {
@@ -531,4 +531,5 @@ sf_error()
 {
 	message("", 1);
 	clean_up("sorry, score file is out of order");
+	exit(1);
 }
