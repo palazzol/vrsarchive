@@ -1,0 +1,200 @@
+.TL
+.nf
+Kernel/Process Interfaces in XENIX
+.FS
+XENIX is a trademark of Microsoft Corporation.
+.FE
+Revision 1.1
+.AU
+Vincent R. Slyngstad
+.AI
+XENIX Applications Marketing
+.AB
+Many OEM customers are indicating a need for a low level understanding of
+what goes on when a running process interfaces to the kernel.  This paper
+describes how the process and the kernel interface, with respect to program
+loading, system calls, and floating point instructions.  The information is
+of interest primarily to customers who wish to use XENIX systems for
+development and download the executable files to other environments.
+.AE
+.NH 1
+Program Loading
+.PP
+When the kernel loads an x.out image for execution, it loads the various
+segments into memory wherever room can be allocated.  Then it adjusts
+the low 128 bytes of the first text segment to contain the `ucode'.  The
+ucode is a special set of branch instructions and kernel interface routines
+which are written into low memory.  The ucode routines provide an interface
+to the XENIX kernel and allow the kernel to change without
+breaking application code.  The first ten words of the ucode are reserved for
+branch instructions.  The first branch instruction branches around the rest of
+the ucode.  The next three are used in Release 3 of XENIX to branch to the
+system call handler, the stack growth routine, and the stack limit routine,
+respectively.  The remaining six branch instructions are reserved for future
+use.
+.PP
+The current XENIX 286 implementation uses a fixed size stack allocated when
+the program is loaded, so the stack growth and stack limit routines are
+simply system calls which take a single parameter (the proposed new stack
+pointer), and checks the new stack pointer for validity, given the known
+bounds of the stack.  
+.NH 1
+System Calls
+.PP
+On XENIX 286, system calls are implemented through a call gate.  The user
+pushes all of the parameters to the system call onto the stack and calls
+a library routine.  This library routine places the system call number (see
+Appendix A) in the ax register and branches to the second word of the ucode
+area (the system call branch instruction).  The ucode then interfaces with
+the kernel to service the request.  On return, the carry bit will be set if
+an error occurred, and the zero flag will be set if the system call was
+interrupted by signal processing, and therefore returned early.  On error,
+the ax register contains the error number from \fB/usr/include/errno.h\fR.
+System calls which return 2 byte values will return the value in the ax
+register, and system calls that return 4 bytes use the ax and dx registers.
+.PP
+Parameter passing is different in small and middle model than in large model.
+In large model, all parameters are passed on the stack, much as for an ordinary
+C procedure call.  In small and middle model, however, system calls which take
+four words or less for arguments place the arguments in registers (for backward
+compatibility to the 86).  The arguments are placed from left to right into
+the bx, cx, si, and di registers.  Users who are re-implementing the libraries
+and the kernel interface may wish to pass parameters on the stack,
+since the C language will place them there before calling the library
+interface routine.
+.NH 1
+Floating Point
+.PP
+Floating point instructions go through a number of changes before they
+actually execute in 286 XENIX.  First, the compiler generates floating
+point instructions with references to `fixups', which are a global symbols
+whose value should be added to the instruction when the program is linked.
+The current libraries define these fixups to values which will result in
+interrupt instructions (int 0xf0 through int 0xfa).  These interrupt
+instructions cause traps into the kernel when executed.  The kernel then
+decides, based on the presence or absence of the 287 coprocessor, whether
+to emulate the floating point operation, or convert the instruction back
+to the true floating point form.  This double conversion allowed XENIX to
+execute floating point operations on very early steppings of the 286 and
+287.  Appendix B shows the mapping of emulator instructions to 287
+instructions.
+.NH 1
+Summary
+.PP
+This provides the basic information necessary to run an executable file
+generated on a XENIX system.  The user will also need to understand the
+format of the x.out executable file itself, as documented in the file
+\fBa.out.h\fR and in documents available from OMS XENIX Applications
+Marketing.
+.bp
+.ps 20
+.vs 20
+.ce
+APPENDIX A
+.sp 2
+.ps 10
+.vs 10
+.sp -2
+.TS
+box center;
+c s s s
+c s s s
+c s s s
+c c c c
+c c | c c
+c c | c c
+c c | c c
+c | l | c | l.
+
+System Call Numbers
+
+_	_	_	_
+
+System Call	System III Function	System Call	System III Function
+
+_	_	_	_
+
+0	Illegal	43	times
+1	Exit	44	profil
+2	fork	45	lock
+3	read	46	setgid
+4	write	47	getgid
+5	open	48	signal
+6	close	49	USG Reserved
+7	wait	50	USG Reserved
+8	creat	51	acct
+9	link	52	Illegal
+10	unlink	53	Illegal
+11	exec	54	ioctl
+12	chdir	55	Illegal
+13	time	56	Illegal
+14	mknod	57	uname (UTS)
+15	chmod	58	USG Reserved
+16	chown	59	exece
+17	brk	60	umask
+18	stat	61	chroot
+19	seek	62	fcntl
+20	getpid	63	ulimit
+21	mount	296	locking (XENIX)
+22	umount	552	creatsem (XENIX)
+23	setuid	569	ustat (UTS)
+24	getuid	808	opensem (XENIX)
+25	stime	1064	sigsem (XENIX)
+26	ptrace	1320	waitsem (XENIX)
+27	alarm	1576	nbwaitsem (XENIX)
+28	fstat	1832	rdchk (XENIX)
+29	pause	2088	stkgrow (XENIX)
+30	utime	2600	chsize (XENIX)
+31	stty	2856	ftime (XENIX)
+32	gtty	3112	nap (XENIX)
+33	access	3368	sdget (XENIX)
+34	nice	3624	sdfree (XENIX)
+35	Illegal	3880	sdenter (XENIX)
+36	sync	4136	sdleave (XENIX)
+37	kill	4392	sdgetv (XENIX)
+38	User Reserved	4648	sdwaitv (XENIX)
+39	setpgrp	4904	brkctl (XENIX)
+40	shutup (XENIX)	5160	dq_overlay (Intel)
+41	dup	5416	nfs_sys (Intel)
+42	pipe
+
+.TE
+.bp
+.ps 20
+.vs 20
+.ce
+APPENDIX B
+.sp 2
+.ps 12
+.vs 12
+.TS
+box center;
+c s
+c s
+c s
+c c
+c | c
+c | c
+c | l.
+
+Floating Point Instruction Mapping
+
+_	_
+
+Emulator Instruction	287 Instruction
+
+_	_
+
+int f0	fwait; esc 0
+int f1	fwait; esc 1
+int f2	fwait; esc 2
+int f3	fwait; esc 3
+int f4	fwait; esc 4
+int f5	fwait; esc 5
+int f6	fwait; esc 6
+int f7	fwait; esc 7
+int f8	fwait; nop
+int f9	fwait; seg es
+int fa	fwait; seg ss
+
+.TE

@@ -1,0 +1,418 @@
+.nr LL 5.5i
+.nr HM 2i
+.TL
+.nf
+Intel Release 2 and Unix System 5: Competitive Analysis
+Revision 1.0
+.AU
+Vincent R. Slyngstad
+.AI
+Intel Applications Marketing
+.AB
+This paper summarizes the issues relating to the competitiveness
+of Intel's Release 2 of Xenix relative to Unix System 5, pointing out, where
+possible, groups of customers likely to be affected by differences.  The
+information is presented in in an order very roughly based on
+overall importance, though of course the order of importance to any given
+customer will be quite different.
+.AE
+.NH 1
+Introduction
+.PP
+This description is relative to Unix System 5 in general, rather than the
+system sold by any particular vendor of System 5.  As a result, one should
+read the descriptions of System 5 as being those of a typical fully equipped
+System 5 based system, less the added value of the particular vendor.  The
+Release 2 Xenix described below is Intel Xenix Release 2, which is based
+on Microsoft Xenix Release 3.0.  Value added and bundling options chosen
+by various vendors will complicate the issues of how our system competes
+with any other specific system.
+.PP
+The descriptions that follow fall into four main sections.  Differences
+in the utilities provided are discussed first, then differences in the
+system calls supported, differences in the library routines supplied,
+and lastly features of Unix System 5 Release 2.  Although System 5
+Release 2 systems are not currently available, this last section will
+give some information about future Unix systems.
+.NH 1
+Command Differences
+.NH 2
+Introduction
+.PP
+In this section the differences in the utilities supplied by Unix System
+5 and Intel's Xenix Release 2 are summarized.
+Utilities directly impact the usability of the system as it is provided.  In
+general, any of these facilities could be made available on either system,
+but this provides some data on what one can expect to `come with,' which
+is of importance to customers who possess only the Xenix binary license,
+and to customers of limited development resources.
+.NH 2
+Batch Execution
+.PP
+Unix based systems generally provide the ability to execute commands at user
+specified times without manual intervention.  This ability is useful when
+repetitive processing needs to be done.  Examples would be daily, weekly or
+monthly reports, etc.  There are two facilities for this - `cron', which is
+traditionally available only to the super-user, and `at', which is intended for
+unprivileged users.  Release 2 provides both facilities, and enhances the `at'
+facility by permitting the user to inspect and modify the batch queues (`atq',
+`atrm').  System 5 systems are not required to provide the `at' facility, and
+thus may not provide batch execution to the unprivileged user.
+.NH 2
+Assignable Devices
+.PP
+Release 2 has two new commands (`assign', `deassign'), which provide the ability
+to restrict access to devices to a single user at a time.  This provides
+security by allowing me to prevent access to a tar diskette which has my
+private files on it during the time that I have it inserted in the drive.
+Formerly, the only way to provide this security was to restrict access to
+the device and allow only the super-user to access the floppy.  System 5
+does not provide this new functionality.
+.NH 2
+MS-DOS File Transfer Utilities
+.PP
+Release 2 supplies a number of utilities (`doscat', `doscp', `dosdir', `dosls',
+`dosmkdir', `dosrm', `dosrmdir') which permit maintenance and access to
+diskettes in MS-DOS format.  This should allow customers of Xenix R2 to
+leverage existing access the MS-DOS based single user machines they may already
+be using or planning to use.
+.NH 2
+Berkeley Features
+.PP
+Release 2 continues to provide some of the Berkeley enhancements to
+UNIX.  The most significant of these is probably the C shell
+(`csh').  The C shell provides a command language very well suited to
+interactive control of processes.  Release 2 will provide all of the
+C shell functionality except for the ability to stop and resume a
+process.  The C shell's history and substitution features will be
+a selling point to those who are used to them and to customers who
+use the system in a highly interactive way.
+.PP
+Other Berkeley enhancements include a facility for interactively paging
+through a file a screen at a time (`more'), for obtaining information
+about the users of the system (`finger'), for looking at the front of files
+(`head'), for initializing terminals quickly and easily (`tset'), for making
+word processing documents portable to other Unix based systems (`soelim'),
+and an enhanced version of the directory listing utility (`lc').  These
+features will be important to
+customers who are familiar with Berkeley Unix or its derivatives or who
+prefer the slightly more straightforward user interface these utilities
+provide, and which is not provided with System 5.
+.NH 2
+On-line Tutorials
+.PP
+Xenix Release 2 will continue to provide the on-line tutorials (`learn').
+System 5 based systems are not required to provide these facilities.
+The tutorials cover the basic user interface to the command language
+(`sh'), an editor (`ed'), and the C compiler.  Customers with a need to train
+novice Unix users may be interested in these facilities.
+.NH 2
+Visual Shell
+.PP
+Xenix Release 2 provides a new command interpreter (`vsh') designed for users
+running prepackaged applications.  It provides a menu based interface to
+system operations, and can be customized for specific applications or
+data processing tasks.  This will be of use to OEMs who wish to add a
+convenient interface to application packages and to customers who have
+a need for personnel relatively unfamiliar with Xenix to perform specific
+operations.  System 5 does not provide this feature.
+.NH 2
+Micnet
+.PP
+Micnet is a new facility in Release 2 which provides the ability to link
+Xenix systems over serial lines and send mail, transfer files, and request
+remote execution of commands.  System 5 uses the older, lower performance
+uucp facility to provide these services.  Release 2 continues to provide
+uucp for communication with Release 1 and other systems using the older
+facilities.
+.NH 2
+Administration Utilities
+.PP
+Xenix Release 2 provides a new facility for password administration.  Passwords
+are traditionally a weak spot for system security, and Release 2 provides
+utilities (`pwadmin', `pwcheck'), which can force users to change passwords
+periodically, and to pick passwords which are reasonably difficult to
+compromise.  System 5 does not provide password aging.
+.PP
+Release 2 continues to support several system maintenance utilities (`dumpdir',
+`mkuser', `pstat', `quot', `ranlib', `restor', `rmuser', `sddate') not
+included in System 5.  This reduces the need to retrain users coming from
+Release 1, and is useful for customers familiar with V7 or Berkeley based
+Unix systems.
+.PP
+In addition, a new utility (`sysadmin') is provided to simplify system backing
+and file restores.  File restore operations are made considerably simpler,
+a possible plus for customers who do not employ a resident Xenix or Unix
+wizard.
+.NH 2
+Fortran Related Tools
+.PP
+System 5 comes with a complete implementation of the Fortran 77 standard,
+including the `ratfor' and `efl' structured Fortran tools.  Intel Fortran will
+be a separate option for our customers, and Fortran will probably also be
+unbundled by nearly all System 5 vendors.  Xenix Release 2 will not support
+`efl', but should continue to support `ratfor'.
+.NH 2
+On-line Manuals
+.PP
+System 5 implements a facility (`man') which allows pages of the reference 
+manuals to be kept on-line and inspected by users of the system who do not
+have convenient access to a printed manual.  The Release 2 manuals have
+been reorganized for quicker reference, and this facility has not been 
+reimplemented in Release 2.  Customers for Xenix Release 2 will therefore
+need to buy copies of the printed manuals for their users.
+.NH 2
+Plotting Utilities
+.PP
+System 5 provides a set of utilities (`300', `300s', `4014', `450', `plot')
+which implement simple plotting commands for some popular plotting devices.
+These plotting commands will no longer be available in Release 2, so
+customers who used the plotting software of Release 1 should be aware
+that this software has not been implemented in release 2.  This may
+also affect new customers who have used this software on other Unix
+based systems, or who are interested in plotting software.  A newer,
+much more comprehensive treatment of graphics for Xenix is in the
+planning stages.
+.NH 2
+High Level Debugger
+.PP
+System 5 supports a source language debugger (`sdb') which provides debugging
+information at the source language level for C.  When this debugger is used,
+errors in execution cause the source statement to be printed.  The user may
+then examine variables by name, etc.  Xenix Release 2 will continue to support
+only the `adb' debugger, which provides lower level information geared toward
+assembly language, with access by name only to global variables.  This is
+likely to be most critical to customers who do significant application
+software development and are used to sdb or other high level language
+debuggers or do not wish to become familiar with 286 assembly language.
+.NH 2
+UUCP Extensions
+.PP
+System 5 supports the uucp system for connecting systems together over serial
+lines, as do Release 1 and Release 2.  However, System 5 provides additional
+utilities (`uuname', `uupick', `uustat', `uuto') which allow the inspection of
+the state of the uucp system, of the systems to which one is connected, and
+the status of user's requests.  Xenix does not provide this additional
+software.  This is not likely to be a sticking point for customers, since
+this software is largely a convenience item and is not widely used.
+.PP
+System 5 also supports the news system, which provides an electronic bulletin
+board on a international scale with numerous topics.  This software is quite
+generally available however, and is known to run on Xenix.  Xenix users may
+get it from systems which already have it, usually without charge and a
+separate license is not required.
+.NH 2
+Process Accounting
+.PP
+System 5 supports a fairly elaborate system of process accounting, including
+utilities to compute costs for billing of computer time, and packages these
+to be fairly easy to use.  Xenix provides a simpler process accounting
+scheme which requires more effort to extract this information.  This may
+be important to a customer who would like to bill users for services.
+.NH 2
+Error Logging
+.PP
+System 5 also supports an error logging facility to track device errors
+and generate reports about system hardware reliability.
+.NH 2
+Miscellany
+.PP
+Release 2 will supply a number of utilities which are less likely to
+be significant issues, but which System 5 does not provide.  The `cref'
+utility generates cross reference listings from C source code.  The
+`ctags' utility generates simple indices from C source code in a format
+also usable by the editor to find procedures.  The `cw' and `cwcheck' utilities
+prepare constant width text (listings, etc) for typesetting.  The `diction'
+program checks manuscripts for potentially awkward phrases.  The `dtype'
+utility uses heuristics tests to identify the format of disk media.  The
+`eqncheck' utility checks the legality of commands to typeset mathematical
+expressions.  The `look' utility finds lines of a file which match a given key
+efficiently.  The `prep' utility reads manuscripts and prepares an output
+file suitable for extracting statistical information.  The `style' utility
+uses heuristic tests to comment on readability, sentence length, etc. in
+an input document.  The `xref' utility generates a slightly different format
+cross reference listing for C programs.
+.NH 1
+System Calls
+.NH 2
+Introduction
+.PP
+In this section, information on system call differences is presented.
+Differences in system calls indicate differences in the system's basic
+capability, as system calls are implemented in the kernel and generally
+cannot be emulated by user code without a substantial performance penalty.
+.NH 2
+File Locking
+.PP
+Xenix Releases 1 and 2 provide the ability for one process to block access
+by other processes to files or parts of files.  Access may be denied for
+writing or reading and writing.  This is used in data base applications
+to prevent chaos which results from two processes attempting to update
+a record at once, and the reading of old or inconsistent data from records
+which are being updated.  This feature must be emulated in System 5 using
+files or semaphores which mark a file as in use.  These emulations rely on
+all processes which access the file to agree on the emulation procedure,
+and provide poorer performance and functionality.
+.NH 2
+Semaphores
+.PP
+System 5 and Release 1 and 2 of Xenix all provide semaphore system calls.
+However, the mechanism provided by System 5 is quite different than that
+of Xenix, and somewhat more complex.  Semaphores are used to prevent chaos
+resulting from multiple access to shared resources.  Formerly this could only
+be done using the existence of files as a sign that a resource was in use.
+Semaphores provide a performance enhancement for applications in which multiple
+processes compete for access to shared memory or other resources.  Xenix will
+use them less than System 5 because of the availability of file locking in the
+kernel.
+.NH 2
+Universal Development Interface
+.PP
+UDI support should be a major win for Xenix, since it will allow us to
+capitalize on the languages and software available for our development
+systems and run these on Xenix.  This should give us decided advantages
+in language support.  System 5 based systems can be expected to provide
+only Fortran and C compilers, with Cobol available for some.  Additional
+enhancements to Xenix from this feature can be expected to benefit
+customers who do large amounts of software development.
+.NH 2
+Shared Data
+.PP
+System 5 and Release 2 will both support shared data segments, but again
+in different and incompatible ways.  In this case however, the basic
+functionality and operations are the same in both systems.
+.NH 2
+V7 UNIX/R1 Compatibility
+.PP
+Xenix Release 2 has a commitment to source code compatibility with Xenix
+Release 1.  As a result, code from Xenix Release 1 and other Unix Version 7
+systems can be compiled and run on a Xenix Release 2 system.  System 5 no
+longer carries certain system calls from Version 7, and as a result will not
+run, for example, code which uses `stty' and `gtty' calls, though it does
+provide equivalent incompatible calls.  This will have obvious significance to
+our Release 1 customers and potential customers migrating from other Xenix
+based systems or Unix version 7 based systems, including Berkeley style
+systems.
+.NH 2
+Interprocess Communication
+.PP
+System 5 supports a set of system calls which pertain to message passing
+between tasks.  This allows the creation of message queues, and permits
+operations such as ``return the first message of type n''.  Xenix does
+not support these primitives.  However, all of the operations can be
+achieved by the use of named pipes, which Xenix Release 2 and System 5
+both support.  Named pipes or message queues replace earlier unreliable
+and low performance uses of signals and unnamed pipes.  These older methods
+only allow processes to communicate which are descendants of a particular
+process or owned by a particular user, whereas the newer methods allow any
+tasks to communicate as needed.  The new facilities are not widely used yet,
+however.  System 5 style message queues currently have few applications,
+though there is speculation about real time applications if other problems in
+the Unix kernel could be solved.
+.NH 2
+Miscellany
+.PP
+Xenix also supports a number of system calls which System 5 does not.  The
+`chsize' system call truncates a file to a given size, which is important to
+the efficient execution of certain Fortran write operations.  The `ftime'
+system call provides useful information about the time-zone, etc. in addition
+to the time of day.  The `nap' system call allows a process to sleep for
+shorter intervals than a second.  The `rdchk' system call determines if a
+read operation would block waiting for input, allowing tasks to overlap
+other processing instead of just waiting.  The `shutdn' system call provides
+an orderly shutdown of system operation.  Each of these operations is
+useful in certain contexts, but are not likely to be major points.
+.NH 1
+Library Functions
+.NH 2
+Introduction
+.PP
+In this section, differences in library functions are outlined.  Differences
+in library routine support influence the software developer; but since library
+routines are simply subroutines written in C, deficiencies can be compensated
+for by including the functional equivalents in the development effort.
+.NH 2
+Curses library
+.PP
+The Curses library is a set of routines developed at Berkeley which create
+and display windows on CRT screens.  They use the information in the termcap
+data base to provide support for a wide variety of terminal types.  Xenix
+Release 2 will continue to supply curses, while System 5 does not.  These
+routines are very useful, but will probably be most important to developers
+of menu based systems.
+.NH 2
+Database Manipulation
+.PP
+Release 2 provides a set of routines to implement keyed access to files
+(`dbminit', `fetch', `firstkey', `nextkey', `store').  These routines are useful
+in data processing and data base applications, and are not provided in
+System 5.
+.NH 2
+Plot Library
+.PP
+System 5 supplies a set of library routines (`arc', `circle', `closepl',
+`cont', `erase', `label', `line', `linemod', `move', `openpl', `point',
+`space') which implement device independent plotting.  These routines are
+supplied with Release 1 but not with Release 2.
+.NH 2
+Memory Manipulation
+.PP
+System 5 supplies a set of library routines (`memccpy', `memchr', `memcmp',
+`memcpy', `memset') to do simple memory to memory transfers, compares, etc.
+These routines are intended to be tailored to the specific machine for
+efficiency.  Xenix does not supply this library.  The routines in this
+library are so straight-forward, however, that any customer for whom such
+operations must be efficient should be able to implement equivalents, so that
+this should not be an issue.
+.NH 2
+Executable Image Manipulation
+.PP
+System 5 suplies a set of routines to obtain data about executable files
+from the executable image on disk.  This is designed to promote portability
+of of the few applications which need to do this, since executable formats
+vary from machine to machine.  Xenix does not provide these routines but
+continues to provide the nlist and xlist routines which determine the address
+and type of symbols from the executable image.  This is not expected to be an
+issue, since these routines are seldom used.
+.NH 2
+Login File Manipulation
+.PP
+System 5 supplies a set of routines to scan and modify the record of logins
+on the system (`utmp').  Xenix does not provide these routines.  It is not
+expected that the number of programs needing to know who was logged on for
+how long will make this an issue.
+.NH 2
+Miscellany
+.PP
+System 5 provides a number of other library routines not expected to be
+selling issues.  These include routines to dial out on modems, manipulate
+hash tables, determine the login directory and terminal, modify the group
+permissions control file (`/etc/group'), and manipulate tree structures.
+These routines are simple enough that users who need this functionality
+should be able to develop their own equivalents.
+.NH 1
+System 5's Release 2
+.PP
+System 5's Release 2 will introduce three features of significance: job
+control, batch execution, and the curses library.  The last two are
+discussed above and represent current advantages for us that System 5
+vendors will attempt to rectify in their products.  Job control is a
+feature that allows a user to run multiple interactive tasks.  Currently
+Xenix permits multiple background tasks, but only one interactive task at
+a time.  DSSO is currently working on software which will provide multiple
+interactive tasks in Xenix Release 2.
+.NH 1
+Summary
+.PP
+From a features point of view, the most significant wins for Xenix are
+probably the batch execution facility, the MS-DOS file transfer utilities,
+The Berkeley enhancements, the Visual Shell, file locking, UDI support,
+wider compatibility with other systems, and curses library and the keyed
+access to files.  On the down side, the most significant features missing are
+probably the lack of a high level debugger, message queues, process accounting,
+and possibly the AT&T marketing of System 5 as `the standard'.  These are
+being worked on and will probably appear in updates to the Release 2 product.
+There seems to be every reason for optimism about Release 2 of Xenix, and it
+continue to get better from there.  Eventual goals (by the time of Release 3)
+in fact include compatibility with System 5, including the features mentioned
+above.

@@ -1,0 +1,196 @@
+.TL
+.nf
+Multiple Disk Support Tool for XENIX
+.FS
+XENIX is a trademark of Microsoft Corporation.
+.FE
+Revision 1.1
+.AU
+Vincent R. Slyngstad
+.AI
+XENIX Applications Marketing
+.AB
+As more and more 310 customers elect to purchase 311 configurations,
+configuration and maintenance of systems with more than one disk drive
+will become more common.  This TECHBIT describes a tool written by
+OMS Technical Marketing which deals with the creation and maintenance
+of file systems on multiple disk drives.  This tool is supported by the
+OMS XENIX Technical Marketing team and is available from Software Specialists.
+.AE
+.NH 1
+Introduction
+.PP
+The XENIX product as shipped will automatically set up a system with a single
+disk drive, placing file systems on it which contain the standard XENIX
+product.  To obtain higher mass storage capacities, users may obtain a 311
+P-box and install additional peripherals, such as disk drives and a tape drive
+for backup.  Since the tape is the only additional mass storage peripheral
+which XENIX supports in the `as shipped' configuration, the user must modify
+the system to understand additional disk drives.
+.PP
+Installation and maintenance operations such as formatting the disk or
+restoring a file from a backup required mastery of several commands on systems
+with more than one disk.  Each of these commands has several options, and
+selection of correct values for these options can be nontrivial.  The tool
+described here automates the selection of these options and presents a menu
+based interface to choosing the \fItask\fR to be performed.  Once the task is
+chosen, the tool then handles the details necessary to execute of the desired
+function.
+.NH 1
+Integrating an Additional Disk Drive
+.PP
+There are several steps to accomplish the integration of an additional
+disk drive.  First, the kernel must be modified to configure support for
+the additional drive and device nodes must be created.  This is the province
+of the ICP tool, described by earlier TECHBITS and available from Software
+Specialists.  A version of this tool ships with the P-box.
+.PP
+Modifying the device configuration is not enough to make additional disk drives
+useful.  The drive must be formated, and file systems must be created and
+maintained on the drive.  The rest of this TECHBIT explains how to accomplish
+these operations using a menu based tool called \fIsysadm\fR.  This tool is
+part of Release 2 of the tools from OMS XENIX Technical Marketing and is
+available from your Software Specialist.
+.PP
+.NH 1
+Formatting a Drive
+.PP
+The first thing that must be done with a new disk drive is that is must be
+formated.  Formatting places sector identification information on each sector
+of the disk.  It is assumed that your drive has either gone through Intel
+Quality Assurance or that you have initialized the bad track table with the
+SDT utilities provided with the 310 hardware.  The \fIsysadm\fR menu option for
+formatting a drive will ask you which drive you want to format.  Winchester
+disks have names such as `w0' for drive zero, `w1' for drive one, etc.  DO
+NOT format drive zero -- drive zero is your system disk.  You will most likely
+want to format device `w1'.  Notice that \fIsysadm\fR may also be used to
+format floppy disks, and that you may abort the formatting operation.
+.PP
+Once you have chosen the hard disk to be formated, you will be asked for the
+type of the drive.  The drive type is needed to allow \fIsysadm\fR to determine
+the number of heads, interleave, and other parameters needed to format the
+drive.  Notice that this question does not appear if you format a floppy, and
+that you are given another chance to abort the format operation.  This is a
+general characteristic of \fIsysadm\fR.  You are given an abort option at
+every question.
+.PP
+Formatting a device is a destructive operation.  Any files previously stored
+on the drive are destroyed.  For this reason, \fIsysadm\fR gives you one last
+chance before erasing all the information on the drive and creating the sector
+identification information.  If you answer yes here, a format command will be
+generated for the drive, displayed, and executed.  The \fIsysadm\fR utility
+will always display commands which are executed on your behalf so that you
+can follow what is being done to your system.
+.NH 1
+Making a File System
+.TS
+center;
+r c l r c l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+r | c | l r | c | l
+c s s s s s.
+ 	DRIVE 0	 	 	DRIVE 1	 
+ 	_	 	 	_	 
+a	root	 	a	free	 
+ 	_	 	 	_	 
+b	swap	e	b	free	e
+ 	_	 	 	_	 
+c	usr	 	c	free	 
+ 	_	 	 	_	 
+d	error	 	d	error	 
+ 	_	 	 	_	 
+Partitions on a typical Wincester Disk.
+.TE
+.PP
+Once you have formated your drive, it contains no information.  Before you can
+create files on it, you must create one or more file systems.  The available
+space on disk drives is divided into `partitions', to allow different portions
+of the drive to be used for different purposes.  For most disks (over 20Mb),
+there will be four partitions of interest -- an `a' partition 8208K long, a `b'
+partition 4204K long, a `c' partition containing whatever space is left, and an
+`e' partition which refers to the space covered by the `a', `b', and `c'
+partitions combined.  (The `d' partition is reserved for error handling.)  When
+you use \fIsysadm\fR to create a file system, you must tell it which partition
+of the disk you want to contain the file system.  The \fIsysadm\fR utility will
+determine the size of the partition and execute a suitable `mkfs' command on
+your behalf.
+.PP
+A file system is basically a XENIX data structure which can be used to contain
+files.  Each file system must be `mounted' before it can be used to create,
+access, or modify files.  You will probably want to add commands to
+\fI/etc/rc\fR to mount and unmount file systems automatically when the system
+is restarted.  The \fIsysadm\fR utility does not assist with this process.
+You must create an empty directory to use as a `mount point' and edit
+\fI/etc/rc\fR to do this.  The commands you need to add are very similar to
+the commands already in \fI/etc/rc\fR for \fI/dev/usr\fR, and you can use those
+commands as a prototype.
+.NH 1
+Making Backups
+.PP
+Once files have been created on your file systems, you should take regular
+backups to insure that a minimum amount of work is lost if a crash should
+occur.  The \fIsysadm\fR utility provides menu options for two types of
+backup -- a daily dump and a periodic dump.  The periodic dump is a complete
+dump of every file in a file system to the backup archive.  Your first dump
+should be a periodic dump, and they should be done periodically after that,
+depending on the level of activity on the file system.  A daily dump should
+be done quite often, and will dump only the files which have changed since
+the last periodic dump.  The idea here is to do daily dumps, which will be
+quick, since few files will need to be backed up.  The periodic dumps should
+be done often enough that the daily dumps remain quick and easy to do.
+.PP
+Backups should always be done while the system is in system
+maintenance mode.  The \fIsysadm\fR utility will prompt you to change
+volumes as necessary, and allow you to format additional volumes as needed.
+The \fBSystem Administrator's Guide\fR contains information about how to set
+up files in \fI/etc/default\fR so that backups can be done to tape.
+.NH 1
+Restoring Files
+.PP
+Occasionally, a user will accidentally destroy a file which will contain
+important data.  When this happens the file can be restored from the latest
+backups.  If the file was changed since the last periodic dump, the latest
+backed up version will be located on the latest daily archive.  If not, it
+will be on the latest periodic backup.  You can use \fIsysadm\fR to obtain
+a listing of a dump archive to determine the location of the file.  Note
+that the list of files on the archive is written in /tmp.  This is done
+to allow you to manipulate the information and because the \fImore\fR utility
+may not be available at the time the listing is requested.
+.PP
+Note that many systems have an incorrect value in the file
+\fI/etc/default/dumpdir\fR.  This file should contain the line
+`archive=/dev/dvf0' for system which back up to floppy disk, and 
+`archive=/dev/rmt0' for system which back up to tape.
+.PP
+Once the correct archive has been located, \fIsysadm\fR may be used to restore
+the file.  To do this, sysadm should be run with the file system which will
+contain the restored file mounted at its usual mount point.  You will be
+prompted for the full path name (starting with a leading `/') for the file,
+and to insert various volumes (diskettes or tapes) of the dump archive.
+.NH 1
+Restoring File Systems
+.PP
+In the unlikely event of a serious system crash, it is sometimes necessary to
+completely reload a file system from the periodic and daily dump archives.
+Like taking a backup, restoring a file system requires that the system be in
+system maintenance mode.  To reload a file system, first make a clean new
+file system as described above.  Then use \fIsysadm\fR to reload the periodic
+backup archive and check the resulting file system.  The daily dump archive
+must be reloaded after the periodic dump archive has been loaded.  You will
+be prompted to change volumes, etc. as necessary.
+.NH 1
+Summary
+.PP
+The \fIsysadm\fR tool enables users to accomplish the major tasks involved
+in setting up and maintaining multiple disk systems without mastering the
+detailed syntax of commands such as \fIformat\fR, \fImkfs\fR, \fIdump\fR
+and \fIrestor\fR.  This should make system administration of such systems 
+considerably more straightforward and provide a consistent option for the
+maintenance of file system and disk media.

@@ -1,0 +1,171 @@
+.if n .nr PO 1i
+.nr LL 5.5i
+.nr HM 2i
+.nr PS 12
+.ps 12
+.TL
+.nf
+Simplifying Kernel I/O Configuration in Intel XENIX Release 3
+.FS
+XENIX is a trademark of Microsoft Corporation.
+.FE
+Revision 1.1
+.AU
+Vincent R. Slyngstad
+.AI
+XENIX Applications Marketing
+.AB
+As the XENIX product matures, more and more configurations will need to
+be accommodated, including custom configurations and changes such as the
+availability of new devices and new
+combinations.  The increase in the variety of configurations desired will
+generate pressure to make changes to the configuration as easy as possible.
+This paper describes an enhancement to the ease with which the XENIX I/O
+configuration may be changed in the field.  The proposal has been implemented
+and is presented for feedback regarding the desirability of the enhancement,
+which is available from XENIX Software Specialists.
+.AE
+.NH 1
+Introduction
+.PP
+One major feature of the Intel XENIX System is its configurability,
+and I/O flexibility is an area where Intel particularly shines.  Few
+situations are encountered where a XENIX kernel cannot be generated
+for a new peripheral configuration.  While Intel's XENIX I/O drivers
+are very flexible, the many training sessions the XENIX Applications
+group has been asked to present have shown that this configurability
+is not as accessible as would be desired.  This is the first in a series
+of papers presenting the configurability of XENIX, and represents the state
+of our ideas regarding improvements to the ease with which changes can be made
+to the kernel I/O configuration.
+.PP
+Future articles on configuration in XENIX will discuss the configuration of
+the UUCP communication software, and other software included with XENIX.
+The series is an attempt to address the issues of configuration at a higher
+level of user friendliness than has been available before.  We in Applications
+Marketing believe the next step is to make the configurability of XENIX as
+easy to use as it is flexible.
+.NH 1
+Kernel I/O Configuration in XENIX
+.PP
+The XENIX kernel has a modular design, so that device drivers and other
+system software are controlled independently from one another by specific
+files.  Below is a list of files which are relevant to XENIX I/O devices
+and the major function performed by each file.
+.TS
+box;
+c | c
+l | l.
+File Name	Function
+=
+/dev/makefile	Create Device Nodes
+/dev/*	Device Nodes
+/etc/bootcfg	Disk Drive Configuration Specification
+/etc/ttys	Terminal Baud Rate Specification
+/etc/ttytype	Terminal Type Specification
+/sys/cfg/c188.c	SBC188/48 Terminal Controller Configuration
+/sys/cfg/c215g.c	SBC215/SBC215G Disk Controller Configuration
+/sys/cfg/c534.c	SBC534 Terminal Controller Configuration
+/sys/cfg/c544.c	SBC544 Terminal Controller Configuration
+/sys/conf/master	Interrupt Vector Specification, etc.
+/sys/conf/xenixconf	Kernel Device Driver Selection/Time Zone, etc.
+.TE
+.PP
+Each device controller has its own set of operating parameters, and most
+of these are configurable by the user.  The SBC215 configuration, for example,
+will consist of one or more SBC215 boards, each with an interrupt vector,
+wakeup address, etc. set by the hardware.  In addition, a floppy controller
+is almost always attached to the SBC215, and a tape controller may also be
+attached.  Each SBC215 may thus have up to four each hard disks, floppy disks,
+and tapes.  The specifications for each drive, and the mapping to device nodes
+must all be specified in the file \fB/sys/cfg/c215g.c\fR.  One can see that
+the overall task of configuring a kernel for a specific I/O configuration can
+become quite involved.
+.PP
+While the extreme flexibility implied by the ability to specify all of these
+parameters is definitely desirable, what is needed is a tool to make some
+simplifying assumptions and present a concise user interface that will handle
+the details automatically.  To illustrate the level of user friendly
+configuration we are able to envision at present, consider the following
+dialogue between a system administrator trying to describe the 310-40
+configuration and a new XENIX System.  The user's inputs are in italics.
+.nf
+.in +.5i
+# \fIicp\fR
+How many Winchester	drives do you have?  \fI1\fR
+How many floppy disk	drives do you have?  \fI1\fR
+How many Mag-tape	drives do you have?  \fI0\fR
+
+Known Winchester types are:
+
+ CMI10MB	10Mb CMI disk.  System 286/310-5 standard. [model 5612]
+ CMI15MB	15Mb CMI disk.  System 286/310-17 standard. [model 5619]
+ QNTM36MB	36Mb Quantum disk. System 286/310-40 standard [model Q540]
+ PRIAM32	32Mb Priam disk. System 286/380 standard. [model 3450]
+ PRIAM62	62Mb Priam disk. System 286/380 with iSXM 70Mb. [model 7050]
+
+Are all of your drive types listed?  \fIy\fR
+What type is Winchester drive 0?  \fIqntm36mb\fR
+  Starting up...
+  Floppy Configuration...
+  make f310.0...
+  Wini Configuration...
+  Board Configuration...
+  Minor Number Configuration...
+  Finishing up...
+  Done
+
+How many 188/48 boards does your system contain?  \fI1\fR
+make sbc188.0...
+No 534 devices configured - vector conflict with 188.
+No 544 devices configured - vector conflict with 188.
+\fB< Commands and their output as the I/O configuration is built. >\fR
+How many hours from GMT time are you (P.S.T.=8)?  \fI8\fR
+Use Daylight Savings Time (default is yes)?  \fIy\fR
+Making a new kernel...
+\fB< Commands and their output as the new kernel is built. >\fR
+Renaming the old kernel to /xenix.old...
+Reboot after the ``Normal System Shutdown''
+**** Normal System Shutdown ****
+.in -.5i
+.fi
+.PP
+The system administrator has had to answer eight questions about the
+system to completely establish the I/O configuration of the system.
+This is accomplished by using a high level utility that understands the
+basic relationships between the files involved in kernel configuration,
+and lower level utilities that understand the issues specific to a
+particular device or controller type.  The high level utility is
+responsible for configuring each device type and, as needed, bringing the
+I/O configuration library up to date, relinking the kernel and shutting
+down the system.  To configure each device type, the high level utility
+calls the low level utilities, one per possible I/O controller type.
+Each low level utility does the modifications to the system required
+by presence or absence of devices of that type in the system.
+.PP
+In the above dialogue the top level
+(``icp,'' for interactive configuration program) has called utilities to
+configure for the SBC215 (disk/tape) controller and the SBC188/48, SBC534,
+and SBC544 terminal controllers.  The SBC534 and SBC544 configuration
+utilities generated warnings that the use of the SBC188/48 precludes the
+use of the SBC534 or SBC544.  (This could be changed, but is beyond the
+scope of the utilities described here because it would also require jumper
+changes on the terminal controller boards).
+.PP
+The higher level utility is written in such a way that it recognizes new
+device configuration utilities automatically, and will communicate with
+each one in a standard way.  The chief advantage of this modular approach
+is that the configuration interface is extensible.  As new drivers are
+developed for XENIX, new controllers will need to be handled.  Each controller
+type needs only a simple utility that understands the interfaces of that
+device with XENIX, updates the various relevant files, and communicates
+with the high level utility in a standard way.
+.NH 1
+Summary
+.PP
+The configuration utilities presented here are an attempt to improve the
+accessibility and ease of use of the ``Openness'' already built into the
+XENIX product.  A modular, extensible design was chosen to maximize the
+``Openness'' of the implementation to modification for new situations.
+Comments are encouraged, and suggestions should be directed to the key
+contact.

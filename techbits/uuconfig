@@ -1,0 +1,167 @@
+.if n .nr PO 1i
+.nr LL 5.5i
+.nr HM 2i
+.nr PS 12
+.ps 12
+.TL
+.nf
+Simplifying UUCP Configuration in Intel XENIX Release 3
+.FS
+XENIX is a trademark of Microsoft Corporation.
+.FE
+Revision 1.1
+.AU
+Vincent R. Slyngstad
+.AI
+XENIX Applications Marketing
+.AB
+The UUCP software, while very useful, has been underused in the past because
+it is not easy to configure.  This paper reviews the functions of the UUCP
+software and presents a tool developed to assist the user in configuring a
+UUCP network.
+.AE
+.NH 1
+What is UUCP?
+.PP
+The UUCP software provided with Intel XENIX provides communication services
+between an Intel XENIX system and another system.  The only requirements
+are an ASCII communication line and that both systems have UUCP software.
+The UUCP system provides three basic functions:
+.SH
+File Transfer
+.PP
+The simplest function of the UUCP software is file transfer.  The UUCP
+software provides the user with the ability to transfer files from one
+system to another, with suitable checks to prevent unauthorized transfers.  
+.SH
+Remote Execution
+.PP
+One of the most used features of UUCP is the ability to request that a
+system execute commands on your behalf.  The most popular application of
+this ability is electronic mail.  XENIX provides a  program which is capable
+of displaying and transmitting mail to users of a system.  To send mail
+between systems, the sending system generates a request that the mailer
+on the receiving machine be executed to deliver the mail.
+.SH
+Terminal Emulation
+.PP
+Also included with the UUCP software is the `cu' utility, which allows a
+user to use a terminal on one system to access another.  The user terminal
+appears as if it is connected to the remote system.  In addition, special
+requests are supported to transfer data over the connection.
+.NH 1
+What have been the problems with UUCP?
+.PP
+The problem with UUCP has been one of configuration.  The table below shows
+the configuration files and maintenance programs used by the UUCP system
+distributed with Release 3.0 of XENIX:
+.TS
+box;
+c | c
+l | l.
+File Name	Function
+=
+/etc/systemid	Network node name
+/usr/bin/uulog	Network log maintenance
+/usr/lib/uucp/L-devices	Devices for use by UUCP
+/usr/lib/uucp/L-dialcodes	Dialer Abbreviations
+/usr/lib/uucp/L.sys	Connection Database
+/usr/lib/uucp/USERFILE	File permission database
+/usr/lib/uucp/dial	Program to handler auto-dialers
+/usr/lib/uucp/uuclean	Program to clean spool area
+/usr/lib/uucp/uucico	Program to connect to remote systems
+/usr/lib/uucp/uusub	Program to monitor UUCP network traffic
+/usr/lib/uucp/uuxqt	Program to service remote UUX requests
+/usr/lib/uucp/L_stat	Statistics to collect on UUCP traffic
+/usr/lib/uucp/L_sub	Systems on which to collect statistics
+/usr/lib/uucp/R_stat	Statistics on UUCP traffic
+/usr/lib/uucp/R_sub	Statistics on UUCP connections
+.TE
+.PP
+The functions and syntax of these files and utilities have been poorly
+understood.  To illustrate the issues involved, let us examine for a
+moment the file \fB/usr/lib/uucp/USERFILE\fR.  This file controls the set
+of files a user is allowed to send or receive from a remote system, and
+consists of lines of the form
+.nf
+.sp
+	\fIuser\fR, \fIsystem\fR \fIdirectory\fR...
+.sp
+.fi
+.PP
+The basic idea is that the user named \fIuser\fR on system \fIsystem\fR may
+transfer files to or from only the directories listed.  However, either
+\fIuser\fR or \fIsystem\fR may be null, and four prioritized rules are used
+to specify the behavior in a specific case.
+.PP
+Although the rules are sensible and flexible, the number of rules for each
+of the files in the table above add up to show that the task of configuring
+UUCP can become formidable.
+.PP
+Another problem reported occasionally was that the list of programs which may
+be executed remotely (using the uux utility) is not configurable.  As a result,
+if there is a need to execute a program other than electronic mail, there is
+no way to tell the UUCP system to permit this.
+.NH 1
+Solutions
+.PP
+Solutions to the above problems will come in two parts.  The first part is a
+tool to configure existing functionality in the UUCP system.  This tool also
+contains code to support the second part, which is an enhanced UUCP system
+that provides configurable uux permission lists.
+.NH 2
+The UUCP Configuration Tool
+.PP
+A new tool has been developed by XENIX Applications Marketing which simplifies
+the installation and modification of the UUCP system by handling the details
+of the configuration.  It presents a user interface based on the configuration
+task at hand rather than the content of a particular configuration file.
+.PP
+UUCP Configuration breaks down naturally into a small set of activities.
+A working UUCP network requires a set of machines, each with a unique name
+within the network.  These machines communicate over communication links
+which come in two basic flavors -- direct connections and phone connections.
+Direct connections are implemented by dedicating a communications port on
+each machine involved in a link and running a cable between them.  Modem
+connections are implemented by using an auto-dial modem on one system and
+an auto-answer modem on the other.  Since the XENIX system does not come
+configured for modems, modem lines must be set up specially before they
+can be used by UUCP.  UUCP also maintains a database of abbreviations for
+common phone number prefixes.  The most common use of this is to set up
+a prefix to get an outside line or a long distance area code.  Once lines
+are set up, each system must be informed of the connections in which it
+is involved, and each connection carries a set of permission and login
+information.
+.PP
+The UUCP configuration program presents a menu asking what task the user
+wishes to perform.  The tasks it can perform are 1) set the name by which
+the system is known to the UUCP network, 2) set up and remove modems which
+may then be used by UUCP to connect to other systems or permit other systems
+(or users) to call your system, 3) manipulate dialer abbreviations which are
+used to record site dependent dialing information, 4) manipulate UUCP
+connections to other systems, and 5) edit the list of programs which may be
+executed on your system by users of other systems.  This last requires the
+configurable uux described below.
+.NH 2
+Enhanced UUCP Software
+.PP
+The next release of XENIX will include UUCP enhancements which will include
+the ability to configure the list of commands the uux utility will allow a
+user of one machine to execute on another.  This list is currently set to
+include \fBrmail\fR, \fBrnews\fR, and \fBruusend\fR, and is not configurable
+by the system administrator.  In addition, the new UUCP software will provide
+the ability to initiate a connection immediately in response to a user's uux
+or uucp request.  Since many system administrators would rather spool the
+days work and perform network transfers during low usage times, the
+desirability of immediate connection is a matter of taste.  The current
+release does not do immediate connections, where previous releases did.  In
+the next release, the system administrator will be allowed to make the choice.
+.NH 1
+Summary
+.PP
+The file transfer, remote execution, and terminal emulation capabilities of
+the UUCP software are becoming more accessible as it becomes more
+configurable and easier to configure.  Problems caused by the large numbers
+or poorly understood configuration files have been solved by a tool available
+from your XENIX Software Specialist, so that the power of the UUCP system
+need not lie dormant.
