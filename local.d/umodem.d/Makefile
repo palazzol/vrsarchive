@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/umodem.d/Makefile,v 1.3 2002-11-23 07:51:58 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/umodem.d/Makefile,v 1.4 2002-11-24 18:02:11 vrs Exp $
 #
-ALL	= umodem
+ALL	= umodem$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG
