@@ -147,11 +147,7 @@ data_obj **
 IsPrefix(cp)
 data_obj	*cp;
 {
-#ifdef MAC
 	void (*proc)();
-#else
-	int	(*proc)();
-#endif
 	
 	if (cp == 0 || (cp->Type & TYPEMASK) != FUNCTION)
 		return 0;
