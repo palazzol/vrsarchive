@@ -21,9 +21,32 @@
 #include <ctype.h>
 #include <signal.h>
 
-int IntCatch();
 char *getlogin();
 struct passwd *getpwuid();
+
+/*
+ * Handle interrupts - just print a message about how to quit.
+ */
+SIG_T
+IntCatch(dummy)
+{
+	static char msg[] = " *** Use the QUIT command to quit.";
+
+	if (ReadingTerminal == 2) {	/* print our msg in TopWin */
+		WAcursor(TopWin, 1, 0);
+		Wputs(msg, TopWin);
+	}
+	else {
+#ifndef CURSED
+		if (BaseWin->w_cursor.col)
+#endif
+			Wputc('\n', BaseWin);
+		Wputs(msg, BaseWin);
+		Wputc('\n', BaseWin);
+	}
+	if (ReadingTerminal)
+		refresh();
+}
 
 /*
  * Start up.  Handle the single option ("-username"), get the
@@ -157,27 +180,4 @@ main(argc, argv)
 	prt("Goodbye!\n");
 	refresh();
 	Wexit(0);
-}
-
-/*
- * Handle interrupts - just print a message about how to quit.
- */
-IntCatch()
-{
-	static char msg[] = " *** Use the QUIT command to quit.";
-
-	if (ReadingTerminal == 2) {	/* print our msg in TopWin */
-		WAcursor(TopWin, 1, 0);
-		Wputs(msg, TopWin);
-	}
-	else {
-#ifndef CURSED
-		if (BaseWin->w_cursor.col)
-#endif
-			Wputc('\n', BaseWin);
-		Wputs(msg, BaseWin);
-		Wputc('\n', BaseWin);
-	}
-	if (ReadingTerminal)
-		refresh();
 }
