@@ -3,18 +3,18 @@
 #
 include $(HOME)/CONFIG
 
-all:	src/munge/munge src/adv/adv
+all:	src/munge/munge$(EXE) src/adv/adv$(EXE)
 
-src/munge/munge: force
+src/munge/munge$(EXE): force
 	@cd src/kio; make
 	@cd src/munge ; make
 
-src/adv/adv: force
+src/adv/adv$(EXE): force
 	@cd src/kio ; make
 	@cd src/adv ; make
 
-adv.key adv.rec: src/munge/munge
-	src/munge/munge < comcave
+adv.key adv.rec: src/munge/munge$(EXE)
+	src/munge/munge$(EXE) < comcave
 
 lint print:
 	@cd src/kio ; make $@
@@ -30,7 +30,7 @@ clean:
 install: adv.key adv.rec src/adv/adv
 	cp adv.key adv.rec $(GAMLIB)
 	cd $(GAMLIB); chmod 644 adv.key adv.rec
-	cp src/adv/adv $(GAMDIR)/adventure
+	cp src/adv/adv$(EXE) $(GAMDIR)/adventure$(EXE)
 	cd $(GAMDIR); chmod 711 adventure$(EXE)
 
 force: ;
