@@ -1,3 +1,4 @@
+#define BSD
 #include "cent.h"
 
 #define MAGICNUM 15
@@ -115,6 +116,7 @@ char *fil;
 #define BADF(m) {perror(m); chmod(fil,sbuf.st_mode & 07777); exit(0);}
 
 dorest(fil)
+char *fil;
 {
     int fd,n,count,tim;
     char ch;			/* KDW: was register; blasted for portability */

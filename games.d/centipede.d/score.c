@@ -161,11 +161,11 @@ unlockscore()
 FILE *getpager ()
 {
     FILE *morefp;
-    char *PAGER;
+    char *pager;
 
-    if ((PAGER = getenv("PAGER")) != NULL)
+    if ((pager = getenv("pager")) != NULL)
     {
-	if ((morefp = popen(PAGER, "w")) != NULL)
+	if ((morefp = popen(pager, "w")) != NULL)
 	    return morefp;
     }
     if ((morefp = popen(def_pager, "w")) != NULL)

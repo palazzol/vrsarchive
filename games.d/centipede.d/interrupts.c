@@ -1,3 +1,4 @@
+#define BSD
 #include "cent.h"
 
 endgame()
@@ -17,7 +18,8 @@ endgame()
     exit(0);
 }
 
-catchint()
+SIG_T
+catchint(dummy)
 {
     signal(SIGINT,SIG_IGN);
 #ifdef SIGTSTP
@@ -26,7 +28,8 @@ catchint()
     inter = 1;
 }
 
-catchstop()
+SIG_T
+catchstop(dummy)
 {
 #ifdef SIGTSTP
     signal(SIGTSTP,SIG_IGN);
@@ -35,7 +38,8 @@ catchstop()
     stopped = 1;
 }
 
-stopawhile()
+SIG_T
+stopawhile(dummy)
 {
     struct sgttyb curseterm;
 
@@ -61,7 +65,8 @@ stopawhile()
     signal(SIGINT,catchint);
 }
 
-quit()
+SIG_T
+quit(dummy)
 {
     char ch;
 
@@ -126,7 +131,8 @@ waitboard()
 #endif
 }
 
-catchalarm()
+SIG_T
+catchalarm(dummy)
 {
    gameover = 1;
 }

@@ -1,18 +1,26 @@
 /* Sys_dep.c:  System dependent constants */
 
 
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
 
 /* Scorefile: Where the scorefile should live */
-char scorefile[] = GAMLIB/scorefile";
+char scorefile[] = FILENM(scorefile);
 
 
 /* Lockfile: Where to create and look for a lockfile controlling access
    to the scorefile */
-char lockfile[] = GAMLIB/lockfile";
+char lockfile[] = FILENM(lockfile);
 
 
 /* Helpfile: Where the help file is located */
-char helpfile[] = GAMLIB/cent.doc";
+char helpfile[] = FILENM(cent.doc);
 
 
 /* Maxload: The maximum allowed load average for playing */

@@ -1,3 +1,4 @@
+#define BSD
 #include "cent.h"
 
 float version = 1.7;
@@ -32,8 +33,8 @@ int fleashot;                   /* was it shot once */
 int fleafreq;                   /* a figure which helps determine the
 				   frequency of fleas on a board */
 int nummushrooms;               /* number of mushrooms in player area */
-char lscorpion[] = "\`oo'--/";
-char rscorpion[] = "\\--\`oo'";
+char lscorpion[] = "`oo'--/";
+char rscorpion[] = "\\--`oo'";
 char *scorppic;
 int scorphere = 0;              /* is there a scorpion on the screen */
 int scorpthisboard;
