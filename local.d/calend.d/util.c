@@ -71,7 +71,7 @@ get_plus_parts()
 
 char *datestr(datenum,mtype,forward)
 int datenum,mtype,forward; {
-    char dstri[BUFSIZ];
+    static char dstri[BUFSIZ];
     int ddiff;
 
     if ((mtype == 3) && (abs(ddiff = reldiff(datenum,tdate,forward)) < 3))
