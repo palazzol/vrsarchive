@@ -2,7 +2,7 @@
 # Makefile for atc in distribution directory
 #
 ALL	= atc
-MODEL	= -i
+MODEL	= -i -F 2000
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
 include ../../../CONFIG
 CURSESLIBR =	libatc.a
