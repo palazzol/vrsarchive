@@ -33,7 +33,7 @@ char **argv;
 			randomize = 1;
 			break;
 		default:
-			printf("Unknown flag '%s'\n",*argv);
+			printw("Unknown flag '%s'\n",*argv);
 			break;
 		}
 	if (*argv)
@@ -63,25 +63,23 @@ char randomize, nodriver, debug;
 	}
 
 	(void) srand(getpid());
-
+	scrollok(stdscr, TRUE);
 	if (game < 0) {
-		(void) puts("Choose a scenario:\n");
-		(void) puts("\n        NUMBER  SHIPS   IN PLAY TITLE");
+		(void) addstr("Choose a scenario:\n");
+		(void) addstr("\n        NUMBER  SHIPS   IN PLAY TITLE\n");
 		for (n = 0; n < NSCENE; n++) {
 			/* ( */
-			printf("        %2d):    %2d      %3s     %s\n", n, scene[n].vessels,
+			printw("        %2d):    %2d      %3s     %s\n", n, scene[n].vessels,
 				sync_exists(n) ? "YES" : "no ",
 				scene[n].name);
 		}
 reprint:
-		printf("\nScenario number? ");
-		(void) fflush(stdout);
-		(void) scanf("%d", &game);
-		while (getchar() != '\n')
-			;
+		printw("\nScenario number? ");
+		refresh();
+		(void) scanw("%d", &game);
 	}
 	if (game < 0 || game >= NSCENE) {
-		(void) puts("Very funny.");
+		(void) addstr("Very funny.");
 		exit(1);
 	}
 	cc = &scene[game];
@@ -92,7 +90,7 @@ reprint:
 	foreachship(sp) {
 		sp->file = (struct File *) calloc(1, sizeof (struct File));
 		if (sp->file == NULL) {
-			(void) puts("OUT OF MEMORY");
+			(void) addstr("OUT OF MEMORY");
 			exit(0);
 		}
 		sp->file->index = sp - SHIP(0);
@@ -114,8 +112,8 @@ reprint:
 	}
 
 	if (hasdriver) {
-		(void) puts("Synchronizing with the other players...");
-		(void) fflush(stdout);
+		(void) addstr("Synchronizing with the other players...");
+		refresh();
 		if (Sync() < 0)
 			leave(LEAVE_SYNC);
 	}
@@ -125,7 +123,7 @@ reprint:
 			    && sp->file->captured == 0)
 				break;
 		if (sp >= ls) {
-			(void) puts("All ships taken in that scenario.");
+			(void) addstr("All ships taken in that scenario.");
 			foreachship(sp)
 				free((char *)sp->file);
 			sync_close(0);
@@ -135,25 +133,21 @@ reprint:
 		if (randomize) {
 			player = sp - SHIP(0);
 		} else {
-			printf("%s\n\n", cc->name);
+			printw("%s\n\n", cc->name);
 			foreachship(sp)
-				printf("  %2d:  %-10s %-15s  (%-2d pts)   %s\n",
+				printw("  %2d:  %-10s %-15s  (%-2d pts)   %s\n",
 					sp->file->index,
 					countryname[sp->nationality],
 					sp->shipname,
 					sp->specs->pts,
 					saywhat(sp, 1));
-			printf("\nWhich ship (0-%d)? ", cc->vessels-1);
-			(void) fflush(stdout);
-			if (scanf("%d", &player) != 1 || player < 0
+			printw("\nWhich ship (0-%d)? ", cc->vessels-1);
+			refresh();
+			if (scanw("%d", &player) != 1 || player < 0
 			    || player >= cc->vessels) {
-				while (getchar() != '\n')
-					;
-				(void) puts("Say what?");
+				(void) addstr("Say what?");
 				player = -1;
-			} else
-				while (getchar() != '\n')
-					;
+			}
 		}
 		if (player < 0)
 			continue;
@@ -161,7 +155,7 @@ reprint:
 			leave(LEAVE_SYNC);
 		fp = SHIP(player)->file;
 		if (fp->captain[0] || fp->struck || fp->captured != 0)
-			(void) puts("That ship is taken.");
+			(void) addstr("That ship is taken.");
 		else
 			break;
 	}
@@ -199,15 +193,15 @@ reprint:
 		}
 	}
 
-	printf("Your ship is the %s, a %d gun %s (%s crew).\n",
+	printw("Your ship is the %s, a %d gun %s (%s crew).\n",
 		ms->shipname, mc->guns, classname[mc->class],
 		qualname[mc->qual]);
 	if ((nameptr = (char *) getenv("SAILNAME")) && *nameptr)
 		(void) strncpy(captain, nameptr, sizeof captain);
 	else {
-		(void) printf("Your name, Captain? ");
-		(void) fflush(stdout);
-		(void) gets(captain);
+		(void) printw("Your name, Captain? ");
+		refresh();
+		(void) getstr(captain);
 		if (!*captain)
 			(void) strcpy(captain, "no name");
 	}
@@ -216,10 +210,10 @@ reprint:
 	for (n = 0; n < 2; n++) {
 		char buf[10];
 
-		printf("\nInitial broadside %s (grape, chain, round, double): ",
+		printw("\nInitial broadside %s (grape, chain, round, double): ",
 			n ? "right" : "left");
-		(void) fflush(stdout);
-		(void) scanf("%s", buf);
+		refresh();
+		(void) scanw(" %s", buf);
 		switch (*buf) {
 		case 'g':
 			load = L_GRAPE;
@@ -302,16 +296,16 @@ int conditions;
 		case LEAVE_QUIT:
 			break;
 		case LEAVE_DRIVER:
-			printf("The driver died.\n");
+			printw("The driver died.\n");
 			break;
 		case LEAVE_FORK:
 			perror("fork");
 			break;
 		case LEAVE_SYNC:
-			printf("Synchronization error\n.");
+			printw("Synchronization error\n.");
 			break;
 		default:
-			printf("A funny thing happened (%d).\n",
+			printw("A funny thing happened (%d).\n",
 				conditions);
 		}
 	}
