@@ -17,12 +17,13 @@ if test -s .sucked+; then
     mv .sucked+ .sucked
 fi
 #
-#	Remove duplication, Look for uuencoded stuff
+#	Remove duplication, Process local filter script
 #
 folder +`pwd`
 sortm
-rm `pick -subject "introduction to alt" 2>/dev/null` 2>/dev/null
-rmm `pick -not -search "M............................................................" 2>/dev/null` 2>/dev/null
+if test -x .kill; then
+    ./.kill
+fi
 fgrep "Message-ID:" [1-9]* /dev/null |
 sort -t: +2 |
 awk -F: '
