@@ -121,7 +121,7 @@ readline(x, y, prompt, p)
     standend();
     ClrEoln();
     getyx(stdscr, y, x);
-    for (q = p; (*p = getchar()) !=EOF; ) {
+    for (q = p; (*p = getch()) !=EOF; ) {
 	switch (*p) {
 	    default:
 		p++;
@@ -161,6 +161,8 @@ main()
       if (bothsides && !mate) select_move(opponent); else input_command();
       if (!quit && !mate) select_move(computer);
     }
+  move(LINES-1, 0);
+  refresh();
   endwin();
 }
 
