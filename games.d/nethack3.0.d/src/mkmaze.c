@@ -21,10 +21,15 @@ int x,y;
 		|| levl[x][y].typ == SDOOR);
 }
 
+#ifdef __STDC__
+void
+wallification(int x1,int y1,int x2,int y2,boolean see)
+#else
 void
 wallification(x1, y1, x2, y2, see)
 int x1, y1, x2, y2;
 boolean see;
+#endif
 {
 	char type;
 	short x,y;

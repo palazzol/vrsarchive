@@ -114,6 +114,17 @@ register int lowx,lowy,hix,hiy;
 	}
 }
 
+#ifdef __STDC__
+static int
+comp(x1,y1)
+void *x1,*y1;
+{	register struct mkroom *x = x1;
+	register struct mkroom *y = y1;
+
+	if(x->lx < y->lx) return(-1);
+	return(x->lx > y->lx);
+}
+#else
 static int
 comp(x,y)
 register struct mkroom *x,*y;
@@ -121,6 +132,7 @@ register struct mkroom *x,*y;
 	if(x->lx < y->lx) return(-1);
 	return(x->lx > y->lx);
 }
+#endif
 
 static void
 finddpos(cc, xl,yl,xh,yh)
@@ -982,9 +994,14 @@ register xchar x, y;
 }
 
 /* see whether it is allowable to create a door at [x,y] */
+#ifdef __STDC__
+int
+okdoor(xchar x,xchar y)
+#else
 int
 okdoor(x,y)
 register xchar x, y;
+#endif
 {
 	register boolean near_door = bydoor(x, y);
 
