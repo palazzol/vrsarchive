@@ -1,0 +1,55 @@
+These patches fix cent to run under System V.  I had to (or chose to):
+
+o Remove job control references
+o Change some ioctls (but not much; my SysV has an sgtty.h that
+  provides some compatibility).
+o Add a setblock() routine (and a lot of calls to it) that turns
+  blocking reads on and off.
+o Change the load average code (but either I've done it wrong or my
+  machine doesn't keep track of the load average: it's always 0).
+  Mostly I just made it explain itself if it screws up.
+o Change the random number generator a bit.
+o Change score.c to use the user's preferred pager instead of assuming
+  more(1), since most SysV sites a) don't have more(1), and b) most
+  Unix sites I'm familiar with have multiple pagers available (e.g.,
+  less(1)).  Same for the help file display.
+o Change calls to the FIONREAD ioctl() to use a one character
+  lookahead buffer.
+o Change the keybindings to use hack/vi keys, like all the rest of our
+  games (just my preference).
+
+Stuff that still doesn't work and that I'd appreciate fixes to:
+
+o The redrawscr() function doesn't.
+o Restored games don't redraw the screen, so you only see the things
+  that have changed since the game restarted (like the centipede, the
+  spider, yourself, and the shrooms that you zap).
+
+
+[ These patches were produced and concatenated automatically by makepatch.]
+
+This file contains all you need to convert the old version of cent
+to the latest version; it contains context diffs that will
+update the following files:
+
+Makefile			    cent.c
+cent.h				    input.c
+interrupts.c			    la.c
+move.c				    rand.c
+save.c				    score.c
+stuff.c				    sys_dep.c
+sys_dep.h
+
+If you have Larry Wall's patch program, you can feed this file to it,
+and you're all set.  Just cd to the directory where you keep the
+source code for cent and say:
+
+	    patch <patches
+
+where "patches" is this file.
+
+If not, you'll have to do it by hand (good luck!).
+
+These patches were done by Keith Waclena 
+at University of Chicago, Graduate Library School on cerberus.
+
