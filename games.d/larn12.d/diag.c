@@ -4,7 +4,8 @@
 #include <sys/stat.h>
 #include "header.h"
 extern long int initialtime;
-extern int rmst,maxitm,lasttime;
+extern int rmst,maxitm;
+extern long lasttime;
 extern char nosignal;
 static struct tms cputime;
 /*
