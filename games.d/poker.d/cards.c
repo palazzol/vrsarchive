@@ -46,6 +46,7 @@ int	limit;
 # ifdef MASSCOMP
 # define	random	rand
 # endif
+#define MAXRAND (((unsigned)-1)>>1)
 unsigned long	random();
 unsigned long	scale;
 int		x;
