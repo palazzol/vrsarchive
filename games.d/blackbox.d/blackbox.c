@@ -11,6 +11,9 @@ William Gervasi for the Intel Series-II computer in 1980.
 */
 
 #include <curses.h>
+#ifndef A_REVERSE
+#  define erasechar()	(_tty.sg_erase)
+#endif
 #include <ctype.h>
 
 /* excerpted from c.h to avoid definition conflicts with curses.h */
@@ -293,6 +296,7 @@ another_game()
 		move(BOTTOM_Y, BOTTOM_X);
 		refresh();
 		resetty();					/* restore original tty settings */
+		endwin();
 		exit(0);					/* exit, no error */
 	}
 	number_of_games++;
@@ -873,10 +877,10 @@ power_up()
 {
 	int rnd;					/* store randomizer seed */
 
-	savetty();					/* save tty settings */
 	initscr();					/* initialize curses routines */
+	savetty();					/* save tty settings */
 	noecho();					/* disable keyboard echo */
-	erasech = _tty.sg_erase;	/* dip into curses gtty field */
+	erasech = erasechar();
 	crmode();					/* set cbreak mode */
 	clear();					/* blank the screen */
 	move(SIGNON_Y, SIGNON_X);
@@ -1017,6 +1021,7 @@ quit()
 	clear();
 	refresh();
 	resetty();		/* restore initial tty settings */
+	endwin();
 	exit(1);		/* indicate error exit for shell processing, if needed */
 }
 EJECT
