@@ -13,6 +13,12 @@ extern int search_flag;
 #else
 extern struct ltchars save_special_chars;
 #endif
+#ifdef ultrix
+#define use_crmode
+#endif
+#ifdef M_XENIX
+#define use_crmode
+#endif
 
 int error_sig, error_code;
 int (*core_dump)();
@@ -60,7 +66,7 @@ int sig;
 #ifndef BUGGY_CURSES
   nl();
 #endif
-#ifdef ultrix
+#ifdef use_crmode
   nocrmode();
 #else
   nocbreak();
@@ -88,7 +94,7 @@ struct sigcontext *scp;
 #ifndef BUGGY_CURSES
   nl();
 #endif
-#ifdef ultrix
+#ifdef use_crmode
   nocrmode();
 #else
   nocbreak();
