@@ -27,13 +27,15 @@ dowield()
 #endif
 	if(!(wep = getobj("#-)", "wield"))) /* nothing */;
 	else if(wep == &zeroobj) {
-	  if(uwep == 0){
+	  if(uwep == 0) {
 	    pline("You are already empty handed.");
-	  } else {
-	    setuwep((struct obj *) 0);
-	    res++;
-	    pline("You are empty handed.");
-	  }
+	  } else if (welded(uwep))
+		pline("The %s welded to your hand!",aobjnam(uwep,"are"));
+	  	else  {
+	  	  setuwep((struct obj *) 0);
+	  	  res++;
+	  	  pline("You are empty handed.");
+	  	}
 	} else if(uwep == wep)
 		pline("You are already wielding that!");
 	else if(welded(uwep))
