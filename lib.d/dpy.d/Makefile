@@ -1,12 +1,12 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.7 2002-11-23 07:46:04 Vincent Exp $
+#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.8 2002-11-24 03:08:50 Vincent Exp $
 #
 ALL	= Slibdpy.a Mlibdpy.a Llibdpy.a libdpy.a
 OPTIONS	= -DUSG
 include $(HOME)/CONFIG
 HFILES	= dpy.h
 #
-OBJS	= dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o dpywindow.o
+OBJS	= dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o gensubs.o dpywindow.o
 SOBJS	= $(OBJS:.o=.S)
 MOBJS	= $(OBJS:.o=.M)
 LOBJS	= $(OBJS:.o=.L)
