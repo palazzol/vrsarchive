@@ -402,7 +402,7 @@ static short gemorder[26]={0};	/* the reference to screen location for each */
 static long gemvalue[26]={0};	/* the appraisal of the gems */
 obanksub()
 	{
-	unsigned long amt;
+	long amt;
 	register int i,k;
 	ointerest();	/* credit any needed interest */
 
@@ -597,7 +597,7 @@ cnsitm()
 olrs()
 	{
 	register int i,first;
-	unsigned long amt;
+	long amt;
 	first = nosignal = 1; /* disable signals */
 	clear();  resetscroll(); cursor(1,4);
 	lprcat("Welcome to the Larn Revenue Service district office.  How can we help you?");
