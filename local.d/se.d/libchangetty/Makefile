@@ -1,7 +1,10 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.5 2002-11-23 19:01:16 Vincent Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.6 2002-11-25 21:42:59 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2002/11/23 19:01:16  Vincent
+# Move CONFIG to $(HOME).
+#
 # Revision 1.4  1990/03/30 17:03:28  vrs
 # Move CONFIG to /etc
 #
@@ -30,7 +33,7 @@ PRINTS	= $(SRCS) Makefile
 
 
 $(ALL): $(OBJS) ../flags
-	/bin/ar ruv $(ALL) $(OBJS)
+	ar ruv $(ALL) $(OBJS)
 	if test -x /usr/bin/ranlib; then /usr/bin/ranlib $(ALL); fi
 	if test -x /bin/ranlib; then /bin/ranlib $(ALL); fi
 
