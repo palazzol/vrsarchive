@@ -253,6 +253,32 @@ darkroom ()
   return (0);
 }
 
+#define ckdoor(FLAG, NODOOR, STATIC, INC, S1, S2, I1, I2)\
+	ck_door(flags, any, r, c, FLAG, NODOOR, STATIC, INC, S1, S2, I1, I2);
+ck_door(flags, any, r, c, FLAG, NODOOR, STATIC, INC, S1, S2, I1, I2)
+{
+    if (0 == (flags & FLAG)) {
+	any = 0;
+	if (NODOOR)
+	    any = 1;
+	else
+	    for (STATIC = S2, INC = I1; INC <= I2; INC++)
+		if (onrc (DOOR, r, c)) {
+		    any = 1;
+		    break;
+		}
+	if (any) {
+	    for (STATIC = S2, INC = I1; INC <= I2; INC++)
+		setrc (SEEN+WALL, r, c);
+	    for (STATIC = S1, INC = I1; INC <= I2; INC++)
+		setrc (BOUNDARY, r, c);   /* Room boundary   LGCH */
+	} else {
+	    for (STATIC = S2, INC = I1; INC <= I2; INC++)
+		setrc (BOUNDARY, r, c);  /* Unseen wall or door LGCH */
+	}
+    }
+}
+
 /*
  * currentrectangle: infer room extent based on clues from walls
  * NOTE: When a door appears on the screen, currentrectangle
@@ -311,25 +337,6 @@ currentrectangle ()
       { setrc (ROOM + CANGO, r, c);
         unsetrc	 (HALL, r, c);
       }
-
-# define ckdoor(FLAG, NODOOR, STATIC, INC, S1, S2, I1, I2) \
-    if (0 == (flags & FLAG)) \
-    { any = 0; \
-      if (NODOOR) any = 1; \
-      else \
-	for (STATIC = S2, INC = I1; INC <= I2; INC++) \
-	  if (onrc (DOOR, r, c)) { any = 1; break; } \
-      if (any) \
-      { for (STATIC = S2, INC = I1; INC <= I2; INC++) \
-	  setrc (SEEN+WALL, r, c); \
-	for (STATIC = S1, INC = I1; INC <= I2; INC++) \
-	  setrc (BOUNDARY, r, c);   /* Room boundary   LGCH */ \
-      } \
-      else \
-      { for (STATIC = S2, INC = I1; INC <= I2; INC++) \
-	  setrc (BOUNDARY, r, c);  /* Unseen wall or door LGCH */ \
-      } \
-    }
 
     if (curt <= 2) flags &= ~fT;    /* Wall must be on screen edge */
     if (curb >= 21) flags &= ~fB;
