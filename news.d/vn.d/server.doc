@@ -1,0 +1,341 @@
+vns_envir()
+
+	called to allow server layer to set environment.  Will be called
+	before anything else.  See the vn_env() routine if the server
+	interface intends to use any environment variables.
+
+	There are some procedure pointers in vn which may optionally
+	be set by the server interface.  By default, all of these are
+	NULL:
+
+	(*Massage)(hdr)
+	ARTHEADER *hdr;
+
+		Mail path massaging function.  Allows server interface to
+		interact with the user prior to editing the reply file
+		on mail replies.  See vns_aopen().
+
+	(*Headedit)()
+
+		If set, will be called instead of the default action when
+		the user chooses the "toggle header flag" command.  This
+		is intended to allow the server interface to implement a
+		user selection of which headers to display when reading
+		an article.  If this is set, note that the reader code will
+		never rewind an article past the point set by vns_aopen().
+
+	(*Postfunc)(hdr,fn)
+	(*Mailfunc)(hdr,fn)
+	ARTHEADER *hdr;
+	char *fn;
+
+		If set, these functions will be called for mail / post
+		instead of spawning a command.  They are intended for
+		the instance in which these operations can be handled
+		within the executable rather than forking another process.
+		If forking another process has to be done, you might as
+		well set up postcmd / mailcmd, and let vn do it.  fn is
+		the name of a file containing the user's article or mail
+		reply.
+
+	All of the procedures will be called with the user's terminal in
+	raw mode and will be expected to leave it that way on return.
+	If these routines need to control ioctl settings or send control
+	sequences to the terminal, they should do so through the tty_set /
+	term_set calls used by the rest of vn.  These routines basically
+	hide ioctl / termcap from everybody.
+
+vns_news (argc,argv,lfirst,unsub)
+int argc;
+char **argv;
+int *lfirst;
+int *unsub;
+
+	called to let server layer process options and enter known newsgroups
+	in vn structure.  arguments are vn's command line.   It calls four
+	specific support routines:
+
+	hashenter(group,highnum,lownum)
+	char *group;
+	int highnum, lownum;
+
+		Enter information about a newsgroup. Group is newsgroup
+		name, highnum the highest article number, lownum the lowest.
+
+	NODE *
+	hashfind(group)
+	char *group;
+
+		Return information on entered group.  See node.h header
+		file for structure and legal usage of its items by server
+		interface routines.  May be called by other vns_ rouines
+		as well.
+
+	fw_group(group,new,sub,read,look)
+	char *group;
+	int new, sub, read, look;
+
+		prepare to enter display information for a new newsgroup.
+		new is non-zero if this is to be considered a "new" newsgroup
+		since the user's last session.  sub is non-zero if user is
+		to be considered "subscribed" to it.  read is the initial
+		"articles read" number for the newsgroup.  look is non-zero
+		if server interface intends to look for articles in this
+		newsgroup.  This parameter is open to interpretation, but
+		should indicate that user's options mean group is to be looked
+		at.  This should NOT reflect the fact that no articles will
+		be found because "read" is up to date.  The parameter is only
+		used for statistical collection, anyway.
+
+	fw_art(anum,subj,lines,author)
+	int anum;
+	char *subj, *lines, *author;
+
+		enter information for an article in the newsgroup last set
+		with fw_group().  anum's should be entered in ascending
+		sequence.
+
+	fw_chg(new,sub,read,look)
+	int new, sub, read, look;
+
+		change the parameters for the current group.  To allow the
+		server interface to modify its setting for the group based
+		on what it discovered while scanning the articles.
+
+	fw_group() should be called once and only once for each group
+	hashenter()'ed.  The order of fw_group() calls determines the
+	order of vn's display to the user.  fw_group() calls may be made
+	after all the hashenter() calls have been made, or they may be
+	interleaved.  If no fw_art() calls are made following a particular
+	fw_group() call, no display page will be generated for that group.
+	If vns_news does not stick to the rules regarding calls to fw_group,
+	vn will exit with a fatal error message.
+
+	Rationale for this is for the server layer to have no knowledge
+	of device dependencies (the calls to fw_art will split up display
+	pages), or any of the vn structures beyond the newsgroup information.
+	And the newsgroup NODE structure has clearly documented pieces
+	which are legal for the server to read or use, and others which are
+	out-of-bounds.  It isolates things fairly well.
+
+	Note that vns_news hides all knowledge of the user's .newsrc file or
+	similar concept, and all knowledge of where articles live and how
+	they are administered.  Error handling is brutally simple.  If the
+	server doesn't obey the rules, vn will exit with a fatal error message
+	if it detects the fact.
+
+	lfirst and unsub are returned to the caller based on the command
+	line:
+
+		lfirst - non-zero if vn is supposed to go directly to
+			the newsgroup summary list on startup (-% option).
+
+		unsub - set non-zero if unsubscribed newsgroups are to
+			be updated on "write alls" (-U option).
+
+	We COULD have vn look for these, and nail them down, but most command
+	line options are things which make sense only to the server interface.
+	Different environments may have different options which make sense.
+	Might as well give the server interface control of the command line
+	exclusively, and advise to consistently use -% and -U if possible.
+
+	See below for some other support routines which might be useful for
+	vns_news().
+
+	In summary, what vns_news should do:
+
+		Call hashenter() for all the legitimate newsgroups.
+		After this, hashfind() may be called at any time to retrieve
+		the information about a group.
+
+		Call fw_group() once and only once for each group, in the
+		order newsgroups should be displayed to the user.  The order
+		need bear no relation to the order of hashenter calls.
+
+		After each fw_group call, shovel in article information with
+		fw_art calls.  Optionally call fw_chg() if anything ought to
+		be changed from the original fw_group call.
+
+		If there are fatal errors call printex() with an explanation.
+
+		To produce non-fatal diagnostics / informational messages,
+		call fgprintf().  If you absolutely want to produce the message,
+		backgrounded or not, you CAN simply output to stderr / stdout,
+		but think before doing it.  It's obnoxious to have a
+		backgrounded program stop on output before it's ready to
+		interact with you.
+
+		ISN'T THAT EASY?
+
+FILE *vns_aopen(art,hdr)
+int art;
+ARTHEADER *hdr;
+
+	Returns an open file pointer to article text for vn's use, or
+	NULL for failure.  Fills in the ARTHEADER argument, containing
+	information conceptually thought of as extracted from the "header"
+	lines.  File pointer should be positioned at the start of the
+	bonafide article text, if headers are contained in the file.  See
+	head.h for the items to be filled in.
+
+	If (*Massage)(), (*Postfunc)() or (*Mailfunc)() are defined, they
+	will be called with this same ARTHEADER instance when they are
+	called.  vns_aopen may set up any arguments in the priv item
+	for the convenience of these routines.
+
+	CAUTION:
+		hdr contains string pointers.  vns_aopen must be sure to
+		point to legitimate storage, not its stack.  And it SHOULD
+		NOT simply malloc() the strings every time without freeing
+		the old ones somehow - this will lose storage every time the
+		user reads a new article.  You MAY NOT assume that the same
+		instance of an ARTHEADER structure is passed to each
+		vns_aopen() call, either.  See str_tpool, and associated
+		routines, below.
+
+vns_close(fp)
+FILE *fp;
+
+	Called to close article opened with vns_open().  In many instances
+	will simply be an fclose().  vn will NEVER have multiple articles
+	open, so vns_aopen / vns_aclose may maintain static information if
+	they like.
+
+vns_gset(grp)
+char *grp;
+
+	Called as the user moves from page to page of the display.  vns_aopen
+	and vns_aclose calls will refer to this newsgroup.  May do chdir()'s
+	if it likes.
+
+vns_exit(stat)
+int stat;
+
+	Called before exit to allow the server layer to clean up.  Called
+	on normal exit & from within printex() (ie. DON'T call printex in
+	unconditionally in this routine)
+
+vns_write(news,count)
+NODE **news;
+int count;
+
+	Called to do whatever is the conceptual equivalent of updating the
+	user's .newsrc file.  news is an array of newsgroup nodes in the
+	order that fw_group was called, count is the length of the array.
+	Vn may have modified the rdnum items & the FLG_SUB flag based on
+	user interaction.  User exit, "write" commands, and "subscription"
+	commands will result in this call.  vn will set a flag bit, FLG_ECHG,
+	in the flag item of all newsgroups whose data it changed since last
+	call.  This bit may be used by vns_write to do selective updates, and
+	will be cleared for all groups following return from vns_write().
+
+vns_asave(art,fp,count,name,mode)
+int art;
+FILE *fp;
+int count;
+char *name,*mode;
+
+	Called to shovel an article out to an open file pointer.  Intended
+	to allow the server interface to implement any kind of massaging
+	of the article text that is called for.  count starts with 0, and
+	counts the articles being written on this opening of the file.
+	name is the file name, and mode is the mode it was opened with.
+	This information is being passed in to allow implementation of
+	selective copy of header lines, etc. based on the state of the
+	file.  Note that it WILL exist since it's already been opened.  On
+	count 0, this routine may be interested in whether it's empty or not.
+	This routine WILL get called between vns_aopen and vns_aclose.
+
+char *Vns_version;
+
+	The server layer must define this string.  It should be a
+	short string which describes the server type / version (something
+	like "NNTP-1.0").  Will be printed as part of the vn version message.
+
+Some support routines:
+
+	regex(), regcmp(), strtok() and strpbrk() are standard SYSV
+	routines not normally available for BSD.  vn uses them, so
+	they are implemented in vn for those systems.  Thus, they are
+	available for use in the server interface.  Be careful with
+	strtok(), which retains context from call to call, if you are
+	not familiar with its use.  To free storage handed you by
+	regcmp(), use regfree() instead of free().
+
+	char *vn_env(var, def)
+	char *var, *def;
+
+	Use this in place of getenv() to be consistent with the rest of
+	vn.  This routine checks first for the variable prefixed with "VN"
+	if it doesn't already begin with "VN".  If neither the prefixed
+	or unprefixed name exists, it returns the def argument.  This allows
+	consistent override of EDITOR with VNEDITOR, etc.
+
+	printex(....)
+
+	printf style argument list.  Generates a fatal error and exits.
+	No newline necessary in the message, and printex() adds the error
+	number to its output automatically.  printex() may be called from
+	anywhere in the server interface to generate a fatal error, except
+	from vns_exit().
+
+	fgprintf(....)
+
+	nonfatal diagnostic / informational message.  printf style argument
+	list.  No extra formatting printed.  Will only print if program is
+	running in the foreground.  fgprintf() should be called only from
+	vns_envir() and vns_news(), as all the other routines come after
+	user interaction has begun.
+
+	char *
+	str_store(s)
+	char *s;
+
+	Returns a pointer to a permanent copy of a string.  DO NOT FREE THAT
+	POINTER!!  This routine is intended to save malloc() overhead, and
+	returns pointers into larger buffer allocated with a single request.
+
+	char *
+	str_tstore(ptr,s)
+	char *ptr;
+	char *s;
+
+	char *
+	str_tpool(n)
+	int n;
+
+	char **
+	str_taptr(ptr)
+	char *ptr;
+
+	str_tfree(ptr)
+	char *ptr;
+
+	Temporary string storage.  str_tpool is called with the maximum
+	number of strings to be allocated, and it returns a pointer to use
+	with the other calls (ptr argument).  str_tstore returns allocated
+	copies of strings.  str_taptr returns an address which may be treated
+	as a string array containing the str_tstore allocated strings
+	beginning with the NEXT str_tstore() call.  May be called several
+	times to get several array pointers.  str_tfree() frees all the strings
+	allocated on the given ptr returned from str_tpool, as well as the
+	pool pointer itself.  The returned addresses are no longer valid, nor
+	is the pool pointer.  Multiple pool pointers may be maintained.
+	Pool pointer contents should not be touched by the caller.  These
+	routines are intended for the convenience of vns_aopen().
+
+HEADER FILES:
+
+server.h includes the header files used by vn which are intended to be known
+to server interface routines.  The server interface routines may include
+system headers, this one, and their own headers.  Among their own headers
+should be a config_*.h containing parameters which are likely to be changed
+from installation to installation, such as file paths.  server.h contains
+node.h and head.h, defining the NODE and ARTHEADER structures.
+
+A useful constant defined in server.h is RECLEN.  This should be used only
+as an array dimension for a stack character buffer, intended to be large
+enough to hold an arbitrary string.  If you use this constant, you are
+making "large enough" the same value used in vn.  Use it for fgets()
+buffers, or sprintf buffers prior to making allocated copies of the string,
+and you'll be working about the way vn does in a lot of places.

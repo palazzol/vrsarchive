@@ -1,0 +1,108 @@
+From littlei!uunet!lll-winken!lll-lcc!ames!elroy!jplopto!earle Sat Jan  2 22:14:47 PST 1988
+Status: O
+
+Article 664 of comp.sources.bugs:
+Path: littlei!uunet!lll-winken!lll-lcc!ames!elroy!jplopto!earle
+>From: earle@jplopto.uucp (Greg Earle)
+Newsgroups: comp.sources.bugs
+Subject: Notes on the latest `vn' distribution
+Message-ID: <5119@elroy.Jpl.Nasa.Gov>
+Date: 30 Dec 87 06:11:58 GMT
+Sender: news@elroy.Jpl.Nasa.Gov
+Reply-To: earle@jplopto.JPL.NASA.GOV (Greg Earle)
+Organization: Rockwell International Science Center, Thousand Oaks CA
+Lines: 30
+
+A couple of quick notes on the new `vn' distribution:
+
+(1) If you do not define `tmpnam.o' in the Makefile's EXTRAOBJS *on* *a* *Sun*,
+    you will be sorry.  It appears that Sun's implementation of the `tmpnam'
+    function is broken.  There should probably be a mention of this in the
+    Makefile comments in later releases (as there is for Ultrix).  Using Bob's
+    version works fine.
+
+(2) Undigestify is broken.  Typing `R' to read all digest articles, then
+    reading them sequentially eventually yields a SIGSEGV.  Bob is aware
+    of the problem and has a fix.  Works fine with the fix.
+
+(3) Vanilla `vn' scrolls for each successive page for > 1 page articles.
+    On low-speed modem links, or on Sun monitors (inside a window system
+    or using the raw console), this is a Big Lose (I can't speak for other
+    systems using bit-mapped monitors & window systems).  I submitted patches
+    that enables repainting from the top of the screen for successive pages,
+    if the environment variable MORE is set to `-c'.  This emulates more(1)
+    in this regard.  The same patches also keep the last line of the previous
+    screen as the first line of the current screen (as does the default
+    scrolling behavior), in reverse video if possible (a la rn).
+
+Now if we could only get articles left marked unread between sessions ...
+
+Fixes should be forthcoming for the above; don't write me - wait for Bob to
+release an update (I'm feeding all our fixes to him instead of posting them).
+
+	Greg Earle		earle@jplopto.JPL.NASA.GOV
+	Indep. Sun consultant	earle%jplopto@jpl-elroy.ARPA	[aka:]
+	Rockwell Science Center	earle%jplopto@elroy.JPL.NASA.GOV
+	Thousand Oaks, CA	...!cit-vax!elroy!smeagol!jplopto!earle
+
+
+From littlei!uunet!husc6!rutgers!mtune!codas!cpsc6a!rtech!bobm Sat Jan  2 22:27:15 PST 1988
+Status: O
+
+Article 672 of comp.sources.bugs:
+Path: littlei!uunet!husc6!rutgers!mtune!codas!cpsc6a!rtech!bobm
+>From: bobm@rtech.UUCP (Bob McQueer)
+Newsgroups: comp.sources.bugs
+Subject: Re: Notes on the latest `vn' distribution
+Message-ID: <1519@rtech.UUCP>
+Date: 31 Dec 87 19:03:07 GMT
+References: <5119@elroy.Jpl.Nasa.Gov>
+Sender: news@rtech.UUCP
+Lines: 44
+
+
+Problem list at this point:
+
+	1) the digest handling stuff Greg mentioned.  There are a couple
+	   things to be fixed here, the more serious being one of those
+	   address problems that VAXen blithely ignore.  I hope it's the
+	   only such.
+
+	2) for SYSV, there is no mkdir() call and MAXPATHLEN is undefined
+	   in svart.c.  Needs to be ifdef'ed to call mknod(), which will
+	   mean that the feature will only work for superuser on SYSV, if
+	   the manual pages are to be believed (the feature in question is
+	   the placement of saved articles in separate directories if there
+	   is a "%s" in your VNSAVE variable).
+
+	3) somebody whom I never got confirmation from had a problem with
+	   a "range error" message getting generated, which I believe would
+	   happen if there happened to be multiple records for a given
+	   newsgroup in the active file.  Can be changed to generate a
+	   non-fatal and more informative message, although obviously
+	   your active file is screwed up and should be fixed.
+
+	4) if a badly mangled article gets into the directories, you'll
+	   get a crash if you try to read it.  By badly mangled, I mean
+	   a "From", "Path" and "Reply-to" line are all not present.  Until
+	   I give out a fix, don't read an article from author "?".  The
+	   specific problem is in winding up calling mail_trim() in std.c
+	   with a NULL pointer.  The fix is a one-liner - simply check &
+	   don't call it.  I found this myself shortly after posting - the
+	   offending article was the first time I'd seen a screwed up article
+	   in ages.
+
+        5) if you try to set your NEWSRC variable to a file which is on a 
+	   different filesystem than your HOME, it won't work.  The reason
+	   is that vn plays super-cautious when writing your .newsrc by
+	   making a link of your old .newsrc to a temporary name in case
+	   the write fails, and it's making the temp name in your HOME.
+	   It's a minor mod to make sure the temp name is in the same
+	   directory as your .newsrc.
+
+I intend to post a single set of patches for all of the above.  None of them
+are very extensive changes.  I'll wait about a week to see if there is any
+further fallout.  I'll either post Greg's optimization with it, or as a
+separate patch.
+
+

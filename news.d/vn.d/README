@@ -1,0 +1,75 @@
+Installation procedure steps, for standard version:
+
+1) Edit file config.h and config_std.h, which define system dependent
+parameters.  I have NOT ifdef'ed this file for likely changes for SYSV or
+anything like that.  You probably can use these files untouched only if
+you are UCB with news installed in all the standard places.  Even then,
+you may not like some of the defaults.
+
+2) Edit the makefile, which has lots of comments describing how to set things
+for various systems.  In order to remind you of this step, a "make" using
+the unedited makefile will simply say "PLEASE READ THE MAKEFILE".
+
+3) make vn
+
+4) put the executable where you want it.  put the man page, vn.man
+where you want it.  roff it with -man to print it out.  If you made
+some configuration changes, or you are a SYSV installation, you may
+want to modify the manual a bit.  It is written to reflect the actions in
+the config.h as distributed, and as used on UCB (it refers to job control).
+It also reflects the standard server interface.
+
+Notes:
+
+1)
+	If you modify the default printer or editor, this is
+	their invocation, ufile being a tempfile name.
+
+	"printer files 2>/dev/null"
+	"editor ufile"
+
+2)
+
+	You may also be interested in the header file "tune.h" which contains
+	some sizing / performance affecting parameters.
+
+SERVER INTERFACE:
+
+vn has a separable module which obtains actual news article information,
+and reading / updating user information.  In the "standard" version, this
+module looks at the "active" file, persuses articles in the spool directories,
+and uses the user's .newsrc file.  Through provision of a different set of
+server interface routines, vn may be used with other news storage /
+transmission mechanisms.  The interface is described in the file server.doc.
+
+That module also controls the handling of followup posting & mail replies.
+
+RESOURCE USE:
+
+vn should look like people sitting in an editor once it is done with its
+reading phase.  During the reading phase, the standard version is beating
+mercilessly on the spooling directory, reading file after file.  Another
+server interface could be provided, which would depend on having a daemon
+do this work periodically, building a master file of title information for
+vn to access.  Its reading phase would then be a "pause" rather than a
+"phase", with the penalty that you couldn't read anything until the daemon
+had gotten around to it.
+
+vn maintains a large temporary file containing the users page screens.
+Again, it should look a lot like the user is using an editor which has
+a temp file out there for its edit buffer.  MAX_C in "tune.h" can be
+used to help control the size.
+
+Memory allocation: outside the server interface, vn will allocate a buffer
+for the current screen image, on the order of MAX_C times the number of
+lines on the users terminal.  It will also allocate a NODE structure for
+each group, an array of pointers to same, and copies of the newsgroup name
+strings.  This is all permanent storage for the entire session, hence never
+freed.  There is also allocation of miscellaneous strings and regular
+expressions here and there, probably not significant.  The regular
+expressions are freed after use.  The "standard" server interface will
+allocate an array of character string pointers to newsgroup names, and
+possibly some regular expressions for option processing.  It will free
+these after reading the .newsrc.  It will also create and free string
+storage as articles are accessed, to hold information extracted from
+header lines.
