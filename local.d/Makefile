@@ -1,12 +1,12 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.1 1987-02-15 15:50:59 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.2 1987-03-01 19:14:55 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
 TODO	= LaTeX.d dialers.d lbgm.d map.d news.d news.misc.d
 SUBDIR	= ash arcmail calend calls car clear compress copymode crack ctc ctty \
-	  curse cxref esad espel getopt hoc6 include index kermit less mdemo \
-	  mkman ofiles patch pathalias read20 recipes roff se strings \
+	  curse cxref esad espel getopt hoc6 include index jove kermit less \
+	  mdemo mkman ofiles patch pathalias read20 recipes roff se strings \
 	  tmac talk top tpr umodem vc vttest whatcomm which xmodem
 M0700	= bootime logout mkbad
 M0711	= bincmp clock from getfrom script
