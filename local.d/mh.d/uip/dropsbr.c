@@ -1,6 +1,6 @@
 /* dropsbr.c - write to a mailbox */
 #ifndef	lint
-static char ident[] = "@(#)$Id: dropsbr.c,v 1.1 1990-04-12 13:29:27 vrs Exp $";
+static char ident[] = "@(#)$Id: dropsbr.c,v 1.2 1990-05-06 23:20:59 vrs Exp $";
 #endif	lint
 
 #include <stdio.h>
@@ -17,7 +17,11 @@ static char ident[] = "@(#)$Id: dropsbr.c,v 1.1 1990-04-12 13:29:27 vrs Exp $";
 #include <sys/types.h>
 #include <sys/stat.h>
 #if     (defined(BSD42) || defined(SOCKETS)) && defined(NTOHLSWAP)
+#define NULLVP_HACK NULLVP
+#undef	NULLVP
 #include <netinet/in.h>
+#undef	NULLVP
+#define NULLVP NULLVP_HACK
 #else
 #define	ntohl(n) (n)
 #endif
