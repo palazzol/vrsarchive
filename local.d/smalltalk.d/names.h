@@ -35,12 +35,12 @@
 # define creatingInterpreterInBlock 5
 
 # define InterpreterSize 6
-# define contextInInterpreter 1
-# define previousInterpreterInInterpreter 2
-# define creatingInterpreterInInterpreter 3
-# define stackInInterpreter 4
-# define stackTopInInterpreter 5
-# define byteCodePointerInInterpreter 6
+# define contextInInterp 1
+# define previousInterpreterInInterp 2
+# define creatingInterpreterInInterp 3
+# define stackInInterp 4
+# define stackTopInInterp 5
+# define byteCodePointerInInterp 6
 
 extern object nameTableLookup();
 

@@ -324,10 +324,10 @@ object interp, value;
 	int stacktop;
 	object stack;
 
-	stacktop = 1 + intValue(basicAt(interp, stackTopInInterpreter));
-	stack = basicAt(interp, stackInInterpreter);
+	stacktop = 1 + intValue(basicAt(interp, stackTopInInterp));
+	stack = basicAt(interp, stackInInterp);
 	basicAtPut(stack, stacktop, value);
-	basicAtPut(interp, stackTopInInterpreter, newInteger(stacktop));
+	basicAtPut(interp, stackTopInInterp, newInteger(stacktop));
 }
 
 object doInterp(interpreter)
@@ -336,18 +336,18 @@ object interpreter;
 	object prev, contextobj, obj, argobj, class, newinterp, tempobj;
 	int i, hash, argumentSize, bytecounter, stacktop;
 
-	context = basicAt(interpreter, contextInInterpreter);
+	context = basicAt(interpreter, contextInInterp);
 	method = basicAt(context, methodInContext);
 	arguments = basicAt(context, argumentsInContext);
 	temporaries = basicAt(context, temporariesInContext);
-	stack = basicAt(interpreter, stackInInterpreter);
-	stacktop = intValue(basicAt(interpreter, stackTopInInterpreter));
-	bytecounter = intValue(basicAt(interpreter, byteCodePointerInInterpreter));
+	stack = basicAt(interpreter, stackInInterp);
+	stacktop = intValue(basicAt(interpreter, stackTopInInterp));
+	bytecounter = intValue(basicAt(interpreter, byteCodePointerInInterp));
 
 	execute(method, bytecounter, memoryPtr(stack), stacktop,
 		memoryPtr(arguments), memoryPtr(temporaries));
-	basicAtPut(interpreter, stackTopInInterpreter, newInteger(finalStackTop));
-	basicAtPut(interpreter, byteCodePointerInInterpreter, newInteger(finalByteCounter));
+	basicAtPut(interpreter, stackTopInInterp, newInteger(finalStackTop));
+	basicAtPut(interpreter, byteCodePointerInInterp, newInteger(finalByteCounter));
 
 	switch(finalTask) {
 		case sendMessageTask:
@@ -387,7 +387,7 @@ object interpreter;
 					sysError("cant find method",charPtr(messageToSend));
 				}
 			newContext(method, methodCache[hash].methodClass, &contextobj, argobj, &tempobj);
-			basicAtPut(interpreter, stackTopInInterpreter, newInteger(finalStackTop));
+			basicAtPut(interpreter, stackTopInInterp, newInteger(finalStackTop));
 			argumentsOnStack = 0;
 			/* fall into context execute */
 
@@ -397,19 +397,19 @@ object interpreter;
 				}
 			newinterp = allocObject(InterpreterSize);
 			setClass(newinterp, intrclass);
-			basicAtPut(newinterp, contextInInterpreter, contextobj);
-			basicAtPut(newinterp, previousInterpreterInInterpreter, interpreter);
+			basicAtPut(newinterp, contextInInterp, contextobj);
+			basicAtPut(newinterp, previousInterpreterInInterp, interpreter);
 			/* this shouldn't be 15, but what should it be?*/
-			basicAtPut(newinterp, stackInInterpreter, newArray(15));
-			basicAtPut(newinterp, stackTopInInterpreter, newInteger(0));
-			basicAtPut(newinterp, byteCodePointerInInterpreter, newInteger(argumentsOnStack));
+			basicAtPut(newinterp, stackInInterp, newArray(15));
+			basicAtPut(newinterp, stackTopInInterp, newInteger(0));
+			basicAtPut(newinterp, byteCodePointerInInterp, newInteger(argumentsOnStack));
 			decr(contextobj);
 			return(newinterp);
 			break;
 
 		case BlockCreateTask:
 			basicAtPut(returnedObject, contextInBlock, context);
-			prev = basicAt(interpreter, creatingInterpreterInInterpreter);
+			prev = basicAt(interpreter, creatingInterpreterInInterp);
 			if (prev == nilobj)
 				prev = interpreter;
 			basicAtPut(returnedObject, creatingInterpreterInBlock, prev);
@@ -418,11 +418,11 @@ object interpreter;
 			return(interpreter);
 
 		case BlockReturnTask:
-			interpreter = basicAt(interpreter, creatingInterpreterInInterpreter);
+			interpreter = basicAt(interpreter, creatingInterpreterInInterp);
 			/* fall into return task */
 
 		case ReturnTask:
-			prev = basicAt(interpreter, previousInterpreterInInterpreter);
+			prev = basicAt(interpreter, previousInterpreterInInterp);
 			if (prev != nilobj) {
 				interpush(prev, returnedObject);
 				}
