@@ -121,8 +121,12 @@ register double *avec,*bvec,*cvec;
 {
 	register int i;
 
-	for (i=0;i++<3;)
-		*cvec++ = *avec++ - *bvec++;
+	for (i=0;i++<3;) {
+		*cvec = *avec - *bvec;
+		*cvec++;	/* per Joe Durnavich */
+		*avec++;
+		*bvec++;
+	}
 }
 
 double vdist(avec,bvec)
