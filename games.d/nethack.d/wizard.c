@@ -322,9 +322,9 @@ register struct monst *mtmp;
 		spells successfully.  Sometimes they fail anyway */
 		if(mtmp->mcan ||
 #ifdef HARD
-		   rn2(4)
+		   !rn2(4)
 #else
-		   rn2(2)
+		   !rn2(2)
 #endif
 		   ) {
 		    if(canseemon(mtmp))
@@ -358,8 +358,9 @@ register struct monst *mtmp;
 			aggravate();	/* aggravate all the monsters */
 			/* fall into next case */
 		    case 2:
-			if (flags.no_of_wizards == 1 && rnd(5) == 0)
+			if ((flags.no_of_wizards == 1) && !rn2(3))
 			    /* if only 1 wizard, clone himself */
+			    pline("Double Trouble...");
 			    clonewiz(mtmp);
 			break;
 		    case 3:
@@ -399,7 +400,7 @@ register struct monst *mtmp;
 {
 	register struct monst *mtmp2;
 
-	if(mtmp2 = makemon(PM_WIZARD, mtmp->mx, mtmp->my)) {
+	if(mtmp2 = makemon(PM_WIZARD, u.ux, u.uy)) {
 		flags.no_of_wizards = 2;
 		unpmon(mtmp2);
 		mtmp2->mappearance = wizapp[rn2(sizeof(wizapp)-1)];
@@ -412,11 +413,12 @@ nasty() {
 #ifdef HARD
 	register struct monst	*mtmp;
 	struct monst	*mkmon_at();
-	register int	i, nastynum;
+	register int	i, nastynum, tmp;
 
 	nastynum = sizeof(nasties) - 1;
+	tmp = u.ulevel > 3? u.ulevel : 3;
 
-	for(i = rnd(u.ulevel/3); i > 0; --i) {
+	for(i = rnd(tmp/3); i > 0; --i) {
 
 		if((mtmp = mkmon_at(nasties[rn2(nastynum)], u.ux, u.uy)))  {
 
