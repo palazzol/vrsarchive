@@ -9,6 +9,10 @@
 
 #include "include.h"
 #include <curses.h>
+#ifndef A_REVERSE		/* If not using termio */
+#  define erasechar()	(_tty.sg_erase)
+#  define killchar()	(_tty.sg_kill)
+#endif
 
 #define C_TOPBOTTOM		'-'
 #define C_LEFTRIGHT		'|'
@@ -20,12 +24,16 @@
 
 WINDOW	*radar, *cleanradar, *credit, *input, *planes;
 
+char erase_char, kill_char;
+
 getAChar()
 {
+	int ch;
 #ifdef M_XENIX
 	fixtty();
 #endif
-	return (getchar());
+	ch = getchar();
+	return (ch == '\r'? '\n' : ch);
 }
 
 putAChar(c)
@@ -71,9 +79,12 @@ init_gr()
 {
 	static char	buffer[BUFSIZ];
 
+	setbuf(stdout, buffer);
 	initscr();
 	noraw();
-	setbuf(stdout, buffer);
+	crmode();
+	erase_char = erasechar();
+	kill_char = killchar();
 	input = newwin(INPUT_LINES, COLS - PLANE_COLS, LINES - INPUT_LINES, 0);
 	credit = newwin(INPUT_LINES, PLANE_COLS, LINES - INPUT_LINES, 
 		COLS - PLANE_COLS);
@@ -81,7 +92,7 @@ init_gr()
 }
 
 setup_screen(scp)
-	SCREEN	*scp;
+	screen_t	*scp;
 {
 	register int	i, j;
 	char		str[3], *airstr;
@@ -270,7 +281,7 @@ planewin()
 	char	*command();
 	int	warning = 0;
 
-	wclear(planes);
+	werase(planes);
 	wmove(planes, 0,0);
 	wprintw(planes, "Time: %-4d Safe: %d", clock, safe_planes);
 	wmove(planes, 2, 0);
@@ -341,7 +352,8 @@ redraw()
 	fflush(stdout);
 }
 
-noise()
+#ifndef A_REVERSE	/* If not using terminfo */
+flash()
 {
 	if (VB != 0)
 		tputs(VB, 1, putAChar);
@@ -349,3 +361,4 @@ noise()
 		putAChar('\007');
 	fflush(stdout);
 }
+#endif
