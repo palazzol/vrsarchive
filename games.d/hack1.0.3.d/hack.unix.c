@@ -18,11 +18,11 @@
 
 #include	<sys/types.h>		/* for time_t and stat */
 #include	<sys/stat.h>
-#ifdef BSD
+#ifndef SYS5
 #include	<sys/time.h>
 #else
 #include	<time.h>
-#endif BSD
+#endif
 
 extern char *getenv();
 extern time_t time();
@@ -95,7 +95,7 @@ gethdate(name) char *name; {
 /* register char *np;
 /*	if(stat(name, &hbuf))
 /*		error("Cannot get status of %s.",
-/*			(np = rindex(name, '/')) ? np+1 : name);
+/*			(np = strrchr(name, '/')) ? np+1 : name);
 /*
 /* version using PATH from: seismo!gregc@ucsf-cgl.ARPA (Greg Couch) */
 
@@ -109,11 +109,11 @@ gethdate(name) char *name; {
 
 register char *np, *path;
 char filename[MAXPATHLEN+1];
-	if (index(name, '/') != NULL || (path = getenv("PATH")) == NULL)
+	if (strchr(name, '/') != NULL || (path = getenv("PATH")) == NULL)
 		path = "";
 
 	for (;;) {
-		if ((np = index(path, ':')) == NULL)
+		if ((np = strchr(path, ':')) == NULL)
 			np = path + strlen(path);	/* point to end str */
 		if (np - path <= 1)			/* %% */
 			(void) strcpy(filename, name);
@@ -129,7 +129,7 @@ char filename[MAXPATHLEN+1];
 		path = np + 1;
 	}
 	error("Cannot get status of %s.",
-		(np = rindex(name, '/')) ? np+1 : name);
+		(np = strrchr(name, '/')) ? np+1 : name);
 }
 
 uptodate(fd) {
@@ -293,7 +293,7 @@ getmailstatus() {
 		mailbox = 0;
 #else
 		omstat.st_mtime = 0;
-#endif PERMANENT_MAILBOX
+#endif
 	}
 }
 
@@ -301,7 +301,7 @@ ckmailstatus() {
 	if(!mailbox
 #ifdef MAILCKFREQ
 		    || moves < laststattime + MAILCKFREQ
-#endif MAILCKFREQ
+#endif
 							)
 		return;
 	laststattime = moves;
@@ -311,7 +311,7 @@ ckmailstatus() {
 		mailbox = 0;
 #else
 		nmstat.st_mtime = 0;
-#endif PERMANENT_MAILBOX
+#endif
 	} else if(nmstat.st_mtime > omstat.st_mtime) {
 		if(nmstat.st_size)
 			newmail();
@@ -411,20 +411,20 @@ readmail() {
 		execl(mr, mr, (char *) 0);
 		exit(1);
 	}
-#else DEF_MAILREADER
+#else
 	(void) page_file(mailbox, FALSE);
-#endif DEF_MAILREADER
+#endif
 	/* get new stat; not entirely correct: there is a small time
 	   window where we do not see new mail */
 	getmailstatus();
 }
-#endif MAIL
+#endif
 
 regularize(s)	/* normalize file name - we don't like ..'s or /'s */
 register char *s;
 {
 	register char *lp;
 
-	while((lp = index(s, '.')) || (lp = index(s, '/')))
+	while((lp = strchr(s, '.')) || (lp = strchr(s, '/')))
 		*lp = '_';
 }

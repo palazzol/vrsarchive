@@ -10,8 +10,12 @@ initoptions()
 	register char *opts;
 	extern char *getenv();
 
-	flags.time = flags.nonews = flags.notombstone = flags.end_own =
-	flags.standout = flags.nonull = FALSE;
+	flags.time = FALSE;
+	flags.nonews = FALSE;
+	flags.notombstone = FALSE;
+	flags.end_own = FALSE;
+	flags.nonull = FALSE;
+	flags.standout = FALSE;
 	flags.no_rest_on_space = TRUE;
 	flags.invlet_constant = TRUE;
 	flags.end_top = 5;
@@ -30,11 +34,11 @@ boolean from_env;
 	unsigned num;
 	boolean negated;
 
-	if(op = index(opts, ',')) {
+	if(op = strchr(opts, ',')) {
 		*op++ = 0;
 		parseoptions(op, from_env);
 	}
-	if(op = index(opts, ' ')) {
+	if(op = strchr(opts, ' ')) {
 		op2 = op;
 		while(*op++)
 			if(*op != ' ') *op2++ = *op;
@@ -101,7 +105,7 @@ boolean from_env;
 		  pline("The playername can be set only from HACKOPTIONS.");
 		  return;
 		}
-		op = index(opts,':');
+		op = strchr(opts,':');
 		if(!op) goto bad;
 		(void) strncpy(plname, op+1, sizeof(plname)-1);
 		return;
@@ -109,7 +113,7 @@ boolean from_env;
 
 	/* endgame:5t[op] 5a[round] o[wn] */
 	if(!strncmp(opts,"endgame",3)) {
-		op = index(opts,':');
+		op = strchr(opts,':');
 		if(!op) goto bad;
 		op++;
 		while(*op) {

@@ -123,7 +123,7 @@ makelevel()
 
 #ifdef WIZARD
 	if(wizard && getenv("SHOPTYPE")) mkshop(); else
-#endif WIZARD
+#endif
  	if(dlevel > 1 && dlevel < 20 && rn2(dlevel) < 3) mkshop();
 	else
 	if(dlevel > 6 && !rn2(7)) mkzoo(ZOO);
@@ -260,7 +260,7 @@ boolean discarded;		/* piece of a discarded area */
 	if(rsmax >= MAXRS) {
 #ifdef WIZARD
 		if(wizard) pline("MAXRS may be too small.");
-#endif WIZARD
+#endif
 		return;
 	}
 	rsmax++;
@@ -382,7 +382,7 @@ chk:
 #ifdef WIZARD
 			    if(wizard && !secret)
 				pline("Strange area [%d,%d] in maker().",x,y);
-#endif WIZARD
+#endif
 				if(!rn2(3)) return(0);
 				if(x < lowx)
 					lowx = x+xlim+1;
@@ -672,7 +672,7 @@ register struct mkroom *croom;
 	if(!num || num >= TRAPNUM) {
 		nopierc = (dlevel < 4) ? 1 : 0;
 		nomimic = (dlevel < 9 || goldseen ) ? 1 : 0;
-		if(index(fut_geno, 'M')) nomimic = 1;
+		if(strchr(fut_geno, 'M')) nomimic = 1;
 		kind = rn2(TRAPNUM - nopierc - nomimic);
 		/* note: PIERC = 7, MIMIC = 8, TRAPNUM = 9 */
 	} else kind = num;

@@ -35,7 +35,7 @@ struct trobj Extra_objs[] = {
 	{ 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
-#endif WIZARD
+#endif
 
 struct trobj Cave_man[] = {
 	{ MACE, 1, WEAPON_SYM, 1, 1 },
@@ -112,12 +112,12 @@ extern char readchar();
 
 	printf("\nAre you an experienced player? [ny] ");
 
-	while(!index("ynYN \n\004", (exper = readchar())))
+	while(!strchr("ynYN \n\004", (exper = readchar())))
 		bell();
 	if(exper == '\004')		/* Give him an opportunity to get out */
 		end_of_input();
 	printf("%c\n", exper);		/* echo */
-	if(index("Nn \n", exper)) {
+	if(strchr("Nn \n", exper)) {
 		exper = 0;
 		goto beginner;
 	}
@@ -179,7 +179,7 @@ got_suffix:
 	init_uhunger();
 #ifdef QUEST
 	u.uhorizon = 6;
-#endif QUEST
+#endif
 	uarm = uarm2 = uarmh = uarms = uarmg = uwep = uball = uchain =
 	uleft = uright = 0;
 
@@ -242,7 +242,7 @@ got_suffix:
 
 #ifdef WIZARD
 	if(wizard) wiz_inv();
-#endif WIZARD
+#endif
 
 	/* make sure he can carry all he has - especially for T's */
 	while(inv_weight() > 0 && u.ustr < 118)
@@ -299,7 +299,7 @@ extern struct obj *mkobj();
 			if(trop->trquan)
 				continue;	/* make a similar object */
 		}
-#endif PYRAMID_BUG
+#endif
 		trop++;
 	}
 }
@@ -312,7 +312,7 @@ register char *ep = getenv("INVENT");
 register int type;
 	while(ep && *ep) {
 		type = atoi(ep);
-		ep = index(ep, ',');
+		ep = strchr(ep, ',');
 		if(ep) while(*ep == ',' || *ep == ' ') ep++;
 		if(type <= 0 || type > NROFOBJECTS) continue;
 		trop->trotyp = type;
@@ -330,11 +330,11 @@ register int type;
 	trop->trquan = 1;
 	ini_inv(trop);
 }
-#endif WIZARD
+#endif
 
 plnamesuffix() {
 register char *p;
-	if(p = rindex(plname, '-')) {
+	if(p = strrchr(plname, '-')) {
 		*p = 0;
 		pl_character[0] = p[1];
 		pl_character[1] = 0;
@@ -351,7 +351,7 @@ char pc;
 		/* so that rolesyms[] is defined */
 	register char *cp;
 
-	if(cp = index(rolesyms, pc))
+	if(cp = strchr(rolesyms, pc))
 		return(cp - rolesyms);
 	return(-1);
 }

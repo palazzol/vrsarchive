@@ -39,7 +39,7 @@ register struct obj *otmp;
 		mtmp->mspeed = MFAST;
 		break;
 	case WAN_UNDEAD_TURNING:
-		if(index(UNDEAD,mtmp->data->mlet)) {
+		if(strchr(UNDEAD,mtmp->data->mlet)) {
 			mtmp->mhp -= rnd(8);
 			if(mtmp->mhp < 1) killed(mtmp);
 			else mtmp->mflee = 1;
@@ -62,7 +62,7 @@ register struct obj *otmp;
 	case WAN_PROBING:
 		mstatusline(mtmp);
 		break;
-#endif WAN_PROBING
+#endif
 	default:
 		impossible("What an interesting wand (%u)", otmp->otyp);
 	}
@@ -109,7 +109,7 @@ register struct obj *obj, *otmp;	/* returns TRUE if sth was done */
 	case WAN_SPEED_MONSTER:
 #ifdef WAN_PROBING
 	case WAN_PROBING:
-#endif WAN_PROBING
+#endif
 		res = FALSE;
 		break;
 	default:
@@ -552,20 +552,20 @@ register type;
 		break;
 	case -1:		/* Dragon blazing fire */
 	case 1:			/* fire */
-		if(index("Dg", mon->data->mlet)) break;
+		if(strchr("Dg", mon->data->mlet)) break;
 		tmp = d(6,6);
-		if(index("YF", mon->data->mlet)) tmp += 7;
+		if(strchr("YF", mon->data->mlet)) tmp += 7;
 		break;
 	case 2:			/* sleep*/
 		mon->mfroz = 1;
 		break;
 	case 3:			/* cold */
-		if(index("YFgf", mon->data->mlet)) break;
+		if(strchr("YFgf", mon->data->mlet)) break;
 		tmp = d(6,6);
 		if(mon->data->mlet == 'D') tmp += 7;
 		break;
 	case 4:			/* death*/
-		if(index(UNDEAD, mon->data->mlet)) break;
+		if(strchr(UNDEAD, mon->data->mlet)) break;
 		tmp = mon->mhp+1;
 		break;
 	}

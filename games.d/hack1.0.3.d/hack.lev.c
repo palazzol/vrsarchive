@@ -17,7 +17,7 @@ extern char nul[];
 #include	"def.wseg.h"
 extern struct wseg *wsegs[32], *wheads[32];
 extern long wgrowtime[32];
-#endif NOWORM
+#endif
 
 boolean level_exists[MAXLEVEL+1];
 
@@ -28,7 +28,7 @@ xchar lev;
 #ifndef NOWORM
 	register struct wseg *wtmp, *wtmp2;
 	register tmp;
-#endif NOWORM
+#endif
 
 	if(fd < 0) panic("Save on bad file!");	/* impossible */
 	if(lev >= 0 && lev <= MAXLEVEL)
@@ -52,7 +52,7 @@ xchar lev;
 #ifndef QUEST
 	bwrite(fd,(char *) rooms,sizeof(rooms));
 	bwrite(fd,(char *) doors,sizeof(doors));
-#endif QUEST
+#endif
 	fgold = 0;
 	ftrap = 0;
 	fmon = 0;
@@ -67,7 +67,7 @@ xchar lev;
 		wsegs[tmp] = 0;
 	}
 	bwrite(fd,(char *) wgrowtime,sizeof(wgrowtime));
-#endif NOWORM
+#endif
 }
 
 bwrite(fd,loc,num)
@@ -158,7 +158,7 @@ xchar lev;
 	register struct trap *trap;
 #ifndef NOWORM
 	register struct wseg *wtmp;
-#endif NOWORM
+#endif
 	register tmp;
 	long omoves;
 	int hpid;
@@ -194,7 +194,7 @@ xchar lev;
 		long newhp;		/* tmoves may be very large */
 
 		mtmp2 = mtmp->nmon;
-		if(index(genocided, mtmp->data->mlet)) {
+		if(strchr(genocided, mtmp->data->mlet)) {
 			mondead(mtmp);
 			continue;
 		}
@@ -205,7 +205,7 @@ xchar lev;
 		}
 
 		newhp = mtmp->mhp +
-			(index(MREGEN, mtmp->data->mlet) ? tmoves : tmoves/20);
+			(strchr(MREGEN, mtmp->data->mlet) ? tmoves : tmoves/20);
 		if(newhp > mtmp->mhpmax)
 			mtmp->mhp = mtmp->mhpmax;
 		else
@@ -238,7 +238,7 @@ xchar lev;
 #ifndef QUEST
 	mread(fd, (char *)rooms, sizeof(rooms));
 	mread(fd, (char *)doors, sizeof(doors));
-#endif QUEST
+#endif
 #ifndef NOWORM
 	mread(fd, (char *)wsegs, sizeof(wsegs));
 	for(tmp = 1; tmp < 32; tmp++) if(wsegs[tmp]){
@@ -251,7 +251,7 @@ xchar lev;
 		}
 	}
 	mread(fd, (char *)wgrowtime, sizeof(wgrowtime));
-#endif NOWORM
+#endif
 }
 
 mread(fd, buf, len)
