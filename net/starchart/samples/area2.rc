@@ -1,0 +1,14 @@
+ra = 0
+dec = 90
+scale = 30
+namelim = 20
+gklim = 20
+maglim = 20
+title = Area test 2
+starfile /dev/null
+nebfile /dev/null
+indexfile /dev/null
+planetfile /dev/null
+userfile = area.star
+projection_mode = stereographic
+chart_type = fullpage

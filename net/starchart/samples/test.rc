@@ -1,0 +1,9 @@
+ra .20
+dec 5
+scale 12
+maglim 20
+starfile /dev/null
+nebfile /dev/null
+indexfile /dev/null
+planetfile /dev/null
+

@@ -1,0 +1,77 @@
+#	Makefile Microsoft C Version 5.1 - staribm
+CC=cl
+
+LIB=C:\C51\LIB\GRAPHICS.LIB
+
+TARGS=staribm.exe
+
+LOCAL=-DSYSV -Dindex=strchr
+
+
+# FOR ALL
+# define OLD_GREEK if you have the old yale.star file, with a
+#                slightly different greek encoding
+# To produce programs which allow keyboard user interaction with the -u flag, 
+#    see COBJ and starmain.o below.
+DEFINES=-DOLD_GREEK
+
+#list ALL header files
+HDRS=icon.h parse_input.h star3.h pcstar.h patchlevel.h
+
+#list ALL source files, whether or not you use them
+SRCS= interact.c parse_input.c readfile.c starimages.c starm2.c starmain.c \
+	starsupp.c staribm.c
+
+#list ALL object files which could be produced
+OBJS= interact.obj parse_input.obj readfile.obj starimages.obj starm2.obj \
+	starcust.obj starmain.obj staribm.obj
+
+FILES=Makefile README $(SRCS) $(HDRS)
+
+#The following may be defined here to set default data file locations
+# filename	filetype	description
+# STARFILE	STARFTYPE	bright star data (yale)
+# INDEXFILE	INDEXFTYPE	index to fainter stars (SAO)
+# NEBFILE	NEBFTYPE	nebulae
+# BOUNDFILE	BOUNDFTYPE	constellation boundaries
+# PATTERNFILE	PATTFTYPE	constellation patterns
+# CNAMEFILE	CNAMEFTYPE	constellation names
+# PLANETFILE	PLANETFTYPE	planet positions
+
+# other files
+# CONSTFILE	constellation locations
+# RCFILE	resource file
+
+all: $(TARGS)
+
+#CFLAGS= $(LOCAL) $(DEFINES) -AL -Gt16 -Zi -Od
+CFLAGS= $(LOCAL) $(DEFINES) -AL
+
+
+COBJ=starmain.obj starm2.obj starsupp.obj readfile.obj parse_input.obj \
+	starcust.obj interact.obj
+COBJIM=$(COBJ) starimages.obj
+
+staribm.exe: $(COBJIM) staribm.obj
+	$(CC) *.obj -Zi -F 6000 -Festaribm.exe $(LIB)
+
+# use -DINTERACTIVE_CONTROL in starmain.obj and starm2.obj
+#     to allow keyboard user interaction
+starmain.obj: starmain.c star3.h pcstar.h parse_input.h
+	$(CC) $(CFLAGS) -DINTERACTIVE_CONTROL -c starmain.c
+
+starm2.obj: starm2.c star3.h pcstar.h
+	$(CC) $(CFLAGS) -DINTERACTIVE_CONTROL -c starm2.c
+
+readfile.obj: readfile.c star3.h pcstar.h
+
+starimages.obj: starimages.c star3.h pcstar.h
+	$(CC) $(CFLAGS) -DAREAS -c starimages.c
+
+starcust.obj: starcust.c star3.h pcstar.h
+interact.obj: star3.h pcstar.h parse_input.h patchlevel.h
+parse_input.obj: star3.h pcstar.h parse_input.h
+starsupp.obj: star3.h pcstar.h 
+
+clean:
+	rm -f *.obj $(TARGS)

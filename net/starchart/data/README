@@ -1,0 +1,28 @@
+These are data files to accompany the starchart program.
+
+boundaries.star		constellation boundaries
+cnames.star		constellation names
+con.locs		constellation locations
+index.indx		sample index file for SAO data (see below)
+pattern.star		constellation patterns
+reg_to_indx.perl	generate index file for GSC CD rom (see below)
+
+The  *.star files are courtesy Dave  Van't  Hof.  The con.locs file is
+from Bob Tidd, modified by Dave.
+
+You  will  also need a   bright star file,   typically  yale.star from
+comp.sources.unix volume 12 (patches in volume 13),  and  optionally a
+larger database, for example the converted SAO database available from
+comp.sources.unix volume 16, or the GSC CD_ROM.
+
+If you have  the GSC CD_ROM,  you should generate  an index.indx  file
+(perhaps  name it    "gsc.indx"   and  alter   the starchart  Makefile
+accordingly).   See  reg_to_indx.perl  for   details.  The    file  so
+generated is too large to include in this distribution.
+
+A nebula  database  file was  posted  to sci.astro  in   the past, and
+another may be posted to a source group by mid-1990.
+
+See sci.astro  or   the astronomy  mailing list  for   news of   other
+databases.
+

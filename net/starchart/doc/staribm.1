@@ -1,0 +1,36 @@
+.TH STARCHART LOCAL "15 July 1989"
+.ad b
+.SH NAME
+staribm \- display astronomical star charts on IBM PC.
+.SH SYNOPSIS
+Arguments as in other starchart programs, with the special argument -a:
+.br
+.B \-a
+[
+.B VRES16COLOR
+.B VRES2COLOR
+.B ERESCOLOR
+.B ERESNOCOLOR
+.B HRES16COLOR
+.B HRESBW
+.B MRES16COLOR
+.B MRES4COLOR
+.B MRESNOCOLOR
+]
+.br
+.SH DESCRIPTION
+See starchart(1) for details on the starchart programs in general.
+.PP
+The
+.B \-a
+option allows the specification of a display mode to use. Normally
+the driver picks the highest resolution display which will work, but
+if you specify a mode it will try to use that instead.
+.SH BUGS
+The driver gets its font from the built in font in the BIOS ROM.
+On PCs which are not totally standard, the font may not be located
+at the same magic address, so characters will display as gibberish.
+.SH AUTHORS/EDITORS
+Tom Horsley <tahorsley@ssd.csd.harris.com>
+.br
+Craig Counterman

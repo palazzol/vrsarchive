@@ -1,0 +1,7 @@
+First three lines are ignored unless year is specified
+sample data
+date       RA          DEC      \Delta     r     (V or m1)
+Oct.   6   14 50.24    3 41.0   1.204    0.643   12.5
+      11   15 29.62    2 48.8
+      16   16 04.01    1 54.1   1.339    0.889   14.1
+      21   16 33.96    1 02.5

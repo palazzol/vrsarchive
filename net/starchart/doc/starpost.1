@@ -1,0 +1,118 @@
+.TH STARCHART LOCAL "15 July 1989"
+.ad b
+.SH NAME
+starpost \- print astronomical star charts.
+.SH SYNOPSIS
+Arguments as in other starchart programs, with the special argument -a:
+.br
+.B \-a
+"\fBm\fR
+[
+.I mag-1
+:
+.I mag0
+:
+.I mag1
+:
+.I mag2
+:
+.I ...
+]
+|
+.B \-a
+\fBs\fR
+[
+.I D0
+[
+.I v0
+[
+.I k
+]]]
+|
+\fBn\fR
+[
+.I rad1
+:
+.I rad2
+:
+.I rad3
+:
+.I rad4
+:
+.I ...
+]
+|
+.BI f " file"
+|
+.B c
+|
+\fBl\fR"
+.br
+
+.SH DESCRIPTION
+See starchart(1) for details on the starchart programs in general.
+.PP
+The additional argument controls include \fBm\fR for magnitude:
+with \fBm\fR 0.1 magnitude quanta are used (the default is 1.0
+magnitude, e.g. a 4.6 magnitude star is represented by the same symbol
+as a star of magnitude 5.4).  The rest of the argument string is
+optional, and taken to be a list of floating point numbers separated
+by `:' or ` '.  These are taken to be the radii of the symbols for
+stars of magnitude -1, 0, 1, 2, 3 etc.  The sizes of symbols for stars
+with magnitudes between these magnitudes are determined by linear
+interpolation.  Note that the last value given is the value assigned
+to all magnitudes fainter than that magnitude. Current default sizes
+are "9 8 7 6 5 4 3.25 2.5 2 1.5 1 0.5".
+.PP
+The \fBs\fR argument provides an alternative way of specifying
+magnitude symbol sizes, using a formula proposed by Andrew Young in
+Sky and Telescope, March 1990, p. 311, D = D0 * 10^(k*(v0 - v)).
+He proposes a k of between 0.07 and 0.16, with 0.11 as probably the
+best.  If \fBs\fR uses 0.1 magnitude quanta as does \fBm\fR.  The
+default values for D0, v0, and k are 0.5 (points), the limiting
+magnitude of the main map, and 0.11, respectively.  These may be
+altered with the optional arguments to \fBs\fR.
+.PP
+The \fBn\fR argument is for ``notebook'' mode.  The chart is shifted
+to the right on the page, and the ``thumbnail'' map is replaced with
+prompts and space for recording observing conditions.  The rest of the
+argument string is taken to be a list of floating point numbers
+separated by `:' or ` '.  These are taken to be the radii in degrees
+of fields of view of the instrument or finder.  Circles with these
+radii are drawn, centered on the center of the chart.
+.PP
+.BI f " file"
+may be used to specify an output file, otherwise the postscript
+produced is sent to the standard output.
+.PP
+.B c
+may be used to produce color postscript output.
+.PP
+.B l
+may be used to specify landscape mode (as opposed to the default
+portrait orientation).  Landscape mode can only used with a
+fullpage map.
+.PP
+.sp
+Since the resolution of PostScript is much higher than other common
+devices, ``mapwin'' files must be edited when transferred between
+starpost and other drivers.  The controls for window width, height,
+x_offset and y_offset must be changed.
+.PP
+The "\fB-a\fR p" or "\fB-a\fR l" option used with "starX11" or
+"starXaw" can be used in producing a ``mapwin'' file which can be
+converted for use in "starpost" through an "awk" script named
+"postconv.awk", provided with the source to this program.
+
+.SH EXAMPLE
+starpost -a "n 6:1.5:.5" -a "m9 8 7 6 5 4 3.5 2.5 2 1.5 1 0.5" -a "f orion.PS" -c ori -g 5 
+.SH BUGS
+.SH AUTHORS/EDITORS
+Craig Counterman
+.br
+Alan Paeth, University of Waterloo <AWPaeth@watCGL>
+.br
+Thanks also to
+.br
+Poul-Henning Kamp
+

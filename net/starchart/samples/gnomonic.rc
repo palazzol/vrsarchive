@@ -1,0 +1,11 @@
+ra = 6.4
+dec = 15
+scale = 70
+namelim = 2
+gklim = 3
+maglim = 5.5
+title = Sample Gnomonic plot
+projection_mode = gnomonic
+chart_type = fullpage
+invert = false
+grid .4 10 0 0

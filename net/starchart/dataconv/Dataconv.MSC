@@ -1,0 +1,26 @@
+SRCS=dataconv.c tosize.c sif_to_text.c
+HDRS=
+OBJS=dataconv.obj tosize.obj sif_to_text.obj
+FILES=Makefile $(SRCS) $(HDRS)
+TARGS=dataconv.exe tosize.exe sif_to_text.exe
+
+CFLAGS=
+LDFLAGS=
+
+
+DISTDIR=../../dist/dataconv
+
+all: $(TARGS)
+
+
+dataconv.exe: dataconv.obj
+	$(CC) $(CFLAGS) -o $@ dataconv.obj $(LDFLAGS)
+
+tosize.exe: tosize.obj
+	$(CC) $(CFLAGS) -o $@ tosize.obj $(LDFLAGS)
+
+sif_to_text.exe: sif_to_text.obj
+	$(CC) $(CFLAGS) -o $@ sif_to_text.obj $(LDFLAGS)
+
+clean:
+	rm -f *.obj $(TARGS)

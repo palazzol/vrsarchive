@@ -1,0 +1,14 @@
+ra = 0.15
+dec = 5
+scale = 15
+namelim = 20
+gklim = 20
+maglim = 20
+title = Area test
+starfile /dev/null
+nebfile /dev/null
+indexfile /dev/null
+planetfile /dev/null
+userfile = area.star
+projection_mode = sansons
+chart_type = fullpage

@@ -1,0 +1,50 @@
+This directory contains the distribution of  version 3.2 of starchart,
+plus several supporting programs, and documentation.
+
+
+PROBLEMS and installation:
+
+You should   have   no difficulty with  the  three   programs  in  the
+"dataconv" directory.
+
+You might (but shouldn't) have trouble with "observe".  However, a few
+compilers might still have trouble with the  large expressions used in
+some calculations.  Also, if you have non-standard time functions, you
+may need to change that section of code.
+
+You must take care in compiling programs in the "starchart" directory.
+Examine (all of) and edit (a few lines of) the Makefile.  Decide which
+versions  of the program you  will want to  use (there  is a different
+version   for     each  (input/)output  device).    Also  examine  the
+"postconv.awk" file if you  will be using "starpost",  and "startool*"
+if you have a Sun computer.
+
+Extensive documentation  is available  in  the  "doc"  directory, in a
+variety of formats.
+
+Sample input files are found in the "samples" directory.
+
+Some data  files are in the  "data"  directory.  Other  starchart data
+files are distributed separately.
+
+Note Well: 
+
+All programs are copyrighted.
+
+This software may be redistributed freely, not sold.
+
+No representation is made  about the suitability  of this software for
+any  purpose.  It is  provided   "as  is" without  express or  implied
+warranty, to the extent permitted by applicable law.
+
+DISCLAIMER OF WARRANTY
+----------------------
+The author  disclaims all warranties  with regard to  this software to
+the   extent  permitted  by applicable   law,  including all   implied
+warranties  of merchantability  and  fitness. In  no event shall   the
+author be liable for any special, indirect or consequential damages or
+any  damages whatsoever resulting from  loss of use, data or  profits,
+whether in an action of contract, negligence or other tortious action,
+arising  out of  or in connection with the  use or performance of this
+software.
+

@@ -1,0 +1,266 @@
+.TH OBSERVE LOCAL "15 July 1989"
+.ad b
+.SH NAME
+observe \- observing session planning aid, ephemeris generation, and more.
+.SH SYNOPSIS
+.B observe
+[
+.BI \-m " longitude_hrs"
+[
+.I long_min
+[
+.I long_sec
+]
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-l " latitude_hrs"
+[
+.I lat_min
+[
+.I lat_sec
+]
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-a " altitude_meters"
+]
+[
+.BI \-z " time_zone_hrs"
+]
+.br
+.if t .ti +.5i
+[
+.B \-d
+\fI"start_date"\fR
+[
+\fI"end_date"\fR
+[
+.I interval_days
+]
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-o[[\fIa\fR][\fIe\fR][\fIi\fR][\fIo\fR][\fIs\fR]] " outfilename_root"
+]
+.br
+.if t .ti +.5i
+[
+.B \-p
+[
+[\fIM\fR][\fIV\fR][\fIm\fR][\fIJ\fR][\fIs\fR][\fIU\fR][\fIN\fR]
+]
+]
+[
+.BI \-s i
+]
+.br
+.if t .ti +.5i
+[
+.BI \-f " filename format"
+]
+[
+.BI \-n " object_name"
+]
+
+
+.SH DESCRIPTION
+The program is used to prepare for astronomical observations and for
+ephemeris calculation.  It can calculate the position of the major
+planets, the satellites of Jupiter and Saturn, and minor planets and
+comets given either orbital elements or a tabulated ephemeris.
+Coordinates of stationary objects may also be input.  It calculates
+(approximate) rise and set times, and transit times, of all objects to
+be observed.
+.PP
+The information (coordinates, rise and set times) may be prepared for either
+a single time or a sequence of times.
+.PP
+Output includes a file containing the timetable of events for the evening or
+evenings.  The coordinates of the sun and moon, plus any planets, minor
+planets, and comets are placed in a readable text file, with other calculated
+values for solar system objects (e.g. distance to earth).  The coordinates
+of all objects to be observed are placed in files in formats to be read by
+the other programs in this family, namely "dataconv" and the starchart
+charting programs.  If satellite positions are to be computed, these
+coordinates are placed in one file, and a separate PostScript file
+graphically showing their positions relative to the primary is also
+produced.
+.PP
+Parameters set the location of the observer, control
+what objects are to be observed, and designate the time or times of
+interest.
+.PP
+The file \fIfilename\fR may be in one of several ephemeris
+formats for a single object:
+.br
+.nf
+.ta \w'empb    'u
+emp	- Format used in the Russian \fIEphemerides of minor planets\fR.
+.br
+empb	- Format used in the Russian \fIEphemerides of minor planets\fR for
+	    bright and unusual asteroids.
+.br
+aa	- Format used by Astronomical Almanac.
+.br
+st	- Format commonly used by Sky and Telescope.
+.br
+iau	- Format commonly used by IAU Circulars.
+.fi
+.PP
+Or it may be contain orbital elements for one or more objects:
+.br
+.nf
+.ta \w'par_e    'u
+ell_e	- elliptical orbital elements.
+.br
+par_e	- parabolic orbital elements.
+.fi
+.PP
+Or it may contain coordinates of fixed objects:
+.br
+.nf
+.ta \w'par_e    'u
+obj	-  fixed object coordinates.
+.br
+.fi
+.PP
+If the file \fIfilename\fR is in one of the ephemeris formats, it
+contains ephemeris data for object named "obj_name".
+.PP
+Interpolation of the data is performed from the date
+specified by the string \fIstart_date\fR until the \fIend_date\fR,
+with interval between interpolated points of \fIinterval\fR days.  The
+"lineread" and "sif" files contain commands to draw a solid vector
+between calculated points, and draw the object symbol and label with
+name.
+.PP
+
+All ephemeris formats have date RA DEC, then other info.  Date is month in
+characters, then date  How the month is encoded is format dependent,
+examples include "IX" "Sept." "Sep" "Sep." "September".  Year is
+current year unless specified in command line, and is the year of the
+first date.  Dates must be in increasing order: 3 followed by 4,
+December followed by January.
+.PP
+The orbital element formats may be used to conveniently calculate
+coordinates of asteroids and comets.
+.PP
+Output files are named \fIoutfile_root.X\fR where X is:
+.nf
+.ta \w'.sat_PS    'u
+altaz	- altitude and azimuth of objects at sunrise and sunset, and
+	    morning and evening twilights.
+.br
+eph	- ephemeris of sun, moon and objects specified.
+.br
+obs	- observability of objects: rise and set times of objects,
+	    twilight times, etc.
+.br
+star	- "lineread" format file containing coordinates (equinox
+	   2000) of the object(s), sun, moon.
+.br
+sif	- "sif" format file containing the same information as the
+	   .star file.  The separation character is ";".
+.br
+sat	- Locations of the major satellites of Jupiter and Saturn with
+	   respect to the primary.
+.br
+sat_PS	- PostScript file drawing either: one page showing appearance of
+	    Jupiter and Saturn with satellites, and relative sizes and
+	    orientations of Mercury, Venus, Mars, Jupiter, and Saturn,
+	    and the Moon; or several pages showing Jupiter and Saturn
+	    with moons on a sequence of times if a range of dates was
+	    specified.
+.PP
+The default \fIoutfile_root\fR is set at compile time.  The usual
+default is "planet" for historical reasons.  A character or characters
+immediately following the \fB-o\fR option may select a subset of these
+files to be output.  The characters "aeios" specify the altaz, eph,
+sif, obs, and star files respectively.
+.PP
+The options controlling the location of the observer are
+.TP
+.B \-m
+Meridian of longitude, measured East of Greenwich.  The USA is West of
+Greenwich, and the longitude is negative for all USA locations.
+.TP
+.B \-l
+Latitude.
+.TP
+.B \-a
+Altitude in meters.
+.TP
+.B \-z
+Time zone in hours East of Greenwich, again, this number is negative
+for USA locations.  This does not include any effects of daylight
+savings.
+.fi
+.PP
+The defaults for these parameters are set when the program is compiled.
+.PP
+The date or dates of observation in UT are specified with the \fB-d\fR
+flag.  The dates for the \fB-d\fR option are each specified as a string
+consisting of month, day, and optional year (use if different from the
+current year).  The month may be encoded as above, e.g. "Aug" for
+august.  Using the first three letters of the English name for the
+month always works,  as does the Roman numeral form.  Some other
+common abbreviations also work.  The year may also be specified, the
+default is the current year.  The day may be fractional, e.g. 1.25 is
+6 am UT on the first.  An optional third parameter is the increment of
+time to be used in stepping between the two dates.
+.PP
+The positions of any or all of the major planets at the time(s) may be
+calculated.  This is specified either as \fB-p\fR which causes the
+positions of all planets to be calculated, or individual planets may
+be specified by following the \fB-p\fR with a letter or letters from
+the sequence "MVmJsUN".  The positions of the sun and moon are always
+calculated, since they always have some effect on observing
+conditions.
+.PP
+The \fB-s\fR option causes the ".sat"and ".sat_PS" files to be
+produced for the satellites of Jupiter and Saturn.  \fB-s\fR implies
+\fB-p\fR.  With the \fB-si\fR option the drawings in the PS file are
+flipped north to south (if for one time) or east to west (if for
+multiple times) to produce an inverted view.
+.SH EXAMPLES
+observe -f cer.empb empb -d "Nov 3" "Nov 5"
+.br
+observe -si -d "aug 1 1980" "Aug 31"
+.br
+observe -f asteroids.ell_e ell_e -d "Sep 1" "sep 5" 0.25 -oe test
+.br
+observe -m -72 33 25 -l 54 40 -a 1050
+.SH FILES
+See sample data files for formats.
+.SH BUGS
+Minor corrections such as parallax and nutation are not made.
+.PP
+Positions are accurate enough for most applications other than
+occultations.
+.PP
+Rise and set times may be off by several minutes.
+.PP
+Positions opf Saturn's satellites are approximate, good enough for
+identification of satellites.
+.SH AUTHOR
+Craig Counterman
+.br
+.sp
+parts from \fIplanet\fR by
+.br
+F.T. Mendenhall <ihnp4!inuxe!fred>
+.br
+Jim Cobb <jcobb@gr.utah.edu>
+.br
+Alan Paeth <AWPaeth@watCGL>
+.SH SOURCES
+\fIAstronomical Formulae for Calculators\fR by Jean Meesus
+.br
+\fIAstronomical Almanac 1989\fR

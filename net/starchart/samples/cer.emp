@@ -1,0 +1,10 @@
+First three lines are ignored unless year is specified, as in:
+year = 1987
+on any line.  This is Ceres data
+X      6  23 48.4 -18  5
+      16  23 41.5 -18 13
+      26  23 36.4 -18  0
+XI     5  23 33.4 -17 29
+      15  23 32.8  -16 42
+      25  23 34.4 -15 41
+XII    5  23 38.1 -14 29

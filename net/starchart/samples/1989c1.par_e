@@ -1,0 +1,4 @@
+First three lines are ignored
+q = a*(1-e) Omega=node omega=peri.  g,k: g + 5*log(Delta) + 2.5*kappa*log(r)
+Name i Omega omega q Epoch_date Equinox_year g kappa
+Austin 58.9370003 75.3042984 61.5709 0.349428 Apr 9.9138 1990 1950.0 4.5 4

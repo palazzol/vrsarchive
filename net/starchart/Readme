@@ -1,0 +1,25 @@
+This is release 3  of starchart, actually  now starchart/observe, plus
+supporting  programs and data  files.  Starchart produces astronomical
+charts from  a variety of databases,  producing output  for,  in rough
+order  of quality, PostScript,  X11, Sunview, Atari  ST, IBM  PC, X10,
+tektronix, unix plot, HP laserjet, and  tty displays, on Unix, vms and
+other systems.   It is straightforward   to  write drivers  for  other
+output devices.   Observe is    a  multifunction program for   use  in
+planning an observing session.  It calculates the positions of planets
+and their  satellites,  asteroids and  comets,  calculates rising  and
+setting  times, and much more.  Observe  complements the Ephem program
+previously posted in comp.sources.misc.
+
+This version of starchart is compatible with earlier versions written
+by awpaeth.
+
+Databases for starchart  were posted  to comp.sources.unix:   volume12
+contains the previous version including  a version  of the yale bright
+star  catalog, and volume16  contains a  version  of the  SAO catalog.
+This  version supports the Hubble  Space  Telescope Guide Star Catalog
+version 1.0.   A nebula database is available  and may be submitted in
+the future.  Archive sites for databases are  much desired, contact me
+as ccount@athena.mit.edu to arrange things.
+
+
+

@@ -1,0 +1,62 @@
+.TH STARCHART LOCAL "15 July 1989"
+.ad b
+.SH NAME
+starX11, starXaw, starXtk \- astronomical star charts for X11.
+.SH SYNOPSIS
+Arguments as in other starchart programs, with the special argument -a:
+.br
+.B \-a
+"\fBp\fR
+|
+.B l
+|
+.B h
+|
+.B b
+|
+.B m
+|
+.BI t " toolkit_args"
+"
+.br
+
+.SH DESCRIPTION
+See
+.IR starchart(1)
+for details on the starchart programs in general.
+.PP
+The additional argument is:
+\fBh\fR for hide: display is generated invisibly, which may save time.
+.br
+\fBp\fR for PostScript preview: use screen size and shape to
+approximate coverage of ``starpost'' chart.
+.br
+\fBl\fR for PostScript landscape preview: use screen size and shape to
+approximate coverage of ``starpost'' landscape format chart.
+.br
+\fBb\fR for backup: use backup pixmap, allows window to be hidden and redrawn.
+.br
+\fBm\fR for monochrome: prevents use of color on displays otherwise
+capable of it.
+.PP
+starXaw has the additional control:
+.br
+.BI t " toolkit_args"
+for access to the standard X toolkit controls, such as for geometry,
+fonts, etc.
+.SH EXAMPLES
+starX11 -c ori -g 5 -a p
+.br
+starXaw -c sgr -a p -a "t -geometry -0-0 -bg red"
+
+.SH BUGS
+.SH AUTHORS/EDITORS
+Craig Counterman
+.br
+Alan Paeth, University of Waterloo <AWPaeth@watCGL>
+.SH MAJOR CONTRIBUTORS
+Joe Wang <joe@athena.mit.edu>
+.br
+Steve Kennedy <smk@cbosgd.att.com>
+
+

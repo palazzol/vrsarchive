@@ -1,0 +1,58 @@
+While there is not yet a Macintosh version available, some of the programs
+should compile and run on the Macintosh.
+
+Here is a makefile for starpost for MPW C, provided by Gavin Eadie,
+Gavin_Eadie@um.cc.umich.edu.  It has been modified so that the
+non-ASCII character that appear in MPW makefiles are printable - <f>
+for the dependency operator and <d> for the literal-next:
+ 
+#   File:       StarPost.make
+#   Target:     StarPost
+#   Sources:    starmain.c
+#               starm2.c
+#               starsupp.c
+#               readfile.c
+#               parse_input.c
+#               starpost.c
+#               starcust.c
+#   Created:    Thursday, March 8, 1990 9:46:18 AM
+
+COPTIONS = -m -d 'NEBFILE="neb.star"' -d 'STARFILE="yale.star"'
+
+starmain.c.o <f> starmain.c
+    C -s 1 starmain.c {COPTIONS}
+starm2.c.o <f> starm2.c
+    C -s 2 starm2.c {COPTIONS}
+starsupp.c.o <f> starsupp.c
+    C -s 3a starsupp.c {COPTIONS}
+readfile.c.o <f> readfile.c
+    C -s 4 readfile.c {COPTIONS}
+parse_input.c.o <f> parse_input.c
+    C -s 5 parse_input.c {COPTIONS}
+starpost.c.o <f> starpost.c
+    C -s 6 starpost.c {COPTIONS}
+starcust.c.o <f> starcust.c
+    C -s 7 starcust.c {COPTIONS}
+
+OBJECTS = <d>
+      starmain.c.o <d>
+      starm2.c.o <d>
+      starsupp.c.o <d>
+      readfile.c.o <d>
+      parse_input.c.o <d>
+      starpost.c.o <d>
+      starcust.c.o
+
+StarPost <ff> StarPost.make {OBJECTS}
+   Link -ss 65000 -w -c 'MPS ' -t MPST <d>
+      {OBJECTS} <d>
+      "{Libraries}"stubs.o <d>
+      "{CLibraries}"CRuntime.o <d>
+      "{Libraries}"Interface.o <d>
+      "{CLibraries}"StdCLib.o <d>
+      "{CLibraries}"CSANELib.o <d>
+      "{CLibraries}"Math.o <d>
+      "{CLibraries}"CInterface.o <d>
+      "{Libraries}"ToolLibs.o <d>
+      {Cincludes}StdCLib.o <d>
+      -o StarPost

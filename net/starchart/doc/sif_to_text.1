@@ -1,0 +1,30 @@
+.TH SIF_TO_TEXT LOCAL "15 July 1989"
+.ad b
+.SH NAME
+sif_to_text \- produce table of data contained in `sif' format
+starchart data file
+.SH SYNOPSIS
+.B sif_to_text
+[
+.BI \-i " infile"
+] [
+.BI -s c
+]
+	
+.SH DESCRIPTION
+
+This program takes the data from the starchart `sif' format file
+\fIinfile\fR, or the standard input if no file name is given, and
+sends the interpreted and formatted data to the standard output.
+.PP
+
+The \fB-s\fR\fIc\fR argument specifies the field separation character of
+the input `sif' data.  The default separation character is ";".
+
+.PP
+
+See also the \fIdataconv\fI program.
+
+.SH BUGS
+.SH AUTHOR
+Craig Counterman

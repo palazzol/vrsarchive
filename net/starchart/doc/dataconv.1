@@ -1,0 +1,53 @@
+.TH DATACONV LOCAL "15 July 1989"
+.ad b
+.SH NAME
+dataconv \- convert data between starchart formats, precessing if desired
+.SH SYNOPSIS
+.B dataconv
+.BI \-i " inname intype"
+.BI \-o " outname outtype"
+[
+.BI \-s c
+]
+.br
+.if t .ti +.5i
+[
+.BI \-f " from_equinox"
+.BI \-t " to_equinox"
+]
+
+.SH DESCRIPTION
+
+Convert the file \fIinname\fR of file format \fIintype\fR to
+\fIoutname\fR of file format \fIouttype\fR.  If either type is `sif',
+the \fB-s\fIc\fR argument specifies a field separation character of
+\fIc\fR.  The default separation character is ";".  The coordinates
+may be precessed from \fIfrom_equinox\fR to \fIto_equinox\fR.
+.PP
+
+The file formats are:
+.br
+lineread - yale.star format text format.
+.br
+sif	 - Starchart Interchange Format, simple text format.
+.br
+binfull	 - Binary file format containing all the data in the above formats.
+.br
+binobj	 - Binary file format containing only position, magnitude, and
+object type.
+.br
+binstar	 - Binary file format containing only position and magnitude,
+type defaults to single star.
+.br
+gsc	 - Data file from the Guide Star Catalog.  This format can
+only be read, not generated.
+.PP
+
+.SH EXAMPLES
+dataconv -i yale.star lineread -o yale.binstar binfull
+.br
+dataconv -i new-comet.sif sif -o new-comet binobj -s= -f 1989.0 -t 2000.0
+.SH FILES
+.SH BUGS
+.SH AUTHOR
+Craig Counterman

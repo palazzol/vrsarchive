@@ -1,0 +1,428 @@
+.TH STARCHART LOCAL "15 July 1989"
+.ad b
+.SH NAME
+stardsp, starlaser, starpost, starsunv, startool, startek, staruplot,
+starX10, starX11, starXaw, starXtk \- print astronomical star charts.
+.SH SYNOPSIS
+star____
+[
+.BI \-c " constellation"
+[
+.I constell_data_file
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-r " R.A."
+.BI \-d " Declination"
+]
+[
+.BI \-s " scale"
+]
+[
+.BI \-m "  maglim"
+]
+.br
+.if t .ti +.5i
+[
+.BI \-l " lbllim"
+]
+[
+.BI \-g " grklim"
+]
+[
+.BI \-t " title"
+]
+.br
+.if t .ti +.5i
+[
+.BI \-p
+[
+.I projection_mode
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-f " user1.star"
+[
+.I file_format
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-y " yale.star"
+[
+.I file_format
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-n " neb.star"
+[
+.I file_format
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-w " planet.star"
+[
+.I file_format
+]
+]
+[
+.BI \-h " index.indx"
+]
+.br
+.if t .ti +.5i
+[
+.BI \-v " center_mag mag_range"
+]
+.br
+.if t .ti +.5i
+[
+.BI \-x " ra_spacing de_spacing"
+[
+.I ra_origin de_origin
+]
+]
+.br
+.if t .ti +.5i
+[
+.BI \-b
+]
+[
+.BI \-i
+]
+[
+.BI \-u
+]
+[
+.BI \-e " extra_commands_file"
+]
+.br
+.if t .ti +.5i
+[
+.BI \-a " device_control_string"
+]
+.SH DESCRIPTION
+These programs generate star charts based on data extracted from the Yale
+public domain star catalog, the SAO catalog, the RNGC catalog, and
+other databases.
+Output is to the terminal 
+.RI ( stardsp ),
+Hewlett-Packard Laserjet printer format
+.RI ( starlaser ),
+PostScript format
+.RI ( starpost ),
+Sun Sunview format
+.RI ( starsunv ),
+Sun Sunview using
+.B tooltool
+.RI ( startool ),
+Tektronix vector format
+.RI ( startek ),
+Unix Plot(5) format
+.RI ( staruplot ),
+X Version 10
+.RI ( starX10 ),
+X Version 11
+.RI ( starX11 ),
+X Version 11 using Athena widgets
+.RI ( starXaw ),
+and X Version 11 using Athena widgets with a different interface
+.RI ( starXtk ).
+.PP
+Star data is optionally overlayed with other cosmic objects, such as planets.
+If limiting magnitudes are properly set and the databases are available,
+NGC objects, constellation boundaries and names, and constellation
+patterns are also printed.
+.PP
+The starchart center is specified by two parameters: Right
+Ascension [0.00 to 24.00 hours] and Declination [-90.00 to +90.00 degrees].
+An optional scale parameter defines either the N/S range of the output
+window, in degrees of declination or the radius of the map in
+degrees, depending on the map projection.  Digits after decimal point
+are taken as minutes:  object positions can therefore be taken
+directly from a star catalog. 
+.PP
+Other parameters are:
+.TP
+.B \-r
+Right ascension.
+.TP
+.B \-d
+Declination.
+.TP
+.B \-s
+Scale.
+.TP
+.B \-c
+A three or four character mnemonic follows, which is a search string for a
+matching line-item entry in the file
+.IR constell_data_file .
+If found, then the
+initial values for Ra, Decl, Scale and Title are taken from that file.
+Because the command line is parsed from left to right, subsequent switches
+might change the scale, title, or otherwise fine-tune the new defaults.
+.TP
+.B \-m
+Star limiting magnitude. This sets limits on the faintest stars displayed
+on the ``master'' view. Default limits are device driver dependent
+(more below).  The ``thumbnail'' finder view is set to a related
+limit. 
+.TP
+.B \-l
+Name label limiting magnitude. The Yale database contains both a small set of
+familiar names (for stars and special objects), plus an extensive list of
+labels (Greek Bayer letter or Flamsteed numbers). Star names (including planet
+names) always print for this small set. To avoid clutter, the labels may be
+omitted below a cut-off magnitude by specifying this value.
+.TP
+.B \-g
+Greek/Flamsteed annotation magnitude. Labels printed for stars dimmer than
+this value will use a Bayer or numerical label in favor of a proper name.
+The default (2.05) includes nearly all well-known proper names including
+Polaris, and excludes but a small number (such as Algol). Large values
+generate charts full of obscure Arabian names, small (zero or negative) values
+produce non-verbose charts, e.g. ``a'', in Greek where possible, instead of
+``Sirius''.
+.TP
+.B \-t
+Title.
+.TP
+.B \-p
+Projection mode.  With no argument, selects STEREOGRAPHIC projection
+instead of the default SANSONS.  Argument may be used to select
+GNOMONIC, ORTHOGRAPHIC or RECTANGULAR.
+.TP
+.B \-b
+This switch provides a single full-page of output, without a thumbnail-sized
+finder map. The legend placard is replaced with a single line banner giving
+title, right ascension, declination and limiting magnitude. This mode is
+useful for the construction of atlas pages. Because the page depicts the same
+vertical scale in degrees of declination, the output will cover a slightly
+reduced extent in right ascension.
+.TP
+.B \-f
+The argument is the name of a user-supplied file containing objects in
+the yale.star (a.k.a. ``lineread'') format, which will overlay the output.
+This is useful for generating asteroid finder charts, planet or
+satellite tracks, or other special needs. Files are processed
+sequentially. Thus, order may take on meaning for devices which
+provide a 2-1/2D page description, such as PostScript.  The file
+format may be ``lineread'', ``binfull'', ``binobj'', ``binstar'' or ``gsc''.
+.TP
+.B \-y \-n \-w \-h
+These switches allow for the redefinition of the bright star, nebula,
+planet, and star index files, respectively.  The files are in
+``lineread'' format unless a \fIfile_format\fR is specified.
+.TP
+.B \-v
+mag range.  The stars in a range of magnitudes are labeled with their
+magnitude, as for variable star or asteroid finder charts. The first
+argument is the center magnitude, and the second a range: stars within
+plus or minus range of the center magnitude are labeled.
+.TP
+.B \-x
+ra_spacing de_spacing [ra_origin de_origin].  A grid is drawn, with arbitrary
+spacing in ra and dec.  The optional third and fourth arguments
+allow the origin of the grid to be moved.
+.TP
+.B \-i
+invert.  The main map of the chart is dawn with north and south
+flipped, to produce an inverted view.
+.TP
+.B \-e
+extra.  The argument is a file containing a detailed description of
+the chart, by setting many control variables.  These include those
+which may be controlled by command line switches, and many more.
+This file may be in either ``mapwin'' format or ``.starrc'' format.
+The ``mapwin'' format specifies the detailed configuration of each
+map in the chart.
+.TP
+.B \-a
+additional.  This argument is passed to the device dependent routines,
+to allow for special controls.  See the man page for the particular
+program, e.g. starX11(1).  If the \fB-a\fR argument is supported,
+there should be a separate man page.
+.TP
+.B \-u
+user input.  If the program has been compiled for this option,
+controls of the sort which may be placed in a ``.starrc'' file may be
+typed by the user interactively.  The ``end_input'' command causes the
+chart to be drawn, ``quit'' exits the program.
+.PP
+
+.SH THE .starrc AND -e CONTROL FILE
+
+Detailed control of the chart is provided through files containing
+variable names and values.  A ``.starrc'' file may be used to set
+personal preferences.  Additionally, the
+.B \-e
+argument allows additional files to be read.  These files set
+parameters which may be overridden by later command line arguments.
+.PP
+The \fB-e\fR file may be in ``.starrc'' format or in ``mapwin''
+format.  Exact specifications for each map in a chart are contained in
+such a ``mapwin'' file.
+.PP
+For a detailed explanation, see the ``astro.texinfo'' document and the
+sample .rc files.
+
+.SH SPECIAL ARGUMENTS
+The
+.B \-a
+argument is used by individual driver programs for device-specific
+controls.  See the manual page (if there is one) for that program for
+details.
+
+.SH INTERACTION
+The \fB-u\fR option activates interactive mode, where the same
+commands as in the ``.starrc'' file may be typed to control the
+program options.  In addition, ``end_input'' ends interactive input
+and draws the chart.  After the chart is drawn, control returns to the
+keyboard.  The ``quit'' command exits the program.  The command
+``show'' shows the current state of the control variables.  The
+command ``help'' may be used to get a brief description of the
+commands and controls available.
+.PP
+Some, especially window based, versions will allow the user final
+control over each map of the chart.  The chart is specified by an
+array of large \fBC\fR structures, one for each map on the page.  The
+``mapwin'' file contains the values in this structure.  Advanced
+interactive versions of starchart, such as starXaw, allow the
+components of the structures to be edited individually, providing full
+access to the flexible controls of the program.
+.PP
+The sequence of control of the program is:
+.br
+1) read the ``.starrc'' file.
+2) process the command line: options are processed in order, later
+arguments may override earlier arguments, additional ``.starrc''
+format files are read as they are encountered in \fB-e\fR options.
+However, if the file specified in the \fB-e\fR option is in ``mapwin''
+format, it is read later.  After the command line is processed, if the
+\fB-u\fR option is active, keyboard interaction is performed.  Next,
+any ``mapwin'' format files are read.  If there is more interaction
+available (e.g. as in starXaw), the details of the chart may now be
+controlled.  If a ``mapwin'' file is to be written, it is written now.
+Then the chart is drawn to specification.  Finally, after the chart is
+drawn, the program returns to the first interaction (i.e. returns to
+the point after the command line has been processed).
+.PP
+One more form of interaction is available on some systems:  A mouse or
+other pointing device may be used to either select points on a map and
+the coordinates of that point are displayed, or the databases may be
+searched for objects near the selected point and the database entries
+for the objects found are displayed.
+.SH OUTPUT
+The present implementations draw two maps: a ``master'' map plus a
+``thumbnail'' overview map with brighter limiting magnitude and a larger
+coverage area.  Their location and the limiting magnitude is specified
+by records in the device driver, allowing the chart layout be tuned on
+a per-device basis.  The
+.B -b
+flag selects a ``fullpage'' option, with a larger ``master'' map and
+no ``thumbnail''.
+.PP
+Objects are represented by glyphs defined by each display driver. Vector-only
+devices rely on the parent module ``starimages.c'' to provide shape tables;
+other devices plot special characters (stardsp) or private symbols
+(PostScript). The latter additionally provides distinctions between object
+subclasses, e.g. planetary vs diffuse nebula.
+.PP
+Sanson's sinusoidal projection is used to map coordinates by default.
+This projection preserves both area and linearity in Declination (y axis).
+It gives good conformality (angle correctness) near the equator, so it is
+useful along the Ecliptic.
+Lines of RA converge at the poles (unlike cylindrical projections),
+though Cassiopeia and the Dipper reproduce well.
+.PP
+Alternative projections currently include: stereographic, which
+preserves circles and allows an entire hemisphere to be drawn;
+orthographic, which may also display an entire hemisphere, but with
+great distortion; gnomonic, in which great circles appear as
+lines, but distorts for large areas, and rectangular, which is a
+direct mapping of longitude and latitude to the map.  Gnomonic is
+useful for meteor path plotting charts.  Rectangular is useful for
+displaying the entire ecliptic.
+
+.SH EXAMPLES 
+.nf
+# Sagittarius: a nice bunch of Messier objects.
+starpost -c sgr -t Sagittarius >sag.PS
+.sp
+# Orion: the belt lies near 5h40m in RA, just below the CE.
+stardsp -r 5.32 -d -5 -s 12 -t "Trapezium (Orion)" -m 8 -l 5 | more
+.sp
+# nowhere in particular
+starX11 -r 20.15 -d 19.5 -s 12 -m 10 -l 2 -g 6 -t "demo title" -p
+gnomonic -f test.star binstar -y alternate.star -w ceres.bin binfull
+-v 6 1.5 -x 0.5 5 -b -i -u -e ovverride
+
+.fi
+.SH FILES
+Note that the names may have been changed for your particular site.
+.nf
+.ta \w'boundaries.star    'u
+yale.star	stellar information (mandatory)
+neb.star	nebulae (optional)
+planet.star	planets (optional)
+boundaries.star	constellation boundaries (optional)
+cnames.star	constellation names (optional)
+patterns.star	constellation patterns (optional)
+index.indx	index file for additional star files (optional)
+con.locs	default mnemonic locations
+.fi
+.br
+.sp
+These default paths can be easily changed in the Makefile.
+.PP
+All data file coordinates are for epoch and equinox 2000.0.
+.SH BUGS
+.PP
+If <minutes> part of the parameters is greater than 59 it is silently
+truncated to 59.
+.SH SEE ALSO
+dataconv(1), sif_to_text(1), tosize(1), observe(1).
+.SH AUTHORS/EDITORS
+Craig Counterman
+.br
+Alan Paeth, University of Waterloo
+.SH MAJOR CONTRIBUTORS
+Steve Kennedy
+.br
+Holger Zessel and Markus Kempf.
+.br
+Tom Horsley
+.br
+Dave Van't Hof
+.br
+Dave Van't Hof
+.br
+Michael Campanella
+.br
+Robert Tidd
+.br
+Joe Wang
+.br
+Petri Launiainen
+.br
+Jyrki Yli-Nokari
+.br
+Sjoerd Mullender
+.br
+and
+.br
+Dean Payne <deanp@hplsla.hp.com>
+.br
+David Smith <smith@hpldrs.hp.com>
+.br
+Tim Pointing <tim@zorac.dciem.dnd.ca>
+.br
+and others

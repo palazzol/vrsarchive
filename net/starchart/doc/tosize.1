@@ -1,0 +1,54 @@
+.TH TOSIZE LOCAL "15 July 1989"
+.ad b
+.SH NAME
+tosize \- Encode size of object in two characters, as used in starchart data
+.SH SYNOPSIS
+.B tosize
+[
+.B \-
+[
+.B d
+][
+.B m
+][
+.B s
+]]
+.I size
+[
+.I size ...
+]
+	
+.SH DESCRIPTION
+
+The size field for non-stellar objects in the starchart databases
+contains the size of the object in seconds of arc encoded to two
+significant figures as two characters, up to a diameter of 89000
+seconds, or 24.7 degrees, which is encoded as `Z9'.
+
+.PP
+
+This program is intended to facilitate the encoding.  The sizes of
+several objects may be included in the command line, the encoded sizes
+are sent to the standard output.  The first argument may be used to
+control the meaning of the succeding arguments.  A `d' means that the
+corresponding argument is the size in degrees, a `m' represents
+minutes, and `s' represents seconds.  These may be combined up to
+three letters.  That is, `-dm' means that the following arguments
+should be taken in pairs, with the first being the degree component of
+the size, and the second the minutes.
+
+.PP
+
+When the command line arguments have been exhausted, numbers are read
+from the standard input.
+
+
+
+.SH EXAMPLES 
+tosize 1 14 140 1400  14000 14000 89000 88000
+.br
+tosize -dms 1 10 30 2 30 45
+.SH FILES
+.SH BUGS
+.SH AUTHOR
+Craig Counterman

@@ -1,0 +1,63 @@
+The files here are example data formats, test files, and suggestions
+for manipulating data:
+
+Example formats:
+ast1990.ell_e
+asteroids.ell_e
+1989c1.par_e
+comet.par_e
+cer.aa
+cer.emp
+cer.empb
+sampl.iau
+sampl.st
+mess.obj
+sample.rc
+
+(Note, 1989c1 is Comet Austin)
+
+
+Test files:
+	Projections:
+	gnomonic.rc
+
+	Areas:
+	area.rc
+	area.star
+	area2.rc
+	area2.star
+	area3.star
+
+	Color:
+	cobj.rc
+	cobj.star
+	color.rc
+	color.star
+
+	Moon:
+	moon.star
+	moon.rc
+
+	Objects:
+	obj.rc
+	obj.star
+
+	Object size:
+	size.star
+	size.rc
+
+	General test:
+	test.rc
+	test.star1-5
+	test.star6-A
+	test.starbright
+
+
+Suggestions:
+add color to databases:
+	colorize.c
+	colorsif.awk
+	colorsif.perl
+	colorstar.awk
+	colorstar.perl
+

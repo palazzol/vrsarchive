@@ -1,0 +1,20 @@
+ra	=	    22.30	  # same as -r
+dec		    -5	 	  # same as -d
+scale		    12		  # same as -s
+title		    Sample title	  # same as -t
+namelim		    4.0		  # same as -l
+maglim		    20.0	  # same as -m
+gklim		    6.5		  # same as -g
+projection_mode	    gnomonic	  # set projection mode
+#				    may be "sansons", "stereographic"
+#				    "orthographic", or "gnomonic"
+invert		    true	  # same as -i if logical is nonzero or is TRUE
+precess_to          1950.0	  # Precess to equinox and ecliptic of year.
+chart_type	    fullpage	  # set chart type: "fullpage" or "threepart"
+#				    "threepart" is default: Large window,
+#				    thumbnail, and legend
+#				    "fullpage'' is same as -b flag
+vrange		    5.0 0.5	  # same as -v
+grid		    0.30 5.0
+#				    same as -x
+userfile	    sample.star lineread	  # same as -f

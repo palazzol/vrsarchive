@@ -1,0 +1,32 @@
+VMS) The files decwxtk.opt, descrip.mms, starchart_init.com, and
+vaxcrtl.opt are for VMS.
+
+IBMPC) Starchar.MSC, pcstar.h, and staribm.c are for Microsoft C on the IBMPC.
+
+Mac) See README.mac
+
+Atari) makefile.st starst.c vqgdos.txt and vqgdos.s are for the
+Atari ST.  See README.st.
+
+Copyright (c) 1990 by Craig Counterman. All rights reserved.
+
+This software may be redistributed freely, not sold.
+This copyright notice and disclaimer of warranty must remain
+   unchanged. 
+
+No representation is made about  the suitability of  this software for
+any  purpose.   It  is  provided "as  is"  without express or  implied
+warranty, to the extent permitted by applicable law.
+
+DISCLAIMER OF WARRANTY
+----------------------
+The author  disclaims all warranties  with regard to  this software to
+the   extent  permitted  by applicable   law,  including all   implied
+warranties  of merchantability  and  fitness. In  no event shall   the
+author be liable for any special, indirect or consequential damages or
+any  damages whatsoever resulting from  loss of use, data or  profits,
+whether in an action of contract, negligence or other tortious action,
+arising  out of  or in connection with the  use or performance of this
+software.
+
+

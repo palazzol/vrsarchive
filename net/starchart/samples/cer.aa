@@ -1,0 +1,9 @@
+First three lines are ignored (unless year is specified)
+Ceres data
+date     RA          DEC       r    Ephemeris Transit
+Oct.  1  23 54 52.1 -17 37 21 2.011 23 10.0
+      3  23 53 16.1 -17 42 32 2.019 23 00.5
+      5  23 51 42.2 -17 46 55 2.028 22 51.1
+      7  23 50 11.1 -17 50 30 2.038 22 41.8
+      9  23 48 42.9 -17 53 16 2.049 22 32.5
+     11  23 47 18.0 -17 55 13 2.061 22 23.2

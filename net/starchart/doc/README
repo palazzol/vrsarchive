@@ -1,0 +1,39 @@
+This directory contains documentation for astronomy programs:
+
+All files ending in ".1" are man pages for the corresponding programs.
+"starchart.1"  contains general  information   about  all  the   star*
+programs.  "starX11.1"   is   the man page  for   starX11 and starXaw,
+"staribm.1" is  for the IBM PC  version, and  "starpost.1"  is the man
+page  for starpost, but these man  pages each contain only the special
+features  of  the program; the   rest of   the information  is  in the
+"starchart.1" man page.
+
+The other files   are various forms  of  (the first  version  of)   an
+extensive documentation set.  The key  file is  "astro.texinfo", which
+is in GNU Emacs texinfo format.  This file may be formatted using TeX:
+see the GNU Emacs distribution for details.  I have already run TeX on
+this file, the .dvi  file  is "astro.dvi".   I   then used a  "dvi2ps"
+program to    generate   the "astro.PS" file.    These   files are  in
+../doc-formatted.  This directory is not in the mailable shar files or
+the comp.sources.misc distribution.
+
+The texinfo file  has  also been (automatically) processed  into *roff
+form, producing the  "astro.ms"   file which uses   -ms   macros.  The
+nroffed output from this file is in "astro.cat" in ../doc-formatted.
+
+The texinfo file is also to be used  from within GNU Emacs.  The Emacs
+Info format file is provided  as the file "astro" in ../doc-formatted.
+The  Emacs lisp file "astroinfo.el" is  provided to facilitate  use of
+this file.  The command:
+
+emacs -l astroinfo.el
+
+starts emacs  in info mode   with the file loaded  and  ready   to  be
+browsed.  You may want to edit the "astroinfo.el" file to use the full
+path name of the "astro" file.
+
+You probably only need  the "astro.PS" file, if you  have a PostScript
+printer; "astro.dvi" if you have TeX  and a non-PostScript printer; or
+"astro.ms" or "astro.cat" files, if you don't.  If you have GNU Emacs,
+you may find the  "astro" file useful.  Feel   free to delete all  the
+files you don't need.
