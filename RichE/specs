@@ -1,0 +1,100 @@
+.nr Pt 0
+.nr Pi 5
+.nr Li 6
+.nr Hb 7
+.nr Hs 7
+.nr Hi 0
+.ds HF 3 3 3 3 3 3 3
+.nr Hu 3
+.PH " "
+.DS C
+.B "Rich Engineering Implementation and Test Plan"
+.B "Vincent R. Slyngstad"
+.DE
+.SP 1
+.DS C
+\*(DT
+.DE
+.SP 3
+.nf
+.fi
+.H 1 "REQUIREMENTS"
+.AL
+.LI
+Changes to System V/386 to allow the kernel and user processes to address
+virtual addresses which map to physical addresses up to 64 megabytes.
+.LI
+Changes to I/O Drivers necessitated by the fact that the Multibus I address
+space will still be restricted to 16 Megabytes.
+.LI
+Stability and functionality equivalent to the existing System V/386.
+.LI
+Have these changes completed and tested by April 1, 1987.
+.LE
+.H 1 "GOALS/NON-GOALS"
+.AL
+.LI
+First, meet all requirements with minimal changes to existing System V/386
+code.  The schedule requirement implies initial implementation will not
+contain even obvious performance optimizations unless they are also the
+most time efficient solutions to meet the other requirements.
+.LI
+The changes will be designed with support for 128 megabytes of physical
+memory in mind.  The system will be tested for 128 megabyte operation
+only if time and hardware permit.
+.LI
+Extra time (if any) will be used to implement performance enhancements.
+.H 1 "COMPONENTS"
+.AL
+.LI
+Changes to initialization so the kernel's address space can be large enough
+to map physical memory.
+.LI
+Changes to initialization required by the relocation of data structures
+moved to accommodate the physical memory map.
+.LI
+Changes to the 214 driver to request DMA only from addresses less than 16
+megabytes.  For addresses above 16 megabytes, the driver must use a copying
+scheme.  (Initial implementation will use a copying scheme for all transfers
+for simplicity and reliability.  One of the first optimizations would be to
+fix this).
+.LI
+Changes to other drivers which use memory mapped I/O or DMA.  This probably
+includes the 546 and the 552 drivers.
+.LE
+.H 1 "SCHEDULE"
+.TS
+box, tab(:);
+c | c | c | c
+l | r | r | r.
+Deliverable:Original:Current:Actual
+=
+386/28:2/22:2/22:
+Initialization Changes:3/3:3/3
+214 Changes:3/3:3/3
+546 Changes:3/3:3/3
+8 Mb Stability:3/16:3/16
+552 Changes:3/18:3/18
+552 Testing:3/20:3/20
+Hardware:3/20:3/20
+Testing Complete:3/31:3/31
+Delivery:4/1:4/1
+.TE
+.H 1 "RISKS"
+.AL
+.LI
+Since the changes involve very low level subsystems of System V/386, debugging
+will be difficult.
+.LI
+Hardware is not expected until 1 week before delivery to Rich Engineering.
+Obviously, if either hardware or software require extensive debugging,
+schedule will not be met.
+.LE
+.H 1 "ARs"
+.H 2 "Bob Rossi/George Heider"
+To proceed with implementation on a Beta-1 base, I will need a 7x9 386/20
+with more that 4 megabytes of memory ASAP.
+.H 2 "Bob Rossi/Brandy Coughlin"
+I would like Brandy Coughlin to look into an alleged bug which prevents the
+existing System V/386 implementation from working with more than 4 megabytes
+of physical memory.  I will need a resolution for this bug by March 1, 1987.
