@@ -1,0 +1,14 @@
+owner=$1
+for f in \
+	/usr/man/manl/espel.l \
+	/usr/local/espel \
+	/usr/local/lib/espel.hi \
+	/usr/local/lib/espel.help \
+	/usr/local/lib/.spellwd \
+	/usr/local/lib/.spellht
+do
+	touch $f
+	chown $owner $f
+done
+mkdir /usr/local/src/espel
+chown $owner /usr/local/src/espel

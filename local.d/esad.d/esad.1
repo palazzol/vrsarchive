@@ -1,0 +1,18 @@
+.TH ESAD 1 11/24/84
+.SH NAME
+esad \- Extra Syncs and Death
+.SH SYNOPSIS
+.B esad
+.SH DESCRIPTION
+.I Esad
+Does numerous syncs and then invokes haltsys to shut down the system.  The
+syncs are timed to heuristically maximize the probability the filesystem
+will be clean when the system is rebooted.
+.SH FILES
+.ta 1.5i
+.nf
+/bin/sync	Updates the filesystems.
+/etc/haltsys	Shuts down the system.
+.fi
+.SH BUGS
+This is essentailly a workaround because /etc/haltsys is not reliable.

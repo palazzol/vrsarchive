@@ -1,0 +1,26 @@
+
+
+		Instructions for the Adventure shell
+
+Welcome to the Adventure shell!  In this exploration of the UNIX file
+system, I will act as your eyes and hands.  As you move around, I will
+describe whatever is visible and will carry out your commands.  The
+general form of a command is
+	Verb Object Extra_stuff.
+Most commands pay no attention to the "Extra_stuff", and many do not
+need an "Object".  A typical command is
+	get all
+which picks up all files in the current "room" (directory).  You can
+find out what you are carrying by typing the command
+	inventory
+The command "help" results in a full description of all commands that I
+understand.  To quit the Adventure shell, type
+	quit
+
+There are UNIX monsters lurking in the background.  These are also
+known as "commands with arguments".
+
+Good luck!
+
+
+

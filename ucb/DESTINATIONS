@@ -1,0 +1,13 @@
+/usr/local        ;: badsect
+/usr/local        ;: clear
+/usr/local        ;: fold
+/usr/local        ;: leave
+/usr/local        ;: man
+/usr/local        ;: print
+/usr/local        ;: su
+/usr/local        ;: ucbinstall
+/usr/local        ;: users
+/usr/local        ;: uudecode
+/usr/local        ;: uuencode
+/usr/local        ;: uusend
+/usr/local        ;: w

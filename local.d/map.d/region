@@ -1,0 +1,515 @@
+echo x - usa.wa
+cat >usa.wa <<'!Funky!Stuff!'
+Comments: ****************** WASHINGTON (WA) ****************
+
+Name: entropy
+Organization: University of Washington, Seattle; Stat., Biostat., and
+	Math Depts.
+Contact: Steve Hubert
+Phone: (206) 545-2303
+Postal-Address: Dept. of Statistics, GN-22, Seattle, WA 98195
+Electronic-Address: uw-beaver!entropy!hubert
+News: uw-june
+Mail: uw-june uw-beaver apl-uw
+
+Name: fluke
+Organization: John Fluke Manufacturing Co., Inc.
+Contact: Joe Kelsey, Norm Seethoff
+Phone: (206) 356-5933, (206) 356-5054
+Postal-Address: POB C9090, MS 223B, Everett, WA 98206
+Electronic-Address: fluke!joe, fluke!norm
+News: microsoft ssc-vax telematic
+Mail: allegra lbl-csam microsoft ssc-vax sun telematic teltone uw-beaver
+	uw-vlsi
+
+Name: microsoft
+Organization: Microsoft
+Contact: Gordon Letwin
+Phone: (206) 828-8080
+Postal-Address: 10700 Northup Way, Bellevue, WA 98004
+Electronic-Address: decvax!microsoft!gordonl
+News: decvax fluke mspiggy uw-beaver
+Mail:
+
+Name: mspiggy
+Organization: Microsoft
+Contact: Gordon Letwin
+Phone: (206) 828-8080
+Postal-Address: 10700 Northup Way, Bellevue, WA 98004
+Electronic-Address: decvax!microsoft!gordonl
+News: microsoft
+Mail:
+
+Name: ssc
+Organization: Specialized Systems Consultants
+Contact: Irene Pasternack
+Phone: (206) 367-UNIX
+Postal-Address: P.O. Box 7, Northgate Station, Seattle, WA 98125-0007
+Electronic-Address: uw-beaver!teltone!ssc!irene
+News: teltone
+Mail:
+
+Name: ssc-vax
+Organization: Software Support Center, Boeing Aerospace Co.
+Contact: Jeffrey Jongeward
+Phone: (206) 773-2954
+Postal-Address: PO Box 3999, MS 8H-56, Seattle, WA 98124
+Electronic-Address: ucbvax!lbl-csam!ssc-vax!jeff
+News: uw-beaver uvicctr fluke
+Mail: fluke uw-beaver teklabs lbl-csam
+
+Name: teldata
+Organization: Teltone Corporation
+Contact: Duane Hesser
+Phone: (206) 827-9626
+Postal-Address: 10801 120th Ave., NE, Kirkland, WA 98033
+Electronic-Address: uw-beaver!teltone!sysad
+News: teltone
+Mail: teltone
+
+Name: telematic
+Organization: Telematic Products, Inc.
+Contact: John J. Hansen
+Phone: (206) 882-5000
+Postal-Address: 5000 148th Ave., N.E., Redmond, WA 98052
+Electronic-Address: microsoft!fluke!telematic!johnj
+News: fluke
+Mail: beesvax fluke
+
+Name: teltone
+Organization: Teltone Corporation
+Contact: Joe Brady
+Phone: (206) 827-9626
+Postal-Address: 10801 - 120th Ave. NE, Kirkland, WA 98033
+Electronic-Address: microsoft!uw-beaver!teltone!joe
+News: uw-beaver teldata ssc
+Mail:
+
+Name: uw-beaver
+Organization: University of Washington, Dept. of Computer Science
+Contact: Richard Furuta
+Phone: (206) 543-7798
+Postal-Address: FR-35, Seattle, WA 98115
+Electronic-Address: decvax!microsoft!uw-beaver!furuta
+News: ubc-vision uw-june cornell teltone tektronix ssc-vax uvicctr
+	microsoft
+Mail: allegra apl-uw apollo arizona atari-s cornell decvax fluke ihnp4 largo
+	lbl-csam lento microsoft sdcsvax ssc-vax tektronix teltone 
+	ubc-vision utcsrgv uvicctr uw-eddie uw-june uw-lumpy uw-vlsi
+	uw-wally uw-ward uw70 vivace yale-comix
+
+Name: uw-june
+Organization: University of Washington, Dept. of Computer Science
+Contact: Richard Furuta
+Phone: (206) 543-7798
+Postal-Address: FR-35, Seattle, WA 98115
+Electronic-Address: decvax!microsoft!uw-beaver!uw-june!furuta
+News: entropy uw-beaver uw-vlsi uw70
+Mail: uw-beaver uw-vlsi uw70
+
+Name: uw-vlsi
+Organization: University of Washington, Dept. of Computer Science
+Contact: Richard Furuta
+Phone: (206) 543-7798
+Postal-Address: FR-35, Seattle, WA 98115
+Electronic-Address: decvax!microsoft!uw-beaver!uw-june!furuta
+News: uw-june
+Mail: uw-june uw-beaver fluke
+
+Name: uw70
+Organization: University of Washington, Dept. of Geophysics
+Contact: Steve Malone
+Phone: (206) 545-3811
+Postal-Address: AK-50, Seattle, WA 98195
+Electronic-Address: decvax!microsoft!uw-beaver!uw70!steve
+News: uw-june
+Mail: uw-june
+
+!Funky!Stuff!
+echo x - usa.or
+cat >usa.or <<'!Funky!Stuff!'
+Comments: ****************** OREGON (OR) ****************
+
+Name: apssys
+Organization: Intel Corporation
+Contact: Vincent Slyngstad
+Phone: (503) 640-7140
+Postal-Address: HF2-2-345, 5200 NE Elam Young Pkwy., Hillsboro, OR 97123
+Electronic-Address: apssys!vrs
+Mail: isonvax isosys
+
+Name: azure
+Organization: Tektronix, Inc.
+Contact:
+Phone:
+Postal-Address: Beaverton, OR
+Electronic-Address:
+News: tektronix
+Mail:
+
+Name: bronze
+Organization: Tektronix, Inc., Microprocessor Development Products Business Unit
+Contact: Lauri Rathmann
+Phone: (503) 629-1353
+Postal-Address: D/S 92-527, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!tekmdp!laurir
+News: tekmdp
+Mail:
+
+Name: cdi
+Organization: Computer Development Inc.
+Contact: Chuck Forsberg
+Phone: (503) 646-1599
+Postal-Address: 6700 S.W. 105th Street, Beaverton, OR 97005
+Electronic-Address: metheus!cdi!caf
+News: metheus sequent
+Mail: reed sequel
+
+Name: crimson
+Organization: Tektronix, Inc.
+Contact:
+Phone:
+Postal-Address: P.O. Box 500, Beaverton, OR 97077
+Electronic-Address:
+News: tekmdp
+Mail:
+
+Name: dadla
+Organization: Tektronix, Inc.
+Contact: Jim Binkley
+Phone:
+Postal-Address: MS 92-725, Box 500, Beaverton, OR 97007
+Electronic-Address: ucbvax!tektronix!tekmdp!dadla!dadla-b!james
+News: dadla-a dadla-b dadla-d tekmdp
+Mail:
+
+Name: dadla-a
+Organization: Tektronix, Inc.
+Contact: Jim Binkley
+Phone:
+Postal-Address: MS 92-725, Box 500, Beaverton, OR 97007
+Electronic-Address: ucbvax!tektronix!tekmdp!dadla!dadla-b!james
+News: dadla
+Mail:
+
+Name: dadla-b
+Organization: Tektronix, Inc.
+Contact: Jim Binkley
+Phone:
+Postal-Address: MS 92-725, Box 500, Beaverton, OR 97007
+Electronic-Address: ucbvax!tektronix!tekmdp!dadla!dadla-b!james
+News: dadla
+Mail:
+
+Name: dadla-d
+Organization: Tektronix, Inc.
+Contact: Jim Binkley
+Phone:
+Postal-Address: MS 92-725, Box 500, Beaverton, OR 97007
+Electronic-Address: ucbvax!tektronix!tekmdp!dadla!dadla-b!james
+News: dadla
+Mail:
+
+Name: hammer
+Organization: Tektronix, Inc.
+Contact:
+Phone:
+Postal-Address: Wilsonville, OR
+Electronic-Address:
+News: orca
+Mail:
+
+Name: hp-cvd
+Organization: Hewlett-Packard Corp., Corvallis Division
+Contact: Seth D. Alford
+Phone: (503) 757-2000, x3707
+Postal-Address: 1000 NE Circle, Corvallis, OR 97330
+Electronic-Address: hp-pcd!hp-cvd!seth
+News: hp-pcd hp-kirk uoregon
+Mail: uoregon
+
+Name: hp-kirk
+Organization: hp-pcd!hp-cvd!seth
+News: hp-cvd
+Mail:
+
+Name: hp-pcd
+Organization: Hewlett-Packard Corp., Personal Computer Division
+Contact: Tw Cook
+Phone: (503) 757-2000 x4097
+Postal-Address: 1010 NE Circle Blvd., Corvallis, OR 97330
+Electronic-Address: hp-pcd!tw
+News: hplabs orstcs hpfcla hp-lsd hp-dcd uoregon
+Mail: boeing harpo hp-dcd hp-lsd hpcnoa hpfcla hpda hplabs microsoft ogcvax
+	orstcs rice uoregon
+
+Name: iddic
+Organization: Tektronix, Inc., Information Display Division
+Contact: Robert D. Perry, Jr.
+Phone:
+Postal-Address: Wilsonville Industrial Park, P.O. Box 1000, M/X 63-296,
+	Wilsonville, OR 97070
+Electronic-Address: tektronix!iddic!robp
+News: tektronix tekgds
+Mail:
+
+Name: inteloa
+Organization: Intel Corporation Special Systems Operation
+Contact: Kevin Kahn
+Phone: (503) 681-4289
+Postal-Address: JF1-2-108, OR
+Electronic-Address: icalqa!inteloa!kck
+Mail: icalqa intelob ogcvax isonvax
+
+Name: intelob
+Organization: Intel Corporation
+Contact:
+Phone:
+Postal-Address:
+Electronic-Address:
+News: inteloa
+Mail:
+
+Name: intelqa
+Mail: icalqa inteloa isonvax
+
+Name: isonvax
+Organization: Intel Corporation
+Contact: Bill Edmark
+Phone: (503) 640-7308
+Postal-Address: HF2-2-267, 5200 NE Elam Young Pkwy., Hillsboro, OR 97123
+Electronic-Address: isonvax!bse
+News: icalqa ogcvax inteloa aus86 intelca
+Mail: microsoft hplabs idv2 aus86 icalqa ogcvax inteloa isosvax
+
+Name: isosys
+Organization: Intel Corporation
+Mail: isonvax apssys
+
+Name: metheus
+Organization: Metheus Corp.
+Contact: Rex McDowell, Chet Britten
+Phone: (503) 640-8000
+Postal-Address: 5288 NE Elam Young Pkwy., D-600, Hillsboro, OR 97123
+Electronic-Address: ogcvax!metheus!rex, ogcvax!metheus!chet
+News: ogcvax cdi
+Mail:
+
+Name: ogcvax
+Organization: Oregon Graduate Center, Dept. of Computer Science and Engineering
+Contact: Bruce Jerrick
+Phone: (503) 645-1121 x355
+Postal-Address: 19600 N.W. Walker Rd., Beaverton, OR 97006
+Electronic-Address: teklabs!ogcvax!root
+News: tektronix metheus sequent isonvax inteloa verdix
+Mail: allegra sbcs teklabs hp-pcd sequent metheus
+
+Name: omosys
+Organization: Intel Corporation
+Mail: apssys omovax
+
+Name: omovax
+Organization: Intel Corporation
+Contact: Unknown
+Phone: (503) 640-7308
+Postal-Address: HF2-2-267, 5200 NE Elam Young Pkwy., Hillsboro, OR 97123
+Electronic-Address: omovax!root
+News: icalqa ogcvax inteloa aus86 intelca
+Mail: microsoft hplabs idv2 aus86 icalqa ogcvax inteloa isosvax
+
+Name: orca
+Organization: Tektronix, Inc.
+Contact:
+Phone:
+Postal-Address: Wilsonville, OR
+Electronic-Address:
+News: hammer tektronix shark
+Mail:
+
+Name: orstcs
+Organization: Oregon State University, Computer Science Dept.
+Contact: Dave Regan
+Phone: (503) 754-1911
+Postal-Address: Corvallis, OR
+Electronic-Address: orstcs!regan
+News: hp-pcd
+Mail:
+
+Name: reed
+Organization: Reed College
+Contact: Charlie Green
+Phone: (503) 771-1112 x329
+Postal-Address: Director, Academic Computing, Portland, OR
+Electronic-Address: duke!reed!cag
+News: tektronix
+Mail: bio cdi duke tektronix uw-beaver
+
+Name: sequent
+Organization: Sequent Computer Systems, Inc.
+Contact: Phil Hochstetler
+Phone: (503) 626-5700
+Postal-Address: 14360 Science Park Dr., Portland, OR 97229
+Electronic-Address: teklabs!ogcvax!sequent!phil, pur-ee!sequent!phil
+News: ogcvax cdi
+Mail: unisoft pur-ee nsc ogcvax rocks34 cdi vax135 verdix shell decwrl
+
+Name: shark
+Organization: Tektronix, Inc.
+Contact:
+Phone:
+Postal-Address: Wilsonville, OR
+Electronic-Address:
+News: orca
+Mail:
+
+Name: tekcad
+Organization: Tektronix, Inc.
+Contact: Mike Edmonds
+Phone: (503) 627-5340
+Postal-Address: Mail Stop 50/454, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!mikee
+News: tektronix
+Mail:
+
+Name: tekchips
+Organization: Tektronix, Inc.
+Contact: Mike Edmonds
+Phone: (503) 627-5340
+Postal-Address: Mail Stop 50/454, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!mikee
+News: tektronix teklabs
+Mail:
+
+Name: tekecs
+Organization: Tektronix Engineering Computing Systems Business Unit
+Contact:
+Phone: (503) 685-
+Postal-Address: P.O. Box 500, Beaverton, OR 97005
+Electronic-Address:
+News: tektronix
+Mail: tektronix teklabs tekmdp tekchips iddic tekcad tekarch tekid
+
+Name: tekgds
+Organization: Tektronix, Inc.
+Contact: Charles Perkins
+Phone:
+Postal-Address: P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!iddic!tekgds!charliep
+News: iddic
+Mail:
+
+Name: tekgvs
+Organization: Tektronix, Inc.
+Contact:
+Phone:
+Postal-Address: Beaverton, OR
+Electronic-Address:
+News: tektronix
+Mail:
+
+Name: tekig
+Organization: Tektronix, Inc.
+Contact: Dan Romike
+Phone: (503) 627-3003
+Postal-Address: D/S 47-578, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!tekig!danr
+News: tektronix
+Mail:
+
+Name: tekig1
+Organization: Tektronix, Inc., Instruments Group
+Contact: Dan Romike
+Phone: (503) 627-3003
+Postal-Address: D/S 47-578, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!tekig!danr
+News: tektronix
+Mail: tektronix
+
+Name: tekigm
+Organization: Tektronix, Inc., Instruments Group
+Contact: Dan Romike
+Phone: (503) 627-3003
+Postal-Address: D/S 47-578, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!tekig!danr
+News: tektronix
+Mail: tektronix
+
+Name: teklabs
+Organization: Tektronix, Inc.
+Contact: Mike Edmonds
+Phone: (503) 627-5340
+Postal-Address: Mail Stop 50/454, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!mikee
+News: tekchips
+Mail: tektronix
+
+Name: tekmdp
+Organization: Tektronix, Inc., Microprocessor Development Products Business Unit
+Contact: Lauri Rathmann
+Phone: (503) 627-1352
+Postal-Address: D/S 92-525, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!tekmdp!laurir
+News: tektronix dadla bronze crimson
+Mail:
+
+Name: tekred
+Organization: Tektronix, Inc., Communications Network Analyzers Business Unit
+Contact: Bill Randle
+Phone: (503) 923-4422
+Postal-Address: P.O. Box 1197, Redmond, OR 97756
+Electronic-Address: tektronix!tekred!billr
+News: tektronix
+Mail: tektronix
+
+Name: tektinker
+Organization: Tektronix, Inc.
+Contact: Michael S. Miller
+Phone: (503) 685-3539
+Postal-Address: D/S 63-399, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!iddic!tektinker!msm
+News:
+Mail:
+
+Name: tektronix
+Organization: Tektronix, Inc.
+Contact: Mike Edmonds
+Phone: (503) 627-5340
+Postal-Address: Mail Stop 50/454, P.O. Box 500, Beaverton, OR 97077
+Electronic-Address: tektronix!mikee
+News: uw-beaver zehntel decvax ucbcad tekcad tekchips tekig iddic tekmdp
+	tekecs reed ogcvax tekig1 tekigm uoregon tekred azure orca tekgvs
+Mail: uoregon
+
+Name: uoregon
+News: uo-vax1 tektronix hp-cvd hp-pcd
+Mail: uo-vax1 tektronix hp-cvd hp-pcd
+
+Name: verdix
+Organization: Verdix Corp., Western Operations
+Contact: Stephen Scalpone
+Phone: (503) 642-4032
+Postal-Address: 19665 S.W. Tualatin Valley Highway, Suite B, Aloha, OR 97006
+Electronic-Address: sequent!verdix!rascal, ocgvax!verdix!rascal
+News: ogcvax
+Mail: sequent ogcvax inteloa
+!Funky!Stuff!
+echo x - usa.id
+cat >usa.id <<'!Funky!Stuff!'
+Comments: ****************** IDAHO (ID) ****************
+
+!Funky!Stuff!
+echo x - usa.mt
+cat >usa.mt <<'!Funky!Stuff!'
+Comments: ****************** MONTANA (MT1) ****************
+
+!Funky!Stuff!
+echo x - usa.wy
+cat >usa.wy <<'!Funky!Stuff!'
+Comments: ****************** WYOMING (WY) ****************
+
+!Funky!Stuff!
+echo x - usa.ak
+cat >usa.ak <<'!Funky!Stuff!'
+Comments: ****************** ALASKA (AK) ****************
+
+!Funky!Stuff!

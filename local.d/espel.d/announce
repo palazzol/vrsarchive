@@ -1,0 +1,20 @@
+echo "~s espel \
+
+
+	-=-=-=-*-*-*-*-*-*-*-*-*-*-*-*-*-=-=-=-
+	(				      )
+	)		   		      (
+	(	ANNOUNCING		      )
+	)				      (
+	(		ESPEL		      )
+	)				      (
+	(	an interactive spelling	      )
+	)	checker 		      (
+	(	using a local dictionary      )
+	)				      (
+	-=-=-=-*-*-*-*-*-*-*-*-*-*-*-*-*-=-=-=-
+
+/usr/local/espel
+	use the help command to learn how
+	or check the manual entry
+" | mail world

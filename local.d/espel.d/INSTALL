@@ -1,0 +1,53 @@
+: "*
+   *  INSTALL
+   *	a program to install the espel files
+   *"
+tmp=/tmp/install$$
+trap "rm -f $tmp
+	trap 0
+	exit" 0 1 2 13 15
+quote='s/\//\\\//g'
+echo -n "Where do you want espel? [default: /usr/local] "
+	read ANS
+	if test null$ANS = null
+	then
+		ANS='/usr/local'; fi
+	BIN=`echo $ANS | sed "$quote"`
+echo -n "The espel library? [default: /usr/local/lib] "
+	read ANS
+	if test null$ANS = null
+	then
+		ANS='/usr/local/lib'; fi
+	LIB=`echo $ANS|sed "$quote"`
+echo -n "The public dictionary? [default: $ANS] "
+	read DIR
+	if test null$DIR = null
+	then
+		DIR=$ANS; fi
+	PUBLIC=`echo $DIR|sed "$quote"`
+if test ! -s /usr/bin/spellin; then
+	if test ! -s /usr/lib/spell/spellin; then
+		eSPELLIN=$LIB'\/spellin'
+		mSPELLIN=spellin
+	else
+		eSPELLIN='\/usr\/lib\/spell\/spellin'
+		mSPELLIN=
+	fi
+else
+	eSPELLIN='\/usr\/bin\/spellin'
+	mSPELLIN=
+fi
+
+if sed  -e "/^LIB/s/=.*$/=$LIB/" \
+	-e "/^PUBLIC/s/=.*$/=$PUBLIC/"  \
+	-e "/^SPELLIN/s/=.*$/=$eSPELLIN/" espel > $tmp
+then
+	cp $tmp espel; fi
+
+if sed  -e "/^LIB/s/=.*$/=$LIB/" \
+	-e "/^BIN/s/=.*$/=$BIN/" \
+	-e "/^PUBLIC/s/=.*$/=$PUBLIC/" \
+	-e "/^SPELLIN/s/=.*$/=$mSPELLIN/" Makefile.dist > $tmp
+then
+	cp $tmp Makefile; fi
+

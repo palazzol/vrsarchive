@@ -1,0 +1,118 @@
+. \"       Monthly Status Reports
+.
+.
+.po 0.8i                    \" establish page size  0.8 inches in
+.ll 6.5i                    \" and 6.5 inches wide from there
+.pn 1                       \" number pages starting at 1
+.na                         \" and don't do filling
+.
+.
+. \" Define the variables we use
+.
+.ds au Author
+.ds pg Page spelling
+.ds mn Month spelling
+.
+.wh 0 HD                    \" Establish header
+.wh -0.5i FT                \" and footer
+.
+.de AU                      \" Author macro
+.ds au \\$1 \\$2 \\$3 \\$4
+..
+.de HD
+\c
+.if \\n%=1 .ds pg One
+.if \\n%=2 .ds pg Two
+.if \\n%=3 .ds pg Three
+.if \\n%=4 .ds pg Four
+.if \\n%=5 .ds pg Five
+.if \\n%=6 .ds pg Six
+.if \\n%=1\{\
+'sp 5
+'ce 2
+ISO PRODUCT MARKETING
+.sp 1
+\\*(au
+'sp 4 \}
+.if \\n%>1\{\
+\c
+'sp 2
+.tl '\\*(au'
+.tl 'Page \\*(pg'
+'sp 2 \}
+..
+.	\"MO  - month
+.de MO
+.br
+.in 0.5i
+.sp 3
+.ul
+.ti -0.5i
+\\$1 Key Results: 
+.br
+..
+.de NM
+.br
+.if \\n(mo=1 .ds mn February
+.if \\n(mo=2 .ds mn March
+.if \\n(mo=3 .ds mn April
+.if \\n(mo=4 .ds mn May
+.if \\n(mo=5 .ds mn June
+.if \\n(mo=6 .ds mn July
+.if \\n(mo=7 .ds mn August
+.if \\n(mo=8 .ds mn September
+.if \\n(mo=9 .ds mn October
+.if \\n(mo=10 .ds mn November
+.if \\n(mo=11 .ds mn December
+.if \\n(mo=12 .ds mn January
+.MO \\*(mn
+..
+.de TM
+.if \\n(mo=1 .ds mn January
+.if \\n(mo=2 .ds mn February
+.if \\n(mo=3 .ds mn March
+.if \\n(mo=4 .ds mn April
+.if \\n(mo=5 .ds mn May
+.if \\n(mo=6 .ds mn June
+.if \\n(mo=7 .ds mn July
+.if \\n(mo=8 .ds mn August
+.if \\n(mo=9 .ds mn September
+.if \\n(mo=10 .ds mn October
+.if \\n(mo=11 .ds mn November
+.if \\n(mo=12 .ds mn December
+.MO \\*(mn
+..
+.	\"KR - key result
+.de KR
+.br
+.sp 1
+..
+.	\"FT - page foot
+.de FT
+.br
+.tl '\\n(mo/\\n(yr'
+.bp
+..
+.de XX
+.br
+.in 0i
+.sp 3
+.ul
+\\$1:
+.sp 1
+..
+.de AC
+.XX Accomplishments
+..
+.de CM
+.XX Comments
+..
+.de PR
+.XX Problems
+..
+.de TR
+.XX Training
+..
+.de TV
+.XX Travel
+..

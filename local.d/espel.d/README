@@ -1,0 +1,22 @@
+
+This directory contains the following files:
+
+literature:
+	README		: this file
+	espel.help	: brief summary of commands
+	espel.l		: manual page
+shell scripts:
+	INSTALL		: sets file variables in espel and makefile 
+	espel		: this script coordinates spell, espel.hi, etc.
+source files:
+	makefile	: make will compile and install
+	*.[ch]		: c source and macro files
+These two files are created from the source files
+	espel.hi	: human interface, a.out format
+	spellin		: creates a hash table for spell
+
+be sure to read makefile and INSTALL
+To install type:
+		INSTALL
+		make install
+

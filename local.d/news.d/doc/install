@@ -1,0 +1,1782 @@
+
+
+
+
+
+
+
+
+
+               USENET Version B Installation
+
+
+                       Matt Glickman
+
+                 Computer Science Division
+ Department of Electrical Engineering and Computer Sciences
+                  University of California
+                 Berkeley, California 94720
+
+
+          Revised by Mark Horton for version 2.10
+          Revised by Rick Adams for version 2.10.2
+
+
+
+
+
+
+_\0101.  _\010I_\010n_\010t_\010r_\010o_\010d_\010u_\010c_\010t_\010i_\010o_\010n
+
+     This document is intended to help a USENET site install
+and  maintain  the  network news software.  Please ask ques-
+tions of Rick Adams, such questions will help to  point  out
+areas that need to be addressed here.
+
+     The overall order of things to do is:
+
+(a)  Find somebody to link up with.  You need a network con-
+     nection of some kind, for example ARPANET or UUCP.  You
+     cannot get a link to Berkeley, sorry.  If you must  use
+     UUCP  and have no connections, you must have at least a
+     dialup and preferably a dialer, and find  someone  wil-
+     ling to call your machine.  The USENET directory may be
+     helpful in finding some other site geographically  near
+     yours to hook up to.
+
+(b)  Create a localize.sh script to make  local  changes  to
+     the makefile and defs.h files.
+
+(c)  Compile the software using the _\010m_\010a_\010k_\010e command.
+
+(d)  Su and type ``make install''.  This will copy the files
+     out  to the right place and make directories containing
+     most of the important files.  It will configure you  in
+     with  a  connection to oopsvax via uucp links.  This is
+     undoubtably wrong, so you will have to configure  links
+     as needed.
+
+(e)  After editing the configuration table, get your contact
+     at the other end of the link to add you to their sys.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 2 -
+
+
+(f)  Post a message to the to._\010s_\010y_\010s_\010n_\010a_\010m_\010e newsgroup which should
+     be  set up to go only to the site you are linked to, as
+     a test.  Have the other person send a message  to  your
+     system using the same mechanism.  If this doesn't work,
+     find  the  problem  and  fix  it.   (Please  don't  use
+     net.test  unless there is no alternative.  It is almost
+     always possible to use test,  or  to._\010s_\010y_\010s_\010n_\010a_\010m_\010e,  or  some
+     local.test group, instead of net.test.
+
+(g)  Fill out a USENET directory form and post a copy to the
+     USENET newsgroup ``net.news.newsite.''
+
+(h)  Post the ``etiquette'' and ``howto'' files (in the  doc
+     directory)  to  your  ``general'' newsgroup with a long
+     expiration date.  Running ``rnews'' separately on  each
+     of these files will do.
+
+(i)  It will probably be necessary to fix your uucp  command
+     to  allow rnews and cunbatch, and to support the -z and
+     -n options.
+
+_\0102.  _\010I_\010n_\010s_\010t_\010a_\010l_\010l_\010a_\010t_\010i_\010o_\010n
+
+_\0102._\0101.  _\010C_\010o_\010n_\010f_\010i_\010g_\010u_\010r_\010a_\010t_\010i_\010o_\010n
+
+     Local configuration of the _\010U_\010S_\010E_\010N_\010E_\010T  version  B  software
+requires  you  to  edit  a few files.  Most importantly, the
+_\010d_\010e_\010f_\010s._\010h and _\010M_\010a_\010k_\010e_\010f_\010i_\010l_\010e files must be created  from  their  tem-
+plates _\010d_\010e_\010f_\010s._\010d_\010i_\010s_\010t and _\010M_\010a_\010k_\010e_\010f_\010i_\010l_\010e._\010v_\0107or You should create a shell
+script called localize.sh which copies the files  and  makes
+local  changes to the copies.  Even for a completely vanilla
+site, some changes will be  necessary.   For  example,  your
+script  should  choose between Makefile.v7 and Makefile.usg.
+You should  include  the  name  of  the  local  organization
+(MYORG)  and  the uid of the local news super user (ROOTID).
+You should also choose how your hostname will be determined.
+If  you  are  a USG site, define UNAME in defs.h. If you are
+running 4.2 BSD, define GHNAME in  defs.h.  Otherwise,  news
+will  look  in  the file /_\010u_\010s_\010r/_\010i_\010n_\010c_\010l_\010u_\010d_\010e/_\010w_\010h_\010o_\010a_\010m_\010i._\010h for a line of
+the form
+
+        #define sysname your-sysname
+
+
+     If you are running System 3 or System 5, you are a  USG
+site.  Otherwise, unless you are in AT&T, you are probably a
+V7 site.  The previously  mentioned  defines  are  the  only
+modifications  that  are  _\010n_\010e_\010c_\010e_\010s_\010s_\010a_\010r_\010y  to install news at your
+site. However, you will probably want to change some of  the
+ones listed below.
+
+     A  sample  localize  shell  script  can  be  found   in
+localize.sample.  The most important parameters are:
+
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 3 -
+
+
+_\0102._\0101._\0101.  _\010R_\010O_\010O_\010T_\010I_\010D
+
+     The numerical userid of the  person  who  is  the  news
+super  user.   This  should not be set to 0.  Normally it is
+set to the uid of the news contact person for the site.
+
+_\0102._\0101._\0102.  _\010N__\010U_\010M_\010A_\010S_\010K
+
+     Mask for _\010u_\010m_\010a_\010s_\010k(_\0102) system call.  Set to  something  like
+022 for a secure system.  Unsecure systems might want 002 or
+000.  This mask controls the mode of news files  created  by
+the software.  Insecure modes would allow people to edit the
+files directly.
+
+_\0102._\0101._\0103.  _\010D_\010F_\010L_\010T_\010E_\010X_\010P
+
+     The default no. of seconds after which an article  will
+expire.   2 weeks (1,209,600 seconds) is the default choice.
+Articles which were posted more than DFLTEXP  ago  are  con-
+sidered  too old and are moved into the junk directory. This
+is because they are too old to be in the history file, so it
+is  impossible  to tell if they really should be accepted or
+are endlessly looping around the network (This was theoreti-
+cally  possible before this feature was added.). If you wish
+to expire articles faster than two weeks, it is  recommended
+that  you  use  the  -e flag to expire instead of decreasing
+DFLTEXP.
+
+_\0102._\0101._\0104.  _\010D_\010F_\010L_\010T_\010S_\010U_\010B
+
+     The default subscription list.   If  a  user  does  not
+specify  any list of newsgroups, this will be used.  Popular
+choices are _\010a_\010l_\010l and _\010g_\010e_\010n_\010e_\010r_\010a_\010l,_\010a_\010l_\010l._\010g_\010e_\010n_\010e_\010r_\010a_\010l.
+
+_\0102._\0101._\0105.  _\010T_\010M_\010A_\010I_\010L
+
+     This is the version of the Berkeley _\010M_\010a_\010i_\010l  program  that
+has  the  -T  option.   If  left undefined, the -_\010M option to
+_\010r_\010e_\010a_\010d_\010n_\010e_\010w_\010s will be disabled.
+
+_\0102._\0101._\0106.  _\010A_\010D_\010M_\010S_\010U_\010B
+
+     This newsgroup  (or  newsgroup  list)  will  always  be
+selected  unless  the  user  specifies a newsgroup list that
+doesn't include ADMSUB on the command  line.   That  is,  as
+long  as the user doesn't use the -_\010n flag to readnews on the
+command line, ADMSUB will always be selected.  This is  usu-
+ally  set  to  _\010g_\010e_\010n_\010e_\010r_\010a_\010l.  (The intent of this parameter is to
+have certain newsgroups which users  are  required  to  sub-
+scribe to.  A typical site might require _\010g_\010e_\010n_\010e_\010r_\010a_\010l.)
+
+_\0102._\0101._\0107.  _\010P_\010A_\010G_\010E
+
+     The default program for which articles will be piped to
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 4 -
+
+
+for paging.  This can be disabled or changed by the environ-
+ment variable PAGER.  If you have it, the Berkeley _\010m_\010o_\010r_\010e com-
+mand  should  be used, since the + option allows the headers
+to be skipped.
+
+_\0102._\0101._\0108.  _\010N_\010O_\010T_\010I_\010F_\010Y
+
+     If defined, this character string will  be  used  as  a
+user  name  to  send mail to in the event of certain control
+messages  of  interest.   (Currently  these  are   newgroup,
+rmgroup,  sendsys,  checkgroups  and senduuname.) As distri-
+buted, mail will be sent to user _\010u_\010s_\010e_\010n_\010e_\010t.  It is  recommended
+you create such a mailbox (have it forwarded to yourself) if
+possible, since this makes it easier  for  another  site  to
+contact  the  site  administrator for your site.  If you are
+unable to do this (e.g. you are  not  the  super  user)  you
+should  change  this name to yourself.  Also, messages about
+missing or extra newsgroups are mailed to this user  by  the
+``checkgroups'' control message.
+
+_\0102._\0101._\0109.  _\010D_\010F_\010T_\010X_\010M_\010I_\010T
+
+     This is the default command to use to transmit news  if
+no  explicit  command  is  given in the 4th field of the sys
+file.  It normally includes uux with  the  -z  option.   You
+should  install  this  mod  to  uucp at once, otherwise your
+users will start being bombarded with annoying  uux  comple-
+tion  messages.   However, you can turn this off to get news
+installed.
+
+_\0102._\0101._\0101_\0100.  _\010U_\010X_\010M_\010I_\010T
+
+     This is the default command  used  if  the  U  flag  is
+present  in  the  flags portion of a sys file line.  In this
+case, the 2nd %s refers to the name of a file  in  the  news
+spool  area,  not  a temporary file.  It can usually only be
+used when local modifications are made to the  uucp  system,
+such as the -c option to uux.
+
+_\0102._\0101._\0101_\0101.  _\010D_\010F_\010T_\010E_\010D_\010I_\010T_\010O_\010R
+
+     This is the full path name of the default editor to use
+during  followups and replies.  It should be set to the most
+popular text editor on your system.  As distributed,  _\010v_\010i  is
+used.
+
+_\0102._\0101._\0101_\0102.  _\010U_\010U_\010P_\010R_\010O_\010G
+
+     If this is defined, it will be used as a command to run
+when  the _\010s_\010e_\010n_\010d_\010u_\010u_\010n_\010a_\010m_\010e control message is sent around.  Other-
+wise the command _\010u_\010u_\010n_\010a_\010m_\010e will be run.  Normally, this program
+should be placed in LIBDIR.
+
+
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 5 -
+
+
+_\0102._\0101._\0101_\0103.  _\010M_\010A_\010N_\010U_\010A_\010L_\010L_\010Y
+
+     If this is defined, incoming _\010r_\010m_\010g_\010r_\010o_\010u_\010p messages will  not
+remove  the subdirectories, but rather just remove the group
+line from your active file.  You should have  NOTIFY  on  if
+you  use  this.   Note that on a USG system the subdirectory
+will not be removed anyway unless you have an unsecure (mode
+777  directory)  system.   This  is turned off by default to
+protect you against accidental or malicious  removal  of  an
+important newsgroup.
+
+_\0102._\0101._\0101_\0104.  _\010B_\010A_\010T_\010C_\010H
+
+     If set, this is the name of a program that will be used
+to unpack batched articles (those beginning with the charac-
+ter `#').  Batched articles normally are files reading
+
+        #! rnews 1234
+        article containing 1234 characters
+        #! rnews 4321
+        article containing 4321 characters
+        etc.
+
+Batching is _\010s_\010t_\010r_\010o_\010n_\010g_\010l_\010y recommended.
+
+_\0102._\0101._\0101_\0105.  _\010L_\010O_\010C_\010A_\010L_\010N_\010A_\010M_\010E
+
+     Most systems have a full name database  on  line  some-
+where,  showing for each user what their full name is.  Most
+often this is in the GCOS field  of  /etc/passwd.   If  your
+system  has  such a database, LOCALNAME should be left unde-
+fined.  If not, define LOCALNAME, and articles  posted  will
+only  receive  full names from local user information speci-
+fied in NAME or ~/.name by the user.  If you have a nonstan-
+dard GCOS format (not finger or RJE) it will be necessary to
+make local changes to fullname.c as appropriate on your sys-
+tem.
+
+_\0102._\0101._\0101_\0106.  _\010I_\010N_\010T_\010E_\010R_\010N_\010E_\010T
+
+     If your system  has  a  mailer  that  understands  ARPA
+Internet  syntax  addresses (user@site.domain) turn this on,
+and replies will use the From or Reply-To  headers.   Other-
+wise,  leave  it  disabled  and  replies  will  use the Path
+header.
+
+_\0102._\0101._\0101_\0107.  _\010M_\010Y_\010D_\010O_\010M_\010A_\010I_\010N
+
+     When generating internet addresses, this domain will be
+appended  to  the  local  site  name to form mailing address
+domains.  For example, on system ucbvax with user  root,  if
+MYDOMAIN  is set to ``.UUCP'', addresses generated will read
+``root@ucbvax.UUCP''.  If  MYDOMAIN  is  ``.Berkeley.ARPA'',
+the address would be ``root@ucbvax.Berkeley.ARPA''.  If your
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 6 -
+
+
+site is in more than one domain, use  your  primary  domain.
+The  domain  always  begins  with a period, unless the local
+site name contains the domain; in this case MYDOMAIN  should
+be the null string.
+
+_\0102._\0101._\0101_\0108.  _\010C_\010H_\010E_\010A_\010P
+
+     Do not chown spool files to  news.   Used  for  obscure
+accounting reasons on some systems.
+
+_\0102._\0101._\0101_\0109.  _\010O_\010L_\010D
+
+     Define this if any of your USENET neighbors run 2.9  or
+earlier versions of B news.  It will cause all headers writ-
+ten to contain two extra lines: Article-I.D. and Posted, for
+upward  compatibility.   Once  all  your neighbors have con-
+verted, you can save disk space and  transmission  costs  by
+turning  this off.  It is strongly encouraged that they con-
+vert. 2.10 is _\010M_\010U_\010C_\010H faster than 2.9. The performance  differ-
+ence is dramatic.
+
+_\0102._\0101._\0102_\0100.  _\010U_\010N_\010A_\010M_\010E
+
+     Define this if  the  uname  system  call  is  available
+locally,  even though you are not a USG system.  USG systems
+always have uname available and ignore this setting.
+
+_\0102._\0101._\0102_\0101.  _\010G_\010H_\010N_\010A_\010M_\010E
+
+     Define this if the 4.2BSD gethostname  system  call  is
+available.   If  neither  UNAME  or GHNAME is defined, inews
+will determine the name  of  the  local  system  by  reading
+/usr/include/whoami.h.
+
+_\0102._\0101._\0102_\0102.  _\010V_\0107_\010M_\010A_\010I_\010L
+
+     Define this if your system uses  V7  mail  conventions.
+The  V7  mail  convention is that a mailbox contains several
+messages concatenated, each message beginning  with  a  line
+reading  ``From  user date'' and ending in a blank line.  If
+this is defined, articles saved will have these lines  added
+so that mail can be used to look at saved news.
+
+_\0102._\0101._\0102_\0103.  _\010S_\010O_\010R_\010T_\010A_\010C_\010T_\010I_\010V_\010E
+
+     Define this if you want the news  groups  presented  in
+the  order  of  each  persons  .newsrc instead of the active
+file.
+
+_\0102._\0101._\0102_\0104.  _\010Z_\010A_\010P_\010N_\010O_\010T_\010E_\010S
+
+     Define this if you want old style notesfile ids in  the
+body  of  the  article to be converted into NF-ID: fields in
+the header.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 7 -
+
+
+_\0102._\0101._\0102_\0105.  _\010B_\010S_\010D_\0104__\0102
+
+     Define this if you are running 4.2 bsd Unix.
+
+_\0102._\0101._\0102_\0106.  _\010B_\010S_\010D_\0104__\0101_\010C
+
+     Define this if you are running 4.1C bsd Unix.
+
+_\0102._\0101._\0102_\0107.  _\010S_\010E_\010N_\010D_\010M_\010A_\010I_\010L
+
+     This is the program to use instead of recmail for send-
+ing  mail.   At  this time, it has only been used with send-
+mail. However, it could be used with other mailers.
+
+_\0102._\0101._\0102_\0108.  _\010M_\010Y_\010O_\010R_\010G
+
+     This should be set to the name  of  your  organization.
+Please  keep  the  name  short,  because it will be printed,
+along with the electronic  address  and  full  name  of  the
+author  of  each  message.  40 characters is probably a good
+upper bound on the length.  If the city and state or country
+of  your organization are not obvious, please try to include
+them.  If the organization name begins with a `/',  it  will
+be taken as the name of a file.  The first line in that file
+will be used as the organization.   This  permits  the  same
+binary  to  be used on many different machines.  A good file
+name would be `/usr/lib/news/organization'.  For example, an
+organization  might read ``AT&T Bell Labs, Murray Hill'', or
+``U.C. Berkeley'' or ``MIT'' or  ``Computer  Corp.  America,
+Cambridge, Mass''.
+
+     There are other parameters  that  may  be  modified  in
+_\010d_\010e_\010f_\010s._\010h, and they are described in the file.
+
+_\0102._\0102.  _\010M_\010a_\010k_\010e_\010f_\010i_\010l_\010e
+
+     There are also a few  parameters  in  the  _\010M_\010a_\010k_\010e_\010f_\010i_\010l_\010e  as
+well.  These are:
+
+_\0102._\0102._\0101.  _\010N_\010E_\010W_\010S_\010U_\010S_\010R
+
+     This is the owner (user name) of _\010i_\010n_\010e_\010w_\010s.  If you  are  a
+superuser,  you should probably create a new user id (tradi-
+tionally _\010n_\010e_\010w_\010s) and use this id.  If you are not a superuser,
+you  can  use  your  own  user  id.  If you are able to, you
+should create a mail alias _\010u_\010s_\010e_\010n_\010e_\010t  and  have  mail  to  this
+alias  forwarded to you.  This will make it easier for other
+sites to find the right person in the presence  of  changing
+jobs  and  out  of  date  or  nonexistent  directory  pages.
+NEWSUSR and ROOTID do not need to represent the same user.
+
+_\0102._\0102._\0102.  _\010N_\010E_\010W_\010S_\010G_\010R_\010P
+
+     This is the group (name) to which _\010i_\010n_\010e_\010w_\010s  belongs.   The
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 8 -
+
+
+same considerations as NEWSUSR apply.
+
+_\0102._\0102._\0103.  _\010S_\010P_\010O_\010O_\010L_\010D_\010I_\010R
+
+     This directory contains subdirectories  in  which  news
+articles will be stored.  It is normally /usr/spool/news.
+
+     Briefly, for each  newsgroup  (say  _\010n_\010e_\010t._\010g_\010e_\010n_\010e_\010r_\010a_\010l)  there
+will  be a subdirectory /usr/spool/news/net/general contain-
+ing articles, whose file names are sequential numbers,  e.g.
+/usr/spool/news/net/general/1, etc.
+
+     Each article file is in a mail-compatible  format.   It
+begins  with  a  number of header lines, followed by a blank
+line, followed by the body of the article.  The  format  has
+deliberately  been  chosen to be compatible with the ARPANET
+standard for mail documented in RFC 822.
+
+     You should place news in  an  area  of  the  disk  with
+enough  free  space to hold news you intend to keep on line.
+The total volume of news in net.all currently runs about 14M
+bytes/month.   If you expire news after the default 2 weeks,
+you will need about 7M bytes of disk space (plus some  extra
+as a safety margin and to allow for increased traffic in the
+future.) If you only receive  some  of  the  newsgroups,  or
+expire news after a different interval, these figures can be
+adjusted accordingly.  Other newsgroup classes  do  not  add
+much   to   the  volume;  fa.all  accounts  for  only  about
+80KB/week, and btl.all+bell.all are only about 450KB/week.
+
+_\0102._\0102._\0104.  _\010B_\010A_\010T_\010C_\010H_\010D_\010I_\010R
+
+     This directory will contain the  list  of  articles  to
+send to each system. It is normally /usr/spool/batch.
+
+_\0102._\0102._\0105.  _\010L_\010I_\010B_\010D_\010I_\010R
+
+     This directory will contain various system  files.   It
+is normally /usr/lib/news.
+
+_\0102._\0102._\0106.  _\010B_\010I_\010N_\010D_\010I_\010R
+
+     This is the  directory  in  which  _\010r_\010e_\010a_\010d_\010n_\010e_\010w_\010s,  _\010p_\010o_\010s_\010t_\010n_\010e_\010w_\010s,
+_\010v_\010n_\010e_\010w_\010s,  and _\010c_\010h_\010e_\010c_\010k_\010n_\010e_\010w_\010s are to be installed.  This is normally
+/usr/bin.  If you decide to set BINDIR  to  a  local  binary
+directory,  you  should consider that the _\010r_\010n_\010e_\010w_\010s and _\010c_\010u_\010n_\010b_\010a_\010t_\010c_\010h
+commands must be in a directory that can be found by  _\010u_\010u_\010x_\010q_\010t,
+which  normally  only searches /bin and /usr/bin (unless you
+modify uuxqt).
+
+_\0103.  _\010F_\010I_\010L_\010E_\010S
+
+     This section lists the files  in  LIBDIR  and  comments
+briefly what they do.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 9 -
+
+
+_\0103._\0101.  _\010a_\010c_\010t_\010i_\010v_\010e
+
+     A list of active newsgroups.  Automatically updated  as
+new newsgroups come in.  The order here is the order news is
+initially presented by _\010r_\010e_\010a_\010d_\010n_\010e_\010w_\010s, so you can edit  this  file
+to  put  important newsgroups first.  If you have _\010S_\010O_\010R_\010T_\010A_\010C_\010T_\010I_\010V_\010E
+defined, after the first time the user invokes readnews,  it
+will be presented in the order of his .newsrc.  Each line of
+the active file contains four fields, separated by a  space:
+the  newsgroup  name,  the highest local article number (for
+the most recently received article), the lowest local  arti-
+cle  number that has not yet expired, and a single character
+used to determine if the user can post  to  that  newsgroup.
+If the character is _\010y the user is permitted to post articles
+to that group. If the character is _\010n the user is not permit-
+ted  to  post articles to that groups. (This field takes the
+place of the _\010n_\010g_\010f_\010i_\010l_\010e in  earlier  versions  of  news.   Local
+article numbers begin at 1 and count sequentially within the
+newsgroup as articles are received.   They  do  not  usually
+correspond  to  local  article  numbers on other sites.  The
+article numbers are always stored as a 5 digit number  (with
+leading zeros) to allow updating of the file in place.
+
+     The active file  should  contain  _\010A_\010L_\010L  active  net-wide
+active  newsgroups  (net.all,  mod.all  and  fa.all).  It is
+important that they all be present, as they are  used  as  a
+check  for valid newsgroup names and invalid newsgroup names
+are removed from any articles processed by inews. You should
+use the _\010s_\010y_\010s file to keep out unwanted newsgroups.
+
+_\0103._\0102.  _\010a_\010l_\010i_\010a_\010s_\010e_\010s
+
+     This file is used to map bad  newsgroup  names  to  the
+correct  ones.   (For example, net.unix.wizards is mapped in
+net.unix-wizards).   Each  line  consists  of   two   fields
+separated  by  a  space.  If the first field is found in the
+newsgroup list of the incoming article, it is changed to the
+second  field. This change takes place in the article before
+it is passed on to other systems, not just locally.
+
+_\0103._\0103.  _\010b_\010a_\010t_\010c_\010h
+
+     This program reads a list of filenames of articles  and
+outputs  the  articles themselves. It is typically used by a
+shell script such as _\010s_\010e_\010n_\010d_\010b_\010a_\010t_\010c_\010h or _\010c_\010s_\010e_\010n_\010d_\010b_\010a_\010t_\010c_\010h.
+
+_\0103._\0104.  _\010c_\010a_\010e_\010s_\010a_\010r
+
+     A program to do caesar decoding of rotated text,  on  a
+line  by  line  basis.   The standard input is copied to the
+standard output, rotating each line according  to  a  static
+single  letter  frequency  table.  If an integer argument is
+given (e.g. 13), every line is  rotated  by  that  argument,
+without  regard  to  letter  frequencies.   This  program is
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 10 -
+
+
+invoked by the ``D'' readnews command.  It is also used   by
+postnews   with  the  ``13''  argument  to  encode  selected
+material for posting.
+
+_\0103._\0105.  _\010c_\010h_\010e_\010c_\010k_\010g_\010r_\010o_\010u_\010p_\010s
+
+     checkgroups is a shell file to aid in automatic  check-
+ing  of  the accuracy of your active file. It is executed by
+the _\010c_\010h_\010e_\010c_\010k_\010g_\010r_\010o_\010u_\010p_\010s control message and mails a list of  out  of
+date  newsgroups  to  the  person  defined by _\010N_\010O_\010T_\010I_\010F_\010Y It also
+updates the _\010n_\010e_\010w_\010s_\010g_\010r_\010o_\010u_\010p_\010s file that is used by  _\010p_\010o_\010s_\010t_\010n_\010e_\010w_\010s  as  a
+helpfile for newsgroup selection.
+
+_\0103._\0106.  _\010c_\010o_\010m_\010p_\010r_\010e_\010s_\010s
+
+     This program  is  used  for  data  compression  by  the
+compressed batching scheme. It averages 50% compression on a
+typical batch of news.
+
+_\0103._\0107.  _\010c_\010s_\010e_\010n_\010d_\010b_\010a_\010t_\010c_\010h
+
+     This shell  file is used to send a compressed batch  of
+news to a machine that has _\010c_\010u_\010n_\010b_\010a_\010t_\010c_\010h available to unbatch it.
+
+_\0103._\0108.  _\010d_\010i_\010s_\010t_\010r_\010i_\010b_\010u_\010t_\010i_\010o_\010n_\010s
+
+     This is a list of distributions that are valid for your
+site.  Each line has two fields separated by the first space
+on the line.  The first field is the name of  the  distribu-
+tion  (e.g.  usa,  na,  etc.).   The  second  field  is text
+describing the distribution. As distributed,  this  file  is
+only  correct  for sites in the USA. You should examine this
+file and add or delete the appropriate distributions.
+
+_\0103._\0109.  _\010e_\010r_\010r_\010l_\010o_\010g
+
+     This file contains  the  ``important''  error  messages
+found  in  the  log file. These errors usually indicate that
+something was wrong with an article.  This  file  should  be
+watched  closely.  The  _\010l_\010o_\010g  file contains much more verbose
+information and it is often difficult to  detect  errors  in
+it.
+
+_\0103._\0101_\0100.  _\010e_\010x_\010p_\010i_\010r_\010e
+
+     This program expires old articles and archives then  if
+archiving  is  selected. It is typically run once a day from
+_\010c_\010r_\010o_\010n.
+
+_\0103._\0101_\0101.  _\010h_\010e_\010l_\010p
+
+     A list of commands printed when an illegal  command  is
+typed to _\010r_\010e_\010a_\010d_\010n_\010e_\010w_\010s.
+
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 11 -
+
+
+_\0103._\0101_\0102.  _\010h_\010i_\010s_\010t_\010o_\010r_\010y
+
+     A list of every article that has come in to  your  sys-
+tem.   Used  to  reject articles that come in for the second
+time (presumably via a different path).  This file will grow
+but is cleaned out by the expire command.
+
+_\0103._\0101_\0103.  _\010h_\010i_\010s_\010t_\010o_\010r_\010y._\010d_\010i_\010r,_\010h_\010i_\010s_\010t_\010o_\010r_\010y._\010p_\010a_\010g
+
+     These two files are used on V7 systems as a hashed ver-
+sion of history, containing the message ID's of all articles
+in history.  They are only used if -DDBM and -ldbm appear in
+the Makefile.
+
+_\0103._\0101_\0104.  _\010i_\010n_\010e_\010w_\010s
+
+     This is the program that actually  sends  and  receives
+news. All other programs interface eventually with it. It is
+not intended to be used directly by a human,  so  it  is  no
+longer in /usr/bin.
+
+_\0103._\0101_\0105.  _\010l_\010o_\010c_\010a_\010l_\010g_\010r_\010o_\010u_\010p_\010s
+
+     This is a list of newsgroups specific to your site.  It
+is used in addition to the data furnished by the _\010c_\010h_\010e_\010c_\010k_\010g_\010r_\010o_\010u_\010p_\010s
+control message to provide a  list  of  possible  groups  to
+which to submit articles.
+
+_\0103._\0101_\0106.  _\010l_\010o_\010g
+
+     If present, a log of articles processed and error  con-
+ditions  is kept here.  This file grows without limit unless
+cleaned out periodically, the trimlib script in misc can  be
+invoked  from  /usr/lib/crontab  daily or weekly to keep the
+log short.
+
+_\0103._\0101_\0107.  _\010m_\010o_\010d_\010e_\010r_\010a_\010t_\010o_\010r_\010s
+
+     This file contains a list of the moderators  and  their
+mailing  addresses  for  each moderated newsgroup. Each line
+consists of two  fields.  the  first  is  the  name  of  the
+moderated  group.  The  second is the mailing address of the
+group's moderator. As distributed, they are almost certainly
+wrong.  You  will need to modify the paths so they work from
+your site.
+
+_\0103._\0101_\0108.  _\010n_\010e_\010w_\010s_\010g_\010r_\010o_\010u_\010p_\010s
+
+     This file is displayed by _\010p_\010o_\010s_\010t_\010n_\010e_\010w_\010s  when  a  user  hits
+``?''  in  response  to  its  request  for newsgroups. It is
+updated automatically by the _\010c_\010h_\010e_\010c_\010k_\010g_\010r_\010o_\010u_\010p_\010s control message.
+
+
+
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 12 -
+
+
+_\0103._\0101_\0109.  _\010n_\010o_\010t_\010i_\010f_\010y
+
+     If this file is present, it's contents will be taken as
+the name of the user to notify in case of a problem.  If the
+file is empty, nobody will be notified.  (This overrides the
+NOTIFY  option  in  defs.h.)  This  is  useful if one person
+administers several  systems  and  does  not  want  multiple
+copies of control message notifications.
+
+_\0103._\0102_\0100.  _\010o_\010a_\010c_\010t_\010i_\010v_\010e, _\010o_\010h_\010i_\010s_\010t_\010o_\010r_\010y, _\010o_\010h_\010i_\010s_\010t_\010o_\010r_\010y._\010d_\010i_\010r, _\010o_\010h_\010i_\010s_\010t_\010o_\010r_\010y._\010p_\010a_\010g
+
+     These are copies of the corresponding active,  history,
+history.dir,  history.pag  files before expire ran. They are
+kept in case something happens to the originals.
+
+_\0103._\0102_\0101.  _\010r_\010e_\010c_\010m_\010a_\010i_\010l
+
+     This program can serve as a link between news and  your
+local  mailer.   If  you  have  _\010s_\010e_\010n_\010d_\010m_\010a_\010i_\010l, don't use recmail.
+Sendmail is much more useful.
+
+_\0103._\0102_\0102.  _\010r_\010e_\010c_\010n_\010e_\010w_\010s
+
+     A program which allows you to send  mail  to  get  news
+posted.   You usually need to run _\010s_\010e_\010n_\010d_\010m_\010a_\010i_\010l or _\010d_\010e_\010l_\010i_\010v_\010e_\010r_\010m_\010a_\010i_\010l to
+be able to use this.
+
+_\0103._\0102_\0103.  _\010r_\010e_\010c_\010o_\010r_\010d_\010i_\010n_\010g
+
+     A list of newsgroup classes and  filenames  to  display
+recordings  for.   The recording feature is analogous to the
+recordings played in some  areas  when  you  dial  directory
+assistance,  trying to be annoying and make you think twice.
+Recordings on certain newsgroups are intended to remind  the
+user  of  the  rules for the newsgroup, or, in the case of a
+company worried about letting proprietary  information  out,
+reminding authors that anything they say is seen outside the
+company  and  so  proprietary  information  should  not   be
+included.
+
+     The file contains one line  per  recording.   The  line
+contains  two fields, separated by a space.  The first field
+is the newsgroup class (e.g. ``net.all''), the second  field
+is the name of the file containing the recorded message.  If
+the file name does not  begin  with  a  slash,  it  will  be
+searched for in LIBDIR.  Sample recording files can be found
+in the misc directory.
+
+_\0103._\0102_\0104.  _\010r_\010m_\010g_\010r_\010o_\010u_\010p
+
+     This shell file should be used  to  remove  any  groups
+that are no longer used.
+
+
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 13 -
+
+
+_\0103._\0102_\0105.  _\010s_\010e_\010n_\010d_\010b_\010a_\010t_\010c_\010h
+
+     This shell file is used to  send  batched  articles  to
+other systems. It is typically run from _\010c_\010r_\010o_\010n.
+
+_\0103._\0102_\0106.  _\010s_\010e_\010n_\010d_\010n_\010e_\010w_\010s
+
+     A program to send news internally from one computer  to
+another.  Useful if you use mail links to transmit articles.
+
+_\0103._\0102_\0107.  _\010s_\010e_\010q
+
+     The current sequence number for your system.   Used  to
+generate unique article ID's.
+
+_\0103._\0102_\0108.  _\010s_\010y_\010s
+
+     A list of all your  neighbors,  which  newsgroups  they
+get, and how to send news to them.  The format is documented
+below.
+
+_\0103._\0102_\0109.  _\010u_\010n_\010b_\010a_\010t_\010c_\010h
+
+     This program is used to unbatch  the  incoming  batched
+news  and feed each article to inews. It's horrible and will
+go away in the next version.
+
+_\0103._\0103_\0100.  _\010u_\010s_\010e_\010r_\010s
+
+     A list of users that read news on your system.
+
+_\0103._\0103_\0101.  _\010u_\010u_\010r_\010e_\010c
+
+     A program to receive news sent by _\010s_\010e_\010n_\010d_\010n_\010e_\010w_\010s.
+
+_\0103._\0103_\0102.  _\010v_\010n_\010e_\010w_\010s._\010h_\010e_\010l_\010p
+
+     This is the helpfile used by vnews.
+
+_\0104.  _\010S_\010e_\010t_\010t_\010i_\010n_\010g _\010U_\010p _\010L_\010i_\010n_\010k_\010s
+
+     There are two basic types of links for exchanging news:
+those that use mail and those that don't.  The ones that use
+mail are more indirect, yet more versatile  while  the  ones
+that don't are simpler.  The default is without mail so that
+is discussed first.
+
+_\0104._\0101.  _\010N_\010o_\010n-_\010m_\010a_\010i_\010l _\010L_\010i_\010n_\010k_\010s
+
+     The basic theory behind a non-mail  link  is  that  the
+_\010r_\010n_\010e_\010w_\010s program is invoked on the remote system with the arti-
+cle being transmitted as the standard input.  This is possi-
+ble  on some networks, but the most common implementation is
+via the  _\010U_\010U_\010C_\010P  network.   Using  the  _\010u_\010u_\010x(_\0101_\010C)  command,  the
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 14 -
+
+
+command which is forked to the shell looks like:
+           _\010u_\010u_\010x - -_\010r -_\010z _\010r_\010e_\010m_\010o_\010t_\010e_\010s_\010y_\010s!_\010r_\010n_\010e_\010w_\010s < _\010a_\010r_\010t_\010i_\010c_\010l_\010e
+This is the default transmission method.  In order to set up
+such  a  link,  obviously a _\010U_\010U_\010C_\010P link with the remote system
+must be in effect.  In addition, _\010r_\010n_\010e_\010w_\010s must be available and
+executable  by  _\010u_\010u_\010x_\010q_\010t on the remote machine.  In most cases,
+this means that _\010r_\010n_\010e_\010w_\010s must be in /usr/bin so  _\010u_\010u_\010x  can  find
+it.   Also,  /usr/src/cmd/uucp/uuxqt.c  should be checked to
+make sure that rnews is an allowed command.
+
+     Other networks that allow remote execution include  the
+Berknet,  BLICN  (usend), many Ethernets, and the NSC hyper-
+channel (nusend).  It is important, however, that a spooling
+mechanism  be  available.   Otherwise,  if system A tries to
+send an article to system B via a remote execution  command,
+and B is down, the article could be lost.  Spooling arranges
+that the system will try again when B comes back up.
+
+_\0104._\0102.  _\010M_\010a_\010i_\010l _\010L_\010i_\010n_\010k_\010s
+
+     When using mail to transmit articles, two  intermediary
+programs are necessary.  These are _\010s_\010e_\010n_\010d_\010n_\010e_\010w_\010s(_\0108) and _\010u_\010u_\010r_\010e_\010c(_\0108).
+The idea is that when system A wants to send an  article  to
+system B, the sys file on system A has an entry for system B
+such as:
+
+        /usr/lib/news/sendnews -a rnews@B
+
+which runs _\010s_\010e_\010n_\010d_\010n_\010e_\010w_\010s on the article.  The -a option specifies
+that the mail should be formatted for the Arpanet.  Sendnews
+packages the article and mails it to rnews@B.  Somehow,  the
+B  system  is  expected  to  make sure that all mail to user
+``rnews'' is fed as input to the program _\010u_\010u_\010r_\010e_\010c.   This  pro-
+gram unpackages it and invokes rnews.
+
+     The best way to get mail to rnews fed into _\010u_\010u_\010r_\010e_\010c is  to
+use  sendmail or delivermail, if you are on a system running
+them.  Create an alias in /usr/lib/aliases as follows:
+
+        rnews: "|/usr/lib/news/uurec"
+
+and sendmail will handle it.  If you do not have a  facility
+for  forwarding  mail  to  a  program,  you can gimmick your
+mailer to watch for it (using _\010p_\010o_\010p_\010e_\010n(3S), this is  easy)  or,
+if  you  don't want to do any programming, you can have _\010c_\010r_\010o_\010n
+invoke uurec every hour with /usr/spool/mail/rnews as stdin.
+This solution is messier because uurec must potentially deal
+with  multiple  messages,  something  that  has  never  been
+tested.
+
+_\0105.  _\010F_\010o_\010r_\010m_\010a_\010t _\010o_\010f _\010t_\010h_\010e _\010s_\010y_\010s _\010f_\010i_\010l_\010e
+
+     To set up a link to another site, edit the _\010s_\010y_\010s file  in
+LIBDIR.   This  file  is  similar to the L.sys file of uucp.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 15 -
+
+
+Each line contains four fields, separated by colons:
+
+(1)  The system name of a site to which  you  forward  news.
+     Normally   all  systems  you  have  links  to  will  be
+     included.  You should also have a  line  for  your  own
+     system.
+
+(2)  The newsgroups to be forwarded to them.  This is a pat-
+     tern  in  the  sense of a subscription.  Generally, you
+     will list classes of newsgroups, that is, using ``all''
+     for  everything.   A  typical forwarding list for a new
+     site would be
+
+             net,mod,na,usa,to.sysname
+
+     where _\010s_\010y_\010s_\010n_\010a_\010m_\010e is the name of the  remote  system.   (Of
+     course  if you are not in the USA or North America, you
+     would remove those distributions and replace them  with
+     the  ones  appropriate  for  you).   In particular, you
+     don't want to forward _\010a_\010l_\010l since local newsgroups (those
+     without  dots)  should  not  be  sent.   For  the  line
+     describing your own system, this  field  describes  the
+     newsgroups  your  site  will  accept from remote sites.
+     Thus, if another site insists on sending  you  a  news-
+     group you don't want, say _\010n_\010e_\010t._\010j_\010o_\010k_\010e_\010s, include !_\010n_\010e_\010t._\010j_\010o_\010k_\010e_\010s
+     here.
+
+(3)  This field contains flags  describing  the  connection.
+     An  A will indicate that the other site is running an A
+     version of netnews.  A B indicates a B version.   Leav-
+     ing  it  empty  defaults to B.  If you are reading this
+     document, you have a B version.   Some  existing  sites
+     run  A  versions.  If you aren't sure, ask your contact
+     at the other site, with whom you should be  talking  to
+     set  this  up  anyway.   The  F flag indicates that the
+     fourth field is the name of a file.  The full path name
+     of  a  file  containing  the  article  in SPOOL will be
+     appended to this file.  The L flag  prevents  transmis-
+     sion  unless the article was created on this site.  (It
+     is recommended that you feed an L link  to  a  backbone
+     site,  to  ensure  that  your  submissions will be more
+     likely to get to the entire network, even in the  event
+     of  a local problem.  Please make sure that a mail link
+     exists too, so you can get replies.)  The  N  flag  can
+     also  be  included here, indicating that mail should be
+     sent using the _\010i_\010h_\010a_\010v_\010e/_\010s_\010e_\010n_\010d_\010m_\010e protocol  described  below.
+     The U field arranges that the parameter to the optional
+     %s in the command field to be filled  in  with  a  per-
+     manent file name from SPOOL instead of a temporary cus-
+     tomized file name.
+
+(4)  This field is the command to be run to send news to the
+     remote  site.   The  article  will  be  on the standard
+     input.  Leaving this field blank means an ordinary uucp
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 16 -
+
+
+     link is being used, that is, the command defaults to
+
+             uux - -r -z sysname!rnews
+
+     The - option tells uux to expect input on  stdin.   The
+     -z  option  is nonstandard - you should add it, see the
+     minus.z* files in the uucp directory.  It shuts off the
+     annoying  message you would otherwise get mailed to you
+     telling you that your article  was  broadcast  OK.   To
+     avoid using the -z option, change the source or put the
+     uux command in the fourth field.  The -r  option  tells
+     uux  not  to  start up a daemon right away.  This turns
+     out to ease the load on the system, at the  expense  of
+     making news be transmitted a bit slower.  The news will
+     be sent when the next daemon is started,  usually  this
+     means  the  next time mail is sent to or from your sys-
+     tem.  If this turns out to be unreasonably long, put  a
+     line in crontab to run
+
+             /usr/lib/uucp/uucico -r1
+
+     every hour or so.
+
+     Here is a sample sys file for  a  site  ``myvax''  with
+connections  to  ``yourvax'' where myvax also passes news on
+to ``downstream''.  We assume  that  ``myvax''  and  ``down-
+stream'' exchange a local newsgroup class lng.all as well as
+the network wide  newsgroups.   News  to  ``downstream''  is
+batched.  We  also  assume that myvax and yourvax are in the
+USA, while downstream is in Canada.
+
+        myvax:net,fa,mod,na,usa,lng::
+        yourvax:net,fa,mod,na,usa::
+        downstream:net,fa,mod,na,usa,lng:F:/usr/spool/batch/downstream
+
+
+_\0106.  _\010P_\010o_\010s_\010t_\010i_\010n_\010g _\010M_\010e_\010t_\010h_\010o_\010d_\010s
+
+     The basic method is _\010p_\010o_\010s_\010t_\010n_\010e_\010w_\010s.  This program will prompt
+you  for the title, newsgroups, and distribution, then place
+you in the editor.   (The  system  default  EDITOR  is  used
+unless  the  environment  variable EDITOR is set, overriding
+the system default.) The text  should  be  typed  after  the
+blank  line.   The  title  and  newsgroups are available for
+editing at the top of the buffer.  Other header lines can be
+added, such as an expiration date or distribution.  When you
+write out the file and exit from  the  editor,  the  article
+will be posted.
+
+     Another method is to use mail.  This can only  be  done
+on systems that allow mail to a given name to be fed into an
+arbitrary program as input.  This is easily  done  with  the
+Berkeley  delivermail  or sendmail program, and not with any
+other mailer the  author  is  familiar  with.   (It  may  be
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 17 -
+
+
+possible  to  painfully  set this up with MMDF, provided the
+newsgroup name is no more than 8 characters  long.)  To  use
+mail, set up an alias such as the following:
+
+        net.general: "|/usr/lib/news/recnews net.general"
+
+Whenever a user sends mail to _\010n_\010e_\010t._\010g_\010e_\010n_\010e_\010r_\010a_\010l,  this  starts  up
+the  given  shell command which calls recnews with one argu-
+ment, the name of the newsgroup.  You  need  to  create  one
+alias for each newsgroup, and to keep the list up to date as
+new newsgroups are created.  _\010R_\010e_\010c_\010n_\010e_\010w_\010s  will  in  turn  invoke
+_\010i_\010n_\010e_\010w_\010s.
+
+     Note that there are problems with recnews.  There is no
+way  to use it to post to multiple newsgroups without creat-
+ing separate articles (something frowned  upon   because  it
+forces  people to read the same thing more than once.) Also,
+there is no way to make the recording feature (to safe guard
+proprietary information) work when recnews is used.
+
+_\0107.  _\010V_\010a_\010r_\010i_\010o_\010u_\010s _\010c_\010o_\010n_\010s_\010i_\010d_\010e_\010r_\010a_\010t_\010i_\010o_\010n_\010s
+
+_\0107._\0101.  _\010S_\010u_\010i_\010d _\010b_\010i_\010t_\010s
+
+     The current intended state of  affairs  is  that  _\010i_\010n_\010e_\010w_\010s
+runs suid NEWSUSR.  The _\010r_\010e_\010a_\010d_\010n_\010e_\010w_\010s program does not need to be
+suid.  This makes it possible to write your own interface to
+read news instead of using readnews.  (As distributed, _\010i_\010n_\010e_\010w_\010s
+is also sgid.  I know of no good reason for this.)
+
+_\0107._\0102.  _\010M_\010o_\010d_\010e_\010s _\010o_\010f _\010S_\010p_\010o_\010o_\010l _\010D_\010i_\010r_\010e_\010c_\010t_\010o_\010r_\010i_\010e_\010s
+
+     All the files should be writable by NEWSUSR.   However,
+due to a glitch, you will probably have to make the SPOOLDIR
+and its subdirectories mode 777.  It could be 755 except for
+one  problem.   When  a  new  newsgroup comes in, _\010i_\010n_\010e_\010w_\010s will
+attempt to _\010m_\010k_\010d_\010i_\010r a new  subdirectory  of  SPOOLDIR  for  the
+newsgroup.   Since both inews and mkdir are suid, mkdir will
+use the real uid instead of NEWSUSER when checking for  per-
+missions,  and  if  the  directory  isn't 777 the check will
+fail.  Here are several alternatives if you don't want a 777
+directory around:
+
+_\0107._\0102._\0101.  _\010F_\010i_\010x _\010R_\010e_\010a_\010l _\010U_\010i_\010d
+
+     If inews is always run from cron or by root,  the  real
+uid  can  be arranged to be root or NEWSUSR.  This is a poor
+solution since it makes the local creation of new  newsgroup
+require  super user permissions, and is a potential security
+hole.  If this approach is taken,  care  must  be  taken  to
+insure that the owner of the created directory is NEWSUSR.
+
+
+
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 18 -
+
+
+_\0107._\0102._\0102.  _\010C_\010h_\010a_\010n_\010g_\010e _\010t_\010h_\010e _\010K_\010e_\010r_\010n_\010e_\010l
+
+     _\010i_\010n_\010e_\010w_\010s will do _\010s_\010e_\010t_\010u_\010i_\010d(_\010g_\010e_\010t_\010e_\010u_\010i_\010d())  before  it  forks  the
+mkdir.   If  your system permits this call, there will be no
+problem.  In particular, Berkeley 4.0BSD and  later  systems
+allow  this.   An  alternative  change  to  the kernel is to
+automatically stack uids: when an suid program is  run,  set
+the new real uid to the old effective uid.
+
+_\0107._\0102._\0103.  _\010G_\010r_\010o_\010u_\010p_\010s
+
+     You could have inews be  sgid  NEWSGRP  and  all  files
+writable  by  the  group.  This approach has been tested and
+the problem turns out to be that the _\010m_\010k_\010d_\010i_\010r command uses  the
+_\010a_\010c_\010c_\010e_\010s_\010s  system call to check permissions.  Since _\010a_\010c_\010c_\010e_\010s_\010s uses
+the real gid, you run into the same problem.
+
+_\0107._\0102._\0104.  _\010A_\010n_\010o_\010t_\010h_\010e_\010r _\010m_\010k_\010d_\010i_\010r
+
+     You could create a version  of  mkdir  that  does  less
+checking,  and  put  it  in  a  directory  that  can only be
+accessed by NEWSUSR (mode  700,  owned  by  NEWSUSR).   Have
+inews fork this mkdir.
+
+_\0107._\0103.  _\010E_\010x_\010p_\010i_\010r_\010a_\010t_\010i_\010o_\010n _\010d_\010a_\010t_\010e_\010s
+
+     To get articles to expire automatically, put a line  in
+crontab to run
+
+        /usr/lib/news/expire
+
+every night.  This command deletes all expired news.  The -a
+_\010n_\010e_\010w_\010s_\010g_\010r_\010o_\010u_\010p_\010s  option  causes  all  expired news to be archived
+under /usr/spool/oldnews depending on which  newsgroups  are
+selected. (See _\010e_\010x_\010p_\010i_\010r_\010e(_\0103) for details.
+
+     Sometimes news is not expired when it  should  be.   Be
+sure  to  check that expire has permissions to unlink files,
+that it runs as a user that has a .newsrc, and  that  it  is
+properly  suid.   You can manually invoke expire with the -v
+(verbose) option to find out what it's doing.  Adding levels
+of verbosity (e.g. -v6) will get more and more output.
+
+_\0107._\0104.  _\010V_\010e_\010r_\010s_\010i_\010o_\010n _\010t_\010o _\010V_\010e_\010r_\010s_\010i_\010o_\010n
+
+     Version B will understand incoming news in either  ver-
+sion  A or B format, automatically.  Version B will generate
+either format, depending on the flag in the 3rd field of the
+sys  line.   Version A will not understand version B format.
+Thus, it is possible for two version B sites to  communicate
+using  version  A  format.  This will work but is not a good
+idea, since the translation from B to  A  loses  information
+(such  as  the expiration date) which will not be there when
+translated back to version B.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 19 -
+
+
+     News from versions A and 2.9 B do not  conform  to  the
+USENET interchange standard.  2.10 supports the standard and
+will communicate with either A or 2.9 B  news.   A  news  is
+written  (losing  other  header  information) if A is in the
+flags for the system.  If OLD is defined,  2.10  will  write
+out  headers  with  both standard (Date, Message-ID) and 2.9
+(Posted, Article-I.D.) lines so that either  B  system  will
+properly handle the article.  Incoming news is recognized by
+the first letter (``A'' for A news), or the lack of an ``@''
+in  the  From line (2.9).  Missing fields are constructed as
+well as possible from the available information.
+
+_\0107._\0105.  _\010P_\010r_\010e_\010s_\010e_\010n_\010t_\010a_\010t_\010i_\010o_\010n _\010O_\010r_\010d_\010e_\010r
+
+     The order of the newsgroups listed in LIBDIR/active  is
+the order the newsgroups will be presented in initially.  If
+_\010S_\010O_\010R_\010T_\010A_\010C_\010T_\010I_\010V_\010E is defined in defs.h, after the first  time  news
+will be presented in the order of the persons .newsrc.  Ini-
+tially this will be directory order, but you can edit impor-
+tant newsgroups like general to the top.
+
+     A recommended order to maintain your active file in  is
+this:
+
+                general
+                local.general
+                net.announce
+                net.general
+                net.followup
+                local newsgroups, in alphabetical order
+                net.all newsgroups, in alphabetical order
+                fa.all, in alphabetical order
+                test
+                all.test
+                to.all
+                control
+                junk
+
+
+_\0108.  _\010C_\010o_\010n_\010t_\010r_\010o_\010l _\010M_\010e_\010s_\010s_\010a_\010g_\010e_\010s
+
+     Some news systems will send you articles that  are  not
+for  human consumption.  They are messages to your news sys-
+tem called _\010c_\010o_\010n_\010t_\010r_\010o_\010l _\010m_\010e_\010s_\010s_\010a_\010g_\010e_\010s.  Such messages contain the Con-
+trol:   header.    Older  systems  use  newsgroups  matching
+_\010a_\010l_\010l._\010a_\010l_\010l._\010c_\010t_\010l, and this will still work, although the Control:
+header  is  preferred.  Since the newsgroup name is used for
+distribution only, and is not checked to ensure it's in  the
+active  file,  such newsgroup names can still be used.  This
+makes it possible to post network wide control messages with
+_\010n_\010e_\010t._\010m_\010s_\010g._\010c_\010t_\010l (or restricted broadcast such as _\010b_\010t_\010l._\010m_\010s_\010g._\010c_\010t_\010l) or
+messages for a particular system:  _\010t_\010o._\010u_\010c_\010b_\010v_\010a_\010x._\010c_\010t_\010l.   Messages
+are  canceled, however, with a Control: line in a message to
+the same newsgroup(s) as the original message.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 20 -
+
+
+     A control message contains a command and zero  or  more
+arguments  (much  like  a UNIX program).  The subject of the
+article contains the command and arguments.  The body of the
+article  is  usually ignored, although some messages can use
+it for additional text information.   Control  messages  are
+not  stored in SPOOL, rather they are acted on and discarded
+at once.
+
+_\0108._\0101.  _\010i_\010h_\010a_\010v_\010e/_\010s_\010e_\010n_\010d_\010m_\010e
+
+     Two control messages are _\010i_\010h_\010a_\010v_\010e and _\010s_\010e_\010n_\010d_\010m_\010e.  These  mes-
+sages allow two participating sites to set up a link so that
+one site will tell the other site it has a given article and
+wait  for a request before it actually sends it.  The normal
+case is to send an entire article to a  system,  which  con-
+sults  the  history  file  to see if the article has already
+been seen, and then throws it away if it's been seen before.
+
+     Note  that,  since  most  messages  are  short  anyway,
+experience  has  indicated  that for ordinary UUCP unbatched
+communication, all ihave/sendme does is triple the load  and
+slow  down  forwarding.   Hopefully  future  code will allow
+ihave's with multiple message ID's in the body, and existing
+code  in  2.10  understands such messages, but does not gen-
+erate them.  So we advise that you  don't  use  ihave/sendme
+for now.
+
+     Use of these control messages  can  cut  down  on  this
+wasted  transmission,  but if you have a polled UUCP connec-
+tion, they can slow down receipt  of  news  due  to  polling
+delays.   It  is  up to each connected pair of sites whether
+they want to use this protocol.  The choice is controlled by
+the N flag in the sys file.  In the case of a leaf node (one
+with only one neighbor) there is no advantage to this proto-
+col.   Even  if both sites are able to initiate a connection
+(have dialers or the link is hardwired) the -r option on the
+uux  can  cause  2  hour or more delays in propagating news.
+Since this protocol can triple the number of  messages  gen-
+erated,  you  should  carefully evaluate your situation when
+deciding whether to use it.  If transmission time and  phone
+bills  dominate  your  costs,  and  you  are sending news to
+several sites, and large article bodies dominate  the  costs
+(rather  than  the  headers and the time spent by UUCP nego-
+tiating transmission)  it  is  probably  worthwhile  to  use
+ihave/sendme.   If your costs are dominated by CPU load from
+UUCP, or if you send news to a site that cannot get it  from
+anywhere  else,  you probably do not want to use this proto-
+col.  The decision can be made independently for  each  site
+in your sys file.
+
+     This pair works as follows: Site _\010m_\010y_\010s_\010i_\010t_\010e receives  arti-
+cle  <_\0101_\0102_\0103@_\010a_\010b_\010c._\010U_\010U_\010C_\010P>.   It  enters it locally and then broad-
+casts it to its neighbors.  One of  its  neighbors  is  site
+_\010y_\010o_\010u_\010r_\010s_\010i_\010t_\010e  which  has  the N flag in the _\010s_\010y_\010s file.  So mysite
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 21 -
+
+
+sends an article on  newsgroup  to.yoursite.ctl  with  title
+``ihave  <123@abc.UUCP>  mysite''.  This control message has
+two arguments - the first (<123@abc.UUCP>) is the article ID
+of  the article in question, the second (mysite) is the name
+of the site sending the article.  The name of the  newsgroup
+and  the  sys file control transmission of the article, nor-
+mally the sys file will read something like
+
+        yoursite:net.all,fa.all,to.yoursite:BN:
+
+which  will  cause  an  article  on  to.yoursite.ctl  to  be
+transmitted.
+
+     Yoursite receives the message and looks to  see  if  it
+has  seen  it before.  If it has, it throws the message away
+and  stops.   If  it  hasn't,  it   sends   a   message   on
+to.mysite.ctl  with title ``sendme <123@abc.UUCP> yoursite''
+which is transmitted  to  mysite.   (The  two  arguments  to
+sendme  are the article ID requested and the site to send it
+to.) Then mysite gets this message  and  actually  transmits
+the article to yoursite.
+
+_\0108._\0102.  _\010n_\010e_\010w_\010g_\010r_\010o_\010u_\010p
+
+     This message has one argument, the name of a  newsgroup
+to  be  created.   This  allows  special  action to be taken
+locally when a new newsgroup is created.  It is generated by
+the  -C option to inews.  By default, the newsgroup is added
+to the active file and a directory is created, and  mail  is
+sent  to  the local contact advising that this has happened.
+See the routine ``c_newgroup''  in  control.c  if  you  want
+something  different  to  happen.   (Note that, although the
+body of the message contains a brief description of the pur-
+pose  of  the  group,  this  body  is usually thrown away by
+existing software.)
+
+_\0108._\0103.  _\010r_\010m_\010g_\010r_\010o_\010u_\010p
+
+     This message has one argument, the name of a  newsgroup
+to  be removed.  It is used for network-wide cancellation of
+a newsgroup.  If MANUALLY is not defined, it will remove the
+articles,  directory,  and  active  file line for the group.
+There is a shell script _\010r_\010m_\010g_\010r_\010o_\010u_\010p that  does  essentially  the
+same  thing  as  this  message,  but  the  shell script only
+removes the group locally.   We  recommend  that  you  leave
+MANUALLY  defined, and when you receive mail advising you of
+the demise of the newsgroup, you run rmgroup by hand.   This
+will prevent accidental or malicious removal of a good news-
+group.
+
+_\0108._\0104.  _\010c_\010a_\010n_\010c_\010e_\010l
+
+     This message cancels a given  article.   It  takes  one
+argument,  the  message  ID  of  the  article to cancel.  It
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 22 -
+
+
+should be broadcast to the same newsgroup  as  the  original
+article.
+
+_\0108._\0105.  _\010s_\010e_\010n_\010d_\010s_\010y_\010s
+
+     The sys file is mailed to the originator  of  the  mes-
+sage.   There  are  no  arguments.   This is used for making
+maps.  Since your sys file is public information, you should
+not remove or change this control message.
+
+_\0108._\0106.  _\010s_\010e_\010n_\010d_\010u_\010u_\010n_\010a_\010m_\010e
+
+     The _\010u_\010u_\010n_\010a_\010m_\010e(1) program is run and the output  is  mailed
+to  the  originator of the message.  There are no arguments.
+This is used for making uucp maps.  If you do not  run  UUCP
+or have sites in your L.sys which are a secret, you may wish
+to edit this.  Note  that  only  the  output  of  uuname  is
+mailed,  not the contents of L.sys (which news does not have
+access to anyway).  If you do  make  a  change,  you  should
+arrange  that  some mail still is sent out to the originator
+of the message, so he will know your site received it.   See
+the code in routine c_senduuname in control.c.
+
+_\0108._\0107.  _\010v_\010e_\010r_\010s_\010i_\010o_\010n
+
+     The local version name/number of the  netnews  software
+is mailed back to the author of the control message.
+
+_\0108._\0108.  _\010c_\010h_\010e_\010c_\010k_\010g_\010r_\010o_\010u_\010p_\010s
+
+     This control message is an  attempt  at  semi-automatic
+mainenance  of  the list of active news groups. This control
+messages takes the body of the article  and  pipes  it  into
+LIB/checkgroups.  As  mentioned  perviously, LIB/checkgroups
+will update the newsgroups file, add any missing  newsgroups
+and  mail  a message to _\010N_\010O_\010T_\010I_\010F_\010Y about any old newsgroups that
+should be removed. It is expected that the person who  main-
+tains the list of active newsgroups will broadcast this con-
+trol message on a regular basis.
+
+_\0108._\0109.  _\010O_\010t_\010h_\010e_\010r _\010M_\010e_\010s_\010s_\010a_\010g_\010e_\010s
+
+     Any unrecognized message will cause an error message to
+be  mailed  to  the  originator.  Additional messages may be
+defined as time goes on, such as messages  to  automatically
+update  directories  or  maps.   You should be willing to go
+into the code (control.c) and add messages  as  they  become
+standardized.
+
+_\0109.  _\010M_\010a_\010i_\010n_\010t_\010e_\010n_\010a_\010n_\010c_\010e
+
+     There are some things you  should  do  periodically  to
+keep  your news system running smoothly.  We hope to eventu-
+ally automate all or most of this, but right now some of  it
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 23 -
+
+
+must be done by hand.
+
+     The _\010h_\010i_\010s_\010t_\010o_\010r_\010y and _\010l_\010o_\010g files in your  LIB  directory  will
+grow.  You should make sure that they are cleaned up period-
+ically.  The LIB/expire program will remove lines from  his-
+tory  corresponding  to  deleted  articles, but it is a good
+idea to check the file every few months to make sure  it  is
+not  going wild. Be sure not to completely lose your history
+file when you clean it up, in case another neighbor tries to
+send you an article you recently got.  (If you only get news
+from one site it is safe to clean it out completely.)
+
+     The log file is not automatically cleaned  out  by  any
+netnews  software,  and will grow quickly.  The misc/trimlib
+script can be installed in LIB/trimlib, and  invoked  weekly
+from /usr/lib/crontab.
+
+     You should also clean out old newsgroups  that  are  no
+longer  active.   To  remove a newsgroup net.foo, you should
+run the shell script rmgroup with net.foo as  the  argument.
+I.e.
+
+        /usr/lib/news/rmgroup net.foo
+
+
+     Note that clearing  up  UUCP  constipation  is  another
+thing  you'll have to do if you have flaky hardware or phone
+lines.  If you have more than one  connection,  chances  are
+that  UUCP  will  get  clogged up when one of your neighbors
+goes down for more  than  a  few  hours.   Various  spooling
+schemes  are being worked on to help make the news/uucp sys-
+tem more robust, but one thing you can and should do, if you
+find  your  /usr/spool/uucp directory getting too big, is to
+install a subdirectory fix to UUCP.  A quick and dirty  ver-
+sion  of  this is available from Duke, which traps the open,
+creat, link, etc. system  calls  at  the  assembly  language
+level    and    maps,    for    example,   D.fooA1234   into
+D.foo/D.fooA1234.  Since  the  C.  and  D.local  directories
+still  get  big,  in practice this can still create some big
+directories, but the directories tend to be a  factor  of  5
+smaller,  resulting  in  a factor of 25 improvement to speed
+(since a directory traversal for all files is  quadratic  on
+UNIX).   Right now, UUCP is the weak link in netnews distri-
+bution, and you should certainly keep an eye on it.
+
+_\0101_\0100.  _\010C_\010r_\010e_\010a_\010t_\010i_\010n_\010g _\010N_\010e_\010w _\010N_\010e_\010w_\010s_\010g_\010r_\010o_\010u_\010p_\010s
+
+     As system news administrator, you are  able  to  create
+newsgroups.   To create a newsgroup, first make sure this is
+the right thing to do.   (Normally  a  suggestion  is  first
+posted  to  net.general,net.news.group  for a net newsgroup,
+followups are made to net.news.group, it is  established  if
+there  is  general  interest  in such a group, and a name is
+agreed on.) Then someone creates it by typing the command
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 24 -
+
+
+
+        inews -C _\010n_\010e_\010w_\010s_\010g_\010r_\010o_\010u_\010p
+
+This will create the directory and active entry locally.  It
+will  also  prompt  you for a paragraph describing the group
+and start up an inews to post  a  newgroup  control  message
+announcing the group.  This control message will be sent out
+on net.msg.ctl and other sites  may  have  configured  their
+systems  to do something with these messages.  A human read-
+able announcement is  not  made  -  you  can  post  this  to
+net.news.group if necessary.
+
+     Someone should post a first article to  the  new  news-
+group immediately.  If this is not done, the empty directory
+for the newsgroup will cause _\010c_\010h_\010e_\010c_\010k_\010n_\010e_\010w_\010s to believe  there  is
+unread  news, because each user has no .newsrc line for that
+newsgroup.  This command creates the group network-wide.  It
+is then possible to submit an article to the group.
+
+     You must be the super user to  use  the  -C  option  to
+inews.   (That is, your uid must match ROOTID.  It is recom-
+mended that you change ROOTID to your own uid so  you  don't
+have to su to create newsgroups.)
+
+     A new site should get the active file from their neigh-
+bor  and  use  the  _\010m_\010a_\010k_\010e_\010a_\010c_\010t_\010i_\010v_\010e._\010s_\010h shell script to create the
+local directory  hierarchy  and  active  file.   (The  local
+active  file will have 00000 for each newsgroup, since local
+numbers will start at 1 for the first  article  received  in
+each newsgroup.)
+
+_\0101_\0101.  _\010C_\010o_\010n_\010v_\010e_\010r_\010s_\010i_\010o_\010n _\010f_\010r_\010o_\010m _\010A _\010t_\010o _\010B
+
+     If you are currently running version A on your  system,
+note that B is incompatible with A.  The files are stored in
+a different format (headers have mail like field names now).
+The  directory organization is different (each newsgroup has
+a subdirectory of its own, and the file  names  are  numbers
+rather than site.id pairs).  There are no bitmap, uindex, or
+nindex files to be trashed (which articles have been read is
+stored  in  each users .newsrc file).  The user interface is
+slightly different (news/netnews  is  now  called  readnews,
+news  is posted using inews, subscription is done by editing
+.newsrc, the sense of the -c option  is  reversed,  news  is
+presented  in  newsgroup  order,  the  -a and -t options now
+probably need -x as well, and there are many minor changes).
+
+     We decided not to provide a  program  to  convert  from
+version  A to version B.  Rather, the following strategy was
+adopted for conversion:
+
+(1)  Install the new news in  a  different  spool  directory
+     from   the   old   one.    For  example,  you  can  use
+     /usr/spool/newnews.  You can  change  to  the  standard
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 25 -
+
+
+     name  later if you want.  Get it to work for local mes-
+     sages.
+
+(2)  Post an article to newsgroup _\010g_\010e_\010n_\010e_\010r_\010a_\010l with the old  news
+     announcing  the  change.   Make available documentation
+     such as the accompanying paper ``How to Read  the  Net-
+     work  News''  to  the  users.  This article will be the
+     last one in the old news.
+
+(3)  Chmod the old news directory to 555 to prevent any more
+     news  from  being posted.  (Actually, this will prevent
+     the bitfile from being updated, so it may not be a good
+     idea.)
+
+(4)  Replace the old rnews program with the new  rnews  pro-
+     gram.
+
+(5)  Test it by having your neighbor send you a message.
+
+(6)  Wait a reasonable period for everyone to have read  the
+     final  article  with the old news.  Perhaps a few weeks
+     is right.
+
+(7)  Uninstall the old news.
+
+     Users will have to invoke _\010r_\010e_\010a_\010d_\010n_\010e_\010w_\010s instead  of  _\010n_\010e_\010t_\010n_\010e_\010w_\010s
+to read news.  Depending on your old method of posting, this
+could be changed too.  (If you were using mail, it does  not
+need  to  be changed.) They will also have to fix their sub-
+scriptions.  In general, they can type
+
+        netnews -s
+
+to see what they subscribe to on the old  system,  and  then
+create  a  file  in their home directory called .newsrc con-
+taining
+
+        options -s _\010t_\010h_\010e_\010i_\010r _\010s_\010u_\010b_\010s_\010c_\010r_\010i_\010p_\010t_\010i_\010o_\010n
+
+The format of the subscription pattern matching is the  same
+as  in A except that ALL is replaced by all (change to lower
+case).  Something along the lines of this could be  used  to
+automate this:
+
+(echo -n "options -s" ; netnews -s | sed s/ALL/all/) > .newsrc
+
+
+_\0101_\0102.  _\010C_\010o_\010n_\010v_\010e_\010r_\010s_\010i_\010o_\010n _\010f_\010r_\010o_\010m _\0102._\0109 _\010t_\010o _\0102._\0101_\0100
+
+     Conversion from 2.9 to 2.10 is not nearly  as  involved
+as an A to B conversion.  The user interface does not change
+much, and the user .newsrc files are not affected.  However,
+it  is  recommended that you do the conversion during a time
+when no news is received, so that incoming news will not get
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 26 -
+
+
+lost.   One  way  to  ensure this is to make /bin/rnews be a
+shell script which saves the article in /usr/spool/innews/$$
+($$  is  the  process id of the particular shell and will be
+unique for each article).
+
+     The first  step  to  conversion  is  to  customize  the
+sources.   In the past, you had to take a fresh distribution
+and edit the defs.h file and Makefile to suit local  prefer-
+ences.   If you had many local changes, or didn't record the
+local changes, upgrading could be annoying.  2.10 provides a
+mechanism  to automate these changes.  Create a shell script
+in the src  directory  called  localize.sh.   (You  can  use
+localize.sample  as  a  template.)  This shell script should
+copy defs.dist to defs.h, and  copy  either  Makefile.v7  or
+Makefile.usg  to  Makefile.   It should chmod any files that
+need to be changed (often Makefile and defs.h) to a writable
+mode.   Then  it  should  invoke _\010e_\010d on the files, making any
+necessary local changes.
+
+     The  next  step  is  to  compile  the  software,   with
+``make''.   It  may  be  necessary to update the localize.sh
+file until you are satisfied  with  the  compilation.   Note
+that  after  any  change to the Makefile in localize.sh, you
+should run localize.sh by hand.   Otherwise,  although  make
+will  run  it  for you, it will then continue to do the make
+with the old Makefile.
+
+     When the software  is  compiled,  you  should  run  the
+cvt.active.sh  shell  script,  with the lib and spool direc-
+tories as parameters.  This will create a new active file in
+LIB/active.   Then  run  cvt.links.sh with the lib and spool
+directories as parameters.  Then run cvt.names.sh  with  the
+lib  and  spool directories as parameters.  Old news will be
+linked into the new hierarchy while leaving links in the old
+hierarchy.   If you were using the default library and spool
+directories, you would do the following:
+
+         sh cvt.active.sh /usr/lib/news /usr/spool/news
+         sh cvt.links.sh /usr/lib/news /usr/spool/news
+         sh cvt.names.sh /usr/lib/news /usr/spool/news
+
+
+     The next step is  to  back  up  the  old  binaries  (mv
+/usr/bin/rnews  /usr/bin/ornews,  etc.)  and to install 2.10
+with ``make install''.  Once it is installed,  any  incoming
+news  will  be placed into the new hierarchy but not the old
+one.  The critical time window is between running the  three
+shell  files  and installing the new software - any incoming
+news between these two points will appear in  only  the  old
+hierarchy  and be lost to the new software.  If any signifi-
+cant time elapses here,  you  should  divert  rnews  into  a
+separate spool directory as described above.
+
+     Expire will update several key files automatically.
+
+
+
+                     September 7, 1984
+
+
+
+
+
+                           - 27 -
+
+
+     Finally, test things by posting articles to to.neighbor
+newsgroups and watching some incoming news, and announce the
+change to your users.
+
+     When you are satisfied that the conversion was success-
+ful,  run  the shell file _\010c_\010v_\010t._\010c_\010l_\010e_\010a_\010n._\010s_\010h which will remove the
+old 2.9 news hierarchy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     September 7, 1984
+
+

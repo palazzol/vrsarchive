@@ -1,0 +1,12 @@
+  This directory contains XENIX versions of utilities which exist
+on 4.1 Berkeley Unix systems.  Most of these programs are stolen
+from omsvax, with portability improvements to get them to run.
+
+  In some cases the code is extensively rewritten, particuluarly
+programs like `w.c', which access information in mem and kmem.
+
+  A companion directory, /usr/src/local, contains source for commands 
+which are locally developed or are developed from material in the
+public domain.  The intent is that this directory contain licensed
+materials and that /usr/src/local contain material free of license
+requirements.

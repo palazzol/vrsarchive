@@ -1,0 +1,25 @@
+
+rm -f Makefile
+cp Makefile.v7 Makefile
+chmod u+w Makefile
+ed - Makefile  <<'EOF'
+/NEWSGRP/s/news/uucp/
+/UUXFLAGS/s/-r -z/-r -z -n -gd/
+w
+q
+EOF
+rm -f defs.h
+cp defs.dist defs.h
+chmod u+w defs.h
+ed - defs.h <<'EOF'
+/ROOTID/s/10/6/
+/N_UMASK/s/000/022/
+/DFTXMIT/s/-z/-z -gd/
+/UXMIT/s/-z/-z -gd/
+/GHNAME/s;/\* ;;
+/BSD4_2/s;/\* ;;
+/SENDMAIL/s;/\* ;;
+/MYORG/s/Frobozz Inc., St. Louis/Center for Seismic Studies, Arlington, VA/
+w
+q
+EOF

@@ -1,0 +1,61 @@
+: /bin/sh
+#
+#   Start from the USG Makefile.  Set the following parameters:
+#   1)	All the news is owned by 'network', who also owns all of micnet.
+#	This reduces proliferation of magic user ids.  The 'network' user
+#	was chosen over 'uucp' because 'network' has a real shell, and
+#	the ability to 'su' to work on news is desirable.
+#   2)	Fix up the UUXFLAGS for the lamentable state of the current XENIX
+#	UUX (no -z flag).  This means you get an annoying message from uuxqt 
+#	about every news batch you send, whether it fails or not.
+#   3)	Don't strip the executables at link time (i.e., leave them debuggable).
+#	Instead, adjust the fixed stack size to 8K.
+#   4)	Use our own version of uname instead of the uname system call, which is
+#	not configurable (always returns null).
+#   5)	Use CFLAGS for compress, since our optimizer seems OK and we need the
+#	stack flags.
+#
+rm -f Makefile
+cp Makefile.usg Makefile
+chmod u+w Makefile
+ed - Makefile  <<'EOF'
+/NEWSUSR/s/news/network/
+/NEWSGRP/s/news/network/
+/UUXFLAGS/s/-r -z/-r/
+/LFLAGS/s/-s/-F 3000/
+/MISC/s/$/ uname.o/
+/^compress:/+1s/(CC)/& $(CFLAGS)/
+w
+q
+EOF
+#
+#   Start from the standard defs.h.  Set the following parameters:
+#   1)	The news owner is 'network', whose user id is 12.
+#   2)	The news files should not be world writeable.
+#   3)	Subscribe to everything by default.
+#   4)	There is no mailer which understands -T flags.
+#   5)	The pager is /usr/bin/more, not /usr/ucb/more.
+#   6)	The 64K data limitation for small model means use 12 bits in compress.
+#   7)	The uux command does not know either the -z or -c flags (groan).
+#   8)	This is Intel Corporation.
+#   9)	The secure path is just /bin:/usr/bin.
+#
+rm -f defs.h
+cp defs.dist defs.h
+chmod u+w defs.h
+ed - defs.h <<'EOF'
+/ROOTID/s/10/12/
+/N_UMASK/s/000/022/
+/DFLTSUB/s/".*"/"all"/
+/TMAIL/s;^;/\* ;
+/PAGE/s/ucb/bin/
+a
+#define BITS	12		/* Force 12 bit version of compress	*/
+.
+/DFTXMIT/s/-z //
+/UXMIT/s;^;/\* ;
+/MYORG/s/Frobozz Inc., St. Louis/Intel Corporation, Hillsboro, OR/
+/SYSPATH/s;/local/bin:;;
+w
+q
+EOF

@@ -1,0 +1,64 @@
+.TH ASH 1 11/24/84
+.SH NAME
+ash \- Adventure Shell
+.SH SYNOPSIS
+.B ash
+.SH DESCRIPTION
+.I Ash
+is a shell for those with a passion for the adventure game.  In this
+exploration of the UNIX file system, the computer acts as your eyes
+and hands.  As you move around, it will describe whatever is visible
+and will carry out your commands.  The general form of a command is
+.sp
+.ta 1i
+	Verb Object Extra_stuff.
+.PP
+Most commands pay no attention to the "Extra_stuff", and many do not
+need an "Object".  A typical command is
+.sp
+	get all
+.sp
+which picks up all files in the current "room" (directory).
+.PP
+The Adventure Shell understands the following commands
+(synonyms in parentheses):
+.ta 3i
+.nf
+change OBJECT to NEW_NAME	change the name of the object
+clone OBJECT as NEW_NAME	duplicate the object
+drop OBJECTS			leave the objects in the room
+enter (go) PASSAGE		take the labeled passage
+examine OBJECTS			describe the objects in detail
+feed OBJECT to MONSTER		stuff the object into a UNIX monster
+get (take) OBJECTS		pick up the specified objects
+gripe (bug)			report a problem
+help				print this summary
+inventory (i)			list what you are carrying
+kill (destroy) OBJECTS		destroy the objects
+look (l)			describe the room, even hidden objects
+open (read) OBJECT		show the contents of an object
+quit (exit)			leave the Adventure shell
+resurrect OBJECTS		attempt to restore dead objects
+steal OBJECT from MONSTER	obtain the object from a UNIX monster
+throw OBJECT at daemon		feed the object to the printer daemon
+up				take the overhead passage
+wake MONSTER			awaken a UNIX monster
+where (w)			tell you where you are
+xyzzy				move you to your home
+.fi
+.PP
+There are UNIX monsters lurking in the background.  These are also
+known as "commands with arguments".
+.PP
+Good luck!
+.SH FILES
+.ta 2.5i
+.nf
+/usr/local/lib/ash.help	Text for help command
+/usr/local/lib/ash.inst	Text for instructions
+$HOME/.knapsack	Holds what you are carrying
+$HOME/.limbo	Holds destroyed objects for resurrect command
+.fi
+.SH BUGS
+The Adventure Shell is not designed for getting work done.  It is, in fact,
+an elaborate parody based on a derogatory remark once made about Unix.

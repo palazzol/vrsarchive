@@ -1,0 +1,306 @@
+ARGVAL	compress.c	?^#define ARGVAL() (*++(*argv) || (--argc && *++argv?
+AllocCpy	pathinit.c	?^AllocCpy(cp)$?
+BIT	visual.c	?^#define BIT(_a) (1<<((_a)-1))$?
+DIRSIZ	ndir.h	?^#define DIRSIZ(dp) \\$?
+EOL	readr.c	?^#define EOL() if (*bptr != '\\0') { fprintf(ofp, "??
+FCLOSE	rparams.h	?^#define FCLOSE(fp)	{if (fp != NULL) {fclose(fp);fp?
+MAXCODE	compress.c	?^# define MAXCODE(n_bits)	(1 << (n_bits) - 1)$?
+Mail	rfuncs.c	?^Mail()$?
+Mbatch	batch.c	?^main(argc,argv)$?
+Mberknews	berknews.c	?^main(argc, argv)$?
+Mcaesar	caesar.c	?^main( argc, argv )$?
+Mchecknews	checknews.c	?^main(argc, argv)$?
+Mcompress	compress.c	?^main( argc, argv )$?
+Mexpire	expire.c	?^main(argc, argv)$?
+Minews	inews.c	?^main(argc, argv)$?
+Mpostnews	postnews.c	?^main(argc, argv)$?
+Mreadnews	readnews.c	?^main(argc, argv)$?
+Mrecmail	recmail.c	?^main()$?
+Mrecnews	recnews.c	?^main(argc, argv)$?
+Msendnews	sendnews.c	?^main(argc, argv)$?
+Munbatch	unbatch.c	?^main()$?
+Muurec	uurec.c	?^main(argc, argv)$?
+NLINES	readr.c	?^#define NLINES(h, fp) (h->numlines[0] ? h->intnuml?
+Sprintf	pathinit.c	?^#define Sprintf(where,fmt,arg)	sprintf(bfr,fmt,arg?
+Usage	compress.c	?^Usage() {$?
+_amove	virtterm.c	?^_amove(row, col) {$?
+_aputc	virtterm.c	?^_aputc(c) {$?
+_ckclrlin	virtterm.c	?^_ckclrlin(i) {$?
+_clrtoeol	virtterm.c	?^_clrtoeol(row, col) {$?
+_dolog	funcs.c	?^_dolog(which, fmt, a1, a2, a3, a4, a5, a6, a7, a8,?
+_dshift	virtterm.c	?^_dshift(top, bot, count) {$?
+_fixlines	virtterm.c	?^_fixlines() {$?
+_hmove	virtterm.c	?^_hmove(ocol, ncol, row) {$?
+_relhmove	virtterm.c	?^_relhmove(ocol, ncol, row) {$?
+_sclear	virtterm.c	?^_sclear() {$?
+_setul	virtterm.c	?^_setul(on) {$?
+_ushift	virtterm.c	?^_ushift(top, bot, count) {$?
+_vmove	virtterm.c	?^_vmove(orow, nrow) {$?
+_zap	virtterm.c	?^_zap() {$?
+addch	virtterm.c	?^addch (c) {$?
+addhist	ifuncs.c	?^addhist(msg)$?
+addnum	visual.c	?^addnum(n)$?
+addrecips	recmail.c	?^addrecips(line)$?
+addstr	virtterm.c	?^addstr(s)$?
+any	inews.c	?^any(sp, sq)$?
+appfile	visual.c	?^appfile(iop, nlines)$?
+argparse	control.c	?^argparse(str)$?
+arpadate	funcs2.c	?^arpadate(longtime)$?
+article_line	postnews.c	?^article_line(article, field, line)$?
+aselect	rfuncs.c	?^aselect(hp, insist)$?
+askyes	postnews.c	?^askyes(msg, def)$?
+back	rfuncs.c	?^back()$?
+bclear	header.c	?^bclear(cp, nc)$?
+beep	virtterm.c	?^beep() {$?
+botscreen	virtterm.c	?^botscreen() {$?
+briefdate	rfuncs2.c	?^briefdate(datestr)$?
+broadcast	ifuncs.c	?^broadcast()$?
+buildfname	fullname.c	?^buildfname(p, login, buf)$?
+byebye	postnews.c	?^byebye(mesg)$?
+c_cancel	control.c	?^c_cancel(argc, argv)$?
+c_checkgroups	control.c	?^c_checkgroups(argc, argv)$?
+c_ihave	control.c	?^c_ihave(argc, argv)$?
+c_newgroup	control.c	?^c_newgroup(argc, argv)$?
+c_rmgroup	control.c	?^c_rmgroup(argc, argv)$?
+c_sendme	control.c	?^c_sendme(argc, argv)$?
+c_sendsys	control.c	?^c_sendsys(argc, argv)$?
+c_senduuname	control.c	?^c_senduuname(argc, argv)$?
+c_unimp	control.c	?^c_unimp(argc, argv)$?
+c_unknown	control.c	?^c_unknown(h, ctlmsgtext)$?
+c_version	control.c	?^c_version(argc, argv)$?
+caesar_command	readr.c	?^caesar_command()$?
+cancel	inews.c	?^cancel()$?
+cancel_command	readr.c	?^cancel_command()$?
+catchcont	readr.c	?^catchcont(sig)$?
+catchterm	rfuncs.c	?^catchterm()$?
+cdump	rfuncs2.c	?^cdump(ofp)$?
+cgtdate	funcs2.c	?^cgtdate(datestr)$?
+check_mod	postnews.c	?^check_mod()$?
+checkbatch	ifuncs.c	?^checkbatch()$?
+checkin	visual.c	?^checkin()$?
+checkpass	control.c	?^checkpass(encpw)$?
+clear	rparams.h	?^#define clear(i) if (i>=minartno) bitmap[(i-minart?
+clearin	visual.c	?^clearin()$?
+clearok	visual.c	?^#define clearok(xxx, flag) _junked = flag$?
+closedir	ndir.c	?^closedir(dirp)$?
+clrline	virtterm.c	?^clrline(row) {$?
+clrtoeol	virtterm.c	?^clrtoeol() {$?
+command	readr.c	?^command()$?
+compress	compress.c	?^compress() {$?
+control	control.c	?^control(h)$?
+cookedterm	virtterm.c	?^cookedterm() {$?
+copystat	compress.c	?^copystat(ifname, ofname)$?
+cout	rfuncs2.c	?^cout(ofp)$?
+createng	inews.c	?^createng()$?
+ctlcheck	control.c	?^ctlcheck()$?
+dash	rfuncs2.c	?^dash(num, ofp)$?
+dates	ifuncs.c	?^dates(hp)$?
+decompress	compress.c	?^decompress() {$?
+dhprint	digest.c	?^dhprint(art, ifp, ofp)$?
+digest	digest.c	?^digest(ifp, ofp, h)$?
+dirname	funcs.c	?^dirname(ngname)$?
+docmd	visual.c	?^docmd(c, count)$?
+dprint	digest.c	?^dprint(art, ifp, ofp)$?
+dprinta	digest.c	?^dprinta(art, ifp, ofp)$?
+dsaveart	digest.c	?^dsaveart(art, ifp, ofp, name)$?
+dscan	digest.c	?^dscan(ifp)$?
+dummy	compress.c	?^dummy()$?
+dump_tab	compress.c	?^dump_tab()$?
+edit_article	postnews.c	?^edit_article()$?
+encode	postnews.c	?^encode(article)$?
+eq	control.c	?^#define eq(msg) (strcmp(msg, cargv[0]) == 0)$?
+erase	virtterm.c	?^erase() {$?
+errchk	digest.c	?^#define	errchk(p)	if (*p) goto badopt$?
+even	visual.c	?^#define even(cols) ((cols&1) ? cols + 1 : cols)$?
+exists	ifuncs.c	?^exists(fname)$?
+fcopy	expire.c	?^fcopy(fn, newname)$?
+fiddle	berknews.c	?^fiddle(buf)$?
+field	logdir.c	?^field(p)$?
+findend	visual.c	?^findend(l)$?
+findex	checknews.c	?^findex(string, searchfor)$?
+findfname	funcs2.c	?^findfname(artid)$?
+findgroup	recnews.c	?^findgroup(dest, group)$?
+findhist	funcs2.c	?^findhist(artid)$?
+findparent	visual.c	?^findparent(id, num)$?
+findrcline	checknews.c	?^findrcline(name)$?
+fixid	header.c	?^fixid(hp)$?
+fldget	funcs2.c	?^fldget(q, p)$?
+fmthdr	visual.c	?^fmthdr() {$?
+followup	postnews.c	?^followup(baseart)$?
+foreground	compress.c	?^foreground()$?
+frmread	header.c	?^frmread(fp, hp)$?
+frombreak	recnews.c	?^frombreak(buf, fbuf)$?
+fromline	berknews.c	?^fromline() {$?
+fsubr	funcs.c	?^fsubr(f, s1, s2)$?
+ftime	ftime.c	?^ftime(tp)$?
+fullname	fullname.c	?^fullname(un)$?
+fwait	funcs.c	?^fwait(pid)$?
+gensender	ifuncs.c	?^gensender(hp, logname)$?
+genversion	header.c	?^genversion()$?
+get	rparams.h	?^#define get(i)	((i<minartno)? 0 : (bitmap[(i-minar?
+get_distribution	postnews.c	?^get_distribution()$?
+get_newsgroup	postnews.c	?^get_newsgroup()$?
+getcode	compress.c	?^getcode() {$?
+getfield	header.c	?^getfield(hpfield)$?
+getident	ifuncs.c	?^getident(hp)$?
+getmailname	visual.c	?^getmailname()$?
+getnextart	readr.c	?^getnextart(minus)$?
+getnum	digest.c	?^#define	getnum(p, n)	for (n=0; *p>='0' && *p<='9';?
+getpr	postnews.c	?^getpr(msg, bfr)$?
+getuser	checknews.c	?^getuser()$?
+growline	visual.c	?^growline(col)$?
+hdr	readr.c	?^hdr()$?
+help	rfuncs2.c	?^help(ofp)$?
+hfgets	header.c	?^hfgets(buf, len, fp)$?
+hfopen	funcs2.c	?^hfopen(artid)$?
+history	ifuncs.c	?^history(hp)$?
+hprint	rfuncs2.c	?^hprint(hp, ofp, verbose)$?
+hread	header.c	?^hread(hp, fp, wholething)$?
+hwrite	header.c	?^hwrite(hp, fp)$?
+idlock	ifuncs.c	?^idlock(str)$?
+idunlock	ifuncs.c	?^idunlock()$?
+ignoring	rfuncs2.c	?^ignoring()$?
+ihwrite	header.c	?^ihwrite(hp, fp, wr)$?
+index	berknews.c	?^index(sp, c)$?
+init	postnews.c	?^init()$?
+initterm	virtterm.c	?^initterm() {$?
+input	inews.c	?^input()$?
+insert	inews.c	?^insert()$?
+intuitfrom	header.c	?^intuitfrom(hp)$?
+isat	recnews.c	?^isat(str)$?
+isfol	rfuncs.c	?^isfol(hp)$?
+isheader	digest.c	?^isheader(s)$?
+islegal	expire.c	?^islegal(fullname, path, name)$?
+isok	recmail.c	?^#define isok(c) (isprint(c) && (c) != ' ' && c != ?
+its	header.c	?^#define its(type) (prefix(ptr, type))$?
+lcase	checknews.c	?^lcase(s)$?
+lhwrite	header.c	?^lhwrite(hp, fp)$?
+linecnt	rfuncs2.c	?^linecnt(fp)$?
+localize	inews.c	?^localize(ngname)$?
+lock	ifuncs.c	?^lock()$?
+log	funcs.c	?^log(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)$?
+logdir	logdir.c	?^logdir(name)$?
+logerr	batch.c	?^logerr(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)$?
+mailback	recmail.c	?^mailback(errfd, tmpf, errf)$?
+mailhdr	control.c	?^mailhdr(hptr, subject)$?
+mailto	recmail.c	?^mailto(tmpf, errfd, recip)$?
+makehimask	checknews.c	?^makehimask(nbuf, ng)$?
+mclose	control.c	?^mclose(ptr)$?
+mhopen	control.c	?^mhopen(hptr)$?
+mknewsg	inews.c	?^mknewsg(fulldir, ngname)$?
+mkparents	expire.c	?^mkparents(dirname)$?
+modify_article	postnews.c	?^modify_article(fname, field, line, how)$?
+move	virtterm.c	?^move(row, col) {$?
+msg	visual.c	?^msg(s, a1, a2, a3, a4)$?
+mvaddstr	virtterm.c	?^mvaddstr(row, col, str)$?
+nchk	checknews.c	?^nchk(argv)$?
+newrc	rfuncs.c	?^newrc(rcname)$?
+newssave	ifuncs.c	?^newssave(fd, dummy)$?
+next_ng_command	readr.c	?^next_ng_command()$?
+nextbit	rfuncs.c	?^nextbit()$?
+nextng	rfuncs.c	?^nextng()$?
+ngcat	checknews.c	?^ngcat(s)$?
+ngdel	checknews.c	?^ngdel(s)$?
+ngfcheck	ifuncs.c	?^ngfcheck(isproc)$?
+nghprint	readr.c	?^nghprint(title)$?
+ngline	sendnews.c	?^ngline()$?
+ngmatch	checknews.c	?^ngmatch(nglist, sublist)$?
+nstrip	checknews.c	?^nstrip(s)$?
+ohwrite	funcs2.c	?^ohwrite(hp, fp)$?
+onalarm	visual.c	?^onalarm()$?
+onint	visual.c	?^onint() {$?
+onquit	visual.c	?^onquit()$?
+onsig	ifuncs.c	?^onsig(n)$?
+onstop	visual.c	?^onstop(signo)$?
+opendir	ndir.c	?^opendir(name)$?
+outline	visual.c	?^outline()$?
+output	compress.c	?^output( code )$?
+pathinit	pathinit.c	?^pathinit()$?
+plodput	virtterm.c	?^plodput(c) { *plodstr++ = c; }$?
+post_article	postnews.c	?^post_article()$?
+post_checks	postnews.c	?^post_checks()$?
+pout	rfuncs2.c	?^pout(ofp)$?
+pprint	readr.c	?^pprint(fd)$?
+pre_checks	postnews.c	?^pre_checks()$?
+prefix	funcs.c	?^prefix(full, pref)$?
+prget	visual.c	?^prget(prompter, buf)$?
+printcodes	compress.c	?^printcodes()$?
+process	process.c	?^process(argc,argv)$?
+prun	visual.c	?^prun(args, flags)$?
+pshell	funcs.c	?^pshell(s, dummy)$?
+ptrncmp	checknews.c	?^ptrncmp(ng1, ng2)$?
+pushback	visual.c	?^pushback(c)$?
+qfflush	rfuncs2.c	?^qfflush(fp)$?
+rawterm	virtterm.c	?^rawterm() {$?
+rcsort	rfuncs.c	?^rcsort(a,b)$?
+readdir	ndir.c	?^readdir(dirp)$?
+readr	readr.c	?^readr()$?
+rebuilddbm	expire.c	?^rebuilddbm( )$?
+recording	postnews.c	?^recording(ngrps)$?
+refresh	virtterm.c	?^refresh() {$?
+remember	expire.c	?^remember(article)$?
+rename	batch.c	?^rename(from, to)$?
+reply	visual.c	?^reply()$?
+reply_command	readr.c	?^reply_command()$?
+replyname	funcs2.c	?^replyname(hptr)$?
+reset_stdin	ifuncs.c	?^reset_stdin()$?
+rewinddir	ndir.h	?^#define rewinddir(dirp)	seekdir((dirp), (long)0)$?
+rightgroup	rfuncs.c	?^rightgroup(hp)$?
+rindex	compress.c	?^rindex(s, c)		/* For those who don't have it in li?
+rotate	caesar.c	?^rotate( c, perm )$?
+rwaccess	ifuncs.c	?^rwaccess(fname)$?
+s_close	funcs2.c	?^s_close()$?
+s_find	funcs2.c	?^s_find(sp, system)$?
+s_openr	funcs2.c	?^s_openr()$?
+s_read	funcs2.c	?^s_read(sp)$?
+save	rfuncs2.c	?^save(file, to)$?
+save_article	postnews.c	?^save_article()$?
+savehist	ifuncs.c	?^savehist(hline)$?
+selectng	rfuncs.c	?^selectng(name, fastcheck)$?
+senderof	ifuncs.c	?^senderof(hp)$?
+set	rparams.h	?^#define set(i)	if (i>=minartno) bitmap[(i-minartno?
+shcmd	visual.c	?^shcmd(cmd, flags)$?
+showtail	readr.c	?^showtail(fd)$?
+sortactive	rfuncs.c	?^sortactive()$?
+suser	control.c	?^suser()$?
+tailpath	funcs2.c	?^tailpath(hp)$?
+tbufcpy	ifuncs.c	?^tbufcpy(s1, s2)$?
+tfappend	visual.c	?^tfappend(tline)$?
+tfget	visual.c	?^tfget(tline, linno)$?
+tfput	visual.c	?^tfput(tline, linno)$?
+tfseek	visual.c	?^tfseek(linno, wrflag)$?
+timer	visual.c	?^timer()$?
+titmat	rfuncs2.c	?^titmat(h, titlist)$?
+tprint	rfuncs2.c	?^tprint(ifp, ofp, checkfrom)$?
+transmit	ifuncs.c	?^transmit(sp, ifp, maynotify)$?
+ttycooked	visual.c	?^ttycooked()$?
+ttyowait	visual.c	?^ttyowait()$?
+ttyraw	visual.c	?^ttyraw()$?
+ttysave	visual.c	?^ttysave()$?
+twosplit	postnews.c	?^twosplit(src, dest1, dest2)$?
+type	header.c	?^type(ptr)$?
+ulall	expire.c	?^ulall(artlist, h)$?
+uname	uname.c	?^uname(uptr)$?
+unlock	ifuncs.c	?^unlock()$?
+updaterc	rfuncs.c	?^updaterc()$?
+updscr	visual.c	?^updscr()$?
+ushell	funcs.c	?^ushell(s, dummy)$?
+ushift	virtterm.c	?^ushift(top, bot, count) {$?
+valid_ng	postnews.c	?^valid_ng(ng, maxart, minart, canpost)$?
+validng	funcs.c	?^validng(ngname)$?
+vcmd	visual.c	?^vcmd() {$?
+verifyname	control.c	?^verifyname(sendto)$?
+vflush	visual.c	?^vflush()$?
+vgetc	visual.c	?^vgetc()$?
+vhprint	visual.c	?^vhprint(hp, verbose)$?
+vputc	visual.c	?^vputc(c)$?
+vsave	visual.c	?^vsave(to, flags)$?
+writeerr	compress.c	?^writeerr()$?
+writeoutrc	readnews.c	?^writeoutrc()$?
+xerror	checknews.c	?^xerror(message, arg1, arg2)$?
+xfopen	funcs.c	?^xfopen(name, fmode)$?
+xmit_command	readr.c	?^xmit_command()$?
+xmitmsg	control.c	?^xmitmsg(tosys, title, ng)$?
+xshell	funcs.c	?^xshell(s)$?
+xxit	checknews.c	?^xxit(i)$?
+yep	checknews.c	?^yep(argv)$?

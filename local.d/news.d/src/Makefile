@@ -1,0 +1,277 @@
+# @(#)Makefile.usg	2.25	9/3/84
+# Makefile for System III, System V and other USG based systems
+
+# definitions
+
+NEWSUSR = network
+NEWSGRP = network
+# This is either usg or v7
+OSTYPE= usg
+# HOME is the user name whose home dir has all the news stuff in it.
+HOME=	exptools
+# Use the -DHOME line if you want dynamic lookup in /etc/passwd
+#HOMENAME=	-DHOME=\"$(HOME)\"
+HOMENAME=
+SPOOLDIR = /usr/spool/news
+BATCHDIR = /usr/spool/batch
+LIBDIR = /usr/lib/news
+BINDIR = /usr/bin
+UUXFLAGS = -r
+
+DEBUG =
+IBMFLAGS =
+DEFS =	-DRNEWS=\"$(BINDIR)/rnews\" -DSPOOLDIR=\"$(SPOOLDIR)\" \
+	-DBATCHDIR=\"$(BATCHDIR)\" -DLIBDIR=\"$(LIBDIR)\" \
+	-DBINDIR=\"$(BINDIR)\" -DNEWSUSR=\"$(NEWSUSR)\" \
+	-DNEWSGRP=\"$(NEWSGRP)\"
+CFLAGS = ${DEBUG} -O $(IBMFLAGS) -DUSG -Dindex=strchr -Drindex=strrchr ${DEFS}
+LFLAGS = -F 3000 -i $(IBMFLAGS)
+LIBS =
+LINTFLAGS = ${DEFS}
+
+MISC = ftime.o uname.o
+OBJECTS = funcs.o funcs2.o getdate.o header.o ndir.o $(MISC)
+IOBJECTS = inews.o ifuncs.o iextern.o control.o fullname.o \
+	ipathinit.o $(OBJECTS)
+POBJECTS = postnews.o rextern.o rpathinit.o funcs.o $(MISC)
+ROBJECTS = readnews.o rfuncs.o rfuncs2.o rextern.o readr.o \
+	process.o rpathinit.o digest.o $(OBJECTS)
+VOBJECTS = readnews.o rfuncs.o rfuncs2.o rextern.o process.o rpathinit.o \
+	$(OBJECTS) visual.o virtterm.o
+EXPOBJS=  expire.o header.o funcs.o getdate.o rextern.o epathinit.o \
+	funcs2.o ndir.o $(MISC)
+
+SRCS = funcs.c funcs2.c header.c
+ISRCS = inews.c ifuncs.c iextern.c control.c fullname.c  $(SRCS)
+PSRCS = postnews.c rextern.c funcs.c
+RSRCS = readnews.c rfuncs.c rfuncs2.c rextern.c readr.c process.c  \
+	digest.c $(SRCS)
+VSRCS = readnews.c rfuncs.c rfuncs2.c rextern.c process.c $(SRCS) \
+	visual.c virtterm.c
+EXPSRCS = expire.c header.c funcs.c getdate.c rextern.c \
+	funcs2.c
+OSRCS = uurec.c recnews.c sendnews.c batch.c unbatch.c caesar.c \
+	recmail.c compress.c
+
+OTHERS = inews uurec recnews sendnews expire batch unbatch caesar recmail \
+	compress sendbatch csendbatch rmgroup checkgroups
+COMMANDS = readnews checknews postnews vnews cunbatch
+
+# dependencies
+all: $(COMMANDS) $(OTHERS)
+
+cp: all $(LIBDIR) $(BINDIR) help vnews.help
+	cp $(COMMANDS) $(BINDIR)
+	-cd $(BINDIR); chown $(NEWSUSR) $(COMMANDS); chgrp $(NEWSGRP) $(COMMANDS);\
+		chmod 755 $(COMMANDS)
+	@echo "Reminder: uux must permit cunbatch if running over uucp."
+	cp help vnews.help $(OTHERS) $(LIBDIR)
+	cd $(LIBDIR); chown $(NEWSUSR) $(OTHERS); chgrp $(NEWSGRP) $(OTHERS);\
+		chmod 755 $(OTHERS)
+	chmod 6755 $(LIBDIR)/inews
+	-rm -f $(BINDIR)/rnews
+	ln $(LIBDIR)/inews $(BINDIR)/rnews
+
+defs.h:	defs.dist localize.sh
+	sh localize.sh
+
+Makefile: Makefile.$(OSTYPE) localize.sh defs.dist
+	sh localize.sh
+
+install: cp install.sh makeactive.sh
+	sh install.sh $(SPOOLDIR) $(LIBDIR) $(NEWSUSR) $(NEWSGRP) $(OSTYPE)
+
+clean:
+	rm -f $(COMMANDS) $(OTHERS) *.o a.out
+	rm -f core index errs getdate.c
+
+lint:  ilint vlint rlint elint plint olint
+
+ilint: defs.h params.h iparams.h header.h $(ISRCS)
+	lint $(LINTFLAGS) $(ISRCS)
+
+vlint: defs.h params.h rparams.h header.h $(VSRCS)
+	lint $(LINTFLAGS) $(VSRCS)
+
+rlint: defs.h params.h rparams.h header.h $(RSRCS)
+	lint $(LINTFLAGS) $(RSRCS)
+
+elint: defs.h params.h iparams.h header.h $(ESRCS)
+	lint $(LINTFLAGS) $(ESRCS)
+
+plint: defs.h params.h iparams.h header.h $(PSRCS)
+	lint $(LINTFLAGS) $(PSRCS)
+
+olint: defs.h params.h iparams.h header.h $(OSRCS)
+	for i in $(OSRCS); do lint $(LINTFLAGS) $$i; done
+
+inews:  Makefile $(IOBJECTS)
+	$(CC) $(LFLAGS) $(IOBJECTS) -o inews $(LIBS)
+
+readnews:  Makefile $(ROBJECTS)
+	$(CC) $(LFLAGS) $(ROBJECTS) -o readnews $(LIBS)
+
+funcs.o:  funcs.c params.h defs.h header.h
+	$(CC) $(CFLAGS) -c funcs.c
+
+getdate.o:  getdate.y
+	@echo "expect 6 shift/reduce conflicts"
+	yacc getdate.y
+	mv y.tab.c getdate.c
+	$(CC) $(CFLAGS) -c getdate.c
+	-rm -f getdate.c
+
+inews.o:  inews.c iparams.h defs.h params.h header.h
+	$(CC) $(CFLAGS) -c inews.c
+
+ifuncs.o:  ifuncs.c iparams.h defs.h params.h header.h
+	$(CC) $(CFLAGS) $(HOMENAME) -c ifuncs.c
+
+iextern.o:  iextern.c iparams.h defs.h params.h Makefile header.h
+	$(CC) $(CFLAGS) -c iextern.c
+
+postnews: Makefile $(POBJECTS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(POBJECTS) -o postnews
+
+postnews.o: postnews.c defs.h
+	$(CC) $(CFLAGS) -c postnews.c
+
+readnews.o:  readnews.c rparams.h defs.h params.h header.h
+	$(CC) $(CFLAGS) $(HOMENAME) -c readnews.c
+
+rfuncs.o:  rfuncs.c rparams.h defs.h params.h header.h
+	$(CC) $(CFLAGS) -c rfuncs.c
+
+rfuncs2.o:  rfuncs2.c rparams.h defs.h params.h header.h
+	$(CC) $(CFLAGS) -c rfuncs2.c
+
+rextern.o:  rextern.c rparams.h defs.h params.h Makefile header.h
+	$(CC) $(CFLAGS) -c rextern.c
+
+readr.o:  readr.c rparams.h defs.h params.h Makefile ndir.h header.h
+	$(CC) $(CFLAGS) -c readr.c
+
+checknews.o:  checknews.c defs.h header.h Makefile
+	$(CC) $(CFLAGS) -c checknews.c
+
+vnews:	$(VOBJECTS)
+	$(CC) $(LFLAGS) $(VOBJECTS) -ltermcap $(LIBS) -o $@
+
+visual.o:  visual.c rparams.h defs.h params.h ndir.h header.h
+	$(CC) $(CFLAGS) -c visual.c
+
+control.o:  control.c defs.h iparams.h params.h header.h
+	$(CC) $(CFLAGS) -c control.c
+
+logdir.o: logdir.c
+	$(CC) $(CFLAGS) -c logdir.c
+
+uname.o:  uname.c defs.h
+	$(CC) $(CFLAGS) -c uname.c
+
+ndir.o: ndir.c ndir.h
+	$(CC) $(CFLAGS) -c ndir.c
+
+uurec:  uurec.c defs.h
+	$(CC) $(CFLAGS) -s uurec.c -o uurec
+
+recnews:  recnews.c defs.h
+	$(CC) $(CFLAGS) -s recnews.c -o recnews
+
+sendnews:  sendnews.o uname.o
+	$(CC) $(LFLAGS) sendnews.o uname.o -o sendnews
+
+batch:  batch.c Makefile
+	$(CC) $(CFLAGS) -s batch.c -o batch
+
+unbatch:  unbatch.c
+	$(CC) $(CFLAGS) -s unbatch.c -o unbatch
+
+caesar:  caesar.c
+	$(CC) $(CFLAGS) -s caesar.c -o caesar -lm
+
+# do NOT compile this with -O on a vax due to a bug in the optimizer
+compress: compress.c
+	$(CC) $(CFLAGS) -o compress compress.c
+
+recmail:  recmail.c
+	$(CC) $(CFLAGS) -s recmail.c -o recmail
+
+process.o:  process.c rparams.h defs.h params.h header.h
+	$(CC) $(CFLAGS) -c process.c
+
+
+checknews:  Makefile checknews.o process.o cpathinit.o
+	$(CC) $(LFLAGS) checknews.o process.o cpathinit.o -o checknews
+
+csendbatch: csendbatch.sh Makefile
+	sed -e "s%LIBDIR%$(LIBDIR)%g" \
+	 -e "s%UUXFLAGS%$(UUXFLAGS)%g" \
+	 -e "s%BATCHDIR%$(BATCHDIR)%g" csendbatch.sh > csendbatch
+
+sendbatch: sendbatch.sh Makefile
+	sed -e "s%LIBDIR%$(LIBDIR)%g" \
+	 -e "s%UUXFLAGS%$(UUXFLAGS)%g" \
+	 -e "s%BATCHDIR%$(BATCHDIR)%g" sendbatch.sh > sendbatch
+
+cunbatch: cunbatch.sh Makefile
+	sed -e "s%LIBDIR%$(LIBDIR)%g" \
+	 -e "s%BINDIR%$(BINDIR)%g" cunbatch.sh > cunbatch
+
+rmgroup: rmgroup.sh Makefile
+	sed -e "s%LIBDIR%$(LIBDIR)%g" \
+	 -e "s%SPOOLDIR%$(SPOOLDIR)%g" rmgroup.sh > rmgroup
+
+checkgroups: checkgroups.sh Makefile
+	sed -e "s%LIBDIR%$(LIBDIR)%g" checkgroups.sh > checkgroups
+
+sendnews.o: sendnews.c defs.h
+	$(CC) $(CFLAGS) -c sendnews.c
+
+fullname.o: defs.h
+
+expire: Makefile $(EXPOBJS)
+	$(CC) $(LFLAGS) -o expire $(EXPOBJS) $(LIBS)
+
+header.o:  header.c header.h defs.h
+	$(CC) $(CFLAGS) -c header.c
+
+expire.o:  expire.c defs.h Makefile params.h ndir.h header.h
+	$(CC) $(CFLAGS) -c expire.c
+
+digest.o:  digest.c
+	$(CC) $(CFLAGS) -c digest.c
+
+params.h: defs.h header.h
+
+# Some silliness here to get pathinit for both readnews & inews
+rpathinit.o:  pathinit.c rparams.h header.h params.h
+	$(CC) $(CFLAGS) $(HOMENAME) -DREAD -c pathinit.c
+	mv pathinit.o rpathinit.o
+
+ipathinit.o:  pathinit.c iparams.h header.h params.h
+	$(CC) $(CFLAGS) $(HOMENAME) -DINEW -c pathinit.c
+	mv pathinit.o ipathinit.o
+
+cpathinit.o:  pathinit.c iparams.h header.h params.h
+	$(CC) $(CFLAGS) $(HOMENAME) -DCHKN -c pathinit.c
+	mv pathinit.o cpathinit.o
+
+epathinit.o:  pathinit.c iparams.h header.h params.h
+	$(CC) $(CFLAGS) $(HOMENAME) -DEXP -c pathinit.c
+	mv pathinit.o epathinit.o
+
+tags:	/tmp
+	ctags -w *.h *.c
+
+$(LIBDIR):
+	mkdir $(LIBDIR)
+	chmod 755 $(LIBDIR)
+	chown $(NEWSUSR) $(LIBDIR)
+	chgrp $(NEWSGRP) $(LIBDIR)
+
+$(BINDIR):
+	mkdir $(BINDIR)
+	chmod 755 $(BINDIR)
+	chown $(NEWSUSR) $(BINDIR)
+	chgrp $(NEWSGRP) $(BINDIR)

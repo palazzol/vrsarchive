@@ -1,0 +1,6 @@
+  This directory contains XENIX versions of utilities which are
+not subject to license restrictions.
+
+  In some cases the code is derived from public domain software,
+like `dtree.c', and in other cases it is developed by individuals
+and donated.

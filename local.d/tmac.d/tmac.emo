@@ -1,0 +1,43 @@
+.ds I4 \kH\h'|4.5i-\nH'
+.ds I1 \kH\h'|0.75i-\nH'
+.de IN
+.sp 1i
+.na
+\f3\s36  \h'-0.2'i\h'-0.05'n\h'-0.05't\v'-0.19'\h'-0.03'\s18\z_\s36\v'+0.78'\h'-0.12'e\v'-0.59'\h'-0.1'l\fP\v'-1.6'\s10\z\(ci\s6\h'0.08'\v'-0.1'R\v'+1.6'\s10   \v'-3.0'\L'+4.0'\v'-1.0'\h'+0.5i'INTERNAL CORRESPONDENCE
+\l'6i'
+.ps 10
+..
+.de TO
+.ps 10
+.sp 2
+\fBTo\h'+0.18':\*(I1\fI\\$1  \fB\\$2\*(I4Date\h'+0.18': \fI\n(mo/\n(dy/\n(yr
+..
+.de FR
+.sp 1
+\fBFrom\h'+0.18':\*(I1\fI\\$1  \fB\\$2
+..
+.de CC
+.ds CS \\$1 
+..
+.de SU
+.fi
+.sp 1
+\fB\s10Subject\h'+0.18':\*(I1\fR\\$1\*(I4\fBCC\h'+0.18': \fI\\*(CS\fR
+.sp 2
+.ad
+.ps 10
+..
+.de LI
+.sp 3
+\fBList\h'+0.18':\fR
+.sp -1
+.in +0.5i
+.nf
+..
+.de EL
+.in -0.5i
+.sp +1
+.)l
+.)b
+.fi
+..

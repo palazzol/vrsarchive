@@ -1,0 +1,22 @@
+espel interactive commands
+
+----------------------------------------------------------------------------
+selecting the following options will not advance the current word:
+s < string >		spell words beginning with string.
+l [ number ]		list the misspellings. (adding number will just give
+						you the next n misspellings)
+c [ word ]		context of word is printed. (default is current word)
+h			help (by printing this table).
+!			shell escape.
+
+selecting the remaining options will change advance the current word:
+a [ word ]		add to local dictionary. (default is current word)
+r < word >		replace current word to < word >.
+'rtn'			skip current word.
+- [ number ]		backup the list. (default is previous word)
+q			quit and update files.
+x			exit without updating
+	note:
+		[] optional argument
+		<> required argument
+----------------------------------------------------------------------------
