@@ -1,0 +1,34 @@
+From littlei!uunet!lll-winken!lll-lcc!ames!necntc!banyan!tim Sun Jan 31 14:01:25 PST 1988
+Status: RO
+
+Article 737 of comp.sources.bugs:
+Path: littlei!uunet!lll-winken!lll-lcc!ames!necntc!banyan!tim
+>From: tim@banyan.UUCP (Tim Henrion)
+Newsgroups: comp.sources.bugs
+Subject: omega fix
+Message-ID: <235@banyan.UUCP>
+Date: 29 Jan 88 13:30:32 GMT
+Lines: 59
+
+The game has a few other bugs which I haven't looked for yet but in
+general it's pretty fun except for the fact that it uses curses which
+is rather inefficient. I have finally gotten the Head of the Goblin
+King for the Duke and am going for the Demonhide Armor...
+
+	Other minor bugs which I haven't looked for yet:
+	1) Saving the game when you're a "three time loser"
+           does not save that fact. When you restart and get
+	   put into jail, you are given probation.
+	2) When you restore a saved game, it does not draw you
+	   on the screen until you do a ^R.
+	3) When you find a secret passage using the search command,
+	   it does not redraw the newfound square. Again you must use
+	   the ^R command.
+----------------------------------------------------------------------------
+Tim Henrion
+Communications Software Engineer	UUCP:  ...!necntc!banyan!tim
+Banyan Systems, Inc.			VOICE: (617) 898-1116
+115 Flanders Road
+Westboro, MA 01581
+
+	   "UNIX?  What do you expect from the phone company..." :-)
