@@ -75,11 +75,11 @@
 #	define SMALL
 #	define BUFSIZ	512	/* or 1024 */
 #   endif
-#
+#   ifndef SYS5
 #   define LOAD_AV	/* Use the load average for various commands.
 #			   Do not define this if you lack a load average
 #			   system call and kmem is read protected. */
-#
+#   endif
 #   define JOB_CONTROL	/* if you have job stopping */
 #
 #   ifdef JOB_CONTROL
