@@ -8,9 +8,9 @@ TTY  = unixtty.c
 UNIX = unixunix.c
 
 # on some systems the termcap library is in -ltermcap
-TERMLIB = -ltermlib
-CRT0   =
-LIBS =  
+TERMLIB	= -ltermlib
+CRT0	=
+LIBS	=
 
 # make NetHack
 GAME = nethack
@@ -19,8 +19,8 @@ GAMEGRP = cron
 GAMEDIR = /usr/games/lib/$(GAME)dir
 SHELLDIR = /usr/games
 MANDIR  = /usr/man/man6
-CFLAGS = -O -M2lt100
-LFLAGS = -M2lt100
+CFLAGS = -M2lt50
+LFLAGS = -M2lt50
 HACKCSRC = apply.c bones.c decl.c\
 	cmd.c do.c dothrow.c do_name.c do_wear.c dog.c dogmove.c eat.c end.c\
 	engrave.c fight.c fountain.c hack.c invent.c ioctl.c lev.c main.c\
@@ -58,7 +58,7 @@ HOBJ = apply.o bones.o decl.o cmd.o do.o dothrow.o do_name.o do_wear.o dog.o\
 
 $(GAME):	specifics $(HOBJ) Makefile
 	@echo "Loading ..."
-	@cc $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(LIBS)
+	@cc $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(TERMLIB) $(LIBS)
 
 all:	$(GAME) lint
 	@echo "Done."
@@ -69,15 +69,19 @@ makedefs:	makedefs.c alloc.o config.h
 RUMORFILES= rumors.base rumors.kaa rumors.mrx
 
 rumors:	config.h $(RUMORFILES) makedefs
+	chmod u+w $(RUMORFILES)
 	./makedefs -r
 
 data:	config.h data.base makedefs
+	chmod u+w $@.base
 	./makedefs -d
 
 date.h:	$(SOURCES) makedefs
+	chmod u+w $@
 	./makedefs -D
 
 trap.h:	config.h makedefs
+	chmod u+w $@
 	./makedefs -t
 
 onames.h:	makedefs objects.h
@@ -85,19 +89,17 @@ onames.h:	makedefs objects.h
 
 specifics:	main.o tty.o unix.o
 
-main.o: main.c
-
 main.c:	unixmain.c hack.h
-	cp ${MAIN} main.c
-
-tty.o:	tty.c
-	cc  -c tty.c
+	cp ${MAIN} $@
+	chmod u+w $@
 
 tty.c:	unixtty.c extern.h
 	cp ${TTY} tty.c
+	chmod u+w $@
 
 unix.c:	unixunix.c hack.h mkroom.h
 	cp ${UNIX} unix.c
+	chmod u+w $@
 
 lint:
 # lint cannot have -p here because (i) capitals are meaningful:
