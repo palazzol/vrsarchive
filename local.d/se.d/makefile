@@ -1,15 +1,19 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.8 2002-11-23 07:51:56 Vincent Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.9 2002-11-24 05:31:01 Vincent Exp $
 # 
 DOCS= Makefile README
 MANS= scriptse.1 se.1
-BINS= se scriptse
+BINS= se$(EXE) scriptse$(EXE)
 ALL	= $(BINS) $(MANS)
 MODEL	= -M2l
 OPTIONS	= -O `cat flags`
 include $(HOME)/CONFIG
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2002/11/23 07:51:56  Vincent
+# Move CONFIG to $(HOME).
+# Fix hardcoded values where $(CC), etc. should be.
+#
 # Revision 1.7  1990/03/30 17:03:26  vrs
 # Move CONFIG to /etc
 #
@@ -76,7 +80,7 @@ CHMOD	= chmod
 
 # Begin list of dependencies
 
-se: $(OBJS) $(LIBRARIES)
+se$(EXE): $(OBJS) $(LIBRARIES)
 #	if grep DBSD flags > /dev/null || grep US5R2 flags > /dev/null; \
 #	then	echo -ltermlib > libs; \
 #	else	echo -lcurses > libs ; \
@@ -99,7 +103,7 @@ libchangetty/libchangetty.a: libchangetty/changetty.c
 pat/libpat.a: pat/pat.c
 	cd pat; make
 
-scriptse: scriptse.c
+scriptse$(EXE): scriptse.c
 	$(CC) -O scriptse.c -o scriptse
 
 se.1: se.m4 flags

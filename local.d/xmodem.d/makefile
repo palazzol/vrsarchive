@@ -1,7 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.4 2002-11-23 07:51:59 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.5 2002-11-24 05:35:23 Vincent Exp $
 #
-ALL	= xmodrec xmodtran addcr delcr cr2lf lf2cr
+ALL	= xmodrec$(EXE) xmodtran$(EXE) addcr$(EXE) delcr$(EXE) cr2lf$(EXE) \
+	  lf2cr$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG

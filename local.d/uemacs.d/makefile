@@ -1,4 +1,4 @@
-ALL	= emacs
+ALL	= emacs$(EXE)
 OPTIONS	= -O
 MODEL	= -M2l -F 2000
 include $(HOME)/CONFIG
@@ -19,7 +19,7 @@ CFILES	= ansi.c basic.c bind.c buffer.c crypt.c dg10.c \
 
 HFILES	= estruct.h edef.h efunc.h epath.h ebind.h evar.h
 
-emacs:	$(OFILES)
+emacs$(EXE):	$(OFILES)
 	$(CC) $(CFLAGS) $(OFILES) $(LIBS) -o $@
 
 clean:
