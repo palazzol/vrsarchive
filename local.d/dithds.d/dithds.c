@@ -76,12 +76,18 @@ struct sgttyb ottyb, nttyb;
 #endif
 
 #ifdef USG
+#ifdef __STDC__
+#include <termios.h>
+struct  termios old;
+struct  termios noret;
+#else
 #include <sys/termio.h>
 #ifndef TCGETA
 #include <sys/ioctl.h>
 #endif /*!TCGETA*/
 struct  termio old;
 struct  termio noret;
+#endif
 #endif
 
 FILE *fp;                /* input file pointer */
@@ -180,12 +186,21 @@ char *argv[];
 #endif
 
 #ifdef USG
+#ifdef __STDC__
+        tcgetattr(0, &old);      /* set for reading characters from tty */
+	noret = old;
+        noret.c_cc[VMIN] = 1;
+        noret.c_cc[VTIME] = 0;
+        noret.c_lflag &= ~(ICANON|ECHO);
+	tcsetattr(0, TCSANOW, &noret);
+#else
         ioctl(0, TCGETA, &old);      /* set for reading characters from tty */
         ioctl(0, TCGETA, &noret);
         noret.c_cc[VMIN] = 1;
         noret.c_cc[VTIME] = 0;
         noret.c_lflag &= ~(ICANON|ECHO);
         ioctl(0, TCSETA, &noret);
+#endif
 #endif
 
         quit = FALSE;
@@ -526,7 +541,11 @@ char *argv[];
         ioctl(0,TIOCSETP,(char *) &ottyb);
 #endif
 #ifdef USG
+#ifdef __STDC__
+	tcsetattr(0, TCSADRAIN, &old);   /* set tty back */
+#else
         ioctl(0, TCSETAW, &old);         /* set tty back */
+#endif
 #endif
 } /* tk */
 
