@@ -1,12 +1,14 @@
 # include	<ctype.h>
 # include	<curses.h>
 
+#ifndef A_STANDOUT	/* If not terminfo... */
 # ifndef erasechar
 #   define erasechar()	_tty.sg_erase
 # endif
 # ifndef killchar
 #   define killchar()	_tty.sg_kill
 # endif
+#endif
 /*
  * Miscellaneous constants
  */
