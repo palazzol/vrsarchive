@@ -7,7 +7,13 @@
 /* external variables */
 extern LVAL s_unbound,true;
 extern FILE *tfp;
+#ifdef __STDC__
+#include <errno.h>
+#include <termios.h>
+static struct termios otty;
+#else
 extern int errno;
+#endif
 
 /* make sure we get a large stack */
 int _stklen = 32766;
@@ -24,6 +30,13 @@ static long rseed = 1L;
 osinit(banner)
   char *banner;
 {
+#ifdef __STDC__
+    static struct termios tty;
+    tcgetattr(0, &tty);
+    otty = tty;
+    tty.c_lflag &= ~(ICANON|ECHO|ECHOE|ECHOK);
+    tcsetattr(0, TCSADRAIN, &tty);
+#endif
     printf("%s\n",banner);
     lposition = 0;
     lindex = 0;
@@ -33,6 +46,9 @@ osinit(banner)
 /* osfinish - clean up before returning to the operating system */
 osfinish()
 {
+#ifdef __STDC__
+    tcsetattr(0, TCSADRAIN, &otty);
+#endif
 }
 
 /* oserror - print an error message */
@@ -124,6 +140,7 @@ int ostgetc()
     for (lcount = 0; ; )
 	switch (ch = xgetc()) {
 	case '\r':
+	case '\n':
 		lbuf[lcount++] = '\n';
 		xputc('\r'); xputc('\n'); lposition = 0;
 		if (tfp)
@@ -236,6 +253,7 @@ static xflush()
     ostputc('\n');
 }
 
+#ifdef MSDOS
 /* xgetc - get a character from the terminal without echo */
 static int xgetc()
 {
@@ -254,6 +272,41 @@ static int xcheck()
 {
     return (bdos(6,0xFF));
 }
+
+#else
+
+static int peek = -1;
+
+/* xgetc - get a character from the terminal without echo */
+static int xgetc()
+{
+    if (peek != -1) {
+	int i = peek;
+	peek = -1;
+	return i;
+    }
+    return getchar();
+}
+
+/* xputc - put a character to the terminal */
+static xputc(ch)
+  int ch;
+{
+    putchar(ch);
+}
+
+/* xcheck - check for a character */
+static int xcheck()
+{
+    int i = 0;
+
+    if (peek != -1)
+	return peek;
+    ioctl(0, TIOCINQ, &i);
+    peek = i? xgetc() : -1;
+    return peek;
+}
+#endif
 
 /* xsystem - execute a system command */
 LVAL xsystem()
