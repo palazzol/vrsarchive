@@ -191,7 +191,8 @@ draws(xmin,xmax,ymin,ymax)
 
 	subroutine to redraw the whole screen as the player knows it
  */
-char screen[MAXX][MAXY],d_flag;	/* template for the screen */
+char **screen;
+char d_flag;	/* template for the screen */
 drawscreen()
 	{
 	register int i,j,k;
