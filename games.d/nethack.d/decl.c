@@ -13,7 +13,7 @@ struct symbols defsyms = {
     '}', '{',
 #endif
 #ifdef NEWCLASS
-    '\',
+    '\\',
 #endif
 #ifdef SPIDERS
     '"',
