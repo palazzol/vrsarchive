@@ -1,22 +1,11 @@
 #
 #	%W% %G%
 #
-SHELL	= /bin/sh
-USRLCL	= ..
-USRBRK	= $(USRLCL)/berkeley
-USRINCL	= $(USRBRK)/include
-INCLSYS	= $(USRINCL)/sys
-USRLIB	= $(USRBRK)/lib
+ALL	= Slibberkeley.a Mlibberkeley.a Llibberkeley.a
+include ../../CONFIG
+BRKSYS	= $(INCDIR)/sys
 HFILES	= h/*.h h/sys/*.h
 CFLAGS	= -I./h
-#
-#
-#	Use a no-op for $(RANLIB) if you are running on an AT&T UNIX system.
-#	UNIX is a trademark of AT&T.  Of course, you'll need to recode the
-#	shared data calls.
-#
-RANLIB	= ranlib
-SACRED	= Slibberkeley.a Mlibberkeley.a Llibberkeley.a
 #
 OBJS	= _close.o _common.o _read.o _write.o _sock_alloc.o \
 	  accept.o bcmp.o bcopy.o bfill.o bind.o bmove.o bzero.o close.o \
@@ -166,7 +155,7 @@ LLIB	= Llibberkeley.a(_close.L) \
 #
 .SUFFIXES:
 .SUFFIXES:	.a .S .M .L .o .s .c
-.PRECIOUS:	$(SACRED)
+.PRECIOUS:	$(ALL)
 
 .c.S:
 	$(CC) -c $(CFLAGS) -Ms $<
@@ -205,8 +194,6 @@ LLIB	= Llibberkeley.a(_close.L) \
 	ar rv $@ $%
 	rm -f $%
 
-all:	$(SACRED)
-
 Slibberkeley.a: $(SLIB)
 	$(RANLIB) $@
 
@@ -221,20 +208,20 @@ $(MOBJS): $(HFILES)
 $(LOBJS): $(HFILES)
 
 clean:
-#	rm -f $(SOBJS) $(MOBJS) $(LOBJS) $(SACRED) make.out
+	rm -f $(SOBJS) $(MOBJS) $(LOBJS) $(ALL) make.out
 
 #
 #	Build the works and install it.
 #
-install:	$(SACRED) # $(USRLCL) $(USRBRK) $(USRLIB) $(USRINCL) $(INCLSYS)
-#		cp $(SACRED) $(USRLIB)
-#		cd $(USRLIB); chmod 644 $(SACRED)
-#		for i in $(SACRED); do $(RANLIB) $(USRLIB)/$$i; done
-#		cp h/*.h $(USRINCL)
-#		chmod 644 $(USRINCL)/*.h
-#		cp h/sys/*.h $(INCLSYS)
-#		chmod 644 $(INCLSYS)/*.h
+install:	$(ALL) $(LIBDIR) $(INCDIR) $(BRKSYS)
+		cp $(ALL) $(LIBDIR)
+		cd $(LIBDIR); chmod 644 $(ALL)
+		for i in $(ALL); do $(RANLIB) $(LIBDIR)/$$i; done
+		cp h/*.h $(INCDIR)
+		chmod 644 $(INCDIR)/*.h
+		cp h/sys/*.h $(BRKSYS)
+		chmod 644 $(BRKSYS)/*.h
 
-$(USRLCL) $(USRBRK) $(USRLIB) $(USRINCL) $(INCLSYS):
+$(BRKSYS):
 		mkdir $@
 		chmod 755 $@
