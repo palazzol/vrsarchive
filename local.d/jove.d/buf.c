@@ -220,7 +220,7 @@ BufSelect()
 	SetBuf(do_select(curwind, bname));
 }
 
-#ifdef MSDOS
+/*#ifdef MSDOS*/
 
 private void
 BufNSelect(n)
@@ -249,7 +249,7 @@ void Buf8Select() { BufNSelect(8); }
 void Buf9Select() { BufNSelect(9); }
 void Buf10Select() { BufNSelect(10); }
 
-#endif /* MSDOS */
+/*#endif /* MSDOS */
 
 private void
 defb_wind(b)
