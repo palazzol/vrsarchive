@@ -1,6 +1,6 @@
 /* msh.c - The MH shell (sigh) */
 #ifndef	lint
-static char ident[] = "@(#)$Id: msh.c,v 1.1 1990-04-12 13:29:30 vrs Exp $";
+static char ident[] = "@(#)$Id: msh.c,v 1.2 1990-05-07 06:43:49 vrs Exp $";
 #endif	lint
 
 /* TODO:
@@ -117,7 +117,7 @@ static int  windows[NWIN + 1];
 static jmp_buf peerenv;
 
 void	padios (), padvise ();
-static int	alrmser ();
+static TYPESIG	alrmser ();
 
 
 #ifdef	BPOP
@@ -169,7 +169,7 @@ int     should_intr;		/* signal handler should interrupt call */
 jmp_buf sigenv;			/* the environment pointer */
 #endif	BSD42
 
-static int	intrser (), pipeser (), quitser ();
+static TYPESIG	intrser (), pipeser (), quitser ();
 
 
 #ifdef	SYS5
@@ -1821,7 +1821,7 @@ register int msgnum;
 
 /* ARGSUSED */
 
-static int  intrser (i)
+static TYPESIG  intrser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -1840,7 +1840,7 @@ int     i;
 
 /* ARGSUSED */
 
-static int  pipeser (i)
+static TYPESIG  pipeser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -1860,7 +1860,7 @@ int     i;
 
 /* ARGSUSED */
 
-static int  quitser (i)
+static TYPESIG  quitser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -2225,7 +2225,7 @@ static int  peerwait () {
 
 /* ARGSUSED */
 
-static int alrmser (i)
+static TYPESIG alrmser (i)
 int	i;
 {
     longjmp (peerenv, DONE);
