@@ -3,15 +3,15 @@
 .TL
 .nf
 Intel Release 3 and Unix System 5: Competitive Analysis
-Revision 1.2
+Revision 1.3
 .AU
 Vincent R. Slyngstad
 .AI
 Intel Applications Marketing
 .AB
 This paper summarizes the issues relating to the competitiveness
-of Intel's Release 3 of Xenix 286 relative to Unix System 5, pointing out,
-where possible, groups of customers likely to be affected by differences.
+of Intel's Release 3 of Xenix 286 relative to Unix System 5, pointing out
+where possible groups of customers likely to be affected by differences.
 The information is presented in in an order very roughly based on
 overall importance, though of course the order of importance to any given
 customer will probably be quite different.
@@ -23,7 +23,7 @@ This description is relative to Unix System 5 in general, rather than the
 system sold by any particular vendor of System 5.  As a result, one should
 read the descriptions of System 5 as being those of a typical fully equipped
 System 5 based system, less the added value of the particular vendor.  The
-Release 3 Xenix described below is Intel Xenix Release 3, which is based
+Release 3 Xenix described below is Intel Xenix 286 Release 3, which is based
 on Microsoft Xenix Release 3.0.  Value added and bundling options chosen
 by various vendors will complicate the issues of how our system competes
 with any other specific system.
@@ -31,8 +31,8 @@ with any other specific system.
 The descriptions that follow fall into four main sections.  Differences
 in the utilities provided are discussed first, then differences in the
 system calls supported, differences in the library routines supplied,
-and lastly features of Unix System 5 Release 3.  Although System 5
-Release 3 systems are not currently available, this last section will
+and lastly features of Unix System 5 Release 2.  Although System 5
+Release 2 systems are not currently available, this last section will
 give some information about future Unix systems.
 .NH 1
 Command Differences
@@ -44,15 +44,16 @@ In this section the differences in the utilities supplied by Unix System
 Utilities directly impact the usability of the system as it is provided.  In
 general, any of these facilities could be made available on either system,
 but this provides some data on what one can expect to `come with,' which
-is of importance to customers who possess only the Xenix binary license,
+is of importance to customers who possess only a binary license,
 and to customers of limited development resources.
 .NH 2
 Batch Execution
 .PP
 Unix based systems generally provide the ability to execute commands at user
 specified times without manual intervention.  This ability is useful when
-repetitive processing needs to be done.  Examples would be daily, weekly or
-monthly reports, etc.  There are two facilities for this - `cron', which is
+repetitive processing needs to be done.  An example would be the generation
+of daily, weekly or monthly reports.  There are two facilities
+for this - `cron', which is
 traditionally available only to the super-user, and `at', which is intended for
 unprivileged users.  Release 3 provides both facilities, and enhances the `at'
 facility by permitting the user to inspect and modify the batch queues (`atq',
@@ -63,8 +64,8 @@ Assignable Devices
 .PP
 Release 3 has two new commands (`assign', `deassign'), which provide the ability
 to restrict access to devices to a single user at a time.  This provides
-security by allowing me to prevent access to a tar diskette which has my
-private files on it during the time that I have it inserted in the drive.
+security by allowing one to prevent access to a tar diskette which has
+private files on it during the time that it is inserted in the drive.
 Formerly, the only way to provide this security was to restrict access to
 the device and allow only the super-user to access the floppy.  System 5
 does not provide this new functionality.
@@ -73,9 +74,9 @@ MS-DOS File Transfer Utilities
 .PP
 Release 3 supplies a number of utilities (`doscat', `doscp', `dosdir', `dosls',
 `dosmkdir', `dosrm', `dosrmdir') which permit maintenance and access to
-diskettes in MS-DOS format.  This should allow customers of Xenix Release 3 to
-leverage existing access the MS-DOS based single user machines they may already
-be using or planning to use.
+diskettes and other media in MS-DOS format.  This should allow customers of
+Xenix Release 3 to leverage existing access to the MS-DOS based single user
+machines they may already be using or planning to use.
 .NH 2
 Berkeley Features
 .PP
@@ -97,7 +98,7 @@ and an enhanced version of the directory listing utility (`lc').  These
 features will be important to
 customers who are familiar with Berkeley Unix or its derivatives or who
 prefer the slightly more straightforward user interface these utilities
-provide, and which is not provided with System 5.
+provide.  These features are not provided with System 5.
 .NH 2
 Visual Shell
 .PP
@@ -105,7 +106,7 @@ Xenix Release 3 provides a new command interpreter (`vsh') designed for users
 running prepackaged applications.  It provides a menu based interface to
 system operations, and can be customized for specific applications or
 data processing tasks.  This will be of use to OEMs who wish to add a
-convenient interface to application packages and to customers who have
+convenient interface to application packages, and to customers who have
 a need for personnel relatively unfamiliar with Xenix to perform specific
 operations.  System 5 does not provide this feature.
 .NH 2
@@ -132,10 +133,10 @@ included in System 5.  This reduces the need to retrain users coming from
 Release 1, and is useful for customers familiar with V7 or Berkeley based
 Unix systems.
 .PP
-In addition, a new utility (`sysadmin') is provided to simplify system backing
+In addition, a new utility (`sysadmin') is provided to simplify system backup
 and file restores.  File restore operations are made considerably simpler,
 a possible plus for customers who do not employ a resident Xenix or Unix
-wizard.
+`wizard'.
 .NH 2
 Fortran Related Tools
 .PP
@@ -143,14 +144,15 @@ System 5 comes with a complete implementation of the Fortran 77 standard,
 including the `ratfor' and `efl' structured Fortran tools.  Intel Fortran will
 be a separate option for our customers, and Fortran will probably also be
 unbundled by nearly all System 5 vendors.  Xenix Release 3 will not support
-`efl', but should continue to support `ratfor'.
+`efl', but will continue to support `ratfor'.
 .NH 2
 On-line Manuals
 .PP
 System 5 implements a facility (`man') which allows pages of the reference 
 manuals to be kept on-line and inspected by users of the system who do not
 have convenient access to a printed manual.  The Release 3 manuals have
-been reorganized for quicker reference, and this facility has not been 
+been reorganized for quicker reference, but the on-line manual
+facility has not been 
 reimplemented in Release 3.  Customers for Xenix Release 3 will therefore
 need to buy copies of the printed manuals for their users.
 .NH 2
@@ -166,31 +168,32 @@ based systems, or who are interested in plotting software.  A newer,
 much more comprehensive treatment of graphics for Xenix is in the
 planning stages.
 .NH 2
-High Level Debugger
+High Level Debuggers
 .PP
 System 5 supports a source language debugger (`sdb') which provides debugging
 information at the source language level for C.  When this debugger is used,
 errors in execution cause the source statement to be printed.  The user may
 then examine variables by name, etc.  Xenix Release 3 will continue to support
 the `adb' debugger, which provides lower level information geared toward
-assembly language, with access by name only to global variables.  The Universal
-Developement Interface feature described later will allow the use of Xenix
+assembly language, with access by name only to global variables.  In addition,
+the Universal
+Development Interface feature described later will allow the use of Xenix
 PSCOPE-286, which will provide additional functionality similar to sdb. This
 is likely to be most critical to customers who do significant application
-software development and are used to sdb or other high level language
-debuggers or do not wish to become familiar with 286 assembly language.
+software development and have used sdb or other high level language
+debuggers or do not wish to become familiar with iAPX 286 assembly language.
 .NH 2
 UUCP Extensions
 .PP
-System 5 supports the uucp system for connecting systems together over serial
+System 5 supports the uucp facility for connecting systems together over serial
 lines, as do Release 1 and Release 3.  However, System 5 provides additional
-utilities (`uuname', `uupick', `uustat', `uuto') which allow the inspection of
-the state of the uucp system, of the systems to which one is connected, and
+utilities (`uupick', `uustat', `uuto') which allow the inspection of the state
+of the uucp system, the state of the systems to which one is connected, and
 the status of user's requests.  Xenix does not provide this additional
 software.  This is not likely to be a sticking point for customers, since
 this software is largely a convenience item and is not widely used.
 .PP
-System 5 also supports the news system, which provides an electronic bulletin
+System 5 also includes the news system, which provides an electronic bulletin
 board on a international scale with numerous topics.  This software is quite
 generally available however, and is known to run on Xenix.  Xenix users may
 get it from systems which already have it, usually without charge and a
@@ -220,8 +223,8 @@ prepare constant width text (listings, etc) for typesetting.  The `diction'
 program checks manuscripts for potentially awkward phrases.  The `dtype'
 utility uses heuristics tests to identify the format of disk media.  The
 `eqncheck' utility checks the legality of commands to typeset mathematical
-expressions.  The `look' utility finds lines of a file which match a given key
-efficiently.  The `prep' utility reads manuscripts and prepares an output
+expressions.  The `look' utility efficiently finds lines of a file which match
+a given key.  The `prep' utility reads manuscripts and prepares an output
 file suitable for extracting statistical information.  The `style' utility
 uses heuristic tests to comment on readability, sentence length, etc. in
 an input document.  The `xref' utility generates a slightly different format
@@ -244,8 +247,8 @@ writing or reading and writing.  This is used in data base applications
 to prevent chaos which results from two processes attempting to update
 a record at once, and the reading of old or inconsistent data from records
 which are being updated.  This feature must be emulated in System 5 using
-files or semaphores which mark a file as in use.  These emulations rely on
-all processes which access the file to agree on the emulation procedure,
+files or semaphores which mark the data file as `in use'.  These emulations
+rely on all processes which access the file to agree on the emulation procedure,
 and provide poorer performance and functionality.
 .NH 2
 Semaphores
@@ -262,30 +265,30 @@ kernel.
 .NH 2
 Universal Development Interface
 .PP
-UDI support should be a major win for Xenix, since it will allow us to
+UDI support should be a major win for Release 3, since it will allow us to
 capitalize on the languages and software available for our development
 systems and run these on Xenix.  This should give us decided advantages
 in language support.  System 5 based systems can be expected to provide
-only Fortran and C compilers, with Cobol available for some.  Additional
-enhancements to Xenix from this feature can be expected to benefit
-customers who do large amounts of software development.
+only Fortran and C compilers, with Cobol available for some.  This feature
+can be expected to benefit customers who do large amounts of software
+development.
 .NH 2
 Shared Data
 .PP
-System 5 and Release 3 will both support shared data segments, but again
+System 5 and Release 3 will both support shared data segments, but
 in different and incompatible ways.  In this case however, the basic
 functionality and operations are the same in both systems.
 .NH 2
-V7 UNIX/R1 Compatibility
+Version 7 UNIX and Release 1 Compatibility
 .PP
 Xenix Release 3 has a commitment to source code compatibility with Xenix
 Release 1.  As a result, code from Xenix Release 1 and other Unix Version 7
-systems can be compiled and run on a Xenix Release 3 system.  System 5 no
+based systems can be compiled and run on a Xenix Release 3 system.  System 5 no
 longer carries certain system calls from Version 7, and as a result will not
 run, for example, code which uses `stty' and `gtty' calls, though it does
 provide equivalent incompatible calls.  This will have obvious significance to
 our Release 1 customers and potential customers migrating from other Xenix
-based systems or Unix version 7 based systems, including Berkeley style
+based systems or Unix Version 7 based systems, including Berkeley style
 systems.
 .NH 2
 Interprocess Communication
@@ -314,8 +317,8 @@ to the time of day.  The `nap' system call allows a process to sleep for
 shorter intervals than a second.  The `rdchk' system call determines if a
 read operation would block waiting for input, allowing tasks to overlap
 other processing instead of just waiting.  The `shutdn' system call provides
-an orderly shutdown of system operation.  Each of these operations is
-useful in certain contexts, but are not likely to be major points.
+an orderly shutdown of system operation.  Each of these system calls is
+useful in certain contexts, but is not likely to be a major selling point.
 .NH 1
 Library Functions
 .NH 2
@@ -329,7 +332,7 @@ for by including the functional equivalents in the development effort.
 Curses library
 .PP
 The Curses library is a set of routines developed at Berkeley which create
-and display windows on CRT screens.  They use the information in the termcap
+and display windows on CRT screens.  They use the information in the `termcap'
 data base to provide support for a wide variety of terminal types.  Xenix
 Release 3 will continue to supply curses, while System 5 does not.  These
 routines are very useful, but will probably be most important to developers
@@ -361,7 +364,7 @@ this should not be an issue.
 .NH 2
 Executable Image Manipulation
 .PP
-System 5 suplies a set of routines to obtain data about executable files
+System 5 supplies a set of routines to obtain data about executable files
 from the executable image on disk.  This is designed to promote portability
 of of the few applications which need to do this, since executable formats
 vary from machine to machine.  Xenix does not provide these routines but
@@ -380,7 +383,7 @@ Miscellany
 .PP
 System 5 provides a number of other library routines not expected to be
 selling issues.  These include routines to dial out on modems, manipulate
-hash tables, determine the login directory and terminal, modify the group
+hash tables, determine the login directory and login terminal, modify the group
 permissions control file (`/etc/group'), and manipulate tree structures.
 These routines are simple enough that users who need this functionality
 should be able to develop their own equivalents.
@@ -401,12 +404,13 @@ Summary
 From a features point of view, the most significant wins for Xenix are
 probably the batch execution facility, the MS-DOS file transfer utilities,
 The Berkeley enhancements, the Visual Shell, file locking, UDI support,
-wider compatibility with other systems, and curses library and the keyed
+wider compatibility with other systems, the curses library and the keyed
 access to files.  On the down side, the most significant features missing are
 probably the lack of a high level debugger, message queues, process accounting,
 and possibly the AT&T marketing of System 5 as `the standard'.  These are
 being worked on and will probably appear in updates to the Release 3 product.
 There seems to be every reason for optimism about Release 3 of Xenix, and it
-continue to get better from there.  Eventual goals (by the time of Release 3)
-in fact include compatibility with System 5, including the features mentioned
-above.
+continues to get better from there.  Eventual goals in fact include
+compatibility with System 5, including the features mentioned above.
+This compatibility should exist by the time of the next release after Release
+3.
