@@ -15,15 +15,23 @@
                                  October, 1980
 
 */
+#ifdef __STDC__
+#include <stdlib.h>
+#endif
 #include <stdio.h>
+#include <termcap.h>
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 #define cursor(col,row) tputs(tgoto(CM,col,row),1,outc)
 outc(c)
 {
         putchar(c);
 }
-extern char *UP;
-extern short ospeed;
+char *UP;
+short ospeed;
 int Wrap;
 short *ref[24];
 static char flavor[]={
@@ -145,7 +153,11 @@ char *argv[];
     char *tcp;
     register char *term;
     char tcb[100];
+#ifdef __STDC__
+    struct termios sg;
+#else
     struct sgttyb sg;
+#endif
     setbuf(stdout, (char *)0);
     for (x=1;x<argc;x++) {
         register char *p;
@@ -207,8 +219,13 @@ char *argv[];
     bottom=LI-1;
     SR=tgetstr("sr",&tcp);
     UP=tgetstr("up",&tcp);
+#ifdef __STDC__
+    tcgetattr(fileno(stdout),&sg);
+    ospeed=sg.c_ospeed;
+#else
     gtty(fileno(stdout),&sg);
     ospeed=sg.sg_ospeed;
+#endif
     Wrap=tgetflag("am");
     ip=(short *)malloc(LI*CO*sizeof (short));
     for (n=0;n<LI;) {
@@ -323,5 +340,9 @@ char c;
     putchar(c);
 }
 float ranf() {
+#ifdef RAND_MAX
+    return((float)rand()/((float)RAND_MAX+1));
+#else
     return((float)rand()/32768);
+#endif
 }
