@@ -1,14 +1,14 @@
 #
 # Makefile for jive and valspeak programs
 #
-ALL	= jive valspeak
+ALL	= jive$(EXE) valspeak$(EXE)
 MODEL	= -i
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
-.l:
-	lex $?
-	$(CC) $(CFLAGS) lex.yy.c -o $@ $(LIBS) -ll
+.l$(EXE):
+	$(LEX) $?
+	$(CC) $(CFLAGS) lex.yy.c -o $@ $(LIBS) $(LEXLIB)
 	rm -f lex.yy.c lex.yy.o
 
 clean:
