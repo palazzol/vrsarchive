@@ -87,9 +87,9 @@ struct	passwd	*getpwuid();
 extern	char	*fgets();
 
 /* functions which we need to know about */
-extern	int	interrupt();
-extern	int	ill_sig();
-extern	int	catchalarm();
+extern	SIG_T	interrupt();
+extern	SIG_T	ill_sig();
+extern	SIG_T	catchalarm();
 extern	long	recallplayer();
 extern	long	findname();
 extern	long	allocrecord();

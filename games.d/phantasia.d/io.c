@@ -231,8 +231,8 @@ inputoption()
 /	to its original condition.
 /
 /************************************************************************/
-
-interrupt()
+SIG_T
+interrupt(dummy)
 {
 char	line[81];		/* a place to store data already on screen */
 register int	loop;		/* counter */
@@ -478,8 +478,8 @@ YELL:		mvprintw(oldy + 1, 0, "Please choose one of : [%s]\n", choices);
 /	Simply longjmp() into getanswer().
 /
 /************************************************************************/
-
-catchalarm()
+SIG_T
+catchalarm(dummy)
 {
     longjmp(Timeoenv, 1);
 }
