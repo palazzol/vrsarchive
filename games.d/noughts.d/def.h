@@ -27,9 +27,9 @@ short int thtcnt[2][5];
 char thtmax[2];
 char hvlr[4][18];
 
-unsigned char automat[][13];
-char tmppts[4][2][17];
-char tmptht[4][2][17];
+extern unsigned char automat[][13];
+unsigned char tmppts[4][2][17];
+unsigned char tmptht[4][2][17];
 
 LOGIC slf;
 

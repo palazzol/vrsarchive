@@ -1,10 +1,11 @@
 # include "def.h"
 # include <stdio.h>
 # include <signal.h>
-extern cheat();
+extern SIG_T cheat();
 
 /* makes the program play self */
-normal(){
+SIG_T
+normal(dummy){
 	signal(SIGINT, cheat);
 	slf = 0;
 }

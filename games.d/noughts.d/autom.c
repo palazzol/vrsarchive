@@ -1,16 +1,16 @@
 # include "def.h"
 
-/* Scans the tabel who defines the finite automat */
+/* Scans the table who defines the finite automat */
 
 autom(){
     register int state, i, way;
     short int who, j;
     unsigned char *atm;
-    char (*p)[17], (*t)[17];
+    unsigned char (*p)[17], (*t)[17];
     unsigned char *newpts;
-    char *oldpts;
+    unsigned char *oldpts;
     unsigned char *newtht;
-    char *oldtht;
+    unsigned char *oldtht;
     char max;
 
     for(way = 0; way < 4; way++){
