@@ -1,15 +1,15 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.9 1988-02-09 14:37:15 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.10 1990-02-27 10:57:23 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
 TODO	= LaTeX.d dialers.d lbgm.d map.d news.d news.misc.d $(XENIX) $(M4711) \
-	  dial.onet
+	  dial.onet se
 XENIX	= cbuf cmap curse dial.onet mdemo smap top
 SUBDIR	= arc ash arcmail calend calls car clear compress copymode crack ctc \
 	  ctty cursive cxref diffc displays dithds elbat espel getopt hoc6 \
 	  include index ispell jove kermit less lintlib mkman msdos ofiles patch \
-	  pathalias ptc read20 recipes roff se strings talk teco tmac tpr \
+	  pathalias ptc read20 recipes roff strings talk teco tmac tpr \
 	  umodem uuencode vc vttest whatcomm which xmodem
 M0700	= bootime esad logout mkbad
 M0711	= bincmp clock from getfrom script
