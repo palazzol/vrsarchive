@@ -199,7 +199,8 @@ long	nmins; {
 	time(&daytime);
 	daytime += gseconds;
 	whenleave = ctime(&daytime);
-	printf("You have to %s at %s", buff1, whenleave);
+	whenleave[16] = '\0';
+	printf("You have to %s at %s\n", buff1, whenleave+11);
 	if(pid=fork()) {
 		if(pid == -1) {
 			perror("can't fork");
