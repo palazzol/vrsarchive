@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/dir.d/Makefile,v 1.2 1987-02-16 11:19:10 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/dir.d/Makefile,v 1.3 1987-02-22 20:02:41 vrs Exp $
 #
 ALL	= Slibdir.a Mlibdir.a Llibdir.a
 OPTIONS	= -O -I.
@@ -97,6 +97,9 @@ clean:
 #	Build the works and install it.
 #
 install: $(ALL) $(LIBDIR) $(INCDIR) $(MAN3)
+	cp $(ALL) $(CCLIB)
+	cd $(CCLIB); chmod 644 $(ALL)
+	for i in $(ALL); do ranlib $(CCLIB)/$$i; done
 	cp $(ALL) $(LIBDIR)
 	cd $(LIBDIR); chmod 644 $(ALL)
 	for i in $(ALL); do ranlib $(LIBDIR)/$$i; done

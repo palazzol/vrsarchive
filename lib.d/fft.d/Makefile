@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/fft.d/Makefile,v 1.1 1987-02-16 11:19:58 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/fft.d/Makefile,v 1.2 1987-02-22 20:03:05 vrs Exp $
 #
 ALL	= Slibfft.a Mlibfft.a Llibfft.a
 OPTIONS	= -O -I.
@@ -80,6 +80,9 @@ clean:
 #	Build the works and install it.
 #
 install: $(ALL) $(LIBDIR) $(INCDIR) $(MAN3)
+	cp $(ALL) $(CCLIB)
+	cd $(CCLIB); chmod 644 $(ALL)
+	for i in $(ALL); do ranlib $(CCLIB)/$$i; done
 	cp $(ALL) $(LIBDIR)
 	cd $(LIBDIR); chmod 644 $(ALL)
 	for i in $(ALL); do ranlib $(LIBDIR)/$$i; done

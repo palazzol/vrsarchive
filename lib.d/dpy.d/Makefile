@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.4 1987-02-16 11:19:19 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.5 1987-02-22 20:02:54 vrs Exp $
 #
 ALL	= Slibdpy.a Mlibdpy.a Llibdpy.a
 OPTIONS	= -DUSG
@@ -100,6 +100,9 @@ clean:
 #	Build the works and install it.
 #
 install: $(ALL) $(LIBDIR) $(INCDIR) $(MAN3)
+	cp $(ALL) $(CCLIB)
+	cd $(CCLIB); chmod 644 $(ALL)
+	for i in $(ALL); do ranlib $(CCLIB)/$$i; done
 	cp $(ALL) $(LIBDIR)
 	cd $(LIBDIR); chmod 644 $(ALL)
 	for i in $(ALL); do ranlib $(LIBDIR)/$$i; done
