@@ -2,6 +2,12 @@
 #include <nlist.h>
 #endif
 #include <stdio.h>
+#ifdef __STDC__
+#   include <errno.h>
+#else
+    extern int errno;
+    extern char *sys_errlist[];
+#endif
 
 loadav(avenrun)         /* Function storing 1,5,15 minute load averages in */
 double *avenrun;        /* avenrun; should be declared double avenrun[3];  */
@@ -46,8 +52,6 @@ double *avenrun;        /* avenrun; should be declared double avenrun[3];  */
 syserror (str)
     char *str;
 {
-    extern int errno;
-    extern char *sys_errlist[];
     fprintf(stderr, "%s (%s)\n", str, sys_errlist[errno]);
 }
 
