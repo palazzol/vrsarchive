@@ -1,0 +1,23 @@
+   File Name		Archive #	Description
+-----------------------------------------------------------
+ MANIFEST                  1	This shipping list
+ Makefile                  5	
+ README                    1	
+ cexecute.c                2	
+ combat.c                  4	
+ commands.c                3	
+ data.h                    6	
+ forms.c                   4	
+ help                      1	
+ io.c                      6	
+ magic.c                   3	
+ main.c                    3	
+ makeworld.c               2	
+ misc.c                    5	
+ move.c                    4	
+ nations                   5	
+ newlogin.c                1	
+ npc.c                     2	
+ randevent.c               5	
+ reports.c                 5	
+ run                       3	
