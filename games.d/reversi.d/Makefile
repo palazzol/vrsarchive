@@ -1,5 +1,5 @@
 #
-#	reversi @(#)Makefile	1.1 7/28/85
+#	reversi @(#)Makefile	1.2 10/6/85
 #
 SHELL	= /bin/sh
 GAMEDIR	= /usr/games
