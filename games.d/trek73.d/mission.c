@@ -9,7 +9,7 @@
 #ifdef BSD
 #include <sys/time.h>
 #endif
-#ifdef SYSV
+#ifdef SYS5
 #include <time.h>
 #endif
 

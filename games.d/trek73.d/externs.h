@@ -7,12 +7,12 @@
 
 /* UNIX include files needed for most (if not all) of the C files */
 #include <stdio.h>
-#ifdef SYSV
+#ifdef SYS5
 #include <string.h>
-#endif SYSV
+#endif
 #ifdef BSD
 #include <strings.h>
-#endif BSD
+#endif
 #include <math.h>
 
 /* UNIX extern declarations of functions used which do not
@@ -21,9 +21,9 @@ extern char	*getenv(), *malloc();
 extern long	time();
 extern unsigned	sleep(), alarm();
 extern void	exit(), free(), perror();
-#ifdef SYSV
+#ifdef SYS5
 extern void	srand();
-#endif SYSV
+#endif
 extern char	*optarg;
 
 /*

@@ -9,7 +9,7 @@
 #ifdef BSD
 #include <strings.h>
 #endif
-#ifdef SYSV
+#ifdef SYS5
 #include <string.h>
 #endif
 #include <fcntl.h>

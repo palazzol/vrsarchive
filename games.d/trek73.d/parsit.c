@@ -7,7 +7,7 @@
  *
  */
 
-#ifdef SYSV
+#ifdef SYS5
 #define index strchr
 #endif
 

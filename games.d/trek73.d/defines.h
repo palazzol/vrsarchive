@@ -14,7 +14,7 @@ extern float rectify(), bearing();
 #ifdef BSD
 extern long random();
 #endif
-#ifdef SYSV
+#ifdef SYS5
 #define random()	((long)(rand()))
 #define srandom(seed)	(srand((unsigned)(seed)))
 #endif
