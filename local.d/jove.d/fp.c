@@ -107,6 +107,8 @@ File	*fp;
 	fp->f_ptr = fp->f_base;
 	fp->f_cnt = read(fp->f_fd, fp->f_base, fp->f_bufsize);
 	if (fp->f_cnt == -1) {
+		if (errno == EINTR)
+			return(0);
 		printf("[Read error %d]", errno);
 		fp->f_flags |= F_ERR;
 	}
