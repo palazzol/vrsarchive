@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.4 1987-02-15 20:38:29 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.5 1987-02-15 20:42:07 vrs Exp $
 # 
 DOCS= Makefile README
 MANS= scriptse.1 se.1
@@ -10,6 +10,9 @@ OPTIONS	= -O `cat flags`
 include ../../CONFIG
 #
 # $Log: not supported by cvs2svn $
+# Version 1.4  87/02/15  20:38:29  vrs
+# Make 'make clean' consistent with other Makefiles
+# 
 # Version 1.3  87/02/15  15:59:08  vrs
 # Use CONFIG
 # 
@@ -118,5 +121,6 @@ printall: printman print
 
 clean:
 	rm -f $(OBJS) flags se.1 $(BINS)
+	cd se_h; make clean
 	cd pat; make clean
 	cd libchangetty; make clean
