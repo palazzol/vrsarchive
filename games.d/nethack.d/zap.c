@@ -18,7 +18,7 @@ char *fl[]= {
 	"sleep ray",
 	"bolt of cold",
 	"death ray",
-	"magic missle",		/* Spell equivalents of above wands */
+	"magic missile",		/* Spell equivalents of above wands */
 	"fireball",
 	"sleep ray",
 	"cone of cold",
@@ -124,7 +124,10 @@ register struct obj *obj, *otmp;	/* returns TRUE if sth was done */
 		otmp2 = mkobj_at((obj->otyp == ROCK
 			|| obj->otyp == ENORMOUS_ROCK) ? GEM_SYM : obj->olet,
 			obj->ox, obj->oy);
-		otmp2->quan = obj->quan;
+		if (index("%*?!+", otmp2->olet) ||
+		    (otmp2->known &&
+		     (otmp2->olet == WEAPON_SYM && otmp2->otyp < BOOMERANG)))
+		    	otmp2->quan = obj->quan;
 		/* keep special fields (including charges on wands) */
 		/* The DGK modification doesn't allow polymorphing a weapon
 		   with enchantments into another one, and doesn't allow 
