@@ -1,35 +1,29 @@
 #
-# Makefile for wator.  Note that on 2.8 and 2.9 you may
-# need to change the library from "termcap" to "termlib".
+#	$Header: /home/Vince/cvs/games.d/wator.d/Makefile,v 1.2 1987-05-17 18:58:42 vrs Exp $
 #
-
-CC=cc
-CFLAGS= -O
-LIBS= -ltermcap
-#LIBS= -ltermlib
-OBJS=	wator.o screen_control.o item_control.o init.o  	parse_args.o fish_cycle.o shark_cycle.o
+ALL	= wator
+OPTIONS	= -O
+MODEL	= -i -F 2000
+include ../../CONFIG
+OBJS	= wator.o screen_ctl.o item_control.o init.o parse_args.o \
+	  fish_cycle.o shark_cycle.o
 
 wator:	$(OBJS)
-	$(CC) -o wator $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
-wator.o: wator.c wator.h
-	$(CC) $(CFLAGS) -c wator wator.c
+wator.o: wator.h
+screen_ctl.o: wator.h
+item_control.o: wator.h
+init.o: wator.h
+parse_args.o: wator.h
+fish_cycle.o: wator.h
+shark_cycle.o: wator.h
 
-screen_control.o: screen_control.c wator.h
-	$(CC) $(CFLAGS) -c screen_control screen_control.c
+clean:
+	rm -f $(ALL) $(OBJS)
 
-item_control.o: item_control.c wator.h
-	$(CC) $(CFLAGS) -c item_control item_control.c
-
-init.o: init.c wator.h
-	$(CC) $(CFLAGS) -c init init.c
-
-parse_args.o: parse_args.c wator.h
-	$(CC) $(CFLAGS) -c parse_args parse_args.c
-
-fish_cycle.o: fish_cycle.c wator.h
-	$(CC) $(CFLAGS) -c fish_cycle fish_cycle.c
-
-shark_cycle.o: shark_cycle.c wator.h
-	$(CC) $(CFLAGS) -c shark_cycle shark_cycle.c
-
+install: $(ALL) $(GAMDIR) $(MAN6)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp wator.6 $(MAN6)
+	cd $(MAN6); chmod 644 wator.6
