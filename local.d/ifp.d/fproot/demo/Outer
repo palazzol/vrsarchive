@@ -1,0 +1,6 @@
+(* 
+ * Outer product of two vectors 
+ *)
+DEF Outer AS 
+   Cart | EACH EACH * END END;
+

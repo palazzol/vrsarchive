@@ -1,0 +1,6 @@
+DEF MatMul AS
+   [1,2|trans] |
+   distr |
+   EACH distl |
+      EACH Inner END
+   END;  

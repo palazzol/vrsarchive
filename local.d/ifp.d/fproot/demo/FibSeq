@@ -1,0 +1,17 @@
+(*
+ * Fibonacci numbers
+ * 
+ * n : FibSeq -> sequence of first n Fibonacci numbers
+ *
+ * Example
+ *      6 : FibSeq -> <1 1 2 3 5 8>
+ *)
+
+DEF FibSeq AS
+   IF [id,#2] | <= THEN
+      [#<1 1>,id] | takel       (* trivial case *)
+   ELSE
+      sub1 | FibSeq |           (* generate n-1 Fibonacci numbers        *)
+      [id, [1r,2r]|+] | apndr   (* append sum of last two to end of list *)
+   END;
+

@@ -1,0 +1,13 @@
+(*
+ * CosSin
+ *
+ * Compute the sine and cosine of an angle via half-angle formulae.
+ * The function is accurate to 12 decimals.
+ *)
+DEF CosSin AS
+   IF [id|Abs,#1e-6]|< THEN [[#1,[Square,#2]|%]|-,id]
+   ELSE
+      [id,#2]|% | CosSin | 
+      [[+,-]|*, [*,*]|+] 
+   END;
+

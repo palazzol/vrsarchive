@@ -1,0 +1,4 @@
+(* Converts pair of matrices to matrix of pairs *)
+
+DEF MatCat AS trans | EACH trans END;
+

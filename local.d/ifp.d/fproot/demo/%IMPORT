@@ -1,0 +1,12 @@
+FROM /sys IMPORT
+   apndl,apndr,apply,assoc,cat,distl,distr,dropl,dropr,explode,id,implode,
+   iota,length,patom,pick,repeat,reverse,takel,taker,tl,tlr,trans;
+
+FROM /math/arith IMPORT
+   +,-,*,%,add1,arccos,arcsin,arctan,cos,div,exp,ln,
+   max,min,mod,minus,power,prod,sin,sqrt,sub1,sum,tan;
+
+FROM /math/logic IMPORT
+   <,<=,=,~=,>=,>,~,and,all,any,atom,boolean,false,longer,member,null,
+   numeric,odd,or,pair,shorter,xor; 
+

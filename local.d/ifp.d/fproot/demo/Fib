@@ -1,0 +1,15 @@
+(*
+ * Compute nth fibonacci number
+ *
+ * Examples:
+ *
+ *	6 : Fib -> 8
+ *	7 : Fib -> 13
+ *	8 : Fib -> 21
+ *)
+
+DEF Fib AS 
+   IF [id,#2] | < THEN id
+   ELSE
+      sub1 | [Fib,sub1|Fib] | +
+   END;

@@ -1,0 +1,12 @@
+(*
+ * Text
+ * 
+ * Example piece of text for use with PigLatin function.
+ *
+ * Example:
+ *
+ *	0 : Text | PigLatin -> ...
+ *)
+
+DEF Text AS
+   #<All work and no play makes Jack a dull boy>;

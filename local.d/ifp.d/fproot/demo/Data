@@ -1,0 +1,16 @@
+(*
+ * Currently I/O is almost non-existent in IFP.  One way to skirt this problem
+ * when you have a large amount of data to input is to define a constant 
+ * function with the appropriate values.
+ *
+ * The function Data returns a sequence of data values.  We could, for 
+ * instance, sort them by composing Data with QuickSort
+ *
+ * Examples:
+ *      0 : Data -> <5 3 88 6 21 0 -7>
+ *      0 : Data | QuickSort -> <-7 0 3 5 6 21 88>
+ *)
+
+DEF Data AS
+   #<5 3 88 6 21 0 -7>;
+ 

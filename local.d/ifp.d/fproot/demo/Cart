@@ -1,0 +1,6 @@
+(* 
+ * Cartesian product of two sequences
+ *)
+DEF Cart AS 
+   distr | EACH distl END;
+

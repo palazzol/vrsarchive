@@ -1,0 +1,12 @@
+This directory contains the following subdirectories and files:
+
+	README - this file
+
+	RunIFP - shell script which runs IFP interpreter
+
+	fproot - IFP demonstration root directory
+	fproot/demo - demonstration functions
+
+	interp - source code and Makefile for IFP interpreter
+
+	manual - troff files and Makefile for IFP manual

@@ -1,0 +1,26 @@
+(*
+ * QuickSort
+ *
+ * This function sorts a sequence of numbers or strings into ascending order
+ * using the Quicksort algorithm.
+ *
+ * Examples:
+ *
+ *      <3 1 4 1 5 9 2> : QuickSort == <1 1 2 3 4 5 9>
+ *
+ *      <all work and no play> : QuickSort == <all and no play work>
+ *
+ * The sequence may not mix strings and numbers.
+ *)
+
+DEF QuickSort AS
+   IF [length,#2] | < THEN id
+   ELSE
+      [id,1] | distr |
+      [      
+         FILTER < END | EACH 1 END | QuickSort,
+         FILTER = END | EACH 1 END,
+         FILTER > END | EACH 1 END | QuickSort
+      ] | cat
+   END;
+

@@ -1,0 +1,13 @@
+(*
+ * prod
+ *
+ * Compute product of sequence.
+ *
+ * E.g. <10 2 3 4> : prod -> 240
+ *)
+
+DEF prod AS
+   IF ../logic/null THEN #1
+   ELSE
+      INSERT * END
+   END;

@@ -1,0 +1,8 @@
+DEF Permute AS
+   IF null THEN #<<>>
+   ELSE
+      [id,length|iota] | distl |
+      EACH
+	 [pick,[takel|tlr,dropl]|cat|Permute] | distl | EACH apndl END
+      END | cat
+   END; 

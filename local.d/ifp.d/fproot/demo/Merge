@@ -1,0 +1,18 @@
+(*
+ * Merge
+ *
+ * Merge two ascending sequences.
+ *
+ * The sequences should not mix strings and numbers.
+ *
+ * Example:
+ *
+ *	<<a b x z> <c d z>> : Merge -> <a b c d x y z>
+ *)
+DEF Merge AS
+   IF EACH null END | or THEN cat
+   ELSE
+      IF EACH 1 END | > THEN reverse ELSE id END |
+      [1|1,[1|tl,2]|Merge] | apndl
+   END;
+

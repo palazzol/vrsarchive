@@ -1,0 +1,32 @@
+# Shell script for invoking IFP interpreter.
+
+# This script is for demonstration and documentation purposes only.
+# Running the script will set the appropriate environment variables
+# and start up the IFP interpreter in the demonstration directory.
+
+# All its actions should be put in the user's .login, and .cshrc files.
+# The IFP interpreter must be compiled before running this script.
+# See the Makefile in subdirectory "interp" for instructions on how
+# to compile the interpreter.
+
+#-----------------------------------------------------------------------
+
+# These two lines should go in each user's .login file and be customized
+# for the user's particular IFP root directory and editor. 
+
+	setenv IFProot $cwd/fproot
+	setenv EDITOR "/usr/ucb/vi"
+
+# This alias is for convenience.  Presumably the interpreter will normally
+# reside on the user's search path.
+
+	alias ifp $cwd/interp/ifp
+
+# Normally the user would type in the following two lines:
+
+	cd fproot/demo
+	ifp
+
+# The interpreter will respond with the prompt "ifp>" when ready for 
+# user input.
+

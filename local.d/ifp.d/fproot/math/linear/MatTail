@@ -1,0 +1,3 @@
+(* Deletes first row and column of matrix *)
+DEF MatTail AS tl | EACH tl END;
+

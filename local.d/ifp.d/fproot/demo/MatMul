@@ -1,0 +1,11 @@
+(*
+ * MatMul
+ *
+ * [matrixA,matrixB] -> matrixAB
+ *)
+DEF MatMul AS
+   {[A,B] := id}
+   [A,B|trans] | distr |
+   EACH distl |
+      EACH Inner END
+   END;  

@@ -1,0 +1,12 @@
+(*
+ * Compute Euler's phi-function, i.e. number of number rel. prime to n.
+ *
+ * E.g. 8:Euler -> 4 since 1,3,5,7 are relatively prime to 8
+ *)
+DEF Euler AS
+   [id,iota] | distl |
+   EACH 
+      WHILE [2,#0]|> DO [2,mod] END |
+      IF [1, #1]|= THEN #1 ELSE #0 END 
+   END | sum;
+

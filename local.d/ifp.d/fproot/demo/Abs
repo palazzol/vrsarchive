@@ -1,0 +1,6 @@
+(* Absolute value function *)
+
+DEF Abs AS
+   IF [id,#0] | < THEN minus
+   ELSE id
+   END;

@@ -1,0 +1,26 @@
+This directory contains demonstration functions.  To use one, enter the
+IFP command
+
+     show input : function ;
+
+where input is an appropriate object and function is one of the functions below:
+
+     Abs - absolute value of a number
+     cotan - find trigonometric cotangent of angle expressed in radians
+     Debug - version of Fib with debugging messages
+     Double - double a number
+     Euler - Euler totient (phi) function
+     Fib - find first n fibonacci numbers
+     Inner - find inner product of two vectors
+     Inter - set intersection
+     Member - set membership
+     PigLatin - converts sequence of words to Pig Latin
+     PasTri - find first n rows of Pascal's triangle
+     QuickSort - sort a sequence of numbers or sequence of strings
+     Square - square a number
+     Vowel - determine if a string is a vowel     
+
+All IFP primitives are imported into this directory also, so you can
+experiment with them.  Look in %IMPORT for their names.  The functions
+are detailed in the file \IFP.TXT
+

@@ -1,0 +1,10 @@
+(*
+ * <S e> : Member -> #t if e is in sequence S, #f otherwise
+ *
+ * Examples:
+ *      <<a b c d> c> -> t
+ *      <<2 4 6 8> 3> -> f
+ *)
+DEF Member AS
+   distr | EACH = END | any;
+

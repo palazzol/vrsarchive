@@ -1,0 +1,10 @@
+(* L part of LU decomposition of matrix *)
+DEF L AS
+   IF Singleton THEN #<<1.0>>
+   ELSE 
+      [
+         Li1,
+	 Aik | [EACH #0 END,L] | apndl
+      ] | ApndlCol
+   END;
+

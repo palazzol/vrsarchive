@@ -1,0 +1,4 @@
+(* Append column (1) to left side of matrix (2) *)
+
+DEF ApndlCol AS [1,2|trans] | apndl | trans;
+

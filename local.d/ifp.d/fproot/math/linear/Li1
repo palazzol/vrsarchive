@@ -1,0 +1,3 @@
+(* First column of L part *)
+DEF Li1 AS [EACH 1 END,1|1] | distr | EACH % END;
+

@@ -1,0 +1,4 @@
+(* Square a number - e.g. 3:Square -> 9 *)
+
+DEF Square AS [id,id]|*;
+

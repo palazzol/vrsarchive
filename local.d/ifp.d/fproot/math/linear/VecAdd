@@ -1,0 +1,3 @@
+(* Vector addition *)
+DEF VecAdd AS trans | EACH + END;
+

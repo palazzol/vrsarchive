@@ -1,0 +1,5 @@
+(*
+ * Compute the inner product of two vectors.
+ *)
+DEF Inner AS 
+   trans | EACH * END | INSERT + END;

@@ -1,0 +1,3 @@
+(* Append column (2) to right side of matrix (1) *)
+DEF ApndrCol [1|trans,2] | apndr | trans;
+

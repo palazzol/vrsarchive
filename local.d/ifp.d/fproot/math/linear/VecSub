@@ -1,0 +1,3 @@
+(* Vector subtraction *)
+DEF VecSub AS trans | EACH - END;
+

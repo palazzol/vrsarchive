@@ -1,0 +1,6 @@
+(*
+ * Trigonmetric cotangent function
+ *)
+
+DEF cotan AS [cos,sin] | %;
+

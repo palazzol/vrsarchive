@@ -1,0 +1,3 @@
+This directory contains functions for linear matrix manipulation.
+In particular, it contains L and U, which take the lower and upper 
+parts of the LU decomposition of a matrix.

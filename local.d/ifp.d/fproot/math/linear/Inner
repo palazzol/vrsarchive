@@ -1,0 +1,7 @@
+(* Inner product *)
+
+DEF Inner AS 
+   trans | EACH * END | 
+   IF null THEN #0 
+   ELSE INSERT + END 
+   END;

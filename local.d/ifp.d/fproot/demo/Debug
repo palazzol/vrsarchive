@@ -1,0 +1,21 @@
+(*
+ * Version of Fib with debugging output
+ *
+ * n : Debug -> sequence of first n Fibonacci numbers
+ *
+ * The two functions created with the "@" form print their inputs
+ * so we can see what is going on inside the Debug function.
+ *)
+
+DEF Debug AS
+
+   IF [id,#2] | <= THEN
+
+      @"trivial case" | [#<1 1>,id] | takel
+
+   ELSE
+
+      @"recurse" | sub1 | Debug | [id, [1r,2r]|+] | apndr
+
+   END;
+

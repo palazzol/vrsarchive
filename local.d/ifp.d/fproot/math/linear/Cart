@@ -1,0 +1,3 @@
+(* Cartesian product of two vectors *)
+DEF Cart AS distr | EACH distl END;
+

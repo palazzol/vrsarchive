@@ -1,0 +1,29 @@
+Mod.sources: Volume 10, Number 34
+Submitted by: robison@b.cs.uiuc.edu (Arch Robison)
+Archive-name: ifp/Part01
+
+IFP[1] is a variant of Backus' FP [2].  The IFP interpreter is written
+in C and is an order of magnitude faster than the BSD 4.2 FP [3].
+The interpreter should run on any UNIX box.
+
+Arch D. Robison
+University of Illinois at Urbana-Champaign
+	
+CSNET: robison@UIUC.CSNET
+UUCP: {ihnp4,pur-ee,convex}!uiucdcs!robison
+ARPA: robison@B.CS.UIUC.EDU (robison@UIUC.ARPA)
+
+General References
+------------------
+
+[1]  Arch D. Robison, "Illinois  Functional  Programming:  A
+     Tutorial," BYTE Vol. 12,2 pp. 115-125 McGraw-Hill Inc.,
+     (February 1987).
+
+[2]  John Backus, "Can Programming Be Liberated from the von
+     Neumann  Style?   A Functional Style and Its Algebra of
+     Programs," CACM  Vol.  21,8 pp.  613-641  ACM,  (August
+     1978).
+
+[3]  Scott Baden, "Berkeley FP  User's  Manual,  Rev.  4.1,"
+     UNIX Programmers Manual, (July 27,1983).

@@ -1,0 +1,22 @@
+(*
+ * Hanio - towers of Hanoi solver
+ *
+ * <N Names> : Hanoi -> <<src dst> ...<src dst>>
+ *
+ * where N is number of rings and names is a triple of post names
+ * <source temporary dest>.
+ *
+ * Example:
+ *	<2 <a b c>> : Hanoi -> <<a,b>,<a,c>,<b,c>>
+ *)
+
+DEF Hanoi AS
+   {[n,[a,b,c]] := id}
+   IF [n,#0]|= THEN []
+   ELSE [
+      [n|sub1, [a,c,b]] | Hanoi,
+      [[a,c]],
+      [n|sub1, [b,a,c]] | Hanoi 
+   ] | cat
+   END;
+

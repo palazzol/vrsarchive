@@ -1,0 +1,34 @@
+(*
+ * Pascal's triangle generator
+ *
+ * n : PasTri -> first n rows of Pascal's triangle
+ *
+ * Example
+ *              5 : PasTri -> <
+ *                               <1>
+ *                               <1 1>
+ *                               <1 2 1>
+ *                               <1 3 3 1>
+ *                               <1 4 6 4 1>
+ *                            >
+ *)
+
+DEF PasTri AS          
+   IF [id,#0] | <= THEN #<<1>>
+   ELSE
+      sub1 | PasTri |                (* Create triangle with n-1 rows *)
+      [
+         id,  
+
+         1r |                        (* Take last row of smaller triangle *)
+         [
+            [#0,id] | apndl,         (* Append 0 to left edge of row  *)
+            [id,#0] | apndr          (* Append 0 to right edge of row *)
+         ] | trans | EACH + END      (* Add corresponding elements *)
+
+      ] | apndr                      (* Append new row to smaller triangle *)
+   END;
+
+
+
+

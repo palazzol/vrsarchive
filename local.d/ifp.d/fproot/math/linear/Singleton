@@ -1,0 +1,4 @@
+(* Check if matrix is a singleton *)
+
+DEF Singleton AS [length,#1]|=;
+

@@ -1,0 +1,8 @@
+(* Tail of matrix after gaussian elimination on (1|1) *)
+
+DEF Aik AS 
+   [
+      MatTail, 
+      [Li1|tl,U1k|tl] | Outer
+   ] | MatSub;
+

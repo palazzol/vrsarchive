@@ -1,0 +1,11 @@
+(* U part of LU decomposition of matrix *)
+
+DEF U AS
+   IF Singleton THEN id
+   ELSE
+      [
+         U1k,
+	 Aik | [EACH #0 END,U] | ApndlCol
+      ] | apndl
+   END;
+

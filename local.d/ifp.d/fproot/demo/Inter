@@ -1,0 +1,9 @@
+(*
+ * Set intersection: [A,B] : Inter -> elements of B which are in A 
+ * 
+ * Example:
+ *      <<2 3 4> <5 3 2 1>> : Inter -> <3 2>
+ *)
+
+DEF Inter AS
+   distl | FILTER member END | EACH 2 END;

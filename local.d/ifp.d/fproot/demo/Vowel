@@ -1,0 +1,13 @@
+(*
+ * Determine if a letter is a vowel.
+ *
+ * E.g.
+ *      A : Vowel -> t
+ *      u : Vowel -> t
+ *      R : Vowel -> f
+ *
+ * This function is used by function PigLatin.
+ *)
+
+DEF Vowel AS 
+   [#<a e i o u A E I O U>, id] | member;

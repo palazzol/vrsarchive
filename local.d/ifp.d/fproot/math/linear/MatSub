@@ -1,0 +1,3 @@
+(* Matrix subtraction *)
+DEF MatSub AS MatCat | EACH EACH - END END;
+

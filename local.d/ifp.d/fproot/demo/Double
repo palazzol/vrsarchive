@@ -1,0 +1,4 @@
+(* Double a number - e.g. 3:Double -> 6 *)
+
+DEF Double AS [id,id]|+;
+

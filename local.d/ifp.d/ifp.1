@@ -1,0 +1,79 @@
+.TH IFP 1 "Jan 28, 1987"
+.UC 4
+.SH NAME
+ifp \- Illinois FP interpreter 
+.SH SYNOPSIS
+.B ifp
+[ option ] 
+.SH DESCRIPTION
+.I Ifp
+starts the Illinois FP interpreter.
+.PP
+.I Ifp
+understands several options.  Normally, no options are required.
+Most of the options are for experimental work.  
+Not all (or even any) of the options may
+exist for a particular version of the interpreter.
+.TP
+.B \-l
+Print all functions with full pathname.  
+Useful for debugging scope problems.
+.TP
+.B \-e[012]
+Turn on expression cache.  The cache may be turned on for any subset of:
+.nf
+	0	Primitive functions
+	1	User-defined functions
+	2	PFOs
+.fi
+To see the cache statistics, give the command "cache" to the interpreter.
+.TP
+.B \-pn
+(Multimax only) This option specifies that the interpreter should be run
+as n parallel processes.
+.TP
+.B \-f
+(Multimax only) Print expression queue statistics.
+.TP 
+.B  \-sn
+(Multimax only) Use stack of max. depth n for expression scheduling.
+.TP
+.B \-qn
+(Multimax only) Use queue of max. length n for expression scheduling.
+.TP
+.B \-d[pafricxhusle]
+Turn on spy points corresponding to selected letters.
+.nf
+	p	parser
+	a	memory allocation
+	f	file io
+	r	reference counts
+	i	initialization
+	c	expression cache
+	x	extended definitions
+	h	hypercube
+	u	Multimax
+	s	Semaphores
+	l	Free list
+	e	Expression sckeduling
+.fi
+For example, -dar turns on spy points for memory allocation and 
+reference counts.
+.SH FILES
+.ta \w'/usr/local/lib/lib*.a\ \ 'u
+ifp	interpreter 
+.br
+.SH "SEE ALSO"
+Illinois FP User's Manual
+.sp 2
+A Functional Programming Interpreter (THESIS, Univerisity of Illinois) 
+.sp 2
+.ul
+Illinois Functional Programming: A Tutorial 
+(BYTE, Feb. 1987)
+.br
+fp(1)
+.SH BUGS
+Programming in IFP still requires thinking.  Some the options are incompatible.
+.SH AUTHOR
+Arch D. Robison

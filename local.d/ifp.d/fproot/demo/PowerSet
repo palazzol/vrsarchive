@@ -1,0 +1,24 @@
+(*
+ * PowerSet
+ *
+ * This function generates all subsets of a given set.  Sets are 
+ * represented as sequences of distinct elements.
+ *
+ * Examples:
+ *
+ *      <> : PowerSet -> <<>>
+ *
+ *      <a b c> : PowerSet -> <<a,b,c>,<a,b>,<a,c>,<a>,<b,c>,<b>,<c>,<>>
+ *)
+
+DEF PowerSet AS
+   IF null THEN [id] 
+   ELSE 
+      [1, tl | PowerSet] |
+      [
+         distl | EACH apndl END,
+	 2 
+      ] 
+      | cat 
+   END;
+

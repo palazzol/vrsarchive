@@ -1,0 +1,2166 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		  Professional Workstation
+	     Research Group Technical Report #7
+
+
+
+
+
+
+		 Illinois FP User's Manual
+
+
+
+
+
+
+
+		      Arch D. Robison
+	       Department of Computer Science
+	 University of Illinois at Urbana-Champaign
+		   Urbana, Illinois 61801
+
+		      February 9, 1987
+
+
+
+		     _T_a_b_l_e _o_f _C_o_n_t_e_n_t_s
+
+1.  Overview ..........................................    1
+2.  Prerequisites .....................................    2
+2.1.  Organization ....................................    2
+2.2.  Environment (UNIX) ..............................    3
+2.3.  Environment (MSDOS) .............................    3
+3.  Using IFP .........................................    4
+3.1.  Starting IFP ....................................    4
+3.2.  Creating and Editing Definitions ................    4
+3.3.  Applying Functions ..............................    5
+3.4.  Executing UNIX Commands .........................    5
+3.5.  Executing MSDOS Commands ........................    6
+4.  Language ..........................................    6
+4.1.  Objects .........................................    6
+4.2.  Functions .......................................    7
+4.2.1.  Primitive Functions ...........................    9
+4.2.1.1.  Structural Functions (/sys) .................   11
+4.2.1.2.  Arithmetic (/math/arith) ....................   12
+4.2.1.3.  Logic (/math/logic) .........................   14
+4.2.1.4.  String Functions (/sys) .....................   16
+4.2.1.5.  Miscellaneous Functions (/sys) ..............   16
+4.2.2.  User Defined Functions ........................   19
+4.2.3.  Functional Variables ..........................   20
+4.3.  Functional Forms ................................   21
+4.3.1.  Constant ......................................   21
+4.3.2.  Selection .....................................   22
+4.3.3.  Composition ...................................   22
+4.3.4.  Construction ..................................   23
+4.3.5.  Apply to Each .................................   23
+4.3.6.  If-Then-Else ..................................   24
+4.3.7.  Filter ........................................   24
+4.3.8.  Right Insert ..................................   25
+4.3.9.  While .........................................   26
+4.3.10.  Fetch[8] .....................................   26
+4.4.  Comments ........................................   27
+4.5.  Syntax Summary ..................................   27
+5.  IFP Graphics (optional)[9] ........................   27
+5.1.  Coordinate System ...............................   28
+5.2.  Display List Structure ..........................   28
+5.2.1.  Polyline ......................................   28
+5.2.2.  Color .........................................   29
+5.2.3.  Transform .....................................   29
+5.2.4.  Text ..........................................   29
+6.  Debugging .........................................   30
+7.  Differences between IFP and Backus' FP ............   31
+7.1.  Domain ..........................................   31
+7.2.  Functions .......................................   31
+7.3.  Functional Forms ................................   31
+7.4.  Syntax ..........................................   32
+8.  Functional Programming Techniques .................   33
+8.1.  Functional Programming Identities ...............   33
+8.2.  Common Subfunctions .............................   34
+8.3.  State Machines ..................................   34
+8.4.  Tail Recursion ..................................   35
+9.  Installation Notes ................................   35
+9.1.  Machine Dependence ..............................   35
+9.2.  Compiling Options ...............................   36
+
+
+			     i
+
+
+
+
+
+
+
+	      _I_l_l_i_n_o_i_s _F_P _0._5 _U_s_e_r_s _M_a_n_u_a_l[_1]
+
+
+
+_1.  _O_v_e_r_v_i_e_w
+
+
+     Functional Programming (FP) [Bac78a] is a radically new
+
+form  of  programming.  FP programs have neither the control
+
+flow nor variables of Von-Neumann languages.   Instead  pro-
+
+grams  are  directly constructed from smaller programs. As a
+
+result, FP offers a new style of programming  with  numerous
+
+advantages, including:
+
+
+		    Modular Programming
+		    Program Verification
+		    Parallel Processing
+		    Optimization
+
+
+
+     IFP (Illinois Functional  Programming)  [Rob87a,Rob87b]
+
+is  an interactive functional programming implementation for
+
+UNIX and MSDOS systems.  The user may  interactively  create
+
+and execute functional programs.  In addition to Backus' FP,
+
+IFP has the following features:
+
+
+       Hierarchical and Modular Function Organization
+       Block-Structured Syntax
+       Error Explanations
+       Graphics Display List Processor[2]
+
+
+The interpreter is an order of magnitude  more  compact  and
+____________________
+
+   [1]Any resemblance to the real product  is  purely  coin-
+cidental.
+   [2]Once upon a time it worked.  The code has  since  then
+not  been maintained.  So it is not implemented in most ver-
+sions.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   2
+
+
+faster than previous FP implementations.
+
+
+_2.  _P_r_e_r_e_q_u_i_s_i_t_e_s
+
+
+     The rest of the manual  assumes  the  reader  has  read
+
+Backus'  original paper on FP.  [Bac78a] Other references on
+
+FP [Bad83a,Dar82a] may be of help.  Additionally,  parts  of
+
+the  manual  assume  the reader understands UNIX or MSDOS[3]
+
+file structure and paths.
+
+
+_2._1.  _O_r_g_a_n_i_z_a_t_i_o_n
+
+
+     IFP organizes functions in a tree  structure  analogous
+
+to  UNIX/MSDOS files.  In fact each function is a file.  For
+
+UNIX systems, each user specifies the root (``IFP root'') of
+
+their function tree.  Within IFP, paths specify a path rela-
+
+tive to the IFP root.   The  IFP  root  is  set  by  a  UNIX
+
+environment  variable.   For  MSDOS systems, the IFP root is
+
+identical to the current drive root.   (see  ``Environment''
+
+below).
+
+
+     Each node on the tree is either a  function  definition
+
+(corresponding  to  a file), or a module (corresponding to a
+
+directory).  A function may reference another function via a
+
+path.
+
+
+     To avoid having to write out  the  entire  path  for  a
+
+function  every time, IFP has a function identifier importa-
+
+tion feature.  Functions from other modules may be  imported
+
+into  a module.  Once imported, a function may be referenced
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   3
+
+
+as though it were defined in the module.
+
+
+_2._2.  _E_n_v_i_r_o_n_m_e_n_t (_U_N_I_X)
+
+
+     Before invoking IFP, two environment  variables  should
+
+be set. The ``EDITOR'' variable should be set to the name of
+
+your favorite editor.  The ``IFProot''  variable  should  be
+
+set to the  absolute  path  of  your  ``IFP  root''.[3]  The
+
+``IFPprompt''  is  optional.   If  set,  it  changes the IFP
+
+prompt.  The default prompt is ``ifp>  ''.   Normally  these
+
+variables  will  be  set  by  your .login file.  Below is an
+
+example of the commands which would appear  in  your  .login
+
+file.
+
+	   setenv EDITOR = ``/usr/ucb/vi''
+	   setenv IFProot = ``/mnt/bonzo/fproot''
+	   setenv IFPprompt = ``ifp> ''
+
+
+_2._3.  _E_n_v_i_r_o_n_m_e_n_t (_M_S_D_O_S)
+
+
+     Before invoking IFP, two environment  variables  should
+
+be  set.   The ``EDITOR'' and ``IFPDIR'' variables should be
+
+set to the names of your favorite editor and directory  lis-
+
+ters  respectively.   Normally  these  should be set by your
+
+autoexec.bat file, e.g.:
+
+		    set EDITOR=C:ED.EXE
+		    set IFPDIR=C:SD2.COM
+
+Unlike the UNIX version, there is no IFProot variable.   The
+
+____________________
+
+   Use the actual path,  not  a  symbolic  link.   When  IFP
+starts  up,  it assumes that the current directory path is a
+prefix of the IFP root path.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   4
+
+
+root of the IFP file system  is  the  root  of  the  current
+
+drive.
+
+
+_3.  _U_s_i_n_g _I_F_P
+
+
+_3._1.  _S_t_a_r_t_i_n_g _I_F_P
+
+
+     To start an IFP session, change  your  current  working
+
+directory  to  a  directory  under your IFP root.  Then type
+
+"ifp".  Your current  working  directory  becomes  your  IFP
+
+current  working  module. When IFP is ready, it will respond
+
+with the prompt ``ifp> ''.  To end  the  IFP  session,  type
+
+control-D or enter the command ``exit''.
+
+
+_3._2.  _C_r_e_a_t_i_n_g _a_n_d _E_d_i_t_i_n_g _D_e_f_i_n_i_t_i_o_n_s
+
+
+     To edit an IFP definition, type the command:
+
+			 vi[4] foo
+
+where foo is the name of the function  to  be  edited.   The
+
+function  may be one local to the current working module, or
+
+one that is imported into the current  working  module.   If
+
+the  function  name is neither defined locally nor imported,
+
+then it is assumed to be a new local function.  To delete an
+
+IFP definition, type the command:
+
+			 rm[5] foo
+
+
+____________________
+
+   [4]If your editor is not ``vi'' (as specified by the last
+element  of  your  EDITOR  path),  replace  ``vi'' with your
+editor's name.  For MS-DOS, the command is always ``ed'', no
+matter what the editor is called.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   5
+
+
+_3._3.  _A_p_p_l_y_i_n_g _F_u_n_c_t_i_o_n_s
+
+
+     To apply an FP function, type the command[6]:
+
+		  show object : function
+
+The  interpreter  evaluates  the  result  of  applying   the
+
+function  to  the object.  The result is then pretty-printed
+
+at the terminal.  Below are some example inputs and outputs.
+
+show <a b c> : reverse
+
+<c b a>
+
+show <1 2 3> : sum
+
+6
+
+show <1 2 3> : EACH [id,id]|* END | sum     (* sum of squares *)
+
+14
+
+show <1 2 3 4 5> : EACH iota END
+
+<
+     <1>
+     <1,2>
+     <1,2,3>
+     <1,2,3,4>
+     <1,2,3,4,5>
+>
+
+exit
+
+
+_3._4.  _E_x_e_c_u_t_i_n_g _U_N_I_X _C_o_m_m_a_n_d_s
+
+
+     If a command is not recognized by the IFP  interpreter,
+
+then  it  is  passed  on to the UNIX shell ``sh''.  Commands
+
+such as ``ls'' and  ``more''  work  as  expected.   Commands
+
+which  change  environment  do  not  work  properly, as they
+____________________
+
+   [5]For MS-DOS, the command is ``del''.
+   [6]Some earlier versions (before 0.4, e.g. the  BYTE  BIX
+release) require a semicolon after the _f_u_n_c_t_i_o_n.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   6
+
+
+change their environment (within ``sh'') but not  your  own.
+
+For example, the ``cd'' command does not work.
+
+
+_3._5.  _E_x_e_c_u_t_i_n_g _M_S_D_O_S _C_o_m_m_a_n_d_s
+
+
+     The only two MSDOS command that can be run from  within
+
+the  interpreter are ``dir'' and ``del''.  Some systems seem
+
+to require ``dir/''.  I don't know why.
+
+
+
+_4.  _L_a_n_g_u_a_g_e
+
+
+     IFP semantics  are  almost  identical  to  Backus'  FP,
+
+though  the syntax is quite different. The IFP language con-
+
+sists of objects, functions, and functional forms.  The sin-
+
+gle operation is _a_p_p_l_y which maps a function and object into
+
+a new object.
+
+
+_4._1.  _O_b_j_e_c_t_s
+
+
+     Objects in FP are either atoms, sequences,  or  _b_o_t_t_o_m.
+
+The  latter  is  a special object which denotes an undefined
+
+value.  Atoms  are  numbers,  strings,  or  boolean  values.
+
+Strings  must  be quoted when they look like another kind of
+
+atom or contain non-alphanumeric  characters.   Below  is  a
+
+table of some typical atoms:
+
+
+       banana                 string
+       "The cat in the hat"   string (double quotes)
+       'hello world'          string (single quotes)
+       7                      number
+       3.1415                 number
+       1e6                    number (million)
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   7
+
+
+       "1.414"                string
+       t                      boolean true
+       f                      boolean false
+       "t"                    string
+
+
+
+     Sequences are lists of zero or more objects  surrounded
+
+by angle brackets.  Sequences are written as:
+
+
+		       <x ,x ,...x >
+			 1  2     n
+Below is table of some typical sequences:
+
+
+		 <a,b,c>
+		 <1 2 3 4 5 6>
+		 <>
+		 <<1 2 3> <apple banana> t>
+
+
+Either commas or spaces may be used to separate the elements
+
+of a sequence.  The elements of the sequence may be any kind
+
+of object except ``?'', and do not have to be  of  the  same
+
+type.
+
+
+     IFP sequences have the _b_o_t_t_o_m _p_r_e_s_e_r_v_i_n_g [_B_a_c_7_8_a]  pro-
+
+perty.   Any  sequence  containing  ``?'' is itself equal to
+
+``?''.
+
+
+
+_4._2.  _F_u_n_c_t_i_o_n_s
+
+
+     Functions in FP always have a  single  argument  and  a
+
+single  result.  FP functions are analogous to UNIX programs
+
+which transform ``standard input'' into ``standard  output''
+
+without side effects.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   8
+
+
+     The IFP interpreter distinguishs  two  kinds  of  func-
+
+tions:   primitive  functions  and  user-defined  functions.
+
+Primitive functions  are  built  into  the  FP  interpreter;
+
+user-defined  functions  are  created by the user.  The only
+
+distinction between the  two  kinds  of  functions  is  that
+
+user-defined  functions  have  definitions in terms of other
+
+IFP functions.  All  functions  may  be  used  in  the  same
+
+manner,  neither  primitive  nor  user-defined functions are
+
+privileged in any way.
+
+
+     IFP functions are arranged in a tree  structure  analo-
+
+gous  to  the way UNIX files are arranged.  Each node of the
+
+tree is either a module (directory) or function  (file).   A
+
+function  is referenced by its _p_a_t_h_n_a_m_e, which is a sequence
+
+of node names separated by slashes.   Pathnames  follow  the
+
+UNIX  conventions.  Absolute  pathnames  begin with a slash,
+
+which indicates that the path starts at the IFP root  direc-
+
+tory  (as specified by the IFProot variable in your environ-
+
+ment).  Relative pathnames do not begin with a slash,  which
+
+indicates  that  the  path  starts at the current directory.
+
+Within function definitions, the current  directory  is  the
+
+parent  node of the function.  Pathnames may contain ``..'',
+
+which indicates moving up to the parent node.
+
+
+     For example, consider the node tree in Figure  1.   The
+
+root node is ``r''.  Below are some ways the function  ``b''
+
+can  reference  the  other nodes.  Note that the name of the
+
+root node is never explicitly used.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                   9
+
+
+
+				+-----+
+				|  r  |
+				+-----+
+			       /       \
+			      /         \
+			     /           \
+			    /             \
+			   /               \
+			  /                 \
+		     +-----+               +-----+
+		     | tmp |               | sys |
+		     +-----+               +-----+
+		    /   |   \               /   \
+		   /    |    \             /     \
+		  /     |     \           /       \
+		 /      |      \         /         \
+	     +-----+ +-----+ +-----+  +-----+     +-----+
+	     | foo | |  a  | |  b  |  | id  |     | sum |
+	     +-----+ +-----+ +-----+  +-----+     +-----+
+	      /   \
+	     /     \
+	    /       \
+	+-----+    +-----+
+	|  p  |    |  q  |
+	+-----+    +-----+
+			  Figure 1
+
+
+		 _________________________
+		|_p_a_t_h_n_a_m_e________t_y_p_e______|
+		| /sys/sum       absolute|
+		| /tmp/foo/p     absolute|
+		| foo/p          relative|
+		| ../tmp/foo/p   relative|
+		| ../sys/sum     relative|
+		|_________________________|
+
+
+
+_4._2._1.  _P_r_i_m_i_t_i_v_e _F_u_n_c_t_i_o_n_s
+
+
+     Primitive functions are built into the IFP interpreter.
+
+They  have  pathnames  like  any other function, except that
+
+there is no source code file for the function.  The function
+
+descriptions  are grouped into sections below.  The pathname
+
+for the function's module is in parentheses at  the  top  of
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  10
+
+
+each section.[7]
+
+
+     The following sets (types) are used in the  definitions
+
+of functions:
+
+
+    A         atoms
+    B         boolean values
+    O         objects
+    R         real numbers
+    Z         integers
+    S         strings
+    T*        sequences with element type T
+    T+        non-empty sequences with element type T
+    Tn        sequences of length n with element type T
+    T[n,m]    sequences of length m with element type Tn
+    [T ,T ]   pair of types T  and T
+      1  2                   1      2
+
+A function returns ``?'' if  the  argument  is  not  in  its
+
+domain.   The  notation  x   denotes  the  nth  element of a
+			  n
+sequence X.
+
+
+     For example, the domain of  the  addition  function  is
+
+[X,Y]  in  [R,R].   That  is  addition  takes a pair of real
+
+numbers as its argument.  We could also write this as  [X,Y]
+
+in R2, since a pair is a sequence of length two.
+
+
+     The types may be pictured neatly with the Venn  diagram
+
+in Figure 2:
+
+
+
+
+
+
+
+____________________
+
+   [7] NOTE: The author does not worship  backward  compati-
+bility.   Future versions of IFP may put primitive functions
+in different subdirectories.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  11
+
+
+
+	  +----------------------------+
+	  | O                          |
+	  |   +--------------------+   |
+	  |   |  A                 |   |
+	  |   |    +-----------+   |   |
+	  |   |    |     B     |   |   |
+	  |   |    +-----------+   |   |
+	  |   |    | R         |   |   |
+	  |   |    |   +---+   |   |   |
+	  |   |    |   | Z |   |   |   |
+	  |   |    |   +---+   |   |   |
+	  |   |    |           |   |   |
+	  |   |    +-----------+   |   |
+	  |   |    |     O*    |   |   |
+	  |   |    +-----------+   |   |
+	  |   |                    |   |
+	  |   +--------------------+   |
+	  |                            |
+	  | +-+                        |
+	  | |?|                        |
+	  | +-+                        |
+	  |                            |
+	  +----------------------------+
+			  Figure 2
+
+
+_4._2._1._1.  _S_t_r_u_c_t_u_r_a_l _F_u_n_c_t_i_o_n_s (/_s_y_s)
+
+
+     Structural  functions  are  assemble,  reorganize,  and
+
+select  data.  The primitive structural functions are listed
+
+below:
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  12
+
+
+__________________________________________________________________________
+_|N_a_m_e_______D_o_m_a_i_n_________________D_e_f_i_n_i_t_i_o_n________________________________|
+|                                                                        |
+|apndl     [X,Y] in [O,On]       <X,y ,y ,...y >                         |
+|                                    1  2     n                          |
+|apndr     [X,Y] in [Om,O]       <x  x ,...x ,Y>                         |
+|                                  1, 2     m                            |
+|                nm                                                      |
+|cat       X in O                catenate subsequences, e.g.             |
+|                                <<a b> <x> <3 5>> -> <a b x 3 5>        |
+|                       n                                                |
+|distl     [X,Y] in [O,O ]       <<X,y1><X,y2>...<X,yn>>                 |
+|                     m                                                  |
+|distr     [X,Y] in [O ,O]       <<x1,Y><x2,Y>...<xm,Y>>                 |
+|                     n                                                  |
+|dropl     [X,K] in [O ,0<_Z<_n]   <xK+1,xK+2,...xn>                       |
+|                     n                                                  |
+|dropr     [X,K] in [O ,0<_Z<_n]   <x1,x2,...xn-k>                         |
+|                                                                        |
+|iota      n in Z>_0              <1,2,...n>                              |
+|                n                                                       |
+|length    X in O                n                                       |
+|                     n                                                  |
+|pick      [X,K] in [O ,0<Z<_n]   xK                                      |
+|                                                                        |
+|repeat    [X,K] in [O,0<_Z]      sequence <X,X...X> of length K          |
+|                n                                                       |
+|reverse   X in O                <xn,xn-1,...x1>                         |
+|                     n                                                  |
+|takel     [X,K] in [O ,0<_Z<_n]   <x1,x2,...xK>                           |
+|                     n                                                  |
+|taker     [X,K] in [O ,0<_Z<_n]   <xn-K+1,xn-k+2,...xn>                   |
+|                m>0                                                     |
+|tl        X in O                <x2,x3,...xm>                           |
+|                m>0                                                     |
+|tlr       X in O                <x1,x2,...xm-1>                         |
+|                [n,m]                                                   |
+|trans     X in O                transpose matrix, e.g.                  |
+_||________________________________<_<_a__1_>__<_b__2_>__<_c__3_>_>__-_>__<_<_a__b__c_>__<_1__2__3_>_>
+
+
+
+_4._2._1._2.  _A_r_i_t_h_m_e_t_i_c (/_m_a_t_h/_a_r_i_t_h)
+
+
+     Most IFP arithmetic functions are found here.  Below is
+
+a  table  of the existing functions.  Some function's domain
+
+may be further restricted due to range limitations.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  13
+
+
+_______________________________________________________________
+_|N_a_m_e______D_o_m_a_i_n______________D_e_f_i_n_i_t_i_o_n_________________________|
+|                                                             |
+|+        [X,Y] in [R,R]     X+Y                              |
+|                                                             |
+|-        ...                X-Y                              |
+|                                                             |
+|*        ...                XxY                              |
+|                                                             |
+|%        [X,Y] in [R,R=/0]   X/Y                              |
+|                                                             |
+|add1     X in R             X+1                              |
+|                                                             |
+|arcsin   X in R, -1<_X<_1     arcsinX                          |
+|                                                             |
+|arccos   X in R, -1<_X<_1     arccosX                          |
+|                                                             |
+|arctan   X in R             arctanX                          |
+|                                                             |
+|cos      X in R             cosX                             |
+|                                                             |
+|div      [X,Y] in [R,R=/0]   floor(X/Y)                       |
+|                                                             |
+|exp      X in R             eX                               |
+|                                                             |
+|ln       X in R>0           log X                            |
+|                               e                             |
+|max      [X,Y] in [R,R]     max(X,Y)                         |
+|                                                             |
+|min      [X,Y] in [R,R]     min(X,Y)                         |
+|                                                             |
+|minus    X in R             -X                               |
+|                                                             |
+|mod      [X,Y] in [R,R]     X-Yfloor(X/Y) if Y=/0, 0 otherwise|
+|                                                             |
+|power    [X,Y] in [R>_0,R]   XY                               |
+|                                                             |
+|sin      X in R             sinX                             |
+|                              _                              |
+|sqrt     X in R>0           \|X                              |
+|                                                             |
+|sub1     X in R             X-1                              |
+|                                                             |
+|sum      X in R*            X +X +...+X                      |
+|                             1  2      n                     |
+|tan      X in R             tanX                             |
+_|______________________________________________________________|
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  14
+
+
+_4._2._1._3.  _L_o_g_i_c (/_m_a_t_h/_l_o_g_i_c)
+
+
+     Most IFP primitive functions returning  boolean  values
+
+are found here.  Below is a table of the existing functions:
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  15
+
+
+       ______________________________________________
+      |_N_a_m_e_______D_o_m_a_i_n__________________D_e_f_i_n_i_t_i_o_n___|
+      |                                             |
+      | =         [X,Y] in [O,O]         X=Y        |
+      |                                             |
+      | ~=        ...                    X=/Y        |
+      |                                             |
+      | <         [X,Y] in [R,R]U[S,S]   X<Y        |
+      |                                             |
+      | <=        ...                    X<_Y        |
+      |                                             |
+      | >=        ...                    X>_Y        |
+      |                                             |
+      | >         ...                    X>Y        |
+      |                                             |
+      | ~         X in B                 ~X         |
+      |                                             |
+      | and       [X,Y] in [B,B]         X/\Y       |
+      |                                             |
+      | all       X in B*                /\x        |
+      |                                  k  k       |
+      |                                             |
+      | any       X in B*                \/xk       |
+      |                                  k          |
+      | atom      X in O                 X in A     |
+      |                                             |
+      | boolean   X in O                 X in B     |
+      |                                             |
+      | false     X in O                 X=#f       |
+      |                                             |
+      | imply     [X,Y] in [B,B]         ~X\/Y      |
+      |                                             |
+      | longer    [X,Y] in [Om,On]       m>n        |
+      |                                             |
+      | member    [X,Y] in [O*,O]        Y in X     |
+      |                                             |
+      | numeric   X in O                 X in R     |
+      |                                             |
+      | null      X in O*                X=<>       |
+      |                                             |
+      | odd       X in Z                 X mod 2 = 1|
+      |                                             |
+      | or        [X,Y] in [B,B]         X\/Y       |
+      |                                             |
+      | pair      X in O                 X in [O,O] |
+      |                                             |
+      | shorter   [X,Y] in [Om,On]       m<n        |
+      |                                             |
+      | xor       [X,Y] in [B,B]         X=/Y        |
+      |______________________________________________|
+
+
+String  inequalities  are  defined  from  the  lexigraphical
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  16
+
+
+(dictionary) ordering.
+
+
+_4._2._1._4.  _S_t_r_i_n_g _F_u_n_c_t_i_o_n_s (/_s_y_s)
+
+
+     The string functions are:
+
+
+____________________________________________________________
+_|N_a_m_e_______D_o_m_a_i_n_____D_e_f_i_n_i_t_i_o_n______________________________|
+|                                                          |
+|explode   X in S    sequence of characters in X           |
+|                                                          |
+|implode   X in S*   string made by catenating strings in X|
+|                                                          |
+|patom     X in A    string representation of X, e.g.      |
+|                    123 : patom -> "123"                  |
+_|___________________________________________________________|
+
+
+
+_4._2._1._5.  _M_i_s_c_e_l_l_a_n_e_o_u_s _F_u_n_c_t_i_o_n_s (/_s_y_s)
+
+
+     The miscellaneous functions  are  listed  below.   Each
+
+function  description  is  preceded  by  a title line of the
+
+form:
+
+____________________________________________________________
+
+
+function                   domain                 definition
+
+
+____________________________________________________________
+
+
+apply                 [X,F] in [O,S*]           apply F to X
+
+
+    F is a sequence of strings representing  a  pathname
+    to  a  defined function.  The result is the function
+    referenced by F applied to X.  Example:
+
+	     <<3 4> <math arith "+">> : apply -> 7
+
+    F may also be an anonymous  function.   Anonymous  func-
+    tions are objects that are enclosed by parentheses.  For
+    instance, the previous example could be written as
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  17
+
+
+		    <<3 4> (+)> : apply -> 7
+
+    Functions built from functional forms may  also  be  ob-
+    jects, for example:
+
+	<<<1 2 3> <4 5 6>> (trans|EACH * END|sum) -> 32
+
+    Function objects are considered to be atomic.  Functions
+    that  act on sequences will not behave properly when ap-
+    plied to a function object.  The ``apply'' function com-
+    bined with function objects lets us define our own func-
+    tional forms.  For example, we can define  a  functional
+    form Twice which applies a function twice as:
+
+		 DEF Twice AS [apply,2]|apply;
+
+    Then we can write:
+
+	      3 : [id,([id,id]|*)] | Twice -> 81
+
+    ________________________________________________________
+
+assoc               [X,Y] in [(O+)*,O]    associative lookup
+
+
+	X is an association sequence,  which  is  a  se-
+	quence  of  non-empty  subsequences.   The first
+	element of each subsequence is the  _k_e_y  of  the
+	subsequence.   The  result of assoc is the first
+	subsequence of X with a key equal to Y.   If  no
+	matching  key  is found, f is returned.  The key
+	may be any type of object.  Examples:
+
+	     <<<a b c> <w x y z> <i j>> w> -> <w x y z>
+	     <<<a b c> <w x y z> <i j>> U> -> f
+
+
+	____________________________________________________
+
+def                       X in S+                 definition
+
+
+	    The definition function returns  the  object
+	    representation   of   its   argument.    The
+	    representation of a function is  a  sequence
+	    of  strings  denoting its absolute pathname.
+	    The representation of a functional form is a
+	    sequence.  The first element of the sequence
+	    is a pathname to the functional  form.   The
+	    remaining   elements  of  the  sequence  are
+	    parameters of the functional form.  Suppose,
+	    for  example,  we  define  the inner product
+	    function:
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  18
+
+
+	     DEF Inner AS trans | EACH * END | INSERT + END
+
+	    and ``Inner'' is  defined  with  a  module  with
+	    pathname  ``/math/linear''.  Then ``<math linear
+	    Inner> : def'' will result in:
+
+		  <
+		       <sys compose>
+		       <sys trans>
+		       <<sys each> <math arith *>>
+		       <<sys insertr> <math arith +>>
+		  >
+
+	    Currently,  the  representations  of  functional
+	    forms are:
+
+	________________________________________________________
+       | #c                       <<sys constant> #c>          |
+       | #?                       <<sys constant>>             |
+       | n                        <<sys select> n>             |
+       | nr                       <<sys select> -n>            |
+       | f1|f2|...fn              <<sys compose>, f1,f2,...fn  |
+       | [f1,f2,...fn]            <<sys construct>, f1,f2,...fn|
+       | ^c                       <<sys fetch> c>              |
+       | EACH f END               <<sys each> f>               |
+       | FILTER p END             <<sys filter> p>             |
+       | INSERT f END             <<sys insertr> f>            |
+       | IF p THEN g ELSE h END   <<sys if> p g h>             |
+       ||_W_H_I_L_E__p__D_O__f__E_N_D__________<_<_s_y_s__w_h_i_l_e_>__p__f_>______________||
+
+	    ELSIF   clauses   are   always   expanded   into
+	    equivalent  nested  IF-THEN-ELSE  constructions.
+	    Note the special case for #?, the representation
+	    <<sys  constant>  ?> would be useless due to the
+	    bottom-preserving property.
+
+	    ________________________________________________
+
+id                        X in O                    identity
+
+
+		The identity function returns its  argu-
+		ment.  It is useful as a place holder in
+		functional  forms.   For  example,   the
+		``square'' function can be written as:
+		DEF Square AS [id,id] | *;
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  19
+
+
+_4._2._2.  _U_s_e_r _D_e_f_i_n_e_d _F_u_n_c_t_i_o_n_s
+
+
+     The user may define functions by  creating  defini-
+
+tion files (source code).  The definition in the file is
+
+of the form:
+
+		    DEF _f_o_o AS _b_a_r;
+
+where _f_o_o is the name of the function and _b_a_r is the de-
+
+finition.   The  name of the file must also be _f_o_o.  The
+
+definition may be any IFP function.   For  example,  you
+
+can define the square function as:
+
+    DEF Square AS [/sys/id,/sys/id] | /math/arith/*;
+
+
+     Writing out the entire pathname of functions is not
+
+necessary.   If the function is defined in the same sub-
+
+directory, then just its  name  is  necessary.   If  the
+
+function  is  defined  in another subdirectory, then you
+
+can ``import'' it.  An imported function can  be  refer-
+
+enced  as  though  it were defined in the directory into
+
+which it is imported.  To import functions into  a  sub-
+
+directory,  you  create an ``import file'' with the name
+
+%IMPORT with the editor.  The form of the  %IMPORT  file
+
+is:
+
+	 FROM directory  IMPORT f ,f , ... f ;
+	 FROM directory1 IMPORT g1,g2, ... gn;
+	      ...      2         1  2       m
+
+The directory is a pathname to a directory.   For  exam-
+
+ple, typical import file might be:
+
+
+	FROM /sys IMPORT apndr,distl,id,iota,takel;
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  20
+
+
+	FROM /math/arith IMPORT +,-,*,%;
+
+Since the function ``id'' is imported, the  square  function
+can be defined as:
+		 DEF Square AS [id,id] | *;
+
+
+_4._2._3.  _F_u_n_c_t_i_o_n_a_l _V_a_r_i_a_b_l_e_s
+
+
+     Functional variables [Bac81a] are locally defined func-
+
+tions with special scope rules. A functional variable defin-
+
+ition is written:
+
+		     {_l_h_s := _f_u_n_c_t_i_o_n}
+
+where _l_h_s (left hand side) is either a function name or con-
+
+struction  of  _l_h_s's.   All function names in the _l_h_s become
+
+functional variables within their scope.  The scope is _b_o_u_n_-
+
+_d_a_r_y  _s_t_r_u_c_t_u_r_e_d as opposed to block structured, which means
+
+that the variables may be seen only  through  certain  boun-
+
+daries.   The  scope  rules  can be defined by the following
+
+transformations:
+
+ {V := h} v -> h | V -1
+		    v
+ {V := h} [f ,f ,...] -> [{V := h} f , {V := h} f , ...]
+	    1  2                    1            2
+ {V := h} IF p THEN x       IF {V := h} p THEN {V := h} x
+	  ELSE y        ->   ELSE {V := h} y
+	  END               END
+
+where -> indicates that the left side may be  simplified  to
+
+the  right  side.  ``V'' denotes a left-hand side containing
+
+the functional variable ``v''.  V -1 is the inversion  func-
+				 v
+tion  of ``V'' for ``v''.  For example, if V = [a,b,c], then
+
+V -1 = 3. Variables must be defined before use.   Note  that
+ c
+the vertical bar of composition cuts off the scope, e.g. in
+
+		    {[_x,_y] := id} _g | _h
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  21
+
+
+the function _g can ``see'' _x and _y, but _h can not.
+
+
+     An example of a definition  with  functional  variables
+
+appears below:
+
+(*
+ * InsertSort
+ *
+ * This function sorts a sequence of numbers or strings into ascending order
+ * using insertion sort.
+ *
+ * Examples:
+ *
+ *      <3 1 4 1 5 9 2> : InsertSort == <1 1 2 3 4 5 9>
+ *
+ *      <all work and no play> : InsertSort == <all and no play work>
+ *
+ * The sequence may not mix strings and numbers.
+ *)
+DEF InsertSort AS
+   IF null THEN id     (* Check for trivial case *)
+   ELSE
+      [tl,[1]] | apndr |
+      INSERT
+	 {[Element,Seq] := id}
+	 {[Left,Right] := [Seq, distl | FILTER > END | length] | [takel,dropl]}
+	 [Left,[Element],Right] | cat
+      END
+   END;
+
+In this example, _E_l_e_m_e_n_t, _S_e_q, _L_e_f_t, and _R_i_g_h_t are function-
+
+al variables.
+
+
+
+_4._3.  _F_u_n_c_t_i_o_n_a_l _F_o_r_m_s
+
+
+     Functional  forms  combine  functions  and  objects  to
+
+create new functions.
+
+
+_4._3._1.  _C_o_n_s_t_a_n_t
+
+
+     Constant functions always return the same  result  when
+
+applied to any value which is not ``?''.  Constant functions
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  22
+
+
+are written as:
+
+			     #_c
+
+where c is the constant value to  be  returned.  A  constant
+
+function  applied  to ``?'' results in ``?''.  Note that the
+
+function ``#?'' always returns `?'.  Examples:
+
+	    923 : #<cat in hat> -> <cat in hat>
+	    <a b c d e f> : #427 -> 427
+	    ? : #<q w er t y> -> ?
+	    5 : #? -> ?
+
+
+_4._3._2.  _S_e_l_e_c_t_i_o_n
+
+
+     Selector functions return the nth element of a sequence
+
+and  are  written as n, where n is a positive integer.  Note
+
+the distinction between #5, which returns the value  5,  and
+
+5,  which  returns  the fifth element of its argument. There
+
+are also a corresponding set of select-from-right functions,
+
+written  as  nr. These select the nth element of a sequence,
+
+counting from the right. All selectors return ``?''  if  the
+
+argument has no nth element or is not a sequence.  Below are
+
+some examples of applying selector functions:
+
+	    <a b c d e> : 1 -> a
+	    <a b c d e> : 2 -> b
+	    <apple banana cherry> : 1r -> cherry
+	    <apple banana cherry> : 4 -> ?
+	    hello : 1 -> ?
+
+
+_4._3._3.  _C_o_m_p_o_s_i_t_i_o_n
+
+
+     The function composition of two  functions  is  written
+
+as:
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  23
+
+
+			   f | g
+
+Applying the result function is the same as applying  f  and
+
+then g.  E.g.: Function composition is defined by the equal-
+
+ity:
+
+
+		 x : (f | g) =_ (x : f) : g
+
+Since function composition is associative,  the  composition
+
+of  more  than  two  functions does not require parentheses.
+
+The composition of f ,f ,...f  is written:
+		    1  2     n
+
+		      f  | f  | ...f
+		       1    2       n
+Composition syntax is identical to UNIX's pipe notation  for
+
+a  reason:  function  composition  is  isomorphic  to a pipe
+
+between processes without side effects.
+
+
+_4._3._4.  _C_o_n_s_t_r_u_c_t_i_o_n
+
+
+     The construction of functions is written  as  bracketed
+
+list  of  the  functions.   For example, the construction of
+
+functions f  is written:
+	   i
+
+		       [f ,f ,...f ]
+			 1  2     n
+Function construction is defined by the equality:
+
+
+	  x : [f ,f ,...f ] =_ <x:f ,x:f ,...x:f >
+		1  2     n        1    2       n
+
+_4._3._5.  _A_p_p_l_y _t_o _E_a_c_h
+
+
+     The EACH functional form applies  a  function  to  each
+
+element of a sequence.  It is written as
+
+			 EACH _f END
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  24
+
+
+It is defined by the equality:
+
+      <x ,x ,...x > : EACH f END =_ <x :f,x :f,...x :f>
+	1  2     n                   1    2       n
+
+_4._3._6.  _I_f-_T_h_e_n-_E_l_s_e
+
+
+     The IF functional form allows conditional function  ap-
+
+plication.  It is written as
+
+		   IF _p THEN _g ELSE _h END
+
+and is defined by the equality:
+
+
+				     | g(x) if p(x)=t
+				     |
+       x :IF p THEN g ELSE h END  -> | h(x) if p(x)=f
+				     | ?    otherwise
+				     |
+The level of nesting of conditional forms may be reduced  by
+
+using ELSIF clauses:
+
+		    IF p  THEN g
+		    ELSE1       1
+		       IF p  THEN g
+		       ELSE2       2
+			  IF p  THEN g
+			  ELSE3h      3
+			  END
+		       END
+		    END
+
+
+_4._3._7.  _F_i_l_t_e_r
+
+
+     The FILTER functional form filters through elements  of
+
+a sequence satisfying a predicate.  It is written as:
+
+			FILTER _p END
+
+where p is the predicate.  It is defined by  the  functional
+
+equality:
+
+	       EACH
+		  IF _p THEN [id] ELSE [] END
+	       END | cat
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  25
+
+
+For example, if you wish to find all numeric elements  in  a
+
+sequence, you could write:
+
+		     FILTER numeric END
+
+The FILTER functional form is an IFP  extension  to  Backus'
+
+FP.
+
+
+_4._3._8.  _R_i_g_h_t _I_n_s_e_r_t
+
+
+     The INSERT functional form is defined by the recursion:
+
+INSERT _f END =_ IF tl|null THEN 1 ELSE [1,tl | INSERT _f END] | _f END
+
+Typically it is used for crunching a sequence down.  For ex-
+
+ample,
+
+			INSERT + END
+
+returns the sum of a sequence.
+
+
+     Unlike Backus' FP, functions formed with INSERT are al-
+
+ways  undefined  for empty sequences.  The reason is that it
+
+is impractical for the interpreter to know the identity ele-
+
+ment  of  user-defined functions.  The number of cases where
+
+the interpreter could know the identity element are  so  few
+
+that  you  might  as well define special functions for those
+
+cases, e.g:
+
+     DEF sum AS IF null THEN #0 ELSE INSERT + END END;
+
+Alternatively, you can append the identity  element  to  the
+
+end of the sequence before inserting, e.g.:
+
+	 DEF sum AS [id,#0] | apndr | INSERT + END;
+
+
+     Currently there is no ``left insert'' form.   The  left
+
+insertion of f can be written as:
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  26
+
+
+	       reverse | INSERT reverse|f END
+
+
+_4._3._9.  _W_h_i_l_e
+
+
+     The WHILE functional form  allows  indefinite  composi-
+
+tion. It is written as:
+
+		     WHILE _p DO _f END;
+
+and is defined by the recursive functional equality:
+
+	 WHILE _p DO _f END =_ IF _p THEN
+			       _f | WHILE _p DO _f END
+			     ELSE id
+			     END
+
+That is the _W_H_I_L_E PFO  applies  the  fewest  f's  such  that
+
+_x:_f:_f:_f...:_p is true.
+
+
+_4._3._1_0.  _F_e_t_c_h[_8]
+
+
+     The fetch functional form allows easy access to associ-
+
+ation  sequences (see function /sys/assoc in section 4.2.1.5
+
+for a description of association  sequences.)   A  fetch  is
+
+written  as ^c, where c is an object.  The fetch form is de-
+
+fined by the functional equality:
+
+     ^_c =_= IF EACH pair END | all THEN [id,#_c]|assoc|2
+	  ELSE #?
+	  END;
+
+Note that the input is restricted to a  sequence  of  pairs.
+
+For example,
+
+	       <<a 1> <b 2> <c 3>> : ^b -> 2
+
+
+____________________
+
+   [8]The fetch functional form is being  deimplemented.  It
+may or may not exist on your IFP interpreter.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  27
+
+
+_4._4.  _C_o_m_m_e_n_t_s
+
+
+     Comments are delimited by matching pairs of ``(*''  and
+
+``*)''.  Comments may be inserted anywhere not adjacent to a
+
+token.  For example:
+
+DEF foo AS bar; (* This is a comment.  DEF foo AS bar is not a comment *)
+
+
+_4._5.  _S_y_n_t_a_x _S_u_m_m_a_r_y
+
+
+     Below is an EBNF grammar for IFP:
+
+
+________________________________________________________________________________________
+|Def ->            'DEF String 'AS' Comp ';'                                           |
+|Comp ->            Simple { '|' Simple }                                              |
+|Simple ->          Conditional | Constant | Construction | Each | Filter |            |
+|                  Insert | Path | While | Fetch | Debug | FunVar                      |
+|Conditional ->    'IF' Comp 'THEN' Comp { 'ELSIF' Comp 'THEN' Comp } 'ELSE' Comp 'END'|
+|While ->          'WHILE' Comp 'DO' Comp 'end'                                        |
+|Insert ->         'INSERT' Comp 'END'                                                 |
+|Each ->           'EACH' Comp 'END'                                                   |
+|Filter ->         'FILTER' Comp 'END'                                                 |
+|Fetch ->          '^' String                                                          |
+|Constant ->       '#' Object                                                          |
+|Debug ->          '@' Object                                                          |
+|FunVar ->         '{' Lhs ':=' Comp '}'                                               |
+|Lhs ->            String | '[' [ Lhs { ',' Lhs } ] ']'                                |
+|Construction ->   '[' [Comp {',' Comp}] ']'                                           |
+|Path ->           ['/'] String {'/' String}                                           |
+|Object ->         Bottom | Atom | '<' [Atom {','Atom}] '>'                            |
+|Bottom ->         '?'                                                                 |
+|Atom ->           Number | String | Boolean                                           |
+_||B_o_o_l_e_a_n__-_>_________'_t_'__|__'_f_'_____________________________________________________________||
+
+Strings may be in single  or  double  quotes.   The  strings
+``t''  and  ``f''  must  be  quoted to distinguish them from
+boolean atoms.  Strings of digits must  also  be  quoted  to
+distinguish them from numeric atoms.
+
+
+_5.  _I_F_P _G_r_a_p_h_i_c_s (_o_p_t_i_o_n_a_l)[_9]
+____________________
+
+   [9]This option is currently  not  implemented.   If  this
+section  inspires  you,  get the source code and fix it (see
+G_*.c).
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  28
+
+
+     There are no graphics primitives in IFP itself,  rather
+
+IFP  is  used  to  calculate a display list.  A display-list
+
+processor then draws the picture specified  by  the  display
+
+list.   To  send an IFP result to the display-list processor
+
+instead of the screen, use the command:
+
+		  graph object : function
+
+instead of the ``show'' command.
+
+
+_5._1.  _C_o_o_r_d_i_n_a_t_e _S_y_s_t_e_m
+
+
+     Points on the graphics display are referenced by  <X,Y>
+
+coordinate  pairs.  <0,0> is the lower left corner, <1,1> is
+
+the upper left corner.   Currently  there  is  no  clipping.
+
+Lines  outside the display are wrap around in weird and not-
+
+so-wonderful ways.
+
+
+_5._2.  _D_i_s_p_l_a_y _L_i_s_t _S_t_r_u_c_t_u_r_e
+
+
+     Below is an EBNF grammar for the display list.
+
+
+______________________________________________________________________________
+|                                                                            |
+| display-list ->   < {display-list} > | polyline | color | transform | text |
+| polyline ->       <'line' { < x y > } >                                    |
+| color ->          <'color' color-index display-list >                      |
+| text ->           <'text' atom size ['center']>                            |
+| transform ->      <'trans' t-matrix display-list >                         |
+| t-matrix ->       <<Txx Txy Tx0> <Tyx Tyy Ty0>>                            |
+_||_____________________________________________________________________________||
+
+
+_5._2._1.  _P_o_l_y_l_i_n_e
+
+
+     The polyline structure specifies a sequence of  points.
+
+It is of the form:
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  29
+
+
+	     <line <x ,y > <x ,y > ... <x ,y >>
+		     1  1    2  2        n  n
+where each <x ,y > is a point coordinate.   Adjacent  points
+	     i  i
+in  the sequence are connected with line segments. For exam-
+
+ple, the sequence:
+
+	    <line <0 0> <0 5> <1 5> <1 0> <0 0>>
+
+draws a box 1 unit wide and 5 units high.
+
+
+_5._2._2.  _C_o_l_o_r
+
+
+     The color structure draws the display-list in the color
+
+specified  by the color index (0..15).  The color applies to
+
+all parts of the  subordinate  display-list  which  are  not
+
+subordinate  to a color structure within.  In other words, a
+
+structure is colored by its  inner-most  bounding  ``color''
+
+structure.
+
+
+_5._2._3.  _T_r_a_n_s_f_o_r_m
+
+
+     The  transform  structure  draws  the  display-list  as
+
+transformed  by  the  t-matrix.   Transforms  may be nested.
+
+Transforming a display-list converts coordinates <x,y>  into
+
+coordinates <x',y'> via the formula:
+
+
+	    | x' |     | Txx  Txy  Tx0 |  | x |
+	    |    |  =  |               |  | y |
+	    | y' |     | Tyx  Tyy  Ty0 |  |   |
+		       |               |  | 1 |
+
+_5._2._4.  _T_e_x_t
+
+
+     The text structure draws the atom with  the  lower-left
+
+corner  at (0,0).  Each character is drawn in a _s_i_z_e by _s_i_z_e
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  30
+
+
+box (including spacing) The lower-left corner of the text is
+
+at  <0  0>  by default.  Including the _c_e_n_t_e_r option centers
+
+the text on <0 0>.
+
+
+
+_6.  _D_e_b_u_g_g_i_n_g
+
+
+     Currently, IFP has simple program trace  mechanism.[10]
+
+To trace a function, respond to the IFP prompt with:
+
+		   trace on f ,f ,...f ;
+			     1  2     n
+where the f's are functions to be traced.  Whenever a traced
+
+function  is  invoked,  its  argument  and result are shown.
+
+Also, the argument and result of all  called  functions  are
+
+shown.  To stop tracing functions, respond to the IFP prompt
+
+with:
+
+		  trace off f ,f ,...f ;
+			     1  2     n
+
+     When tracing, the interpreter ellipses are used to  ab-
+
+breviate functions.  You can set the depth at which ellipses
+
+occur with the _d_e_p_t_h command:
+
+			  depth n
+
+where n is a non-negative integer.   The  default  depth  is
+
+two.
+
+
+     There is also a  functional  form  for  creating  trace
+
+functions.  Its form is
+
+			  @_m_e_s_s_a_g_e
+____________________
+
+   [10]This will be replaced by a much better trace  mechan-
+ism as soon as the author as time to design one.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  31
+
+
+The function formed always returns its  argument  unchanged,
+
+and  it  prints ``message: '' followed by its argument.  For
+
+example,
+
+		 <1 3 5> : EACH @banana END
+
+will print the messages:
+
+			 banana: 1
+			 banana: 3
+			 banana: 5
+
+This tracing functional form is for debugging only, since it
+
+creates  a side effect (the message!), it is not truly func-
+
+tional.
+
+
+
+_7.  _D_i_f_f_e_r_e_n_c_e_s _b_e_t_w_e_e_n _I_F_P _a_n_d _B_a_c_k_u_s' _F_P
+
+
+_7._1.  _D_o_m_a_i_n
+
+
+     Backus' FP has two types of atom, the string and  empty
+
+sequence.  IFP atoms do not include the empty sequence.  IFP
+
+include numbers and truth  values  as  atoms  distinct  from
+
+strings.
+
+
+_7._2.  _F_u_n_c_t_i_o_n_s
+
+
+     There are many new  primitives.   See  the  section  on
+
+``Primitives''  elsewhere.   Of  particular interest are the
+
+functions _c_a_t, _d_r_o_p_l, _t_a_k_e_l, _t_a_k_e_r, and _i_o_t_a.
+
+
+_7._3.  _F_u_n_c_t_i_o_n_a_l _F_o_r_m_s
+
+
+     Backus' FP defines the INSERT form for empty  sequences
+
+as  returning u , the right identity element of f.  IFP does
+	       f
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  32
+
+
+not define INSERT for empty sequences.   If  necessary,  use
+
+one of the following functions:
+
+	   IF null THEN u  ELSE INSERT f END END
+			 f
+	   [id,u ] | apndr | INSERT f END
+		f
+
+     IFP has a new functional form, FILTER, which filters  a
+
+sequence according to a predicate.  It is written as:
+
+			FILTER p END
+
+When applied to a sequence X, it returns a  sequence  of  x
+							   i
+for which p is true.
+
+
+_7._4.  _S_y_n_t_a_x
+
+
+     The IFP syntax is designed  to  facilitate  indentation
+
+and  comments.   All  functional forms bracket their parame-
+
+ters, so no  parentheses  are  necessary.   The  differences
+
+between Backus' FP and IFP syntax are shown below.
+
+
+    ___________________________________________________
+   |_B_a_c_k_u_s___________I_F_P________________________________|
+   | CBA             A | B | C                        |
+   | [F,G,H]         [F,G,H]                          |
+   | p->f;g          IF p THEN f ELSE g END           |
+   | p->f; q->g; h   IF p THEN f ELSIF q THEN g ELSE h|
+   | Af              EACH f END                       |
+   | /f              INSERT f END                     |
+   | (while p f)     WHILE p DO f END                 |
+   | (_bu f x)        [id,#x] | _f                      |
+   | f               #_f                               |
+   | Def f =_ x       DEF f AS x;                      |
+   | U               <>                               |
+   | _|               ?                                |
+   |___________________________________________________|
+
+Also, parentheses are neither necessary nor allowed  in  IFP
+
+function definitions.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  33
+
+
+     Finally, IFP functions are arranged in a tree structure
+
+and  referenced  by  pathnames.   All pathnames are expanded
+
+into absolute pathnames when read by the interpreter, so the
+
+meaning  of  a  pathname  is  static.   This is an important
+
+point, otherwise IFP would have significantly different (and
+
+more complex) semantics than Backus' FP.
+
+
+_8.  _F_u_n_c_t_i_o_n_a_l _P_r_o_g_r_a_m_m_i_n_g _T_e_c_h_n_i_q_u_e_s
+
+
+_8._1.  _F_u_n_c_t_i_o_n_a_l _P_r_o_g_r_a_m_m_i_n_g _I_d_e_n_t_i_t_i_e_s
+
+
+     Functional programs can be improved by  algebraic  sub-
+
+stitutions.   Below  is a table of some IFP identities.  The
+
+notation ``f=_g'' indicates f and g are equal  and  have  the
+
+same  domain.   The  notation  ``f < g'' indicates that g is
+
+equal to f over f's domain, but may  have  a  larger  domain
+
+than f.
+
+
+ __________________________________________________________
+| EACH f END | EACH g END   =_     EACH f | g END          |
+| [#c,id] | distl           =_     EACH [#c,id] END        |
+| [takel,dropl] | cat        <    1                       |
+| apndl | length             <    2 | length | add1       |
+| apndr | length             <    1 | length | add1       |
+| iota | length              <    id                      |
+| reverse | length          =_     length                  |
+| tl | length                <    length | sub1           |
+| tlr | length               <    length | sub1           |
+| apndl | reverse           =_     [2 | reverse,1] | apndr |
+| apndr | reverse           =_     [2,1 | reverse] | apndl |
+| reverse | reverse          <    id                      |
+||_t_r_a_n_s__|__t_r_a_n_s_______________<_____i_d________________________||
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  34
+
+
+_8._2.  _C_o_m_m_o_n _S_u_b_f_u_n_c_t_i_o_n_s
+
+
+     The interpreter is not very smart about common subfunc-
+
+tions, it reevaluates a function every time its encountered.
+
+You can always factor out such common subfunctions by creat-
+
+ing extra function constructions.  Consider the function:
+
+
+			[f,a,f|g,b]
+
+You can move f to outside the construction  by  forming  the
+
+pair [id,f] and making the transformation:
+
+
+      [f, a, f|g, b]  ->  [id,f] | [2, 1|a, 2|g, 1|b]
+
+In general, create the pair [id,f].  Then replace all  lead-
+
+ing  occurrences  of f in the construction by the 2 selector
+
+and insert a leading 1 selector elsewhere in  the  construc-
+
+tion.
+
+
+_8._3.  _S_t_a_t_e _M_a_c_h_i_n_e_s
+
+
+     You can simulate a state machine in IFP by defining the
+
+state  transition  function D, which maps an input and state
+
+into another state:
+
+		 [input,state] : _D -> state
+
+You then run the state machine with the function
+
+	       apndl | reverse | INSERT _D END
+
+which yields the final state when  applied  to  the  initial
+
+conditions <initial-state,tape>.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  35
+
+
+_8._4.  _T_a_i_l _R_e_c_u_r_s_i_o_n
+
+
+     Regrettably, the IFP  interpreter  currently  does  not
+
+recognize tail recursions as iterations.  Thus near-infinite
+
+recursions will cause a stack overflow.  If this is a  prob-
+
+lem,  rewrite the function with the WHILE functional form to
+
+remove the tail recursion.
+
+
+     For example, consider the tail recursive function:
+
+       DEF f AS
+	    IF p THEN g
+	    ELSE h | f          (* tail recursion *)
+	    END;
+
+We can rewrite is as:
+
+		DEF f AS
+		     WHILE p|~ DO h END | g;
+
+
+_9.  _I_n_s_t_a_l_l_a_t_i_o_n _N_o_t_e_s
+
+
+_9._1.  _M_a_c_h_i_n_e _D_e_p_e_n_d_e_n_c_e
+
+
+     The IFP interpreter is machine independent, as long  as
+
+your  machine  has 32-bit two's complement integers and IEEE
+
+floating point.  If not, you  should  take  a  look  at  the
+
+struct.h  and F_arith.c source files.  The struct.h file de-
+
+fines all the principle types and  limit  definitions  (e.g.
+
+MaxInt,  MAXFLOAT).   The  F_arith.c contains the arithmetic
+
+functions.  See the comments in the code for details.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  36
+
+
+_9._2.  _C_o_m_p_i_l_i_n_g _O_p_t_i_o_n_s
+
+
+     Look in the Makefile and "struct.h" for  possible  com-
+
+piling  options.   Not  all  options  are  available  in all
+
+releases.  Normally, the release version comes ready to com-
+
+pile  on UNIX boxes.  For MSDOS, you will have to modify the
+
+Makefile and change the OPSYS variable in ``struct.h''.  The
+
+graphics  interface  is  extremely machine dependent, though
+
+should not be difficult to modify it for other machines.
+
+
+
+
+February 9, 1987    IFP 0.5 Users Manual                  37
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+____________________
+
+
+Bac78a.
+     John Backus, "Can Programming Be Liberated from the von
+     Neumann  Style?   A Functional Style and Its Algebra of
+     Programs," _C_A_C_M  Vol.  21,8 pp.  613-641  ACM,  (August
+     1978).
+
+Rob87a.
+     Arch  D.  Robison,  "A  Functional  Programming  Inter-
+     preter,"   _T_H_E_S_I_S,  University  of  Illinois,  (January
+     1987).
+
+Rob87b.
+     Arch D. Robison, "Illinois  Functional  Programming:  A
+     Tutorial," _B_Y_T_E Vol. 12,2 pp. 115-125 McGraw-Hill Inc.,
+     (February 1987).
+
+Bad83a.
+     Scott Baden, "Berkeley FP  User's  Manual,  Rev.  4.1,"
+     _U_N_I_X _P_r_o_g_r_a_m_m_e_r_s _M_a_n_u_a_l, (July 27,1983).
+
+Dar82a.
+     J. Darlington, J.V. Guttag, P. Henderson, J.H.  Morris,
+     J.E.Stoy,  G.J.  Sussman,  P.C. Treleaven, D.A. Turner,
+     J.H. Williams, and D.S.  Wise,  _F_u_n_c_t_i_o_n_a_l  _P_r_o_g_r_a_m_m_i_n_g
+     _a_n_d   _i_t_s   _A_p_p_l_i_c_a_t_i_o_n_s,  Cambridge  University  Press
+     (1982).
+
+Bac81a.
+     John Backus, "The Algebra of Functional Programs: Func-
+     tional  Level Reasoning, Linear Equations, and Extended
+     Definitions," in _F_o_r_m_a_l_i_z_a_t_i_o_n _o_f _P_r_o_g_r_a_m_m_i_n_g _C_o_n_c_e_p_t_s,
+     Springer Verlag,  New York (1981).

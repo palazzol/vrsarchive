@@ -1,0 +1,12 @@
+(*
+ * SlowSort
+ *
+ * Sort a sequence the hard way, i.e. take all permutations
+ * and pick one for which all elements are in order.
+ *)
+DEF SlowSort AS
+   Permute | 
+   FILTER 
+      [tl,tlr]|trans | EACH >= END | all 
+   END | 1;
+

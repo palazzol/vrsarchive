@@ -1,0 +1,45 @@
+(*
+ * Convert sequence of words to pig-latin
+ *
+ * E.g.
+ *      <Have a nice day> : PigLatin -> <aveHay a icenay ayday>
+ *
+ * The text processing is done via explode and implode.
+ * `explode' converts a string into a sequence of characters (1 letter strings),
+ * `implode' catenates a sequence of strings into a single string.
+ *
+ * Coded by Kevin Kenny and Arch Robison
+ *)
+
+DEF PigLatin AS
+
+   EACH
+      explode |
+
+      IF EACH Vowel END | any | ~ THEN id    (* Not a word, don't mangle it *)
+      ELSE
+
+         IF 1|Vowel|~ THEN
+
+            (* Word begins with a consonant - rotate first vowel to front. *)
+
+            WHILE 1|Vowel|~ DO
+               [tl,1]|apndr
+            END
+
+         ELSIF [1r|Vowel, [#<y Y>,1r]|member] | or THEN
+
+            (* Word ends in vowel or 'y' - append a 'w' *)
+
+            [id,#w] | apndr
+
+         ELSE id
+         END |
+
+         [id,#<a y>] | cat
+
+      END |
+
+      implode
+   END;
+
