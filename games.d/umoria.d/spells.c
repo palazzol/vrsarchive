@@ -42,7 +42,7 @@ int y, x;
 	    r_ptr = &c_list[m_ptr->mptr];
 
 	    sleep = TRUE;
-	    if ((randint(MAX_MONS_LEVEL) < r_ptr->level) ||
+	    if (((unsigned)randint(MAX_MONS_LEVEL) < r_ptr->level) ||
 		(0x1000 & r_ptr->cdefense))
 	      {
 		(void) sprintf(out_val, "The %s is unaffected.", r_ptr->name);
@@ -1175,7 +1175,7 @@ int dir, y, x, spd;
 		  m_ptr->cspeed += spd;
 		  m_ptr->csleep = 0;
 		}
-	      else if (randint(MAX_MONS_LEVEL) > r_ptr->level) 
+	      else if ((unsigned)randint(MAX_MONS_LEVEL) > r_ptr->level) 
 		{
 		  m_ptr->cspeed += spd;
 		  m_ptr->csleep = 0;
@@ -1222,7 +1222,7 @@ int dir, y, x;
 	      r_ptr = &c_list[m_ptr->mptr];
 	      confuse = TRUE;
 	      flag = TRUE;
-	      if ((randint(MAX_MONS_LEVEL) < r_ptr->level) ||
+	      if (((unsigned)randint(MAX_MONS_LEVEL) < r_ptr->level) ||
 		  (0x1000 & r_ptr->cdefense))
 		{
 		  (void) sprintf(out_val, "The %s is unaffected.",
@@ -1272,7 +1272,7 @@ int dir, y, x;
 	      r_ptr = &c_list[m_ptr->mptr];
 	      sleep = TRUE;
 	      flag = TRUE;
-	      if ((randint(MAX_MONS_LEVEL) < r_ptr->level) ||
+	      if (((unsigned)randint(MAX_MONS_LEVEL) < r_ptr->level) ||
 		  (0x1000 & r_ptr->cdefense))
 		{
 		  (void) sprintf(out_val, "The %s is unaffected.",
@@ -1433,7 +1433,7 @@ int dir, y, x;
 	      if (c_ptr->cptr > 1) 
 		{
 		  r_ptr = &c_list[m_list[c_ptr->cptr].mptr];
-		  if (randint(MAX_MONS_LEVEL) > r_ptr->level) 
+		  if ((unsigned)randint(MAX_MONS_LEVEL) > r_ptr->level) 
 		    {
 		      flag = TRUE;
 		      delete_monster((int)c_ptr->cptr);
@@ -1709,7 +1709,7 @@ int spd;
 	      m_ptr->csleep = 0;
 	      speed = TRUE;
 	    }
-	  else if (randint(MAX_MONS_LEVEL) > r_ptr->level) 
+	  else if ((unsigned)randint(MAX_MONS_LEVEL) > r_ptr->level) 
 	    {
 	      m_ptr->cspeed += spd;
 	      m_ptr->csleep = 0;
@@ -1746,7 +1746,7 @@ int sleep_monsters2()
       sleep = TRUE;
       if (m_ptr->ml) 
 	{
-	  if ((randint(MAX_MONS_LEVEL) < r_ptr->level) ||
+	  if (((unsigned)randint(MAX_MONS_LEVEL) < r_ptr->level) ||
 	      (0x1000 & r_ptr->cdefense))
 	    {
 	      (void) sprintf(out_val, "The %s is unaffected.", r_ptr->name);
@@ -2064,7 +2064,7 @@ int damage;
 			      c_list[m_ptr->mptr].cmove);
 		r_ptr = &c_list[m_ptr->mptr];
 		p_ptr = &py.misc;
-		p_ptr->exp += ((r_ptr->mexp*(r_ptr->level/p_ptr->lev)) + 0.5);
+		p_ptr->exp += ((r_ptr->mexp*((unsigned)r_ptr->level/p_ptr->lev)) + 0.5);
 		delete_monster(i);
 	      }
 	    else
@@ -2098,7 +2098,7 @@ int turn_undead()
 	if (m_ptr->ml) 
 	  if (0x0008 & c_list[m_ptr->mptr].cdefense)
 	    {
-	      if (((py.misc.lev+1) > c_list[m_ptr->mptr].level) ||
+	      if (((py.misc.lev+1) > (unsigned)c_list[m_ptr->mptr].level) ||
 		  (randint(5) == 1)) 
 		{
 		  (void) sprintf(out_val, "The %s runs frantically!",
@@ -2249,8 +2249,8 @@ int amount;
   j = m_ptr->lev - i;
   while (j > 0)
     {
-      av_hp = (m_ptr->mhp/m_ptr->lev) + 1;
-      av_mn = (m_ptr->mana/m_ptr->lev) + 1;
+      av_hp = ((unsigned)m_ptr->mhp/m_ptr->lev) + 1;
+      av_mn = ((unsigned)m_ptr->mana/m_ptr->lev) + 1;
       m_ptr->lev--;
       j--;
       lose_hp = randint(av_hp*2-1);

@@ -472,7 +472,7 @@ read_scroll()
 			if (i_ptr->flags != 0) 
 			  {
 			    m_ptr = &py.misc;
-			    m_ptr->exp += (i_ptr->level/m_ptr->lev);
+			    m_ptr->exp += ((unsigned)i_ptr->level/m_ptr->lev);
 			    prt_experience();
 			  }
 		      }

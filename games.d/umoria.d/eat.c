@@ -204,7 +204,7 @@ eat()
 	      if (i_ptr->flags != 0) 
 		{
 		  m_ptr = &py.misc;
-		  m_ptr->exp += ((i_ptr->level/m_ptr->lev) + .5);
+		  m_ptr->exp += (((unsigned)i_ptr->level/m_ptr->lev) + .5);
 		  prt_experience();
 		}
 	      add_food(i_ptr->p1);

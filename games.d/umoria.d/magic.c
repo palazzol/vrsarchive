@@ -193,7 +193,7 @@ cast()
  		    p_ptr = &py.misc;
  		    if (!reset_flag)
 		      {
- 			if (m_ptr->smana > p_ptr->cmana)
+ 			if ((unsigned)m_ptr->smana > p_ptr->cmana)
 			  {
  			    msg_print("You faint from the effort!");
  			    py.flags.paralysis = 

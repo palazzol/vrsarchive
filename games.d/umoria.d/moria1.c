@@ -375,10 +375,11 @@ int r1;
 }
 
 /* Remove item from equipment list		-RAK-	*/
-int remove(item_val)
+int myremove(item_val)
 int item_val;
 {
-  int i, j, typ;
+  int i, j;
+  unsigned typ;
   vtype out_val, prt1, prt2;
   int flag;
   treasure_type *i_ptr;
@@ -486,7 +487,7 @@ unwear()
 	      com_val = 0;
 	    }
 	  else
-	    (void) remove(j);
+	    (void) myremove(j);
 	}
       if (scr_state == 0) 
 	exit_flag = TRUE;
@@ -631,7 +632,7 @@ wear()
 	      if (unwear_obj.tval != 0) 
 		{
 		  inventory[INVEN_MAX] = unwear_obj;
-		  tmp = remove(INVEN_MAX);
+		  tmp = myremove(INVEN_MAX);
 		  if (tmp < com_val) 
 		    com_val = tmp;
 		}
@@ -654,7 +655,7 @@ wear()
 	      (void) sprintf(out_val, "%s%s (%c%c",
 		      prt1, prt2, j+97, cur_char2(i));
 	      msg_print(out_val);
-	      if ((i == 22) && (py.stats.cstr*15 < i_ptr->weight))
+	      if ((i == 22) && (py.stats.cstr*15 < (unsigned)i_ptr->weight))
 		msg_print("You have trouble wielding such a heavy weapon.");
 	    }
 	}
@@ -1127,13 +1128,13 @@ int y, x;
 	      (void) strcat(floor_str, tmp_str);
 	    }
 	  else
-	    if (strlen(floor_str) > 0) 
+	    if (strlen(floor_str) != 0) 
 	      {
 		print(floor_str, ypos, xpos);
 		floor_str[0] = '\0';
 	      }
 	}
-      if (strlen(floor_str) > 0) 
+      if (strlen(floor_str) != 0) 
 	print(floor_str, ypos, xpos);
     }
 }
@@ -1250,7 +1251,7 @@ int y1, x1, y2, x2;
 	  if (flag) 
 	    {
 	      if (xpos < 0)  xpos = j;
-	      if (strlen(save_str) > 0) 
+	      if (strlen(save_str) != 0) 
 		{
 		  (void) strcat(floor_str, save_str);
 		  save_str[0] = '\0';
@@ -1339,7 +1340,7 @@ int y1, x1, y2, x2;
 	  if (flag) 
 	    {
 	      if (xpos == 0)  xpos = j;
-	      if (strlen(save_str) > 0) 
+	      if (strlen(save_str) != 0) 
 		{
 		  (void) strcat(floor_str, save_str);
 		  save_str[0] = '\0';

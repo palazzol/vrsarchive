@@ -298,7 +298,8 @@ int typ;
 display_inventory(store_num, start)
 int store_num, start;
 {
-  int i, j, stop;
+  int i, j;
+  unsigned stop;
   vtype out_val1, out_val2;
   store_type *s_ptr;
   treasure_type *i_ptr;
@@ -425,7 +426,7 @@ int store_num;
   increase = FALSE;
   s_ptr = &store[store_num];
   s_ptr->insult_cur++;
-  if (s_ptr->insult_cur > owners[s_ptr->owner].insult_max) 
+  if ((unsigned)s_ptr->insult_cur > owners[s_ptr->owner].insult_max) 
     {
       prt_comment4();
       s_ptr->insult_cur = 0;
@@ -875,7 +876,7 @@ int *cur_top;
 		    (void) sprintf(out_val, "You have %s (%c)",
 				   tmp_str, item_new+97);
 		    msg_print(out_val);
-		    if (*cur_top >= s_ptr->store_ctr) 
+		    if (*cur_top >= (unsigned)s_ptr->store_ctr) 
 		      {
 			*cur_top = 0;
 			display_inventory(store_num, *cur_top);

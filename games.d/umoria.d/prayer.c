@@ -173,7 +173,7 @@ pray()
 		    m_ptr = &py.misc;
 		    if (!reset_flag) 
 		      {
-			if (s_ptr->smana > m_ptr->cmana) 
+			if ((unsigned)s_ptr->smana > m_ptr->cmana) 
 			  {
 			    msg_print("You faint from fatigue!");
 			    py.flags.paralysis = 

@@ -347,7 +347,7 @@ quaff()
 	      if (i_ptr->flags != 0) 
 		{
 		  m_ptr = &py.misc;
-		  m_ptr->exp += (int)(i_ptr->level/m_ptr->lev + 0.5);
+		  m_ptr->exp += (int)((unsigned)i_ptr->level/m_ptr->lev + 0.5);
 		  prt_experience();
 		}
 	      add_food(i_ptr->p1);
