@@ -1,12 +1,13 @@
 #
-#	$Header: /home/Vince/cvs/local.d/calend.d/makefile,v 1.3 1987-02-08 23:13:09 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/calend.d/makefile,v 1.4 1987-02-09 06:40:51 vrs Exp $
 #
-OPTIONS	= -O -F 2000
+ALL	= calend remind addcal
+MODEL	= -F 2000
+OPTIONS	= -O
 include ../../CONFIG
 SRCS	= calend.c process.c util.c parser scanner globals.h process.h pars.h 
 DOCS	= calend.1l remind.1l addcal.1l
 MISC	= $(DOCS) Makefile remind.c README addcal
-ALL	= calend remind addcal
 
 all: $(ALL)
 
