@@ -1,7 +1,7 @@
 #
-# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.5 1990-04-04 21:25:02 vrs Exp $
+# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.6 1990-04-12 13:18:40 vrs Exp $
 #
-OPTIONS	= -DDEST=\"$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"$(SAFEUID)\" \
+OPTIONS	= -DDEST=$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"$(SAFEUID)\" \
 	  -DUIDA=0 -DUIDB=244 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
 MODEL	= -M2m
 GAME	= phantasia
