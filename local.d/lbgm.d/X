@@ -1,0 +1,18 @@
+#!/bin/sh
+
+export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh $0; kill $$)
+
+:
+:	Simple delayed-deletion shell script
+:
+:	Usage:
+:
+:	X files
+:
+:	You must also have a crontab entry of the form
+:
+:	45 4 * * * find / -name '#*' -atime +3 -print -exec rm -f {} \;
+:
+:	to make sure the files get removed at a later date.
+:
+for i do mv $i \#$i; done

@@ -1,0 +1,109 @@
+I liked the newsstats program. 
+
+Since this system (ACC.ARPA) is a VMS/Eunice site, we had to make
+a few changes to make it work. These are of two classes:
+1. Eunice ".newsrc" files are slightly different from
+   the .newsrc files expected by your program (and for which I
+   have no documentation).
+   Our ".newsrc" files look like the following sample:
+
+news 27
+bboard 33
+bugs 63
+infovax 564
+tcpip 305
+infounix 661
+c 407
+
+   - i.e. no options line and a ' ' delimiter instead of ':'.
+
+2. Your hash() function screws up royally with short newsgroup
+   names (we have a bulletin board named "c").
+
+The following is a diff of the original program and the program that
+works for us; you may want to incorporate at least the change to the
+hash() function:
+
+
+*** newsstats.c.or	Wed Dec  5 11:14:05 1984
+--- newsstats.c	Wed Dec  5 11:13:49 1984
+***************
+*** 100,108
+          if((newsrc=fopen(file, "r")) != NULL) {
+  
+              /*  Pick off the options line   */
+! 
+!             (void) fgets(line, sizeof line, newsrc);
+! 
+              /*  For each entry, process it if it is active.  */
+  
+              while(fgets(line, sizeof line, newsrc) != NULL) {
+
+--- 100,108 -----
+          if((newsrc=fopen(file, "r")) != NULL) {
+  
+              /*  Pick off the options line   */
+! /* eunice news does not have an options line
+!  *           (void) fgets(line, sizeof line, newsrc);
+!  */
+              /*  For each entry, process it if it is active.  */
+  
+              while(fgets(line, sizeof line, newsrc) != NULL) {
+***************
+*** 106,112
+              /*  For each entry, process it if it is active.  */
+  
+              while(fgets(line, sizeof line, newsrc) != NULL) {
+!                 if((delimeter = index(line, ':'))) {
+                      *delimeter = 0;
+  
+                      /*  Get its location by its hash value  */
+
+--- 106,113 -----
+              /*  For each entry, process it if it is active.  */
+  
+              while(fgets(line, sizeof line, newsrc) != NULL) {
+!                 if((delimeter = index(line, ':'))
+! 		 ||(delimeter = index(line, ' '))) {
+                      *delimeter = 0;
+  
+                      /*  Get its location by its hash value  */
+***************
+*** 155,160
+  hash(ptr)
+  char    ptr[];
+  {
+      int     value,len;
+  
+      len = strlen(ptr);
+
+--- 156,162 -----
+  hash(ptr)
+  char    ptr[];
+  {
++     register int i;
+      int     value,len;
+  
+      len = strlen(ptr);
+***************
+*** 158,164
+      int     value,len;
+  
+      len = strlen(ptr);
+!     value = (ptr[1] * ptr[5] * ptr[len-1] * ptr[len-2]) % TABLESIZE;
+      return(value);
+  }
+  
+
+--- 160,171 -----
+      int     value,len;
+  
+      len = strlen(ptr);
+!     value = 0;
+!     for (i = 0; i <len; i++)
+!       {
+! 	value += ptr[i] * (i+1);
+!       }
+!     value = value % TABLESIZE;
+      return(value);
+  }
