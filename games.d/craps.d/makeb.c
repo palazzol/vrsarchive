@@ -1,12 +1,11 @@
 #include "types.h"
 #include "ext.h"
-double getbet();
 
 make_bets()
 {
 	int i,fk,bad,y,z;
 	static int fl=0;
-	double x, t;
+	double getbet(),x,t;
 	char c, *shell = "/bin/csh",*cp="AahLyRUTKrVsc",pp[15];
 
 	pr_bets();
@@ -60,6 +59,9 @@ make_bets()
 					continue;
 				case QUIT:
 					stop();
+				case REFRESH:
+					wrefresh(curscr);
+					continue;
 				case CHEAT:
 					addline("Enter password:");
 					gs(pp,15);

@@ -98,6 +98,7 @@ mvaddstr(R+13,C,"         |        DONT PASS BAR 12                       |");
 mvaddstr(R+14,C,"         -------------------------------------------------");
 mvaddstr(R+15,C,"         |        P A S S    L I N E                     |");
 mvaddstr(R+16,C,"         -------------------------------------------------");
+refresh();
 mvaddstr(R   ,D,"-----------------");
 mvaddstr(R+1 ,D,"| Any Seven 4-1 |");
 mvaddstr(R+2 ,D,"|               |");

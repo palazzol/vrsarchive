@@ -22,10 +22,10 @@ help()
 	mvaddstr(15,20," 3         Three bet");
 	mvaddstr(16,20," y         Eeyo-'Leven (Eleven) bet");
 	mvaddstr(17,20," u         Boxcars (Twelve) bet");
-	mvaddstr(18,20," C         Cheat, set the dice for the next roll");
-	mvaddstr(19,20," q         Quit");
-	mvaddstr(20,20," ?         This List");
-	mvaddstr(21,20," !         Shell escape");
+	mvaddstr(18,20," q         Quit");
+	mvaddstr(19,20," ?         This List");
+	mvaddstr(20,20," !         Shell escape");
+	mvaddstr(21,20,"^L         Redraw the screen");
 	refresh();
 	msg("Press [space] to continue",23,1);
 	print_board();
