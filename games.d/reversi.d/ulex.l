@@ -1,3 +1,4 @@
+%option lex-compat
 %{
 /*
  *	ex:set ts=8 sw=8:
@@ -5,10 +6,19 @@
 # include	"y.tab.h"
 extern int	yylval;
 extern char	sbuf[];
+#ifdef FLEX_SCANNER
+#undef YY_INPUT
+#define YY_INPUT(buf,result,msize) \
+	{ \
+	int c = lexgetc(); \
+	result = (c == EOF)? YY_NULL : (buf[0] = c, 1); \
+	}
+#else
 #undef input
 #define input()	lexgetc()
 #undef unput
 #define unput(c)	lexungetc(c)
+#endif
 %}
 %%
 [ \t]		;
