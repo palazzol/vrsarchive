@@ -68,8 +68,8 @@ int
 static int
     (*_break_rout)();
 
-static
-_do_break()
+static SIG_T
+_do_break(dummy)
 {
     /* This routine is the one which actually gets called when signalled */
     signal( SIGINT, SIG_IGN );		/* Ignore this signal until ready */
