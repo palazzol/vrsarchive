@@ -1,4 +1,4 @@
-/* $Header: /home/Vince/cvs/games.d/fortune.d/fortune.c,v 1.1 1987-06-13 14:33:19 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/fortune.d/fortune.c,v 1.2 1987-06-17 19:04:39 vrs Exp $ */
 
 # include	<sys/types.h>
 # include	<stdio.h>
@@ -141,12 +141,12 @@ char	*av[];
 	 * available.
 	 */
 	(void) flock(fileno(Inf), LOCK_EX);
-#endif	LOCK_EX
+#endif
 	if (fwrite((char *) &Tbl, 1, sizeof Tbl, Inf) != sizeof Tbl)
 		fprintf(stderr, "can't update fortune data file\n");
 #ifdef	LOCK_EX
 	(void) flock(fileno(Inf), LOCK_UN);
-#endif	LOCK_EX
+#endif
 	if (Wflag)
 		sleep((unsigned int) max((int) nchar / CPERS, MINW));
 	exit(0);
@@ -272,7 +272,7 @@ register char	*av[];
 				  case 'i':
 					ignore_case++;
 					break;
-# endif	NO_REGEX
+# endif
 				  default:
 					fprintf(stderr, "unknown flag: '%c'\n",
 						*sp);
@@ -294,7 +294,7 @@ register char	*av[];
 			bad++;
 		}
 	}
-# endif	NO_REGEX
+# endif
 
 	if (bad) {
 		printf("use \"%s -\" to get usage\n", av[0]);
@@ -441,4 +441,4 @@ find_matches()
 		exit(1);
 	/* NOTREACHED */
 }
-# endif	NO_REGEX
+# endif
