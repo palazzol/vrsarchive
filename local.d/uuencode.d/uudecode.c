@@ -13,9 +13,14 @@ static char sccsid[] = "@(#)uudecode.c  5.3-1 (Berkeley) 9/1/87";
    loop for multiple decodes from a single file, and to handle common
    BITNET mangling.  Also kludged around a missing string function in Aztec
    C */
+/* Modified by drw (Dale Worley, drw@math.mit.edu) to add the -f switch, which
+   forces the output to be on stdout.  This makes uudecode into a filter, and
+   frees the user from perversions in the file name and mode given in the
+   input file. These changes Copyright (C) 1987 Dale R. Worley, and are hereby
+   put in the public domain. */
 
 /*
- * uudecode [input]
+ * uudecode [-f] [input]
  *
  * Decode a file encoded with uuencode.  WIll extract multiple encoded
  * modules from a single file.	Can deal with most mangled files, including
@@ -37,6 +42,9 @@ static char sccsid[] = "@(#)uudecode.c  5.3-1 (Berkeley) 9/1/87";
 #include <sys/stat.h>
 #endif
 
+long	written_size;	/* number of bytes written to output, used instead of
+			   of ftell, because ftell doesn't work with -f */
+
 #define SUMSIZE 64
 #define DEC(c)	(((c) - ' ') & 077)    /* single character decode */
 
@@ -49,11 +57,19 @@ int	mode;		/* file's mode (from header) */
 long	filesize;	/* theoretical file size (from header) */
 char	dest[128];
 char	buf[80];
+int	f_option = 0;	/* set to 1 if -f option is present */
 
 #ifdef AMIGA_LATTICE
 extern	int Enable_Abort;
 	Enable_Abort=1;
 #endif
+
+    /* First, check for the -f option */
+    if (argc >= 2 && strcmp(argv[1], "-f") == 0)
+        {
+        f_option = 1;
+        argc--; argv++;
+        }
 
     /* A filename can be specified to be uudecoded, or nothing can
     be specified, and the input will come from STDIN */
@@ -68,13 +84,13 @@ extern	int Enable_Abort;
 	if ((in = fopen(argv[1], "r")) == NULL)
 	    {
 	    fprintf(stderr, "ERROR: can't find %s\n", argv[1]);
-	    fprintf(stderr, "USAGE: uudecode [infile]\n");
+	    fprintf(stderr, "USAGE: uudecode [-f] [infile]\n");
 	    exit(10);
 	    }
 	break;
 
 	default:
-	fprintf(stderr, "USAGE: uudecode [infile]\n");
+	fprintf(stderr, "USAGE: uudecode [-f] [infile]\n");
 	exit(11);
 	break;
 	}
@@ -104,46 +120,58 @@ for (;;)
 	}
     sscanf(buf, "begin %o %s", &mode, dest);
 
+    /* set up the output file */
+    if (f_option)
+        {
+        /* the -f option is used, so use stdout */
+	out = stdout;
+        }
+    else
+        {
+        /* the -f option is not used, so use the filename (and mode) in the
+         * begin line */
 #ifdef unix
-    /* handle ~user/file format */
-    if (dest[0] == '~')
-	{
-	char *sl;
-	struct passwd *getpwnam();
-	char *index();
-	struct passwd *user;
-	char dnbuf[100];
+	/* handle ~user/file format */
+	if (dest[0] == '~')
+	    {
+	    char *sl;
+	    struct passwd *getpwnam();
+	    char *index();
+	    struct passwd *user;
+	    char dnbuf[100];
 
-	sl = index(dest, '/');
-	if (sl == NULL)
-	    {
-	    fprintf(stderr, "Illegal ~user\n");
-		exit(13);
+	    sl = index(dest, '/');
+	    if (sl == NULL)
+		{
+		fprintf(stderr, "Illegal ~user\n");
+		    exit(13);
+		}
+	    *sl++ = 0;
+	    user = getpwnam(dest+1);
+	    if (user == NULL)
+		{
+		fprintf(stderr, "No such user as %s\n", dest);
+		exit(14);
+		}
+	    strcpy(dnbuf, user->pw_dir);
+	    strcat(dnbuf, "/");
+	    strcat(dnbuf, sl);
+	    strcpy(dest, dnbuf);
 	    }
-	*sl++ = 0;
-	user = getpwnam(dest+1);
-	if (user == NULL)
-	    {
-	    fprintf(stderr, "No such user as %s\n", dest);
-	    exit(14);
-	    }
-	strcpy(dnbuf, user->pw_dir);
-	strcat(dnbuf, "/");
-	strcat(dnbuf, sl);
-	strcpy(dest, dnbuf);
-	}
 #endif
 
-    /* create output file */
-    if ((out = fopen(dest, "w")) == NULL)
-	{
-	fprintf(stderr, "ERROR: can't open output file %s\n", dest);
-	exit(15);
-	}
+	/* create output file */
+	if ((out = fopen(dest, "w")) == NULL)
+	    {
+	    fprintf(stderr, "ERROR: can't open output file %s\n", dest);
+	    exit(15);
+	    }
 #ifdef unix
-    chmod(dest, mode);
+	chmod(dest, mode);
 #endif
+       }
 
+    /* actually decode the data */
     decode(in, out, dest);
 
     if (fgets(buf, sizeof buf, in) == NULL || strncmp(buf,"end",3))
@@ -155,12 +183,21 @@ for (;;)
     if (!(fgets(buf,sizeof buf,in) == NULL || strncmp(buf,"size ",3)))
 	{
 	sscanf(buf, "size %ld", &filesize);
-	if (ftell(out) != filesize)
+	if (written_size != filesize)
 	    {
-	    fprintf(stderr, "ERROR: file should have been %ld bytes long but was %ld.\n", filesize, ftell(out));
+	    fprintf(stderr, "ERROR: file should have been %ld bytes long but was %ld.\n", filesize, written_size);
 	    exit(17);
 	    }
 	}
+
+    /* close the output file */
+    if (!f_option)
+        if (fclose(out) != 0)
+            {
+	    fprintf(stderr, "ERROR: error closing file %s.\n", dest);
+	    exit(20);
+	    }
+
     through_loop = 1;
 }   /* forever */
 }   /* main */
@@ -184,6 +221,9 @@ extern errno;
 register int j;
 register int n;
 int checksum, line;
+
+    /* zero the byte count */
+    written_size = 0;
 
     for (line = 1; ; line++)	/* for each input line */
 	{
@@ -220,9 +260,21 @@ int checksum, line;
 
 	while (n >= 4)
 	    {
-	    j = DEC(bp[0]) << 2 | DEC(bp[1]) >> 4; putc(j, out); checksum += j;
-	    j = DEC(bp[1]) << 4 | DEC(bp[2]) >> 2; putc(j, out); checksum += j;
-	    j = DEC(bp[2]) << 6 | DEC(bp[3]);	   putc(j, out); checksum += j;
+	    j = DEC(bp[0]) << 2 | DEC(bp[1]) >> 4;
+	    putc(j, out);
+	    checksum += j;
+	    written_size++;
+
+	    j = DEC(bp[1]) << 4 | DEC(bp[2]) >> 2;
+	    putc(j, out);
+	    checksum += j;
+	    written_size++;
+
+	    j = DEC(bp[2]) << 6 | DEC(bp[3]);
+	    putc(j, out);
+	    checksum += j;
+	    written_size++;
+
 	    checksum = checksum % SUMSIZE;
 	    bp += 4;
 	    n -= 3;
@@ -231,15 +283,24 @@ int checksum, line;
 	    j = DEC(bp[0]) << 2 | DEC(bp[1]) >> 4;
 		checksum += j;
 		if (n >= 1)
+		    {
 		    putc(j, out);
+		    written_size++;
+		    }
 	    j = DEC(bp[1]) << 4 | DEC(bp[2]) >> 2;
 		checksum += j;
 		if (n >= 2)
+		    {
 		    putc(j, out);
+		    written_size++;
+		    }
 	    j = DEC(bp[2]) << 6 | DEC(bp[3]);
 		checksum += j;
 		if (n >= 3)
+		    {
 		    putc(j, out);
+		    written_size++;
+		    }
 	    checksum = checksum % SUMSIZE;
 	    bp += 4;
 	    n -= 3;
@@ -285,5 +346,4 @@ register char *sp, c;
 
     return(0);
 }
-#endif unix
-
+#endif /*unix*/
