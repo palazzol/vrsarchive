@@ -4,7 +4,7 @@
 ALL	= atc
 MODEL	= -i -F 2000
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 CURSESLIBR =	libatc.a
 OFILE =		tunable.o
 CFILE =		tunable.c
