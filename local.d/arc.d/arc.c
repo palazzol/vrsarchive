@@ -83,7 +83,7 @@ char *argv[];                          /* pointers to arguments */
     char *a;                           /* option pointer */
     char *upper();                     /* case conversion routine */
     INT dups = 0;                      /* duplicate argument counter */
-    INT onintr();                      /* funtion to call when SIGNAL caught */
+    SIG_T onintr();                    /* funtion to call when SIGNAL caught */
 
     /* Basic signal trapping */
     signal(SIGHUP,SIG_IGN);

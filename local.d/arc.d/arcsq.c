@@ -202,15 +202,15 @@ static INT scale(ceil)
 unsigned INT ceil;                     /* upper limit on total weight */
 {
     register INT i;
-    INT ovflw, divisor;
-    unsigned INT w, sum;
+    INT ovflw;
+    unsigned INT divisor, w, sum;
     unsigned char increased;           /* flag */
 
     do
     {
         for (i=sum=ovflw=0; i<NUMVALS; ++i)
         {
-            if (node[i].weight > (ceil-sum))
+            if (node[i].weight > (unsigned)(ceil-sum))
                 ++ovflw;
             sum += node[i].weight;
         }

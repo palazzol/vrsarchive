@@ -93,11 +93,13 @@ char *s;
     exit(1);                           /* quit */
 }
 
+#ifndef __STDC__
 rename(o, n)
 char *o, *n;
 {
     return(link(o, n) || unlink(o));
 }
+#endif
 
 makenames(rawfn)
 char *rawfn;

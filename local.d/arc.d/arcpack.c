@@ -40,6 +40,7 @@ static unsigned char state;            /* current packing state */
 
 static long stdlen;                    /* length for standard packing */
 static INT crcval;                     /* CRC check value */
+INT getch();
 
 INT pack(f,t,hdr)                      /* pack file into an archive */
 FILE *f, *t;                           /* source, destination */
@@ -53,7 +54,6 @@ struct heads *hdr;                     /* pointer to header data */
     long pred_cm();                    /* dynamic crunching cleanup */
     char tnam[STRLEN];                 /* temporary name buffer */
     FILE *crn = NULL;                  /* temporary crunch file */
-    INT getch();
     INT getc_ncr();
     INT putc_pak();
 
