@@ -2,6 +2,7 @@
 /*
  *	ex:set ts=8 sw=8:
  */
+char	line[80];
 int	score;
 extern int	position;
 %}
@@ -387,7 +388,6 @@ main ()
 	return yyparse ();
 }
 
-char	line[80];
 char	*lp = line;
 
 yyerror (s)
