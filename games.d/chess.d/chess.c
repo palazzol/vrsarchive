@@ -50,7 +50,7 @@ short PieceList[3][16],PieceCnt[3];
 short castld[3],kingmoved[3],mtl[3],pmtl[3],emtl[3],hung[3];
 short mate,post,xkillr,ykillr,opponent,computer,Sdepth;
 long time0;
-int response_time,extra_time,timeout,et,et0;
+int response_time,extra_time,time_out,et,et0;
 short quit,reverse,bothsides,InChk,player;
 long NodeCnt;
 int srate;
@@ -205,7 +205,7 @@ short side;
 {
 short i,alpha,beta,tempb,tempc;
 
-  timeout = false; player = side;
+  time_out = false; player = side;
   for (i = 0; i < 30; i++)
     prvar[i] = killr1[i] = killr2[i] = killr3[i] = 0;
   PPscore[0] = -5000;
@@ -215,8 +215,8 @@ short i,alpha,beta,tempb,tempc;
   TrPnt[1] = 0; root = &Tree[0];
   MoveList(side,1);
   if (GameCnt < BookDepth) OpeningBook(side); else BookDepth = -1;
-  if (BookDepth > 0) timeout = true;
-  while (!timeout && Sdepth<30)
+  if (BookDepth > 0) time_out = true;
+  while (!time_out && Sdepth<30)
     {
       Sdepth++;
       gotoXY(70,1); printw("%d ",Sdepth); ClrEoln();
@@ -229,7 +229,7 @@ short i,alpha,beta,tempb,tempc;
           search(side,1,Sdepth,beta,12000,prvar);
         }
       beta = root->score+75;
-      if (root->flags & exact) timeout = true;
+      if (root->flags & exact) time_out = true;
     }
   if (root->score > -9999)
     {
@@ -541,7 +541,7 @@ int minute,second;
   if (et < et0) et0 = 0;
   if (et > et0 || iop == 1)
     {
-      if (et > response_time+extra_time) timeout = true;
+      if (et > response_time+extra_time) time_out = true;
       et0 = et;
       if (iop == 1)
         {
@@ -1564,7 +1564,7 @@ struct leaf *reply;
   nxtline[ply] = (node->f<<8) + node->t;
   nxtline[ply+1] = node->reply;
   search(xside,ply+1,depth-1,-beta,-alpha,nxtline);
-  if (!timeout)
+  if (!time_out)
     {
       reply = &Tree[TrPnt[ply+1]];
       s = -reply->score;
@@ -1663,7 +1663,7 @@ struct leaf *node;
   if (ply > 1) MoveList(side,ply);
   best = -12000; PPscore[ply] = -PPscore[ply-1];
   pnt = TrPnt[ply]; pbst = pnt;
-  while (pnt < TrPnt[ply+1] && best<=beta && !timeout)
+  while (pnt < TrPnt[ply+1] && best<=beta && !time_out)
     {
       node = &Tree[pnt]; NodeCnt++;
       nxtline[ply+1] = 0;
@@ -1709,7 +1709,7 @@ struct leaf *node;
           }
         UnmakeMove(side,node,&tempb,&tempc);
       }
-      if (node->score > best && !timeout)
+      if (node->score > best && !time_out)
         {
           if (ply == 1 && depth > 1 && node->score>alpha &&
             (node->flags & exact) == 0) node->score += 5;
@@ -1723,7 +1723,7 @@ struct leaf *node;
       pnt++;
       if (best > 9000) beta = 0;
     }
-  if (timeout) pnt--;
+  if (time_out) pnt--;
   if (ply == 1) sort(TrPnt[ply],pnt-1);
   else Tree[TrPnt[ply]] = Tree[pbst];
   node = &Tree[TrPnt[ply]];
