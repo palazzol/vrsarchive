@@ -1,19 +1,23 @@
-# AR = shar -c -v -d
-DIST = ../adl.dist/SHAR
-AR = post -c -v -p 1 17
+# AR	= shar -c -v -d
+DIST	= ../adl.dist/SHAR
+AR	= post -c -v -p 1 17
+GAMDIR	= /usr/games
+GAMLIB	= $(GAMDIR)/lib
+BIN	= $(GAMLIB)/adl
+LIBS	= "-lcurses -ltermcap"
 
 all	:
-		(cd util;	make all);
-		(cd adlcomp;	make all);
-		(cd adlrun;	make all);
-		(cd samples;	make all);
-		(cd misc;	make all);
+		@(cd util;	make BIN=$(BIN) LIBS=$(LIBS) all);
+		@(cd adlcomp;	make BIN=$(BIN) LIBS=$(LIBS) all);
+		@(cd adlrun;	make BIN=$(BIN) LIBS=$(LIBS) all);
+		@(cd samples;	make BIN=$(BIN) LIBS=$(LIBS) all);
+		@(cd misc;	make BIN=$(BIN) LIBS=$(LIBS) all);
 
 install :
-		(cd util;	make all);
-		(cd adlcomp;	make install);
-		(cd adlrun;	make install);
-		(cd misc;	make install);
+		@(cd util;	make BIN=$(BIN) all);
+		@(cd adlcomp;	make BIN=$(BIN) install);
+		@(cd adlrun;	make BIN=$(BIN) install);
+		@(cd misc;	make BIN=$(BIN) install);
 
 post	:	shar
 		mv adl.shar ${DIST}/adl_01.shar
@@ -59,10 +63,10 @@ touch	:
 		(cd misc;	make -t);
 
 clean	:
-		(cd util;	make clean);
-		(cd adlcomp;	make clean);
-		(cd adlrun;	make clean);
-		(cd samples;	make clean);
-		(cd include;	make clean);
-		(cd misc;	make clean);
+		@(cd util;	make clean);
+		@(cd adlcomp;	make clean);
+		@(cd adlrun;	make clean);
+		@(cd samples;	make clean);
+		@(cd include;	make clean);
+		@(cd misc;	make clean);
 		rm -f adl.shar
