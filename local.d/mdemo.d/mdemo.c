@@ -1,12 +1,13 @@
 /*
- $	3/10/85	@(#)mdemo.c	1.1
+ $	3/10/85	@(#)mdemo.c	1.2
  *	Display a constantly updated map of main memory.
  *
 */
 #ifdef lint
 #  define far				/* Lint chokes on far ptrs	*/
 #else
-static char *sccsid = "3/10/85	@(#)mdemo.c	1.1";	/* Suppress unref message	*/
+static char *sccsid = "3/10/85 @(#)mdemo.c	1.2";
+					/* Suppress unref message	*/
 #endif
 
 #include <curses.h>
@@ -209,13 +210,13 @@ main()
         continue;			/* Skip procs not in memory	*/
       (void) lseek(mem,(long)mltoa(pp->p_addr.p_caddr),0);
       (void) read(mem,(char *)&u,sizeof u);/* Get the u structure	*/
-      pp->p_ldsel >>= 3;		/* How much ldt?		*/
+      r = pp->p_ldsel >> 3;		/* How much ldt?		*/
       if (pp->p_ldsel >= NUSEGS)
         continue;			/* Ldt was weird		*/
       (void) read(mem,(char *)ldt,sizeof(ldt[0])*(pp->p_ldsel));
       if (u.u_procp != addr)		/* U structure point at p?	*/
         continue;			/* No, u structure vanished!	*/
-      for (l = ldt; l < ldt+pp->p_ldsel; l++)
+      for (l = ldt; l <= ldt+r; l++)
         position(u.u_comm,
                  (int)((l->d_hiaddr<<6)+(l->d_loaddr>>10)),
                  (int)(l->d_limit/1024));
