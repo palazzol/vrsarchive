@@ -498,8 +498,11 @@ setmodes()
 	   | ICRNL | IUCLC | IXON | IXANY | IXOFF);
 	ttysnew.c_oflag = 0;	/* Turn off everything */
 	ttysnew.c_cflag &= ~PARENB;
+#ifdef XCASE
+	ttysnew.c_lflag &= ~XCASE;
+#endif
 	ttysnew.c_lflag &=
-	    ~(ISIG | ICANON | XCASE | ECHO | ECHOE | ECHOK | ECHONL | NOFLSH);
+	    ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL | NOFLSH);
 	ttysnew.c_cc[VMIN] = 6;
 	ttysnew.c_cc[VTIME] = 1;
 
@@ -996,7 +999,7 @@ char *name;
                 checksum = 0;  /* init checksum */
                 for (bufctr=0; bufctr < BBUFSIZ; bufctr++)
                 {  sendbyte(buff[bufctr]);  /* send the byte */
-                   if (ARPA && (buff[bufctr]==0xff))  /* ARPA Net FFH esc */
+                   if (ARPA && (buff[bufctr]==(char)0xff))  /* ARPA Net FFH esc */
                         sendbyte(buff[bufctr]);  /* send 2 FFH's for one */
                    checksum = ((checksum+buff[bufctr])&BITMASK);
                 }
@@ -1240,8 +1243,10 @@ ttyparams()
             pryn (ttysnew.c_lflag, ISIG);
           fprintf (stderr, "\tCanonical Input Processing   ");
             pryn (ttysnew.c_lflag, ICANON);
+#ifdef XCASE
           fprintf (stderr, "\tCanonical Upper/Lower Output ");
             pryn (ttysnew.c_lflag, XCASE);
+#endif
           fprintf (stderr, "\tEcho Enabled                 ");
             pryn (ttysnew.c_lflag, ECHO);
           fprintf (stderr, "\tCRT Backspace Enabled        ");
@@ -1386,8 +1391,18 @@ char speed;
                 case B2400 : fprintf (stderr, "2400"); break;
                 case B4800 : fprintf (stderr, "4800"); break;
                 case B9600 : fprintf (stderr, "9600"); break;
+#ifdef B19200
+                case B19200 : fprintf (stderr, "19200"); break;
+#endif
+#ifdef B38400
+                case B38400 : fprintf (stderr, "19200"); break;
+#endif
+#ifdef EXTA
                 case EXTA : fprintf (stderr, "External A"); break;
+#endif
+#ifdef EXTB
                 case EXTB : fprintf (stderr, "External B"); break;
+#endif
 #endif
 
                 default    : fprintf (stderr, "Error"); break;
