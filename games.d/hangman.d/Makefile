@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.3 1987-06-14 02:04:58 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.4 1987-12-26 16:53:59 vrs Exp $
 #
 ALL	= hangman
 MODEL	= -i -F 2000
@@ -23,7 +23,7 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
 	cd $(MAN6); chmod 644 hangman.6
 	
 hangman: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) -lcurses -ltermlib
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 clean:
 	rm -f $(OBJS) $(ALL)

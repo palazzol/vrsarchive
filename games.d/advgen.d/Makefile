@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.2 1987-06-08 21:23:50 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.3 1987-12-26 16:53:57 vrs Exp $
 #
 ALL	= advgen
 MODEL	= -i
@@ -22,7 +22,7 @@ DIST	= READ_ME TO_DO advgen.6 advgen.c advgram.y advlex.l lookup.c \
 	  Dist.hdr
 
 advgen: $(OBJS)
-	cc $(CFLAGS) -o $@ $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 lint:	$(SRCS) tokens.h
 	$(LINT) $(LINTFLGS) $(SRCS)
