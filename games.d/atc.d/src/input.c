@@ -228,15 +228,17 @@ getcommand()
 	}
 
 	pp = findplane(p.plane_no);
-	if (pp->new_altitude != p.new_altitude)
+	if (pp->new_altitude != p.new_altitude){
 		pp->new_altitude = p.new_altitude;
-	else if (pp->status != p.status)
-		pp->status = p.status;
-	else {
-		pp->new_dir = p.new_dir;
-		pp->delayd = p.delayd;
-		pp->delayd_no = p.delayd_no;
+		return(0);
 	}
+	if (pp->status != p.status){
+		pp->status = p.status;
+		return(0);
+	}
+	pp->new_dir = p.new_dir;
+	pp->delayd = p.delayd;
+	pp->delayd_no = p.delayd_no;
 	return (0);
 }
 
@@ -410,24 +412,39 @@ descend(c)
 char	*
 setalt(c)
 {
-	if ((p.altitude == c - '0') && (p.new_altitude == p.altitude))
+	register int alt;
+
+	alt = c - '0';
+	if ((p.altitude == alt) && (p.new_altitude == p.altitude))
 		return ("Already at that altitude");
-	p.new_altitude = c - '0';
+
+	if (p.new_altitude == alt)
+		return ("Already going to that altitude");
+
+	p.new_altitude = alt;
 	return (NULL);
 }
 
 char	*
 setrelalt(c)
 {
+	register int alt;
+
 	if (c == 0)
 		return ("altitude not changed");
 
 	switch (dir) {
 	case D_UP:
-		p.new_altitude = p.altitude + c - '0';
+		alt = p.altitude + c - '0';
+		if(p.new_altitude == alt)
+		    return ("Already going to that altitude");
+		p.new_altitude = alt;
 		break;
 	case D_DOWN:
-		p.new_altitude = p.altitude - (c - '0');
+		alt = p.altitude - (c - '0');
+		if(p.new_altitude == alt)
+		    return ("Already going to that altitude");
+		p.new_altitude = alt;
 		break;
 	default:
 		return ("Unknown case in setrelalt!  Get help!");
