@@ -133,7 +133,7 @@ char	**argv; {
 #ifdef	VAX			/* this doesn't work under v7, sigh */
 				/* and i don't think it's worth re-writing */
 	setexit();		/* refigure time if killed */
-#endif	VAX
+#endif	/*VAX*/
 
 	time(&now);
 	nv = localtime(&now);
