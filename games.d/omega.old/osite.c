@@ -978,9 +978,10 @@ void l_pawn_shop()
 	items[i] = create_object();
 	if (items[i] != NULL) {
 	  items[i]->known = 2;
-	  if (items[i]->objchar == CASH)
+	  if (items[i]->objchar == CASH) {
 	    free((char *)items[i]);
 	    items[i] = NULL;
+	  }
 	}
       }
       lastitemgen = Date;
