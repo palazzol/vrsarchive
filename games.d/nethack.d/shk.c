@@ -172,7 +172,7 @@ register roomno = inroom(u.ux,u.uy);
 			    mm.x = xdnstair;
 			    mm.y = ydnstair;
 			    while(cnt--) {
-				    mm = enexto(mm.x, mm.y);
+				    enexto(&mm, mm.x, mm.y);
 				    (void) mkmon_at('K', mm.x, mm.y);
 			    }
 			    /* Create a swarm near the shopkeeper */
@@ -180,7 +180,7 @@ register roomno = inroom(u.ux,u.uy);
 			    mm.x = shopkeeper->mx;
 			    mm.y = shopkeeper->my;
 			    while(cnt--) {
-				    mm = enexto(mm.x, mm.y);
+				    enexto(&mm, mm.x, mm.y);
 				    (void) mkmon_at('K', mm.x, mm.y);
 			    }
 			}
