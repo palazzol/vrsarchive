@@ -1,7 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.2 1987-02-15 15:58:15 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.3 1987-12-26 20:17:19 vrs Exp $
 #
-ALL	= pathalias makedb
+XENIX	= makedb
+ALL	= pathalias
 MODEL	= -Ml
 OPTIONS	= -DALIASDB=\"$(LIBDIR)/palias\"
 include ../../CONFIG
