@@ -46,8 +46,8 @@ score (board, player)
 register boardT	board;
 int	player;
 {
-	register char	*j, *b;
-	char	*l;
+	register short	*j, *b;
+	short	*l;
 	register int	score;
 	int	i;
 	int	n, m;

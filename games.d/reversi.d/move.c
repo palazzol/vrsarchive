@@ -13,7 +13,7 @@ register int	player;
 int				x, y;
 boardT			board;
 {
-	register char	*b, *m;
+	register short	*b, *m;
 	register int	*o, i;
 
 	b = & board[x][y];
@@ -39,7 +39,7 @@ register int	player;
 int				x, y;
 boardT			board;
 {
-	register char	*b, *m;
+	register short	*b, *m;
 	register int	*o, i;
 
 	b = & board[x][y];

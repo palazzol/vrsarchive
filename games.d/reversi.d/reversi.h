@@ -6,7 +6,12 @@
 
 # define	SIZE	8
 
-typedef char	boardT[SIZE+2][SIZE+2];
+/*
+ *	The type was was changed from char to short (here, in move.c and
+ *	score.c).  This uses more storage, but is portable to machines which
+ *	consider char an unsigned type.
+*/
+typedef short	boardT[SIZE+2][SIZE+2];
 
 typedef boardT	*boardP;
 
