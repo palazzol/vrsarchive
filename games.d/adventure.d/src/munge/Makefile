@@ -4,7 +4,7 @@
 #
 OPTIONS	= -O
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 KLIB	= ../kio/klib.a
 MAIN	= munge.c
 MLIB	= mlib.a(buffers.o) \
@@ -22,20 +22,20 @@ HEADER	= mdefs.h
 
 .PRECIOUS: mlib.a
 
-all:	munge
+all:	munge$(EXE)
 
-munge: $(MAIN) mlib.a
-	$(CC) $(CFLAGS) $(MAIN) mlib.a $(KLIB) $(LIBS) -o munge
-	size munge
+munge$(EXE): $(MAIN) mlib.a
+	$(CC) $(CFLAGS) $(MAIN) mlib.a $(KLIB) $(LIBS) -o munge$(EXE)
+	size munge$(EXE)
 
 $(SRC) $(MAIN):: mdefs.h
 	touch $@
 
-mlib.a:	$(MLIB)
+mlib.a:	$(OBJ) $(MLIB)
 	$(RANLIB) $@
 
 clean:
-	rm -f *.o mlib.a munge
+	rm -f *.o mlib.a munge$(EXE)
 
 backup:
 	cp Makefile $(HEADER) $(MAIN) $(SRC) bkup

@@ -25,9 +25,9 @@ struct files
 
 static struct files fx[15] =
 {
-	{ "(stdin)", 0, stdin },
-	{ "(stdout)", 0, stdout },
-	{ "(stderr)", 0, stderr },
+	{ "(stdin)", 0, NULL },
+	{ "(stdout)", 0, NULL },
+	{ "(stderr)", 0, NULL },
 	{ "", 0, NULL },
 	{ "", 0, NULL },
 	{ "", 0, NULL },
