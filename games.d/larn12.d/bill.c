@@ -1,4 +1,5 @@
 #include "header.h"
+#include <signal.h>
 /* bill.c		 "Larn is copyrighted 1986 by Noah Morgan. */
 static char mail600[32];
 /*
@@ -120,6 +121,10 @@ mailbill()
 	wait(0);  pid=getpid();
 	if (fork() == 0)
 		{
+		signal(SIGINT,  SIG_IGN);	/* Don't do a save here */
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGHUP,  SIG_IGN);
+		nosignal = 1;			/* Not even if killed	*/
 		resetscroll();
 		for (i=0; i<sizeof(pfn)/sizeof(int (*)()); i++)
 			if ((*pfn[i])())
