@@ -1,5 +1,5 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/libchangetty/changetty.c,v 1.1 1987-02-07 19:05:03 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/libchangetty/changetty.c,v 1.2 1987-02-07 20:25:14 vrs Exp $";
 #endif
 
 /*
@@ -35,6 +35,8 @@ static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/libchangetty/change
 #include "../constdefs.h"
 
 #ifdef USG
+#include <sys/types.h>
+#include <sys/ioctl.h>
 #include <termio.h>
 #else
 #include <sgtty.h>
