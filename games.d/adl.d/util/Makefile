@@ -1,15 +1,12 @@
+ALL		= vstring.o virtmem.o mytime.o
+MODEL	= -M2l -O
 INC = ../include
+OPTIONS	= -I${INC}
+include /etc/CONFIG
 # AR = shar -c -v
 AR = post -c -v -p 9 17
 B = ..
 D = util/
-
-DFLAGS = -M2l -O
-CFLAGS = -I${INC} ${DFLAGS}
-
-OBJS = vstring.o	virtmem.o 	  mytime.o
-
-all		: ${OBJS}
 
 shar		: util.shar
 
@@ -26,4 +23,4 @@ virtmem.o	: virtmem.c	${INC}/adltypes.h	${INC}/virtmem.h
 vstring.o	: vstring.c	${INC}/adltypes.h	${INC}/virtmem.h
 
 clean		:
-	rm -f ${OBJS} core util.shar
+	rm -f ${ALL} core util.shar

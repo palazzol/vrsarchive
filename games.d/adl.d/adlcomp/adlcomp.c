@@ -394,7 +394,7 @@ printmsg()
 getfile()
 {
     char *fsave;
-    char msg[ 80 ], nsave[ 512 ], t_in[ 512 ], *sprintf();
+    char msg[ 80 ], nsave[ 512 ], t_in[ 512 ];
     int16 lsave, numsave, i, found;
 
     lexer();				/* Get a token.			*/
