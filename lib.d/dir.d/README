@@ -1,0 +1,12 @@
+This is the source and manual page for a public-domain getwd(3) routine,
+the C function equivalent of the pwd(1) program.  This stuff has been
+written from scratch without reference to Bell or Berkeley sources.
+It may be used by anyone, on any system, for any purpose.  It has been
+tested on both V7 and 4.1BSD, and is believed to contain no gratuitous
+system dependencies, with one exception:  it wants the Berkeley routines
+for directory scanning.  It could easily be fixed to bypass this need,
+but since I think the directory routines are a Good Thing and their use
+should be encouraged, I haven't done so.
+
+Note that the reference in the manual page to pwd(1) running setuid-root
+may not be true everywhere (although it should be made true everywhere...).
