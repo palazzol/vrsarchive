@@ -19,7 +19,9 @@ extern char *getenv();
 extern char *sbrk();
 extern char *strcpy();
 extern gettmode();
+#ifndef __STDC__
 extern setterm();
+#endif
 
 STAT sbuf;
 
