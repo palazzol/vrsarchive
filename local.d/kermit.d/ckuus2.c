@@ -172,7 +172,7 @@ Type of packet block check to be used for error detection, 1, 2, or 3.\n",
 "" } ;
 
  
-static char *hmxyf[] = { "\set file: names, type, warning, display.\n\n",
+static char *hmxyf[] = { "set file: names, type, warning, display.\n\n",
 "'names' are normally 'converted', which means file names are converted\n",
 "to 'common form' during transmission; 'literal' means use filenames\n",
 "literally (useful between like systems).\n\n",

@@ -87,7 +87,7 @@ char *txt2 = "()\n\
 
 /* this program's output goes here, followed by final text... */
 
-char *txt3 = "\n	    }\n    }\n\}\n\n";
+char *txt3 = "\n	    }\n    }\n}\n\n";
 
 
 /*
@@ -511,7 +511,7 @@ FILE *fp;
 	    	      rdcmnt(fp);	/* skip over the comment */
 		      continue; }	/* and keep looping */
 		    else {
-			ungetc(c);	/* put this back into input */
+			ungetc(c, fp);	/* put this back into input */
 			c = '/'; }	/* put character back, fall thru */
 
 	  default: if (isword(c)) {
