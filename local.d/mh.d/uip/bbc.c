@@ -1,6 +1,6 @@
 /* bbc.c - ZOTnet BBoard checker */
 #ifndef	lint
-static char ident[] = "@(#)$Id: bbc.c,v 1.1 1990-04-12 13:29:25 vrs Exp $";
+static char ident[] = "@(#)$Id: bbc.c,v 1.2 1990-05-07 06:38:22 vrs Exp $";
 #endif	lint
 
 #include "../h/mh.h"
@@ -133,11 +133,11 @@ extern char response[];
 char   *getusr (), **getip ();
 #endif	BPOP
 
-int	sigser (), action ();
-int	hupser ();
+int action ();
+TYPESIG	sigser (), hupser ();
 #ifdef	SIGTSTP
 int	tstpid;
-int	tstpser ();
+TYPESIG	tstpser ();
 #endif	SIGTSTP
 
 static char *rcfile=NULL;
@@ -686,7 +686,7 @@ register struct bboard  *bb;
 
 /* ARGSUSED */
 
-int	sigser (i)
+TYPESIG	sigser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -698,7 +698,7 @@ int     i;
 
 /* ARGSUSED */
 
-int	hupser (i)
+TYPESIG	hupser (i)
 int	i;
 {
     static int armed = 0;
@@ -806,17 +806,25 @@ register struct bbcount *p;
 /*  */
 
 #ifdef	SIGTSTP
-static int  tstpser (sig)
+static TYPESIG  tstpser (sig)
 int	sig;
 {
     int	    pid;
+#ifdef SYS5
+    int		w;
+#else
     union wait w;
+#endif
 
     rcend ();
 
+#ifdef SYS5
+	waitpid(tstpid, &w, WUNTRACED);
+#else
     while ((pid = wait3 (&w, WUNTRACED, (struct rusage *) 0)) != NOTOK
 	    && pid != tstpid)
 	continue;
+#endif
 
     (void) signal (SIGTSTP, SIG_DFL);
 #ifdef	BSD42
