@@ -1,3 +1,9 @@
+# Flags for CC
+MODEL	= -M2l
+OPTIONS	= -I${INC} -O '-DADL_NAME="${BIN}"'
+ALL		= adlcomp
+include /etc/CONFIG
+
 # Source directories - INC is the include directory; UTL is the
 # utilities directory.
 INC = ../include
@@ -13,9 +19,6 @@ D = adlcomp/
 # Where adlcomp will be installed, with make install.
 #BIN = /users/cunniff/bin
 
-# Flags for CC
-CFLAGS = -I${INC} -M2l -O '-DADL_NAME="${BIN}"'
-
 # Flags for lint
 LFLAGS = -DLINT -I${INC} -C
 
@@ -24,16 +27,14 @@ HDRS =	${INC}/adltypes.h	${INC}/adldef.h		${INC}/adlprog.h \
 	${INC}/adlcomp.h	${INC}/virtmem.h	${INC}/vstring.h
 
 # Utility files used by adlcomp
-UTIL =	${UTL}/virtmem.o	${UTL}/vstring.o	${UTL}/mytime.o
+UTIL =	${UTL}/virtmem.o ${UTL}/vstring.o ${UTL}/mytime.o
 
 # The object modules from which to buld adlcomp
-OBJS =	adlcomp.o	codegen.o	adllex.o	adlmisc.o	\
-	adlmsg.o	adlobj.o	routcomp.o	predef.o	\
-	compdict.o	adlglob.o
+OBJS =	adlcomp.o codegen.o adllex.o adlmisc.o \
+	adlmsg.o adlobj.o routcomp.o predef.o \
+	compdict.o adlglob.o
 
 # The rules.
-
-all		: adlcomp
 
 shar		: adlcomp1.shar	adlcomp2.shar
 
@@ -57,7 +58,7 @@ install		: adlcomp
 	chmod 755 ${BIN}/adlcomp
 
 clean		:
-	rm -f ${OBJS} core adlcomp1.shar adlcomp2.shar adlcomp
+	rm -f ${ALL} ${OBJS} core adlcomp1.shar adlcomp2.shar adlcomp
 
 lint		:
 	lint ${LFLAGS} adlcomp.c codegen.c predef.c \
