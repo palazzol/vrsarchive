@@ -41,23 +41,40 @@ catchstop(dummy)
 SIG_T
 stopawhile(dummy)
 {
+#ifdef __STDC__
+    struct termios curseterm;
+#else
     struct sgttyb curseterm;
+#endif
 
     move(23,0);
     refresh();
     putchar('\n');
     fflush(stdout);
+#ifdef __STDC__
+    tcgetattr(0,&curseterm);
+    tcsetattr(0,TCSADRAIN,&origterm);
+#else
     ioctl(0,TIOCGETP,&curseterm);
     ioctl(0,TIOCSETP,&origterm);
+#endif
 #ifdef SIGTSTP
     signal(SIGTSTP,SIG_DFL);
     kill(getpid(),SIGTSTP);
     signal(SIGTSTP,SIG_IGN);
 #endif
     stopped = 0;
+#ifdef __STDC__
+    tcsetattr(0,TCSADRAIN,&curseterm);
+#else
     ioctl(0,TIOCSETP,&curseterm);
+#endif
     redrawscr();
+#ifdef __STDC__
+    tcsetattr(0,TCSADRAIN,&curseterm);
+#else
     ioctl(0,TIOCSETP,&curseterm);       /* Just to make sure... */
+#endif
     waitboard();
 #ifdef SIGTSTP
     signal(SIGTSTP,catchstop);

@@ -37,7 +37,11 @@ char **argv;
 	printf("Sorry, the load average is too high to play now.\n");
 	exit(0);
     }
+#ifdef __STDC__
+    tcgetattr(0,&origterm);
+#else
     ioctl(0,TIOCGETP,&origterm);
+#endif
     initscr();
     if (LINES < 24 || COLS < 80)
     {

@@ -4,6 +4,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
        /* stdio.h and sgtty.h are included by curses.h */
+#ifdef __STDC__
+#   include <termios.h>
+#endif
 #ifdef SYS5
 #   include <fcntl.h>
 #endif
@@ -63,7 +66,11 @@ extern char fichar,upchar,dochar,lechar,richar,ulchar,urchar,dlchar,drchar,
 	flchar,frchar,pachar;
 #endif
 extern char scorefile[],lockfile[],helpfile[];
+#ifdef __STDC__
+extern struct termios origterm;
+#else
 extern struct sgttyb origterm;
+#endif
 extern float version;
 extern double maxload;
 

@@ -8,7 +8,11 @@
  */
 
 #include "include.h"
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 
 int interval;
 

@@ -6,7 +6,11 @@ PEDE *centipede;                /* head of the list */
 PEDE *lastpede;                 /* last pede in list */
 int numpedes;
 char mushw[24][57];             /* Array to store mushrooms */
+#ifdef __STDC__
+struct termios origterm;        /* the terminal before */
+#else
 struct sgttyb origterm;         /* the terminal before */
+#endif
 int inter = 0;
 int stopped = 0;
 char name[10];
