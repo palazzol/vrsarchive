@@ -36,7 +36,7 @@ register char *str;
 	register int n = 0;
 	register int ch;
 
-	while((ch = getchar()) != '\n') {
+	while((ch = getch()) != '\n') {
 		if (ch == '\010' && n > 0)
 			n--;
 		else if (ch == '\010')
@@ -53,9 +53,9 @@ inform(fmt, jerry)
 char *fmt;
 int jerry;
 {
-	scroll++;
-	if (scroll > 11) scroll = 0;
-	wmove(notes, scroll, 0);
+	scrollcnt++;
+	if (scrollcnt > 11) scrollcnt = 0;
+	wmove(notes, scrollcnt, 0);
 	wclrtoeol(notes);
 	if (jerry) {
 		wprintw(notes, fmt, shiplist[jerry -1].row, shiplist[jerry -1].col);
