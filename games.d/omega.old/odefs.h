@@ -895,7 +895,7 @@ char *malloc(),*calloc();
 int free();
 
 #ifndef BSD
-extern long lrand48;
+extern long lrand48();
 #define random()	lrand48()
-#define srandom()	srand48()
+#define srandom(s)	srand48(s)
 #endif
