@@ -1,6 +1,11 @@
 OPTIONS	= -g
-ALL 	= sucklst sucko
+ALL 	= sucklst sucko active
 include $(HOME)/CONFIG
+
+all:	$(ALL)
+
+active: active.o nntp.o
+	$(CC) $(CFLAGS) -o $@ active.o nntp.o
 
 sucklst: main.o nntp.o
 	$(CC) $(CFLAGS) -o $@ main.o nntp.o
