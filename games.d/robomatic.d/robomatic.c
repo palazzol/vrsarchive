@@ -592,11 +592,18 @@ makemove (r, c)
 charsavail ()
 { long n;
   int retc;
-  
+
+#ifdef FIONREAD
   if (retc = ioctl (READ, FIONREAD, &n))
   { fprintf (stderr, "Ioctl returns %d, n=%ld.\n", retc, n);
     n=0;
   }
+#else
+  if ((n = rdchk(READ)) < 0)
+  { fprintf (stderr, "rdchk returns %ld.\n", n);
+    n=0;
+  }
+#endif
 
   return ((int) n);
 }
