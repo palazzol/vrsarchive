@@ -11,14 +11,14 @@ TERMDIR	= $(ROOT)/usr/lib/term
 LINTTAB	= $(TABLES)
 OPTIONS	= -O
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 
 $(TABLES):: table.o
 	@make $@.o
 	$(CC) $(CFLAGS) table.o $@.o
-	./a.out $@
-	rm -f ./a.out $@.o
+	./$(DEFEXE) $@
+	rm -f ./$(DEFEXE) $@.o
 
 # This dummy_file should never exist -- it is a kludge to get Make to
 elbat:	elbat.c

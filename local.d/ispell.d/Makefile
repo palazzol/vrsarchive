@@ -17,7 +17,7 @@
 #   buildhash <infile> <outfile>
 OPTIONS = -O -DUSG
 ALL	= ispell.hash fixdict ispell icombine munchlist isexpand $(DEFHASH)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # BINDIR, LIBDIR, DEFHASH, DEFDICT, MAN1DIR, MAN4DIR, MAN1EXT, MAN4EXT,
 # LIBS
 DEFHASH = ispell.hash
@@ -66,7 +66,7 @@ isexpand:	isexpand.X Makefile
 OBJS=ispell.o term.o good.o lookup.o hash.o tree.o xgets.o
 
 ispell: $(OBJS)
-	cc $(CFLAGS) -o ispell $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -o ispell $(OBJS) $(LIBS)
 
 $(OBJS) buildhash.o: config.h ispell.h
 ispell.o: version.h

@@ -17,7 +17,7 @@ MAN			= cops.1 cron.1 dev.1 dir.1 file.1 group.1 passwd.1 \
 			  is_able.1 home.1 user.1 pass.1
 OPTIONS		= -g
 ALL			= $(EXECUTABLE) $(DOCS) $(MAN)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 #
 # Where the programs are....
 #

@@ -1,5 +1,5 @@
 ALL		= fixcpio
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 fixcpio:	fixcpio.c
 	$(CC) $(CFLAGS) -o fixcpio fixcpio.c

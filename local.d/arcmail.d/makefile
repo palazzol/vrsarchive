@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/arcmail.d/makefile,v 1.3 1990-03-30 17:02:16 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/arcmail.d/makefile,v 1.4 2002-11-23 07:48:55 Vincent Exp $
 #
 ALL	= arcmail
 MODEL	= -i -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)

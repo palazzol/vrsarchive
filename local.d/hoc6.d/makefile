@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/hoc6.d/makefile,v 1.3 1990-03-30 17:02:52 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/hoc6.d/makefile,v 1.4 2002-11-23 07:49:07 Vincent Exp $
 #
 ALL	= hoc6
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 YFLAGS	= -d
 OBJS	= hoc.o code.o init.o math.o symbol.o
 

@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.3 1990-03-30 17:02:50 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.4 2002-11-23 07:49:06 Vincent Exp $
 #
 ALL	= espel espel.hi spellin
 OPTIONS	= -DLIB=\"$(LIBDIR)\"
-include /etc/CONFIG
+include $(HOME)/CONFIG
 #
 #	PUBLIC is where to keep the public dictionaries
 #

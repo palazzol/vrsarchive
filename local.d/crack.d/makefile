@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.8 1988-12-15 15:22:32 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.9 2002-11-23 07:49:03 Vincent Exp $
 #
 ALL		= crack
 MODEL	= -i -K
@@ -7,10 +7,10 @@ OPTION = -DTRYEASY
 #OPTION	= -DTRYHARD
 #OPTION	= -DTRYEASY -DTRYHARD
 OPTIONS = -O $(OPTION)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 crack:	crack.o
-	cc $(CFLAGS) -o $@ crack.o
+	$(CC) $(CFLAGS) -o $@ crack.o $(LIBS)
 
 clean:
 	rm -f crack crack.o

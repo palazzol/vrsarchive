@@ -1,7 +1,7 @@
 ALL		= maptoX maptoXrgb
 CMAP	= Xrgb.gif Xcolors.gif
 PAGES	= #maptoX.1 maptoXrgb.1
-include /etc/CONFIG
+include $(HOME)/CONFIG
 .SUFFIXES: .ppm .uu .gif
 
 all:	$(ALL) $(CMAP)

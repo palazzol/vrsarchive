@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/getopt.d/makefile,v 1.2 1990-03-30 17:02:51 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/getopt.d/makefile,v 1.3 2002-11-23 07:49:07 Vincent Exp $
 #
 ALL	= getopt
 MODEL	= -i
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 DOCS	= getopt.1
 
 install: $(ALL) $(BINDIR) $(DOCS) $(MAN1)

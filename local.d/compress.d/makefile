@@ -1,13 +1,13 @@
 #
-#	$Header: /home/Vince/cvs/local.d/compress.d/makefile,v 1.3 1990-03-30 17:02:30 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/compress.d/makefile,v 1.4 2002-11-23 07:49:03 Vincent Exp $
 #
 MODEL	= -i -F 3000
 OPTIONS	= -O -DSHORT_INT
 ALL	= compress
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 compress.o: compress.c USERMEM
-	cc -c $(CFLAGS) compress.c
+	$(CC) -c $(CFLAGS) compress.c
 
 # USERMEM may have to be set by hand.  It should contain the amount of
 # available user memory in bytes.  Set it to zero for physical memory

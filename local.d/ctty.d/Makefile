@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ctty.d/Makefile,v 1.3 1990-03-30 17:02:37 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/ctty.d/Makefile,v 1.4 2002-11-23 07:49:04 Vincent Exp $
 #
 MODEL	= -M2em -F 2000
 ALL	= ctty
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(BINDIR) ctty
 	cp ctty $(BINDIR)/ttype

@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/include.d/makefile,v 1.3 1990-03-30 17:02:54 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/include.d/makefile,v 1.4 2002-11-23 07:49:07 Vincent Exp $
 #
 ALL	= include
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)

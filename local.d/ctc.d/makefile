@@ -1,7 +1,7 @@
 ALL	= ctc
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJ	= ctc.o termcap.o
 
 install: $(ALL) $(BINDIR) $(MAN1)

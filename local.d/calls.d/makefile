@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/calls.d/makefile,v 1.3 1990-03-30 17:02:26 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/calls.d/makefile,v 1.4 2002-11-23 07:49:02 Vincent Exp $
 #
 ALL	= calls
 MODEL	= -i
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL) $(MAN1) $(BINDIR)
 	cp $(ALL) $(BINDIR)
