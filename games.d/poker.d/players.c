@@ -114,7 +114,7 @@ int	block;		/* if nobody wants to join, wait on socket
         close( s );
       } else {
       	block = FALSE;
-      	printf("accepted connection");
+      	/*printf("accepted connection");*/
 # ifdef MASSCOMP
       	new_socket = free_socket();
       	socketaddr( new_socket, &from );
@@ -148,7 +148,7 @@ int	block;		/* if nobody wants to join, wait on socket
       	if ( strlen( temp ) > 25 )
       	  temp[25] = NULL;
       	player[*n_players].name = strsave( temp );
-      	printf("%s\n",temp);
+      	/*printf("%s\n",temp);*/
       	fflush(stdout);
       	readln( s, temp );
       	player[*n_players].userid = atoi( temp );
