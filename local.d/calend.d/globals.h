@@ -12,7 +12,7 @@
 #define SWAP(a,b) { int temp; temp = a; a = b; b = temp; }
 
 typedef	char	bool;
-extern	int	errno;
+#include <errno.h>
 
 char	line[BUFSIZ];		/* dates and string on rest of line */
 int	lineptr;		/* current location in 'line' */
