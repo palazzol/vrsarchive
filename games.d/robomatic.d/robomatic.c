@@ -162,7 +162,7 @@ robomatic ()
     { switch (getchar ())
       { case 'd':	debug++; 
 			break;
-        case 'r':	clear (); drawscreen (); refresh (); 
+        case 'r':	resetty(); clear (); drawscreen (); refresh (); 
 			break;
 	default:	break;
       }
@@ -187,6 +187,7 @@ robomatic ()
     ;
 
   /* Now wait for the user to type a character before finishing */
+  resetty();
   refresh ();
   getchar ();
 
@@ -322,6 +323,7 @@ getrobot ()
     }
   }
 
+  resetty();
   drawscreen ();
   move (row, col); 
   refresh ();
