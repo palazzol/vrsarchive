@@ -59,7 +59,7 @@ int choose_race()
   prt("Choose a race (? for Help):", 20, 2);
   do
     {
-      (void) sprintf(tmp_str, "%c) %s", k+97, race[j].trace);
+      (void) sprintf(tmp_str, "%c) %s", k+'a', race[j].trace);
       put_buffer(tmp_str, m, l);
       k++;
       l += 15;
@@ -77,7 +77,7 @@ int choose_race()
   do
     {
       inkey_flush(&s);
-      j = s - 97;
+      j = s - 'a';
       if ((j < MAX_RACES) && (j >= 0)) 
 	{
 	  p_ptr = &py;
@@ -307,7 +307,7 @@ int get_class()
     {
       if (race[i].tclass & bit_array[j])
 	{
-	  (void) sprintf(tmp_str, "%c) %s", k+97, class[j].title);
+	  (void) sprintf(tmp_str, "%c) %s", k+'a', class[j].title);
 	  put_buffer(tmp_str, m, l);
 	  cl[k] = j;
 	  l += 15;
@@ -327,7 +327,7 @@ int get_class()
   do
     {
       inkey_flush(&s);
-      j = s - 97;
+      j = s - 'a';
       if ((j < k) && (j >= 0)) 
 	{
 	  (void) strcpy(py.misc.tclass, class[cl[j]].title);
