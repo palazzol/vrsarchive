@@ -19,16 +19,18 @@
 # NOTE: Edit helper.c to adjust the pathname for q1text.dat for
 # your particular system.
 #
+ALL	= world
+OPTIONS	= -O -DQ1TEXT=\"$(GAMLIB)/q1text.dat\"
+MODEL	= -i
+include ../../CONFIG
+WHEADERS= arrays.h variab.h
+WOBJS	= demons.o helper.o motion.o parser.o verbs1.o verbs2.o world.o
 
-WHEADERS = arrays.h variab.h
-WOBJS = demons.o helper.o motion.o parser.o verbs1.o verbs2.o world.o
-CFLAGS = -O
-
-all:	world
-
-install: 	world
-	cp world /usr/games/world
-	cp q1text.dat /usr/games/lib/q1text.dat
+install: $(ALL) $(GAMDIR) $(GAMLIB)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp q1text.dat $(GAMLIB)
+	cd $(GAMLIB); chmod 644 q1text.dat
 
 convert:	vcnvrt vtxtcn vtext.dat
 	@echo "creating data files..."
@@ -36,14 +38,19 @@ convert:	vcnvrt vtxtcn vtext.dat
 	./vcnvrt
 	touch convert
 
-vtext.dat:
-	cat vtext.dat.aa vtext.dat.ab vtext.dat.ac >vtext.dat
-
 vcnvrt:	vcnvrt.c
-	cc $(CFLAGS) -o vcnvrt vcnvrt.c
+	$(CC) $(CFLAGS) -o $@ vcnvrt.c
+	rm -f vcnvrt.o
 
 vtxtcn:	vtxtcn.c
-	cc $(CFLAGS) -o vtxtcn vtxtcn.c
+	$(CC) $(CFLAGS) -o $@ vtxtcn.c
+	rm -f vtxtcn.o
 
 world:	convert $(WOBJS) $(WHEADERS) 
-	cc -s -o world $(WOBJS)
+	$(CC) $(CFLAGS) -o $@ $(WOBJS)
+
+clean:
+	rm -f $(ALL) $(WOBJS) convert vcnvrt vtxtcn
+	rm -f *.inc q1text.dat
+
+helper.o: Makefile
