@@ -1,0 +1,42 @@
+#!/bin/sh
+
+export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh $0; kill $$)
+
+: "lbgmX - X (remove) file with a message-id of $1 from a lbgm archive"
+: "HISTORY"
+: " 06-Sep-84  z at XEROX Henrietta "
+:	" Created by Jim Ziobro "
+: " 04-Dec-84  geoff "
+:	" Made lbgmdir and RM overrideable from the environment, made "
+:	" default RM be /bin/rm -f. "
+: " 05-Dec-84  geoff "
+:	" Made sure save.log is world-writeable "
+:
+
+lbgmdir=${LBGMDIR:-/usr/lbgm}
+RM=${LBGMRM:-"/bin/rm -f"}
+: lbgmdir is archive location
+cd $lbgmdir
+
+: get filename from Message-Id
+filenam=`awk  'BEGIN { filid = "" ; FS = ":" }\
+\
+	{\
+	if ( filid == "" ) filid = $1 ;\
+	if ( $0 ~ /^[	 ]*$/ ) filid = "" ;
+	# line following blank has filename
+	}\
+\
+\
+/^	[Mm][eE][sS][sS][aA][gG][eE]-[Ii][Dd]:/	{\
+	if ( $2 == "'"$1"'" )\
+	print filid ;\
+	}\
+	' < save.log `
+
+: "$filenam is filename to be purged from lbgm archive"
+: remove the files
+$RM *save.log
+sed -e /$filenam"/,/^	$/d" < \#save.log > save.log
+chmod a+w save.log
+$RM $filenam
