@@ -7,6 +7,10 @@
 
 #include "talk.h"
 #include <signal.h>
+#ifndef A_REVERSE	/* No A_REVERSE if using old TERMCAP stuff */
+#define erasechar()	_tty.sg_erase
+#define killchar()	_tty.sg_kill
+#endif /*!TERMCAP*/
 
 sig_sent()
 {   static char eot = '\004';
@@ -56,11 +60,9 @@ set_edit_chars()
 {
     char buf[3];
     int cc;
-    struct sgttyb tty;
     
-    (void) gtty(0, &tty);
-    my_win.cerase = tty.sg_erase;
-    my_win.kill = tty.sg_kill;
+    my_win.cerase = erasechar();
+    my_win.kill = killchar();
     my_win.werase = '\027';	/* Control W	*/
     buf[0] = my_win.cerase;
     buf[1] = my_win.kill;
