@@ -154,8 +154,7 @@ main(argc,argv)
 		if(argv[1][0] == '-') {
 			switch(argv[1][1]) {
 			case 's':
-				scoring(FALSE);
-				(void) exit(0);
+				quit(FALSE);
 			}
 		}
 	}
