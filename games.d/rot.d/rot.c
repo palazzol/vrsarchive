@@ -1,10 +1,44 @@
+/*
+ * Revision History:
+ *
+ * Original source from:
+ *  Peter da Silva (ihnp4!shell!neuro1!{hyd-ptd,datafact,baylor}!peter)
+ *
+ * Changes for padding added by:
+ *  Andrew Scott Beals ({ucbvax,decwrl}!amdcad!bandy or bandy@amdcad.amd.com)
+ *  20 April 1987
+ *
+ * Additional changes for padding, fix for computation of tglen,
+ * increase max lines, improve termlib handling, add System V #ifdefs.
+ *  Bill Randle (billr@tekred.TEK.COM)
+ *  21 April 1987
+ *
+ * Add padding for cl.
+ *  Andrew Scott Beals ({ucbvax,decwrl}!amdcad!bandy or bandy@amdcad.amd.com)
+ *  22 April 1987
+ *
+ * Add comments and scroll fixes from Colin Plumb (ccplumb@watmath.UUCP)
+ * More terminal handling cleanup and error checking.
+ *  Bill Randle (billr@tekred.TEK.COM)
+ *  22 April 1987
+ */
+
 #include <stdio.h>
+#include "patchlvl.h"
+
+#ifdef SYSV
+# include <termio.h>
+#else
+# include <sgtty.h>
+#endif
 
 /*		-- Miscellaneous defines --				     */
 #define FALSE 0
 #define TRUE 1
 #define MAXCOL 80
-#define MAXLI 24
+#define MAXLI 36
+
+#define min(a,b)	((a)<(b) ? a : b)
 
 extern char *tgetstr();
 
@@ -17,10 +51,10 @@ struct _c {
 
 /*		-- Global variables --					     */
 char *tent;                                               /* Pointer to tbuf */
-char *PC;                                                    /* Pad character */
-char *UP, *BC;                                /* Upline, backsapce character */
-short ospeed;                                       /* Terminal output speed */
-int tglen;
+extern char PC;                                             /* Pad character */
+extern char *UP, *BC;                         /* Upline, backsapce character */
+extern short ospeed;                                /* Terminal output speed */
+int tglen, bclen;
 
 char *cm,                                                   /* Cursor motion */
      *cl,                                                    /* Clear screen */
@@ -35,16 +69,32 @@ main(ac, av)
 int ac;
 char **av;
 {
-	srand(getpid());
-	tinit(getenv("TERM"));
-	if(av[1])
-		while(*++av)
-			dropf(*av);
+	/* set ospeed so padding works correctly */
+#ifdef SYSV
+	struct termio	p;
+
+	if(ioctl(1, TCGETA, &p) != -1)
+		ospeed=p.c_cflag & CBAUD;
+#else
+	struct sgttyb	p;
+
+	if(ioctl(1, TIOCGETP, &p) != -1)
+		ospeed=p.sg_ospeed;
+#endif
+
+	srand(getpid());	/* init random number generator */
+	tinit(getenv("TERM"));	/* init terminal */
+	if(ac > 1)
+		/* do all files */
+		while(--ac)
+			dropf(*++av);
 	else
+		/* or stdin */
 		fdropf(stdin);
-	tend();
+	tend();			/* clean up terminal */
 }
 
+/* put character c at (x, y) */
 at(x, y, c)
 int x, y;
 char c;
@@ -52,14 +102,21 @@ char c;
 #ifdef DEBUG
 	_at(x, y);
 #else
+	/* optimize cursor motion if goal is on *same* line */
 	if(y==lasty) {
 		if(x!=lastx) {
-			if(x<lastx && lastx-x<tglen)
+			if(x<lastx && (lastx-x)*bclen<tglen)
+				/* backspace into place if it takes */
+				/* less characters than cursor motion */
 				while(x<lastx) {
-					putchar('\b');
+					if (bclen > 1)
+						outs(BC);
+					else
+						putchar(*BC);
 					lastx--;
 				}
 			else if(x>lastx && x-lastx<tglen)
+				/* print intervening characters */
 				while(x>lastx) {
 					putchar(newscreen[lasty][lastx]);
 					lastx++;
@@ -83,11 +140,21 @@ char c;
 _at(x, y)
 int x, y;
 {
-	outs(tgoto(cm, x, y));
+	extern void	outc();
+
+	tputs(tgoto(cm, x, y), 1, outc);	 /* handle padding */
 	lastx = x;
 	lasty = y;
 }
 
+void
+outc(c)
+register c;
+{
+	putc(c, stdout);
+}
+
+/* initialize terminal dependent variables */
 tinit(name)
 char *name;
 {
@@ -99,26 +166,51 @@ char *name;
 
 	tgetent(tbuf, name);
 
-	PC = tgetstr("pc", &junkptr);
+	if (!tgetflag("bs"))		/* is backspace not used? */
+		BC = tgetstr("bc",&junkptr);	/* find out what is */
+	else
+		BC = "\b";		/* make a backspace handy */
+	bclen = strlen(BC);		/* for optimization stuff */
+	if (tgetstr("pc", &junkptr) != NULL)
+		PC = *junkptr;  /* set pad character */
+	else
+		PC = '\0';
 	UP = tgetstr("up", &junkptr);
-	BC = tgetstr("bc", &junkptr);
 	cm = tgetstr("cm", &junkptr);
+	if (cm == NULL) {
+		printf("Can't rot on dumb terminals.\n");
+		exit(1);
+	}
 	cl = tgetstr("cl", &junkptr);
 	ti = tgetstr("ti", &junkptr);
 	te = tgetstr("te", &junkptr);
 	li = min(tgetnum("li"), MAXLI);
+	if (li == -1)
+		li = 24;
+	/* the original code had special case code for last line and */
+	/* last column.  Unfortunately, it didn't always work on all */
+	/* terminals so we take the easy way out and don't use the   */
+	/* bottom line of the screen				     */
+	li--;	/* prevent bottom screen line from scrolling */
 	co = min(tgetnum("co"), MAXCOL);
-	tglen = strlen(tgoto(co-1, li-1));
+	if (co == -1)
+		co = 80;
+	tglen = strlen(tgoto(cm, co-1, li-1)); /* for optimization stuff */
+	if (ti != NULL)
+		outs(ti);
 }
 
+/* cleanup terminal after use */
 tend()
 {
-	outs(te);
-	_at(0, li-1);
+	if (te != NULL)
+		outs(te);
+	_at(0, li);
 	putchar('\n');
 	fflush(stdout);
 }
 
+/* read in a new screen */
 readscreen(fp)
 FILE *fp;
 {
@@ -177,18 +269,24 @@ FILE *fp;
 
 drawscreen()
 {
+	extern void	outc();
+
 	lastx = lasty = 0;
-	outs(cl);
+	if (cl != NULL)
+		tputs(cl, li, outc);	/* for really slow terminals */
 	update();
 }
 
-update() /* copy new screen back to old screen */
+/* copy newscreen[][] to physical screen and screen[][] */
+update()
 {
 	int l, c;
 
 	for(l=0; l<li; l++)
 		for(c=0; c<co; c++)
+			/* copy any changes */
 			if(screen[l][c] != newscreen[l][c]) {
+				/* are they *really* different? */
 				if((screen[l][c] & ~0200) !=
 				   (newscreen[l][c] & ~0200))
 					at(c, l, newscreen[l][c]);
@@ -196,19 +294,19 @@ update() /* copy new screen back to old screen */
 			}
 }
 
+/* add char at (column, line) to clist if feasable */
 drop(line, column)
 int line, column;
 {
 	struct _c *hold;
 
-	if(line<0 || line>=li || column<0 || column>=co ||
-	   (line>=li-2 && column >= co-1) || /* scroll potential */
+	if(line<0 || line>=li || column<0 || column>=co || /* off screen */
 	   screen[line][column]==' ' || /* empty */
 	   screen[line][column] & 0200) /* already in list */
 		return;
 	if(screen[line+1][column]!=' ' &&
 	   (column==co-1 ||screen[line+1][column+1]!=' ') &&
-	   (column==0 ||screen[line+1][column-1]!=' '))
+	   (column==0 ||screen[line+1][column-1]!=' ')) /* can't be dropped */
 		return;
 
 	hold = (struct _c *) malloc(sizeof(struct _c));
@@ -220,27 +318,29 @@ int line, column;
 	clist = hold;
 }
 
+/* drop everything in the clist */
 drops()
 {
-	int l, c;
+	int line, column;
 	struct _c *hold;
+
 	for(hold = clist; hold; hold=hold->c_next) {
-		int line = hold->c_line, column=hold->c_column;
-		if(line>= li-2 && column>=co-1) {
-			newscreen[line][column] &= ~0200;
-			screen[line][column] &= ~0200;
-			hold->c_mark = 1;
-			continue;
-		}
+		line = hold->c_line;
+		column = hold->c_column;
+		/* add adjacent characters to clist */
 		drop(line+1, column);
 		drop(line, column+1);
 		drop(line-1, column);
 		drop(line, column-1);
+		/* drop straight down if possible */
 		if(newscreen[line+1][column]==' ') {
 			newscreen[line+1][column] = screen[line][column];
 			newscreen[line][column] = ' ';
 			line++;
-		} else if(rand()&01000) {
+		}
+		/* otherwise try and drop to the sides.  Randomly pick
+		/* which side to try first. */
+		else if(rand()&01000) {
 			if(column>0 && newscreen[line][column-1] == ' ' &&
 			    newscreen[line+1][column-1]==' ') {
 				newscreen[line][column-1] =
@@ -257,6 +357,7 @@ drops()
 					column++;
 			}
 			else {
+				/* forget it */
 				screen[line][column] &= ~0200;
 				newscreen[line][column] &= ~0200;
 				hold -> c_mark = 1;
@@ -277,21 +378,25 @@ drops()
 				column--;
 			}
 			else {
+				/* forget it */
 				newscreen[line][column] &= ~0200;
 				screen[line][column] &= ~0200;
 				hold -> c_mark = 1;
 			}
 		}
+		/* update list entry */
 		hold -> c_column = column;
 		hold -> c_line = line;
-		fflush(stdout);
 	}
 
+	/* delete all list entries marked for deletion */
+	/* do all at head of list */
 	while(clist && clist->c_mark) {
 		struct _c *p = clist;
 		clist = clist -> c_next;
 		free(p);
 	}
+	/* ...and all in body */
 	hold = clist;
 	while(hold && hold->c_next)
 		if(hold->c_next->c_mark) {
@@ -346,9 +451,9 @@ char *file;
 {
 	FILE *fp;
 
-	if(!(fp = fopen(file, "r"))) {
+	if((fp = fopen(file, "r")) == NULL) {
 		perror(file);
-		return -1;
+		return;
 	}
 	fdropf(fp);
 }
@@ -371,11 +476,4 @@ outs(s)
 char *s;
 {
 	fputs(s, stdout);
-}
-
-min(a, b)
-int a, b;
-{
-	if(a<b) return a;
-	return b;
 }
