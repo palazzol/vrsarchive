@@ -155,6 +155,7 @@ readline(x, y, prompt, p)
 main()
 {
   initscr();
+  crmode();
   NewGame();
   while (!(quit))
     {
