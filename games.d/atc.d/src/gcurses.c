@@ -7,8 +7,8 @@
  * For more info on this and all of my stuff, mail edjames@berkeley.edu.
  */
 
-#include <curses.h>
 #include "include.h"
+#include <curses.h>
 
 #define C_TOPBOTTOM		'-'
 #define C_LEFTRIGHT		'|'
@@ -22,6 +22,9 @@ WINDOW	*radar, *cleanradar, *credit, *input, *planes;
 
 getAChar()
 {
+#ifdef M_XENIX
+	fixtty();
+#endif
 	return (getchar());
 }
 
@@ -63,6 +66,7 @@ init_gr()
 	static char	buffer[BUFSIZ];
 
 	initscr();
+	noraw();
 	setbuf(stdout, buffer);
 	input = newwin(INPUT_LINES, COLS - PLANE_COLS, LINES - INPUT_LINES, 0);
 	credit = newwin(INPUT_LINES, PLANE_COLS, LINES - INPUT_LINES, 
@@ -227,21 +231,18 @@ ioerror(pos, len, str)
 quit()
 {
 	int			c, y, x;
-	struct itimerval	itv;
 
+	signal(SIGINT, quit);
+	signal(SIGQUIT, quit);
 	getyx(input, y, x);
 	wmove(input, 2, 0);
 	waddstr(input, "Really quit? (y/n) ");
 	wclrtobot(input);
 	wrefresh(input);
 	fflush(stdout);
-
 	c = getchar();
 	if (c == EOF || c == 'y') {
-		/* disable timer */
-		itv.it_value.tv_sec = 0;
-		itv.it_value.tv_usec = 0;
-		setitimer(ITIMER_REAL, &itv, NULL);
+		alarm(0); /* disable timer */
 		fflush(stdout);
 		clear();
 		refresh();
@@ -298,13 +299,9 @@ loser(p, s)
 	char	*s;
 {
 	int			c;
-	struct itimerval	itv;
 
 	/* disable timer */
-	itv.it_value.tv_sec = 0;
-	itv.it_value.tv_usec = 0;
-	setitimer(ITIMER_REAL, &itv, NULL);
-
+	alarm(0);
 	wmove(input, 0, 0);
 	wclrtobot(input);
 	wprintw(input, "Plane '%c' %s\n\nHit space for top players list...",

@@ -9,12 +9,16 @@
 
 #include "include.h"
 
+extern int interval;
+
 update()
 {
 	int	i, dir_diff, mask, unclean;
 	PLANE	*pp, *p1, *p2, *p;
+	int	(*sig)();
 
-	mask = sigblock(sigmask(SIGINT));
+	signal(SIGALRM, update);
+	sig = signal(SIGINT, SIG_IGN);
 	clock++;
 
 	erase_all();
@@ -164,7 +168,8 @@ update()
 	if ((rand() % sp->newplane_time) == 0)
 		addplane();
 
-	sigsetmask(mask);
+	(void) signal(SIGINT, sig);
+	alarm(interval);
 }
 
 char *
@@ -179,7 +184,7 @@ command(pp)
 		(pp->fuel < LOWFUEL) ? '*' : ' ',
 		(pp->dest_type == T_AIRPORT) ? 'A' : 'E', pp->dest_no);
 
-	comm_start = bp = index(buf, '\0');
+	comm_start = bp = strchr(buf, '\0');
 	if (pp->altitude == 0)
 		sprintf(bp, "Holding @ A%d", pp->orig_no);
 	else if (pp->new_dir >= MAXDIR || pp->new_dir < 0)
@@ -187,11 +192,11 @@ command(pp)
 	else if (pp->new_dir != pp->dir)
 		sprintf(bp, "%d", dir_deg(pp->new_dir));
 
-	bp = index(buf, '\0');
+	bp = strchr(buf, '\0');
 	if (pp->delayd)
 		sprintf(bp, " @ B%d", pp->delayd_no);
 
-	bp = index(buf, '\0');
+	bp = strchr(buf, '\0');
 	if (*comm_start == '\0' && 
 	    (pp->status == S_UNMARKED || pp->status == S_IGNORED))
 		strcpy(bp, "---------");
@@ -245,6 +250,24 @@ next_plane()
 		return (-1);
 	return (last_plane);
 }
+
+#ifndef BSD
+bzero(p, s)
+register char *p;
+register unsigned s;
+{
+	while (s--)
+		*p++ = 0;
+}
+
+bcopy(from, to, s)
+register char *from, *to;
+register unsigned s;
+{
+	while (s--)
+		*to++ = *from++;
+}
+#endif
 
 addplane()
 {

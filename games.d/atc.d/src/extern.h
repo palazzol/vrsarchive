@@ -7,7 +7,7 @@
  * For more info on this and all of my stuff, mail edjames@berkeley.edu.
  */
 
-extern char		GAMES[], LOG[], *file;
+extern char		GAMES[], LOG[], *File;
 
 extern int		clock, safe_planes, start_time, test_mode;
 
@@ -16,8 +16,6 @@ extern FILE		*filein, *fileout;
 extern SCREEN		screen, *sp;
 
 extern LIST		air, ground;
-
-extern struct sgttyb	tty_start, tty_new;
 
 extern DISPLACEMENT	displacement[MAXDIR];
 

@@ -12,11 +12,11 @@
  * Change this to whatever you want.  Be sure to have to path end 
  * with a '/', like "/usr/games/lib/atc/".
  */
-char	SPECIAL_DIR[] =		"/usr/public/.atc/";
+char	SPECIAL_DIR[] =		"/usr/games/lib/atc/";
 
 /*
  * NUM_SCORES - Number of scores that are kept track of.
- * Keep this greater than 0, but less than 100.
+ * Keep this greater than 0, but fairly small.
  * 4 lines are printed above the score, one below + your prompt, so
  * to prevent scrolling: 6 + NUM_SCORES <= 24 (lines on an average terminal).
  */

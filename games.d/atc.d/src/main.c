@@ -8,6 +8,12 @@
  */
 
 #include "include.h"
+#include <sgtty.h>
+
+struct sgttyb tty_start, tty_new;
+char erase_char, kill_char;
+
+int interval;
 
 main(ac, av)
 	char	*av[];
@@ -15,13 +21,12 @@ main(ac, av)
 	int			seed;
 	int			f_usage = 0, f_list = 0, f_showscore = 0;
 	int			f_printpath = 0;
-	char			*file = NULL;
+	char			*File = NULL;
 	char			*name, *ptr;
-	struct itimerval	itv;
 	extern int		update(), quit(), log_score();
 	extern char		*default_game(), *okay_game();
 
-	start_time = seed = time(0);
+	start_time = seed = time((long *)0);
 
 	name = *av++;
 	while (*av) {
@@ -54,7 +59,7 @@ main(ac, av)
 				break;
 			case 'f':
 			case 'g':
-				file = *av;
+				File = *av;
 				av++;
 				break;
 			default: 
@@ -87,12 +92,12 @@ main(ac, av)
 	if (f_usage || f_showscore || f_list || f_printpath)
 		exit(0);
 
-	if (file == NULL)
-		file = default_game();
+	if (File == NULL)
+		File = default_game();
 	else
-		file = okay_game(file);
+		File = okay_game(File);
 
-	if (file == NULL || read_file(file) < 0)
+	if (File == NULL || read_file(File) < 0)
 		exit(1);
 
 	init_gr();
@@ -102,39 +107,34 @@ main(ac, av)
 
 	signal(SIGINT, quit);
 	signal(SIGQUIT, quit);
+#ifdef SIGTSTP
 	signal(SIGTSTP, SIG_IGN);
+#endif
+#ifdef SIGSTOP
 	signal(SIGSTOP, SIG_IGN);
+#endif
 	signal(SIGHUP, log_score);
 	signal(SIGTERM, log_score);
 
 	ioctl(fileno(stdin), TIOCGETP, &tty_start);
+	erase_char = tty_start.sg_erase;
+	kill_char = tty_start.sg_kill;
 	bcopy(&tty_start, &tty_new, sizeof(tty_new));
 	tty_new.sg_flags |= CBREAK;
 	tty_new.sg_flags &= ~ECHO;
 	ioctl(fileno(stdin), TIOCSETP, &tty_new);
 
 	signal(SIGALRM, update);
-	itv.it_value.tv_sec = 0;
-	itv.it_value.tv_usec = 1;
-	itv.it_interval.tv_sec = sp->update_secs;
-	itv.it_interval.tv_usec = 0;
-	setitimer(ITIMER_REAL, &itv, NULL);
-
+	interval = 0;
+	alarm(sp->update_secs);
 	for (;;) {
 		if (getcommand() != 1)
 			planewin();
 		else {
-			itv.it_value.tv_sec = 0;
-			itv.it_value.tv_usec = 0;
-			setitimer(ITIMER_REAL, &itv, NULL);
-
+			alarm(0);
 			update();
-
-			itv.it_value.tv_sec = sp->update_secs;
-			itv.it_value.tv_usec = 0;
-			itv.it_interval.tv_sec = sp->update_secs;
-			itv.it_interval.tv_usec = 0;
-			setitimer(ITIMER_REAL, &itv, NULL);
+			interval = sp->update_secs;
+			alarm(sp->update_secs);
 		}
 	}
 }
@@ -145,7 +145,7 @@ read_file(s)
 	extern FILE	*yyin;
 	int		retval;
 
-	file = s;
+	File = s;
 	yyin = fopen(s, "r");
 	if (yyin == NULL) {
 		perror(s);
@@ -164,7 +164,7 @@ char	*
 default_game()
 {
 	FILE		*fp;
-	static char	file[256];
+	static char	File[256];
 	char		line[256], games[256];
 
 	strcpy(games, SPECIAL_DIR);
@@ -180,9 +180,9 @@ default_game()
 	}
 	fclose(fp);
 	line[strlen(line) - 1] = '\0';
-	strcpy(file, SPECIAL_DIR);
-	strcat(file, line);
-	return (file);
+	strcpy(File, SPECIAL_DIR);
+	strcat(File, line);
+	return (File);
 }
 
 char	*
@@ -190,7 +190,7 @@ okay_game(s)
 	char	*s;
 {
 	FILE		*fp;
-	static char	file[256];
+	static char	File[256];
 	char		*ret = NULL, line[256], games[256];
 
 	strcpy(games, SPECIAL_DIR);
@@ -203,9 +203,9 @@ okay_game(s)
 	while (fgets(line, sizeof(line), fp) != NULL) {
 		line[strlen(line) - 1] = '\0';
 		if (strcmp(s, line) == 0) {
-			strcpy(file, SPECIAL_DIR);
-			strcat(file, line);
-			ret = file;
+			strcpy(File, SPECIAL_DIR);
+			strcat(File, line);
+			ret = File;
 			break;
 		}
 	}

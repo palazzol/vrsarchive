@@ -25,6 +25,9 @@
 %{
 #include "include.h"
 
+extern char *malloc();
+extern char *realloc();
+
 int	errors = 0;
 int	line = 1;
 %}
@@ -242,6 +245,11 @@ Lline:
 	;
 %%
 
+yywrap()
+{
+	return(1);
+}
+
 check_edge(x, y)
 {
 	if (!(x == 0) && !(x == sp->width - 1) && 
@@ -281,7 +289,7 @@ check_line(x1, y1, x2, y2)
 
 yyerror(s)
 {
-	fprintf(stderr, "\"%s\": line %d: %s\n", file, line, s);
+	fprintf(stderr, "\"%s\": line %d: %s\n", File, line, s);
 	errors++;
 
 	return (errors);

@@ -60,7 +60,11 @@ typedef struct {
 
 typedef struct {
 	char	name[10];
+#ifdef BSD
 	char	host[256];
+#else
+	char	host[20];
+#endif
 	char	game[256];
 	int	planes;
 	int	time;

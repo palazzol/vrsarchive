@@ -8,6 +8,12 @@
  */
 
 #include "include.h"
+#include <errno.h>
+
+extern struct passwd *getpwuid();
+extern char *malloc();
+extern FILE *popen();
+extern int errno;
 
 compar(a, b)
 	SCORE	*a, *b;
@@ -47,16 +53,49 @@ timestr(t)
 	return (s);
 }
 
+#ifndef BSD
+gethostname(buf, s)
+char *buf;
+int s;
+{
+	FILE *File;
+
+	File = popen("uuname -l", "r");
+	if (File == NULL)
+		strncpy(buf, "unknown", s);
+	else {
+		fscanf(File, "%s", buf);
+		pclose(File);
+	}
+}
+#endif
+
 log_score(list_em)
 {
 	register int	i, fd, num_scores = 0, good, changed = 0, found = 0;
 	struct passwd	*pw;
 	FILE		*fp;
 	char		*cp, logstr[BUFSIZ];
-	SCORE		score[100], thisscore;
+#ifndef LOCK_EX
+	char		loglock[BUFSIZ];
+#endif
+	static SCORE	*score = 0;
+	static SCORE	thisscore;
+
+	if (score == 0) {
+		score = (SCORE *)malloc(NUM_SCORES*sizeof(SCORE));
+		if (score == 0) {
+			fprintf(stderr, "No memory for score array\n");
+			return(-1);
+		}
+	}
 
 	strcpy(logstr, SPECIAL_DIR);
 	strcat(logstr, LOG);
+#ifndef LOCK_EX
+	strcpy(loglock, logstr);
+	strcat(loglock, ".lck");
+#endif
 
 	umask(0);
 	fd = open(logstr, O_CREAT|O_RDWR, 0644);
@@ -73,10 +112,20 @@ log_score(list_em)
 		perror(logstr);
 		return (-1);
 	}
+#ifdef LOCK_EX
 	if (flock(fileno(fp), LOCK_EX) < 0) {
 		perror("flock");
 		return (-1);
 	}
+#else
+	while (link(logstr, loglock) < 0) {
+		if (errno != EEXIST) {
+			perror("lock");
+			return (-1);
+		}
+		sleep(1);
+	}
+#endif /*LOCK_EX*/
 	for (;;) {
 		good = fscanf(fp, "%s %s %s %d %d %d",
 			score[num_scores].name, 
@@ -100,9 +149,9 @@ log_score(list_em)
 			perror("gethostname");
 			return (-1);
 		}
-		cp = rindex(file, '/');
+		cp = strrchr(File, '/');
 		if (cp == NULL) {
-			fprintf(stderr, "log: where's the '/' in %s?\n", file);
+			fprintf(stderr, "log: where's the '/' in %s?\n", File);
 			return (-1);
 		}
 		cp++;
@@ -110,7 +159,7 @@ log_score(list_em)
 
 		thisscore.time = clock;
 		thisscore.planes = safe_planes;
-		thisscore.real_time = time(0) - start_time;
+		thisscore.real_time = time((long *)0) - start_time;
 
 		for (i = 0; i < num_scores; i++) {
 			if (strcmp(thisscore.name, score[i].name) == 0 &&
@@ -167,13 +216,17 @@ log_score(list_em)
 		}
 		putchar('\n');
 	}
+#ifdef LOCK_UN
 	flock(fileno(fp), LOCK_UN);
+#else
+	(void) unlink(loglock);
+#endif
 	fclose(fp);
 	printf("%2s:  %-8s  %-8s  %-18s  %4s  %9s  %4s\n", "#", "name", "host", 
 		"game", "time", "real time", "planes safe");
 	puts("-------------------------------------------------------------------------------");
 	for (i = 0; i < num_scores; i++) {
-		cp = index(score[i].host, '.');
+		cp = strchr(score[i].host, '.');
 		if (cp != NULL)
 			*cp = '\0';
 		printf("%2d:  %-8s  %-8s  %-18s  %4d  %9s  %4d\n", i + 1,

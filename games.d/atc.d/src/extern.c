@@ -14,15 +14,13 @@ char		GAMES[] =	"Game_List",
 
 int		clock, safe_planes, start_time, test_mode;
 
-char		*file;
+char		*File;
 
 FILE		*filein, *fileout;
 
 SCREEN		screen, *sp = &screen;
 
 LIST		air, ground;
-
-struct sgttyb	tty_start, tty_new;
 
 DISPLACEMENT	displacement[MAXDIR] = {
 		{  0, -1 },

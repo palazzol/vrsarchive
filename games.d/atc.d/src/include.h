@@ -10,12 +10,11 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <pwd.h>
-#include <sgtty.h>
-#include <sys/time.h>
-#include <sys/file.h>
+#include <time.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <math.h>
-#include <strings.h>
+#include <string.h>
 
 #include "def.h"
 #include "struct.h"

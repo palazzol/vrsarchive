@@ -9,6 +9,8 @@
 
 #include "include.h"
 
+extern char erase_char, kill_char;
+
 #define MAXRULES	6
 #define MAXDEPTH	15
 
@@ -190,10 +192,10 @@ getcommand()
 
 	do {
 		c = gettoken();
-		if (c == tty_new.sg_erase) {
+		if (c == erase_char) {
 			if (pop() < 0)
 				noise();
-		} else if (c == tty_new.sg_kill) {
+		} else if (c == kill_char) {
 			while (pop() >= 0)
 				;
 		} else {
@@ -553,3 +555,23 @@ dir_no(ch)
 	}
 	return (dir);
 }
+
+#ifdef M_XENIX
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <termio.h>
+
+extern int _tty_ch;
+
+/*
+ *	Set CS8 because -inpck is not working.
+*/
+fixtty()
+{	struct termio tty;
+
+	ioctl(fileno(stdin), TCGETA, &tty);
+	tty.c_cflag &= ~CSIZE & ~PARENB & ~PARODD;
+	tty.c_cflag |= CS8;
+	ioctl(fileno(stdin), TCSETAW, &tty);
+}
+#endif

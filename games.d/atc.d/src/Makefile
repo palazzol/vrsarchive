@@ -7,12 +7,9 @@ EXTHDRS	      = /usr/include/ctype.h \
 		/usr/include/sgtty.h \
 		/usr/include/signal.h \
 		/usr/include/stdio.h \
-		/usr/include/strings.h \
+		/usr/include/string.h \
 		/usr/include/sys/file.h \
 		/usr/include/sys/ioctl.h \
-		/usr/include/sys/time.h \
-		/usr/include/sys/ttychars.h \
-		/usr/include/sys/ttydev.h \
 		/usr/include/time.h
 
 HDRS	      = def.h \
@@ -21,13 +18,11 @@ HDRS	      = def.h \
 		struct.h \
 		tunable.h
 
-LDFLAGS	      =
-CFLAGS        = -g
+CFLAGS        = -Dsrandom=srand -Drandom=rand -i
+
 YFLAGS        =	-d
 
 LIBS	      = -ll -lcurses -ltermcap
-
-LINKER	      = ld
 
 MAKEFILE      = Makefile
 
@@ -46,7 +41,7 @@ LOBJS	      = tunable.o
 
 PRINT	      = pr
 
-CURSESLIBR    = libatc_curses.o
+CURSESLIBR    = libatc.a
 
 SRCS	      = extern.c \
 		grammar.y \
@@ -70,7 +65,8 @@ co:
 		co $(ASRCS)
 
 $(CURSESLIBR):	$(OBJS) $(CURSES_OBJ)
-		$(LINKER) -r $(LDFLAGS) $(OBJS) $(CURSES_OBJ) -o $(CURSESLIBR)
+		ar r $@ $(OBJS) $(CURSES_OBJ)
+		ranlib $@
 
 clean:;		@rm -f $(OBJS) $(CURSES_OBJ)
 
@@ -97,58 +93,43 @@ lex.o: grammar.o
 ###
 extern.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h
 grammar.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h
 gcurses.o: /usr/include/curses.h /usr/include/stdio.h \
 	/usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h include.h \
-	/usr/include/ctype.h /usr/include/pwd.h /usr/include/sys/time.h \
+	include.h \
+	/usr/include/ctype.h /usr/include/pwd.h \
 	/usr/include/time.h /usr/include/sys/file.h /usr/include/signal.h \
-	/usr/include/math.h /usr/include/strings.h def.h struct.h extern.h \
+	/usr/include/math.h /usr/include/string.h def.h struct.h extern.h \
 	tunable.h
 input.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h
 list.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h
 log.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h
 main.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h
 update.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
 	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/strings.h \
+	/usr/include/time.h /usr/include/sys/file.h \
+	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
 	def.h struct.h extern.h tunable.h

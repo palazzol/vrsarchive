@@ -2,16 +2,16 @@
 # Makefile for atc in distribution directory
 #
 
-LIBS =		-ll -lm
+LIBS =		-lm -lx # -ll
 CURSESLIBS =	-lcurses -ltermcap $(LIBS)
 
-CURSESLIBR =	libatc_curses.o
+CURSESLIBR =	libatc.a
 
 OFILE =		tunable.o
 
 CFILE =		tunable.c
 
-CFLAGS =	-O
+CFLAGS =	-O -i
 
 all:		atc
 
