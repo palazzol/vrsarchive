@@ -1,0 +1,6 @@
+*
+*	Serial Driver Configuration
+*
+character(64)
+prefix = serial
+functions = open, close, read, write, ioctl, tty

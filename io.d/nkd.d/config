@@ -1,0 +1,8 @@
+*
+*	Configuration for new EGA display driver
+*
+character(66)
+prefix = nkd
+* intvec = 1
+* intpri = SPLTTY
+functions = init, intr

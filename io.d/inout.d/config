@@ -1,0 +1,6 @@
+*
+*	I/O Port Driver Configuration
+*
+character(63)
+prefix = inout
+functions = read, write

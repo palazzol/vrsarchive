@@ -1,0 +1,8 @@
+*
+*	Configuration for new line printer driver
+*
+character(65)
+prefix = nlp
+intvec = 5, 7
+intpri = SPLTTY
+functions = init, intr

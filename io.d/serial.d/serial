@@ -1,0 +1,4 @@
+mv ../etc/conf/node.d/serial node
+mv ../etc/conf/pack.d/serial/* .
+mv ../etc/conf/pack.d/serial/sys/serial.h sys
+mv ../etc/conf/sdevice.d/serial sdevice

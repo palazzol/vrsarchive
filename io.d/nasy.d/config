@@ -1,0 +1,8 @@
+*
+*	Configuration for new async driver
+*
+character(67)
+prefix = nasy
+intvec = 3, 4
+intpri = SPLTTY
+functions = init, intr

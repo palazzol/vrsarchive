@@ -1,0 +1,3 @@
+serial	console	c	0
+serial	syscon	c	0
+serial	systty	c	0
