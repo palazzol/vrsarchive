@@ -9,7 +9,7 @@ extern long *alloc();
 
 #ifndef lint
 extern			/* it is defined in libtermlib (libtermcap) */
-#endif lint
+#endif
 	short ospeed;		/* terminal baudrate; used by tputs */
 static char tbuf[512];
 static char *HO, *CL, *CE, *UP, *CM, *ND, *XD, *BC, *SO, *SE, *TI, *TE;
@@ -230,33 +230,6 @@ bell()
 	(void) fflush(stdout);
 }
 
-static short tmspc10[] = {		/* from termcap */
-	0, 2000, 1333, 909, 743, 666, 500, 333, 166, 83, 55, 41, 20, 10, 5
-};
-
-delay_output() {
-	/* delay 50 ms - could also use a 'nap'-system call */
-	/* BUG: if the padding character is visible, as it is on the 5620
-	   then this looks terrible. */
-	if(!flags.nonull)
-		tputs("50", 1, xputc);
-
-		/* cbosgd!cbcephus!pds for SYS V R2 */
-		/* is this terminfo, or what? */
-		/* tputs("$<50>", 1, xputc); */
-
-	else if(ospeed > 0 || ospeed < SIZE(tmspc10)) if(CM) {
-		/* delay by sending cm(here) an appropriate number of times */
-		register int cmlen = strlen(tgoto(CM, curx-1, cury-1));
-		register int i = 500 + tmspc10[ospeed]/2;
-
-		while(i > 0) {
-			cmov(curx, cury);
-			i -= cmlen*tmspc10[ospeed];
-		}
-	}
-}
-
 cl_eos()			/* free after Robert Viduya */
 {				/* must only be called with curx = 1 */
 
@@ -272,5 +245,24 @@ cl_eos()			/* free after Robert Viduya */
 		}
 		cl_end();
 		curs(cx, cy);
+	}
+}
+
+#include <sys/param.h>
+#ifndef M_XENIX
+#include <sys/types.h>
+#endif
+#include <sys/times.h>
+
+/* delay 40 ms -- Is there another portable way? */
+delay_output() {
+	int i;
+	long t;
+	struct tms buf;
+
+	for (i = 0; i < (40*HZ+999)/1000; i++) {
+		t = times(&buf);
+		while (t == times(&buf))
+			;
 	}
 }
