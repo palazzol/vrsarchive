@@ -163,21 +163,29 @@ register char c;
 			screen[vdisp].cm_col = screen[vdisp].cm_col*10 + c-'0';
 			break;
 		    case 'A':
+			if (screen[vdisp].cm_col == 0)
+			    screen[vdisp].cm_col = 1;
 			y -= screen[vdisp].cm_col;
 			if (y < 0)
 			    y = 0;
 			break;
 		    case 'B':
+			if (screen[vdisp].cm_col == 0)
+			    screen[vdisp].cm_col = 1;
 			y += screen[vdisp].cm_col;
 			if (y >= LINES)
 			    y = LINES-1;
 			break;
 		    case 'C':
+			if (screen[vdisp].cm_col == 0)
+			    screen[vdisp].cm_col = 1;
 			x += screen[vdisp].cm_col;
 			if (x >= COLS)
 			    x = COLS-1;
 			break;
 		    case 'D':
+			if (screen[vdisp].cm_col == 0)
+			    screen[vdisp].cm_col = 1;
 			x -= screen[vdisp].cm_col;
 			if (x < 0)
 			    x = 0;
