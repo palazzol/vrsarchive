@@ -111,7 +111,7 @@ eexpr(tp)
 	  case nmod:  case nquot:
 		flag = (boolean)(cprio.A[(int)(tp->tt) - (int)(nassign)] > cprio.A[(int)(tp->U.V41.texpl->tt) - (int)(nassign)]);
 		if ((Member((unsigned)(tp->tt), Conset[149])) && !arithexpr(tp->U.V41.texpl)) {
-			(void)fprintf(output.fp, "(int)"), Putl(output, 0);
+			(void)fprintf(output.fp, "(integer)"), Putl(output, 0);
 			flag = true;
 		}
 		if (flag)
@@ -169,7 +169,7 @@ eexpr(tp)
 		}
 		flag = (boolean)(cprio.A[(int)(tp->tt) - (int)(nassign)] > cprio.A[(int)(tp->U.V41.texpr->tt) - (int)(nassign)]);
 		if ((Member((unsigned)(tp->tt), Conset[150])) && !arithexpr(tp->U.V41.texpr)) {
-			(void)fprintf(output.fp, "(int)"), Putl(output, 0);
+			(void)fprintf(output.fp, "(integer)"), Putl(output, 0);
 			flag = true;
 		}
 		if (flag)
@@ -291,7 +291,7 @@ eexpr(tp)
 		if (arithexpr(tq))
 			eexpr(tq);
 		else {
-			(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+			(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 			eexpr(tq);
 			Putchr(')', output);
 		}
@@ -304,7 +304,7 @@ eexpr(tp)
 					if (arithexpr(tq->U.V19.tlo))
 						eexpr(tq->U.V19.tlo);
 					else {
-						(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+						(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 						eexpr(tq->U.V19.tlo);
 						Putchr(')', output);
 					}
@@ -342,7 +342,7 @@ eexpr(tp)
 			}
 		} else
 			if ((tq->tt == nconst) && (*G194_conflag))
-				(void)fprintf(output.fp, "%1d", cvalof(tp)), Putl(output, 0);
+				(void)fprintf(output.fp, "%1ldL", cvalof(tp)), Putl(output, 0);
 			else
 				if (Member((unsigned)(tq->tt), Conset[153])) {
 					(void)fprintf(output.fp, "(*"), Putl(output, 0);
@@ -355,7 +355,7 @@ eexpr(tp)
 		printchr(tp->U.V43.tsym->U.V11.lchar);
 		break ;
 	  case ninteger:
-		(void)fprintf(output.fp, "%1d", tp->U.V43.tsym->U.V10.linum), Putl(output, 0);
+		(void)fprintf(output.fp, "%1ldL", tp->U.V43.tsym->U.V10.linum), Putl(output, 0);
 		break ;
 	  case nreal:
 		printtok(tp->U.V43.tsym->U.V8.lfloat);
@@ -679,10 +679,10 @@ etdef(uid, tp)
 					eexpr(tq->U.V19.tlo);
 				}
 			} else {
-				(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+				(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 				eexpr(tq->U.V19.thi);
 				if (cvalof(tq->U.V19.tlo) != 0) {
-					(void)fprintf(output.fp, ") - (int)("), Putl(output, 0);
+					(void)fprintf(output.fp, ") - (integer)("), Putl(output, 0);
 					eexpr(tq->U.V19.tlo);
 				}
 				Putchr(')', output);
@@ -1038,14 +1038,14 @@ estmt(tp)
 				indent();
 				(void)fprintf(output.fp, "if ("), Putl(output, 0);
 				if (tq->tt == nscalar) {
-					(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+					(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 					printid(locid1);
 					Putchr(')', output);
 				} else
 					printid(locid1);
 				(void)fprintf(output.fp, " %c= ", opc2), Putl(output, 0);
 				if (tq->tt == nscalar) {
-					(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+					(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 					printid(locid2);
 					Putchr(')', output);
 				} else
@@ -1065,14 +1065,14 @@ estmt(tp)
 			(void)fprintf(output.fp, "; "), Putl(output, 0);
 			if (lazyfor) {
 				if (tq->tt == nscalar) {
-					(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+					(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 					eexpr(tp->U.V34.tforid);
 					Putchr(')', output);
 				} else
 					eexpr(tp->U.V34.tforid);
 				(void)fprintf(output.fp, " %c= ", opc2), Putl(output, 0);
 				if (tq->tt == nscalar) {
-					(void)fprintf(output.fp, "(int)("), Putl(output, 0);
+					(void)fprintf(output.fp, "(integer)("), Putl(output, 0);
 					eexpr(tp->U.V34.tto);
 					Putchr(')', output);
 				} else
@@ -1083,7 +1083,7 @@ estmt(tp)
 			if (tq->tt == nscalar) {
 				(void)fprintf(output.fp, " = ("), Putl(output, 0);
 				eexpr(tq->tup->U.V14.tidl);
-				(void)fprintf(output.fp, ")((int)("), Putl(output, 0);
+				(void)fprintf(output.fp, ")((integer)("), Putl(output, 0);
 				eexpr(tp->U.V34.tforid);
 				(void)fprintf(output.fp, ")%c1)", opc1), Putl(output, 0);
 			} else
