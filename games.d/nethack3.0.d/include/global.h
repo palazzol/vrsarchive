@@ -85,31 +85,6 @@ typedef	xchar	boolean;		/* 0 or 1 */
 #define Getchar pgetchar
 #endif
 
-/*
- * Automatic inclusions for the subsidiary files.
- * Please don't change the order.  It does matter.
- */
-
-#ifndef COORD_H
-#include "coord.h"
-#endif
-#if defined(UNIX) && !defined(UNIXCONF_H)
-# include "unixconf.h"
-#endif
-
-#if defined(MSDOS) && !defined(PCCONF_H)
-# include "pcconf.h"
-#endif
-
-#if defined(TOS) && !defined(TOSCONF_H)
-# include "tosconf.h"
-#endif
-
-#if defined(AMIGA) && !defined(AMICONF_H)
-# include "amiconf.h"
-#endif
-
-
 
 /*
  * Configurable internal parameters.
@@ -141,5 +116,30 @@ typedef	xchar	boolean;		/* 0 or 1 */
 
 #define	MAXMONNO	120	/* geno monst after this number killed */
 #define MHPMAX		500	/* maximum monster hp */
+
+
+/*
+ * Automatic inclusions for the subsidiary files.
+ * Please don't change the order.  It does matter.
+ */
+
+#ifndef COORD_H
+#include "coord.h"
+#endif
+#if defined(UNIX) && !defined(UNIXCONF_H)
+# include "unixconf.h"
+#endif
+
+#if defined(MSDOS) && !defined(PCCONF_H)
+# include "pcconf.h"
+#endif
+
+#if defined(TOS) && !defined(TOSCONF_H)
+# include "tosconf.h"
+#endif
+
+#if defined(AMIGA) && !defined(AMICONF_H)
+# include "amiconf.h"
+#endif
 
 #endif /* GLOBAL_H /**/
