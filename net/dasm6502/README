@@ -1,0 +1,12 @@
+	The source that follows is a reverse assembler for C Power (tm)
+C compiler object files.  It represents my first attempt at programming
+in C and is probably full of inconsistencies and other code which might
+be noxious to seasoned C programmers.  I would be greatful for comments
+and suggestions, especially from other owners of C power, with regard to
+enhancing or otherwise improving this program.  One minor point in its
+favor is that it works.  I downloaded this without benefit of Xmodem or
+Kermit so there may be a garble or two, though I've screened the source
+here very carefully.  Don't try to compile it on Unix - FILE is defined
+as int in C Power.  Hope this is of use to someone.
+
+Mark Rinfret

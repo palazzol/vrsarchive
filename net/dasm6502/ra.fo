@@ -1,0 +1,178 @@
+.in 10
+.rm 70
+.ls 2
+.sp 5
+.ce 3
+A Reverse Assembler
+for C Power (tm) 
+Object Files
+
+.sp 20
+.nf
+Mark R. Rinfret
+348 Indian Ave.
+Portsmouth, RI  02871
+(401)-846-7639
+
+
+C Power is a trademark of Pro-Line Software Ltd.
+.fi
+.bp
+.fo //-#-//
+.he /ra/-#-/Reverse Assembler/
+Introduction
+     I wrote the reverse assembler 
+to help debug an assembler which I hope to implement in the near future.  The
+assembler will output C Power compatible object files and will be useful
+for implementing machine-dependent or time/space critical code not easily
+handled by the compiler.
+
+     Original intent aside, the reverse assembler is
+also useful for gaining insight into the quality of machine language
+generated for various C language constructs and also for gleaning interface
+requirements as well as characteristics of the runtime library routines.
+
+
+Operation
+     The reverse assembler is invoked with a command of the following form:
+.br
+     ra [options] objectfile
+.br
+
+Currently, no special checks are made for the ".o" or ".obj" suffix indicating
+object file format so it is possible to invoke RA with a source file (which
+should yield very wierd results).  RA employs a special routine, named openfile,
+to parse filenames.  This allows users with dual 1541's to specify which device
+the file is on, rather than having to move the file to the work disk or play
+games with the 'sys' command.  If the default device is to be used, the filename
+is specified as always.  To indicate a specific drive, precede the filename with
+the number sign, device number (8,9) and a colon.  Example:
+.br
+.ti+5
+#9:ra1.obj
+.br
+The legal options are as follows:
+.br
+.in +5
+-a address 
+.br
+The disassembly process normally sets the address origin to $1800
+(6144 decimal) which is the load address for programs linked to 
+execute under the shell.  This was done to allow the program to
+more reasonably differentiate between zero-page and arg buffer
+references when replacing numeric operands with symbols.  The address
+value is expected to be a hex number.  No range checking is applied.
+.sp2
+-p
+.br
+RA aspires to be intelligent in its choice of formatting mode
+(current IQ is about 60).  If a run gives poor results, you can
+override the internal decision-making (RA won't be offended) and
+RA will prompt you for the formatting mode (instruction or .byte)
+to be used whenever a 'transition point' is detected.  If this 
+still doesn't work, rewrite RA to do what you want.  
+.sp 2
+-l listfile
+.br
+If you want to capture the disassembly in a file, it is recommended
+that you use the -l option rather than simply redirecting output.
+Standard output is used for certain diagnostic messages as well as
+prompts and inputs related to the -p option.  If you want hardcopy
+and are not using the -p option, go ahead and use >> to redirect
+output to the printer.  If you are using -p and want hardcopy, use
+use the -l option and pr (or print) the resulting list file.  RA
+performs no pagination, so the print method may be desirable for that
+reason, also.
+.br
+.in-5
+.sp2
+Implementation Details
+     RA initializes itself by collecting the first four parts of the
+object file (code, relocation info, external definitions, external
+references) and applying the relocation address ($1800 or -a value)
+to the appropriate code words and all external definitions.  RA then
+enters a loop which attempts to determine on each pass whether the
+code should be disassembled as 6502 instructions or as hex constants 
+in .byte directives.  This check is triggered by one of the following
+events:
+.br
+.in+5
+Detection of an external definition whose offset coincides with the 
+current value of the location counter.
+.br
+Detection of an external reference to the library routine C$106 which
+is called whenever a function exits.
+.br
+Detection of an invalid opcode.
+.br
+.in-5
+.sp2
+     In automatic mode, the choice to use instruction mode is based on the
+observation that (as far as I can tell) all functions begin with a
+'sta $fb' instruction.  This does not hold true for runtime routines
+(i.e. c105.obj).  Obviously, this is highly dependent on the current
+implementation of the compiler and, I suppose, subject to change.  In spite
+of its shortcomings, RA has so far given quite useful and readable output
+from a variety of sources.  
+
+     As each instruction is disassembled, the external definition list
+is scanned to see if the operand address is the same as that of one of
+the external symbols.  If so, the hex operand is replaced with the 
+symbol name.  This works best if the default origin is used (no -a option).
+After all code has been reverse assembled, all data block definitions
+are formatted as a series of '*=*+' directives.
+
+.br
+Building RA
+
+     RA is currently comprised of 4 source modules as well as being dependent
+upon the openfile routine.  These are:
+.in+5
+.nf
+ra.h   - Constant and structure definitions
+rad1.c - Global data definitions  
+ra1.c  - Initialization routines
+ra2.c  - Translation routines
+.fi
+Once all of the sources have been compiled, they are bound by the linker
+as follows:
+.nf
+.ls 1
+$ link
+> ra1.o
+> ra2.o
+> openfile.o 
+> rad1.o
+> ^
+> 
+output to: ra.sh
+$
+.fi
+.ls 2
+Actually, I have added openfile to my system library to allow automatic
+resolution during the library search.
+.br
+
+     There is a preprocessor flag, DEBUG, in ra.h which causes extra output
+when defined.  This extra output includes code size, number of relocation
+entries and relocation data list, external definition count and list, and
+external reference count.  In addition, for each line disassembled in
+instruction format, the raw data and location counter are printed to the
+left of the instruction mnemonic.  The source file rad1.c (global data)
+contains a preprocessor flag, LOCDBG (local debug).  If this flag is defined,
+a main routine is compiled which will print out the instruction translation
+tables.  These tables are printed in a format easily cross-checked to the
+tables in the Commodore 64 Programmer's Reference manual. This main routine 
+must not be present when the whole program is linked.
+.br
+
+Release
+     I am releasing this program to the public domain for any
+non-profit use or redistribution.  I would greatly appreciate
+feedback, comments, suggestions or details of any enhancements
+or corrections that are applied.  One area for enhancement is
+the generation of labels for all memory references not already
+'covered' by an external definition.  Further work on RA by me
+at this time will just keep me from getting on with my
+assembler.  Enjoy!
+
