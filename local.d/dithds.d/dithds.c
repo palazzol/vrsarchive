@@ -101,11 +101,17 @@ int char_width;
 int char_space;
 int resolution;
 int current_page, next_page;
-int     catchsig();
 float rasters_per_point;
 jmp_buf env;
 int visibility[8];
 
+SIG_T
+catchsig (dummy)
+{
+        signal (SIGINT, SIG_IGN);
+        quit = TRUE;
+        longjmp (env, 1);
+}
 
 main(argc,argv)
 int argc;
@@ -651,12 +657,3 @@ readch(){
         if (read(2,&c,1)<1) c = 0;
         return(c);
 }
-
-catchsig ()
-{
-        signal (SIGINT, SIG_IGN);
-        quit = TRUE;
-        longjmp (env, 1);
-}
-
-

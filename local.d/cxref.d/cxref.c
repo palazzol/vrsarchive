@@ -41,15 +41,31 @@ int ancestor;		/* id of this process, used by children */
 
 char *filename();	/* turns "-" into "stdin" */
 
+#ifdef __STDC__
+#define do_pipe(x)	if (pipe(x) < 0) { fprintf(stderr, #x": pipe failed\n");\
+				fflush(stderr); exit (1); }
+#else
 #define do_pipe(x)	if (pipe(x) < 0) { fprintf(stderr, "x: pipe failed\n");\
 				fflush(stderr); exit (1); }
+#endif
+
+SIG_T
+catchem(dummy)	/* simple signal catcher */
+{
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
+
+	deltemps();
+
+	exit (0);
+}
+
 
 main(argc, argv)
 int argc;
 char **argv;
 {
 	int i;
-	int catchem();
 
 	signal (SIGQUIT, catchem);
 	signal (SIGINT, catchem);
@@ -573,15 +589,4 @@ char *fname;
 
 	return ( strcmp(cp, "-") == 0 ? "stdin" : cp);
 }
-
-catchem()	/* simple signal catcher */
-{
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, SIG_IGN);
-
-	deltemps();
-
-	exit (0);
-}
-
 #include "basename.c"
