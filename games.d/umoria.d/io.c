@@ -7,7 +7,6 @@
 #include <sys/wait.h>
 #endif
 #include <sys/types.h>
-#include <sys/ioctl.h>
 #include <sys/file.h>
 
 #include "constants.h"
@@ -27,8 +26,12 @@ void exit();
 unsigned sleep();
 #endif
 #ifdef ultrix
+#define use_crmode
 void exit();
 void sleep();
+#endif
+#ifdef M_XENIX
+#define use_crmode
 #endif
 
 #ifdef USG
@@ -59,7 +62,7 @@ init_curses()
 #ifdef USG
   saveterm();
 #endif
-#ifdef ultrix
+#ifdef use_crmode
   crmode();
 #else
   cbreak();
@@ -124,7 +127,7 @@ shell_out()
 #ifndef BUGGY_CURSES
   nl();
 #endif
-#ifdef ultrix
+#ifdef use_crmode
   nocrmode();
 #else
   nocbreak();
@@ -157,7 +160,7 @@ shell_out()
   (void) wait((union wait *) 0);
 #endif
   really_clear_screen();
-#ifdef ultrix
+#ifdef use_crmode
   crmode();
 #else
   cbreak();
@@ -190,7 +193,7 @@ exit_game()
 #ifndef BUGGY_CURSES
   nl();
 #endif
-#ifdef ultrix
+#ifdef use_crmode
   nocrmode();
 #else
   nocbreak();
@@ -219,7 +222,8 @@ char *ch;
 flush()
 {
 #ifdef USG
-  (void) ioctl(0, TCFLSH, 0);  /* flush the input queue */
+  raw();
+  noraw();
 #else
   int arg;
 
