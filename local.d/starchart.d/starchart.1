@@ -1,0 +1,140 @@
+.TH starchart LOCAL 9/22/87
+.ad b
+.SH NAME
+stardsp, starpic, startek, starpost, starhp, starlaser
+.br
+\- print astronomical star charts using Yale database.
+.SH SYNOPSIS
+\fBstar* RA DE [ scale title maglim lbllim ]\fR
+.br
+or
+.br
+\fB-r Ra -d Dl -s scale -t title -m maglim -l lbllim -f x.star\fR
+.br
+or
+.br
+\fB-c constellation ...
+.SH DESCRIPTION
+These programs generate star charts based on data extracted from the Yale
+public domain star catalog.
+Output is to the terminal 
+.RB ( stardsp ),
+Unix PIC file format
+.RB ( starpic ),
+Tektronix
+vector format
+.RB ( startek ),
+PostScript format
+.RB ( starpost ),
+Hewlett-Packard terminal vector format
+.RB (starhp)
+or in Hewlett-Packard Laserjet printer format
+.RB ( starlaser ).
+.PP
+Star data is optionally overlayed with other cosmic objects, such as planets.
+If limiting magnitudes are properly set and the Messier database is available,
+Messier objects and some NGC objects are also printed.
+.PP
+The starchart center is specified by two parameters: Right
+Ascension [0.00 to 24.00 hours] and Declination [-90.00 to +90.00 degrees].
+An optional third parameter defines the N/S range of the output window, in
+degrees of declination.  Digits after decimal point are taken as minutes:
+object positions can therefore be taken directly from a star catalog.
+.PP
+An optional fourth parameter gives a title.  This conforms to the 'old'
+Yale star chart format.  Two new parameters can be added after title,
+defining the magnitude limit and label printing magnitude limit.  These
+are discussed below.  All parameters can be given by using options,
+which offers more flexibility. Parameters are:
+.TP
+.B \-r
+Right ascension.
+.TP
+.B \-d
+Declination.
+.TP
+.B \-s
+Scale.
+.TP
+.B \-t
+Title.  All these work as described above.  New options are:
+.TP
+.B \-m
+Star limiting magnitude. This sets limits on the faintest stars displayed
+on the "master" view. Default limits are device driver dependent (more below).
+The "thumbnail" finder view is set to a related limit.
+.TP
+.B \-l
+Label limiting magnitude. The new Yale database contains both a small set of
+familiar names (for stars and special objects), plus an extensive list of
+labels (Greek Bayer letter or Flamsteed numbers). Star names (including planet
+names) always print for this small set. To avoid clutter, the labels may be
+omitted below a cut-off magnitude by specifying this value.
+.TP
+.B \-c
+A three or four character mnemonic follows, which is a search string for a
+matching line-item entry in the file \fBcon.locs\fP. If found, then the
+initial values for Ra, Decl, Scale and Title are taken from that file.
+Because the command line is parsed from left to right, subsequent switches
+might change the scale, title, or otherwise fine-tune the new defaults.
+.TP
+.B \-f
+A file may be given containing ephemerides in the .star format, which will
+overlay the output. This is also useful for generating constellation
+boundaries, Milky Way isophots, and planet or satellite tracks. (The .star
+format additionally includes records for vector and text annotation).
+.PP
+The present implementations draw two viewports: a ``master'' chart plus a
+``thumbnail'' overview with low limiting magnitude.
+Their location and the limiting magnitude is specified by records in
+the device driver, allowing the chart layout be tuned on a per-device basis.
+The output is annotated with viewport boundaries, a legend and axis labels.
+.PP
+Sanson's sinusoidal projection is used to map coordinates.
+This projection preserves both area and linearity in Declination (y axis).
+It gives good conformality (angle correctness) near the equator, so it is
+useful along the Ecliptic.
+Lines of RA converge at the poles (unlike cylindrical projections),
+though Cassiopeia and the Dipper reproduce well.
+.SH EXAMPLES 
+.nf
+# Sagittarius: a nice bunch of Messier objects.
+starpost -c sgr -t "(Sagittarius 31 Oct 87)" >sag.ps
+.sp
+# Orion: the belt lies near 5h40m in RA, just below the CE.
+stardsp 5.32 -5 12 "Trapezium (Orion)" 8 5 | more
+.fi
+.SH FILES
+.nf
+.ta 2.6i
+\fByale.star\fP	stellar information (mandatory)
+\fBmessier.star\fP	Messier objects (optional)
+\fBplanet.star\fP	Planets (optional)
+\fBcon.locs\fP	default mnemonic locations
+.fi
+.br
+.sp
+These default paths can be easily changed in the Makefile.
+.SH BUGS
+No testing for bogus ranges and scales which may wrap the poles.
+The present implementation expects
+.B yale.star
+sorted by decreasing magnitude so that output is sequential, and then cuts off
+below a limiting magnitude.
+For more detailed charts spatial sorting is more appropriate.
+.PP
+If <minutes> part of the parameters is greater than 59 it is silently
+truncated to 59.
+.PP
+All .star file coordinates are for epoch E2000.0. The Messier objects
+in \fBmessier.star\fP were taken from precessed E1975.0 data. The additional
+NGC objects were taken from data in the star atlas by \fINorton\fP and
+precessed from E1950.0. Rough guesses on visual magnitude were made.
+.SH AUTHOR/EDITOR
+Alan Paeth, University of Waterloo (AWPaeth@watCGL)
+.SH CONTRIBUTORS
+Petri Launiainen (pl@intrin.FI)
+.br
+Jyrki Yli-Nokari (jty@intrin.FI)
+.br
+Robert Tidd (inp@VIOLET.BERKELEY.EDU)

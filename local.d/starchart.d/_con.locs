@@ -1,0 +1,74 @@
+/ con.locs	StarChart 'macro library' for canned views
+/		Bob Tidd  inp@amber.berkeley.edu  6/87
+/
+/ This is a first cut and not a "cannonical" list of celestial locations.
+/ Users should feel free to revise and extend (and post!) new versions.
+/
+/  column 4 coding (to distinguish "virgo area" from "virgo constellation"
+/  c (or blank)=constellation
+/  a=area
+/  f=messier finder chart
+/  t=time of year (evening sky)
+/
+/ columns 1-4 exclusively belong to the mnemonic, column five is ignored.
+/ The remaining four parameters are three floats plus a string (terminated
+/ by the end of line). The first two floats (Ra and Decl) appear in the
+/ "hh" or "hh.mm" format used on the command line. Scale is a "traditional"
+/ floating point value.
+/
+/...+....1....+....2....+....3....+
+/
+and  1     35   30   Andromeda ?
+and  23.45 40   20   Andromeda
+aqu  22.30 -5   30   Aquarius
+ari  2.15  -18  18   Aries
+aur  5.30  40   20   Auriga ?
+boo  14.45 30   30   Bootes
+can  8.30  18   20   Cancer
+cap  21    -20  20   Capricorn
+cas  1.0   60   15   Cassiopeia
+cep  22    70   30   Cepheus
+cet  7     -5   35   Cetus
+cma  6.45  -20  20   Canis Major
+com  13    25   10   Coma Bereneces
+cor  15.45 28   10   Corona Borealis
+cvn  13    40   10   Canes Venatici
+cyg  20.30 40   30   Cygnus
+equ  21.18 8    8    EQU
+gem  7.30  20   30   Gemini
+her  17    35   35   Hercules
+hyd  11    -15  40   Hydra
+lac  22.20 45   15   LAC
+leo  11    20   30   Leo
+lib  15    -20  20   Libra
+lyr  18.30 35   12   Lyra
+oph  17    0    30   Ophiuchius
+ori  5.5   -.1  21   Orion
+peg  23    30   20   Pegasus
+per  3.30  45   35   Perseus
+pis  1     15   40   Pisces
+sco  17    -30  30   Scorpio
+sct  18.35 -10  10   Scutum
+sgr  18    -23  25   Sagittarius
+trp  5.36  -5   12   Trapezium (Orion)
+tau  4.30  20   30   Taurus
+uma  12.30 55   30   Ursa Major
+vir  13.0  -10  30   Virgo  +-
+vul  19.30 25   10   Vulpecula
+/
+101f 14.05 54   3 M101 Area
+andf 0.45  41   3 Andromeda, M31
+coma 12.25 16   6 Coma Bereneces M100
+dbcf 2.25  57   2.3 Double Cluster
+hyaf 4.30  17   5 Hyades Cluster
+m47f 7.35  15.4 3 M47 Finder
+m81f 9.55  69   3 M81, M82
+orif 5.35  -5   6 Orion Nebula
+perf 3.25  49   4 Perseus Detail
+plef 3.50  24   3 The Pleiades
+praf 8.40  20   2 Praesepe, M44
+sgra 18.10 -18  10 Sagitarius Cluster
+umaf 11.25 58   12 Ursa Major Bowl
+vira 12.25 14   8 Virgo Cluster
+/
+mayt 13.0  30   110 May Sky
