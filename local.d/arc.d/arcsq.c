@@ -8,7 +8,7 @@
  *	Last Mod.	3/21/87
  *
  */
-
+#define NULL 0
 /*
  * ARC - Archive utility - ARCSQ
  * 
