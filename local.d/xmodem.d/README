@@ -1,0 +1,14 @@
+
+
+The two compiled programs, xmodrec and xmodtran, will be moved to the
+/usr/local directory.  If this is not where you want them, change the
+Makefile DIR variable to what you want for your system.
+
+The programs are being used on a VAX 750 with BSD 4.2.  They are used
+to transfer data between IBM PCs and the VAX.
+
+If you have any questions or comments, send UUCP mail to:
+
+	{ihnp4,seismo}!uwvax!astroatc!nicmad!brown
+
+Mike Brown

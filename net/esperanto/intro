@@ -1,0 +1,48 @@
+	INTRODUCTION
+First "what is this Esperanto thing, anyway?"  That's a hard question.
+The pat answer is "the international language, used by millions of people
+in over a hundred countries.  It was specifically designed to be
+easy to use and politically neutral."
+
+One recent development which should interest computer scientists is that
+the European Economic Community has funded a large effort to try to use
+Esperanto to help them deal with translating official documents among the
+seven languages they use.  This should result in computer programs to translate
+from Esperanto into each of the seven languages.  I think this capability
+could provide a powerful incentive for people and organizations all over
+the world to pay more attention to Esperanto.
+
+Esperanto is much more popular in Europe than it is in the US, chiefly because
+people there deal with "the language problem" every time they travel more than
+a few hundred miles in any direction.  It is also gaining popularity in
+the far east.  There are more than a million speakers in the world.  This may
+seem like a small number in relation to the number of English speakers, but
+I like to think of it this way: a much higher percentage of Esperanto speakers
+in foreign lands are the sort of people I would like to be able to converse with.
+
+I expect Esperanto to do me the most good when I travel, especially to
+the eastern european countries (where English is less popular....)
+I would LOVE IT if I could converse via electronic mail with esperantists
+in other countries (or here in the US).
+In August of 1985 there will be a meeting of the Universal Esperanto Association
+in Augsberg where I will be able to meet several thousand esperantists from
+scores of countries.  Where else could you do that?
+
+There are hundreds of regular publications in Esperanto, and 
+hundreds of regular radio programs worldwide.
+
+How easy is it to learn?  Some say between 4 and 10 times easier than other
+natural languages, with all their exceptions, special cases, and idioms.
+In a month of studying it during the evening in my spare time (on my own)
+I have gotten to the point where I can frequently (slowly...) understand the gist
+of articles from a Chinese magazine without referring to a dictionary.
+
+Well, I hope the lisp program below can be of use to you!  I think future
+discussion of Esperanto should occur in net.nlang.
+
+For further information, send mail to me or to one of these groups:
+	Esperanto League of North America, Box 1129 El Cerrito, CA 94530
+	Free Postal Course, Esperanto Information Center, 410 Darrell Road,
+		Hillsborough, CA 94010 (send a self-addressed, stamped envelope).
+	various local organizations (especially in CA): ask me for one near you.
+
