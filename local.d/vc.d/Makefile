@@ -42,7 +42,7 @@ vc.man:	vc.1
 	nroff -man vc.1 >$@
 
 clean:
-	rm -f $(ALL) *.o *res.h y.tab.h debug core
+	rm -f $(ALL) *.o gram.c *res.h y.tab.h debug core
 
 install: $(ALL) $(BINDIR) $(MAN1)
 	cp vc $(BINDIR)
