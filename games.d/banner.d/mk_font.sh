@@ -1,3 +1,4 @@
+#!/bin/sh
 HERSHDIR=%HERSHDIR%
 FONTDIR=%FONTDIR%
 
@@ -56,5 +57,6 @@ then
 	echo $HERSHFILES $HMPFILE;
 	echo "";
 	echo "In any case, $FNTFILE is not a valid database for hbanner.";
+	rm $FNTFILE
 	exit 1
 fi
