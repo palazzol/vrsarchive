@@ -1,4 +1,23 @@
+#bbdomain:	UUCP
+#hostable:	@(MHETCPATH)/hosts
+#mailer:	root
+#okdests:	@(MHETCPATH)/Okdests
+#okhosts:	@(MHETCPATH)/Okhosts
+#overseer:	root
+#pophost:	name-of-pop-service-host
+#sendmail:	/usr/lib/sendmail
+#servers:	name-of-smtp-service-host name-of-alternate-host localhost
+#systemname:	paris.ics.uci.edu
+#tmailqdir:	/usr/tmp
+#umincproc:
+localname:
+lockldir:
+mailqdir:	/usr/spool/smtpq
+mmailid:	0
+mmdelim1:	\001\001\001\001\n
+mmdelim2:	\001\001\001\001\n
 mmdfldir:	@(MHDROPATH)
 mmdflfil:	@(MHDROPFIL)
-hostable:	@(MHETCPATH)/hosts
-servers:	localhost \01localnet
+nntphost:	gandalf
+uucpldir:	@(MHDROPATH)
+uucplfil:	@(MHDROPFIL)
