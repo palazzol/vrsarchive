@@ -7,7 +7,7 @@ static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
 
 #include "war.h"
 
-jmp_buf	*scanjumpbuf;			/* jump buffer to use in scanchar */
+jmp_buf	scanjumpbuf;			/* jump buffer to use in scanchar */
 char	scanbuffer[SCAN_SIZE+1];	/* storage for characters */
 char	*scanreadptr;			/* current read pointer */
 char	*scanwriteptr;			/* current write pointer */
@@ -28,8 +28,8 @@ static	char	litchar;		/* literal input */
  * Initialize for later calls to scanchar.
  */
 scaninit(routine, jumpbuf)
-	int	(*routine)();		/* routine to get characters */
-	jmp_buf	*jumpbuf;		/* jump buffer to use later */
+	char (*routine)();		/* routine to get characters */
+	jmp_buf	jumpbuf;		/* jump buffer to use later */
 {
 	struct	sgttyb	sgbuf;		/* basic tty structure */
 #ifdef TIOCGLTC
@@ -37,7 +37,7 @@ scaninit(routine, jumpbuf)
 #endif
 
 	scanroutine = routine;		/* init static variables */
-	scanjumpbuf = jumpbuf;
+	memcpy((char *)scanjumpbuf, (char *)jumpbuf, sizeof(scanjumpbuf));
 	scanwriteptr = scanbuffer;
 	scanreadptr = scanbuffer;
 	sgbuf.sg_erase = CERASE;	/* set defaults in case ioctls fail */
