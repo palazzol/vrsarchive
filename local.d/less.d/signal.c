@@ -105,7 +105,7 @@ psignals()
 		SIGNAL(SIGTTOU, SIG_DFL);
 #endif
 		SIGNAL(SIGTSTP, SIG_DFL);
-#if SIGSETMASK
+#ifdef BSD
 		/*
 		 * This system will not allow us to send a 
 		 * stop signal (SIGTSTP) to ourself
