@@ -181,7 +181,7 @@ get_room_number(row, col)
 
 shell()
 {
-	char *getenv(), *rindex();
+	char *getenv(), *strrchr();
 	char *sh;
 	int status;
 
@@ -196,7 +196,7 @@ shell()
 
 	if (!fork()) {
 		if (setuid(getuid()) < 0) exit(1);
-		execl(sh, rindex(sh, '/') + 1, 0);
+		execl(sh, strrchr(sh, '/') + 1, (char *)0);
 		exit(0);
 	}
 	wait(&status);
