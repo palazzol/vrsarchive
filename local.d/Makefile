@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.20 2002-11-26 21:06:08 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.21 2002-11-26 23:27:37 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
@@ -11,7 +11,8 @@ SUBDIR	= arc ash arcmail calend calls car clear compress copymode crack ctc \
 	  cursive cxref diffc displays dithds elbat espel getopt hoc6 \
 	  include index ispell jove kermit less lintlib mkman msdos \
 	  patch pathalias ptc read20 recipes roff se strings sucko talk teco \
-	  tmac tpr uemacs umodem uuencode vc vttest whatcomm which xlisp xmodem
+	  tmac tpr uemacs umodem uuencode vc vttest whatcomm which xlisp \
+	  xmodem zmodem
 M0700	= esad #bootime logout$(EXE) mkbad$(EXE)
 M0711	= bincmp$(EXE) clock$(EXE) from$(EXE) getfrom$(EXE) script$(EXE)
 M0755	= backup datefudge dirsort dtgt dtree getto islide makewhatis \
