@@ -124,7 +124,7 @@ struct trobj Magicmarker[] = {
 
 #ifdef WALKIES
 struct trobj Leash[] = {
-	{ LEASH, 0, CHAIN_SYM, 1, 0 },
+	{ LEASH, 0, TOOL_SYM, 1, 0 },
 	{ 0, 0, 0, 0, 0 }
 };
 #endif
