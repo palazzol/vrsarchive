@@ -14,7 +14,7 @@ boot$(EXE):	boot.o
 #
 #	Make the Pascal version
 #
-cptc.c:	ptc.p boot
+cptc.c:	ptc.p boot$(EXE)
 	./boot$(EXE) < ptc.p > tmp.c
 	mv tmp.c cptc.c
 
@@ -23,7 +23,7 @@ ptc$(EXE):	cptc.o
 #
 #	Compare reults from Pascal and C versions
 #
-test.c:	cptc.c ptc
+test.c:	cptc.c ptc$(EXE)
 	./ptc$(EXE) < ptc.p > tmp.c
 	mv tmp.c test.c
 
