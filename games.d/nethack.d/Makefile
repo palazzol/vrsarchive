@@ -1,7 +1,18 @@
 #	Hack or Quest Makefile.
 #	SCCS Id: @(#)Makefile.xenix	1.4	87/08/08
 
-# if you are cross-compiling (eg. from Xenix into a Dos enviornment)
+# make NetHack
+GAME	= nethack
+ALL	= $(GAME) $(VARAUX)
+GAMEUID = $(SAFEUID)
+GAMEGRP = $(SAFEGRP)
+HACKDIR	= $(GAMLIB)/$(GAME)dir
+SAVEDIR	= $(HACKDIR)/save
+OPTIONS	= -DHACKDIR=\"$(HACKDIR)\"
+MODEL	= -M2lt50
+include ../../CONFIG
+
+# if you are cross-compiling (eg. from Xenix into a Dos environment)
 # you will have to redefine these filenames.
 MAIN = unixmain.c
 TTY  = unixtty.c
@@ -11,16 +22,8 @@ UNIX = unixunix.c
 TERMLIB	= -ltermlib
 CRT0	=
 LIBS	=
-
-# make NetHack
-GAME = nethack
-GAMEUID = cron
-GAMEGRP = cron
-GAMEDIR = /usr/games/lib/$(GAME)dir
-SHELLDIR = /usr/games
-MANDIR  = /usr/man/man6
-CFLAGS = -M2lt50
-LFLAGS = -M2lt50
+CFLAGS = $(MODEL) $(OPTIONS)
+LFLAGS = $(MODEL)
 HACKCSRC = apply.c bones.c decl.c\
 	cmd.c do.c dothrow.c do_name.c do_wear.c dog.c dogmove.c eat.c end.c\
 	engrave.c fight.c fountain.c hack.c invent.c ioctl.c lev.c main.c\
@@ -56,23 +59,20 @@ HOBJ = apply.o bones.o decl.o cmd.o do.o dothrow.o do_name.o do_wear.o dog.o\
 	trap.o tty.o unix.o u_init.o vault.o wield.o wizard.o worm.o worn.o\
 	write.o zap.o version.o rnd.o alloc.o
 
-$(GAME):	specifics $(HOBJ) Makefile
+$(GAME): main.o tty.o unix.o $(HOBJ)
 	@echo "Loading ..."
 	@cc $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(TERMLIB) $(LIBS)
-
-all:	$(GAME) lint
-	@echo "Done."
 
 makedefs:	makedefs.c alloc.o config.h
 	cc ${CFLAGS} -o makedefs alloc.o makedefs.c
 
 RUMORFILES= rumors.base rumors.kaa rumors.mrx
 
-rumors:	config.h $(RUMORFILES) makedefs
+rumors:	$(RUMORFILES) makedefs
 	chmod u+w $(RUMORFILES)
 	./makedefs -r
 
-data:	config.h data.base makedefs
+data:	data.base makedefs
 	chmod u+w $@.base
 	./makedefs -d
 
@@ -80,25 +80,23 @@ date.h:	$(SOURCES) makedefs
 	chmod u+w $@
 	./makedefs -D
 
-trap.h:	config.h makedefs
+trap.h:	makedefs
 	chmod u+w $@
 	./makedefs -t
 
 onames.h:	makedefs objects.h
 	./makedefs -o
 
-specifics:	main.o tty.o unix.o
-
-main.c:	unixmain.c hack.h
-	cp ${MAIN} $@
+main.c:	$(MAIN)
+	cp $? $@
 	chmod u+w $@
 
-tty.c:	unixtty.c extern.h
-	cp ${TTY} tty.c
+tty.c:	$(TTY)
+	cp $? $@
 	chmod u+w $@
 
-unix.c:	unixunix.c hack.h mkroom.h
-	cp ${UNIX} unix.c
+unix.c:	$(UNIX)
+	cp $? $@
 	chmod u+w $@
 
 lint:
@@ -122,36 +120,29 @@ distribution: Makefile
 		( echo cp $$i $D ; cp $$i $D ) ; done
 # the distribution directory also contains the empty files perm and record.
 
-initial:
-	-rm -rf $(GAMEDIR)
-	-mkdir $(SHELLDIR)
-	mkdir $(GAMEDIR) $(GAMEDIR)/save
-	touch $(GAMEDIR)/perm
-	touch $(GAMEDIR)/record
-	chown $(GAMEUID) $(GAMEDIR) $(GAMEDIR)/*
-	chgrp $(GAMEGRP) $(GAMEDIR) $(GAMEDIR)/*
-	chmod 666 $(GAMEDIR)/*
-	chmod 777 $(GAMEDIR) $(GAMEDIR)/save
+$(HACKDIR) $(SAVEDIR):
+	mkdir $@
+	chown $(GAMEUID) $@
+	chgrp $(GAMEGRP) $@
+	chmod 755 $@
 
-install: $(VARAUX)
-	-rm -f $(GAMEDIR)/$(GAME)
-	-rm -f $(GAMEDIR)/bones*
-	-rm -f $(GAMEDIR)/save/*
-	cp help hh rumors data $(GAMEDIR)
-	cp $(GAME).sh $(SHELLDIR)/$(GAME)
-	cp $(GAME) $(GAMEDIR)/$(GAME)
-	chown $(GAMEUID) $(SHELLDIR)/$(GAME) $(GAMEDIR)/*
-	chgrp $(GAMEGRP) $(SHELLDIR)/$(GAME) $(GAMEDIR)/*
-	chmod 0755 $(SHELLDIR)/$(GAME)
-	chmod 04755 $(GAMEDIR)/$(GAME)
-	-cp nethack.6 $(MANDIR)
+install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVEDIR)
+	rm -f $(HACKDIR)/bones* $(SAVEDIR)/*
+	cd $(HACKDIR); touch perm record
+	cd $(HACKDIR); chmod 644 perm record
+	cp help hh rumors data $(HACKDIR)
+	cd $(HACKDIR); chmod 644 help hh rumors data
+	sed -e 's/#!/: /' -e 's:^HACKDIR=.*:HACKDIR=$(HACKDIR):' $(GAME).sh >$(GAMDIR)/$(GAME)
+	chmod 755 $(GAMDIR)/$(GAME)
+	cp $(GAME) $(HACKDIR)/$(GAME)
+	chown $(GAMEUID) $(GAMDIR)/$(GAME) $(HACKDIR)/*
+	chgrp $(GAMEGRP) $(GAMDIR)/$(GAME) $(HACKDIR)/*
+	chmod 04755 $(HACKDIR)/$(GAME)
+	cp nethack.6 $(MAN6)
+	cd $(MAN6); chmod 644 nethack.6
 
 clean:
-	rm -f *.o
-
-spotless: clean
-	rm -f a.out core $(GAME) makedefs
-	rm -f Makefile $(VARAUX) main.c tty.c unix.c
+	rm -f $(ALL) *.o a.out core makedefs main.c tty.c unix.c
 
 bones.o:  hack.h
 decl.o:  hack.h mkroom.h
@@ -221,3 +212,6 @@ hack.h:  config.h objclass.h monst.h gold.h trap.h obj.h flag.h rm.h permonst.h 
 	touch hack.h
 objects.h:  config.h objclass.h
 	touch objects.h
+main.o:	hack.h
+tty.o:	extern.h
+unix.o:	hack.h mkroom.h
