@@ -5,7 +5,7 @@
 #include	"hack.h"
 
 int multi = 0;
-int warnlevel = 0;		/* used by movemon and dochugw */
+uchar warnlevel = 0;		/* used by movemon and dochugw */
 int nroom = 0;
 int occtime = 0;
 
