@@ -2,7 +2,7 @@ ALL		= vstring.o virtmem.o mytime.o
 MODEL	= -M2l -O
 INC = ../include
 OPTIONS	= -I${INC}
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # AR = shar -c -v
 AR = post -c -v -p 9 17
 B = ..

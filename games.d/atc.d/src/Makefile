@@ -1,20 +1,20 @@
 MODEL	= -i -F 2000
-OPTIONS	= -Dsrandom=srand -Drandom=rand
+#OPTIONS	= -Dsrandom=srand -Drandom=rand
 CURSESLIBR= libatc.a
 ALL	= $(XLIBR) $(CURSESLIBR)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 DEST	      = .
 EXTHDRS	      = /usr/include/ctype.h \
 		/usr/include/curses.h \
 		/usr/include/math.h \
 		/usr/include/pwd.h \
-		/usr/include/sgtty.h \
 		/usr/include/signal.h \
 		/usr/include/stdio.h \
 		/usr/include/string.h \
 		/usr/include/sys/file.h \
 		/usr/include/sys/ioctl.h \
 		/usr/include/time.h
+#		/usr/include/sgtty.h
 HDRS	      = def.h \
 		extern.h \
 		include.h \
@@ -76,45 +76,3 @@ $(DEST)/$(LIBR): $(ASRCS) $(HDRS) $(EXTHDRS)
 
 lex.o: grammar.o
 ###
-extern.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h
-grammar.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h
-gcurses.o: /usr/include/curses.h /usr/include/stdio.h \
-	/usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	include.h \
-	/usr/include/ctype.h /usr/include/pwd.h \
-	/usr/include/time.h /usr/include/sys/file.h /usr/include/signal.h \
-	/usr/include/math.h /usr/include/string.h def.h struct.h extern.h \
-	tunable.h
-input.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h
-list.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h
-log.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h
-main.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h
-update.o: include.h /usr/include/stdio.h /usr/include/ctype.h \
-	/usr/include/pwd.h /usr/include/sgtty.h /usr/include/sys/ioctl.h \
-	/usr/include/time.h /usr/include/sys/file.h \
-	/usr/include/signal.h /usr/include/math.h /usr/include/string.h \
-	def.h struct.h extern.h tunable.h

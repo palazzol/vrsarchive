@@ -1,8 +1,8 @@
 # Flags for CC
 MODEL	= -M2l
 OPTIONS	= -I${INC} -O '-DADL_NAME="${BIN}"'
-ALL		= adlcomp
-include /etc/CONFIG
+ALL		= adlcomp$(EXE)
+include $(HOME)/CONFIG
 
 # Source directories - INC is the include directory; UTL is the
 # utilities directory.
@@ -54,9 +54,9 @@ adlcomp2.shar	: adlmsg.c	adlobj.c	codegen.c	\
 	> ${D}adlcomp2.shar )
 
 install		: ${ALL} ${BIN}
-	strip adlcomp
-	cp adlcomp ${BIN}
-	chmod 755 ${BIN}/adlcomp
+	strip adlcomp$(EXE)
+	cp adlcomp$(EXE) ${BIN}
+	chmod 755 ${BIN}/adlcomp$(EXE)
 
 clean		:
 	rm -f ${ALL} ${OBJS} core adlcomp1.shar adlcomp2.shar adlcomp
@@ -66,7 +66,7 @@ lint		:
 		adllex.c adlmisc.c adlmsg.c adlobj.c \
 		routcomp.c compdict.c adlglob.c ${UTL}/*.c
 
-adlcomp		: ${OBJS} ${UTIL}
+adlcomp$(EXE)	: ${OBJS} ${UTIL}
 	$(CC) $(CFLAGS) -o $@ ${OBJS} ${UTIL}
 
 codegen.o	: codegen.c	${HDRS}

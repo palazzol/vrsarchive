@@ -1,7 +1,7 @@
-ALL		= adldebug adltouch
+ALL		= adldebug$(EXE) adltouch$(EXE)
 MODEL	= -M2l
 OPTIONS	= -O -DHPUX -I${INC}
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # Where utility routines live
 UTL = ../util
 
@@ -22,10 +22,10 @@ BIN		= ${GAMLIB}
 UTIL =	${UTL}/virtmem.o	${UTL}/vstring.o	${UTL}/mytime.o
 
 # The rules
-install		:	adldebug adltouch
-	strip adldebug adltouch
-	cp adldebug adltouch ${BIN}
-	chmod 755 ${BIN}/adldebug ${BIN}/adltouch
+install		:	adldebug$(EXE) adltouch$(EXE)
+	strip adldebug$(EXE) adltouch$(EXE)
+	cp adldebug$(EXE) adltouch$(EXE) ${BIN}
+	chmod 755 ${BIN}/adldebug$(EXE) ${BIN}/adltouch$(EXE)
 
 shar		:	misc.shar
 

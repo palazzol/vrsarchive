@@ -4,7 +4,7 @@
 #
 OPTIONS	= -O
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 KLIB	= klib.a(GetBlk.o) \
 	  klib.a(GetRec.o) \
 	  klib.a(MakBlk.o) \
@@ -20,10 +20,10 @@ KLIB	= klib.a(GetBlk.o) \
 	  klib.a(openk.o) \
 	  klib.a(readk.o) \
 	  klib.a(writek.o)
-SRC	= GetBlk.o GetRec.o MakBlk.o MakNam.o \
-	  MapBlk.o MapKey.o PutBlk.o PutRec.o \
-	  closek.o creatk.o kioglob.o openk.o \
-	  dupk.o readk.o writek.o 
+SRC	= GetBlk.c GetRec.c MakBlk.c MakNam.c \
+	  MapBlk.c MapKey.c PutBlk.c PutRec.c \
+	  closek.c creatk.c kioglob.c openk.c \
+	  dupk.c readk.c writek.c 
 OBJ	= $(SRC:.c=.o)
 HEADER	= kio.h
 

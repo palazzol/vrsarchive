@@ -1,7 +1,7 @@
 MODEL	= -M2l
 OPTIONS	= -I${INC} -O
-ALL		= adlrun
-include /etc/CONFIG
+ALL		= adlrun$(EXE)
+include $(HOME)/CONFIG
 # The include directory
 INC = ../include
 
@@ -63,10 +63,10 @@ adlrun2.shar	: adlscrn.c	adlspec.c	adlstr.c	adltrans.c \
 		${D}rtdict.c	${D}rtglob.c	${D}rtlex.c	${D}rtparse.c \
 	> ${D}adlrun2.shar )
 
-install		: adlrun
-	strip adlrun
-	cp adlrun ${BIN}
-	chmod 755 ${BIN}/adlrun
+install		: adlrun$(EXE)
+	strip adlrun$(EXE)
+	cp adlrun$(EXE) ${BIN}
+	chmod 755 ${BIN}/adlrun$(EXE)
 
 lint		:
 	lint ${LFLAGS} *.c ${UTL}*.c

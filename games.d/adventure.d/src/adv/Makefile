@@ -4,7 +4,7 @@
 #
 OPTIONS	= -O -DADV=\"$(GAMLIB)/adv\"
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 KLIB	= ../kio/klib.a
 ALIB	= alib.a(advglob.o) \
 	  alib.a(cache.o) \
@@ -29,16 +29,16 @@ HEADER	= adefs.h
 
 .PRECIOUS: alib.a
 
-all:	adv
+all:	adv$(EXE)
 
-adv:	alib.a
+adv$(EXE):	alib.a
 	$(CC) $(CFLAGS) $(MAIN) alib.a $(KLIB) $(LIBS) -o $@
-	size adv
+	size $@
 
 $(SRC):: $(HEADER)
 	touch $@
 
-alib.a:	$(ALIB)
+alib.a:	$(OBJ) $(ALIB)
 	$(RANLIB) $@
 
 clean:

@@ -1,4 +1,4 @@
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # AR = shar -c -v
 AR = post -c -v -p 6 17
 B = ..
