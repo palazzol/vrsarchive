@@ -232,7 +232,7 @@ int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
 
 /* Functions */
-int (*istat)(), onintr ();
+void (*istat)(), onintr ();
 char getroguetoken (), *getname();
 
 /* Stuff list, list of objects on this level */
@@ -325,7 +325,8 @@ jmp_buf  commandtop;
 main (argc, argv)
 int   argc;
 char *argv[];
-{ char  ch, *s, *getenv(), *statusline(), msg[128];
+{ int ch;
+  char *s, *getenv(), *statusline(), msg[128];
   int startingup = 1;
   register int  i;
 
@@ -432,7 +433,7 @@ char *argv[];
    */
   
   if (!replaying)
-    while ((int) (ch = GETROGUECHAR) != CL_TOK && (int) ch != EOF);
+    while ((int) (ch = getroguetoken()) != CL_TOK && (int) ch != EOF);
 
   /* 
    * Note: If we are replaying, the logfile is now in synch
@@ -701,7 +702,7 @@ char *argv[];
  * transparent mode. Also send some synchronization characters to Rogue,
  * and reset some goal variables.
  */
-
+void
 onintr ()
 { sendnow ("n\033");            /* Tell Rogue we don't want to quit */
   if (logging) fflush (fecho);  /* Print out everything */
