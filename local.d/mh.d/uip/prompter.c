@@ -1,6 +1,6 @@
 /* prompter.c - prompting editor front-end */
 #ifndef	lint
-static char ident[] = "@(#)$Id: prompter.c,v 1.1 1990-04-12 13:29:35 vrs Exp $";
+static char ident[] = "@(#)$Id: prompter.c,v 1.2 1990-05-07 06:11:44 vrs Exp $";
 #endif	lint
 
 #include "../h/mh.h"
@@ -83,7 +83,7 @@ static struct termio    sg;
 #endif	SYS5
 
 
-static int	intrser ();
+static TYPESIG	intrser ();
 
 static int  wtuser = 0;
 static int  sigint = 0;
@@ -439,7 +439,7 @@ int     n;
 
 /* ARGSUSED */
 
-static	int intrser (i)
+static	TYPESIG intrser (i)
 int    i;
 {
 #ifndef	BSD42

@@ -1,6 +1,6 @@
 /* mhmail.c - simple mail program */
 #ifndef	lint
-static char ident[] = "@(#)$Id: mhmail.c,v 1.1 1990-04-12 13:29:29 vrs Exp $";
+static char ident[] = "@(#)$Id: mhmail.c,v 1.2 1990-05-07 06:07:55 vrs Exp $";
 #endif	lint
 
 #include "../h/mh.h"
@@ -30,7 +30,7 @@ static struct swit switches[] = {
 
 /*  */
 
-static int	intrser ();
+static TYPESIG	intrser ();
 
 
 static char tmpfil[BUFSIZ];
@@ -179,7 +179,7 @@ char   *argv[];
 
 /* ARGSUSED */
 
-static int  intrser (i)
+static TYPESIG  intrser (i)
 int     i;
 {
 #ifndef	BSD42
