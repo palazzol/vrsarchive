@@ -14,18 +14,22 @@
 .nr PD 0
 .na
 .LP
-.ce
-T R E K   7 3
-.ce
-A Star Trek(R) Battle Simulation
 .FS (R)
 Star Trek is a registered trademark of Paramount Pictures.
 .FE
+.FS (TM)
+Star Fleet Battles is a trademark held jointly by Task Force Games
+and Amarillo Design Bureau.
+.FE
+.ce
+T R E K   7 3
+.ce
+A Star Trek Battle Simulation
 .sp
 .PP
 Trek73 is a computer-simulated battle based on the famous
 Star Trek television series and
-the game Star Fleet Battles.
+the board game Star Fleet Battles.
 Via computer terminal, you can clash with enemy
 battle cruisers, such as Klingon D-7's and Romulan Sparrowhawks,
 and use the same strategies
@@ -50,7 +54,7 @@ each other.
 .PP
 All distances are measured in megameters, one million meters
 (abbreviated `M').
-Speed is expressed in `warp factors'.
+Speed is expressed in `Warp Factors'.
 Each warp factor equals 100M per second.\**
 .FS
 Although technically incorrect, it does save the player from
@@ -89,16 +93,19 @@ enemy, you both destroy each other, or one party surrenders)
 the above steps are repeated.
 .sp
 .PP
-Appendix 1 displays certain weapon and shield angles.
+Appendix 1 depicts the Enterprise's power circuits.
 .sp
 .PP
-Appendix 2 depicts the Enterprise's power circuits.
+Appendix 2 displays certain weapon and shield angles.
 .sp
 .PP
 Appendix 3 lists certain weapon and vessel specifications.
 .sp
 .PP
 Appendix 4 lists initial deployment of resources.
+.sp
+.PP
+Appendix 5 contains the designer's notes.
 .sp 2
 .LP
 .in 1i
@@ -118,7 +125,7 @@ CODE	     COMMAND
 9	Load/Unload Torpedo Tubes
 10	Launch Antimatter Probe
 .sp
-11	Probe Control (Detonate, Direct, Lock)
+11	Probe Control (Detonate, Redirect, Lock)
 12	*Position Report
 13	*Position Display
 14	Pursue An Enemy Vessel
@@ -127,18 +134,19 @@ CODE	     COMMAND
 17	*Damage Report
 18	Scan Enemy (Damage Report Of Enemy)
 19	Alter Power Distribution
-20	Alter Torpedo And Phaser Firing Parameters
+20	Jettison Engineering
 .sp
-21	Jettison Engineering
-22	Detonate Engineering
+21	Detonate Engineering
+22	Alter Torpedo And Phaser Firing Parameters
 23	Attempt Defenseless Ruse
 24	Attempt Corbomite Bluff(s)
 25	Surrender
 26	Ask Enemy to Surrender
 27	Initiate Self-Destruct Sequence
 28	Abort Self-Destruct
-29	Survivors Report
-30	*Reprints Above List
+29	*Survivors Report
+30	*Print Version Number
+31	*Reprints Above List
 .sp
 *Does Not Use A Turn
 .in 0
@@ -149,18 +157,22 @@ Detailed Descriptions of Each Command
 .sp
 .PP
 What follows is a detailed description of each command.
-Each command is referred to by a number from 1 to 30.
+Each command is referred to by a number from 1 to 31.
 After the name of the command is given, a synopsis of the
 arguments the command requires is given, if any.
 These arguments can be entered on the command line, separated
-by a space, if you wish.
+by whitespace, if you wish.
 For instance, to fire phasers 1 through 4 with a spread of 15,
 you could type '1 1234 15' on the command line.
+.PP
+It should be noted that all numbers refer to parameters for
+the Heavy Cruiser Class ship, and that other ships have
+slightly different characteristics.
 .sp
 .LP
 1.  Fire Phasers.
 .PP
-[Phasers] [Spread]
+[Phasers | all] [Spread]
 .PP
 Phasers are pure energy units which emit
 a beam similar to lasers, but of a pulsating nature which
@@ -217,7 +229,7 @@ blind side, or if completely discharged.
 .LP
 2.  Fire Photon Torpedos.
 .PP
-[Tubes]
+[Tubes | all]
 .PP
 The Enterprise is equipped with six torpedo tubes, which, as
 phasers, can be set to automatically track a target or be
@@ -232,8 +244,6 @@ depth charges.
 .sp
 .PP
 Tubes must be loaded (code 9) prior to firing.
-Each tube will be automatically loaded with 10 units or
-whatever remains in the engines, whichever is less.
 Normally, torpedos are launched at warp 12 in .2-second
 intervals, beginning with tube one.
 Photon torpedos have a proximity fuse of 200M.
@@ -252,7 +262,7 @@ Hit factors resulting from antimatter explosions are
 calculated as follows:
 .sp
 .ce
-hit = 5(#podscontained)sqrt(1-range/(55(#podscontained)))
+hit = 5(#podscontained)sqrt(1-range/(50(#podscontained)))
 .sp
 .PP
 The maximum hit factor of an antimatter device is five times
@@ -265,37 +275,50 @@ This formula also applies to vessels, engineering sections,
 and antimatter probe explosions.
 .sp
 .PP
+A photon torpedo's proximity fuse will not be activated by a
+cloaked ship.
+.sp
+.PP
 Tubes are unable to fire if damaged, if firing into your
 blind side, or if unloaded.
 .sp
 .LP
 3.  Lock Phasers.
 .PP
-[Phasers] [Target Name]
+[Phasers | all] [Target Name]
 .PP
 Phasers locked on an enemy vessel will automatically aim
 towards it.
 Although phasers may track a vessel which is in the firing
 blind side, they will not fire unless engineering is
 jettisoned.
-To fire at vessels behind, simply change course at least 50
-degrees.
+To fire at vessels in the blind spot, simply change course
+at least 55 degrees.
 Once a phaser is locked, it is not disengaged until the
 target is destroyed (in which case it is then rotated to
-zero degrees relative), relocked, manually over-ridden, or
+zero degrees relative), relocked, manually overridden, or
 damaged.
+.sp
+.PP
+Phasers can not be locked onto cloaked enemy ships as they
+can not find the target.
+Phasers that were previously locked onto a non-cloaked ship
+will track the enemy's last known course and position when
+that ship cloaks.
 .sp
 .LP
 4.  Lock Tubes.
 .PP
-[Tubes] [Target Name]
+[Tubes | all] [Target Name]
 .PP
 Tubes lock and unlock in the same manner that phasers do.
+Tubes suffer the same locking limitations that phasers do in
+reference to cloaked ships.
 .sp
 .LP
 5.  Manually Rotate Phasers.
 .PP
-[Phasers] [Bearing]
+[Phasers | all] [Bearing]
 .PP
 Manually rotating phasers disengages any previous locks and
 positions them as directed, relative to your course.
@@ -307,7 +330,7 @@ however, they will not fire.
 .LP
 6.  Manually Rotate Tubes.
 .PP
-[Tubes] [Bearing]
+[Tubes | all] [Bearing]
 .PP
 Manually rotating tubes is similar to rotating phasers.
 .sp
@@ -317,21 +340,25 @@ Manually rotating tubes is similar to rotating phasers.
 Phaser status reports the control (locks and damages),
 deployment, levels, firing percentages (normally 100),
 and charge/discharge rates (normally +10) of all phasers.
+This command does not use a turn.
+Cf. Command 22.
 .sp
 .LP
 8.  Tube Status.
 .PP
 Tube status reports the control, deployment, tube levels,
 launch speeds (normally 12), proximity delays (normally
-200), and the time delays (normally 10).
+200), and time delays (normally 10) of all tubes.
+This command does not use a turn.
+Cf. Command 22.
 .sp
 .LP
 9.  Load/Unload Tubes.
 .PP
-[l | u] [Tubes]
+[l | u] [Tubes | all]
 .PP
-Tubes are loaded with 10 charged antimatter pods until your
-fuel runs out.
+Each specified tube will be automatically loaded with 10 units or
+whatever remains in the engines, whichever is less.
 Tubes can also be unloaded if the need arises.
 .sp
 .LP
@@ -360,6 +387,22 @@ which may have missed.
 Position reports are vital since valuable information on
 courses, bearings and ranges are given to aid the formation
 of good strategy.
+.PP
+Each ship is listed along with its current speed, course,
+and bearing.
+Also listed is your relative bearing to that ship.
+A relative bearing of 0 means you are pointed directly at
+the ship, whereas a relative bearing of 180 means you are
+pointed directly away from the ship.
+Next is the reverse relative bearing, which gives the relative
+bearing of you with respect to the ship listed.
+.PP
+Cloaked ships show up with an asterisk (*) before the name,
+and the information displayed is the last available information
+on those ships.
+If no position report has been performed prior to the enemy ship
+engages a cloaking device, no information will be available on 
+that ship.
 This order does not use a turn.
 .sp
 .LP
@@ -372,6 +415,8 @@ which surround your vessel.
 The Enterprise is indicated by a `+', jettisoned engineering
 sections by a `#', probes by a `*', torpedos by a `:', and
 enemy vessels by the first letter of their names.
+Enemy vessels that are cloaked appear as lower case letters
+and remain in their last noted absolute position.
 .sp
 .LP
 14.  Pursue An Enemy Vessel.
@@ -380,6 +425,7 @@ enemy vessels by the first letter of their names.
 .PP
 This order instructs the ship's navigation to face an enemy
 vessel whenever possible.
+Obviously it is impossible to pursue a cloaked vessel.
 .sp
 .LP
 15.  Run From An Enemy Vessel.
@@ -389,6 +435,7 @@ vessel whenever possible.
 This order, just the opposite of order #14, instructs the
 navigation to keep the stern of the Enterprise towards an
 enemy vessel whenever possible.
+Running from a cloaked vessel is not very useful.
 .sp
 .LP
 16.  Manually Change Course and Speed.
@@ -402,35 +449,47 @@ The following information applies to the above three orders:
 .PP
 Your maximum rotation rate when turning is:
 .ce
-degrees per sec = 5 * (12 - desired warp)
+degrees per sec = 5 * (11 - current warp speed)
 .sp
 .PP
 Accordingly, you can turn 55 degrees at warp one, 50 at
-warp two, ..., up to 15 degrees at warp nine.
+warp two, and so on down to 10 degrees at warp nine.
 In other words, the faster your speed, the less
 maneuverable you are.
-You are also less maneuverable if you lose your warp drive.
+You are also less maneuverable if your warp drive is damaged
+or destroyed.
 Your maximum speed is warp nine, the enemy's is warp eleven.
 .sp
 .LP
 17.  Damage Report.
 .PP
 This report informs you of certain equipment status.
-A malfunctioning computer (very rare) make orders 3 (lock
+A destroyed computer make orders 3 (lock
 phasers), 4 (lock torpedos), 14 (pursue), 15 (run), 27
 (initiate self-destruct), and 28 (abort self-destruct)
 impossible to execute.
 You will be required to manually rotate phasers and
 torpedos, and manually change course and speed.
-Damaged sensors (rare) makes orders 13 (position report) and
+Destroyed sensors makes orders 13 (position display) and
 18 (scan) impossible.
-A damaged probe launcher (sometimes) prevents you from
+A destroyed probe launcher prevents you from
 launching probes.
-A disabled warp drive (common) slows your speed and
-maneuverability.
-See order #20 about jettisoned engineering section.
+A destroyed warp drive slows your maximum speed to warp 0.99 and
+severly limits your maneuverability.
+See order 20 about jettisoned engineering section.
 When your crew of 450 dies, your vessel is as good as dead.
 There are 350 men aboard each enemy vessel.
+.sp
+.PP
+All of the above systems can be partially damaged.
+A damaged warp drive (common) lowers your maximum speed
+and maneuverability.
+A damaged probe launcher (sometimes) may refuse to launch.
+Damaged sensors (rare) may not be able to return position
+displays or be able to scan an enemy.
+A damaged computer (very rare) will sometimes refuse to lock onto
+targets, and in addition, when damaged, may lose some of the
+locks held by the weapons or by the helm.
 .sp
 .PP
 Shield percentage is calculated by its energy drain times
@@ -466,10 +525,16 @@ speeds or firing phasers.
 .LP
 18.  Scan Enemy (Damage Report of Enemy).
 .PP
-[Ship Name]
+[Ship Name | Probe id | #Ship Name]
 .PP
 An enemy damage report is essentially the same as the
 Enterprise's.
+Sensor reports can not be had for cloaked vessels.
+.PP
+By giving the id number of a probe, information about it can
+be gathered.
+The same information can be gathered about a ship's (jettisoned)
+engineering by prepending a '#' before the ship's name.
 .sp
 .LP
 19.  Alter Power Distribution.
@@ -489,18 +554,18 @@ The same applies to the phaser drains.
 .sp
 .PP
 The power circuits of all vessels are illustrated in
-appendix 2.
+Appendix 2.
 Dilithium crystals produce energy much like generators.
 This power is then used to maintain warp speeds, recharge
 antimatter pods in the engine reserve, recharge phaser
 banks, or maintain shield power.
-Your initial regeneration is ten, however, shields normally
-drain four units and engines burn one unit per each
+Your initial regeneration is ten, however, the shields normally
+drain four units and the engines require one unit per each
 warp-second.
 .sp
 .PP
-Shields can be thought of as electro-magnets.
-The more energy put into them, the stringer their force field
+Shields can be thought of as electromagnets.
+The more energy put into them, the stronger their force field
 becomes.
 Therefore, a shield's overall percentage is calculated by
 the following formula:
@@ -530,8 +595,8 @@ power distribution unless some special need arises.
 Distribution, for the most part, is automatic.
 Regeneration is calculated first; that power is placed in
 reserve, along with any discharged phaser units.
-Shield drain is calculated next, then phaser and engine
-drains.
+Shield drain is calculated next, then the cloaking device,
+then phaser and engine drains.
 .sp
 .PP
 Be concerned with wasting power by indiscriminately firing
@@ -543,7 +608,7 @@ Huge power losses cannot be made up in battle.
 20.  Jettison Engineering.
 .PP
 Although this order was never executed in the television
-series, it is quite possible, according to its producer.
+series, it is quite possible according to its producer.
 Jettisoning engineering has serious consequences, but it may
 be your only course of action.
 .sp
@@ -558,9 +623,9 @@ your regeneration; C: you lose your warp drive; D: your lose
 your probe launcher; E: you lose your shields until you
 designate phasers to discharge; F: the engineering section
 itself decelerates to a stop; G: a ten second time delay on
-it is set; H: hopefully, when it does explode, you are far
-from its effects; I: your phasers and torpedos are now free
-to fire in any direction.
+it is set (hopefully, when it does explode, you are far
+from its effects); H: you lose your cloaking device;
+I: your phasers and torpedos are now free to fire in any direction.
 .sp
 .LP
 21.  Detonate Engineering.
@@ -605,6 +670,7 @@ direction.
 .sp
 .LP
 24.  Attempt Corbomite Bluff(s).
+.PP
 There were two corbomite bluffs in the television series;
 one was against a midget operating a huge space vessel the
 other was against Romulan attackers.
@@ -625,7 +691,7 @@ never accepted one.
 .PP
 This order ends a message to the enemy demanding that they
 surrender.
-Please bear in mind that Romulans are the most suicidal.
+Please bear in mind that Romulans and Orions are the most suicidal.
 .sp
 .LP
 27.  Initiate Self-Destruct.
@@ -649,30 +715,44 @@ detonation.
 .PP
 This order prints out the number of survivors on board all the ships.
 This order does not use a turn.
+Cloaked ships are reported as having `???' survivors.
 .sp
 .LP
-30.  Reprint Above List.
+30.  Print version number
 .PP
-This option, which does not use a turn, lists code numbers
+This command, which does not use a turn, prints the current version
+of TREK73.
+.sp
+.LP
+31.  Save game
+.PP
+This command saves the current game into a file.
+It can be restarted later by using the command line option `-r'.
+.sp
+.LP
+32.  Reprint Above List.
+.PP
+This command, which does not use a turn, lists code numbers
 and associated descriptions of each.
 .sp
 .LP
-31 And Up.
+33 And Up.
 .PP
 Future options, currently being designed in Trek74, will
 include Dr. Daystrom's paranoid, M5 multi-tronics computer
 which will take over while you relax; or battle someone else
 who is on another terminal; or battle in teams; or have a
-free-for-all against nine other starships.
+free-for-all against nine other players.
 .sp
 .bp
 .ce
 Options
 .sp
 .PP
-In TREK73, all the names are taken from the series Star Trek.
-Through the use of options, the names can be changed to whatever
-you want.
+In TREK73, all the names of crewmembers are taken from the
+Star Trek series.
+Through the use of options, the names, as well as other
+aspects of the game, can be changed to whatever you want.
 .sp
 .PP
 To use the options, you must add the variable TREK73OPTS to
@@ -746,10 +826,6 @@ This option names the ship's communications officer.
 It is the duty of this officer to handle all communications between
 the ship and the rest of the universe.
 .sp
-.IP "ships STRING"
-This option, if set, tells the program how many ships you wish to fight.
-If it is not set, then the program will ask.
-.sp
 .IP "enemy STRING [random]"
 If this option is set, it tells the program which race you wish
 to fight.
@@ -762,13 +838,139 @@ If this option is set, it specifies the name of the commander
 of the enemy ship(s).
 If this option is not specified, the name is chosen at random.
 .sp
+.IP "class STRING [CA]"
+This option specifies the kind of ship you are commanding.
+Allowable classes are: DN, CA, CL, and DD, standing for
+dreadnought, heavy cruiser, light cruiser, and destroyer.
+In general, the larger the ship, the more weapons and stronger
+shields you have, at the cost of less speed and maneuverability.
+.sp
+.IP "foeclass STRING [CA]"
+This option specifies the kind of ship that you are fighting.
+The different classes are explained above.
+.sp
 .IP "silly BOOLEAN [nosilly]"
 If this option is set, an additional race is added to the list of
 possible races to fight.
 This race is the Monty Pythons.
 Note that if you wish to always fight the Monty Python's, you merely
 have to set the enemy option above.
+.sp
+.IP "time STRING [30]"
+Time is used to specify the time between commands.
+The longer this value, the more time may be used in issuing a command.
+.sp
+.IP "teletype BOOLEAN [noteletype]"
+The teletype option causes some of the output to come out as it did
+in the original teletype version.
+.sp
+.IP "savefile STRING [$HOME/trek73.save]"
+The savefile option specifies where the data image is to be stored if the
+game is saved during play.  ``~'' is not expanded, so the path should be
+explicit and fully expanded.
+.sp 3
+.ce
+Command Line Options
+.sp
+.PP
+In all cases, the arguments you place on the command line will supersede
+options in the environment.
+.sp
+.PP
+The following is a description of the command line options:
+.sp
+.IP \-t
+Turns on terse mode.
+No initial scenario description is given.
+This is useful for terminals running at low baud rates.
+This option is normally off.
+.sp
+.IP \-c
+Allows the specification of the Federation captain's name.
+.sp
+.IP \-s
+Specify the sex of the captain of the Federation vessel.
+.sp
+.IP \-S
+Specify the name of the Science Officer of the Federation vessel.
+.sp
+.IP \-E
+Specify the name of the Chief Engineer of the Federation vessel.
+.sp
+.IP \-C
+Specify the name of the Communications Officer of the Federation vessel.
+.sp
+.IP \-N
+Specify the name of the Navigator of the Federation vessel.
+.sp
+.IP \-H
+Specify the name of the Helmsman of the Federation vessel.
+.sp
+.IP \-f
+Specify the name of the enemy commanding officer.
+.sp
+.IP \-r
+Specify the race of the enemy.
+The race should be one of the following:
+Klingon, Romulan, Kzinti, Gorn, Hydran, Lyran, Tholian, Orion,
+or Monty Python.
+.sp
+.IP \-d
+Set the delay time for command entry.
+Higher times can be useful for novices or for playing on very slow
+terminals.
+.sp
+.IP \-y
+Silly option.
+Adds the Monty Pythons as a possible enemy race.
+This option is normally off.
+.sp
+.IP \-T
+Teletype option.
+Causes certain parts of the output to come out as they did on the
+original teletype implementation.
+Doesn't do much for the game on crts.
+This option is normally off.
+.sp
+.IP \-n
+Specify the name of the Federation vessel.
+The default name for the Federation vessel is randomly chosen from a
+set of names.
+.sp
+.IP \-F
+Specify the class of the enemy vessel(s).
+Allowable classes are Destroyer (DD), Light Cruiser (CL),
+Heavy Cruiser (CA), and Dreadnought (DN).
+If the argument is none of the above, the program assumes that this is
+the name of a file where a player-designed ship is stored.
+.sp
+.IP \-l
+Specify the class of the Federation vessel.
+Available classes are the same as the enemy's.
+.sp
+.IP \-R
+Restore the game from the savefile.  It is assumed that the TREK73OPTS
+contains the name of the savefile, otherwise it is not possible to restart
+the game with the -R option.  In case the savefile name is not in TREK73OPTS,
+the game may be restored by issuing the command with the path to the savefile
+as the first argument.
 .bp
+.ce
+Designer Ships
+.sp
+.PP
+A feature of TREK73 allows you to have more than just the standard
+four ship types.
+The program
+.I shipyard
+(6) allows new ship types to be created.
+.I Shipyard
+in conjunction with the -F and/or -l command line option allows
+battle between, say, the Enterprise and the Death Star.
+.PP
+See the manual page for
+.I shipyard
+for more information about designer ships.
 .ce
 Simple Strategy
 .sp
@@ -817,13 +1019,12 @@ UNIX is a registered trademark of Bell Laboratories.
 .PP
 In April 1985, Jeff Okamoto and Peter Yee, both
 at the University of California at Berkeley combined the two
-versions into one, fixing bugs and adding new commands.
-The user-settable options were also added.
+versions into one, fixing bugs and adding new commands and concepts.
 .sp
 .PP
 Ideas and bug reports should be sent to:
 .br
-ARPA: okamoto@BERKELEY and yee@BERKELEY
+ARPA: okamoto@ucbvax.berkeley.edu and yee@ucbvaxberkeley.edu
 .br
 UUCP: ..!ucbvax!okamoto and ..!ucbvax!yee
 .bp
@@ -854,11 +1055,11 @@ generator                    *     \\phaser control
         probe   launcher     |      |-10/10|-****>
                              V      |-10/10|-****>
                        =*******=    -------- phaser banks
-               photon  =*****===
-              torpedo  =**======
-                tubes  =======******
+               photon  =*******=
+              torpedo  ===*******
+                tubes  =======*******
                        =========  *******
-                       =========        ********
+                       =========      *******
 + Energy unit
 O Matter-anti-matter pod
 * Filled matter-anti-matter pod
@@ -868,6 +1069,9 @@ O Matter-anti-matter pod
 .bp
 .ce
 APPENDIX 2
+.br
+.ce
+Heavy Cruiser
 .nf
 .sp 7
                                   Shield 2
@@ -897,8 +1101,127 @@ APPENDIX 2
 .bp
 .ce
 APPENDIX 3
+.sp 2
 .ce
 Weapon And Vessel Specifications
+.ce
+Destroyer Class Vessel
+.ce
+Enemy exceptions are enclosed within [brackets]
+.sp
+.DS
+.ta 2.8iR 3.3i
+.ce
+Phasers
+	Number of banks	2
+	Max range	1000 megameters
+	Max spread	90 degrees (45+45)
+	Min spread	20 degrees (10+10)
+	Max hit with 45 degree spread	10
+	Max hit with 10 degree spread	45
+	Loss of shield 1 per hit	hit/3
+	Loss of shields 2-3-4 per hit	hit/2
+	Firing angles with engineering	0-150, 210-360 degrees
+	Max charge per bank	10 units
+	Min charge or discharge time	1 sec
+.sp
+.ce
+Tubes
+	Number of tubes	4
+	Max range	12,000 megameters
+	max launch speed	warp 12
+	Max time delay	10 seconds
+	Max proximity delay	500M
+	Max explosion radius	500M
+	Max number of pods launched	10
+	Max hit factor	50
+	Loss of shield 1 per hit	hit/2.25
+	Loss of shields 2-3-4 per hit	hit/1.5
+	Firing angles with engineering	0-160, 200-360 degrees
+.sp
+.ce
+Probes
+	Number of probe launchers	1
+	Max range	3000M
+	Max launch speed	2
+	Max time delay	15 sec
+	Max proximity delay	any
+	Max explosion radius	50 times number of pods
+	Max pods launched	fuel available
+	Max hit factor	10 times number of pods
+	Loss of shields per hit	same as torpedos
+	Firing angles with engineering	all
+.sp
+.ce
+Vessels
+	Max turning rate	120 degrees
+	Max speed	warp 10 [12]
+	Min units burned per warp-second	.5 [.5]
+	Crew	200 [150]
+.DE
+.bp
+.ce
+Weapon And Vessel Specifications
+.ce
+Light Cruiser Class
+.ce
+Enemy exceptions are enclosed within [brackets]
+.sp
+.DS
+.ta 2.8iR 3.3i
+.ce
+Phasers
+	Number of banks	4
+	Max range	1000 megameters
+	Max spread	90 degrees (45+45)
+	Min spread	20 degrees (10+10)
+	Max hit with 45 degree spread	10
+	Max hit with 10 degree spread	45
+	Loss of shield 1 per hit	hit/4.5
+	Loss of shields 2-3-4 per hit	hit/3
+	Firing angles with engineering	0-140, 220-360 degrees
+	Max charge per bank	10 units
+	Min charge or discharge time	1 sec
+.sp
+.ce
+Tubes
+	Number of tubes	4
+	Max range	12,000 megameters
+	max launch speed	warp 12
+	Max time delay	10 seconds
+	Max proximity delay	500M
+	Max explosion radius	500M
+	Max number of pods launched	10
+	Max hit factor	50
+	Loss of shield 1 per hit	hit/3
+	Loss of shields 2-3-4 per hit	hit/2
+	Firing angles with engineering	0-150, 210-360 degrees
+.sp
+.ce
+Probes
+	Number of probe launchers	1
+	Max range	3000M
+	Max launch speed	2
+	Max time delay	15 sec
+	Max proximity delay	any
+	Max explosion radius	50 times number of pods
+	Max pods launched	fuel available
+	Max hit factor	10 times number of pods
+	Loss of shields per hit	same as torpedos
+	Firing angles with engineering	all
+.sp
+.ce
+Vessels
+	Max turning rate	77 degrees
+	Max speed	warp 9 [11]
+	Min units burned per warp-second	.75 [.5]
+	Crew	350 [250]
+.DE
+.bp
+.ce
+Weapon And Vessel Specifications
+.ce
+Heavy Cruiser Class
 .ce
 Enemy exceptions are enclosed within [brackets]
 .sp
@@ -947,30 +1270,148 @@ Probes
 .sp
 .ce
 Vessels
-	Max turning rate	50 degrees
-	Max speed	warp 99 [11]
+	Max turning rate	55 degrees
+	Max speed	warp 9 [11]
 	Min units burned per warp-second	1 [.75]
-	Crew	450 d[350]
+	Crew	450 [350]
 .DE
+.bp
+.ce
+Weapon And Vessel Specifications
+.ce
+Dreadnought Class
+.ce
+Enemy exceptions are enclosed within [brackets]
+.sp
+.DS
+.ta 2.8iR 3.3i
+.ce
+Phasers
+	Number of banks	6
+	Max range	1000 megameters
+	Max spread	90 degrees (45+45)
+	Min spread	20 degrees (10+10)
+	Max hit with 45 degree spread	10
+	Max hit with 10 degree spread	45
+	Loss of shield 1 per hit	hit/7.5
+	Loss of shields 2-3-4 per hit	hit/5
+	Firing angles with engineering	0-125, 235-360 degrees
+	Max charge per bank	10 units
+	Min charge or discharge time	1 sec
+.sp
+.ce
+Tubes
+	Number of tubes	8
+	Max range	12,000 megameters
+	max launch speed	warp 12
+	Max time delay	10 seconds
+	Max proximity delay	500M
+	Max explosion radius	500M
+	Max number of pods launched	10
+	Max hit factor	50
+	Loss of shield 1 per hit	hit/6
+	Loss of shields 2-3-4 per hit	hit/4
+	Firing angles with engineering	0-135, 225-360 degrees
+.sp
+.ce
+Probes
+	Number of probe launchers	1
+	Max range	3000M
+	Max launch speed	2
+	Max time delay	15 sec
+	Max proximity delay	any
+	Max explosion radius	50 times number of pods
+	Max pods launched	fuel available
+	Max hit factor	10 times number of pods
+	Loss of shields per hit	same as torpedos
+	Firing angles with engineering	all
+.sp
+.ce
+Vessels
+	Max turning rate	30 degrees
+	Max speed	warp 8 [10]
+	Min units burned per warp-second	2 [1.5]
+	Crew	600 [450]
+.DE
+.bp
 .ce
 APPENDIX 4
 .sp 2
 .ce
 Initial Settings
-.sp 2
+.ce
+Destroyer class
+.sp 1
+.ce
+Enemy exceptions are enclosed within [brackets]
+.sp
+.DS
+.ta 2.8iR 3.3i
+	Crew	200 [150]
+	Speed	Warp 1
+	Course	0 [0-360] degrees
+	Engine Efficiency	.5 [.5]
+	Fuel Level	100
+	Fuel Capacity	150
+	Regeneration Rate per Second	8.0
+	Helm Lock	None [None]
+	Phaser Deployment	0, 0
+	Phaser Bank Levels	2 x 10 units
+	Phaser Charge/Discharge Rates	2 x 10 units
+	Shield Drain	2 x 1 units
+	Shield Percentage	2 x 100
+	Torpedo Deployment	60, 0, 0, 300
+	Tube Levels	4 x Zero
+	Total Charged Pods Available	190
+.sp
+.DE
+.ce
+Initial Settings
+.ce
+Light Cruiser Class
+.sp 1
+.ce
+Enemy exceptions are enclosed within [brackets]
+.sp
+.DS
+.ta 2.8iR 3.3i
+	Crew	350 [250]
+	Speed	Warp 1
+	Course	0 [0-360] degrees
+	Engine Efficiency	.75 [.5]
+	Fuel Level	125
+	Fuel Capacity	175
+	Regeneration Rate per Second	10
+	Helm Lock	None [None]
+	Phaser Deployment	90, 0, 0, 270
+	Phaser Bank Levels	4 x 10 units
+	Phaser Charge/Discharge Rates	4 x 10 units
+	Shield Drain	4 x 1 units
+	Shield Percentage	4 x 100
+	Torpedo Deployment	60, 0, 0, 300
+	Tube Levels	4 x Zero
+	Total Charged Pods Available	190
+.sp
+.DE
+.bp
+.ce
+Initial Settings
+.ce
+Heavy Cruiser Class
+.sp 1
 .ce
 Enemy exceptions are enclosed within [brackets]
 .sp
 .DS
 .ta 2.8iR 3.3i
 	Crew	450 [350]
-	Speed	1000 megameters
+	Speed	Warp 1
 	Course	0 [0-360] degrees
 	Engine Efficiency	1 [.75]
 	Fuel Level	150
 	Fuel Capacity	200
 	Regeneration Rate per Second	10
-	Helm Lock	None [Federation Vessel]
+	Helm Lock	None [None]
 	Phaser Deployment	90, 0, 0, 270
 	Phaser Bank Levels	4 x 10 units
 	Phaser Charge/Discharge Rates	4 x 10 units
@@ -981,3 +1422,116 @@ Enemy exceptions are enclosed within [brackets]
 	Total Charged Pods Available	190
 .sp
 .DE
+.ce
+Initial Settings
+.ce
+Dreadnought Class
+.sp 1
+.ce
+Enemy exceptions are enclosed within [brackets]
+.sp
+.DS
+.ta 2.8iR 3.3i
+	Crew	600 [450]
+	Speed	Warp 1
+	Course	0 [0-360] degrees
+	Engine Efficiency	2 [1.5]
+	Fuel Level	200
+	Fuel Capacity	200
+	Regeneration Rate per Second	15
+	Helm Lock	None [None]
+	Phaser Deployment	90, 90, 0, 0, 270, 270
+	Phaser Bank Levels	6 x 10 units
+	Phaser Charge/Discharge Rates	6 x 10 units
+	Shield Drain	4 x 1 units
+	Shield Percentage	4 x 100
+	Torpedo Deployment	120, 60, 60, 0, 0, 300, 300, 240
+	Tube Levels	8 x Zero
+	Total Charged Pods Available	190
+.sp
+.DE
+.bp
+.ce
+APPENDIX 5
+.sp 2
+.ce
+Designer's Notes
+.sp 2
+.PP
+When I was about 10 or 11, I would go to the Lawrence Hall of Science
+quite frequently.
+There, on their time-sharing system, I would sit at a Teletype Model 33
+and play trek.
+.PP
+Sadly, LHS replaced their system and trek went away.
+It was my intention that it should not be forgotten.
+I had had a copy of a slightly different version of trek written in BASIC,
+but it was sadly unimplementable on my Apple computer.
+.PP
+When I learned of an implementation of trek written in C, I jumped at
+the chance to bring it to the systems here at UC Berkeley.
+At that time, the game was mostly a direct translation of the original
+BASIC source.
+Many of the commands and routines were either missing or faulty.
+With Peter Yee, we worked together to fix up the program and managed
+to get it running.
+.PP
+Once it was running, the time came for improvements.
+I admit to pulling many concepts from the game Star Fleet Battles, most
+notably the different races (Hydrans, Lyrans, etc.) and the ship names.
+.PP
+This version of the game represents many hours of thinking and debugging.
+I hope you enjoy playing it as much as I did coding it.
+.sp
+.IP " " 30
+-Jeff Okamoto
+.sp 2
+.PP
+My first experience with TREK73 was also at the Lawrence Hall of Science.
+I had been taking classes in Time-Sharing Basic and noticed that other
+people always talked about a game called $TREK that was a real CPU hog
+and was usually turned off.
+Naturally I was intrigued.
+Soon I was paying $2.00 an hour for the chance to play that game.
+Many long hours and quite a few dollars went into playing $TREK,
+so it was with a certain sadness that I learned that the DG Ecllipse on
+which $TREK ran was being phased out.
+I made several attempts to obtain the source before it went away, but
+I was unable to get it.
+.PP
+Fortunately for me, Dave Pare at UC San Diego was also a fan of the game,
+and more importantly, he had an outdated copy of the source from an
+HP 2000.
+Dave had started to implement the game in C to run under 4.2 BSD UNIX.
+Expressing my interest to Dave, I was able to get a copy of Dave's code
+and thus the TREK Project at Berkeley was started.
+I spent endless hours tweaking with Dave's code, implementing some of
+the fifteen or so commands that he had not yet translated.
+.PP
+At about this time, I learned that Christopher Williams, here at Berkeley,
+had also tried to implement the game in C.
+What is more, he had a copy of the source (in BASIC) from Berkeley
+High School, and had implemented most of the commands.
+Merging the work that Chris had done into my copy of Dave's work led
+to a fairly complete version of the game.
+There still remained a large number of bugs, poor ideas, and outright
+mistakes in the code, but it ran.
+.PP
+Jeff Okamoto, being a fan of the game and a Star Fleet Battles
+player, was greatly interested in hacking on the game to bring up to
+par with the version that ran at LHS and to extend it even beyond
+that.
+Thus our partnership was formed and the current version of the game
+represents several hundred hours of our joint work (and play).
+Also represented are the suggestions, modifications and bug fixes
+we received from numerous people, including (to name a few)
+Matt Dillon, David Sharnoff, Joel Duisman, all at Berkeley, and
+Roger Noe at Rockwell International.
+.PP
+It is hoped that this implementation of a classic game will bring joy
+(and perhaps fond remembrances) to all who play.
+.sp
+.IP " " 30
+Live Long and Prosper,
+.br
+-Peter Yee
