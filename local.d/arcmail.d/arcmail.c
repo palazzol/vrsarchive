@@ -43,7 +43,7 @@ main(argc,argv)
 int argc;
 char *argv[];
 {
-    FILE *fclose(), *fopen();
+    FILE *fopen();
 
     strcpy(ARCDIR, getenv("HOME"));
     strcat(ARCDIR, "/Mail");
