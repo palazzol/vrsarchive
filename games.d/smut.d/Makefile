@@ -10,7 +10,7 @@ OBJS	= ret.o
 SRCS	= $(OBJS:.o=.c) $(SOBJS:.o=.c)
 
 ret:	$(OBJS)
-	$(CC) -o $@ $(CFLAGS) $(OBJS)
+	$(CC) -o $@ $(CFLAGS) $(OBJS) $(LIBS)
 
 .sh:
 	sed '/^GAMLIB/,/^PAGER/c\
