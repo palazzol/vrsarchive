@@ -94,8 +94,8 @@ void	directions ()
 	reg	char	**s = dirs;
 
 	while (*s)
-		printf("%s\n", *s++);
-	trash(getchar());
+		printw("%s\n", *s++);
+	trash(getch());
 }
 
 /*
@@ -114,7 +114,7 @@ char	*get_pass ()
 	{
 		reg	char	in;
 
-		if ((in = getchar()) == '\n')
+		if ((in = getch()) == '\n')
 			break;
 		buf[i] = in;
 	}
@@ -229,8 +229,7 @@ reg	char	dir;
 */
 void	quit_it ()
 {
-	echo();
-	nocrmode();
+	refresh();
 	endwin();
 	exit(0);
 }
@@ -246,7 +245,7 @@ void	shell ()
 
 	echo();
 	nocrmode();
-	_puts(CL);		/* clear screen		*/
+	clear();		/* clear screen		*/
 	move(LINES - 1, 0);	/* and go to the bottom */
 	draw();
 	if ((sh = getenv("SHELL")) == NULL) /* check for a preferred shell */
@@ -278,8 +277,8 @@ void	shell ()
 	trap(0);		/* reset signals		*/
 	noecho();
 	crmode();
-	printf("[Press return to continue]");
-	trash(getchar());
+	printw("[Press return to continue]");
+	trash(getch());
 	redraw();
 }
 

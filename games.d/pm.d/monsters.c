@@ -183,7 +183,7 @@ reg	char	name;
 	m = wh_mons(name);
 	if (m == NULL)
 		msg("No such monster: %s", punctrl(name));
-	_puts(CL);
+	clear();
 	fprintf(stderr, "Name:          %c\n", m->mo_name);
 	fprintf(stderr, "Place:         (%d,%d)\n", m->mo_pos.x, m->mo_pos.y);
 	fprintf(stderr, "Inch:          %c\n", m->mo_inch);
@@ -194,7 +194,7 @@ reg	char	name;
 	fprintf(stderr, "Move:          %c\n", m->mo_ch);
 	fprintf(stderr, "Count:         %d\n", m->mo_cnt);
 	fprintf(stderr, "Attrib:        %o\n\n", m->mo_attrib);
-	trash(getchar());
+	trash(getch());
 	redraw();
 }
 
