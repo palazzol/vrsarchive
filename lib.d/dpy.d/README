@@ -1,0 +1,40 @@
+			DPY (release 2)
+
+The DPY module was originally written for a 4.2 BSD UNIX system running on a
+VAX 750.  It now also runs under System V.  There are two makefiles supplied
+with this release, with the following names:
+
+	makefile.bsd	for 4.2 BSD.
+	makefile.usg	for System V.
+
+You should copy the appropriate makefile to the file "makefile" in order to
+build the library that is suitable for your system.
+
+This is the second release of the DPY module.  There have been some changes
+in some of the dpy routines since the previous release.  If you have any
+programs written for the previous release, you will need to modify them
+as follows in order to use the new DPY:
+
+	Dpyclearline is now called dpyclrline.
+	Dpyclearwindow is now called dpyclrwindow.
+	Dpyinit is called with different arguments.
+
+The file dpy.doc describes the new calling formats.  These changes were made
+in order to make DPY less system dependent.  There are also several bug fixes
+in this new release.
+
+If you are running under a different machine, you have to change the makefile
+to use gensubs.c instead of vaxsubs.s (this contains generic subroutines which
+run on all machines).  If you are ambitious, you can speed up dpy by writing
+your own assembly level routines to duplicate what gensubs.c does.  Not much
+assembly code is needed.  (If you are real lucky, you are on a 32016, and the
+necessary routines are already written in ns32ksubs.s.)  I am willing to
+collect and distribute such subroutines for some other machines.
+
+I have included two toy programs (test1.c and test2.c) which demonstrate some
+of the capabilities of dpy.  Along with dpy.doc, they should show you how to
+use the module.  I am still sorry that dpy.doc is not formatted.  Someday...
+
+Comments and bug fixes are welcome.
+			David I. Bell
+			nsc!daisy!dbell
