@@ -261,10 +261,15 @@ docast()
 	return(spelleffects(spell,FALSE));
 }
 
+#ifdef __STDC__
+int
+spelleffects(int spell,boolean atme)
+#else
 int
 spelleffects(spell,atme)
 register int spell;
 boolean atme;
+#endif
 {
 	register int energy, damage;
 #ifdef HARD

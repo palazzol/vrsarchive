@@ -174,7 +174,7 @@ const struct shclass shtypes[] = {
 	{"rare books", SPBOOK_SYM, 3, D_SHOP,
 	    {{90, SPBOOK_SYM}, {10, SCROLL_SYM}, {0, 0}}, shkbooks},
 #endif
-	{NULL, 0, 0, 0, {{0, 0}, {0, 0}, {0, 0}}, (char **)0}
+	{NULL, 0, 0, 0, {{0, 0}, {0, 0}, {0, 0}}, (const char **)0}
 };
 
 static void
@@ -196,11 +196,11 @@ int sx, sy;
 	else (void) mkobj_at(atype, sx, sy);
 }
 
+/* extract a shopkeeper name for the given shop type */
 static void
 findname(nampt, nlp)
-/* extract a shopkeeper name for the given shop type */
-	char *nampt;
-	char *nlp[];
+char *nampt;
+const char *nlp[];
 {
     register int i;
 
@@ -292,11 +292,16 @@ struct mkroom	*sroom;
 	return(sh);
 }
 
+/* stock a newly-created room with artifacts */
+#ifdef __STDC__
+void
+stock_room(const struct shclass *shp,struct mkroom *sroom)
+#else
 void
 stock_room(shp, sroom)
-/* stock a newly-created room with artifacts */
-struct shclass	*shp;
+const struct shclass	*shp;
 register struct mkroom *sroom;
+#endif
 {
     /*
      * Someday soon we'll dispatch on the dist field of shclass to do
@@ -356,7 +361,7 @@ int
 get_shop_item(type)
 int type;
 {
-	struct shclass *shp = shtypes+type;
+	const struct shclass *shp = shtypes+type;
 	register int i,j;
 
 	/* select an appropriate artifact type at random */

@@ -24,7 +24,7 @@ struct shclass {
 	    int	iprob;	/* probability of an item type */
 	    int itype;	/* item type: if >=0 a class, if < 0 a specific item */
 	} iprobs[5];
-	char **shknms;	/* string list of shopkeeper names for this type */
+	const char **shknms;	/* string list of shopkeeper names for this type */
 };
 extern const struct shclass shtypes[];	/* defined in shknam.c */
 

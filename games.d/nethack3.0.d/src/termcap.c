@@ -290,9 +290,14 @@ register int x, y;
 	curx = x;
 }
 
+#ifdef __STDC__
+void
+xputc(char c)
+#else
 void
 xputc(c)
 char c;
+#endif
 {
 	(void) fputc(c, stdout);
 }
