@@ -1,17 +1,16 @@
-#	%W%	(Berkeley)	%G%
 #
-SHELL	= /bin/sh
-ALIASES	= /usr/lib/mail/aliases
-NEWALIAS= /usr/lib/mail/aliashash
+#	$Header: /home/Vince/cvs/local.d/news.d/Makefile,v 1.2 1987-02-15 15:54:57 vrs Exp $
+#
+SUBDIR	= src man
+ALL	= ${SUBDIR}
+include ../../CONFIG
+ALIASES	= $(LIBMAIL)/aliases
+NEWALIAS= $(LIBMAIL)/aliashash
 #
 # Programs that live in subdirectories, and have makefiles of their own.
 #
-SUBDIR=	src man
-
-all:	${SUBDIR}
-
 ${SUBDIR}: FRC
-	cd $@; make Makefile; make ${MFLAGS}
+	@cd $@; make makefile; make ${MFLAGS}
 
 install:
 	for i in ${SUBDIR}; do \

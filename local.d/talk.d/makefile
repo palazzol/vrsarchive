@@ -1,30 +1,31 @@
 #
-#	@(#)Makefile	1.3 12/3/84
+#	$Header: /home/Vince/cvs/local.d/talk.d/makefile,v 1.4 1987-02-15 15:59:22 vrs Exp $
 #
-SHELL	= /bin/sh
+ALL	= talk
+MODEL	= -i -F 2000
+OPTIONS	= -O
+include ../../CONFIG
 OBJECT	= talk.o announce.o ctl.o display.o get_names.o init_disp.o invite.o \
 	  io.o msgs.o
 SOURCE	= talk.c announce.c ctl.c display.c get_names.c init_disp.c invite.c \
 	  io.c msgs.c
 INCLUDE	= talk.h
-CFLAGS	= -O
-INSTALL	= /usr/local
 
-talk:	${OBJECT}
-	cc -F 2000 -o talk ${OBJECT} -lcurses -ltermlib -lx
+talk:	$(OBJECT)
+	$(CC) $(CFLAGS) -o $@ $(OBJECT) $(LIBS)
 
-install: talk
-	cp talk $(INSTALL)
-	chmod 711 $(INSTALL)/talk
+install: $(ALL) $(BINDIR)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
 
-${OBJECT}: $(INCLUDE)
+$(OBJECT): $(INCLUDE)
 
 lint:
-	lint -lcurses -ltermlib ${SOURCE} | tee lint.out
+	lint -lcurses -ltermlib $(SOURCE) | tee lint.out
 
 clean:
-	rm -f *.o lint.out tags talk
+	rm -f $(OBJECT) $(ALL) lint.out tags
 
-tags:	${SOURCE} ${INCLUDE}
+tags:	$(SOURCE) $(INCLUDE)
 	rm -f tags
-	ctags ${SOURCE} ${INCLUDE}
+	ctags $(SOURCE) $(INCLUDE)

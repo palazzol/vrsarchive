@@ -1,11 +1,16 @@
-CFLAGS	= -Me
+#
+#	$Header: /home/Vince/cvs/local.d/ctty.d/Makefile,v 1.2 1987-02-15 15:52:10 vrs Exp $
+#
+MODEL	= -M2em -F 2000
+ALL	= ctty
+include ../../CONFIG
 
-all:	ttype tspeed
+install: $(BINDIR) ctty
+	cp ctty $(BINDIR)/ttype
+	chown root $(BINDIR)/ttype
+	chmod 4711 $(BINDIR)/ttype
+	rm -f $(BINDIR)/tspeed
+	ln $(BINDIR)/ttype $(BINDIR)/tspeed
 
-ttype:	ctty.o
-	cc $(CFLAGS) -F 2000 -o ttype ctty.o -ltermlib
-	chown root ttype
-	chmod 4711 ttype
-
-tspeed:	ttype
-	ln ttype tspeed
+clean:
+	rm -f $(ALL)

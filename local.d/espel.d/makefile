@@ -1,37 +1,42 @@
 #
-# Make espel:
+#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.2 1987-02-15 15:52:41 vrs Exp $
 #
-#	In order to install espel some make variables must be set:
-#		BIN	or where to keep the excecutable shell script
-#		LIB	or where to keep the supporting binary and text files
-#		PUBLIC	or where to keep the public dictionaries
-#		SPELLIN or whether to make spellin or not
-#			=	 => do not make spellin
-#			=spellin => make spellin
-#	Then be sure LIB is set properly in espel
+ALL	= espel espel.hi spellin
+OPTIONS	= -DLIB=\"$(LIBDIR)\"
+include ../../CONFIG
 #
-BIN	= /usr/local
-LIB	= /usr/local/lib
-PUBLIC	= $(LIB)/.
-SPELLIN	=
-USRMAN	= /usr/man
-MANDIR	= $(USRMAN)/manl
-CC=cc
-CFLAGS=-DLIB=\"$(LIB)\"
-OFILES=main.o hi.o hashtab.o correct.o copy.o minigrep.o
+#	PUBLIC is where to keep the public dictionaries
+#
+PUBLIC	= $(LIBDIR)
+OFILES	= copy.o correct.o hashtab.o hi.o main.o minigrep.o
 
-all: espel.hi $(SPELLIN)
-
-clean:
-	rm -f $(OFILES) espel.hi $(SPELLIN) spellin.o
+espel:	espel.sh
+	sed '/^LIB/,/^PUBLIC/c\
+LIB=$(LIBDIR)\
+SPELLIN=$(LIBDIR)/spellin\
+PUBLIC=$(PUBLIC)' $? > $@
 
 espel.hi: $(OFILES)
 	$(CC) $(CFLAGS) $(OFILES) -o espel.hi
 
-spellin: spellin.o
-	cc spellin.o -o spellin
-spellin.o: spell.h
+install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
+	cp espel $(BINDIR)
+	chmod 755 $(BINDIR)/espel
+	cp espel.help espel.hi spellin $(LIBDIR)
+	cd $(LIBDIR); chmod 711 espel.hi spellin
+	cd $(LIBDIR); chmod 644 espel.help
+	cp /usr/lib/spell/hlista $(PUBLIC)/.spellht
+	touch $(PUBLIC)/.spellwd
+	chmod 666 $(PUBLIC)/.spellht $(PUBLIC)/.spellwd
+	touch /usr/lib/spell/spellhist
+	chmod 666 /usr/lib/spell/spellhist
+	cp espel.l $(MAN1)
+	chmod 644 $(MAN1)/espel.l
 
+clean:
+	rm -f $(ALL) $(OFILES)
+
+spellin.o: spell.h
 main.o: espel.h
 hi.o: espel.h
 hashtab.o: espel.h
@@ -39,22 +44,3 @@ correct.o: espel.h
 copy.o:espel.h
 minigrep.o: espel.h
 
-$(BIN) $(LIB) $(PUBLIC) $(USRMAN) $(MANDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: all $(BIN) $(LIB) $(PUBLIC) $(USRMAN) $(MANDIR)
-	cp espel $(BIN)
-	chmod 755 $(BIN)/espel
-	cp espel.help espel.hi $(SPELLIN) $(LIB)
-	chmod 755 $(LIB)/espel.help $(LIB)/espel.hi $(LIB)/$(SPELLIN)
-
-	cp /usr/lib/spell/hlista $(PUBLIC)/.spellht
-	touch $(PUBLIC)/.spellwd
-	chmod 666 $(PUBLIC)/.spellht $(PUBLIC)/.spellwd
-	touch /usr/lib/spell/spellhist
-	chmod 666 /usr/lib/spell/spellhist
-
-# if you have manuals then remove the # from column one on the lines below
-	cp espel.l $(MANDIR)
-	chmod 644 $(MANDIR)/espel.l

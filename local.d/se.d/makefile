@@ -1,7 +1,18 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.2 1987-02-07 20:42:33 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.3 1987-02-15 15:59:08 vrs Exp $
 # 
+DOCS= Makefile README
+MANS= scriptse.1 se.1
+BINS= se scriptse
+ALL	= $(BINS) $(MANS)
+MODEL	= -M2l
+OPTIONS	= -O `cat flags`
+include ../../CONFIG
+#
 # $Log: not supported by cvs2svn $
+# Version 1.2  87/02/07  20:42:33  vrs
+# Need flags when linking
+# 
 # Revision 1.3  86/09/19  12:16:19  arnold
 # Fixed to ignore return code from shell if statement.
 # 
@@ -23,15 +34,6 @@ OBJS= docmd1.o docmd2.o edit.o main.o misc.o scratch.o screen.o term.o
 
 LIBRARIES= libchangetty/libchangetty.a pat/libpat.a
 
-DOCS= makefile README
-MANS= scriptse.1 se.1
-
-CFLAGS= -O `cat flags`
-LDFLAGS=
-
-# On BSD systems, force make to use the right shell for commands
-SHELL=/bin/sh
-
 ###########################################################################
 # Begin system dependant macro definitions
 
@@ -40,29 +42,19 @@ SHELL=/bin/sh
 PR=pr
 
 # NROFF is for nroffing.  we use the System V nroff. 
-NROFF=/usr/5bin/nroff
-
-# MANSEC is where to put the manual pages. Use 'l' for local, otherwise '1'.
-MANSEC=l
-
-# DESTBIN is where se and scriptse will go
-DESTBIN= /usr/local/bin
-
-# OWNER and GROUP are the owner and group respectively
-OWNER= root
-GROUP= sys
+NROFF=nroff
 
 # INSTALL is the program to do the installation, use cp for real work
-INSTALL= cp
+INSTALL	= cp
 
 # CHOWN changes the owner.
-CHOWN= /etc/chown
+CHOWN	= chown
 
 # CHGRP changes the group.
-CHGRP= chgrp
+CHGRP	= chgrp
 
 # CHMOD will change permissions.
-CHMOD= chmod
+CHMOD	= chmod
 
 ########
 # other things to change:
@@ -72,9 +64,6 @@ CHMOD= chmod
 
 # Begin list of dependencies
 
-all: se scriptse se.1
-	@echo all done
-
 se: $(OBJS) $(LIBRARIES)
 	if grep DBSD flags > /dev/null || grep US5R2 flags > /dev/null; \
 	then	echo -ltermlib > libs; \
@@ -82,7 +71,7 @@ se: $(OBJS) $(LIBRARIES)
 	fi
 	-if [ -f /lib/shlib.ifile ] ; \
 	then	ld /lib/crt0s.o /lib/shlib.ifile $(OBJS) $(LIBRARIES) -o $@ ; \
-	else	$(CC) `cat flags` $(LDFLAGS) $(OBJS) $(LIBRARIES) `cat libs` -o $@ ; \
+	else	$(CC) `cat flags` $(CFLAGS) $(OBJS) $(LIBRARIES) `cat libs` -o $@ ; \
 	fi
 	rm libs
 
@@ -103,23 +92,11 @@ scriptse: scriptse.c
 se.1: se.m4 flags
 	(./m4munge $(CFLAGS) ; cat se.m4) | m4 | sed '/^$$/d' > se.1
 
-install: all $(MANS)
-	$(INSTALL) se $(DESTBIN)
-	$(CHOWN) $(OWNER) $(DESTBIN)/se
-	$(CHGRP) $(GROUP) $(DESTBIN)/se
-	$(CHMOD) 711 $(DESTBIN)/se 
-	$(INSTALL) scriptse $(DESTBIN)
-	$(CHOWN) $(OWNER) $(DESTBIN)/scriptse
-	$(CHGRP) $(GROUP) $(DESTBIN)/scriptse
-	$(CHMOD) 711 $(DESTBIN)/scriptse 
-	$(INSTALL) se.1 /usr/man/man$(MANSEC)/se.$(MANSEC)
-	$(CHOWN) $(OWNER) /usr/man/man$(MANSEC)/se.$(MANSEC)
-	$(CHGRP) $(GROUP) /usr/man/man$(MANSEC)/se.$(MANSEC)
-	$(CHMOD) 644 /usr/man/man$(MANSEC)/se.$(MANSEC)
-	$(INSTALL) scriptse.1 /usr/man/man$(MANSEC)/scriptse.$(MANSEC)
-	$(CHOWN) $(OWNER) /usr/man/man$(MANSEC)/scriptse.$(MANSEC)
-	$(CHGRP) $(GROUP) /usr/man/man$(MANSEC)/scriptse.$(MANSEC)
-	$(CHMOD) 644 /usr/man/man$(MANSEC)/scriptse.$(MANSEC)
+install: $(ALL) $(BINDIR) $(MANS)
+	$(INSTALL) $(BINS) $(BINDIR)
+	cd $(BINDIR); $(CHMOD) 711 $(BINS) 
+	$(INSTALL) $(MANS) $(MAN1)
+	cd $(MAN1); $(CHMOD) 644 $(MANS)
 	cd se_h; make install
 	
 print:

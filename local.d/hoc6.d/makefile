@@ -1,10 +1,21 @@
-SHELL	= /bin/sh
-CFLAGS	= -Dindex=strchr
+#
+#	$Header: /home/Vince/cvs/local.d/hoc6.d/makefile,v 1.2 1987-02-15 15:53:25 vrs Exp $
+#
+ALL	= hoc6
+MODEL	= -i
+include ../../CONFIG
 YFLAGS	= -d
 OBJS	= hoc.o code.o init.o math.o symbol.o
 
 hoc6:  $(OBJS)
-	cc $(CFLAGS) $(OBJS) -lm -o hoc6
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
+
+install: $(ALL) $(BINDIR)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+
+clean:
+	rm -f $(OBJS) [xy].tab.[ch] $(ALL)
 
 hoc.o code.o init.o symbol.o: hoc.h
 
@@ -16,6 +27,3 @@ x.tab.h: y.tab.h
 pr: hoc.y hoc.h code.c init.c math.c symbol.c
 	@pr $?
 	@touch pr
-
-clean:
-	rm -f $(OBJS) [xy].tab.[ch]

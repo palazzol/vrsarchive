@@ -1,3 +1,16 @@
+#
+#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.2 1987-02-15 15:54:19 vrs Exp $
+#
+ALL	= less
+OPTIONS = "-Doff_t=$(off_t)" "-DVOID=$(VOID)" \
+	  "-DREGCMP=$(REGCMP)" "-DRECOMP=$(RECOMP)" \
+	  "-DSHELL_ESCAPE=$(SHELL_ESCAPE)" \
+	  "-DEDITOR=$(EDITOR)" "-DEDIT_PGM=\"$(EDIT_PGM)\"" \
+	  "-DONLY_RETURN=$(ONLY_RETURN)" \
+	  "-DOLD_PAGER_NEW_LOCATION=\"$(OLD_PAGER_NEW_LOCATION)\"" -O
+MODEL	= -i -F 2000
+include ../../CONFIG
+#
 # Makefile for "less"
 #
 # Invoked as:
@@ -30,18 +43,6 @@ VOID = 1
 # off_t is the type which lseek() returns.
 # It is also the type of lseek()'s second argument.
 off_t = long
-
-# TERMIO is 1 if your system has /usr/include/termio.h.
-# This is normally the case for System 5.
-# If TERMIO is 0 your system must have /usr/include/sgtty.h.
-# This is normally the case for BSD.
-TERMIO = 1
-
-# SIGSETMASK is 1 if your system has the sigsetmask() call.
-# This is normally the case only for BSD 4.2,
-# not for BSD 4.1 or System 5.
-SIGSETMASK = 0
-
 
 ##########################################################################
 # Optional and semi-optional features
@@ -82,18 +83,10 @@ ONLY_RETURN = 0
 # Compilation environment.
 ##########################################################################
 
-# LIBS is the list of libraries needed.
-LIBS = -lcurses -ltermlib
-
 # INSTALL_LESS is a list of the public versions of less.
 # INSTALL_MAN is a list of the public versions of the manual page.
-INSTALL_LESS =	/usr/local/less
-INSTALL_MAN =	/usr/man/man1/less.1
-
-# OPTIM is passed to the compiler and the loader.
-# It is normally "-O" but may be, for example, "-g".
-OPTIM = -O -i -F 2000
-
+INSTALL_LESS =	$(BINDIR)/less
+INSTALL_MAN =	$(MAN1)/less.1
 
 ##########################################################################
 # Files
@@ -111,32 +104,12 @@ OBJ =	main.o option.o prim.o ch.o position.o input.o output.o screen.o \
 # Rules
 ##########################################################################
 
-DEFS =	"-DTERMIO=$(TERMIO)" \
-	"-DSIGSETMASK=$(SIGSETMASK)" \
-	"-Doff_t=$(off_t)" "-DVOID=$(VOID)" \
-	"-DREGCMP=$(REGCMP)" "-DRECOMP=$(RECOMP)" \
-	"-DSHELL_ESCAPE=$(SHELL_ESCAPE)" \
-	"-DEDITOR=$(EDITOR)" "-DEDIT_PGM=\"$(EDIT_PGM)\"" \
-	"-DONLY_RETURN=$(ONLY_RETURN)" \
-	"-DOLD_PAGER_NEW_LOCATION=\"$(OLD_PAGER_NEW_LOCATION)\""
+less:	$(OBJ)
+	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
-CFLAGS = $(OPTIM) $(DEFS)
-
-
-all: less
-
-less: $(OBJ)
-	$(CC) $(OPTIM) -o $@ $(OBJ) $(LIBS)
-
-install: install_man install_less
-
-install_man: less.l
-	for f in $(INSTALL_MAN); do  rm -f $$f; cp less.l $$f;  done
-	touch install_man
-	
-install_less: less
-	for f in $(INSTALL_LESS); do  rm -f $$f; cp less $$f;  done
-	touch install_less
+install: $(ALL) $(BINDIR) $(MAN1)
+	for f in $(INSTALL_MAN); do rm -f $$f;cp less.l $$f;chmod 644 $$f; done
+	for f in $(INSTALL_LESS); do rm -f $$f;cp less $$f;chmod 711 $$f; done
 
 pager_patch: pager_patch.c
 	$(CC) $(CFLAGS) -s -o $@ pager_patch.c
@@ -151,7 +124,7 @@ install_pager_patch: pager_patch
 $(OBJ): less.h funcs.h
 
 lint:
-	lint -hp $(DEFS) $(SRC)
+	lint -hp $(CFLAGS) $(SRC)
 
 newfuncs:
 	mv funcs.h funcs.h.OLD

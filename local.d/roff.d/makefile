@@ -1,24 +1,18 @@
 #
-#	%W% %G%
+#	$Header: /home/Vince/cvs/local.d/roff.d/makefile,v 1.2 1987-02-15 15:58:56 vrs Exp $
 #
-BIN	= /usr/local
-CFLAGS	= -O
-SHELL	= /bin/sh
-
-roff:	roff.o
-	cc $(CFLAGS) -o $@ roff.o
+ALL	= roff
+OPTIONS	= -O
+include ../../CONFIG
 
 lint:
 	lint roff.c | tee lint.out
 
-$(BIN):
-	mkdir $@
-
-install: roff
-	cp roff $(BIN)
-	chmod 711 $(BIN)/roff
-	cp roff.1 /usr/man/man1
-	chmod 711 /usr/man/man1/roff.1
+install: $(ALL)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp roff.1 $(MAN1)
+	cd $(MAN1); chmod 644 roff.1
 
 clean:
-	rm -f *.o roff lint.out make.out core
+	rm -f $(ALL) lint.out

@@ -1,33 +1,29 @@
 #
-#	@(#)Makefile	1.7	10/5/86
+#	$Header: /home/Vince/cvs/local.d/top.d/Makefile,v 1.8 1987-02-15 15:59:47 vrs Exp $
 #
-# values for two defaults in "top"
-TOPN = 10
-DELAY = 5
-
+MODEL	= -M2e
+OPTIONS	= -O -DDefault_TOPN=10 -DDefault_DELAY=5
+ALL	= top
+include ../../CONFIG
 # various other useful things
 MAN	= man
-SHELL	= /bin/sh
-TROFF	= itroff
-CFLAGS	= -O -M2e
 
 top: top.o bzero.o
-	cc $(CFLAGS) -o top top.o bzero.o -lcurses -ltermcap -lm
+	cc $(CFLAGS) -o $@ top.o bzero.o $(LIBS)
 
-top.o: top.c
-	cc -c $(CFLAGS) -DDefault_TOPN=$(TOPN) -DDefault_DELAY=$(DELAY) top.c
+install: $(ALL) $(BINDIR) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chown root $(ALL)
+	cd $(BINDIR); chgrp root $(ALL)
+	cd $(BINDIR); chmod 4711 $(ALL)
+	cp top.1 $(MAN1)
+	cd $(MAN1); chmod 644 top.1
 
 clean:
-	rm -f top *.o make.out lint.out
-
-man:
-	nroff -$(MAN) top.1 | cat -s >top.cat
+	rm -f $(ALL) *.o make.out lint.out
 
 troff:
 	$(TROFF) -man top.1
 
-tar:	clean
-	tar cvf top.tar *
-
 lint:
-	lint -lcurses -ltermcap -lm top.c | tee lint.out
+	lint $(LIBS) top.c | tee lint.out

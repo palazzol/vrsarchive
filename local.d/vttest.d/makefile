@@ -1,17 +1,14 @@
-# Do not define SIII or XENIX if you have v7 or BSD
-CFLAGS	= # -DSIII -DXENIX
-CFLAGS	= -DXENIX
-DEST	= /usr/local
-LDFLAGS	= -lx
-OBJECTS	= vttest.o
-SHELL	= /bin/sh
+#
+#	$Header: /home/Vince/cvs/local.d/vttest.d/makefile,v 1.2 1987-02-15 16:03:42 vrs Exp $
+#
+ALL	= vttest
+MODEL	= -i
+OPTIONS	= -O
+include ../../CONFIG
 
-vttest: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o vttest $(OBJECTS)
-
-install: vttest
-	cp vttest $(DEST)
-	chmod 711 $(DEST)/vttest
+install: $(ALL)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
 
 clean:
-	rm -f $(OBJECTS) vttest core make.out
+	rm -f $(ALL)

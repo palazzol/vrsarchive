@@ -1,18 +1,15 @@
-BIN = /usr/local
+#
+#	$Header: /home/Vince/cvs/local.d/index.d/makefile,v 1.2 1987-02-15 15:53:47 vrs Exp $
+#
+ALL	= index
+include ../../CONFIG
 
-install:	$(BIN)/index $(BIN)/iindex ;
+install: $(ALL) $(BINDIR)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
 
 clean:
-		rm -f lex.yy.o
+	rm -f $(ALL) index.o
 
-$(BIN)/index:	index.l
-		lex index.l
-		cc -O -o $@ lex.yy.c -ll
-		chmod 711 $@
-		rm lex.yy.c
-
-$(BIN)/iindex:	index.l
-		lex index.l
-		cc -O -o $@ lex.yy.c -ll -DPR=\"imprint\"
-		chmod 711 $@
-		rm lex.yy.c
+index:	index.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $? -ll -o $@

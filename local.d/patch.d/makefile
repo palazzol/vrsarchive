@@ -1,6 +1,10 @@
-# $Header: /home/Vince/cvs/local.d/patch.d/makefile,v 1.6 1986-12-23 14:17:21 vrs Exp $
+#
+#	$Header: /home/Vince/cvs/local.d/patch.d/makefile,v 1.7 1987-02-15 15:58:02 vrs Exp $
 #
 # $Log: not supported by cvs2svn $
+# Version 1.6  86/12/23  14:17:21  vrs
+# Check in patch version 2.0
+# 
 # Revision 2.0  86/09/17  15:36:15  lwall
 # Baseline for netwide release.
 # 
@@ -10,19 +14,14 @@
 # Revision 1.1  86/08/01  20:18:35  lwall
 # Initial revision
 # 
-
-CC = cc
-bin = /usr/local
-mansrc = /usr/man/man1
+MODEL	= -i
+OPTIONS	= -O
+public	= patch
+private	= 
+ALL	= $(public) $(private)
+include ../../CONFIG
 manext = 1
-CFLAGS = -i -O
-LDFLAGS = -i
-
-
-public = patch
-private = 
 manpages = patch.man
-util = Makefile
 
 c = patch.c pch.c inp.c version.c util.c
 
@@ -32,32 +31,22 @@ lintflags = -phbvxac
 
 addedbyconf = Makefile.old bsd config.h config.sh eunice loc pdp11 usg v7
 
-# grrr
-SHELL = /bin/sh
-
 .c.o:
 	$(CC) -c $(CFLAGS) $*.c
 
-all: $(public) $(private) $(util)
-	touch all
-
 patch: $(obj)
-	$(CC) $(LDFLAGS) $(obj) $(libs) -o patch
+	$(CC) $(CFLAGS) $(obj) $(libs) -o patch
 
 # won't work with csh
-install: patch
-	export PATH || exit 1
-	- mv $(bin)/patch $(bin)/patch.old
-	- if test `pwd` != $(bin); then cp $(public) $(bin); fi
-	cd $(bin); chmod 755 $(public)
-	- if test `pwd` != $(mansrc); then \
-for page in $(manpages); do \
-cp $$page $(mansrc)/`basename $$page .man`.$(manext); \
-done; \
-fi
+install: $(ALL)
+	cp $(public) $(BINDIR)
+	cd $(BINDIR); chmod 755 $(public)
+	for page in $(manpages); do \
+		cp $$page $(MAN1)/`basename $$page .man`.$(manext); \
+	done
 
 clean:
-	rm -f *.o *.orig core
+	rm -f *.o *.orig core $(ALL)
 
 realclean:
 	rm -f patch *.o *.orig core $(addedbyconf)

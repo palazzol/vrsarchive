@@ -1,22 +1,18 @@
 #
-#	@(#)Makefile	1.3	3/16/85
+#	$Header: /home/Vince/cvs/local.d/mdemo.d/Makefile,v 1.5 1987-02-15 15:54:39 vrs Exp $
 #
-BIN	= /usr/local
-CFLAGS	= -M2e -F 2000
-SHELL	= /bin/sh
-LFLAGS	= -lcurses -ltermcap # -lx
+ALL	= mdemo
+MODEL	= -M2e -F 2000
+include ../../CONFIG
 
-mdemo:		mdemo.c
-		cc $(CFLAGS) -o $@ mdemo.c $(LFLAGS)
-
-install:	mdemo
-		cp mdemo $(BIN)
-		chown root $(BIN)/mdemo
-		chgrp root $(BIN)/mdemo
-		chmod 4711 $(BIN)/mdemo
+install:	$(ALL) $(BINDIR)
+		cp $(ALL) $(BINDIR)
+		cd $(BINDIR); chown root $(ALL)
+		cd $(BINDIR); chgrp root $(ALL)
+		cd $(BINDIR); chmod 4711 $(ALL)
 
 clean:
-		rm -f mdemo mdemo.o fluff
+		rm -f $(ALL) fluff
 
 lint:
-		lint $(LFLAGS) mdemo.c | tee fluff
+		lint $(LIBS) mdemo.c | tee fluff

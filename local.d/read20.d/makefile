@@ -1,26 +1,22 @@
 #
-#	%W%	%G%
+#	$Header: /home/Vince/cvs/local.d/read20.d/makefile,v 1.2 1987-02-15 15:58:30 vrs Exp $
 #
-SHELL	= /bin/sh
-OBJS	= read20.o
+ALL	= read20
+MODEL	= -i
+OPTIONS	= -O
+include ../../CONFIG
 CFILES	= read20.c
-HDRS	= dump.h
-CFLAGS	= -O -Dindex=strchr -Drindex=strrchr
-LFLAGS	=
 
-all: read20
+install: $(ALL)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp read20.1 $(MAN1)
+	cd $(MAN1); chmod 711 read20.1
+
+read20.o: dump.h
+
+clean:
+	rm -f $(ALL)
 
 tags: $(HDRS) $(CFILES)
 	ctags $(HDRS) $(CFILES)
-
-install: read20
-	cp read20 $(DESTDIR)/usr/games/read20
-	chmod 711 $(DESTDIR)/usr/games/read20
-
-read20.o: $(HDRS)
-
-read20: $(OBJS)
-	$(CC) $(LFLAGS) -o read20 $(OBJS)
-
-clean:
-	rm -f $(OBJS) read20 core make.out

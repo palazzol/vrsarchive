@@ -1,24 +1,32 @@
+#
+#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.2 1987-02-15 15:58:15 vrs Exp $
+#
+ALL	= pathalias makedb
+MODEL	= -Ml
+OPTIONS	= -DALIASDB=\"$(LIBDIR)/palias\"
+include ../../CONFIG
 # pathalias -- by steve bellovin, as told to peter honeyman
-SHELL	= /bin/sh
 # if you can't or don't intend to use dbm files, don't bother with makedb
 DBM	= -ldbm
 # or if you roll your own ...
 # DBM	= dbm.o
-
-CC	= cc
-CFLAGS	= -Ml
-LDFLAGS	= -Ml
 YFLAGS	= -d
-
-OBJ	= addlink.o addnode.o extern.o local.o main.o mapit.o mapaux.o mem.o parse.o yylex.o
+OBJ	= addlink.o addnode.o extern.o local.o main.o mapit.o mapaux.o mem.o \
+	  parse.o yylex.o
 HDRS	= def.h config.h
-SRC	= addlink.c addnode.c extern.c local.c main.c mapit.c mapaux.c mem.c parse.y yylex.c
-CSRC	= addlink.c addnode.c extern.c local.c main.c mapit.c mapaux.c mem.c parse.c yylex.c
+SRC	= addlink.c addnode.c extern.c local.c main.c mapit.c mapaux.c mem.c \
+	  parse.y yylex.c
+CSRC	= addlink.c addnode.c extern.c local.c main.c mapit.c mapaux.c mem.c \
+	  parse.c yylex.c
 
 pathalias: $(OBJ)
-	$(CC) $(LDFLAGS) $(OBJ) $(LIBE) -o pathalias
+	$(CC) $(CFLAGS) $(OBJ) $(LIBE) -o $@
 
-all: pathalias makedb
+install: $(ALL) $(BINDIR) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp pathalias.1 $(MAN1)
+	cd $(MAN1); chmod 644 pathalias.1
 
 $(OBJ):	def.h
 
@@ -34,12 +42,12 @@ parse.c: parse.y def.h
 yylex.o:	parse.c yylex.c
 
 makedb: makedb.o
-	$(CC) makedb.o $(DBM) -o makedb
+	$(CC) $(CFLAGS) makedb.o $(DBM) -o $@
 
 makedb.o: config.h
 
 clean:
-	rm -f *.o pa y.tab.c y.tab.h parse.c core
+	rm -f *.o $(ALL) y.tab.c y.tab.h parse.c core
 
 tags: $(SRC) $(HDRS) makedb.c
 	ctags -w $(HDRS) $(SRC)

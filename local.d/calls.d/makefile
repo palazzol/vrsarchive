@@ -1,25 +1,16 @@
 #
-#	use 'make' to compile calls
-#	use 'make install' to compile and install calls and install the man page
-#	use 'make clean' to clean up the directory
+#	$Header: /home/Vince/cvs/local.d/calls.d/makefile,v 1.2 1987-02-15 15:49:25 vrs Exp $
 #
-CFLAGS	= -O -i
-DESTDIR	= /usr/local
-DOCDIR	= /usr/man/man1
-SHELL	= /bin/sh
+ALL	= calls
+MODEL	= -i
+OPTIONS	= -O
+include ../../CONFIG
 
-calls:	calls.o
-	$(CC) $(CFLAGS) calls.o -o calls
-
-everything: calls install clean
-
-install: calls $(DOCDIR) $(DESTDIR)
-	cp calls $(DESTDIR)/calls
-	strip $(DESTDIR)/calls
-	cp calls.1 $(DOCDIR)/calls.1
-
-$(DOCDIR) $(DESTDIR):
-	mkdir $@
+install: $(ALL) $(MAN1) $(BINDIR)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp calls.1 $(MAN1)
+	cd $(MAN1); chmod 644 calls.1
 
 clean:
-	rm -f *.o calls make.out core
+	rm -f $(ALL)

@@ -1,16 +1,16 @@
 #
-# include %W%	%G%
+#	$Header: /home/Vince/cvs/local.d/include.d/makefile,v 1.2 1987-02-15 15:53:36 vrs Exp $
 #
-#
-SHELL	= /bin/sh
-CFLAGS	= -Dindex=strchr -Drindex=strrchr
-OBJS	= include.o
+ALL	= include
+MODEL	= -i
+include ../../CONFIG
 
-include: $(OBJS)
-	cc -o include $(OBJS)
+install: $(ALL) $(BINDIR)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
 
 lint:
-	lint $(OBJS:.o=.c) | tee lint.out
+	lint $(CFLAGS) include.c | tee lint.out
 
 clean:
-	rm -f core *.o include a.out
+	rm -f $(ALL)
