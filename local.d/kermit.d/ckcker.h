@@ -23,7 +23,9 @@
 
 #ifdef	UNIXPC		/* This will run on an ATT 7300 or 3b1 */
 #define INTMDM
+#ifndef CYGWIN
 #define UXIII		/* This is always System V */
+#endif
 #endif
 /* Place other conditions setting INTMDM here */
 
