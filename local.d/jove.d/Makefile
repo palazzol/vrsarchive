@@ -17,13 +17,20 @@
 # JOVE, RECOVER and TEACHJOVE.  MANEXT is the extension for the man pages,
 # e.g., jove.1 or jove.l or jove.m.
 
-DESTDIR =
-TMPDIR = /tmp
-LIBDIR = /usr/local/lib/jove
-BINDIR = /usr/local
-MANDIR = /usr/man/manl
-MANEXT = l
-SHELL = /bin/csh
+#DESTDIR =
+#TMPDIR = /tmp
+#LIBDIR = /usr/local/lib/jove
+#BINDIR = /usr/local
+#MANDIR = /usr/man/manl
+#MANEXT = l
+#SHELL = /bin/csh
+#all:	sdate xjove recover teachjove portsrv macvert edate
+# for SCO Xenix, set
+#	MEMFLAGS = -Mle
+#	CFLAGS = -LARGE -O -F 3000 -K -Mle  (say -Mle2 for an 80286)
+#CFLAGS = -O 
+ALL		= sdate xjove recover teachjove portsrv macvert edate
+include /etc/CONFIG
 
 # These should all just be right if the above ones are.
 JOVE = $(DESTDIR)$(BINDIR)/jove
@@ -44,8 +51,7 @@ TEACHJOVEM = $(DESTDIR)$(MANDIR)/teachjove.$(MANEXT)
 #	4.3BSD:	LIBS = -ltermcap
 #	SysV Rel. 2: LIBS = -lcurses
 #	SCO Xenix: LIBS = -ltermcap -lx
-
-LIBS = -ltermcap
+#LIBS = -ltermcap
 
 # If you are not VMUNIX (vax running Berkeley Version 4), you must specify
 # the -i flags (split I/D space) and maybe the -x option (for adb to work).
@@ -66,12 +72,6 @@ LIBS = -ltermcap
 LDFLAGS = 
 
 SEPFLAG =
-
-# for SCO Xenix, set
-#	MEMFLAGS = -Mle
-#	CFLAGS = -LARGE -O -F 3000 -K -Mle  (say -Mle2 for an 80286)
-
-CFLAGS = -O 
 
 BASESEG = funcdefs.o keymaps.o argcount.o ask.o buf.o ctype.o delete.o \
 	  disp.o insert.o io.o jove.o malloc.o marks.o misc.o re.o \
@@ -107,10 +107,8 @@ SUPPORT = teachjove.c recover.c setmaps.c portsrv.c keymaps.txt \
 
 BACKUPS = $(HEADERS) $(C_SRC) $(DOCS) $(SUPPORT) $(MISC)
 
-all:	sdate xjove recover teachjove portsrv macvert edate
-
 sdate:
-	@echo "**** make started at `date` ****"
+	@/bin/echo "**** make started at `date` ****"
 
 edate:
 	@echo "**** make completed at `date` ****"
@@ -158,7 +156,7 @@ setmaps.o:	funcdefs.c keymaps.txt
 # it doesn't understand ifdefs
 
 keymaps.c:	setmaps keymaps.txt
-	-setmaps < keymaps.txt > keymaps.c
+	-./setmaps < keymaps.txt > keymaps.c
 
 keymaps.o:	keymaps.c jove.h
 
@@ -171,7 +169,7 @@ tune.c: Makefile tune.template
 	     -e 's;SHELL;$(SHELL);' tune.template >> tune.c
 
 iproc.o: iproc-ptys.c iproc-pipes.c iproc.c
-	$(CC) -c $(CFLAGS) iproc.c
+	$(CC) $(CFLAGS) -c iproc.c
 
 macvert:	macvert.c
 	$(CC) $(CFLAGS) -o macvert macvert.c
