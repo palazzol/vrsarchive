@@ -7,31 +7,21 @@
 #include	<stdio.h>
 
 /*
- * The distinctions here are not BSD - rest but rather USG - rest, as
- * BSD still has the old sgttyb structure, but SYSV has termio. Thus:
- */
-#ifdef BSD
-#define	V7
-#else
-#define USG
-#endif BSD
-
-/*
  * Some systems may have getchar() return EOF for various reasons, and
  * we should not quit before seeing at least NR_OF_EOFS consecutive EOFs.
  */
-#ifndef BSD
+#ifdef SYS5
 #define	NR_OF_EOFS	20
-#endif BSD
+#endif
 
 
-#ifdef USG
+#ifdef SYS5
 
 #include	<sys/types.h>
 #include	<termio.h>
 #ifndef TCGETA
 #include	<sys/ioctl.h>
-#endif !TCGETA
+#endif
 #define termstruct	termio
 #define kill_sym	c_cc[VKILL]
 #define erase_sym	c_cc[VERASE]
@@ -43,9 +33,9 @@
 #define CBRKON		! /* reverse condition */
 #define OSPEED(x)	((x).c_cflag & CBAUD)
 #define GTTY(x)		(ioctl(0, TCGETA, x))
-#define STTY(x)		(ioctl(0, TCSETA, x))	/* TCSETAF? TCSETAW? */
+#define STTY(x)		(ioctl(0, TCSETAW, x))
 
-#else	/* V7 */
+#else
 
 #include	<sgtty.h>
 #define termstruct	sgttyb
@@ -61,7 +51,7 @@
 #define GTTY(x)		(gtty(0, x))
 #define STTY(x)		(stty(0, x))
 
-#endif USG
+#endif
 
 extern short ospeed;
 static char erase_char, kill_char;
@@ -124,11 +114,11 @@ register int change = 0;
 	if((curttyb.cbrkflgs & CBRKMASK) != cf){
 		curttyb.cbrkflgs &= ~CBRKMASK;
 		curttyb.cbrkflgs |= cf;
-#ifdef USG
+#ifdef SYS5
 		/* be satisfied with one character; no timeout */
 		curttyb.c_cc[VMIN] = 1;		/* was VEOF */
 		curttyb.c_cc[VTIME] = 0;	/* was VEOL */
-#endif USG
+#endif
 		change++;
 	}
 	if(change){
@@ -229,7 +219,7 @@ register int c;
 	while((c = readchar()) != '\n') {
 	    if(flags.cbreak) {
 		if(c == ' ') break;
-		if(s && index(s,c)) {
+		if(s && strchr(s,c)) {
 			morc = c;
 			break;
 		}
@@ -258,7 +248,7 @@ parse()
 		inline[1] = getchar();
 #ifdef QUEST
 		if(inline[1] == foo) inline[2] = getchar(); else
-#endif QUEST
+#endif
 		inline[2] = 0;
 	}
 	if(foo == 'm' || foo == 'M'){
@@ -291,7 +281,7 @@ readchar() {
 	}
 #else
 		end_of_input();
-#endif NR_OF_EOFS
+#endif
 	if(flags.toplin == 1)
 		flags.toplin = 2;
 	return((char) sym);
