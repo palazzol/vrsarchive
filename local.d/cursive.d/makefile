@@ -4,7 +4,7 @@ ALL	= cursive$(EXE)
 include $(HOME)/CONFIG
 OBJ	= cursive.o font.o
 
-cursive: $(OBJ)
+cursive$(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) 
 
 install: $(ALL) $(BINDIR) $(MAN1)
