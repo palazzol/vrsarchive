@@ -60,8 +60,12 @@ int nxtchar = -1;	/* character held from type ahead    */
 #endif
 
 #if	USG			/* System V */
+#include	<sys/types.h>
 #include	<signal.h>
 #include	<termio.h>
+#ifndef TCGETA
+#include	<sys/ioctl.h>
+#endif
 struct	termio	otermio;	/* original terminal characteristics */
 struct	termio	ntermio;	/* charactoristics to use inside */
 #endif
