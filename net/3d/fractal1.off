@@ -1,0 +1,16 @@
+
+
+name		fractal1
+description	Fractal moonscape for checkerboard plain.  
+copyright	public domain
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		fractal1.geom
+vertex_order	default		s		clockwise 
+back_faces	default		s		reverse 
+polygon_colors	default		fff		0.4 0.15 0.1 

@@ -1,0 +1,18 @@
+
+
+name		mushroom
+description	Mushroom #4
+author		Wayne Carlson
+copyright	(c) Ohio State Univ. - ok to distribute if copyright appears
+type		polygon 
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		mushroom.geom
+bounding_box	default		ffffff		-0.61036 0.695863 -0.4584 0.47166 -0.6 0 
+polygon_colors	default		fff		1 0 1 
+vertex_order	default		s		clockwise 
+back_faces	default		s		cull 

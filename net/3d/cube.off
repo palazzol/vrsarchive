@@ -1,0 +1,16 @@
+
+
+name		cube
+copyright	public domain
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		cube.geom
+back_faces	default		s		cull 
+polygon_colors	default		fff		0.5 1 0.5 
+vertex_order	default		s		clockwise 
+

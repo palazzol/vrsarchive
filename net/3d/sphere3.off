@@ -1,0 +1,17 @@
+
+
+name		sphere3
+description	sphere (512 polygons)
+author		Jimmy J. Lin, U. of Central Florida
+copyright	public domain
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		sphere3.geom
+vertex_order	default		s		counter-clockwise 
+back_faces	default		s		cull 
+polygon_colors	default		fff		0 1 1 

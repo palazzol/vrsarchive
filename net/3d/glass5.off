@@ -1,0 +1,17 @@
+
+
+name		glass5
+description	glass #5
+copyright	public domain
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		glass5.geom
+vertex_order	default		s		clockwise 
+bounding_box	default		ffffff		-0.632121 0.632121 -0.632121 0.632121 0 0 
+polygon_colors	default		fff		1 0.75 0.75 
+back_faces	default		s		reverse 

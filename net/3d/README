@@ -1,0 +1,7 @@
+
+To print this document, use
+	pic off.ms | tbl | psroff -ms
+
+If you do not have "pic", edit off.ms and remove what's between
+the .PS and .PE macros, then use
+	tbl off.ms | nroff -ms

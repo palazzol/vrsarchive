@@ -1,0 +1,17 @@
+name		vcube
+author		Allen Akin
+description	cube with differing vertex colors
+copyright	public domain
+type		polygon
+
+geometry	indexed_poly	fff		vcube.geom
+normals		indexed_poly	fff		vcube.norm
+vertex_order	default		s		clockwise 
+back_faces	default		s		cull 
+polygon_colors	generic		fff		vcube.pcol
+vertex_colors	generic		fff		vcube.vcol
+diffuse_coef	default		f		1 
+specular_coef	default		f		0 
+specular_power	default		f		0 
+
+bounding_box	default		ffffff		-1 -1 -1 1 1 1 

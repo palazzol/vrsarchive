@@ -1,0 +1,18 @@
+
+
+name		dragon
+description	Somebody's dragon
+author		probably Jose Garabis
+copyright	(c) Ohio State Univ. - ok to distribute if copyright appears
+type		polygon 
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		dragon.geom
+bounding_box	default		ffffff		-0.288 0.288 -0.39 0.537 -0.7995 0.492 
+vertex_order	default		s		clockwise 
+back_faces	default		s		reverse 
+polygon_colors	default		fff		0.2 0.8 0.2 

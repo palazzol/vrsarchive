@@ -1,0 +1,15 @@
+
+
+name		cone
+copyright	public domain
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		cone.geom
+back_faces	default		s		cull 
+polygon_colors	default		fff		0.2 0.2 1 
+vertex_order	default		s		clockwise 

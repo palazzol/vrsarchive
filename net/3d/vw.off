@@ -1,0 +1,16 @@
+
+
+name		vw
+description	volkswagen bug data base from Evans & Sutherland
+copyright	(c) Evans & Sutherland - ok to distribute if copyright appears
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		vw.geom
+vertex_order	default		s		clockwise 
+back_faces	default		s		reverse 
+polygon_colors	default		fff		0.8 0.1 0.1 

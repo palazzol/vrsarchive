@@ -1,0 +1,18 @@
+
+
+name		dart
+description	Dart
+author		Tom McCollough and John W. Peterson, U of Utah CS Dept.
+copyright	public domain
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		dart.geom
+polygon_colors	generic		fff		dart.pcol
+vertex_order	default		s		clockwise 
+back_faces	default		s		reverse 
+

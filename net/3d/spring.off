@@ -1,0 +1,12 @@
+name		spring
+author		Randi J. Rost (via XModel)
+description	a spring with 5 twists
+copyright	(c) 1986 DEC - ok to distribute if copyright appears
+type		polygon
+geometry	indexed_poly	fff		spring.geom
+polygon_colors	default		fff		0.5 1 0.3 
+back_faces	default		s		reverse 
+vertex_order	default		s		clockwise 
+diffuse_coef	default		f		0.7 
+specular_coef	default		f		0.8 
+specular_power	default		f		30 

@@ -1,0 +1,18 @@
+
+
+name		sticks
+description	Sticks (cyclically overlapping polygons)
+author		Julian Gomez
+copyright	(c) Ohio State Univ. - ok to distribute if copyright appears
+type		polygon 
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		sticks.geom
+vertex_order	default		s		counter_clockwise 
+bounding_box	default		ffffff		-1.00217 1.00217 -1.06791 0.767907 0 0 
+back_faces	default		s		cull 
+polygon_colors	default		fff		1 0.5 0 

@@ -1,0 +1,19 @@
+
+
+name		champagne
+description	Champagne glass (from Utah, used in Phong's thesis)
+copyright	(c) Univ. of Utah - ok to distribute if copyright notice appears
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		champagne.geom
+vertex_order	default		s		clockwise 
+bounding_box	default		ffffff		-1 1 -1 1 -0.9 0.9 
+polygon_colors	default		fff		1 1 1 
+back_faces	default		s		reverse 
+specular_power	default		f		100 
+#transmittance	default		ff		0.9 1

@@ -1,0 +1,13 @@
+name		bottle1
+author		Randi J. Rost (via XModel)
+description	A bottle (XModel custom object)
+copyright	(c) 1986 DEC - ok to distribute if copyright appears
+type		polygon
+geometry	indexed_poly	fff		bottle1.geom
+polygon_colors	default		fff		0.3 1 0.5 
+back_faces	default		s		reverse 
+vertex_order	default		s		clockwise 
+diffuse_coef	default		f		0.7 
+specular_coef	default		f		0.8 
+specular_power	default		f		30 
+normals		indexed_poly	fff		bottle1.norm

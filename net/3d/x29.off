@@ -1,0 +1,16 @@
+
+
+name		x29
+description	x29 aircraft data base from Evans & Sutherland
+copyright	(c) Evans & Sutherland -- ok to distribute if copyright appears
+type		polygon
+
+# Property list for this object
+
+# Prop.          data type    format      filename or default data
+#-------         ---------    ------      ------------------------
+
+geometry	indexed_poly	fff		x29.geom
+vertex_order	default		s		clockwise 
+polygon_colors	generic		fff		x29.pcol
+back_faces	default		s		reverse 
