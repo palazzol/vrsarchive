@@ -85,12 +85,12 @@ pleased() {
 			break;
 	    case 1:
 			if(!uwep) {
-			    if(uleft->cursed) {
+			    if(uleft && uleft->cursed) {
 				pline("your left hand glows amber.");
 				uleft->cursed = 0;
-			    } else if(uright->cursed) {
+			    } else if(uright && uright->cursed) {
 				pline("your right hand glows amber.");
-				uleft->cursed = 0;
+				uright->cursed = 0;
 			    } else    pline("but nothing seems to happen.");
 			    break;
 			}
