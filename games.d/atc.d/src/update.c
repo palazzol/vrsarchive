@@ -253,7 +253,7 @@ next_plane()
 }
 
 #ifndef BSD
-#ifndef CYGWIN
+#ifndef __STDC__
 bzero(p, s)
 register char *p;
 register unsigned s;
