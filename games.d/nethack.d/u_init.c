@@ -200,7 +200,11 @@ extern char readchar();
 
 	printf("%c\n", exper);		/* echo */
 
-	if (index("qQ", exper)) exit(0);
+	if (index("qQ", exper)) {
+		clearlocks();
+		settty((char *)0);
+		exit(0);
+	}
 
 	if(index("Yy", exper)) {
 		exper = 0;
