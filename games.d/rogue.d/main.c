@@ -15,6 +15,8 @@
 #include <pwd.h>
 #include "rogue.h"
 
+int end_win;
+
 /*
  * main:
  *	The main program, of course
@@ -27,7 +29,7 @@ char **envp;
 	register struct passwd *pw;
 	struct passwd *getpwuid();
 	char *getpass(), *crypt();
-	int quit(), exit(), lowtime;
+	int exit(), lowtime;
 
 #ifndef DUMP
 	signal(SIGQUIT, exit);
@@ -81,6 +83,9 @@ char **envp;
 			strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
 	if (env == NULL || fruit[0] == '\0')
 		strcpy(fruit, "slime-mold");
+	initscr();			/* Start up cursor package */
+	end_win = 1;			/* Remember to endwin() */
+	crmode();
 
 	/*
 	 * check for print-score option
@@ -117,8 +122,7 @@ char **envp;
 	init_names();			/* Set up names of scrolls */
 	init_colors();			/* Set up colors of potions */
 	init_stones();			/* Set up stone settings of rings */
-	init_materials();			/* Set up materials of wands */
-	initscr();				/* Start up cursor package */
+	init_materials();		/* Set up materials of wands */
 	setup();
 	/*
 	 * Set up windows
@@ -214,6 +218,15 @@ tstp()
 }
 #endif
 
+#ifndef A_REVERSE	/* Don't have terminfo? */
+unsigned  bauds[] = {
+	   0,   50,    75,   110,
+	 134,  150,   200,   300,
+	 600, 1200,  1800,  2400,
+	4800, 9600, 19200, 38400
+};
+#  define baudrate()	(bauds[_tty.sg_ospeed])
+#endif
 /*
  * playit:
  *	The main loop of the program.  Loop until the game is over,
@@ -222,15 +235,13 @@ tstp()
 playit()
 {
 	register char *opts;
+	extern short ospeed;
 
 	/*
 	 * set up defaults for slow terminals
 	 */
-
-	if (_tty.sg_ospeed <= B1200)
+	if (baudrate() <= 1200)
 		jump = TRUE;
-	if (!CE)
-		inv_type = INV_CLEAR;
 
 	/*
 	 * parse environment declaration of options
@@ -250,6 +261,7 @@ playit()
  * quit:
  *	Have player make certain, then exit.
  */
+void
 quit()
 {
 	register int oy, ox;
@@ -295,7 +307,7 @@ quit()
  */
 leave()
 {
-	if (!_endwin)
+	if (!end_win)
 	{
 		mvcur(0, COLS - 1, LINES - 1, 0);
 		endwin();
@@ -320,6 +332,7 @@ shell()
 	move(LINES-1, 0);
 	refresh();
 	endwin();
+	end_win = 0;
 	(void) putchar('\n');
 	in_shell = TRUE;
 	after = FALSE;
