@@ -1,17 +1,18 @@
-	NetHack & Quest data file - version 1.0
+	NetHack & Quest data file - version 1.4f
 @	human (or you)
 -	a wall
 |	a wall
-+	a door
++	a door (or a spellbook)
 .	the floor of a room
 	a dark part of a room
 #	a corridor
 }	water filled area
+{	a fountain
 <	the staircase to the previous level
 >	the staircase to the next level
 ^	a trap
 $	a pile, pot or chest of gold
-%%	a piece of food
+%	a piece of food
 !	a potion
 *	a gem
 ?	a scroll
