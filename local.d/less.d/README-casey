@@ -1,0 +1,32 @@
+						Monday July 14, 1986
+
+I've made four changes to less:
+
+1.	You can now install the pager_patch program to let you use less as
+	your default pager even if the programs you're using don't pay
+	attention to the PAGER environment variable.
+
+2.	It's now allowable to invoke less with "-[z]N" to specify the window
+	scroll size ala more (note that the "z" may be omitted) - this
+	was done for compatibility with more(1) as some programs (ex: msgs)
+	called the pager with a window size specification.
+
+3.	Less will now detect "boldfacing sequences" and use the /etc/termcap
+	capability "md" and "me" to boldface the corresponding text.
+	Boldface sequences are sequences of a character overstruck with
+	backspaces (ex: a^Hab^Hb ...).  Any number of overstrikes are ok.
+	For those whose nroff doesn't generate these sequences for [default]
+	boldfacing, look at the file n10-diff for the necessary changes to
+	nroff [n10.c].
+
+4.	The manual page has been reformatted to have more boldface sequences
+	(some may find my avoidance of ".B", ".I", etc. to be annoying, but
+	what the hey, I'll let Mark Nudelman (less's original author) have
+	the final decision).  I haven't reorganized the command and switch
+	descriptions to be in alphabetic order ...  Still not sure whether
+	that should be done ...
+
+Leith (Casey) Leedom				lll-crg.arpa!csustan!casey
+Computer Science Department			work: (209) 667-3185
+California State University, Stanislaus		home: (209) 634-2775
+Turlock, CA  95380

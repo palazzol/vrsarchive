@@ -1,0 +1,88 @@
+*** n10-old.c	Sun May  4 01:45:06 1986
+--- n10.c	Mon Jul 14 12:27:54 1986
+***************
+*** 137,151
+  	if(*codep && (esc || lead))move();
+  	esct += w;
+  	if(i&074000)xfont = (i>>9) & 03;
+! 	if(*t.bdon & 0377){
+! 		if(!bdmode && (xfont == 2)){
+! 			oputs(t.bdon);
+! 			bdmode++;
+! 		}
+! 		if(bdmode && (xfont != 2)){
+! 			oputs(t.bdoff);
+! 			bdmode = 0;
+! 		}
+  	}
+  	if(xfont == ulfont){
+  		for(k=w/t.Char;k>0;k--)oput('_');
+
+--- 137,145 -----
+  	if(*codep && (esc || lead))move();
+  	esct += w;
+  	if(i&074000)xfont = (i>>9) & 03;
+! 	if(!bdmode && (xfont == 2)){
+! 		if(*t.bdon & 0377)oputs(t.bdon);
+! 		bdmode++;
+  	}
+  	if(bdmode && (xfont != 2)){
+  		if(*t.bdoff & 0377)oputs(t.bdoff);
+***************
+*** 147,152
+  			bdmode = 0;
+  		}
+  	}
+  	if(xfont == ulfont){
+  		for(k=w/t.Char;k>0;k--)oput('_');
+  		for(k=w/t.Char;k>0;k--)oput('\b');
+
+--- 141,150 -----
+  		if(*t.bdon & 0377)oputs(t.bdon);
+  		bdmode++;
+  	}
++ 	if(bdmode && (xfont != 2)){
++ 		if(*t.bdoff & 0377)oputs(t.bdoff);
++ 		bdmode = 0;
++ 	}
+  	if(xfont == ulfont){
+  		for(k=w/t.Char;k>0;k--)oput('_');
+  		for(k=w/t.Char;k>0;k--)oput('\b');
+***************
+*** 158,163
+  			oput(' ');
+  		}else{
+  			if(plotmode)oputs(t.plotoff);
+  			*obufp++ = *codep++;
+  			if(obufp == (obuf + OBUFSZ + ascii - 1))flusho();
+  /*			oput(*codep++);*/
+
+--- 156,162 -----
+  			oput(' ');
+  		}else{
+  			if(plotmode)oputs(t.plotoff);
++ 			if(obufp >= (obuf + OBUFSZ + ascii - 1 - (bdmode?3:1)))flusho();
+  			*obufp++ = *codep++;
+  			if(bdmode && !*t.bdon){
+  				*obufp++ = '\b';
+***************
+*** 159,165
+  		}else{
+  			if(plotmode)oputs(t.plotoff);
+  			*obufp++ = *codep++;
+! 			if(obufp == (obuf + OBUFSZ + ascii - 1))flusho();
+  /*			oput(*codep++);*/
+  		}
+  	}
+
+--- 158,167 -----
+  			if(plotmode)oputs(t.plotoff);
+  			if(obufp >= (obuf + OBUFSZ + ascii - 1 - (bdmode?3:1)))flusho();
+  			*obufp++ = *codep++;
+! 			if(bdmode && !*t.bdon){
+! 				*obufp++ = '\b';
+! 				*obufp++ = codep[-1];
+! 			}
+  /*			oput(*codep++);*/
+  		}
+  	}
