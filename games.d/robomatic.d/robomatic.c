@@ -33,8 +33,16 @@ nodelay(scr, tf)
 #endif
 # include <signal.h>
 
-# define NEWROBOT	GAMLIB/robots"
-# define ROBOT		GAMDIR/robots"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+# define NEWROBOT	FILENM(robots)
+# define ROBOT		FILENM(robots)
 
 # define READ		0
 # define WRITE		1
@@ -146,8 +154,8 @@ char *argv[];
 /****************************************************************
  * Panic: Abort child, reset terminal, and exit.
  ****************************************************************/
-void
-panic()
+SIG_T
+panic(dummy)
 { send('q');
   send('\n');
   close(frobot);

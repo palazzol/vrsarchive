@@ -1,10 +1,18 @@
 /*
  * sccsid = "@(#)machdep.h	2.5 4/28/84";
  */
-#define LOGFILE GAMLIB/saillog"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+#define LOGFILE FILENM(saillog)
 #define DRIVER1 "driver"
-#define DRIVER2 GAMLIB/saildriver"
-#define DRIVER3 GAMDIR/.driver"
+#define DRIVER2 FILENM(saildriver)
+#define DRIVER3 FILENM(.driver)
 #define DRIVERNAME "driver"
 #define SETUID			/* player and driver run setuid */
 

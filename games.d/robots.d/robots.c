@@ -19,6 +19,9 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/file.h>
+#ifdef __STDC__
+#include <sys/ttold.h>
+#endif
 #ifdef M_XENIX
 #  include <sys/locking.h>
 #  define flock(fd,flag)	locking(fd,flag,0L)
@@ -51,8 +54,16 @@
 #define MSGPOS		39
 #define RVPOS		51
 
-#define HOF_FILE	GAMLIB/robots_hof"
-#define TMP_FILE	GAMLIB/robots_tmp"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+#define HOF_FILE	FILENM(robots_hof)
+#define TMP_FILE	FILENM(robots_tmp)
 
 #define NUMSCORES	20
 #define NUMNAME		"Twenty"
@@ -132,7 +143,7 @@ struct ltchars	ltc;
 char	dsusp;
 #endif
 
-int	interrupt();
+SIG_T	interrupt();
 
 char	*forbidden [] =
 	{ "root",
@@ -824,6 +835,7 @@ msg()
 	refresh();
 }
 
+SIG_T
 interrupt()
 {
 	quit(FALSE);

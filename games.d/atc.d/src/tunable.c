@@ -12,7 +12,15 @@
  * Change this to whatever you want.  Be sure to have to path end 
  * with a '/', like "/usr/games/lib/atc/".
  */
-char	SPECIAL_DIR[] =		GAMLIB/atc/";
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+char	SPECIAL_DIR[] =		FILENM(atc/);
 
 /*
  * NUM_SCORES - Number of scores that are kept track of.

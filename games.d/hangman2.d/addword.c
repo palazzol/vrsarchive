@@ -7,7 +7,15 @@
 #include <stdio.h>
 
 #define WLEN            40
-#define word_file       GAMLIB/.hang-words"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+#define word_file       FILENM(.hang-words)
 #define temp_file       "/tmp/hang"
 #define mode            300     /* -rw------ */
 

@@ -184,7 +184,15 @@ screen()
 } /*end screen */
 
 #include <pwd.h>
-#define LOGFILE GAMLIB/.midwaylog"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+#define LOGFILE FILENM(.midwaylog)
 int maxpoints[2] = {637, 384};
 struct logs {
 	int uid;
@@ -251,7 +259,8 @@ die()
 	exit(0);
 }
 
-interrupt()
+SIG_T
+interrupt(dummy)
 {
 	automatic = 0;
 	signal(SIGINT, interrupt);

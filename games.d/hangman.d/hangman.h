@@ -6,7 +6,15 @@
 
 # define	MINLEN	6
 # define	MAXERRS	7
-# define	DICT	GAMLIB/words"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+# define	DICT	FILENM(words)
 
 # define	MESGY	12
 # define	MESGX	0
@@ -41,10 +49,10 @@ extern FILE	*Dict;
 
 extern off_t	Dict_size;
 
-int	die();
+extern SIG_T	die();
 
 off_t	abs();
 
-#ifndef CTRL
-#  define CTRL(c)	('c'&~0140)
+#ifndef MKCTRL
+#  define MKCTRL(c)	(c&~0140)
 #endif

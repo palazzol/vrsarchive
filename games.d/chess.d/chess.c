@@ -451,13 +451,20 @@ short r1,r2,c1,c2;
     }
 }
 
-
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define CHESS_OPN	STRING(GAMLIB) "/chess.opn"
+#else
+#define STRING(x)	"x
+#define CHESS_OPN	STRING(GAMLIB)/chess.opn"
+#endif
 GetOpenings()
 {
 FILE *fd;
 int c,j;
 char s[80],*p;
-  fd = fopen(GAMLIB/chess.opn","r");
+  fd = fopen(CHESS_OPN, "r");
   BookSize = 0; BookDepth = 24; j = -1; c = '?';
   while (c != EOF)
     {

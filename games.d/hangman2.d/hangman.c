@@ -8,7 +8,15 @@
 #include <signal.h>
 #include "curses.h"
 
-#define word_file       GAMLIB/.hang-words"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+#define word_file       FILENM(.hang-words)
 #define MAX_CHARS       25
 #define MAX_GUESSES     10
 
@@ -24,11 +32,17 @@ char  guessed[26], part_word[MAX_CHARS];
 int   bad_guesses, words_gotten = 0, words_tried = 0;
 int   debug = 0;
 
+SIG_T
+leave(dummy)
+{
+        MoveCursor(23,0);
+        exit(0);
+}
+
 main(argc)
 int argc;
 {
         char ch;
-        int  leave();
 
         debug = (argc>1);
 
@@ -174,7 +188,7 @@ char *ch;
         switch (*ch) {
           case 127 :  leave();          /** hit DELETE! **/
           case 13  :  PutLine(19,0,"You think the word is: ");  /** <ret> **/
-                      gets(guessed_word,MAX_CHARS);
+                      gets(guessed_word);
                       if (strcmp(guessed_word, word) == 0) {
                         PutLine(19,0,"You Got It!");
                         CleartoEOLN();
@@ -241,12 +255,6 @@ char *word;
 {
         PutLine(6,50,"Word: %s", word);
         CleartoEOLN();
-}
-
-leave()
-{
-        MoveCursor(23,0);
-        exit(0);
 }
 
 /******* and now the cheery part: the hanging graphics routines! ********/

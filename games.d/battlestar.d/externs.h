@@ -7,7 +7,15 @@
 #endif
 #include <stdio.h>
 
-#define PATH(x)		GAMLIB/x"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define STRING(x)	STR(x)
+#define PATH(x)		(STRING(GAMLIB) "/" #x)
+#else
+#define STRING(x)	"x
+#define PATH(x)		STRING(GAMLIB)/x"
+#endif
 #define logfile		PATH(battlestar.log)
 
 #define BITS (8 * sizeof (int))
@@ -200,8 +208,8 @@ struct room {
 	char *desc;
 	unsigned int objects[NUMOFWORDS];
 };
-struct room dayfile[];
-struct room nightfile[];
+extern struct room dayfile[];
+extern struct room nightfile[];
 struct room *location;
 
 	/* object characteristics */
@@ -218,15 +226,15 @@ int wordvalue[NWORD];
 int wordtype[NWORD];
 int wordcount, wordnumber;
 
-char *truedirec(), *rate();
-char *getcom(), *getword();
+extern char *truedirec(), *rate();
+extern char *getcom(), *getword();
 
 	/* state of the game */
 int gtime;
 int position;
 int direction;
 int left, right, ahead, back;
-int clock, fuel, torps;
+int gclock, fuel, torps;
 int carrying, encumber;
 int rythmn;
 int followfight;
@@ -261,11 +269,11 @@ struct wlist {
 #define HASHMUL		81
 #define HASHMASK	(HASHSIZE - 1)
 struct wlist *hashtab[HASHSIZE];
-struct wlist wlist[];
+extern struct wlist wlist[];
 
 struct objs {
 	short room;
 	short obj;
 };
-struct objs dayobjs[];
-struct objs nightobjs[];
+extern struct objs dayobjs[];
+extern struct objs nightobjs[];

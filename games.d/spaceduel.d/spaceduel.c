@@ -16,7 +16,15 @@
 #define TORPEDOES       20
 #define MAXTIME         120
 
-static char *logfile = GAMLIB/sd.logfile"; 
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+static char *logfile = FILENM(sd.logfile); 
 unsigned seed;
 int fuel=TANKFULL, torps=TORPEDOES;
 int kills=0;
@@ -55,8 +63,8 @@ int Clock = MAXTIME;            /* time for all the flights in the game */
 char cross = 1;
 void (*oldsig)();
 
-void
-succumb()
+SIG_T
+succumb(dummy)
 {
         if (oldsig == SIG_DFL) {
                 endfly();
@@ -66,6 +74,80 @@ succumb()
                 endfly();
         }
 	exit(1);
+}
+
+SIG_T
+moveenemy(dummy)
+{
+        int d;
+        int oldr, oldc;
+
+        oldr = row;
+        oldc = column;
+        if (fuel > 0){
+                if (row + dr <= LINES-3 && row + dr > 0)
+                        row += dr;
+                if (column + dc < COLS-1 && column + dc > 0)
+                        column += dc;
+        } else if (fuel < 0){
+                fuel = 0;
+                mvaddstr(0,60,"*** Out of fuel ***");
+        }
+        d = ((row - MIDR)*(row - MIDR) + (column - MIDC)*(column - MIDC));
+        if (d < 16){
+                row += (rnd(9) - 4) % (4 - abs(row - MIDR));
+                column += (rnd(9) - 4) % (4 - abs(column - MIDC));
+        }
+        Clock--;
+        mvaddstr(oldr, oldc - 1, "   ");
+        if (cross)
+                target();
+        mvaddstr(row, column - 1, "/-\\");
+        move(LINES-1, 9);
+        printw("%3d", kills);
+        move(LINES-1, 24);
+        printw("%3d", torps);
+        move(LINES-1, 42);
+        printw("%3d", fuel);
+        move(LINES-1, 57);
+        printw("%3d", Clock);
+        refresh();
+        if (oldr == MIDR && oldc - MIDC < 2 && MIDC - oldc < 2) {
+	    move(0,0);
+	    clrtoeol();
+	    mvaddstr(0,0,"The alien fires at you...");
+	    refresh();
+	    sleep(1);
+#ifdef WIZARD
+	    addstr(" You're hit!  Magically, you are unharmed");
+	    refresh();
+#else
+  	    space_death();
+#endif
+	}
+	else {
+            if (abs(oldr - MIDR) <= 1 && abs(oldc - MIDC) <= 2) {
+		move(0,0);
+		clrtoeol();
+	        mvaddstr(0,0,"The alien fires at you...");
+		refresh();
+		sleep(1);
+	        if (rnd(1000) % 20 == 0) { 	/* 5% chance of being hit */
+#ifdef WIZARD
+	        addstr("You're hit! Magically, you are unharmed");
+	        refresh();
+#else
+  	        space_death();
+#endif
+		}
+	        else {
+	            addstr("but misses!!");
+		    refresh();
+	        }
+	    }
+	}
+        signal(SIGALRM, moveenemy);
+        alarm(1);
 }
 
 main()
@@ -269,80 +351,6 @@ blast()
                 mvaddch(n, MIDC-MIDR+n, ' ');
                 refresh();
         }
-        alarm(1);
-}
-
-void
-moveenemy()
-{
-        int d;
-        int oldr, oldc;
-
-        oldr = row;
-        oldc = column;
-        if (fuel > 0){
-                if (row + dr <= LINES-3 && row + dr > 0)
-                        row += dr;
-                if (column + dc < COLS-1 && column + dc > 0)
-                        column += dc;
-        } else if (fuel < 0){
-                fuel = 0;
-                mvaddstr(0,60,"*** Out of fuel ***");
-        }
-        d = ((row - MIDR)*(row - MIDR) + (column - MIDC)*(column - MIDC));
-        if (d < 16){
-                row += (rnd(9) - 4) % (4 - abs(row - MIDR));
-                column += (rnd(9) - 4) % (4 - abs(column - MIDC));
-        }
-        Clock--;
-        mvaddstr(oldr, oldc - 1, "   ");
-        if (cross)
-                target();
-        mvaddstr(row, column - 1, "/-\\");
-        move(LINES-1, 9);
-        printw("%3d", kills);
-        move(LINES-1, 24);
-        printw("%3d", torps);
-        move(LINES-1, 42);
-        printw("%3d", fuel);
-        move(LINES-1, 57);
-        printw("%3d", Clock);
-        refresh();
-        if (oldr == MIDR && oldc - MIDC < 2 && MIDC - oldc < 2) {
-	    move(0,0);
-	    clrtoeol();
-	    mvaddstr(0,0,"The alien fires at you...");
-	    refresh();
-	    sleep(1);
-#ifdef WIZARD
-	    addstr(" You're hit!  Magically, you are unharmed");
-	    refresh();
-#else
-  	    space_death();
-#endif
-	}
-	else {
-            if (abs(oldr - MIDR) <= 1 && abs(oldc - MIDC) <= 2) {
-		move(0,0);
-		clrtoeol();
-	        mvaddstr(0,0,"The alien fires at you...");
-		refresh();
-		sleep(1);
-	        if (rnd(1000) % 20 == 0) { 	/* 5% chance of being hit */
-#ifdef WIZARD
-	        addstr("You're hit! Magically, you are unharmed");
-	        refresh();
-#else
-  	        space_death();
-#endif
-		}
-	        else {
-	            addstr("but misses!!");
-		    refresh();
-	        }
-	    }
-	}
-        signal(SIGALRM, moveenemy);
         alarm(1);
 }
 

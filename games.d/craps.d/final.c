@@ -13,8 +13,16 @@ extern struct passwd *getpwuid();
  */
 
 #ifdef	SCORES
-char *fil = GAMLIB/craps.list";
-char *reclock = GAMLIB/craps.lock";
+#ifdef	__STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILNAM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILNAM(x)	STRING(GAMLIB)/x"
+#endif
+char *fil = FILNAM(craps.list);
+char *reclock = FILNAM(craps.lock);
 
 typedef struct node {
 	struct node *next;

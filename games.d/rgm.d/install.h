@@ -75,8 +75,15 @@
  * (but in that case there must be a "player" binary in the current 
  * directory).
  */
-
-# define PLAYER		GAMLIB/player"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+# define PLAYER		FILENM(player)
 
 /* 
  * This is the version of the "current" Rog-O-Matic, and is an uppercase
@@ -91,8 +98,12 @@
  * not, and NEWROGUE is not defined, then there must be a "rogue" in the
  * current directory.
  */
-
-# define ROGUE		GAMDIR/rogue"
+#ifdef __STDC__
+#define GAME(x)	STRING(GAMDIR) "/" STRING(x)
+#else
+#define GAME(x)	STRING(GAMDIR)/x"
+#endif
+# define ROGUE		GAME(rogue)
 
 /* 
  * This file is created in the current directory if the logging option is
@@ -110,8 +121,7 @@
  * player process could be made setuid, with that uid owning this
  * directory.
  */
-
-# define RGMDIR		GAMLIB"
+# define RGMDIR		FILENM(.)
 
 /* 
  * This file is created in the current directory if the snapshot command
