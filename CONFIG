@@ -21,8 +21,8 @@ ROOT	= $(HOME)
 #	SAFEUID is the login name of a relatively safe login.
 #	SAFEGRP is the group name of a relatively safe group.
 #
-SAFEUID	= Vincent
-SAFEGRP	= unknown
+SAFEUID	= vrs
+SAFEGRP	= vrs
 #
 #	XENIX often needs setuid to root because of limited setuid() semantics.
 #	On other systems this should be $(SAFEUID).
@@ -40,20 +40,21 @@ CFLAGS	= $(CCYGWIN)
 LIBS	= $(LCYGWIN)
 BERKLIB	= #-lberkeley
 DIRLIB	= #-ldir
-DPYLIB	= -ldpy
+DPYLIB	= -L$(LIBDIR) -ldpy
 #LEXLIB	= -ll
 LEXLIB	= -lfl
 PAGER	= less
 #RANLIB	= :
 RANLIB	= ranlib
-NROFF	= :
-TROFF	= :
+NROFF	= nroff
+TROFF	= nroff
 #DEFEXE	= a.out
 DEFEXE	= a.exe
-#EXE	=
 EXE	= .exe
 LINT	= gcc -Wall -W -fsyntax-only
 FC	= g77 -ff77 -fugly-assumed -fugly-logint
+CC	= gcc
+YACC	= bison -y
 #
 #	This keeps USG make from trying to use the user's shell.  We want to
 #	always use the Bourne Shell.
