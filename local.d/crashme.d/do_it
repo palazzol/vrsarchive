@@ -1,1 +1,2 @@
+PATH=$PATH:. export PATH
 crashme +2000 666 50 00:30:00 2
