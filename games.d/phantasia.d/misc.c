@@ -1428,20 +1428,17 @@ readmessage()
 error(whichfile)
 char	*whichfile;
 {
-extern int errno;
-extern printw(), printf();
-int	(*funcp)();
+	extern int errno;
 
     if (Windows)
 	{
-	funcp = printw;
 	clear();
+    printw("An unrecoverable error has occurred reading %s.  (errno = %d)\n", whichfile, errno);
+    printw("Please run 'setup' to determine the problem.\n");
 	}
     else
-	funcp = printf;
-
-    (*funcp)("An unrecoverable error has occurred reading %s.  (errno = %d)\n", whichfile, errno);
-    (*funcp)("Please run 'setup' to determine the problem.\n");
+	printf("An unrecoverable error has occurred reading %s.  (errno = %d)\n", whichfile, errno);
+    printf("Please run 'setup' to determine the problem.\n");
     cleanup(TRUE);
     /*NOTREACHED*/
 }
@@ -1507,7 +1504,7 @@ double	deltax, deltay;
 /	When an illegal signal is caught, print a message, and cleanup.
 /
 /************************************************************************/
-
+SIG_T
 ill_sig(whichsig)
 int whichsig;
 {
