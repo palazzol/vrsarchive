@@ -405,7 +405,7 @@ checkboardloop(cc)
 		for (ptr = cc->c_dirs; ptr < &cc->c_dirs[4]; ptr++) {
 			tc = *ptr;
 			if (tc->c_obj == &edgeobj) continue;
-			if (tc->c_row > (HOMEROW + 1)) continue;
+			if (tc->c_row > (unsigned)(HOMEROW + 1)) continue;
 			if (tc->c_checkcount == checkcount) continue;
 			tc->c_checkcount = checkcount;
 			if (tc->c_obj && (tc->c_obj->o_flags & F_WALL))

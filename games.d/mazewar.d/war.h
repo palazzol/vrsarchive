@@ -8,7 +8,11 @@
 #include <signal.h>
 #include <errno.h>
 #include <sgtty.h>
+#ifdef SYS5
+#include <string.h>
+#else
 #include <strings.h>
+#endif
 
 #ifndef GAMEDIR
 #define	GAMEDIR	"/usr/tmp"		/* for UNIX domain socket names */
