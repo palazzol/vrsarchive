@@ -1,4 +1,4 @@
-	@(#)Changes	1.4	3/30/85
+	@(#)Changes	1.5	3/30/85
 
 Tue Nov 20 1984 - wnl (1.6)
 	Added an "exit" if sbrk's fail.  Added changes from Jonathon
