@@ -1,0 +1,10 @@
+: /bin/sh
+#
+#	Check crack.h for correct form.
+#
+grep -v '^"' crack.h
+grep -v '",$' crack.h
+grep '"..........*"' crack.h
+sort -u -o crack.h crack.h
+set `wc -l crack.h`
+echo $1 lines
