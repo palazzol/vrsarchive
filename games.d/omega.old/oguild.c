@@ -443,7 +443,7 @@ void l_sorcerors()
       else if (Player.rank[CIRCLE]==HIGHSORCEROR) {
 	if (Player.level-Sorcerorlevel <= Primelevel)
 	  mprint("You are not experienced enough to advance.");
-	else if (! ((i=(inpack(CORPSEID,ML10+2))+1))
+	else if (! ((i=(inpack(CORPSEID,ML10+2))+1)))
 	  mprint("You must return with the Crown of the LawBringer!");
 	else  {
 	  mprint("The Crown is ritually sacrificed to the Lords of Chaos.");
