@@ -11,9 +11,9 @@
 int	SyntaxTable = FUNDAMENTAL;	/* Current table to use. */
 
 #ifdef ASCII
-char CharTable[NMAJORS][128] = {
+unsigned char CharTable[NMAJORS][128] = {
 #else /* IBMPC or MAC */
-char CharTable[NMAJORS][256] = {
+unsigned char CharTable[NMAJORS][256] = {
 #endif /* ASCII */
 {	_C,	_C,	_C,	_C,	_C,	_C,	_C,	_C,
 	_C,	_C,	_C,	_C,	_C,	_C,	_C,	_C,
