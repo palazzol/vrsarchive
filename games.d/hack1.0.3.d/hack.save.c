@@ -19,7 +19,7 @@ dosave(){
 	}
 #ifdef lint
 	return(0);
-#endif lint
+#endif
 }
 
 #ifndef NOSAVEONHANGUP
@@ -27,7 +27,7 @@ hangup(){
 	(void) dosave0(1);
 	exit(1);
 }
-#endif NOSAVEONHANGUP
+#endif
 
 /* returns 1 if save successful */
 dosave0(hu) int hu; {
@@ -163,7 +163,7 @@ register fd;
 	}
 #ifndef QUEST
 	setsee();  /* only to recompute seelx etc. - these weren't saved */
-#endif QUEST
+#endif
 	docrt();
 	restoring = FALSE;
 	return(1);
@@ -179,7 +179,7 @@ register fd;
 #ifdef lint
 	/* suppress "used before set" warning from lint */
 	otmp2 = 0;
-#endif lint
+#endif
 	while(1) {
 		mread(fd, (char *) &xl, sizeof(xl));
 		if(xl == -1) break;
@@ -214,7 +214,7 @@ register fd;
 #ifdef lint
 	/* suppress "used before set" warning from lint */
 	mtmp2 = 0;
-#endif lint
+#endif
 	while(1) {
 		mread(fd, (char *) &xl, sizeof(xl));
 		if(xl == -1) break;
