@@ -1,6 +1,6 @@
 /* mf.c - mail filter subroutines */
 #ifndef	lint
-static char ident[] = "@(#)$Id: mf.c,v 1.1 1990-04-12 13:29:42 vrs Exp $";
+static char ident[] = "@(#)$Id: mf.c,v 1.2 1990-05-11 23:08:27 vrs Exp $";
 #endif	lint
 
 #include "mf.h"
@@ -1049,6 +1049,6 @@ register char  **bp;
 		return NOTOK;
 	    }
 	    else
-		cp += dp - pp, ep = (pp = cp) + len - 2;
+		cp += dp - pp, ep = (pp = dp) + len - 2;
     }
 }
