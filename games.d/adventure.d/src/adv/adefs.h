@@ -9,8 +9,7 @@
 **
 */
 
-#define ADV		"adv"
-#define FREEZER		"freezer"
+#define FREEZER		"adventure.save"
 #define	INITIAL		0
 #define	REPEAT		500
 #define	ERROR		(-1)
