@@ -1,0 +1,16 @@
+#!/bin/sh
+if test ! -r active.current
+then
+	echo "current active list must be in file \"active.current\""
+	exit 1
+fi
+
+cat > DEAD.GROUPS <<'EOF'
+# remove all lines that you want to keep in the active list
+#
+EOF
+./Mkactive | ./Mkdead >> DEAD.GROUPS
+
+${EDITOR-vi} DEAD.GROUPS
+/bin/sh -v DEAD.GROUPS
+/bin/rm DEAD.GROUPS

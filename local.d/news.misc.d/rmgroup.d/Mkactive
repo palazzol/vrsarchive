@@ -1,0 +1,15 @@
+#!/bin/sh
+# see Update.active for this usage
+#
+sed -e '1,/---/d'\
+	-e '1,/---/d'\
+	-e 's/^[	]//'\
+	-e 's/	\(.*\)//'\
+	active.current | sort | sed -e '1,/Newsgroup/d' > current
+sed -e 's/ \(.*\)//' /usr/new/lib/news/active | sort > active
+diff active current > /tmp/active.diff
+echo "# active newsgroups not in local active file:"
+fgrep ">" /tmp/active.diff
+echo "# defunct newsgroups still in active file (also local groups):"
+fgrep "<" /tmp/active.diff
+/bin/rm current active /tmp/active.diff
