@@ -221,11 +221,11 @@ map_geometry	: GEOMETRY_ID ':' h_justif ',' v_justif
 			  $<i>$ = $<i>3 + ( $<i>5 * 10 );
 		  };
 
-h_justif	: LEFT_OR_RIGHT
-		| CENTER ;
+h_justif	: LEFT_OR_RIGHT { }
+		| CENTER { };
 
-v_justif	: TOP_OR_BOT
-		| CENTER ;
+v_justif	: TOP_OR_BOT { }
+		| CENTER { };
 
 reg_init	: /* nothing */
 		| reg_init init_reg ;
@@ -488,6 +488,7 @@ trap_name	: string
 			$<i>$ = token;
 		  }
 		| RANDOM_TYPE
+		  { }
 		  ;
 
 room_type	: string
@@ -500,6 +501,7 @@ room_type	: string
 				$<i>$ = token;
 		  }
 		| RANDOM_TYPE
+		  { }
 		  ;
 
 coordinate	: coord
@@ -510,14 +512,19 @@ coordinate	: coord
 		  };
 
 door_state	: DOOR_STATE
+		  { }
 		| RANDOM_TYPE
+		  { }
 		  ;
 
 light_state	: LIGHT_STATE
+		  { }
 		| RANDOM_TYPE
+		  { }
 		  ;
 
 alignment	: ALIGNMENT
+		  { }
 		| a_register
 		| RANDOM_TYPE
 		  {
@@ -525,7 +532,9 @@ alignment	: ALIGNMENT
 		  };
 
 altar_type	: ALTAR_TYPE
+		  { }
 		| RANDOM_TYPE
+		  { }
 		  ;
 
 p_register	: P_REGISTER '[' INTEGER ']'

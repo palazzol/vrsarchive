@@ -23,8 +23,7 @@ static int	lastnoun, lastverb;
 %type	<y_bool>	darkness
 %type	<y_symbol>	itemname itemroom actword description
 
-%token <y_void>
-	ACTION
+%token	ACTION
 	AND
 	ARROW
 	AT
@@ -421,6 +420,7 @@ actions
 
 condition
 	: cond
+			{ }
 	| NOT cond
 			{ negate($2); }
 	;
