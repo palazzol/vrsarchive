@@ -39,4 +39,5 @@ main()
   }
   mvcur(0,COLS-1,LINES-1,0);
   endwin();
+  return(0);
 }
