@@ -32,11 +32,11 @@ install: $(ALL) $(GAMDIR) $(GAMLIB)
 	cp q1text.dat $(GAMLIB)
 	cd $(GAMLIB); chmod 644 q1text.dat
 
-convert:	vcnvrt vtxtcn vtext.dat
+convert$(EXE):	vcnvrt$(EXE) vtxtcn$(EXE) vtext.dat
 	@echo "creating data files..."
-	./vtxtcn
-	./vcnvrt
-	touch convert
+	./vtxtcn$(EXE)
+	./vcnvrt$(EXE)
+	touch convert$(EXE)
 
 vcnvrt$(EXE):	vcnvrt.c
 	$(CC) $(CFLAGS) -o $@ vcnvrt.c
@@ -46,11 +46,11 @@ vtxtcn$(EXE):	vtxtcn.c
 	$(CC) $(CFLAGS) -o $@ vtxtcn.c
 	rm -f vtxtcn.o
 
-world$(EXE):	convert $(WOBJS) $(WHEADERS) 
+world$(EXE):	convert$(EXE) $(WOBJS) $(WHEADERS) 
 	$(CC) $(CFLAGS) -o $@ $(WOBJS)
 
 clean:
-	rm -f $(ALL) $(WOBJS) convert vcnvrt vtxtcn
+	rm -f $(ALL) $(WOBJS) convert$(EXE) vcnvrt$(EXE) vtxtcn$(EXE)
 	rm -f *.inc q1text.dat
 
 helper.o: Makefile
