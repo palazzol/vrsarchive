@@ -15,7 +15,7 @@ char *
 ADDCR(file)
 char *file; {
 	int id, oid;
-	char buf[512], *index();
+	char buf[512], *strchr();
 	static char temp[11];
 	char *end = "\r\n";
 	int ln, cnt;
@@ -37,7 +37,7 @@ char *file; {
 			
 	while (ln = read(id,ptr,512)) {
 		count = 0;
-		while ( od = index(ptr,NL) ) {
+		while ( od = strchr(ptr,NL) ) {
 			if (od > &buf[ln]) break;
 			*od = '\0';
 			cnt = strlen(ptr);

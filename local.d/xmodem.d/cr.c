@@ -14,7 +14,7 @@ char *
 LF2CR(file)
 char *file; {
 	int id, oid;
-	char buf[512], *index();
+	char buf[512], *strchr();
 	static char temp[11];
 	register char *ptr = buf;
 	register ln, count;
@@ -34,7 +34,7 @@ char *file; {
 			
 	count = 0;
 	while (ln = read(id,ptr,512)) {
-		while ( ptr = index(ptr,NL) ) {
+		while ( ptr = strchr(ptr,NL) ) {
 			if (ptr > &buf[ln]) break;
 			*ptr = CR;
 		}

@@ -15,7 +15,7 @@
 DELCR(file)
 char *file; {
 	int id, oid;
-	char buf[BLOCK+10], *index();
+	char buf[BLOCK+10], *strchr();
 	static char temp[11];
 	register char *ptr = buf, *od, *cz;
 	register int len;
@@ -36,9 +36,9 @@ char *file; {
 
 	while ((len = read(id,ptr,BLOCK)) > 0) {
 		*(ptr + len) = 0;
-		while ( od = index(ptr,CR) ) {
+		while ( od = strchr(ptr,CR) ) {
 			*od = '\0';
-			if (cz = index(ptr,CTRL_Z)) {
+			if (cz = strchr(ptr,CTRL_Z)) {
 				*cz = '\0';
 				write(oid, ptr, strlen(ptr));
 			 	goto OUT;
@@ -46,7 +46,7 @@ char *file; {
 			write(oid, ptr, strlen(ptr));
 			ptr = ++od;
 		}
-		if (cz = index(ptr,CTRL_Z)) {
+		if (cz = strchr(ptr,CTRL_Z)) {
 			*cz = '\0';
 			write(oid, ptr, strlen(ptr));
 		 	goto OUT;

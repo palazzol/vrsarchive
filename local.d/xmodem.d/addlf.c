@@ -13,7 +13,7 @@ int argc;
 char *argv[]; {
 	int id, oid;
 	char buf[512];
-	char *temp, *index();
+	char *temp, *strchr();
 	char *end = "\r\n";
 	int ln, cnt;
 	register char *ptr, *od;
@@ -31,7 +31,7 @@ char *argv[]; {
 			ptr = buf;
 			while (ln = read(id,ptr,512)) {
 				count = 0;
-				while ( od = index(ptr,CR) ) {
+				while ( od = strchr(ptr,CR) ) {
 					if (od > &buf[ln]) break;
 					*od = '\0';
 					cnt = strlen(ptr);

@@ -20,7 +20,7 @@
 CR2LF(file)
 char *file; {
 	int id, oid;
-	char buf[BLOCK+1], *index();
+	char buf[BLOCK+1], *strchr();
 	char temp[11], temp1[11];
 	register char *ptr = buf;
 	register int len;
@@ -41,7 +41,7 @@ char *file; {
 
 	buf[BLOCK] = 0;
 	while ((len = read(id,ptr,BLOCK)) > 0) {
-		while ( ptr = index(ptr,CR) ) {
+		while ( ptr = strchr(ptr,CR) ) {
 			*ptr = NL;
 		}
 		write(oid, ptr = buf, len);
@@ -68,7 +68,7 @@ char *file; {
 
 	ptr = buf;
 	while ((len = read(oid,ptr,BLOCK)) > 0) {
-		if (ptr = index(ptr,STOP))  {
+		if (ptr = strchr(ptr,STOP))  {
 			*ptr = 0;
 			write(id, buf, strlen(buf));
 			break;
