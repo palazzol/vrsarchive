@@ -8,6 +8,7 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 
@@ -84,7 +85,8 @@ net_desel (ctx)			/* deselect a net		 */
 	nets_msg (nettgo);
 
 	if (V.cnet -> f) {	/* completed net ?		 */
-	    if (++svcnt > savcnt) {	/* time to auto save ?	 */
+	    if (++svcnt > savcnt &&	/* time to auto save ?	 */
+		!mac_exp) {	/* do not save while macro exp.	 */
 		svcnt = 0;
 		Ferr_msg ("Busy: saving work");
 		save (0);
@@ -163,7 +165,8 @@ start_nt (x, y, ctx)		/* start a copper trace		 */
 	trc_buf[0].x = x;
 	trc_buf[0].y = y;
 	trc_buf[0].ty = (pcb[y][x] & ahb) ? vec :
-			((~pcb[y][x] & vec) ? pcb[y][x] & vec : s1b);
+			((~pcb[y][x] & vec) ? pcb[y][x] & vec :
+			((pcb[y][x] & resb) ? s2b : s1b         ));
 	trc_cnt = 1;
     }
 
@@ -313,6 +316,11 @@ pnt (x_cur, y_cur, si)		/* paint a wire segment		 */
 
     x = xo + dx;
     y = yo + dy;
+
+    if (!((pcb[y][x] ^ ((si & s1b) ? (selb | s1b) : (selb | s2b | resb))) & 
+	  (selb | ahb | resb | si)))
+	return 1;		/* stop in track exit		 */
+
     if (i & 1) {		/* diagonal check		 */
 	dxd = (dx - dy) / 2;
 	dyd = (dx + dy) / 2;
@@ -352,9 +360,6 @@ pnt (x_cur, y_cur, si)		/* paint a wire segment		 */
 	    l |= pchk1 (x + dx + dy, y + dy - dx, si, &x1, &y1);
 	    if (l & 1)
 		break;
-	    if (!k && l && !(pcb[y1][x1] & ahb))
-				/* something special		 */
-		l = 0;
 	    l |= pchk1 (x + dx, y + dy, si, &x1, &y1);
 	    if (l & 1)
 		break;
@@ -383,11 +388,13 @@ pnt (x_cur, y_cur, si)		/* paint a wire segment		 */
 pchk1 (x, y, b, xs, ys)		/* paint check			 */
     int     x, y, b, *xs, *ys;
 {
-    int     i;
+    register int     i;
 /* printf("pchk1: x=%d y=%d b=%2x xs=%d ys=%d\n",x,y,b,*xs,*ys); */
     i = pcb[y][x];
     if (!(i & selb))		/* not selected: peace of cake	 */
 	return (0 != (i & (fb | b | ahb)));/* touches other net?	 */
+    if (!(i & ahb) && !(~i & vec) && ((b & s1b) ? (i & resb) : !(i & resb)))
+	return 1;
     *xs = x;
     *ys = y;
     return (2);			/* needs more careful examination */
@@ -444,25 +451,23 @@ pnt_ha (xe, ye, xt, yt, a, b)
     }
 
     if (a & 1) {		/* diagonal approach		 */
-	if ((abs (xe - xt) >= 2) && (abs (ye - yt)) &&
-		(pcb[ye - yt][xe - dr[a][0]] & b)) {
-	/* this is a wired case		 */
-	    if (abs (yt - (ye - dr[a][1])) > 2)
-		plt (xt, yt, xt, yt - 2 * dr[a][1]);
-	    else
-		plt (xt, yt, xt - 2 * dr[a][0], yt);
-	    plt (trc_buf[trc_cnt - 1].x, trc_buf[trc_cnt - 1].y,
-		    xe -= dr[a][0], ye -= dr[a][1]);
+
+	if (abs (xe - xt) == 2 && abs (ye - yt) == 2) {
+				/* take care of corner points	 */
+	    plt (xt, yt, xe, ye);
 	    ckgp (xe, ye, b);
+	    ckgp (xt, yt, b);
 	    return (2);
 	}
-	xe += dr[a][0];
+
+	xe += dr[a][0];		/* 3 cases left: connect to side */
 	ye += dr[a][1];
 	for (i = 0; i < 3; ++i) {
 	    if ((yt == ye) || (xt == xe)) {
 		plt (xt, yt, xe, ye);
 		plt (trc_buf[trc_cnt - 1].x, trc_buf[trc_cnt - 1].y, xe, ye);
 		ckgp (xe, ye, b);
+		ckgp (xt, yt, b);
 		return (2);
 	    }
 	    xe -= dr[a][0];
@@ -562,10 +567,10 @@ pnt_eha (xe, ye, xt, yt, de, b)
 	    continue;		/* not aligned or no space	 */
 	color (b | selb, b | selb);
 	plt (xe, ye, trc_buf[trc_cnt - 1].x, trc_buf[trc_cnt - 1].y);
-	color (vec, vec);
+	color (vec | selb, vec | selb);
 	pxl (x, y);		/* via hole is inserted		 */
 	if (hasp[i].h[j]) {	/* need a intermediate point	 */
-	    color (b ^ vec, b ^ vec);
+	    color ((b ^ vec) | selb, (b ^ vec) | selb);
 	    pxl ((hasp[i].h[j] < 0) ? xe : xe + dr[(hasp[i].h[j] + de) % 8][0],
 		 (hasp[i].h[j] < 0) ? ye : ye + dr[(hasp[i].h[j] + de) % 8][1]);
 	}
@@ -602,7 +607,7 @@ viaalg (b)			/* via hole alignment		 */
 	if (pin (x, y))
 	    return (1);		/* no space			 */
         else {
-	    color (vec, vec);
+	    color (vec | selb, vec | selb);
 	    pxl (x, y);
 	    return (0); }	/* done !			 */
     }
@@ -615,7 +620,7 @@ viaalg (b)			/* via hole alignment		 */
 				/* extend previous vector	 */
 	    x = trc_buf[trc_cnt - 1].x += dx;
 	    y = trc_buf[trc_cnt - 1].y += dy;
-	    color (vec, vec);
+	    color (vec | selb, vec | selb);
 	    pxl (x, y);
 	    return (0);
 	}
@@ -624,7 +629,7 @@ viaalg (b)			/* via hole alignment		 */
 				/* shorten previous vector	 */
 	    trc_buf[trc_cnt - 1].x -= dx;
 	    trc_buf[trc_cnt - 1].y -= dy;
-	    color (vec, vec);
+	    color (vec | selb, vec | selb);
 	    pxl (trc_buf[trc_cnt - 1].x, trc_buf[trc_cnt - 1].y);
 	    color (0, vec ^ b);
 	    pxl (x, y);
@@ -645,7 +650,7 @@ viaalg (b)			/* via hole alignment		 */
 		    trc_buf[trc_cnt - 1].y -= dy;
 		}
 	    }
-	    color (vec, vec);
+	    color (selb | vec, selb | vec);
 	    pxl (trc_buf[trc_cnt].x = dr[i][0] + x,
 		 trc_buf[trc_cnt].y = dr[i][1] + y);
 	    trc_buf[trc_cnt++].ty = vec ^ b;
@@ -711,7 +716,7 @@ if(pcb[y][x] & ishb) {
 		    abs(trc_buf[trc_cnt - 3].y - trc_buf[trc_cnt - 2].y) <2) {
 				/* remove alignment stub	 */
 		    color (0, selb | trc_buf[trc_cnt - 2].ty);
-		    ck_rdnb (trc_buf[trc_cnt - 3].x, trc_buf[trc_cnt - 3].y,
+		    ck_rdnb (trc_buf[trc_cnt - 2].x, trc_buf[trc_cnt - 2].y,
 			trc_buf[trc_cnt - 2].ty);
 		    trc_cnt--;
 		}
@@ -980,7 +985,7 @@ ad_vck (x1, y1, x2, y2)		/* area-delete vector check	 */
     }
 
     if (abs (x1 - x2) < 2 && abs (y1 - y2) < 2 &&
-	pcb[x1][y1] & chb && pcb[x2][y2] & chb)
+	pcb[y1][x1] & chb && pcb[y2][x2] & chb)
 	return;			/* do not remove parts of a hole */
 
     color (0, wtsb);
@@ -997,6 +1002,10 @@ ad_gchk (x, y)			/* area delete: garbage check	 */
 	wthf = delh;
 	wtvf = delv;
 	wtrace (x, y, vec);
+	if (pcb[y][x] & vec) {	/* kill isolated points		 */
+	    color (0, vec);
+	    pxl (x, y);
+	}
     }
 }
 
@@ -1025,7 +1034,7 @@ exc_art (x, y, ctx)		/* execute area route		 */
 
     max = 200;			/* assume 200 for a start	 */
     cnt = 0;
-    nl = (struct nlhd **) malloc (sizeof (struct nlhd *) * max);
+    nl = (struct nlhd **) p_malloc (sizeof (struct nlhd *) * max);
 
     rm_window ();
     Ferr_msg ("Busy: routing");
@@ -1038,7 +1047,7 @@ exc_art (x, y, ctx)		/* execute area route		 */
 		if (i >= cnt) {
 		    if (cnt >= max) {
 			max += max / 2;
-			nl = (struct nlhd **) realloc
+			nl = (struct nlhd **) p_realloc
 					(nl, sizeof (struct nlhd *) * max);
 		    }
 		    nl[cnt++] = t;
@@ -1049,11 +1058,12 @@ exc_art (x, y, ctx)		/* execute area route		 */
 	sprintf (buf, "Routing net %d of %d", i, cnt);
 	nets_msg (nettgo);
 	Ferr_msg (buf);
+	msg_svd = 0;		/* do not delay			 */
 	N_route (nl[i], 2, wxl, wyl, wxh, wyh);
 	nettgo -= nl[i] -> f;
     }
 
-    free (nl);			/* clean up			 */
+    p_free (nl);		/* clean up			 */
     nets_msg (nettgo);
     err_msg ("Done");
     beep ();

@@ -28,6 +28,9 @@ pntbm ()			/* print bit map on versatek	 */
     FILE *sf, *fopen ();
     extern struct passwd  *getpwuid ();
 
+    double  f1 = 3.937007874;	/* metric conversion factor		 */
+    f1 *= rsun;
+
     if (V.BSY > bmapw * 4) {
 	printf ("Sorry, int Bitmap too wide for single page at this scale\n");
 	return;
@@ -49,9 +52,9 @@ pntbm ()			/* print bit map on versatek	 */
 	printf ("Could not open spool entry file\n");
 	return;
     };
-    fprintf (sf, "L%s : PC-Board preview (%5.2f by %5.2f cm)       \n",
+    fprintf (sf, "L%s : PC-Board preview (%5.2lf by %5.2lf cm)       \n",
 	     getpwuid (getuid ()) -> pw_gecos,
-	     (V.BSX / rsun) * 0.254, (V.BSY / rsun) * 0.254);
+	     (double) V.BSX / f1, (double) V.BSY / f1);
     fprintf (sf, "B%d components with %d holes connected by %d nets\n",
 	     V.ncp, V.nch, V.nnh);
     fprintf (sf, "BCreated by PCB V%d.%d\n", V.pver / 100, V.pver % 100);

@@ -8,6 +8,7 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 #define mainleer		/* this is the main section	 */
@@ -16,6 +17,11 @@
 
 get_rtprm ()			/* get route parameter		 */
 {
+    if (replay_fp) {		/* fetch parameter from file	 */
+	read_rpms ();
+	return;
+    }
+
     RT_sel = getint ("Select router (0=full, 1=confined)", 0, 1, RT_sel);
 
     if (RT_sel) {
@@ -28,16 +34,45 @@ get_rtprm ()			/* get route parameter		 */
 	K5 = getint ("Min length for each segment", K3 + 1, 1000, K5);
 	K6 = getint ("Max number of via holes for one connection", 2, 10, K6);
 	K7 = getint ("Max level for L-routes retries", 0, 10, K7);
-	K8 = -getint ("Bonus for rectangular vias", -20, 20, -K8);}
+	K8 = -getint ("Bonus for rectangular vias", -20, 20, -K8);
+	C8 = 3;}
     else {
 	C1 = getint ("Boarder size for routing area", 1, 100, C1);
 	C2 = getint ("Max path in wrong direction", 1, 100, C2);
 	C3 = getint ("Max number of via holes in one segment", 0, 10, C3);
+	if (C3)
+	    C8 = 3;		/* no confinement		  	 */
+	else
+	    C8 = getint ("Side select (1: Component 2: Solder 3: both)",
+			 1, 3, C8);
 	C4 = getint ("Penalty for HV via holes", 0, 50, C4);
 	C5 = getint ("Penalty for D via hols", C4, 50, C5);
 	C7 = getint ("Penalty progression for via hols", 0, 50, C7);
 	C6 = 2 * getint ("Via hole alignment", 1, 8, C6 / 2);
     }
+
+    if (save_fp)
+	write_rpms ();
+}
+
+read_rpms ()			/* read route parameters from ksv */
+{
+    int     i;
+    char    c;
+
+    i = fscanf (replay_fp, " %c%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d",
+	    &c, &RT_sel, &rt_str, &K1, &K2, &K3, &K4, &K5, &K6, &K7, &K8,
+	    &C1, &C2, &C3, &C4, &C5, &C6, &C7, &C8);
+    if (19 != i || c != 'P')
+	err ("get_rtprm: Keystroke file problem", i, (int) c, 0, 0);
+}
+
+write_rpms ()			/* write route parameters to ksv */
+{
+    fprintf (save_fp,
+	    "P %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+	    RT_sel, rt_str, K1, K2, K3, K4, K5, K6, K7, K8,
+	    C1, C2, C3, C4, C5, C6, C7, C8);
 }
 
 set_rtps (n)			/* set routing parameters	 */
@@ -52,12 +87,12 @@ set_rtps (n)			/* set routing parameters	 */
 {
 #define nmax 4			/* tere are thre sets defined	 */
     static struct rtp {
-	int c1, c2, c3, c4, c5, c6, c7;
+	int c1, c2, c3, c4, c5, c6, c7, c8;
     } rtps[nmax] = {
-	{4, 8, 0, 10, 15, 8, 9},
-	{10, 8, 1, 30, 45, 8, 9},
-	{15, 12, 2, 20, 30, 4, 6},
-	{25, 16, 4, 10, 20, 2, 3}
+	{4, 8, 0, 10, 15, 8, 9, 3},
+	{10, 8, 1, 30, 45, 8, 9, 3},
+	{15, 12, 2, 20, 30, 4, 6, 3},
+	{25, 16, 4, 10, 20, 2, 3, 3}
     };
 
     if (n < 0 || n >= nmax) {
@@ -74,6 +109,7 @@ set_rtps (n)			/* set routing parameters	 */
     C5 = rtps[n].c5;
     C6 = rtps[n].c6;
     C7 = rtps[n].c7;
+    C8 = rtps[n].c8;
 }
 
 cr_gmaze (x1, y1, x2, y2, b)	/* create a good maze		 */
@@ -229,9 +265,9 @@ cr_maze (px, py, qx, qy)	/* create maze (aux. bit map)	 */
     oy = py;
     sx = qx;
     sy = qy;
-    abm = (char *) malloc (sx * sy * sizeof (*abm));
+    abm = (char *) p_malloc (sx * sy * sizeof (*abm));
 				/* allocate space		 */
-    xbuf = (int *) malloc ((sx - 2) * sizeof (*xbuf));
+    xbuf = (int *) p_malloc ((sx - 2) * sizeof (*xbuf));
 				/* x-buffer			 */
 
     p3 = abm;			/* get result pointer		 */
@@ -270,7 +306,7 @@ cr_maze (px, py, qx, qy)	/* create maze (aux. bit map)	 */
     for (i = 0; i < sx; i++)	/*** post - scan	       ***/
 	*p3++ = NOGOD | NOGOD << 4;
 
-    free (xbuf);		/* release x - buffer		 */
+    p_free (xbuf);		/* release x - buffer		 */
 }
 
 set_dir ()			/* set up directions		 */

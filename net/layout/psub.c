@@ -8,9 +8,9 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
-#include <stdio.h>
 
 err (s, e1, e2, e3, e4)			/* error exit			*/
     char s[];
@@ -27,6 +27,27 @@ err (s, e1, e2, e3, e4)			/* error exit			*/
 	printf ("Data structure saved on 'pcb.ERR'\n");
     };
     finish ();
+}
+
+char *s_malloc (n)		/* safe malloc			 */
+    unsigned n;
+{
+    register char *t;
+    t = (char *) malloc (n);
+    if (!t)
+	err ("Failed to get more memory (malloc)", n, 0, 0, 0);
+    return t;
+}
+
+char *s_realloc (ptr, n)	/* safe realloc			 */
+    unsigned n;
+    char *ptr;
+{
+    register char *t;
+    t = (char *) realloc (ptr, n);
+    if (!t)
+	err ("Failed to get more memory (realloc)", n, 0, 0, 0);
+    return t;
 }
 
 beep()			/* beep on the terminal		 */
@@ -292,6 +313,11 @@ menu (s, n)			/* menu function select		 */
 \*********************************************************************/
 {
     int     i, j, x, y;
+    int     mst_sv = mac_def;	/* macro status save		 */
+
+    if (mac_exp)		/* macro expansion ?		 */
+	return macex_mn ();
+    mac_def = 0;
 
     if (cz > 2)			/* No menu on large zooms	 */
 	zoom (2);
@@ -309,16 +335,22 @@ menu (s, n)			/* menu function select		 */
 	err ("menu: couldn't read cursor", i, x, y, 0);
 
     color (0, resb);
-    rect (wx + 20 / cz, wy + 452 / cz - n * j, wx + 300 / cz, wy + 462 / cz);
+    rect (wx + 20 / cz, wy + 452 / cz - n * j, wx + 400 / cz, wy + 462 / cz);
 
     if (x >= wx + 20 / cz  && x < wx + 160 &&
 	y <= wy + 462 / cz && y > wy + 462 / cz - n * j) {
 	msg_on ();
-	return ((wy + 462 / cz - y) / j);}
+	i = (wy + 462 / cz - y) / j;}
     else {
 	err_msg ("Nothing selected");
-	return (-1);
+	i = -1;
     }
+
+    mac_def = mst_sv;		/* restore macro status		 */
+    if (mac_def)
+	macdf_mn (i);
+
+    return i;
 }
 
 clp_plt (x0, y0, x1, y1, xl, yl, xh, yh)	/* clip plot	 */

@@ -8,7 +8,7 @@
 *								*
 \***************************************************************/
 
-
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 
@@ -146,10 +146,14 @@ s_menu (x, y, ctx)		/* start menu			 */
 	"Save Work",
 	"Change color",
 	"Move Component",
-	"Expand wire"
+	"Expand wire",
+	0,
+	"Macro exec"
     };
 
-    switch (menu (mtext, 13)) {
+    mtext[13] = mac_def ? "End MACdef" : "Start MACdef";
+
+    switch (menu (mtext, 15)) {
 	case 0:
 	    Ferr_msg ("Busy: Plotting Bitmap");
 	    pntbm ();
@@ -195,6 +199,12 @@ s_menu (x, y, ctx)		/* start menu			 */
 	    return (CMOVE);
 	case 12:
 	    return wide_wire (ctx);
+	case 13:
+	    mac_strt ();
+	    break;
+	case 14:
+	    mac_exec ();
+	    break;
     }
 
     return (ctx);
@@ -282,7 +292,7 @@ view_on ()			/* display a wire over-view	 */
     color (resb, resb);
 
     for (i = 0; i < V.nnh; ++i)	/* scan through nets		 */
-	if (!NH[i].f) {		/* only unfinished nets		 */
+	if (NH[i].l && !NH[i].f) { /* only unfinished nets	 */
 	    p1 = NH[i].lp;
 	    while (p1) {
 		x0 = p1 -> c -> x;
@@ -438,4 +448,175 @@ seq_rt ()			/* sequence route		 */
 	err_msg ("Done");
 	beep ();
     }
+}
+
+static struct mac_buf {		/* macro buffer			 */
+    int x, y;			/* cursor coordinate		 */
+    int ty;			/* entry type			 */
+} *MB = 0;
+
+static int mb_cnt = 0;		/* macro buffer count		 */
+static int mb_max = 0;		/* max macro buffer size	 */
+static int mb_sz  = 0;		/* current macro size		 */
+static int org_x, org_y;	/* origin of definition		 */
+static int min_x, min_y, max_x, max_y;	/* cursor confinement	 */
+static int disp_x, disp_y;	/* displacement			 */
+
+mac_strt ()			/* start a macro definition	 */
+{
+    if (mac_exp) {
+	err_msg ("No macro nesting/recursion");
+	return;			/* ignore call			 */
+    }
+
+    if (mac_def) {		/* terminate a macro		 */
+	mb_sz--;		/* pop the termination command	 */
+	if (mb_sz > 0)
+	    err_msg ("Macro defined");
+	else {
+	    mb_sz = 0;
+	    err_msg ("Empty macro");
+	}
+	mac_def = 0;  }
+    else {			/* start a macro		 */
+	if (mb_max <= 0) {	/* allocate initial buffer	 */
+	    mb_max = 200;	/* raw guess			 */
+	    MB = (struct mac_buf *) p_malloc(sizeof(struct mac_buf) * mb_max);
+	}
+	mb_cnt = 0;
+	mb_sz = 0;		/* reset size			 */
+	max_x = 0;		
+	max_y = 0;
+	min_x = V.BSX;
+	min_y = V.BSY;
+	disp_x = 0;
+	disp_y = 0;
+	err_msg ("Enter macro origin:");
+	getcur (&org_x, &org_y);
+	err_msg ("Recording macro");
+	mac_def =1;
+    }
+}
+
+mac_exec ()			/* macro execution		 */
+{
+    int x, y;
+    register int i;
+
+    if (mac_def) {
+	err_msg ("No macro nesting/recursion");
+	return;			/* ignore request		 */
+    }
+
+    if (!mb_max || mb_sz <= 0) {
+	err_msg ("No macro defined");
+	beep ();
+	return;
+    }
+
+    err_msg ("Position origin");
+    color (resb, resb);
+    mac_hint ();
+    i = getcur (&x, &y);
+    color (0, resb);
+    mac_hint ();
+    if (i < 0 || i > 3) {
+	err_msg ("Invalid origin");
+	return;
+    }
+
+    disp_x = x - org_x;
+    disp_y = y - org_y;
+    if ((max_x + disp_x) >= V.BSX ||
+	(min_x + disp_x) <= 0 ||
+	(max_y + disp_y) >= V.BSY || 
+	(min_y + disp_y) <= 0       ) {
+	err_msg ("Part of macro leaves board");
+	return;
+    }
+
+    mb_cnt = 0;
+    mac_exp = 1;		/* start expansion		 */
+}
+mac_hint ()			/* give a hint on the macro	 */
+{
+    register int i;
+
+    plts (org_x + disp_x + 5, org_y + disp_y,
+	  org_x + disp_x - 5, org_y + disp_y );
+    plts (org_x + disp_x, org_y + disp_y + 5,
+	  org_x + disp_x, org_y + disp_y - 5);
+
+    for (i = (mb_sz < 5) ? mb_sz : 5; i;)
+	if (MB[--i].x >= 0)
+	    point (MB[i].x + disp_x, MB[i].y + disp_y);
+}
+
+macdf_gc (x, y, i)		/* define macro			 */
+    int x, y, i;
+{
+    if (!mac_def)
+	err ("macdf_gc: no macro being defined", x, y, i, 0);
+
+    if (mb_sz >= mb_max) {	/* time to expand space		 */
+	mb_max += 1 + mb_max / 2;	/* add 50%		 */
+	MB = (struct mac_buf *) p_realloc (MB,
+		sizeof (struct mac_buf) * mb_max);
+    }
+    MB[mb_sz].x = x;
+    MB[mb_sz].y = y;
+    MB[mb_sz++].ty = i;
+
+    if (min_x < x) min_x = x;
+    if (max_x > x) max_x = x;
+    if (min_y < y) min_y = y;
+    if (max_y > y) max_y = y;
+}
+
+macdf_mn (i)			/* define macro			 */
+    int i;
+{
+    if (!mac_def)
+	err ("macdf_mn: no macro being defined", i, 0, 0, 0);
+
+    if (mb_sz >= mb_max) {	/* time to expand space		 */
+	mb_max += 1 + mb_max / 2;	/* add 50%		 */
+	MB = (struct mac_buf *) p_realloc (MB,
+		sizeof (struct mac_buf) * mb_max);
+    }
+    MB[mb_sz].x = -1;
+    MB[mb_sz].y = -1;
+    MB[mb_sz++].ty = i;
+}
+
+macex_gc (x, y)			/* macro expansion: get cursor	 */
+    int *x, *y;
+{
+    if (!mac_exp)
+	err ("macex_gc: no macro being expanded", 0, 0, 0, 0);
+
+    if (MB[mb_cnt].x < 0)
+	err ("macex_gc: sync error", mb_cnt, mb_sz, MB[mb_cnt].ty, 0);
+
+    *x = MB[mb_cnt].x + disp_x;
+    *y = MB[mb_cnt++].y + disp_y;
+
+    if (mb_cnt >= mb_sz)	/* macro terminated		 */
+	mac_exp = 0;
+
+    return MB[mb_cnt - 1].ty;
+}
+
+macex_mn ()			/* macro exansion: menu		 */
+{
+    if (!mac_exp)
+	err ("macex_mn: no macro being expanded", 0, 0, 0, 0);
+
+    if (MB[mb_cnt++].x != -1)
+	err ("macex_mn: sync error", mb_cnt, mb_sz, MB[mb_cnt].ty, 0);
+
+    if (mb_cnt >= mb_sz)	/* macro terminated		 */
+	mac_exp = 0;
+
+    return MB[mb_cnt - 1].ty;
 }

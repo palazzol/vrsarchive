@@ -49,6 +49,7 @@ cdext int C4 initvl(5)		/* penalty for HV via holes		 */
 cdext int C5 initvl(10)		/* penalty for D via holes		 */
 cdext int C6 initvl(8)		/* via hole alignment (must be even)	 */
 cdext int C7 initvl(3)		/* via hole penalty progression		 */
+cdext int C8 initvl(3)		/* side confinement			 */
 
 cdext int K1 initvl(10)		/* small delta limit for single side run */
 cdext int K2 initvl(8)		/* boarder size for single side runs	 */

@@ -8,9 +8,14 @@
 * 						        *
 \*******************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 #include "pleer.h"
+
+#define add_space(p,max) {max += max/2 + 1;\
+	p = (unsigned *) p_realloc (p, sizeof (unsigned) * (max + sftmrg));}
+
 
 maze_run (xs, ys)		/* run through the maze		 */
     int xs, ys;
@@ -47,7 +52,7 @@ maze_run (xs, ys)		/* run through the maze		 */
 	    if (!(*rtp))
 		continue;	/* dead entry, will be removed later */
 	    if (drtc >= drtmax) /* need more space		 */
-		add_space (&drt, drtc, &drtmax);
+		add_space (drt, drtmax);
 
 	    t = abm + (*rtp >> 8);
 	    j = *rtp & rtdr;
@@ -149,7 +154,7 @@ maze_run (xs, ys)		/* run through the maze		 */
 	    if (!(*rtp))	/* dead entry, will be removed later */
 		continue;
 	    if (hvrtc >= hvrtmax)
-		add_space (&hvrt, hvrtc, &hvrtmax);
+		add_space(hvrt, hvrtmax);
 
 	    j = *rtp & rtdr;
 	    t = abm + (*rtp >> 8);
@@ -248,7 +253,7 @@ maze_run (xs, ys)		/* run through the maze		 */
 	    if (!(*rtp))
 		continue;	/* dead entry, will be removed later */
 	    if (drtc >= drtmax)
-		add_space (&drt, drtc, &drtmax);
+		add_space (drt, drtmax);
 
 	    t1 = t = abm + (*rtp >> 8);
 	    ort = *rtp;
@@ -467,22 +472,6 @@ y_key (a, b)
 
 #endif
 
-add_space (p, n, max)		/* increase table space		 */
-    int n, *max;
-    unsigned **p;
-{
-    int     i;
-    unsigned *t, *t1, *t2;
-
-    i = *max + *max / 2;	/* add 50%			 */
-    t1 = t = (unsigned *) malloc ((i + sftmrg) * sizeof (*t));
-    *max = i;
-    for ((t2 = *p, i = 0); i < n; i++)	/* copy stuff		 */
-	*(t1++) = *(t2++);
-    free (*p);			/* release old space		 */
-    *p = t;
-}
-
 trm_chk (xs, ys, t, d, sd, vc)	/* termination check		 */
     int xs, ys, d, sd, vc;
     char *t;
@@ -496,9 +485,9 @@ trm_chk (xs, ys, t, d, sd, vc)	/* termination check		 */
 * 									     *
 \****************************************************************************/
 {
-    int i, j, x, y, vt;
-    int sx1, sy1, ox1, oy1, s1, d1;
-    char *t1, *abm1;
+    register int i, j, x, y, vt;
+    int s1, d1, ctst;
+    register char *t1;
 
     vt = 0;			/* no via hole default		 */
 
@@ -553,7 +542,12 @@ trm_chk (xs, ys, t, d, sd, vc)	/* termination check		 */
 		s1 = ((*t1 & MSK1) == HOLE) ? s2b : s1b;
 		d1 = 7 & ((s1 == s1b) ? *t1 : *t1 >> 4);
 		color (ishb | selb, ishb | selb);
-		if (pin (x, y)) {
+
+		j = pcb[y][x];	/* avoid s1b/s2b overlap in pin check */
+		pcb[y][x] &= ~s1b;
+		ctst = pin (x, y);
+		pcb[y][x] |= j;
+		if (ctst) {
 		    t1 = vhpt[i - 1];
 		    d1 = 7 & ((s1 == s2b) ? *t1 : *t1 >>4);
 		    if (i && fnc_tnnl (t1, d1, s1))
@@ -567,22 +561,10 @@ trm_chk (xs, ys, t, d, sd, vc)	/* termination check		 */
 			(*t1 & MSK2) == MSTART << 4)
 			break;	/* hole on start wire exception	 */
 		    if (mz_chk (t1, d1, s1)) {
-				/* trouble			 */
-			abm1 = abm;/* save aux bit map		 */
-			sx1 = sx;
-			sy1 = sy;
-			ox1 = ox;
-			oy1 = oy;
-			j = s_route (xs, ys, x, y);
-			abm = abm1;/* restore bitmap		 */
-			sx = sx1;
-			sy = sy1;
-			ox = ox1;
-			oy = oy1;
-			set_dir ();
-			if (!j)	/* recovery failed		 */
-			    mz_undone (t, d, sd);
-			return (j);
+				/* bit-plane problem: recovery was
+				   flawed beyond repare - forget it */
+			mz_undone (t, d, sd);
+			return 0;
 		    }
 		    mz_done (t1, d1, s1);
 		}
@@ -743,7 +725,8 @@ mz_chk (t, d, s)		/* maze done - backtrace	 */
 * 								    *
 \*******************************************************************/
 {
-    int     i, j, x, y, p, c;
+    register int i, j, x, y, p, c;
+    int k;
 
     i = (int) (t - abm);	/* get real koordinates		 */
     y = oy + i / sx;
@@ -753,8 +736,13 @@ mz_chk (t, d, s)		/* maze done - backtrace	 */
     c = selb | (vec ^ s);
 
     p = pcb[y][x];
-    if (!(p & ahb) && !(~p & c))
-	return (1);		/* error			 */
+    if (!(p & ahb) && !(~p & c)) {
+	for (k = 0; k < vhptc; k++)
+	    if (t == vhpt[k])
+		break;
+	if (k >= vhptc)
+	    return 1;		/* error			 */
+    }
 
     do {			/* Loop back			 */
 	x += dr[d][0];
@@ -762,8 +750,13 @@ mz_chk (t, d, s)		/* maze done - backtrace	 */
 	t += dir[d];
 
 	p = pcb[y][x];
-	if (!(p & ahb) && !(~p & c))
-	    return (1);		/* error			 */
+	if (!(p & ahb) && !(~p & c)) {
+	    for (k = 0; k < vhptc; k++)
+		if (t == vhpt[k])
+		    break;
+	    if (k >= vhptc)
+		return 1;	/* error			 */
+	}
 
 	if (MSTART == (i = (*t) >> j & MSK1) || i == HOLE)
 	    return (0);		/* success			 */
@@ -849,6 +842,17 @@ mz_undone (t, d, s)		/* maze un-done - backtrace	 */
 		color (selb, selb);
 		dpin (xs, ys);
 	    }
+
+	    if (pcb[y][x] & vec && !(pcb[y][x] & ahb)) {
+		color (selb, selb);
+		pxl (x, y);
+	    }
+
+	    if (pcb[ys][xs] & vec && !(pcb[ys][xs] & ahb)) {
+		color (selb, selb);
+		pxl (xs, ys);
+	    }
+
 	    return;		/* exit on start token		 */
 	}
 
@@ -909,7 +913,7 @@ S_route (xs, ys, xd, yd)		/* full maze - run		 */
 {
     int     mz_vf (), mz_hf ();
     char   *t;
-    int     i;
+    register int  i, j;
 #ifdef debug
     int x, y;
 #endif
@@ -937,7 +941,7 @@ S_route (xs, ys, xd, yd)		/* full maze - run		 */
     getcur(&tx2,&ty2);
     err_msg ("abort?");
     if (getcur (&x, &y) > 3) {	/* abort			 */
-	free (abm);
+	p_free (abm);
 	abm = 0;
 	return (0);
     }
@@ -945,8 +949,8 @@ S_route (xs, ys, xd, yd)		/* full maze - run		 */
 #endif
 
     set_dir ();			/* prepare maze run		 */
-    hvrt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
-    drt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*drt));
+    hvrt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
+    drt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*drt));
     drtmax = hvrtmax = maxrtl;
     vhtc = drtc = drtcd = hvrtcd = hvrtc = 0;/* reset table counter */
 
@@ -961,10 +965,24 @@ S_route (xs, ys, xd, yd)		/* full maze - run		 */
 	else if (i & s2b && i & resb)
 	    wtrace (xs, ys, s2b);
 	else {
-	    free (abm);
+	    p_free (abm);
 	    return 0;		/* somthing is wrong		 */
 	}
     }	    
+
+    if (C8 != 3) {		/* restrict to one side		 */
+	j = (C8 == 1) ? 0 : rtsb;
+	for (i = 0; i < hvrtc; i++)
+	    if ((hvrt[i] & rtsb) != j) {
+		hvrtcd++;
+		hvrt[i] = 0;	/* kill rays for wrong side	 */
+	    }
+	for (i = 0; i < drtc; i++)
+	    if ((drt[i] & rtsb) != j) {
+		drt[i] = 0;	/* kill rays for wrong side	 */
+		drtcd++;
+	    }
+    }
 
     t = abm + (yd - oy) * sx + xd - ox;
     i = (*t & MSK1) == MSTART || (*t & MSK2) == MSTART << 4;
@@ -993,13 +1011,14 @@ S_route (xs, ys, xd, yd)		/* full maze - run		 */
     }
 #endif
 
-    free (drt);			/* release memory		 */
-    free (hvrt);
-    free (abm);
+    p_free (drt);		/* release memory		 */
+    p_free (hvrt);
+    p_free (abm);
     abm = 0;
 
     return (i);
 }
+
 RE_route (src, dst, xl, yl, xh, yh, sd)
     int xl, yl, xh, yh, sd;
     char *src, *dst;
@@ -1027,22 +1046,28 @@ RE_route (src, dst, xl, yl, xh, yh, sd)
     cr_maze (xl, yl, xh - xl + 1, yh - yl + 1);	/* create maze	 */
 
     set_dir ();			/* prepare maze run		 */
-    hvrt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
-    drt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*drt));
+    hvrt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
+    drt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*drt));
     drtmax = hvrtmax = maxrtl;
     vhtc = drtc = drtcd = hvrtcd = hvrtc = 0;/* reset table counter */
 
     wtvf = mz_vf;		/* mark start			 */
     wthf = mz_hf;
     wtrace (xs, ys, sd);
+    wtsb = sd;			/* take care of			 */
+    mz_vf (xs, ys, xs, ys);	/*              isolated points  */
 
     j = (sd == s1b) ? 0 : rtsb;
     for (i = 0; i < hvrtc; i++)
-	if ((hvrt[i] & rtsb) != j)
+	if ((hvrt[i] & rtsb) != j) {
+	    hvrtcd++;
 	    hvrt[i] = 0;	/* kill rays for wrong side	 */
+	}
     for (i = 0; i < drtc; i++)
-	if ((drt[i] & rtsb) != j)
+	if ((drt[i] & rtsb) != j) {
+	    drtcd++;
 	    drt[i] = 0;		/* kill rays for wrong side	 */
+	}
 
     t = abm + (yd - oy) * sx + xd - ox;
     i = (*t & MSK1) == MSTART || (*t & MSK2) == MSTART << 4;
@@ -1053,9 +1078,9 @@ RE_route (src, dst, xl, yl, xh, yh, sd)
     if (!i)
 	err ("RE_route: there should be a path ??", xs, ys, xd, yd);
 
-    free (drt);			/* release memory		 */
-    free (hvrt);
-    free (abm);
+    p_free (drt);		/* release memory		 */
+    p_free (hvrt);
+    p_free (abm);
     abm = 0;
     C3 = sv_C3;			/* restore C3			 */
 }

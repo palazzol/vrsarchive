@@ -210,20 +210,24 @@ exc_cmv (x, y, ctx)		/* execute CP move		 */
 	y1 = cp_y + (pp -> x) * rot_m[cp_r][2] + (pp -> y) * rot_m[cp_r][3];
 	if (cp_alchk (x1) || cp_alchk (y1)) {
 	    err_msg ("Pins not on drill grid");
+	    beep ();
 	    return START;
 	}
 
 				/* check range			 */
 	if (x1 < 3 || y1 < 3 || x1 > V.BSX - 3 || y1 > V.BSY - 3) {
 	    err_msg ("Can't move off board");
+	    beep ();
 	    return START;
 	}
 	
 				/* check for wires		 */
 	x1 = CP[cp_id].x + pp -> x * rot_m[or][0] + pp -> y * rot_m[or][1];
 	y1 = CP[cp_id].y + pp -> x * rot_m[or][2] + pp -> y * rot_m[or][3];
+	ckgp (x1, y1, vec);	/* ignore left over grabage	 */
 	if (pcb[y1][x1] & (s1b | s2b)) {
 	    err_msg ("Disconnect wires first");
+	    beep ();
 	    return START;
 	}
     }
@@ -237,6 +241,7 @@ exc_cmv (x, y, ctx)		/* execute CP move		 */
 
     if (!C_place (&CP[cp_id], cp_x, cp_y, cp_r)) {
 	err_msg ("No space at new place");
+	beep ();
 	if (!C_place (&CP[cp_id], x1, y1, i))
 	    err ("exc_cmv: re-insert to old place failed", x1, y1, i, cp_id);
     }
@@ -434,11 +439,11 @@ C_unplace (cmp)
     if (!chl) {			/* allocate temp table		 */
 	if (chlmax < cmp -> ty -> np)
 	    chlmax = 10 + cmp -> ty -> np;
-	chl = (struct hole **) malloc (sizeof (struct hole *) * chlmax);}
+	chl = (struct hole **) p_malloc (sizeof (struct hole *) * chlmax);}
     else if (chlmax < cmp -> ty -> np) {
-	free (chl);
+	p_free (chl);
 	chlmax = 10 + cmp -> ty -> np;
-	chl = (struct hole **) malloc (sizeof (struct hole *) * chlmax);}
+	chl = (struct hole **) p_malloc (sizeof (struct hole *) * chlmax);}
     }
 
     color (0, selb | chb);	/* remove pins			 */

@@ -198,9 +198,43 @@ cdext struct color_tab {	/* guess what: this is the color table	 */
 #define CT_s2_n 5		/* index to side 2 (normal)	 */
 #define CT_s2_s 9		/* index to side 2 (selected)	 */
 
-cdext int top_side;		/* visable top side (to select stuff)	*/
+cdext int top_side		/* visable top side (to select stuff)	*/
+#ifdef mainpgm
+			= s1b
+#endif
+;
 
 cdext char placed		/* =1: components are placed	 */
+#ifdef mainpgm
+			= 0
+#endif
+;
+
+cdext FILE *save_fp		/* keystroke save file		 */
+#ifdef mainpgm
+			= 0
+#endif
+;
+
+cdext FILE *replay_fp		/* keystroke replay file	 */
+#ifdef mainpgm
+			= 0
+#endif
+;
+
+cdext int mac_exp		/* macro expansion flag		*/
+#ifdef mainpgm
+			= 0
+#endif
+;
+
+cdext int mac_def		/* macro definition flag	*/
+#ifdef mainpgm
+			= 0
+#endif
+;
+
+cdext int msg_svd		/* message save delay flag	 */
 #ifdef mainpgm
 			= 0
 #endif

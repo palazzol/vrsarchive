@@ -216,8 +216,8 @@ char *fnd_seg (x, y, s)
     register int i;
 
     if (!seg_lst) {		/* alloacte segment list	 */
-	seg_lst = (char **) malloc (sizeof (char *) * seg_max);
-	dead_lst = (char **) malloc (sizeof (char *) * seg_max);
+	seg_lst = (char **) p_malloc (sizeof (char *) * seg_max);
+	dead_lst = (char **) p_malloc (sizeof (char *) * seg_max);
     }
     seg_cnt = 0;		/* reset segment list counter	 */
 
@@ -325,9 +325,9 @@ seg_scan (p, d, s, ep)
 
         if (seg_cnt >= seg_max) {	/* need more space	 */
 	    seg_max += 10 + seg_max / 2;
-	    free (dead_lst);
-	    seg_lst = (char **) realloc (seg_lst, sizeof (char *) * seg_max);
-	    dead_lst = (char **) malloc (sizeof (char *) * seg_max);
+	    p_free (dead_lst);
+	    seg_lst = (char **) p_realloc (seg_lst, sizeof (char *) * seg_max);
+	    dead_lst = (char **) p_malloc (sizeof (char *) * seg_max);
 	}
 
 	seg_lst[seg_cnt++] = pp;	/* add point		 */
@@ -789,7 +789,7 @@ plow (x, y, s, d, n)
     if (!fnd_seg (x, y, s) || seg_cnt <= 2)	/* not worth the efford */
 	return;
 
-    un_display (x, y);		/* un-display wire		 */
+    un_display ();		/* un-display wire		 */
 
     dec_b = 1 << d;		/* decision bit			 */
     add = (s & s1b) ? selb | s1b : selb | s2b | resb;/* add bits */
@@ -818,10 +818,10 @@ plow (x, y, s, d, n)
 		    dead_lst[dc++] = seg_lst[i];
 
 	    if (seg_cnt + 2 * dc > seg_max) {	/* add space		 */
-		seg_max = 10 + 2 * dc;
-		seg_lst = (char **) realloc (seg_lst,
+		seg_max += 10 + 2 * dc;
+		seg_lst = (char **) p_realloc (seg_lst,
 						sizeof (char *) * seg_max);
-		dead_lst = (char **) realloc (dead_lst,
+		dead_lst = (char **) p_realloc (dead_lst,
 						sizeof (char *) * seg_max);
 	    }
 
@@ -831,14 +831,57 @@ plow (x, y, s, d, n)
 		*(seg_lst[j++] = p + d2) |= add;
 	    }
 
+	    l = plow_s | selb;
+	    for (i = 0; i < seg_cnt; i++) {	/** STEP 2a		**/
+		p = seg_lst[i] + d1;
+		if (!(*p & ~ss) && (*p & ahb || !(*p & selb) || !(*p & vec))){
+		    k = 0;
+		    if (!(~*(p + xmax) & l)) k++;
+		    if (!(~*(p - xmax) & l)) k++;
+		    if (!(~*(p +   1 ) & l)) k++;
+		    if (!(~*(p -   1 ) & l)) k++;
+		    if (k == 3) {
+			dead_lst[dc++] = seg_lst[i];
+			*(seg_lst[j++] = p) |= add;
+			continue;
+		    }
+		}
+		p = seg_lst[i] + d2;
+		if (!(*p & ~ss) && (*p & ahb || !(*p & selb) || !(*p & vec))){
+		    k = 0;
+		    if (!(~*(p + xmax) & l)) k++;
+		    if (!(~*(p - xmax) & l)) k++;
+		    if (!(~*(p +   1 ) & l)) k++;
+		    if (!(~*(p -   1 ) & l)) k++;
+		    if (k == 3) {
+			dead_lst[dc++] = seg_lst[i];
+			*(seg_lst[j++] = p) |= add;
+			continue;
+		    }
+		}
+	    }
+
 	    for (i = 0; i < dc; i++) {			/** STEP 3	**/
 		p = dead_lst[i];
-		if (!(*p & ahb && *(p + 1) & ahb && *(p - 1) & ahb &&
-		      *(p + xmax) & ahb && *(p - xmax) & ahb)) {
-		    *p &= ~add;				/* remove wire	 */
-		    if (*p & ahb)
-			*p |= selb;
-		}
+		if (*p & ahb && *(p + 1) & ahb && *(p - 1) & ahb &&
+		      *(p + xmax) & ahb && *(p - xmax) & ahb)
+		    continue;		/* skip holes		  */
+
+		l = 0;
+		if (*(p        + 1) & ~ss) l |= 0x01;
+		if (*(p + xmax + 1) & ~ss) l |= 0x02;
+		if (*(p + xmax    ) & ~ss) l |= 0x04;
+		if (*(p + xmax - 1) & ~ss) l |= 0x08;
+		if (*(p        - 1) & ~ss) l |= 0x10;
+		if (*(p - xmax - 1) & ~ss) l |= 0x20;
+		if (*(p - xmax    ) & ~ss) l |= 0x40;
+		if (*(p - xmax + 1) & ~ss) l |= 0x80;
+		if (!uc_tab[l])
+		    continue;		/* skip active parts	 */
+
+		*p &= ~add;		/* remove wire		 */
+		if (*p & ahb)
+		    *p |= selb;
 	    }
 
 	  do {
@@ -846,8 +889,7 @@ plow (x, y, s, d, n)
 	    for (k = i = seg_cnt; i < j; i++) {		/** STEP 4	**/
 		p = seg_lst[i];
 		if (*p & ~ss) {
-/*l = (int) p - (int) pcb;
-test(l%xmax,l/xmax);*/
+
 		    l = 0;
 		    if (*(p        + 1) & ~ss) l |= 0x01;
 		    if (*(p + xmax + 1) & ~ss) l |= 0x02;
@@ -871,6 +913,7 @@ test(l%xmax,l/xmax);*/
 		}
 	    }
 	    j = k;
+	    seg_cnt = 0;
 	  } while (m);				/* I know, this is horrible */
 	    seg_cnt = j;
 
@@ -878,25 +921,12 @@ test(l%xmax,l/xmax);*/
 		break;
 	    else {					/** STEP 5	**/
 		qsort (seg_lst, seg_cnt, sizeof (char *), lst_key);
-		qsort (dead_lst, dc, sizeof (char *), lst_key);
 
-		for (i = 0, k = 0, l = 0; i < j; i++) { /* rm dead (5b)	 */
-		    while (k < dc && seg_lst[i] > dead_lst[k])
-			k++;
-		    if (k >= dc) {		/* dead list exhausted	 */
-			while (i < j)		/* copy rest		 */
-			    seg_lst[l++] = seg_lst[i++];
-			break;
-		    }
-		    if (seg_lst[i] < dead_lst[k]) 	/* alive	 */
-			seg_lst[l++] = seg_lst[i];
-		}
-				/* l has now the number of live entries	 */
-
-		for (i = 0, j = 1; j < l; j++) /* rm multiples (5c)	 */
-		    if (seg_lst[i] != seg_lst[j])
-			seg_lst[++i] = seg_lst[j];
-		seg_cnt = i + 1;
+		for (i = 0, j = 0; j < seg_cnt; j++)
+		    if (*seg_lst[j] & ~ss &&
+			(!i || seg_lst[i - 1] != seg_lst[j]))
+			seg_lst[i++] = seg_lst[j];
+		seg_cnt = i;
 	    }
 	}}
     else {
@@ -916,8 +946,17 @@ test(l%xmax,l/xmax);*/
 	    for (j = 0, i = 0; i < seg_cnt; i++)	/** STEP 1	**/
 	        if (dec_b & tab3[eval_s5 (seg_lst[i])]) { /* move it	 */
 		    p = seg_lst[i];
-		    dead_lst[j++] = p;
-		    seg_lst[i] = p + d1;
+		    dead_lst[j] = p;
+		    p += d1;
+		    if (p == first || p == last) { /* dont touch start/end */
+			for (k = i + 1; k < seg_cnt; k++)
+			    seg_lst[k - 1] = seg_lst[k];
+			seg_cnt--;
+			i--;				
+		    } else {
+			j++;
+			seg_lst[i] = p;
+		    }
 		}
 
 	    for (i = 0; i < j; i++) 			/** STEP 2	**/
@@ -957,8 +996,7 @@ lst_key (a, b)			/* seg_lst sort key		 */
 
 static int hole_x = 0, hole_y = 0; /* coordinate to restatrt wtrace */
 
-un_display (x, y)		/* un-display wire		 */
-    int x, y;
+un_display ()			/* un-display wire		 */
 {
     int sv_hole (), rm_line ();
 
@@ -966,7 +1004,8 @@ un_display (x, y)		/* un-display wire		 */
     wtvf = rm_line;
 
     color (0, selb | plow_s);
-    wtrace (x, y, plow_s);
+    wtrace (((int) first - (int) pcb) % xmax,
+	    ((int) first - (int) pcb) / xmax, plow_s);
 }
 
 sv_hole (x, y)			/* save hole			 */
@@ -1139,11 +1178,11 @@ static char ttt = 0;
 */
     if (!nxt) {				/* need to next pointers	 */
 	nxt_max = seg_max;
-	nxt = (int *) malloc (sizeof (int) * nxt_max);}
+	nxt = (int *) p_malloc (sizeof (int) * nxt_max);}
     else if (nxt_max < n) {		/* need to add space		 */
 	nxt_max = 10 + n;
-	free (nxt);
-	nxt = (int *) malloc (sizeof (int) * nxt_max);
+	p_free (nxt);
+	nxt = (int *) p_malloc (sizeof (int) * nxt_max);
     }
 
     qsort (seg_lst, n, sizeof (char *), lst_key);	/* sort pointer	 */
@@ -1227,13 +1266,13 @@ printf("found: i=%d  x=%3d y=%3d\n",i,
 			if (i >= nxt_max) {	/* shit: need more space */
 			    nxt_max = seg_max + 10 + seg_max / 2;
 			    seg_max = nxt_max;
-			    dead_lst = (char **) realloc (dead_lst,
+			    dead_lst = (char **) p_realloc (dead_lst,
 					sizeof (char *) * seg_max);
-			    seg_lst = (char **) realloc (seg_lst,
+			    seg_lst = (char **) p_realloc (seg_lst,
 					sizeof (char *) * seg_max);
-			    nxt = (int *) realloc (nxt,
+			    nxt = (int *) p_realloc (nxt,
 					sizeof (int) * seg_max);
-			    dvt = (char *) realloc (dvt,
+			    dvt = (char *) p_realloc (dvt,
 					sizeof (char) * seg_max);
 			}
 /*
@@ -1362,12 +1401,12 @@ char *straight (x, y, s)
     }
 
     if (!batch)
-	un_display (x, y);
+	un_display ();
 
     if (st_reroute)
 	return R_straight ();
 
-    dvt = (char *) malloc (sizeof (char) * seg_max);
+    dvt = (char *) p_malloc (sizeof (char) * seg_max);
 
     seg_cnt = adj_sort (first, last, seg_cnt);
 
@@ -1401,7 +1440,7 @@ char *straight (x, y, s)
     if (seg_cnt > 3)
 	t = last + (pdr[dvt[0]] + pdr[dvt[1]]);
 
-    free (dvt);
+    p_free (dvt);
     if (!batch)
 	re_display ();
 
@@ -1981,18 +2020,19 @@ get_seg ()
 	deseln (V.cnet);
 
 					/* allocate space	 */
-    sa_s1 = (char **) malloc (sizeof (char *) * sa_1max);
+    sa_s1 = (char **) p_malloc (sizeof (char *) * sa_1max);
     sa_s1c = 0;
-    sa_s2 = (char **) malloc (sizeof (char *) * sa_2max);
+    sa_s2 = (char **) p_malloc (sizeof (char *) * sa_2max);
     sa_s2c = 0;
-    sal_s1 = (char **) malloc (sizeof (char *) * sal_1max);
-    sal_s2 = (char **) malloc (sizeof (char *) * sal_2max);
+    sal_s1 = (char **) p_malloc (sizeof (char *) * sal_1max);
+    sal_s2 = (char **) p_malloc (sizeof (char *) * sal_2max);
 
     wthf = gs_hf;			/* prepare wtrace	 */
     wtvf = gs_vf;
 
     for (i = 0; i < V.nnh; i++)		/* scan all nets	 */
-	gs_scan (&NH[i]);
+	if (NH[i].l)
+	    gs_scan (&NH[i]);
 }
 
 gs_hf (x, y)				/* hole function	 */
@@ -2027,13 +2067,13 @@ gs_vf (x1, y1, x2, y2)
     if (wtsb == s1b) {
 	if (sal_s1c >= sal_1max) {	/* need more space	 */
 	    sal_1max += 10 + sal_1max / 2;	/* add 50%	 */
-	    sal_s1 = (char **) realloc (sal_s1, sizeof (char *) * sal_1max);
+	    sal_s1 = (char **) p_realloc (sal_s1, sizeof (char *) * sal_1max);
 	}
 	sal_s1[sal_s1c++] = &pcb[y1 + dy][x1 + dx];}
     else {
 	if (sal_s2c >= sal_2max) {	/* need more space	 */
 	    sal_2max += 10 + sal_2max / 2;	/* add 50%	 */
-	    sal_s2 = (char **) realloc (sal_s2, sizeof (char *) * sal_2max);
+	    sal_s2 = (char **) p_realloc (sal_s2, sizeof (char *) * sal_2max);
 	}
 	sal_s2[sal_s2c++] = &pcb[y1 + dy][x1 + dx];
     }
@@ -2074,7 +2114,7 @@ gs_scan (net)
 	while (sal_s1c) {		/* copy generic ptr-s	 */
 	    if (sa_s1c >= sa_1max) {	/* need more space	 */
 		sa_1max += 10 + sa_1max / 2;	/* add 50%	 */
-		sa_s1 = (char **) realloc (sa_s1, sizeof (char *) * sa_1max);
+		sa_s1 = (char **) p_realloc (sa_s1, sizeof (char *) * sa_1max);
 	    }
 	    t = sal_s1[--sal_s1c];
 
@@ -2114,7 +2154,7 @@ gs_scan (net)
 	while (sal_s2c) {		/* copy generic ptr-s	 */
 	    if (sa_s2c >= sa_2max) {	/* need more space	 */
 		sa_2max += 10 + sa_2max / 2;	/* add 50%	 */
-		sa_s2 = (char **) realloc (sa_s2, sizeof (char *) * sa_2max);
+		sa_s2 = (char **) p_realloc (sa_s2, sizeof (char *) * sa_2max);
 	    }
 	    t = sal_s2[--sal_s2c];
 

@@ -187,7 +187,8 @@ NL_list ()			/* list netlist			 */
     pnt_net (&V.VTT, 1);
 
     for (i = 0; i < V.nnh; i++)		/* print normal nets	 */
-	pnt_net (&NH[i], 0);
+	if (NH[i].l)
+	    pnt_net (&NH[i], 0);
 
     fclose (opf);
     err_msg ("Done");
@@ -274,7 +275,7 @@ TY_update ()
 	return;
     }
 
-    flgs = (char *) malloc (sizeof (char) * tymax);
+    flgs = (char *) p_malloc (sizeof (char) * tymax);
     for (i = 0; i < V.nty; flgs[i++] = 0);
 
     lcnt = 1;			/* reset line counter		 */
@@ -320,7 +321,7 @@ TY_update ()
 		printf ("Cannot delete '%s': in use\n", buf);
 	}		
 
-    free (flgs);		/* clean up & exit		 */
+    p_free (flgs);		/* clean up & exit		 */
     fclose (inp);
     err_msg ("Done");
     beep ();
@@ -370,11 +371,11 @@ get_ty ()			/* get a new type		 */
 		error = 1;}
 	    else {
 		if (!new_cif) 	/* need to allocate cif tab	 */
-		    new_cif = (struct cif *) malloc
+		    new_cif = (struct cif *) p_malloc
 				(sizeof (struct cif) * ncf_max);
 		else if (cif_cnt >= ncf_max) {	/* too small	 */
 		    ncf_max += 10 + ncf_max / 2;
-		    new_cif = (struct cif *) realloc
+		    new_cif = (struct cif *) p_realloc
 				(new_cif, sizeof (struct cif) * ncf_max);
 		}
 
@@ -410,7 +411,7 @@ get_ty ()			/* get a new type		 */
 		    new_cif[cif_cnt].flg = 1;
 		    if (cif_cnt >= ncf_max) {
 			ncf_max += 10 + ncf_max / 2;
-			new_cif = (struct cif *) realloc
+			new_cif = (struct cif *) p_realloc
 				(new_cif, sizeof (struct cif) * ncf_max);
 		    }
 		    new_cif[++cif_cnt].flg = 0;
@@ -445,11 +446,11 @@ get_ty ()			/* get a new type		 */
 		    k = (k + 1) % 5;
 		case 2:
 		    if (!new_pin)
-			new_pin = (struct pin *) malloc (
+			new_pin = (struct pin *) p_malloc (
 					sizeof (struct pin) * npn_max);
 		    else if (new_ty.np >= npn_max) {
 			npn_max += 10 + npn_max / 2;
-			new_pin = (struct pin *) realloc (new_pin,
+			new_pin = (struct pin *) p_realloc (new_pin,
 					sizeof (struct pin) * npn_max);
 		    }
 
@@ -474,7 +475,7 @@ get_ty ()			/* get a new type		 */
 
 add_TY ()			/* add new type definition	 */
 {
-    register int i;
+    register int i, j;
 
     if (V.ncif + cif_cnt >= cifmax)
 	err ("EXTcif table too small: increase 'cifmax'", cifmax, 0, 0, 0);
@@ -488,7 +489,13 @@ add_TY ()			/* add new type definition	 */
     if (new_ty.cif)
 	new_ty.cif = V.ncif + 1;
 
-    TY[V.nty++] = new_ty;	/* enter type			 */
+    for (j = 0; j < V.nty; j++)	/* try to re-use an deleted entry */
+	if (!strcmp (DELETED, TY[j].name))
+	    break;
+    if (j >= V.nty)		/* search failed: need new space */
+	V.nty++;
+
+    TY[j] = new_ty;		/* enter type			 */
 
     for (i = 0; i < new_ty.np; i++)	/* copy pins		 */
 	PN[V.npn++] = new_pin[i];
@@ -684,7 +691,7 @@ CP_update ()			/* update component file	 */
 			0.01, 100.0, 1.0);
     brutal = getbool ("Brutal update", 0);
 
-    flgs = (char *) malloc (sizeof (char) * cpmax);
+    flgs = (char *) p_malloc (sizeof (char) * cpmax);
     for (i = 0; i < V.ncp; flgs[i++] = 0);
 
     lcnt = 1;			/* reset line counter		 */
@@ -731,7 +738,7 @@ CP_update ()			/* update component file	 */
 
     placed = 0;			/* revaluate net location	 */
 
-    free (flgs);		/* clean up & exit		 */
+    p_free (flgs);		/* clean up & exit		 */
     fclose (inp);
     err_msg ("Done");
     beep ();
@@ -797,27 +804,33 @@ add_CP ()
 * 								       *
 \**********************************************************************/
 {
-    register int i;
+    register int i, j;
 
     if (V.ncp >= cpmax)
 	err ("Component table too small: increase 'cpmax'", cpmax, 0, 0, 0);
     if (V.nch + new_cp.ty -> np > chmax)
 	err ("Component hole table too small: increase 'chmax'", chmax,0,0,0);
 
+    for (j = 0; j < V.ncp; j++)	/* try to find a deleted entry	 */
+	if (!strcmp (DELETED, CP[j].name))
+	    break;
+    if (j >= V.ncp)		/* no space found		 */
+	V.ncp++;
+
     for (i = new_cp.ty -> np; i;) {	/* allocate holes	 */
 	CH[V.nch].x = 0;
 	CH[V.nch].y = 0;
 	CH[V.nch].pn = --i;
-	CH[V.nch].cpi = V.ncp;
+	CH[V.nch].cpi = j;
 	CH[V.nch++].n = nil;
     }
 
-    CP[V.ncp++] = new_cp;	/* insert component		 */
+    CP[j] = new_cp;		/* insert component		 */
 
     if (!new_cp.unplaced) {	/* try to make it happen	 */
-	CP[V.ncp - 1].unplaced = 1;
+	CP[j].unplaced = 1;
 	i = new_cp.r;
-	if (!C_place (&CP[V.ncp - 1], new_cp.x, new_cp.y, i))
+	if (!C_place (&CP[j], new_cp.x, new_cp.y, i))
 	    printf ("Line %d: cannot place '%s' - kept as unplaced\n",
 		lcnt, new_cp.name);
     }
@@ -1074,7 +1087,7 @@ NL_update ()			/* update netlist		 */
     if (err)
 	printf ("Not deleting old net because of earlier errors\n");
     else {
-	for (i = 0; i <V.nch; i++)
+	for (i = 0; i <V.nnh; i++)
 	    if (!NH[i].ref && NH[i].l) {
 		printf ("Net '%s' deleted\n", NH[i].name);
 		del_NH (&NH[i]);
@@ -1336,7 +1349,7 @@ add_NL (s)			/* add a node to a net list	*/
     if (CP[j].unplaced) {		/* need direct search		*/
 	hp = nil;
 	for (l = 0; l < V.nch; l++)
-	    if (CH[j].cpi == j && CH[j].pn == k) {
+	    if (CH[l].cpi == j && CH[l].pn == k) {
 		hp = &CH[l];
 		break;
 	    }
@@ -1430,10 +1443,10 @@ add_NL (s)			/* add a node to a net list	*/
     }
 
     if (!new_ht) 		/* need to allocate space	 */
-	new_ht = (struct hole **) malloc (sizeof (struct hole *) * ht_max);
+	new_ht = (struct hole **) p_malloc (sizeof (struct hole *) * ht_max);
     else if (ht_max <= ht_cnt) {
 	ht_max += 50;
-	new_ht = (struct hole **) realloc (new_ht, 
+	new_ht = (struct hole **) p_realloc (new_ht, 
 			sizeof (struct hole *) * ht_max);
     }
 

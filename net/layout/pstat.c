@@ -49,6 +49,9 @@ wire_sta ()			/* update wire statistic	 */
 
     for (i = 0; i < V.nnh; i++) {	/* scan nets		 */
 
+	if (!NH[i].l)
+	    continue;			/* skip deleted nets	 */
+
 	for (p = NH[i].lp; p; p = p -> n)
 	    p -> mk = -1;		/* remove marks		 */
 
@@ -122,7 +125,7 @@ cc_stat ()				/* congestion analysis		 */
     if (!cc_array) {			/* allocate cca		 */
 	nccx = (V.BSX - c_grid / 2) / c_grid + 1;
 	nccy = (V.BSY - c_grid / 2) / c_grid + 1;
-	cc_array = (int *) malloc (sizeof (int) * nccx * nccy);
+	cc_array = (int *) p_malloc (sizeof (int) * nccx * nccy);
     }
     j = nccx * nccy;
 
@@ -130,6 +133,9 @@ cc_stat ()				/* congestion analysis		 */
 	cc_array[i] = 0;
 
     for (i = 0; i <V.nnh; i++) {
+
+	if (!NH[i].l)
+	    continue;			/* skip deleted nets		 */
 
 	for (j = NH[i].x1; j < NH[i].x2; j++)	/* update x-projection */
 	    xpro[j]++;

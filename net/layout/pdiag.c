@@ -8,6 +8,7 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 
@@ -104,15 +105,22 @@ verify ()			/* verify connectivity		 */
     printf ("Done\n");
 }
 
+static char ksv_fn[100];	/* key stroke file name		 */
+
 p_diagn ()			/* diagnostic menu		 */
 {
+    char buf[100];
+    FILE *fwantwrite (), *fwantread ();
+    int i, zm, win_x, win_y;
     static char *mtext[] = {
 	"View",
 	"Verify",
 	"Clean",
-	"Flip"};
+	"Flip",
+	"Keystroke on/off",
+	"Replay"};
 
-    switch (menu (mtext, 4)) {
+    switch (menu (mtext, 6)) {
 	case 0:
 	    tst1 ();
 	    break;
@@ -125,6 +133,52 @@ p_diagn ()			/* diagnostic menu		 */
 	case 3:
 	    flip_s();
 	    break;
+	case 4:
+	    if (replay_fp)
+		break;			/* ignore while replay		 */
+
+	    if (save_fp) {
+		err_msg ("Recording ended");
+		fclose (save_fp);
+		save_fp = 0;}
+	    else {
+		Ferr_msg ("Enter file name");
+		save_fp = fwantwrite (".", "Keys.sav", ksv_fn, "New keystroke file:", 1);
+		fprintf (save_fp, "%d %d %d %d\n", mgnm, cz, wx, wy);
+		write_rpms ();
+		err_msg ("Recording started");
+	    }
+	    break;
+	case 5:
+	    replay_fp = fwantread (".", "Keys.sav", buf, "Old keystroke file:");
+	    if (4 !=fscanf (replay_fp,"%d%d%d%d", &i, &zm, &win_x, &win_y) ||
+		i != mgnm) {
+		err_msg ("Bad keystroke file");
+		fclose (replay_fp);
+		replay_fp = 0;}
+	    else {
+		zoom (zm);
+		window (win_x, win_y);
+		read_rpms ();
+		err_msg ("Replaying keystrokes");
+	    }
+	    break;
+    }
+}
+
+ksv_rwnd ()			/* keystroke file rewind	 */
+{
+    if (!save_fp)
+	return;			/* not present			 */
+
+    fclose (save_fp);
+    save_fp = fopen (ksv_fn, "w");
+    if (save_fp) {
+	fprintf (save_fp, "%d %d %d %d\n", mgnm, cz, wx, wy);
+	write_rpms ();}
+    else {
+	printf ("Keystroke file reset failed");
+	beep ();
     }
 }
 
@@ -138,10 +192,11 @@ clean ()			/* scan bitmap for wrong bits	 */
     color (resb, resb);
     for (i = 0; i < V.BSX; i++)
 	for (j = 0; j < V.BSY; j++)
-	    if (pcb[j][i] & 0xa0) {
+	    if (pcb[j][i] & 0xe0) {
 		point (i, j);
-		pcb[j][i] &= 0x5f;
+		pcb[j][i] &= 0x1f;
 	    };
+    Ferr_msg ("Trouble spots");
     window (0, 0);
     update (0, 0, 511, 511);
     fx = fy = 0;

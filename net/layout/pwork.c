@@ -8,6 +8,7 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 
@@ -196,7 +197,7 @@ wtrace(x, y, b)			/* wire trace			 */
 	    if (j == vec) {
 		wtsb = s2b;
 		if (wtvf)
-		    wtvf (x, y, x + dr[i][0], y + dr[i][1]);
+		    (*wtvf) (x, y, x + dr[i][0], y + dr[i][1]);
 		j = pcb[y + 2 * dr[i][1]][x + 2 * dr[i][0]];
 		if (!(j & mrkb) && (j & s2b) &&
 		    vtrace (x + dr[i][0], y + dr[i][1], i, s2b))
@@ -310,7 +311,7 @@ vtrace (x, y, r, b)		/* vector trace		*/
 		k = smd[r][0];
 		if (j == i - 1)
 		    k &= smd[r][1];
-		if (ckv (x1, y1, k, b))
+		if (ckv_d (x1, y1, k, b))
 		    return (1);
 	    }
 	    x1 += dx;
@@ -341,7 +342,7 @@ vtrace (x, y, r, b)		/* vector trace		*/
 		k = smd[r][0];
 		if (j == i - 1)
 		    k &= smd[r][1];
-		if (ckv (x1, y1, k, b))
+		if (ckv_d (x1, y1, k, b))
 		    return (1);
 	    }
 	    x1 += dx;
@@ -420,13 +421,15 @@ vhole (x, y, b)			/* some kind of interconnect hole*/
     for (i = 0; i < 8; ++i) {
 	j = pcb[y + dr[i][1]][x + dr[i][0]];
 	if (j & b) {
-	    if (j & (b ^ vec)) {/* this hack caused by single marker	 */
+	    if (j & ((b ^ vec) | mrkb)){/* this hack caused by single marker */
 		wtsb = b;
 		if (wtvf)
-		    wtvf (x, y, x + dr[i][0], y + dr[i][1]);
+		    (*wtvf) (x, y, x + dr[i][0], y + dr[i][1]);
                 for (j = 0; j < 8; ++j) {
 		    k = pcb[y + dr[i][1] + dr[j][1]][x + dr[i][0] + dr[j][0]];
-		    if (!(k & (ahb | mrkb)) && (k & vec)) {
+		    if (!(k & mrkb) && (k & vec) &&
+			(abs(dr[i][1] + dr[j][1]) == 2 ||
+			 abs(dr[i][0] + dr[j][0]) == 2   )) {
 			if ((k & b) &&
 			    vtrace(x + dr[i][0], y + dr[i][1], j, b)) {
 			    pcb[y + dr[i][1]][x + dr[i][0]] |= mrkb;
@@ -504,6 +507,83 @@ ckv (x, y, s, b)		/* decide on a new direction	 */
     }
 
     return 0;			/* to keep lint happy		 */
+}
+
+ckv_d (x, y, s, b)		/* decide on a new direction (from diag) */
+    int  x, y, s, b;
+{
+    register int i, j, k;
+
+#define mrk_updt if (wtph) pcb[y][x] &= ~mrkb; else pcb[y][x] |= mrkb;
+
+    switch (s) {
+	case 0: 
+	    err ("ckv_d: internal program error", x, y, s, b);
+	case 0x01: 
+	    return (vtrace (x - dr[0][0], y - dr[0][1], 0, b));
+	case 0x02:
+	    mrk_updt
+	    return (vtrace (x, y, 1, b));
+	case 0x04: 
+	    return (vtrace (x - dr[2][0], y - dr[2][1], 2, b));
+	case 0x08: 
+	    mrk_updt
+	    return (vtrace (x, y, 3, b));
+	case 0x10: 
+	    return (vtrace (x - dr[4][0], y - dr[4][1], 4, b));
+	case 0x20: 
+	    mrk_updt
+	    return (vtrace (x, y, 5, b));
+	case 0x40: 
+	    return (vtrace (x - dr[6][0], y - dr[6][1], 6, b));
+	case 0x80: 
+	    mrk_updt
+	    return (vtrace (x, y, 7, b));
+	default: 		/* decide on most likely candidate	 */
+	    j = 1;
+	    if (wtph) {		/* phase 1				 */
+		for (i = 0; i < 8; i++) {
+				/* scan options 			 */
+		    k = pcb[y + dr[i][1]][x + dr[i][0]];
+		    if ((s & j) && (k & mrkb)) {
+			if (i & 1) {
+			    pcb[y][x] &= ~mrkb;
+			    return (vtrace (x, y, i, b));}
+			else
+			    return (vtrace (x - dr[i][0], y - dr[i][1], i,b));
+		    }
+		    j += j;
+		} }
+	    else {		/* phase 0				 */
+		for (i = 0; i < 8; i++) {
+				/* scan options 			 */
+		    k = pcb[y + dr[i][1]][x + dr[i][0]];
+		    if ((s & j) && (k & b) && !(k & mrkb)) {
+			if (i & 1) {
+			    pcb[y][x] |= mrkb;
+			    return (vtrace (x, y, i, b));}
+			else
+			    return (vtrace (x - dr[i][0], y - dr[i][1], i,b));
+		    }
+		    j += j;
+		}
+	    }
+	    j = 1;
+	    for (i = 0; i < 8; i++) {
+				/* single point - take first 		 */
+		if (s & j) {
+		    if (i & 1) {
+			mrk_updt
+			return (vtrace (x, y, i, b));}
+		    else
+			return (vtrace (x - dr[i][0], y - dr[i][1], i, b));
+		}
+		j += j;
+	    }
+    }
+
+    return 0;			/* to keep lint happy		 */
+#undef mrk_updt
 }
 
 static struct nlhd *net_ptr;	/* net-ptr for fndnet - calls	 */
@@ -656,7 +736,7 @@ struct nlhd *choose()		/* choose a net for work	*/
     for (ii = 0; ii < V.nnh; ii++) {
 	i = (ii + lst) % V.nnh;	/* do a circular shift		 */
 
-	if (!NH[i].f && (i != lst || V.nnh < 2)) {
+	if (NH[i].l && !NH[i].f && (i != lst || V.nnh < 2)) {
 	    k = abs (wcx - (NH[i].x1 + NH[i].x1) / 2) +
 		abs (wcy - (NH[i].y1 + NH[i].y1) / 2);
 	    if ((wx <= NH[i].x1) && (wx + 512 / cz > NH[i].x2) && 
@@ -709,7 +789,7 @@ del (x, y, b)			/* delete wire segment		 */
     int x, y, b;
 {
     register int  i, j, x1, y1, x2, y2;
-    int     k, delv (), delh ();
+    int     k, n1, n2, delv (), delh ();
     struct  nlhd *get_net();
 
 /* printf("del: x=%d y=%d\n",x,y); */
@@ -773,8 +853,20 @@ del (x, y, b)			/* delete wire segment		 */
     net_t_del -> f = j;
     nets_msg (nettgo);
 
-    delc (x1, y1, b);		/* clean ends		 */
-    delc (x2, y2, b);
+				/* clean ends			 */
+    for (n1 = 0, n2 = 0, j = 0; j < 8; j++) {
+	if (pcb[y1 + dr[j][1]][x1 + dr[j][0]] & b) n1++;
+	if (pcb[y2 + dr[j][1]][x2 + dr[j][0]] & b) n2++;
+    }
+    if (n1 < n2) {
+	delc (x1, y1, b);
+	delc (x2, y2, b);
+	if (k <= 1 && pcb[y1][x1] & b) ckgp (x1, y1, b);}
+    else {
+	delc (x2, y2, b);
+	delc (x1, y1, b);
+	if (k <= 1 && pcb[y2][x2] & b) ckgp (x2, y2, b);
+    }
 
     while (0 < --k) {		/* scan for branches	 */
 	x1 += dr[i][0];
@@ -808,6 +900,7 @@ delc (x, y, b)			/* clean deleted wire segments	 */
     int     x, y, b;
 {
     struct nlhd *t, *get_net ();
+    register int i, j;
 
 /* printf ("delc: x=%d y=%d b=%2x\n", x, y, b); */
 
@@ -817,13 +910,22 @@ delc (x, y, b)			/* clean deleted wire segments	 */
     if (!t) {			/* dead wire: delete it		 */
 	wtvf = delv;
 	wthf = delh;
-	wtrace (x, y, b);}
-    else if (t != net_t_del) {	/* inconsistent connection !	 */
-	printf ("delc: hey! inconsistent wire\n");
-	return;			/* don't touch it		 */
+	wtrace (x, y, b);
+	ckgp (x, y, b);}	/* clean the wire end		 */
+    else if (t != net_t_del)	/* inconsistent connection !	 */
+	printf ("delc: hey! inconsistent wire\n");	/* don't touch it */
+    else {
+				/* clean end only if really useless */
+	for (i = 0, j = 0; i < 8; i++) {
+	    if (pcb[y + dr[i][1]][x + dr[i][1]] & b) {
+		if (++j > 1 || pcb[y][x] & ahb) {
+		    ckgp (x, y, b);
+		    break;
+		}}
+	    else
+		j = 0;
+	}
     }
-
-    ckgp (x, y, b);		/* clean the wire end		 */
 }
 
 home (xp, yp, xs, ys, xo, yo, b, ob)

@@ -8,6 +8,7 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 #include "pleer.h"
@@ -27,8 +28,8 @@ maze_run1 (xs, ys)		/* run through the maze on side 1 */
 	err ("maze_run1: invalid start point", xs, ys, ox, oy);
 
     set_dir ();
-    hvrt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
-    drt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*drt));
+    hvrt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
+    drt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*drt));
     drtmax = hvrtmax = maxrtl;
     vhtc = drtc = drtcd = hvrtcd = hvrtc = 0;/* reset table counter */
 
@@ -49,8 +50,8 @@ maze_run1 (xs, ys)		/* run through the maze on side 1 */
 
     i = maze_run (xs, ys);	/* find the path		 */
 
-    free (drt);
-    free (hvrt);
+    p_free (drt);
+    p_free (hvrt);
 
     return (i);
 }
@@ -64,8 +65,8 @@ maze_run2 (xs, ys)		/* run through the maze on side 1 */
 	err ("maze_run2: invalid start point", xs, ys, ox, oy);
 
     set_dir ();
-    hvrt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
-    drt = (unsigned *) malloc ((maxrtl + sftmrg) * sizeof (*drt));
+    hvrt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*hvrt));
+    drt = (unsigned *) p_malloc ((maxrtl + sftmrg) * sizeof (*drt));
     drtmax = hvrtmax = maxrtl;
     vhtc = drtc = drtcd = hvrtcd = hvrtc = 0;/* reset table counter */
 
@@ -86,8 +87,8 @@ maze_run2 (xs, ys)		/* run through the maze on side 1 */
 
     i = maze_run (xs, ys);	/* find the path		 */
 
-    free (drt);
-    free (hvrt);
+    p_free (drt);
+    p_free (hvrt);
 
     return (i);
 }
@@ -155,7 +156,8 @@ a_route (xs, ys, xd, yd, sd)
 				/* =1 if already connected	 */
     }
 
-    free (abm);			/* release memory		 */
+    p_free (abm);			/* release memory		 */
+    abm = 0;
 
     return (i);
 }
@@ -208,7 +210,8 @@ l_route (xs, ys, xd, yd, sd)	/* 2 side L-route		 */
     if (sd == s1b) {		/* start on side 1		 */
 	cr_gmaze (xd, yd, xs, yd, K3);
 	if (maze_run1 (xd, yd)) {/* surprise: done		 */
-	    free (abm);
+	    p_free (abm);
+	    abm = 0;
 	    return (1);
 	}
 	x = (xs > xd) ? xs - K3 : xs + K3;
@@ -221,13 +224,15 @@ l_route (xs, ys, xd, yd, sd)	/* 2 side L-route		 */
 	    t += sx;
 	}
 	if (i > 2 * K3) {
-	    free (abm);		/* failed to reach via-area	 */
+	    p_free (abm);		/* failed to reach via-area	 */
+	    abm = 0;
 	    return (0);
 	}}
     else {			/* start on side 2		 */
 	cr_gmaze (xd, yd, xd, ys, K3);
 	if (maze_run2 (xd, yd)) {/* surprise: done		 */
-	    free (abm);
+	    p_free (abm);
+	    abm = 0;
 	    return (1);
 	}
 	y = (ys > yd) ? ys - K3 : ys + K3;
@@ -240,7 +245,8 @@ l_route (xs, ys, xd, yd, sd)	/* 2 side L-route		 */
 	    t++;
 	}
 	if (i > 2 * K3) {
-	    free (abm);		/* failed to reach via-area	 */
+	    p_free (abm);		/* failed to reach via-area	 */
+	    abm = 0;
 	    return (0);
 	}
     }
@@ -254,15 +260,17 @@ l_route (xs, ys, xd, yd, sd)	/* 2 side L-route		 */
     if (sd == s1b) {		/* start on side 1		 */
 	cr_gmaze (xs, ys, xs, yd, K3);
 	if (maze_run2 (xs, ys)) {/* surprise: done		 */
-	    free (abm1);
-	    free (abm);
+	    p_free (abm1);
+	    p_free (abm);
+	    abm = 0;
 	    return (1);
 	}}
     else {			/* start on side 2		 */
 	cr_gmaze (xs, ys, xd, ys, K3);
 	if (maze_run1 (xs, ys)) {/* surprise: done		 */
-	    free (abm1);
-	    free (abm);
+	    p_free (abm1);
+	    p_free (abm);
+	    abm = 0;
 	    return (1);
 	}
     }
@@ -323,15 +331,17 @@ l_route (xs, ys, xd, yd, sd)	/* 2 side L-route		 */
 
 	    if (mz_chk (t1, (sd == s2b) ? 7 & ((*t1) >> 4) : 7 & *t1, sd)){
 				/* got a problem		 */
-		free (abm);
+		p_free (abm);
+		abm = 0;
 		cr_maze (ox, oy, sx, sy);/* redo first maze	 */
 		if (((sd == s1b) && maze_run1 (x, y)) ||
 		    ((sd == s2b) && maze_run2 (x, y))) { /* recovered	*/
-		    free (abm);
-		    free (abm2);
+		    p_free (abm);
+		    abm = 0;
+		    p_free (abm2);
 		    return (1);
 		}
-		free (abm);	/* recovery failed		 */
+		p_free (abm);	/* recovery failed		 */
 
 		abm = abm2;	/* restore aux bit map 2	 */
 		ox = ox2;
@@ -340,20 +350,24 @@ l_route (xs, ys, xd, yd, sd)	/* 2 side L-route		 */
 		sy = sy2;
 		set_dir ();
 	        mz_undone (t, (sd == s1b) ? 7 & ((*t) >> 4) : 7 & *t, vec ^ sd);
-		free (abm);
+		p_free (abm);
+		abm = 0;
 		color (0, selb | ishb);
 		dpin (x, y);	/* remove hole			 */
 		return (0);
 	    }
 	    mz_done (t1, (sd == s2b) ? 7 & ((*t1) >> 4) : 7 & *t1, sd);
-	    free (abm);
+	    p_free (abm);
+	    abm = 0;
+	    p_free (abm2);
 
 	    return (1);
 	}
     }
 
-    free (abm);
-    free (abm1);
+    p_free (abm);
+    abm = 0;
+    p_free (abm1);
     return (0);			/* unsuccessful return		 */
 }
 
@@ -429,7 +443,8 @@ L1_route (xs, ys, xd, yd)
     cr_gmaze (xd, yd, xs, yd, K3);/* create maze		 */
 
     if (maze_run1 (xd, yd)) {
-	free (abm);
+	p_free (abm);
+	abm = 0;
 	return (1);		/* successful termination	 */
     }
 
@@ -501,7 +516,8 @@ L1_route (xs, ys, xd, yd)
 		ox1 = ox;
 		oy1 = oy;
 		if (L2_route (xs, ys, x, y)) {/* done		 */
-		    free (abm1);
+		    p_free (abm1);
+		    abm = 0;
 		    return (1);
 		}		/* success			 */
 		else {
@@ -524,7 +540,8 @@ L1_route (xs, ys, xd, yd)
 	    break;		/* no retries at this level	 */
 	xl = (xl + xd) / 2;
     }
-    free (abm);
+    p_free (abm);
+    abm = 0;
     return (0);			/* via allocation failure	 */
 }
 
@@ -557,7 +574,8 @@ L2_route (xs, ys, xd, yd)
     cr_gmaze (xd, yd, xd, ys, K3);/* create maze		 */
 
     if (maze_run2 (xd, yd)) {
-	free (abm);
+	p_free (abm);
+	abm = 0;
 	return (1);		/* successful termination	 */
     }
 
@@ -628,7 +646,7 @@ L2_route (xs, ys, xd, yd)
 		ox1 = ox;
 		oy1 = oy;
 		if (L1_route (xs, ys, x, y)) {/* done		 */
-		    free (abm1);
+		    p_free (abm1);
 		    return (1);
 		}		/* success			 */
 		else {
@@ -652,6 +670,7 @@ L2_route (xs, ys, xd, yd)
 	yl = (yl + yd) / 2;
     }
 
-    free (abm);
+    p_free (abm);
+    abm = 0;
     return (0);			/* via allocation failure	 */
 }

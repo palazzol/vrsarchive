@@ -516,7 +516,7 @@ addn(s,net,ln)		/* add a node to a net list	*/
     if (CP[j].unplaced) {		/* need direct search		*/
 	hp = nil;
 	for (l = 0; l < V.nch; l++)
-	    if (CH[j].cpi == j && CH[j].pn == k) {
+	    if (CH[l].cpi == j && CH[l].pn == k) {
 		hp = &CH[l];
 		break;
 	    }
@@ -584,8 +584,12 @@ save (ety)				/* save vital data structure	*/
     char    fn[30];
     static char fname[2][8] = { "pcb.SAV", "pcb.ERR"};
     struct {int r, g, b;} crc;		/* color record			*/
+    struct color_tab t;
     
     och = wantwrite (".", &fname[ety][0], fn, "Checkpoint file name:", 0);
+
+    if (!ety)
+	ksv_rwnd ();			/* reset keystroke file		*/
 
     write (och, &V, sizeof (V));	/* write head information	*/
 
@@ -603,11 +607,27 @@ save (ety)				/* save vital data structure	*/
 	write (och, &NH[i], sizeof (NH[0]));
     for (i = 0; i < V.nnl; ++i)
 	write (och, &NL[i], sizeof (NL[0]));
+    if (top_side != s1b) {	/* ensure normal order		 */
+	    t = Color_tab[CT_s1_n];
+	    Color_tab[CT_s1_n] = Color_tab[CT_s2_n];
+	    Color_tab[CT_s2_n] = t;
+	    t = Color_tab[CT_s1_s];
+	    Color_tab[CT_s1_s] = Color_tab[CT_s2_s];
+	    Color_tab[CT_s2_s] = t;
+    }
     for (i = 0; i < ncolors; ++i) {
 	crc.r = Color_tab[i].r;
 	crc.g = Color_tab[i].g;
 	crc.b = Color_tab[i].b;
 	write (och, &crc, sizeof (crc));
+    }
+    if (top_side != s1b) {	/* restore current order	 */
+	    t = Color_tab[CT_s1_n];
+	    Color_tab[CT_s1_n] = Color_tab[CT_s2_n];
+	    Color_tab[CT_s2_n] = t;
+	    t = Color_tab[CT_s1_s];
+	    Color_tab[CT_s1_s] = Color_tab[CT_s2_s];
+	    Color_tab[CT_s2_s] = t;
     }
     for (i = 0; i < V.ncif; ++i)
 	write (och, &CIF[i], sizeof (struct cif));
@@ -827,7 +847,10 @@ radjptr ()			/* readjust pointer		 */
     }
     if (nhof || nlof) {
 	p1.nh = V.cnet;
-	p1.i = p1.i ? p1.i + nhof : nil;
+	if (p1.i >= nh_l && p1.i <= nh_h)
+	    p1.i += nhof;
+	else
+	    p1.i = p1.i ? p1.i + viof : nil;
 	V.cnet = p1.nh;
 	p1.nh = V.enhl;
 	p1.i = p1.i ? p1.i + nhof : nil;

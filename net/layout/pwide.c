@@ -39,7 +39,7 @@ fnd_pnt (x, y)
     register int i;
 
     if (!pnt_lst) {		/* alloacte point list	 */
-	pnt_lst = (char **) malloc (sizeof (char *) * pnt_max);
+	pnt_lst = (char **) p_malloc (sizeof (char *) * pnt_max);
     }
     pnt_cnt = 0;		/* reset point list counter	 */
 
@@ -82,7 +82,7 @@ pnt_scan (p, d, s)
 
         if (pnt_cnt >= pnt_max) {	/* need more space	 */
 	    pnt_max += 10 + pnt_max / 2;
-	    pnt_lst = (char **) realloc (pnt_lst, sizeof (char *) * pnt_max);
+	    pnt_lst = (char **) p_realloc (pnt_lst, sizeof (char *) * pnt_max);
 	}
 
 	pnt_lst[pnt_cnt++] = pp;	/* add point		 */

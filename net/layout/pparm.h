@@ -97,3 +97,9 @@
 #define CMOVE 6				/* component move	*/
 #define PLOW 7				/* plow context		*/
 #define PLACE 8				/* component place cntx */
+
+/*** Storage management routines ***/
+
+#define p_malloc s_malloc		/* allocat memory	*/
+#define p_realloc s_realloc		/* extend memory	*/
+#define p_free free			/* free memory		*/
