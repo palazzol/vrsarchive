@@ -1,0 +1,24 @@
+#! /bin/sh
+: 'archdir [ARCHIVE [LOGFILE]]
+* use this to print out a simple table of contents for the
+* lbgm archive'
+
+ARCHIVE=/user/lbgm
+LOGFILE=save.log
+case $# in
+	1)	ARCHIVE=$1
+		;;
+	2)	ARCHIVE=$1
+		LOGFILE=$2
+		;;
+	*)	echo "Usage: $0 [ARCHIVE [LOGFILE]]" 2>&1
+		exit 1
+		;;
+esac
+
+cd $ARCHIVE
+
+awk 'BEGIN { file="" }
+	/^Jan_|^Feb_|^Mar_|^Apr_|^May_|^Jun_/ {file = $0}
+	/^Jul_|^Aug_|^Sep_|^Oct_|^Nov_|^Dec_/ {file = $0}
+	/^	Subject/	{print file $0}' $LOGFILE
