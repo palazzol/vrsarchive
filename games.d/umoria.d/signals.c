@@ -50,7 +50,9 @@ init_signals()
 #define SIGIOT SIGABRT
 #endif
   (void) signal(SIGIOT, signal_save_core);
+#ifdef SIGEMT
   (void) signal(SIGEMT, signal_save_core);
+#endif
   (void) signal(SIGFPE, signal_save_core);
   (void) signal(SIGKILL, signal_save_core);
   (void) signal(SIGBUS, signal_save_core);

@@ -99,7 +99,9 @@ setup()
 #define SIGIOT	SIGABRT
 #endif
 		signal(SIGIOT, auto_save);
+#ifdef SIGEMT
 		signal(SIGEMT, auto_save);
+#endif
 		signal(SIGFPE, auto_save);
 		signal(SIGBUS, auto_save);
 		signal(SIGSEGV, auto_save);

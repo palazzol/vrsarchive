@@ -153,7 +153,9 @@ char *argv[];
 #define SIGIOT	SIGABRT
 #endif
     signal(SIGIOT,signalexit);
+#ifdef SIGEMT
     signal(SIGEMT,signalexit);
+#endif
     signal(SIGFPE,signalexit);
     signal(SIGBUS,signalexit);
     signal(SIGSEGV,signalexit);

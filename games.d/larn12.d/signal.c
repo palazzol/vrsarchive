@@ -67,7 +67,9 @@ static SIG_T sigiot(dummy)  { sigpanic(SIGIOT); }
 #ifdef SIGABRT
 static SIG_T sigabrt(dummy) { sigpanic(SIGABRT); }
 #endif
+#ifdef SIGEMT
 static SIG_T sigemt(dummy)  { sigpanic(SIGEMT); }
+#endif
 static SIG_T sigfpe(dummy)  { sigpanic(SIGFPE); }
 static SIG_T sigbus(dummy)  { sigpanic(SIGBUS); }
 static SIG_T sigsegv(dummy) { sigpanic(SIGSEGV); }
@@ -85,7 +87,9 @@ sigsetup()
 #ifdef SIGABRT
 	signal(SIGABRT, sigabrt);
 #endif
+#ifdef SIGEMT
 	signal(SIGEMT,  sigemt);
+#endif
 	signal(SIGFPE,  sigfpe);		signal(SIGBUS,  sigbus);
 	signal(SIGSEGV, sigsegv);		signal(SIGSYS,  sigsys);
 	signal(SIGPIPE, sigpipe);		signal(SIGTERM, sigterm);

@@ -59,7 +59,9 @@ char **envp;
 #define SIGIOT	SIGABRT
 #endif
 	signal(SIGIOT, leave);
+#ifdef SIGEMT
 	signal(SIGEMT, leave);
+#endif
 	signal(SIGFPE, leave);
 	signal(SIGBUS, leave);
 	signal(SIGSEGV, leave);

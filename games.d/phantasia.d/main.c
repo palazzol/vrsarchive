@@ -1264,7 +1264,9 @@ playinit()
     sigset(SIGHUP, ill_sig);
     sigset(SIGTRAP, ill_sig);
     sigset(SIGIOT, ill_sig);
+#ifdef SIGEMT
     sigset(SIGEMT, ill_sig);
+#endif
     sigset(SIGFPE, ill_sig);
     sigset(SIGBUS, ill_sig);
     sigset(SIGSEGV, ill_sig);
@@ -1282,7 +1284,9 @@ playinit()
     signal(SIGHUP, ill_sig);
     signal(SIGTRAP, ill_sig);
     signal(SIGIOT, ill_sig);
+#ifdef SIGEMT
     signal(SIGEMT, ill_sig);
+#endif
     signal(SIGFPE, ill_sig);
     signal(SIGBUS, ill_sig);
     signal(SIGSEGV, ill_sig);
@@ -1315,7 +1319,9 @@ playinit()
 #define SIGIOT	SIGABRT
 #endif
     signal(SIGIOT, ill_sig);
+#ifdef SIGEMT
     signal(SIGEMT, ill_sig);
+#endif
     signal(SIGFPE, ill_sig);
     signal(SIGBUS, ill_sig);
     signal(SIGSEGV, ill_sig);
