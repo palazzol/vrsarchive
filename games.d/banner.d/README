@@ -1,0 +1,59 @@
+To quote from the README file in the Hershey font distribution:
+
+>Additional Work To Be Done (volunteers welcome!):
+>	- Write a banner-style program using Hershey Fonts for input and
+>		non-graphic terminals or printers for output.
+
+I had yet to see such a program, so I wrote it myself, and herewith
+present the fruit of my labors to the banner-hungry denizens of Usenet.
+
+Included in this package are:
+	1) this file (README),
+	2) a Makefile,
+	3) the hbanner.c program source,
+	4) mk_font, a shell script for translating the hershey database
+into an hbanner database.
+
+I assume that you have the hershey font distribution, including:
+	1) hersh.oc[1234],
+	2) all of the occidental translation tables (*.hmp) in the same
+directory as hersh.oc[1234].
+
+If you don't have the hershey fonts, they are available from the
+mod.sources archive (sources-request@mirror.uucp).  Please do not post
+requests for hershey fonts to net.sources!
+
+I also assume that you have a 132-column line printer.
+
+To configure hbanner, you must first edit the Makefile, setting these
+two variables:
+
+	HERSHDIR= <the directory where the hersh.oc? & *.hmp files reside>
+	FONTDIR= <the directory where you want the hbanner font files to go>
+
+After you run make, you may begin to compile the font database.  The
+mk_font shell script is invoked thusly:
+
+	mk_font <fontname> &
+
+where fontname is the root of the name of any of the *.hmp files in
+HERSHDIR.  I suggest running this in the background, as it will take a
+number of minutes.
+
+Once you have an hbanner font file, you are ready to make a banner.
+Surely you can think of SOMETHING that deserves to be printed in GIANT
+letters?
+
+	hbanner <fontname>
+	Fee, fie, foh, fum; I smell the blood of an Englishman!
+	^D
+
+Note that hbanner with no arguments will print a list of the available
+fonts.
+
+If you have any trouble with this beastie, or if you thought of a better
+way to do it, by all means contact me.
+
+						Guy K. Hillyer
+						guy@enmasse.uucp
+				{panda,drilex,alliant}!enmasse!guy
