@@ -7,7 +7,10 @@
 
 #include "less.h"
 #include <sys/types.h>
-#if TERMIO
+#ifdef SYS5
+#define TERMIO
+#endif
+#ifdef TERMIO
 #include <termio.h>
 #ifndef TCGETA
 #include <sys/ioctl.h>
@@ -78,7 +81,7 @@ char *tgoto();
 raw_mode(on)
 	int on;
 {
-#if TERMIO
+#ifdef TERMIO
 	struct termio s;
 	static struct termio save_term;
 
