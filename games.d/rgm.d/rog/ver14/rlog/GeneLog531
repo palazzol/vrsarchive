@@ -1,0 +1,159 @@
+Gene pool initalized, k 8, m 20, Wed Feb 27 16:52:10 1985
+Birth:  1 (0) created 0, DNA (78 13 83 59 29 51 28 16)
+Birth:  2 (0) created 0, DNA (36 54 74 67 64 92 81 06)
+Birth:  3 (0) created 0, DNA (63 42 86 51 32 20 61 31)
+Birth:  4 (0) created 0, DNA (59 68 48 45 09 02 83 10)
+Birth:  5 (0) created 0, DNA (24 01 91 18 14 10 83 60)
+Birth:  6 (0) created 0, DNA (10 52 33 35 26 96 54 76)
+Birth:  7 (0) created 0, DNA (30 68 40 69 28 76 28 41)
+Birth:  8 (0) created 0, DNA (41 85 21 72 53 80 49 68)
+Birth:  9 (0) created 0, DNA (41 26 10 96 77 14 54 57)
+Birth:  10 (0) created 0, DNA (75 65 46 20 31 38 44 02)
+Birth:  11 (0) created 0, DNA (67 32 99 33 20 28 04 42)
+Birth:  12 (0) created 0, DNA (29 84 12 76 22 78 67 01)
+Birth:  13 (0) created 0, DNA (02 31 42 53 24 36 73 60)
+Birth:  14 (0) created 0, DNA (88 71 35 83 09 09 59 56)
+Birth:  15 (0) created 0, DNA (53 48 72 72 56 41 47 00)
+Birth:  16 (0) created 0, DNA (76 82 58 05 59 36 66 86)
+Birth:  17 (0) created 0, DNA (21 13 12 44 95 71 31 73)
+Birth:  18 (0) created 0, DNA (75 39 58 57 52 23 87 41)
+Birth:  19 (0) created 0, DNA (66 91 78 37 09 13 60 49)
+Birth:  20 (0) created 0, DNA (24 55 25 81 49 87 75 48)
+Trial    1, Id  13 ->  117/1   age  1,  117+0      1.0+0.0
+Trial    2, Id   3 ->  672/6   age  1,  672+0      6.0+0.0
+Trial    3, Id   2 ->  227/4   age  1,  227+0      4.0+0.0
+Trial    4, Id  18 ->   12/1   age  1,   12+0      1.0+0.0
+Trial    5, Id  14 -> 2286/13  age  1, 2286+0     13.0+0.0
+Trial    6, Id  12 ->  113/1   age  1,  113+0      1.0+0.0
+Trial    7, Id  11 -> 3866/15  age  1, 3866+0     15.0+0.0
+Trial    8, Id   4 ->  178/1   age  1,  178+0      1.0+0.0
+Trial    9, Id   5 -> 1315/10  age  1, 1315+0     10.0+0.0
+Trial   10, Id  17 ->  295/4   age  1,  295+0      4.0+0.0
+Trial   11, Id   6 ->  283/3   age  1,  283+0      3.0+0.0
+Trial   12, Id  10 ->   23/1   age  1,   23+0      1.0+0.0
+Trial   13, Id  19 ->  494/3   age  1,  494+0      3.0+0.0
+Trial   14, Id  20 ->  757/8   age  1,  757+0      8.0+0.0
+Trial   15, Id   1 -> 1057/7   age  1, 1057+0      7.0+0.0
+Trial   16, Id   7 ->    0/1   age  1,    0+0      1.0+0.0
+Trial   17, Id  15 -> 1418/10  age  1, 1418+0     10.0+0.0
+Trial   18, Id  16 -> 1541/8   age  1, 1541+0      8.0+0.0
+Trial   19, Id   8 ->  141/2   age  1,  141+0      2.0+0.0
+Trial   20, Id   9 ->   27/1   age  1,   27+0      1.0+0.0
+Select:  12 age  1, created    0, score   113+0    level  1.0+0.0
+Select:   5 age  1, created    0, score  1315+0    level 10.0+0.0
+Death:    7 age  1, created    0, score     0+0    level  1.0+0.0
+Crossing 12 and 5 produces 21
+Birth:  21 (12,5) created 21, DNA (29 84 12 76 22 10 83 60)
+Trial   21, Id  21 ->   48/1   age  1,   48+0      1.0+0.0
+Select:  11 age  1, created    0, score  3866+0    level 15.0+0.0
+Select:   2 age  1, created    0, score   227+0    level  4.0+0.0
+Death:   18 age  1, created    0, score    12+0    level  1.0+0.0
+Crossing 11 and 2 produces 22
+Birth:  22 (11,2) created 22, DNA (67 32 99 33 20 28 04 06)
+Trial   22, Id  22 ->  252/4   age  1,  252+0      4.0+0.0
+Select:   3 age  1, created    0, score   672+0    level  6.0+0.0
+Select:   1 age  1, created    0, score  1057+0    level  7.0+0.0
+Death:   10 age  1, created    0, score    23+0    level  1.0+0.0
+Crossing 1 and 3 produces 23
+Birth:  23 (3,1) created 23, DNA (78 13 83 59 29 51 28 31)
+Trial   23, Id  23 -> 1447/9   age  1, 1447+0      9.0+0.0
+Select:  11 age  1, created    0, score  3866+0    level 15.0+0.0
+Death:    9 age  1, created    0, score    27+0    level  1.0+0.0
+Mutating 11 produces 24
+Birth:  24 (11) created 24, DNA (67 32 99 33 20 20 04 42)
+Trial   24, Id  24 -> 1944/10  age  1, 1944+0     10.0+0.0
+Select:  16 age  1, created    0, score  1541+0    level  8.0+0.0
+Select:  11 age  1, created    0, score  3866+0    level 15.0+0.0
+Death:   21 age  1, created   21, score    48+0    level  1.0+0.0
+Crossing 11 and 16 produces 25
+Birth:  25 (16,11) created 25, DNA (67 32 99 33 20 28 66 86)
+Trial   25, Id  25 ->    0/1   age  1,    0+0      1.0+0.0
+Select:  17 age  1, created    0, score   295+0    level  4.0+0.0
+Select:  24 age  1, created   24, score  1944+0    level 10.0+0.0
+Death:   25 age  1, created   25, score     0+0    level  1.0+0.0
+Crossing 24 and 17 produces 26
+Birth:  26 (17,24) created 26, DNA (67 13 12 44 95 71 31 73)
+Trial   26, Id  26 ->  128/1   age  1,  128+0      1.0+0.0
+Select:   1 age  1, created    0, score  1057+0    level  7.0+0.0
+Select:  11 age  1, created    0, score  3866+0    level 15.0+0.0
+Death:   12 age  1, created    0, score   113+0    level  1.0+0.0
+Crossing 1 and 11 produces 27
+Birth:  27 (1,11) created 27, DNA (78 13 99 33 20 28 04 42)
+Trial   27, Id  27 ->   71/2   age  1,   71+0      2.0+0.0
+Select:  23 age  1, created   23, score  1447+0    level  9.0+0.0
+Select:  14 age  1, created    0, score  2286+0    level 13.0+0.0
+Death:   27 age  1, created   27, score    71+0    level  2.0+0.0
+Crossing 23 and 14 produces 28
+Birth:  28 (23,14) created 28, DNA (78 13 35 83 09 09 59 56)
+Trial   28, Id  28 ->  275/3   age  1,  275+0      3.0+0.0
+Select:  24 age  1, created   24, score  1944+0    level 10.0+0.0
+Select:   3 age  1, created    0, score   672+0    level  6.0+0.0
+Death:   13 age  1, created    0, score   117+0    level  1.0+0.0
+Crossing 3 and 24 produces 29
+Birth:  29 (24,3) created 29, DNA (63 42 99 33 20 20 04 42)
+Trial   29, Id  29 -> 1349/7   age  1, 1349+0      7.0+0.0
+Select:  14 age  1, created    0, score  2286+0    level 13.0+0.0
+Select:   5 age  1, created    0, score  1315+0    level 10.0+0.0
+Death:   26 age  1, created   26, score   128+0    level  1.0+0.0
+Crossing 14 and 5 produces 30
+Birth:  30 (14,5) created 30, DNA (88 71 35 83 09 09 59 60)
+Trial   30, Id  30 -> 1428/10  age  1, 1428+0     10.0+0.0
+Select:  24 age  1, created   24, score  1944+0    level 10.0+0.0
+Select:   5 age  1, created    0, score  1315+0    level 10.0+0.0
+Death:    8 age  1, created    0, score   141+0    level  2.0+0.0
+Crossing 24 and 5 produces 31
+Birth:  31 (24,5) created 31, DNA (67 01 91 18 14 10 83 60)
+Trial   31, Id  31 ->  709/8   age  1,  709+0      8.0+0.0
+Select:  24 age  1, created   24, score  1944+0    level 10.0+0.0
+Select:  30 age  1, created   30, score  1428+0    level 10.0+0.0
+Death:    4 age  1, created    0, score   178+0    level  1.0+0.0
+Crossing 24 and 30 produces 32
+Birth:  32 (24,30) created 32, DNA (67 71 35 83 09 09 59 60)
+Trial   32, Id  32 ->  996/6   age  1,  996+0      6.0+0.0
+Select:  30 age  1, created   30, score  1428+0    level 10.0+0.0
+Select:  15 age  1, created    0, score  1418+0    level 10.0+0.0
+Death:    2 age  1, created    0, score   227+0    level  4.0+0.0
+Crossing 30 and 15 produces 33
+Birth:  33 (30,15) created 33, DNA (88 71 35 72 56 41 47 00)
+Trial   33, Id  33 ->  775/8   age  1,  775+0      8.0+0.0
+Select:   1 age  1, created    0, score  1057+0    level  7.0+0.0
+Select:  19 age  1, created    0, score   494+0    level  3.0+0.0
+Death:   22 age  1, created   22, score   252+0    level  4.0+0.0
+Crossing 19 and 1 produces 34
+Birth:  34 (1,19) created 34, DNA (66 91 78 37 09 13 28 16)
+Trial   34, Id  34 ->   28/1   age  1,   28+0      1.0+0.0
+Select:  29 age  1, created   29, score  1349+0    level  7.0+0.0
+Select:  30 age  1, created   30, score  1428+0    level 10.0+0.0
+Death:   34 age  1, created   34, score    28+0    level  1.0+0.0
+Crossing 29 and 30 produces 35
+Birth:  35 (29,30) created 35, DNA (63 42 99 33 20 20 59 60)
+Trial   35, Id  35 ->   81/1   age  1,   81+0      1.0+0.0
+Select:  29 age  1, created   29, score  1349+0    level  7.0+0.0
+Select:  16 age  1, created    0, score  1541+0    level  8.0+0.0
+Death:   35 age  1, created   35, score    81+0    level  1.0+0.0
+Crossing 16 and 29 produces 36
+Birth:  36 (29,16) created 36, DNA (76 82 58 05 20 20 04 42)
+Trial   39, Id  36 ->  150/3   age  1,  150+0      3.0+0.0
+Select:  11 age  1, created    0, score  3866+0    level 15.0+0.0
+Select:  24 age  1, created   24, score  1944+0    level 10.0+0.0
+Death:   36 age  1, created   36, score   150+0    level  3.0+0.0
+Crossing 24 and 11 produces 37
+Birth:  37 (11,24) created 40, DNA (67 28 99 33 20 28 02 42)
+Trial   40, Id  37 ->  391/3   age  1,  391+0      3.0+0.0
+Select:  30 age  1, created   30, score  1428+0    level 10.0+0.0
+Death:   28 age  1, created   28, score   275+0    level  3.0+0.0
+Shifting 30 by -13 produces 38
+Birth:  38 (30) created 41, DNA (75 58 22 70 96 96 46 47)
+Trial   41, Id  38 -> 1079/12  age  1, 1079+0     12.0+0.0
+Select:  14 age  1, created    0, score  2286+0    level 13.0+0.0
+Select:  33 age  1, created   33, score   775+0    level  8.0+0.0
+Death:    6 age  1, created    0, score   283+0    level  3.0+0.0
+Crossing 33 and 14 produces 39
+Birth:  39 (14,33) created 42, DNA (88 71 35 72 09 09 59 56)
+Trial   42, Id  39 -> 1352/10  age  1, 1352+0     10.0+0.0
+Select:   1 age  1, created    0, score  1057+0    level  7.0+0.0
+Select:  11 age  1, created    0, score  3866+0    level 15.0+0.0
+Death:   17 age  1, created    0, score   295+0    level  4.0+0.0
+Crossing 11 and 1 produces 40
+Birth:  40 (1,11) created 43, DNA (67 13 83 59 29 51 28 16)
+Trial   43, Id  40 -> 1602/8   age  1, 1602+0      8.0+0.0
