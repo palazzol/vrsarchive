@@ -1,0 +1,16 @@
+This package is an Esperanto->English translation program.  At this point
+it is quite crude, but a lot faster than looking stuff up in a dictionary.
+The translation is morpheme for morpheme, and it is handy to have a real
+dictionary at hand to assist with some of the strange cases.
+
+Files:
+	esperanto.l	a Franz Lisp program
+	esp.root	2500 of the most important roots
+	esp.pref	the prefixes
+	esp.suf		the suffixes
+	esp.nroot	additional roots, created with the '=' command
+				during (interpret)
+
+Comments, improvements, and correspondants are desired!
+-Neal McBurnett, ihnp4!druny!neal, 303-538-4852 (303-494-6495 at home)
+ Boulder, CO.
