@@ -40,4 +40,4 @@ while read a b; do
 	fi
 done
 folder -pack
-scan
+scan | tail -24
