@@ -1,8 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/Makefile,v 1.2 1987-12-26 16:48:50 vrs Exp $
+#	$Header: /home/Vince/cvs/Makefile,v 1.3 1990-05-27 18:58:59 vrs Exp $
 #
-TODO	= lib net ucb vax
-ALL	= games local
+TODO	= jove net ucb vax
+# Build lib first!
+ALL	= lib local games
 include CONFIG
 
 install:
