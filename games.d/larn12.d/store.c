@@ -181,10 +181,10 @@ dndstore()
 		if (i>=maxitm) outofstock(); else
 		if (itm[i].qty <= 0) outofstock(); else
 		if (pocketfull()) handsfull(); else
-		if (c[GOLD] < itm[i].price*10) nogold(); else
+		if (c[GOLD] < itm[i].price*10L) nogold(); else
 			{
 			if (itm[i].mem != 0) *itm[i].mem[itm[i].arg] = ' ';
-			c[GOLD] -= itm[i].price*10;
+			c[GOLD] -= itm[i].price*10L;
 			itm[i].qty--;  take(itm[i].obj,itm[i].arg);
 			if (itm[i].qty==0) dnditem(i);  nap(1001);
 			}
@@ -221,7 +221,7 @@ static dnditem(i)
 	else if (itm[i].obj == OSCROLL)
 		{ lprcat("scroll of "); lprintf("%s",&scrollname[itm[i].arg][1]); }
 	else lprintf("%s",objectname[itm[i].obj]);
-	cursor( j+31,k );  lprintf("%6d",(long)(itm[i].price*10));
+	cursor( j+31,k );  lprintf("%6d", (itm[i].price*10L));
 	}
 
 
