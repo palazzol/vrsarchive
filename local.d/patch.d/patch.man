@@ -1,4 +1,4 @@
-''' $Header: /home/Vince/cvs/local.d/patch.d/patch.man,v 1.1 1986-10-05 12:09:19 root Exp $
+''' $Header: /home/Vince/cvs/local.d/patch.d/patch.man,v 1.2 1986-10-05 12:09:44 root Exp $
 ''' 
 ''' $Log: not supported by cvs2svn $
 .de Sh
@@ -185,6 +185,34 @@ causes the next argument to be interpreted as the output file name.
 .TP 5
 .B \-r
 causes the next argument to be interpreted as the reject file name.
+.TP 5
+.B \-R
+tells
+.I patch
+that this patch was created with the old and new files swapped.
+(Yes, I'm afraid that does happen occasionally, human nature being what it
+is.)
+.I Patch
+will attempt to swap each hunk around before applying it.
+Rejects will come out in the swapped format.
+The
+.B \-R
+switch will not work with ed diff scripts because there is too little
+information to reconstruct the reverse operation.
+.Sp
+If the first hunk of a patch fails,
+.I patch
+will reverse the hunk to see if it can be applied that way.
+If it can, the
+.B \-R
+switch will be set automatically.
+If it can't, the patch will continue to be applied normally.
+(Note: this method cannot detect a reversed patch if it is a normal diff
+and if the first command is an append (i.e. it should have been a delete)
+since appends always succeed.
+Luckily, most patches add lines rather than delete them, so most reversed
+normal diffs will begin with a delete, which will fail, triggering the
+heuristic.)
 .TP 5
 .B \-s
 makes
