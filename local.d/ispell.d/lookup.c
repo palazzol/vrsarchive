@@ -11,6 +11,7 @@
 #include "config.h"
 
 
+struct dent *treelookup();
 struct dent *hashtbl;
 int hashsize;
 

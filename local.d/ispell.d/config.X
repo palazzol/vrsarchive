@@ -1,13 +1,27 @@
 /*
+ * This is the configuration file for ispell.  Thanks to Bob McQueer
+ * for creating it and making the necessary changes elsewhere to
+ * support it.
+ * Look through this file from top to bottom, and edit anything that
+ * needs editing.  There are also five or six variables in the
+ * Makefile that you must edit.  Note that the Makefile edits this
+ * file (config.X) to produce config.h.  If you are looking at
+ * config.h, you're in the wrong file.
+ *
+ * Don't change the funny-looking lines with !!'s in them;  see the
+ * Makefile!
+ */
+
+/*
 ** library directory for hash table(s) / default hash table name
 ** If you intend to use multiple dictionary files, I would suggest
 ** LIBDIR be a directory which will contain nothing else, so sensible
 ** names can be constructed for the -d option without conflict.
 */
-#define LIBDIR "/usr/local/lib"
-#define DEFHASH "ispell.hash"
+#define LIBDIR "!!LIBDIR!!"
+#define DEFHASH "!!DEFHASH!!"
 
-#ifdef SYSV
+#ifdef USG
 #define index strchr
 #endif
 
@@ -15,16 +29,16 @@
 #define PDICTVAR "WORDLIST"
 
 /* default word list */
-#define DEFPDICT "ispell.words"
+#define DEFPDICT ".ispell_words"
 
 /* mktemp template for temporary file - MUST contain 6 consecutive X's */
-#define TEMPNAME "/usr/tmp/spellXXXXXX"
+#define TEMPNAME "/tmp/ispellXXXXXX"
 
 /* default dictionary file */
-#define DEFDICT "dict.191"
+#define DEFDICT "!!DEFDICT!!"
 
 /* define LOOK if look(1) command is available */
-#define LOOK
+#define LOOK	"/usr/bin/look -df"
 
 /* path to egrep (use speeded up version if available) */
 #define EGREPCMD "/usr/local/egrep -i"

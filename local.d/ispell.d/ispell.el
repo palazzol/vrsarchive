@@ -5,6 +5,11 @@
 ;;; ARPA:  Buehring%TI-CSL@CSNet-Relay
 ;;; UUCP:  {smu, texsun, im4u, rice} ! ti-csl ! buehring
 
+;;; ispell-region and associate routines added by
+;;; Perry Smith
+;;; pedz@bobkat
+;;; Tue Jan 13 20:18:02 CST 1987
+
 ;;; Depends on the ispell program snarfed from MIT-PREP in early 
 ;;; 1986.  The only interactive command is "ispell-word" which should be
 ;;; bound to M-$.  If someone writes an "ispell-region" command, 
@@ -33,9 +38,19 @@
     (progn
       (setq ispell-syntax-table (make-syntax-table))
       ;; Make certain characters word constituents
-      (modify-syntax-entry ?' "w   " ispell-syntax-table)
-      (modify-syntax-entry ?- "w   " ispell-syntax-table)
+      ;; (modify-syntax-entry ?' "w   " ispell-syntax-table)
+      ;; (modify-syntax-entry ?- "w   " ispell-syntax-table)
       ;; Get rid on existing word syntax on certain characters 
+      (modify-syntax-entry ?0 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?1 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?2 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?3 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?4 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?5 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?6 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?7 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?8 ".   " ispell-syntax-table)
+      (modify-syntax-entry ?9 ".   " ispell-syntax-table)
       (modify-syntax-entry ?$ ".   " ispell-syntax-table)
       (modify-syntax-entry ?% ".   " ispell-syntax-table)))
 
@@ -71,42 +86,51 @@ and let user select."
 	   (or quietly (message "Found it because of %s" (upcase poss))))
 	  ((null poss)
 	   (or quietly (message "Could Not Find %s" (upcase word))))
-	  (t (setq replace (ispell-choose poss))
+	  (t (setq replace (ispell-choose poss word))
 	     (if replace
 		 (progn
-		   (goto-char end)
-		   (delete-region start end)
-		   (insert-string replace)))))
+		    (goto-char end)
+		    (delete-region start end)
+		    (insert-string replace)))))
     poss))
 
 
-(defun ispell-choose (choices)
-  "Display possible corrections from list CHOICES.  Return chosen word or nil 
-if none chosen."
+(defun ispell-choose (choices word)
+  "Display possible corrections from list CHOICES.  Return chosen word
+if one is chosen; Return nil to keep word"
   (unwind-protect 
       (save-window-excursion
 	(let ((count 0)
 	      (words choices)
-	      (pick -1)
-	      (window-min-height 2))
+	      (window-min-height 2)
+	      char num result)
 	  (overlay-window 3)
 	  (switch-to-buffer "*Choices*") (erase-buffer)
 	  (setq mode-line-format "--  %b  --")
 	  (while words
 	    (if (> (+ 7 (current-column) (length (car words))) (window-width))
 		(insert "\n"))
-	    (insert "(" (+ count ?a) ") " (car words) "  ")
+	    (insert "(" (+ count ?1) ") " (car words) "  ")
 	    (setq words (cdr words)
 		  count (1+ count)))
 	  (select-window (next-window))
-	  (while (eq pick -1)
-	    (message "Enter letter to replace word;  Space to flush")
-	    (let* ((char (read-char))
-		   (num (1+ (- (upcase char) ?A))))
-	      (cond ((= char ? ) (setq pick 0))
-		    ((or (<= num 0) (> num count)) (ding))
-		    (t (setq pick num)))))
-	  (and (> pick 0) (nth (1- pick) choices))))
+	  (while (eq t
+		     (setq result
+			   (progn
+			     (message "Enter letter to replace word;  Space to flush")
+			     (setq char (upcase (read-char)))
+			     (setq num (- char ?1))
+			     (cond ((= char ? ) nil)
+				   ((= char ?I)
+				    (ispell-check (concat "*" word))
+				    nil)
+				   ((= char ?A)
+				    (ispell-check (concat "@" word))
+				    nil)
+				   ((= char ?R) (read-string "Replacement: " nil))
+				   ((and (>= num 0) (< num count)) (nth num choices))
+				   (t (ding) t))))))
+	  result))
     ;; Protected forms...
     (bury-buffer "*Choices*")))
 
@@ -189,3 +213,61 @@ filter function for output."
 	(process-kill-without-query ispell-process)
 	(sit-for 3))))
 
+(defvar ispell-filter-hook "/bin/cat"
+  "Filter to pass a region through before sending it to ispell.
+Typically this is set to cat, deroff, detex, etc.")
+(make-variable-buffer-local 'ispell-filter-hook)
+
+(defvar ispell-filter-hook-args nil
+  "Arguments to pass to ispell-filter-hook")
+(make-variable-buffer-local 'ispell-filter-hook-args)
+
+; This routine has certain limitations brought about by the filter
+; hook.  For example, deroff will take ``\fBcat\fR'' and spit out
+; ``cat''.  This is hard to search for since word-search-forward will
+; not match at all and search-forward for ``cat'' will match
+; ``concatinate'' if it happens to occur before.  I attempt to
+; minimize these problems by always searching for each word in the
+; original buffer even if it is not misspelled.  This slows things
+; down.
+
+(defun ispell-region (start end)
+  "Check a region for spelling errors interactively.  The variable
+which should be buffer or mode specific ispell-filter-hook is called
+to filter out text processing commands."
+  (interactive "r")
+  (let ((this-buf (current-buffer))
+	(spell-buf (get-buffer-create "ispell-temp"))
+	(current-syntax (syntax-table))
+	word poss replace word-start word-end)
+    (unwind-protect
+	(save-excursion
+	  (set-buffer spell-buf)
+	  (erase-buffer)
+	  (set-buffer this-buf)
+	  (if ispell-filter-hook-args
+	      (call-process-region start end ispell-filter-hook nil
+				   spell-buf nil ispell-filter-hook-args)
+	    (call-process-region start end ispell-filter-hook nil
+				 spell-buf nil))
+	  (goto-char start)
+	  (set-buffer spell-buf)
+	  (set-syntax-table ispell-syntax-table)
+	  (goto-char (point-min))
+	  (while (progn
+		   (message "Looking for a misspelled word")
+		   (re-search-forward "\\W*\\(\\w+\\)" nil t))
+	    (setq word (buffer-substring (setq word-start (match-beginning 1))
+					 (setq word-end (match-end 1))))
+	    (setq poss (ispell-check word))
+	    (set-buffer this-buf)
+	    (or (search-forward word nil t)
+		(error "Can not find %s in original text" word))
+	    (if (not (or (eq poss t) (stringp poss))) ;bad word
+		(progn
+		  (sit-for 0)
+		  (setq replace (ispell-choose poss word))
+		  (if replace
+		      (replace-match replace))))
+	    (set-buffer spell-buf)))
+      (set-syntax-table current-syntax))))

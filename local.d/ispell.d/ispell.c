@@ -17,6 +17,11 @@
  *	-c option for creating suffix suggestions from raw words
  *	suffixes in personal dictionary file
  *	hashed personal dictionary file
+ *	-S option for unsorted word lists
+ * 1987, Greg Schaffer, added:
+ *	-T option (for TeX and LaTeX instead of troff) [later changed to -t]
+ *	   passes over \ till next whitespace.
+ *	   does not recognize % (comment)
  */
 
 #include <stdio.h>
@@ -48,6 +53,8 @@ static char Try[256];
 static char Checkch[256];
 #define iswordch(X) (Checkch[((unsigned)(X))&0xff])
 #endif
+
+static int sortit = 1;
 
 givehelp ()
 {
@@ -88,6 +95,7 @@ int fflag = 0;
 int sflag = 0;
 #endif
 int xflag = 0;
+int tflag = 0;
 
 char *askfilename;
 
@@ -95,12 +103,12 @@ static char *Cmd;
 
 usage ()
 {
-	fprintf (stderr, "Usage: %s [-dfile | -pfile | -wchars | -x] file .....\n",Cmd);
-	fprintf (stderr, "       %s [-dfile | -pfile | -wchars] -l\n",Cmd);
+	fprintf (stderr, "Usage: %s [-dfile | -pfile | -wchars | -t | -x | -S] file .....\n",Cmd);
+	fprintf (stderr, "       %s [-dfile | -pfile | -wchars | -t] -l\n",Cmd);
 #ifdef USG
-	fprintf (stderr, "       %s [-dfile | -pfile | -ffile | -s] -a\n",Cmd);
+	fprintf (stderr, "       %s [-dfile | -pfile | -ffile | -t | -s] -a\n",Cmd);
 #else
-	fprintf (stderr, "       %s [-dfile | -pfile | -ffile] -a\n",Cmd);
+	fprintf (stderr, "       %s [-dfile | -pfile | -ffile | -t] -a\n",Cmd);
 #endif
 	fprintf (stderr, "       %s [-wchars] -c\n");
 	exit (1);
@@ -147,6 +155,9 @@ char **argv;
 	argc--;
 	while (argc && **argv == '-') {
 		switch ((*argv)[1]) {
+		case 't':
+			tflag++;
+			break;
 		case 'a':
 			aflag++;
 			break;
@@ -176,6 +187,9 @@ char **argv;
 			sflag++;
 			break;
 #endif
+		case 'S':
+			sortit = 0;
+			break;
 		case 'p':
 			cpd = (*argv)+2;
 			if (*cpd == '\0') {
@@ -309,7 +323,7 @@ char *filename;
 		treeoutput ();
 
 	if ((infile = fopen (tempfile, "r")) == NULL) {
-		fprintf (stderr, "tempoary file disappeared (%s)\r\n", tempfile);	
+		fprintf (stderr, "temporary file disappeared (%s)\r\n", tempfile);	
 		sleep (2);
 		return;
 	}
@@ -358,11 +372,35 @@ checkfile ()
 		currentchar = secondbuf;
 		
 		len = strlen (secondbuf) - 1;
+
+		/* skip over .if */
+		if (strncmp(currentchar,".if t",5) == 0 
+		||  strncmp(currentchar,".if n",5) == 0) {
+			copyout(&currentchar,5);
+			while (*currentchar && isspace(*currentchar)) 
+				copyout(&currentchar, 1);
+		}
+
+		/* skip over .ds XX or .nr XX */
+		if (strncmp(currentchar,".ds ",4) == 0 
+		||  strncmp(currentchar,".de ",4) == 0
+		||  strncmp(currentchar,".nr ",4) == 0) {
+			copyout(&currentchar, 3);
+			while (*currentchar && isspace(*currentchar)) 
+				copyout(&currentchar, 1);
+			while (*currentchar && !isspace(*currentchar))
+				copyout(&currentchar, 1);
+			if (*currentchar == 0) {
+				if (!lflag) putc ('\n', outfile);
+				continue;
+			}
+		}
+
 		if (secondbuf [ len ] == '\n')
 			secondbuf [ len ] = 0;
 
 		/* if this is a formatter command, skip over it */
-		if (*currentchar == '.') {
+		if (!tflag && *currentchar == '.') {
 			while (*currentchar && !myspace (*currentchar)) {
 				if (!lflag)
 					putc (*currentchar, outfile);
@@ -377,6 +415,21 @@ checkfile ()
 
 		while (1) {
 			while (*currentchar && !iswordch(*currentchar)) {
+			    if (tflag)		/* TeX or LaTeX stuff */
+			    {
+				if (*currentchar == '\\') {
+				    /* skip till whitespace */
+				    while (*currentchar && 
+					!isspace(*currentchar)) {
+					    if (!lflag)
+						putc(*currentchar, outfile);
+					    currentchar++;
+					}
+				    continue;
+				}
+			    }
+			    else
+			    {
 				/* formatting escape sequences */
 				if (*currentchar == '\\') {
 				    if(currentchar[1] == 'f') {
@@ -401,6 +454,7 @@ checkfile ()
 					continue;
 				    }
 				}
+			    }
 
 				if (!lflag)
 					putc (*currentchar, outfile);
@@ -418,7 +472,8 @@ checkfile ()
 			*p = 0;
 			if (lflag) {
 				if (!good (token)  &&  !cflag)
-					printf ("%s\r\n", token);
+					if (lflag) printf ("%s\n", token);
+					else       printf ("%s\r\n", token);
 			} else {
 				if (!quit)
 				correct (token, &currentchar);
@@ -431,8 +486,11 @@ checkfile ()
 	}
 }
 
-char possibilities[10][BUFSIZ];
+#define MAXPOSSIBLE	99	/* Max no. of possibilities to generate */
+
+char possibilities[MAXPOSSIBLE][BUFSIZ];
 int pcount;
+int maxposslen;
 
 correct (token, currentchar)
 char *token;
@@ -440,6 +498,8 @@ char **currentchar;
 {
 	int c;
 	int i;
+	int col_ht;
+	int ncols;
 	char *p;
 	int len;
 	char *begintoken;
@@ -459,13 +519,29 @@ checkagain:
 
 	makepossibilities (token);
 
-	for (i = 0; i < 10; i++) {
-		if (possibilities[i][0] == 0)
-			break;
-		printf ("%d: %s\r\n", i, possibilities[i]);
+	/*
+	 * Make sure we have enough room on the screen to hold the
+	 * possibilities.  Reduce the list if necessary.  80 / (maxposslen + 8)
+	 * is the maximum number of columns that will fit.
+	 */
+	col_ht = li - 6;		/* Height of columns of words */
+	ncols = 80 / (maxposslen + 8);
+	if (pcount > ncols * col_ht)
+		pcount = ncols * col_ht;
+
+#if 0
+	/*
+	 * Equalize the column sizes.  The last column will be short.
+	 */
+	col_ht = (pcount + ncols - 1) / ncols;
+#endif
+
+	for (i = 0; i < pcount; i++) {
+		move (2 + (i % col_ht), (maxposslen + 8) * (i / col_ht));
+		printf ("%2d: %s", i, possibilities[i]);
 	}
 
-	move (15, 0);
+	move (li - 3, 0);
 	printf ("%s\r\n", firstbuf);
 
 	for (p = secondbuf; p != begintoken; p++)
@@ -514,7 +590,7 @@ checkagain:
 		case '!':
 			{
 				char buf[200];
-				move (18, 0);
+				move (li - 1, 0);
 				putchar ('!');
 				if (getline (buf) == NULL) {
 					putchar (7);
@@ -527,7 +603,7 @@ checkagain:
 				goto checkagain;
 			}
 		case 'r': case 'R':
-			move (18, 0);
+			move (li - 1, 0);
 			printf ("Replace with: ");
 			if (getline (token) == NULL) {
 				putchar (7);
@@ -539,17 +615,33 @@ checkagain:
 			goto checkagain;
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
-			if (possibilities[c - '0'][0] != 0) {
-				strcpy (token, possibilities[c - '0']);
-				inserttoken (secondbuf, begintoken, token, currentchar);				erase ();
+			i = c - '0';
+			if (pcount > 10
+			    &&  i > 0  &&  i <= (pcount - 1) / 10) {
+				c = getchar () & NOPARITY;
+				if (c >= '0'  &&  c <= '9')
+					i = i * 10 + c - '0';
+				else if (c != '\r'  &&  c != '\n') {
+					putchar (7);
+					break;
+				}
+			}
+			if (i < pcount) {
+				strcpy (token, possibilities[i]);
+				inserttoken (secondbuf, begintoken,
+				    token, currentchar);
+				erase ();
 				return;
 			}
 			putchar (7);
 			break;
+		case '\r':	/* This makes typing \n after single digits */
+		case '\n':	/* ..less obnoxious */
+			break;
 		case 'l': case 'L':
 			{
 				char buf[100];
-				move (18, 0);
+				move (li - 1, 0);
 				printf ("Lookup string ('*' is wildcard): ");
 				if (getline (buf) == NULL) {
 					putchar (7);
@@ -596,16 +688,21 @@ makepossibilities (word)
 char word[];
 {
 	int i;
+	extern int strcmp ();
 
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < MAXPOSSIBLE; i++)
 		possibilities[i][0] = 0;
 	pcount = 0;
+	maxposslen = 0;
 
-	if (pcount < 10) wrongletter (word);
-	if (pcount < 10) extraletter (word);
-	if (pcount < 10) missingletter (word);
-	if (pcount < 10) transposedletter (word);
+	if (pcount < MAXPOSSIBLE) wrongletter (word);
+	if (pcount < MAXPOSSIBLE) extraletter (word);
+	if (pcount < MAXPOSSIBLE) missingletter (word);
+	if (pcount < MAXPOSSIBLE) transposedletter (word);
 
+	if (sortit  &&  pcount)
+		qsort ((char *) possibilities, pcount,
+		    sizeof (possibilities[0]), strcmp);
 }
 
 char *cap();
@@ -620,7 +717,10 @@ char *word;
 			return (0);
 
 	strcpy (possibilities[pcount++], word);
-	if (pcount >= 10)
+	i = strlen (word);
+	if (i > maxposslen)
+		maxposslen = i;
+	if (pcount >= MAXPOSSIBLE)
 		return (-1);
 	else
 		return (0);
@@ -815,7 +915,12 @@ askmode ()
 	setbuf (stdout, NULL);
 
 	while (gets (buf) != NULL) {
-		if (good (buf)) {
+		/* *line is like `i', @line is like `a' */
+		if (buf[0] == '*' || buf[0] == '@') {
+			treeinsert(buf + 1, buf[0] == '*');
+			printf("*\n");
+			treeoutput ();
+		} else if (good (buf)) {
 			if (rootword[0] == 0) {
 				printf ("*\n");	/* perfect match */
 			} else {
@@ -825,7 +930,7 @@ askmode ()
 			makepossibilities (buf);
 			if (possibilities[0][0]) {
 				printf ("& ");
-				for (i = 0; i < 10; i++) {
+				for (i = 0; i < MAXPOSSIBLE; i++) {
 					if (possibilities[i][0] == 0)
 						break;
 					printf ("%s ", possibilities[i]);
@@ -884,7 +989,7 @@ char *string;
 			sprintf (cmd, "%s '^%s$' %s", EGREPCMD, grepstr, WORDS);
 		else
 			/* no wild, use look(1) */
-			sprintf (cmd, "/usr/bin/look -df %s %s", grepstr, WORDS);
+			sprintf (cmd, "%s %s %s", LOOK, grepstr, WORDS);
 #else
 		sprintf (cmd, "%s '^%s$' %s", EGREPCMD, grepstr, WORDS);
 #endif

@@ -8,7 +8,11 @@ munchlist \- Combine suffixes in a spelling list
 .SH SYNOPSIS
 .B ispell
 [
+.B \-t
+|
 .B \-x
+|
+.B \-S
 |
 .B \-d
 file |
@@ -19,6 +23,8 @@ chars ] file .....
 .br
 .B ispell
 [
+.B \-t
+|
 .B \-d
 file |
 .B \-p
@@ -29,6 +35,8 @@ chars ]
 .br
 .B ispell
 [
+.B \-t
+|
 .B \-d
 file |
 .B \-p
@@ -72,7 +80,10 @@ or a pair of transposed letters), then they are also displayed.  If you
 think the word is correct as it stands, you can type either "Space" to
 accept it this one time, or "I" to accept it and put it in your private
 dictionary.  If one of the near misses is the word you want, type the
-corresponding number.  Finally, if none of these choices is right, you
+corresponding number.
+(If there are more than 10 choices,
+you may have to type a carriage return to complete a single-digit number).
+Finally, if none of these choices is right, you
 can type "R" and you will be prompted for a replacement word.
 If you want to see a list of words that might be close using wildcard
 characters, type "L" to lookup a word in the system dictionary.
@@ -90,10 +101,12 @@ is used to produce a list of misspelled words from the standard input.
 .PP
 The
 .B \-a
+option
 is intended to be used from other programs through a pipe.  In this
 mode,
 .I ispell
-expects the standard input to consist of single words.  Each word is
+expects the standard input to consist of lines containing single words.
+Each word is
 read, and a single line is written to the standard output.  If the word
 was found in the main dictionary, or your personal dictionary, then the
 line contains only a '*'.  If the word was found through suffix removal,
@@ -107,6 +120,18 @@ is also suitable for interactive use when you want to figure out the
 spelling of a single word.  (These characters are the same as the codes
 that the real spell program uses.)
 .PP
+When in the
+.B \-a
+mode,
+.I ispell
+will also accept lines of single words prefixed with either a '*' or a '@'.
+A line starting with '*' tells
+.I ispell
+to insert the word into the user's dictionary (similar to the I command).
+A line starting with '@' causes
+.I ispell
+to accept this word in the future (similar to the A command).
+.PP
 The
 .B \-x
 option causes
@@ -114,6 +139,30 @@ option causes
 to remove the .bak file that it normally leaves.  The .bak file contains
 the pre-corrected text.  If there are file opening / writing errors,
 the .bak file may be left for recovery purposes even with the -x option.
+.PP
+The
+.B \-S
+option suppresses
+.IR ispell "'s"
+normal behavior of sorting the list of possible replacement words.
+Some people may prefer this, since it somewhat enhances the probability
+that the correct word will be low-numbered.
+.PP
+The
+.B \-t
+option selects TeX/LaTeX input mode.
+In this mode, whenever a backslash ("\e") is found,
+.I ispell
+will skip to the next whitespace.
+Thus, for example, given
+.RS
+\echapter {This is a Ckapter}
+\ecite{SCH86}
+.RE
+will find "Ckapter" but will not look for SCH.
+The
+.B \-t
+option does not recognize the TeX comment character "%".
 .PP
 The
 .B \-d
@@ -224,7 +273,7 @@ somewhat less space in TMPDIR (normally
 It is possible to install
 .I ispell
 in such a way as to only support ASCII range text if desired.
-.SH DEFAULT FILES
+.SH FILES
 /usr/public/lib/ispell.hash
 .br
 /usr/dict/web2		for the Lookup function
@@ -276,5 +325,20 @@ took another 1500 blocks or so, and ran for about three hours.
 .SH AUTHOR
 Pace Willisson (pace@mit-vax)
 .br
-Enhanced by James Woods, Bob McQueer, Bill Randle, Marc Ries, Rob McMahon,
-and Geoff Kuenning.
+Collected, revised, and enhanced for the Usenet by Walt Buehring.
+.br
+Further enhanced and debugged by
+Don Kark,
+Jim Knutson,
+Geoff Kuenning,
+Dave Mason,
+Rob McMahon,
+Bob McQueer,
+Gary Puckering,
+Bill Randle,
+Marc Ries,
+Rich Salz,
+Greg Schaffer,
+Perry Smith,
+and
+James Woods.

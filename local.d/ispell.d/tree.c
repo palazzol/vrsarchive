@@ -144,73 +144,75 @@ char *p;
 		if ((h = index (buf, '/')) != NULL)
 			*h++ = '\0';
 		dp = treeinsert (buf, 1);
-		while (h != NULL) {
-			switch (*h++) {
-			case 'D':
-			case 'd':
-				dp->d_flag = 1;
-				break;
-			case 'G':
-			case 'g':
-				dp->g_flag = 1;
-				break;
-			case 'H':
-			case 'h':
-				dp->h_flag = 1;
-				break;
-			case 'J':
-			case 'j':
-				dp->j_flag = 1;
-				break;
-			case 'M':
-			case 'm':
-				dp->m_flag = 1;
-				break;
-			case 'N':
-			case 'n':
-				dp->n_flag = 1;
-				break;
-			case 'P':
-			case 'p':
-				dp->p_flag = 1;
-				break;
-			case 'R':
-			case 'r':
-				dp->r_flag = 1;
-				break;
-			case 'S':
-			case 's':
-				dp->s_flag = 1;
-				break;
-			case 'T':
-			case 't':
-				dp->t_flag = 1;
-				break;
-			case 'V':
-			case 'v':
-				dp->v_flag = 1;
-				break;
-			case 'X':
-			case 'x':
-				dp->x_flag = 1;
-				break;
-			case 'Y':
-			case 'y':
-				dp->y_flag = 1;
-				break;
-			case 'Z':
-			case 'z':
-				dp->z_flag = 1;
-				break;
-			default:
-				fprintf (stderr,
-				  "Illegal flag in personal dictionary - %c (word %s)\n",
-				  h[-1], buf);
-				break;
+		if (h != NULL) {
+			while (*h != '\0'  &&  *h != '\n') {
+				switch (*h++) {
+				case 'D':
+				case 'd':
+					dp->d_flag = 1;
+					break;
+				case 'G':
+				case 'g':
+					dp->g_flag = 1;
+					break;
+				case 'H':
+				case 'h':
+					dp->h_flag = 1;
+					break;
+				case 'J':
+				case 'j':
+					dp->j_flag = 1;
+					break;
+				case 'M':
+				case 'm':
+					dp->m_flag = 1;
+					break;
+				case 'N':
+				case 'n':
+					dp->n_flag = 1;
+					break;
+				case 'P':
+				case 'p':
+					dp->p_flag = 1;
+					break;
+				case 'R':
+				case 'r':
+					dp->r_flag = 1;
+					break;
+				case 'S':
+				case 's':
+					dp->s_flag = 1;
+					break;
+				case 'T':
+				case 't':
+					dp->t_flag = 1;
+					break;
+				case 'V':
+				case 'v':
+					dp->v_flag = 1;
+					break;
+				case 'X':
+				case 'x':
+					dp->x_flag = 1;
+					break;
+				case 'Y':
+				case 'y':
+					dp->y_flag = 1;
+					break;
+				case 'Z':
+				case 'z':
+					dp->z_flag = 1;
+					break;
+				default:
+					fprintf (stderr,
+					  "Illegal flag in personal dictionary - %c (word %s)\n",
+					  h[-1], buf);
+					break;
+				}
+				/* Accept old-format dicts with extra slashes */
+				if (*h == '/')
+					h++;
 			}
-			/* Exit loop if no more flags */
-			if (*h++ != '/')
-				break;
 		}
 	}
 
@@ -310,7 +312,7 @@ char *word;
 		if (oldhtab != NULL)
 			free ((char *) oldhtab);
 	}
-	newwords = 1;
+	newwords |= keep;
 	return tinsert (nword, (struct dent *) NULL, keep);
 }
 
@@ -419,6 +421,7 @@ treeoutput ()
 	}
 
 	toutput1 ();
+	newwords = 0;
 
 	fclose (dictf);
 }
@@ -443,40 +446,53 @@ toutput1 ()
 	}
 }
 
+static int hasslash;
+
 static
 toutput2 (cent)
 register struct dent *cent;
 {
+
+	hasslash = 0;
 	fprintf (dictf, "%s", cent->word);
 	if (cent->d_flag)
-		fprintf (dictf, "/D");
+		flagout ('D');
 	if (cent->g_flag)
-		fprintf (dictf, "/G");
+		flagout ('G');
 	if (cent->h_flag)
-		fprintf (dictf, "/H");
+		flagout ('H');
 	if (cent->j_flag)
-		fprintf (dictf, "/J");
+		flagout ('J');
 	if (cent->m_flag)
-		fprintf (dictf, "/M");
+		flagout ('M');
 	if (cent->n_flag)
-		fprintf (dictf, "/N");
+		flagout ('N');
 	if (cent->p_flag)
-		fprintf (dictf, "/P");
+		flagout ('P');
 	if (cent->r_flag)
-		fprintf (dictf, "/R");
+		flagout ('R');
 	if (cent->s_flag)
-		fprintf (dictf, "/S");
+		flagout ('S');
 	if (cent->t_flag)
-		fprintf (dictf, "/T");
+		flagout ('T');
 	if (cent->v_flag)
-		fprintf (dictf, "/V");
+		flagout ('V');
 	if (cent->x_flag)
-		fprintf (dictf, "/X");
+		flagout ('X');
 	if (cent->y_flag)
-		fprintf (dictf, "/Y");
+		flagout ('Y');
 	if (cent->z_flag)
-		fprintf (dictf, "/Z");
+		flagout ('Z');
 	fprintf (dictf, "\n");
+}
+
+static
+flagout (flag)
+{
+	if (!hasslash)
+		putc ('/', dictf);
+	hasslash = 1;
+	putc (flag, dictf);
 }
 
 char *

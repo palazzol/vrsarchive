@@ -23,9 +23,5 @@ register hashsize;
 	}
 
 	h &= 077777;
-	return (h %= hashsize);
+	return (unsigned long) h % hashsize;
 }
-
-
-
-		

@@ -6,7 +6,9 @@
  */
 
 #include <stdio.h>
+#ifdef USG
 #include <sys/types.h>
+#endif
 #include <sys/stat.h>
 #include <sys/param.h>
 #include "ispell.h"
@@ -200,7 +202,7 @@ readdict ()
 
 	i = 0;
 	while (fgets (lbuf, sizeof lbuf, dictf) != NULL) {
-		if (i % 1000 == 0) {
+		if ((i & 1023) == 0) {
 			printf ("%d ", i);
 			fflush (stdout);
 		}
@@ -267,6 +269,7 @@ struct dent *d;
 	d->s_flag = 0;
 	d->p_flag = 0;
 	d->m_flag = 0;
+	d->keep = 0;
 
 	p = index (lbuf, '/');
 	if (p != NULL)
@@ -280,7 +283,7 @@ struct dent *d;
 		return (0);
 
 	p++;
-	while (*p != NULL) {
+	while (*p != '\0'  &&  *p != '\n') {
 		switch (*p) {
 		case 'V': d->v_flag = 1; break;
 		case 'N': d->n_flag = 1; break;
@@ -297,7 +300,7 @@ struct dent *d;
 		case 'P': d->p_flag = 1; break;
 		case 'M': d->m_flag = 1; break;
 		case 0:
- 			fprintf (stderr, "no key word %s\n", lbuf);
+ 			fprintf (stderr, "no flags on word %s\n", lbuf);
 			continue;
 		default:
 			fprintf (stderr, "unknown flag %c word %s\n", 
@@ -305,14 +308,8 @@ struct dent *d;
 			break;
 		}
 		p++;
-		if (*p != '/' && *p != NULL && *p != '\n') {
-			fprintf (stderr, "bad format %s (%c 0%o)\n", 
-					lbuf, *p, *p);
-			break;
-		}
-		if (*p)
+		if (*p == '/')		/* Handle old-format dictionaries too */
 			p++;
-	
 	}
 	return (0);
 }
@@ -330,14 +327,11 @@ newcount ()
 		exit (1);
 	}
 
-	i = 0;
-	while (fgets (buf, sizeof buf, d) != NULL) {
-		i++;
-		if (i % 1000 == 0) {
+	for (i = 0; fgets (buf, sizeof buf, d); )
+		if ((++i & 1023) == 0) {
 			printf ("%d ", i);
 			fflush (stdout);
 		}
-	}
 	fclose (d);
 	printf ("\n%d words\n", i);
 	if ((d = fopen (Cfile, "w")) == NULL) {

@@ -92,6 +92,7 @@ terminit ()
 #else
 	int tpgrp;
 	int onstop();
+	extern short ospeed;
 
 retry:
 	sigsetmask(1<<SIGTSTP | 1<<SIGTTIN | 1<<SIGTTOU);
@@ -117,6 +118,7 @@ retry:
 
 	erasechar = sbuf.sg_erase;
 	killchar = sbuf.sg_kill;
+	ospeed = sbuf.sg_ospeed;
 
 	signal (SIGINT, done);
 

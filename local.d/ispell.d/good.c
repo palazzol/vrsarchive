@@ -383,6 +383,7 @@ char *w;
 				wordok = 1;
 			return;
 		}
+		return;
 	case 'G':	/* J */
 		if (strcmp (p-4, "ING") != 0)
 			return;

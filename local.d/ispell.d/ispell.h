@@ -1,7 +1,5 @@
 /* -*- Mode: Text -*- */
 
-#define LIBDIR "/tmp2/lib"
-
 struct dent {
 	struct dent *next;
 	char *word;
