@@ -20,14 +20,14 @@
  * Also, the code for suspend and various ioctls is only given for BSD4.2
  * (I do not have access to a SYSV system.)
  */
-#define BSD		/* delete this line on System V */
+/* #define BSD		/* delete this line on System V */
 
 /* #define STUPID */	/* avoid some complicated expressions if
 			   your C compiler chokes on them */
 #define PYRAMID_BUG 	/* avoid a bug on the Pyramid */
-/* #define NOWAITINCLUDE */	/* neither <wait.h> nor <sys/wait.h> exists */
+#define NOWAITINCLUDE */	/* neither <wait.h> nor <sys/wait.h> exists */
 
-#define WIZARD  "adams"	/* the person allowed to use the -D option */
+#define WIZARD  "root"	/* the person allowed to use the -D option */
 #define RECORD	"record"/* the file containing the list of topscorers */
 #define	NEWS	"news"	/* the file containing the latest hack news */
 #define	HELP	"help"	/* the file containing a description of the commands */
@@ -46,6 +46,7 @@
  * (This might be preferable for security reasons.)
  * #define DEF_PAGER	".../mydir/mypager"
  */
+#define PAGER "/usr/bin/more"
 
 /*
  * If you define MAIL, then the player will be notified of new mail
@@ -55,7 +56,7 @@
  * A stat system call is done on the mailbox every MAILCKFREQ moves.
  */
 #define	MAIL
-#define	DEF_MAILREADER	"/usr/ucb/mail"		/* or e.g. /bin/mail */
+#define	DEF_MAILREADER	"/usr/bin/mail"		/* or e.g. /bin/mail */
 #define	MAILCKFREQ	50
 
 
@@ -67,12 +68,6 @@
 #endif UNIX
 
 #ifdef CHDIR
-/*
- * If you define HACKDIR, then this will be the default playground;
- * otherwise it will be the current directory.
- */
-#define HACKDIR	"/usr/games/lib/hackdir"
-
 /*
  * Some system administrators are stupid enough to make Hack suid root
  * or suid daemon, where daemon has other powers besides that of reading or
@@ -99,7 +94,7 @@
  * will do when you have signed characters; otherwise use
  *	typedef	short int schar;
  */
-typedef	char	schar;
+typedef	short schar;
 
 /*
  * small unsigned integers (8 bits suffice - but 7 bits do not)
@@ -108,7 +103,7 @@ typedef	char	schar;
  * will be satisfactory if you have an "unsigned char" type; otherwise use
  *	typedef unsigned short int uchar;
  */
-typedef	unsigned char	uchar;
+typedef	unsigned short	uchar;
 
 /*
  * small integers in the range 0 - 127, usually coordinates
@@ -127,7 +122,8 @@ typedef	xchar	boolean;		/* 0 or 1 */
  *	#define Bitfield(x,n)	uchar x
  * since the bitfields used never have more than 7 bits. (Most have 1 bit.)
  */
-#define	Bitfield(x,n)	unsigned x:n
+/* #define	Bitfield(x,n)	unsigned x:n */
+#define Bitfield(x,n)	uchar x
 
 #define	SIZE(x)	(int)(sizeof(x) / sizeof(x[0]))
 

@@ -75,7 +75,7 @@ struct you {
 	schar uluck;
 #define	LUCKMAX		10	/* on moonlit nights 11 */
 #define	LUCKMIN		(-10)
-	int last_str_turn:3;	/* 0: none, 1: half turn, 2: full turn */
+	schar last_str_turn;	/* 0: none, 1: half turn, 2: full turn */
 				/* +: turn right, -: turn left */
 	unsigned udispl:1;	/* @ on display */
 	unsigned ulevel:4;	/* 1 - 14 */
