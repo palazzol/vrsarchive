@@ -82,8 +82,6 @@ getbyte()
 }
 
 /* 320*8/300 = 8.53 inches at 300 dpi */
-unsigned char swath[32][320];
-
 main (argc, argv)
 char **argv;
 {
@@ -101,6 +99,7 @@ char **argv;
 	printf("static char noname_bits[] = {\n");	/* } */
 
 	/* Copy the image */
+	width = (width+7)/8;	/* Convert width to bytes */
 	outcnt = 0;
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
