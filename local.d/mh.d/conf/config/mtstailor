@@ -14,10 +14,10 @@ localname:
 lockldir:
 mailqdir:	/usr/spool/smtpq
 mmailid:	0
-mmdelim1:	\001\001\001\001\n
-mmdelim2:	\001\001\001\001\n
-mmdfldir:	@(MHDROPATH)
-mmdflfil:	@(MHDROPFIL)
+#mmdelim1:	\001\001\001\001\n
+#mmdelim2:	\001\001\001\001\n
+#mmdfldir:	@(MHDROPATH)
+#mmdflfil:	@(MHDROPFIL)
 nntphost:	gandalf
 uucpldir:	@(MHDROPATH)
 uucplfil:	@(MHDROPFIL)
