@@ -1,0 +1,79 @@
+
+    This directory contains a source-archiving system called "lbgm" (Little
+Bird Gave Me).  Responsible parties are:
+
+    lbgm		Alan S. Watt
+    lbgmX		Jim Ziobro
+    X			   "
+    zap.so		   "
+    csh protection	Larry Wall
+
+I have cleaned it up a bit to be more flexible and robust, and added an
+installation script.
+
+To install:
+
+    Run this shar archive to extract the programs.
+    If your system doesn't take #! syntax, edit the scripts to force /bin/sh
+    Define LBGMDIR and LBGMRM (see below) in your environment, or edit lbgmX
+      to define them the way you want them.
+    Run the install script.
+
+LBGMDIR should be the directory you save sources in:  default is /usr/lbgm if
+nothing else is specified.  LBGMRM is the program to remove unwanted sources;
+define this to X (or a similar script/program) if you have delayed-deletion
+facilities.  It defaults to "/bin/rm -f" if unspecified.
+
+That's all.  You should not have to edit anything else, no matter what your
+system is or where you keep news.  News will be saved in the directory
+you specify, and cataloged (by the Usenet header) in 'save.log'.
+
+If garbage shows up on net.sources, simply type "s | zap.so" from readnews or
+rn.  When you exit, run $HOME/tozap to actually delete the articles (this
+takes a while).  Don't forget to remove tozap when you are done.
+
+	Geoff Kuenning
+	...!ihnp4!trwrb!desint!geoff
+======================================================================
+Alan Watt's comments [edited to change the script name to lbgm]:
+
+I don't have space to save all news forever, but I decided some time
+ago that net.sources was worth keeping around, hence "lbgm".
+Usage is from you news "sys" file:
+
+	SOURCES:net.sources:B:/usr/lib/news/lbgm [ srcdir ]
+
+where <srcdir> is where you want the stuff to go.  In there will
+appear the file "save.log", which contains the news header of
+every news article saved, and files of the form:
+
+	${month}_${day}.${unique}
+
+(as in "Apr_8.4552"), each file containing an article.  The log
+file will point to the saved article.  There is a lockout against
+concurrent runnings of lbgm.
+
+You have to periodically go in by hand and delete obvious junk
+(discussions and requests for stuff), and also to weed out which
+version you want to keep if something is posted several times.
+I have everything posted on net.sources since August 15th of last
+year.
+
+	- Alan S. Watt
+	{decvax,duke,purdue,lbl-csam}!ittvax!swatt
+
+======================================================================
+Jim Ziobro's comments:
+
+	For those who keep archives of stuff from net.sources using an
+Alan Watt lbgm (little bird gave me) style archive then you might
+want a convenient way to delete the junk that may get saved there.
+
+	I have written some small scripts which make that job easier.
+When you come across junk simply pipe the offending article into
+zap.so and it creates a script which will remove the article from
+your lbgm archive.  After your finished reading news just invoke tozap
+which was created by zap.so.
+
+	I have include Alan Watt's original article.  As always please
+keep me informed of enhancements or bugs.

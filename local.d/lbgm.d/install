@@ -1,0 +1,139 @@
+:
+#! /bin/sh
+
+export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh $0; kill $$)
+
+cat <<'EOF'
+Installation script for the lbgm package.
+
+You will have to provide the following information:
+
+(1) Name of directory to save news in
+(2) Name of news library directory
+(3) Name of your bin directory
+(4) Who to notify if problems occur
+
+EOF
+lbgmdir=${LBGMDIR:-/usr/lbgm}
+echo 'Enter name of the directory news will be saved in ['"$lbgmdir"']:'
+read lbgmdir
+case X$lbgmdir in
+    X)
+	lbgmdir=/usr/lbgm
+	;;
+    *)
+	;;
+esac
+
+echo 'Enter name of the news library directory [/usr/lib/news]:'
+read libdir
+case X$libdir in
+    X)
+	libdir=/usr/lib/news
+	;;
+    *)
+	;;
+esac
+
+echo 'Enter the name of your bin directory ['"$HOME/bin"']:'
+read bindir
+case X$bindir in
+    X)
+	bindir="$HOME/bin"
+	;;
+    *)
+	;;
+esac
+
+NOTIFY=${USER:-"${LOGNAME:-root}"}
+echo 'Who should be notified in case of trouble ['"$NOTIFY"']?'
+read notify
+case X$notify in
+    X)
+	notify="$NOTIFY"
+	;;
+    *)
+	;;
+esac
+
+echo 'End of questions.  Installation begins.'
+
+if test ! -d $lbgmdir
+then
+    mkdir $lbgmdir  ||  (echo Trouble creating $lbgmdir 1>&2; kill $$)
+fi
+set X `ls -ld $lbgmdir`
+case $2 in
+    drwxrwxrwx)
+	;;
+    *)
+	chmod a+rwx $lbgmdir  ||  \
+	  (echo "Couldn't set modes for $lbgmdir" 1>&2; kill $$)
+	;;
+esac
+
+touch $lbgmdir/save.log  ||  chmod a+rw $lbgmdir/save.log  ||  \
+  (echo "Couldn't create $lbgmdir/save.log" 1>&2; kill $$)
+
+(cp lbgm $libdir  &&  chmod a+rx $libdir/lbgm)  ||  \
+  (echo "Trouble installing lbgm in $libdir" 1>&2; kill $$)
+
+(cp lbgmX zap.so $bindir  &&  chmod a+rx $bindir/lbgmX $bindir/zap.so)  ||  \
+  (echo "Trouble installing utilities in $bindir" 1>&2; kill $$)
+
+grep '^SOURCES:' $libdir/sys >/tmp/ins$$
+if test ! -s /tmp/ins$$
+then
+    cat >> $libdir/sys <<EOF
+#
+#	Automatic archiving of sources
+#
+SOURCES:mod.sources,net.sources:B:$libdir/lbgm $lbgmdir $notify
+EOF
+fi
+
+echo 'Installation completed.'
+echo ''
+case $lbgmdir in
+    /usr/lbgm)
+	;;
+    *)
+	case X$LBGMDIR in
+	    X)
+		cat <<'EOF'
+You will have to add LBGMDIR to your environment before zap.so will work.
+Use the following line:
+
+EOF
+		case X$SHELL in
+		    */csh)
+			echo "	setenv LBGMDIR $lbgmdir"
+			;;
+		    *)
+			echo "	LBGMDIR=$lbgmdir; export LBGMDIR"
+			;;
+		esac
+		;;
+	    *)
+		;;
+	esac
+	;;
+esac
+case X$LBGMRM in
+    X)
+	cat <<EOF
+
+If you have delayed-deletion facilities, you may also want to define LBGMRM
+in your environment to be the name of the delayed-deletion facility.  If you
+do not have delayed deletion right now, but want it, put X into $bindir
+EOF
+	cat <<'EOF'
+and define LBGMRM to be X in your environment, and add the following line to
+/usr/lib/crontab:
+
+    45 4 * * * find / -name '#*' -atime +3 -print -exec rm -f {} \;
+EOF
+	;;
+    *)
+	;;
+esac

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh $0; kill $$)
+
+: Extract a Message-Id from a news file and prepend an lbgmX
+: used to help keep lbgm archives clean
+: called from readnews or rn with "s | zap.so"
+: outputs a file $HOME/tozap
+: archive can then be cleaned by invoking tozap
+: "HISTORY"
+: " 06-Sep-84  z at XEROX Henrietta "
+:	" Created by Jim Ziobro "
+: " 04-Dec-84  geoff "
+:	" Add csh bulletproofing and protection against multiple message id's "
+:
+
+: extract Message-Id
+awk  'BEGIN { FS = ":" }\
+\
+/^[Mm][eE][sS][sS][aA][gG][eE]-[Ii][Dd]/	{\
+	printf("lbgmX \"%s\"\n", $2) ;\
+	exit;\
+	}\
+	'\
+	>> $HOME/tozap 
+
+chmod +x $HOME/tozap
