@@ -1,7 +1,16 @@
+#
 # Makefile for chess program
+#
+ALL	= chess
+OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
+MODEL	= -i
+include ../../CONFIG
 
-# comment out -DBSD for SYSV machines
-CFLAGS = -O -DBSD
+clean:
+	rm -f $(ALL)
 
-chess:	chess.c
-	cc $(CFLAGS) -o chess chess.c -lcurses -ltermlib
+install: $(ALL) $(GAMDIR) $(GAMLIB)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp chess.opn $(GAMLIB)
+	cd $(GAMLIB); chmod 644 chess.opn
