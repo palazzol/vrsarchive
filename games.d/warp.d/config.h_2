@@ -20,8 +20,8 @@
  *	This symbol, if defined, indicates that the program is running under
  *	VMS.  It is currently only set in conjunction with the EUNICE symbol.
  */
-#/*undef	EUNICE		/**/
-#/*undef	VMS		/**/
+/*#undef	EUNICE		/**/
+/*#undef	VMS		/**/
 
 /* CHARSPRINTF:
  *	This symbol is defined if this system declares "char *sprintf()" in
@@ -29,7 +29,7 @@
  *	is up to the package author to declare sprintf correctly based on the
  *	symbol.
  */
-#/*undef	CHARSPRINTF 	/**/
+/*#undef	CHARSPRINTF 	/**/
 
 /* FCNTL:
  *	This symbol, if defined, indicates to the C program that it should
@@ -57,15 +57,15 @@
  *	contents of PHOSTNAME as a command to feed to the popen() routine
  *	to derive the host name.  See also GETHOSTNAME and DOUNAME.
  */
-#/*undef	GETHOSTNAME	/**/
-#/*undef	DOUNAME		/**/
-#/*undef	PHOSTNAME ""	/**/
+/*#undef	GETHOSTNAME	/**/
+/*#undef	DOUNAME		/**/
+/*#undef	PHOSTNAME ""	/**/
 
 /* GETPWENT:
  *	This symbol, if defined, indicates that the getpwent() routine
  *	should be used instead of the getpw() routine.
  */
-#/*undef	GETPWENT	/**/
+/*#undef	GETPWENT	/**/
 
 /* HAVETERMLIB:
  *	This symbol, when defined, indicates that termlib-style routines
@@ -109,7 +109,7 @@
  *	to find out if there is input pending on an IO channel.  Generally
  *	the routine is used only if FIONREAD and O_NDELAY aren't available.
  */
-#/*undef	RDCHK		/**/
+/*#undef	RDCHK		/**/
 
 /* SCOREFULL:
  *	This symbol, if defined, indicates that any scoreboard kept by the
@@ -117,7 +117,7 @@
  *	to the user's login name.  If the user can change his full name he
  *	can enter multiple scores if this is defined.
  */
-#/*undef	SCOREFULL	/**/
+/*#undef	SCOREFULL	/**/
 
 /* SIGNEDCHAR:
  *	This symbol, if defined, indicates that characters are a signed type.
@@ -142,13 +142,13 @@
  *	system's version of ndir.h, rather than the one with this package.
  */
 #define	USENDIR		/**/
-#/*undef	LIBNDIR		/**/
+/*#undef	LIBNDIR		/**/
 
 /* WHOAMI:
  *	This symbol, if defined, indicates that the program may include
  *	whoami.h.
  */
-#/*undef	WHOAMI		/**/
+/*#undef	WHOAMI		/**/
 
 /* HOSTNAME:
  *	This symbol contains name of the host the program is going to run on.
@@ -182,7 +182,7 @@
  */
 #define	PASSNAMES /*  (undef to take name from ~/.fullname) */
 #define	BERKNAMES /* (that is, ":name,stuff:") */
-#/*undef	USGNAMES  /* (that is, ":stuff-name(stuff):") */
+/*#undef	USGNAMES  /* (that is, ":stuff-name(stuff):") */
 
 /* PREFSHELL:
  *	This symbol contains the full name of the preferred user shell on this
