@@ -8,14 +8,16 @@
 #ifdef BSD4_2
 #   include <sys/wait.h>
 #else
+#  ifdef CYGWIN
+#   include <sys/wait.h>
+#  else
 #   include <wait.h>
+#  endif
 #endif
 #include <signal.h>
 #ifdef __STDC__
 #include <sys/termios.h>
 #include <sys/ioctl.h>
-#include <sys/ttold.h>
-#define CRMOD	O_CRMOD
 #else
 #include <sgtty.h>
 #endif
@@ -45,14 +47,22 @@ int	NumProcs = 0;
 #ifdef BRLUNIX
 	extern struct sg_brl sg1;
 #else
+#  ifdef __STDC__
+	extern struct termios sg1;
+#  else
 	extern struct sgttyb sg1;
+#  endif
 #endif
 
+#ifdef __STDC__
+extern struct termios tc1;
+#else
 extern struct tchars tc1;
 
 #ifdef TIOCSLTC
 	extern struct ltchars ls1;
-#endif
+#endif /*TIOCSLTC*/
+#endif /*TIOCGETA*/
 
 char *
 pstate(p)
@@ -161,27 +171,50 @@ ProcCont()
 
 ProcEof()
 {
+#ifdef __STDC__
+	send_p(tc1.c_cc[VEOF]);
+#else
 	send_p(tc1.t_eofc);
+#endif
 }
 
 ProcInt()
 {
+#ifdef __STDC__
+	send_p(tc1.c_cc[VINTR]);
+#else
 	send_p(tc1.t_intrc);
+#endif
 }
 
 ProcQuit()
 {
+#ifdef __STDC__
+	send_p(tc1.c_cc[VQUIT]);
+#else
 	send_p(tc1.t_quitc);
+#endif
 }
 
 ProcStop()
 {
+#ifdef __STDC__
+	send_p(tc1.c_cc[VSUSP]);
+#else
 	send_p(ls1.t_suspc);
+#endif
 }
 
 ProcDStop()
 {
+#ifdef __STDC__
+#  ifndef VDSUSP
+#  define VDSUSP VSUSP
+#  endif
+	send_p(tc1.c_cc[VDSUSP]);
+#else
 	send_p(ls1.t_dsuspc);
+#endif
 }
 
 send_p(c)
@@ -271,7 +304,11 @@ va_dcl
 #ifdef BRLUNIX
 	struct sg_brl sg;
 #else
+#  ifdef __STDC__
+	struct termios sg;
+#  else
 	struct sgttyb sg;
+#  endif
 #endif
 
 #ifdef TIOCGWINSZ
@@ -373,11 +410,20 @@ out:	if (s == 0 && t == 0)
 #endif
 
 		sg = sg1;
+#ifdef __STDC__
+		sg.c_lflag &= ~ECHO;
+		sg.c_iflag &= ~ICRNL;
+		sg.c_oflag &= ~ONLCR;
+		sg.c_oflag |= ONLRET;
+		(void) tcsetattr(0, TCSADRAIN, &sg);
+#else
 		sg.sg_flags &= ~(ECHO | CRMOD);
 		(void) stty(0, &sg);
-
+#endif
 		i = getpid();
+#ifdef TIOCSPGRP
 		(void) ioctl(0, TIOCSPGRP, (struct sgttyb *) &i);
+#endif
 		(void) setpgrp(0, i);
 		va_start(ap);
 		make_argv(argv, ap);
