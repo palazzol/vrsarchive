@@ -40,19 +40,19 @@
 
 #define AMIGA   0                       /* AmigaDOS			*/
 #define ST520   0                       /* ST520, TOS                   */
-#define MSDOS   1                       /* MS-DOS                       */
+#define MSDOS   0                       /* MS-DOS                       */
 #define V7      0                       /* V7 UNIX or Coherent or BSD4.2*/
 #define	BSD	0			/* UNIX BSD 4.2	and ULTRIX	*/
-#define	USG	0			/* UNIX system V		*/
+#define	USG	1			/* UNIX system V		*/
 #define VMS     0                       /* VAX/VMS                      */
 #define CPM     0                       /* CP/M-86                      */
 #define	FINDER	0			/* Macintosh OS			*/
 
 /*	Compiler definitions			*/
-#define	UNIX	0	/* a random UNIX compiler */
+#define	UNIX	1	/* a random UNIX compiler */
 #define MWC	0	/* Marc Williams C */
 #define	LATTICE	0	/* Lattice 2.14 thruough 3.0 compilers */
-#define	AZTEC	1	/* Aztec C 3.20e */
+#define	AZTEC	0	/* Aztec C 3.20e */
 #define	MSC	0	/* MicroSoft C compile version 3 & 4 */
 #define	TURBO	0	/* Turbo C/MSDOS */
 
@@ -73,8 +73,8 @@
 #define	VMSVT	0			/* various VMS terminal entries	*/
 #define VT52    0                       /* VT52 terminal (Zenith).      */
 #define RAINBOW 0                       /* Use Rainbow fast video.      */
-#define TERMCAP 0                       /* Use TERMCAP                  */
-#define	IBMPC	1			/* IBM-PC CGA/MONO/EGA driver	*/
+#define TERMCAP 1                       /* Use TERMCAP                  */
+#define	IBMPC	0			/* IBM-PC CGA/MONO/EGA driver	*/
 #define	DG10	0			/* Data General system/10	*/
 #define	TIPC	0			/* TI Profesional PC driver	*/
 #define	Z309	0			/* Zenith 100 PC family	driver	*/
@@ -90,7 +90,7 @@
 #define DEBUGM	1	/* $debug triggers macro debugging		*/
 #define	VISMAC	0	/* update display during keyboard macros	*/
 #define	CTRLZ	0	/* add a ^Z at end of files under MSDOS only	*/
-#define ADDCR	0	/* ajout d'un CR en fin de chaque ligne (ST520) */
+#define ADDCR	0	/* Add a CR at the end of each line (ST520)	*/
 #define	NBRACE	1	/* new style brace matching command		*/
 
 #define	REVSTA	1	/* Status line appears in reverse video		*/
