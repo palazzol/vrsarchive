@@ -57,28 +57,28 @@ $(GAME)$(EXE): main.o tty.o unix.o $(HOBJ)
 	@echo "Loading ..."
 	@$(CC) $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(TERMLIB) $(LIBS)
 
-makedefs:	makedefs.c alloc.o config.h
-	$(CC) ${CFLAGS} -o makedefs alloc.o makedefs.c
+makedefs$(EXE):	makedefs.c alloc.o config.h
+	$(CC) ${CFLAGS} -o $@ alloc.o makedefs.c
 
 RUMORFILES= rumors.base rumors.kaa rumors.mrx
 
-rumors:	$(RUMORFILES) makedefs
+rumors:	$(RUMORFILES) makedefs$(EXE)
 	chmod u+w $(RUMORFILES)
 	./makedefs -r
 
-data:	data.base makedefs
+data:	data.base makedefs$(EXE)
 	chmod u+w $@.base
 	./makedefs -d
 
-date.h:	$(SOURCES) makedefs
+date.h:	$(SOURCES) makedefs$(EXE)
 	chmod u+w $@
 	./makedefs -D
 
-trap.h:	makedefs
+trap.h:	makedefs$(EXE)
 	chmod u+w $@
 	./makedefs -t
 
-onames.h:	makedefs objects.h
+onames.h:	makedefs$(EXE) objects.h
 	./makedefs -o
 
 main.c:	$(MAIN)
@@ -136,7 +136,7 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVEDIR)
 	cd $(MAN6); chmod 644 nethack.6
 
 clean:
-	rm -f $(ALL) *.o a.out core makedefs
+	rm -f $(ALL) *.o a.out core makedefs$(EXE)
 	rm -f makedefs.[1-9]* main.c tty.c unix.c onames.h
 	chmod a-w data.base date.h rumors.base rumors.kaa rumors.mrx trap.h
 
