@@ -215,7 +215,7 @@ dowearring() {
 	case RIN_LEVITATION:
 		if(!oldprop) float_up();
 		break;
-	case RIN_PROTECTION_FROM_SHAPE_CHANGERS:
+	case RIN_PROTECTION_FROM_SHAPE_CHA:
 		rescham();
 		break;
 	case RIN_GAIN_STRENGTH:

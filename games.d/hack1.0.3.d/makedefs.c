@@ -4,7 +4,7 @@
 /* construct definitions of object constants */
 #define	DEF_FILE	"def.objects.h"
 #define	LINSZ	1000
-#define	STRSZ	40
+#define	STRSZ	30
 
 int fd;
 char string[STRSZ];

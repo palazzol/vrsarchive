@@ -545,7 +545,7 @@ register int show = (Blind && Telepat) || canseemon(mon);
 	if(show && !mon->mdispl){
 		atl(mon->mx,mon->my,
 		 (!mon->mappearance
-		  || u.uprops[PROP(RIN_PROTECTION_FROM_SHAPE_CHANGERS)].p_flgs
+		  || u.uprops[PROP(RIN_PROTECTION_FROM_SHAPE_CHA)].p_flgs
 		 ) ? mon->data->mlet : mon->mappearance);
 		mon->mdispl = 1;
 		mon->mdx = mon->mx;
