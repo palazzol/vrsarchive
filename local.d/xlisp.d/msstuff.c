@@ -8,11 +8,20 @@
 extern LVAL s_unbound,true;
 extern FILE *tfp;
 #ifdef __STDC__
+
 #include <errno.h>
 #include <termios.h>
 static struct termios otty;
+#ifndef TIOCINQ
+#ifndef FIONREAD
+#include <sys/ioctl.h>
+#endif
+#endif
+
 #else
+
 extern int errno;
+
 #endif
 
 /* make sure we get a large stack */
@@ -302,7 +311,11 @@ static int xcheck()
 
     if (peek != -1)
 	return peek;
+#ifdef TIOCINQ
     ioctl(0, TIOCINQ, &i);
+#else
+    ioctl(0, FIONREAD, &i);
+#endif
     peek = i? xgetc() : -1;
     return peek;
 }
