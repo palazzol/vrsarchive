@@ -149,6 +149,9 @@ char *argv[];
     signal(SIGQUIT,signalexit);
     signal(SIGILL,signalexit);
     signal(SIGTRAP,signalexit);
+#ifndef SIGIOT
+#define SIGIOT	SIGABRT
+#endif
     signal(SIGIOT,signalexit);
     signal(SIGEMT,signalexit);
     signal(SIGFPE,signalexit);
