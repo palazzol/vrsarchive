@@ -29,18 +29,18 @@ char **envp;
 	register struct passwd *pw;
 	struct passwd *getpwuid();
 	char *getpass(), *crypt();
-	int exit(), lowtime;
+	int leave(), lowtime;
 
 #ifndef DUMP
-	signal(SIGQUIT, exit);
-	signal(SIGILL, exit);
-	signal(SIGTRAP, exit);
-	signal(SIGIOT, exit);
-	signal(SIGEMT, exit);
-	signal(SIGFPE, exit);
-	signal(SIGBUS, exit);
-	signal(SIGSEGV, exit);
-	signal(SIGSYS, exit);
+	signal(SIGQUIT, leave);
+	signal(SIGILL, leave);
+	signal(SIGTRAP, leave);
+	signal(SIGIOT, leave);
+	signal(SIGEMT, leave);
+	signal(SIGFPE, leave);
+	signal(SIGBUS, leave);
+	signal(SIGSEGV, leave);
+	signal(SIGSYS, leave);
 #endif
 
 #ifdef WIZARD
@@ -77,7 +77,7 @@ char **envp;
 		if ((pw = getpwuid(getuid())) == NULL)
 		{
 			printf("Say, who are you?\n");
-			exit(1);
+			leave();
 		}
 		else
 			strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
@@ -95,12 +95,12 @@ char **envp;
 	{
 		noscore = TRUE;
 		score(0, -1);
-		exit(0);
+		leave();
 	}
 	init_check();			/* check for legal startup */
 	if (argc == 2)
 		if (!restore(argv[1], envp))	/* Note: restore will never return */
-			exit(1);
+			leave();
 	lowtime = (int) time((long *)NULL);
 #ifdef WIZARD
 	if (wizard && getenv("SEED") != NULL)
@@ -128,7 +128,7 @@ char **envp;
 	 * Set up windows
 	 */
 	if ((hw = newwin(LINES, COLS, 0, 0)) == 0)
-				printf("Not enough memory"), endwin(), exit(-1);
+				printf("Not enough memory"), endwin(), leave();
 #ifdef WIZARD
 	noscore = wizard;
 #endif
