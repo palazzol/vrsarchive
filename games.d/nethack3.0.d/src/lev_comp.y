@@ -190,12 +190,12 @@ maze_level	: maze_def regions
 				  (void) close(fout);
 				  npart = 0;
 			  }
-		  }
+		  };
 
 maze_def	: MAZE_ID ':' string
 		  {
 			  $$ = $3;
-		  }
+		  };
 
 regions		: aregion
 		| regions aregion;
@@ -203,7 +203,7 @@ regions		: aregion
 aregion		: map_definition reg_init map_details
 		  {
 			store_part();
-		  }
+		  };
 
 map_definition	: map_geometry MAP_ID
 		  {
@@ -214,12 +214,12 @@ map_definition	: map_geometry MAP_ID
 			tmppart[npart]->nloc = 0;
 			tmppart[npart]->nrmonst = 0;
 			scan_map($2);
-		  }
+		  };
 
 map_geometry	: GEOMETRY_ID ':' h_justif ',' v_justif
 		  {
 			  $<i>$ = $<i>3 + ( $<i>5 * 10 );
-		  }
+		  };
 
 h_justif	: LEFT_OR_RIGHT
 		| CENTER ;
@@ -264,7 +264,7 @@ init_reg	: RANDOM_OBJECTS_ID ':' object_list
 				  memcpy(tmppart[npart]->rmonst, mlist, n_mlist);
 				  tmppart[npart]->nrmonst = n_mlist;
 			  }
-		  }
+		  };
 
 object_list	: object
 		  {
@@ -279,7 +279,7 @@ object_list	: object
 			      olist[n_olist++] = $<i>3;
 			  else
 			      yyerror("Object list too long!");
-		  }
+		  };
 
 monster_list	: monster
 		  {
@@ -294,7 +294,7 @@ monster_list	: monster
 			      mlist[n_mlist++] = $<i>3;
 			  else
 			      yyerror("Monster list too long!");
-		  }
+		  };
 
 place_list	: place
 		  {
@@ -309,7 +309,7 @@ place_list	: place
 			      plist[n_plist++] = current_coord;
 			  else
 			      yyerror("Location list too long!");
-		  }
+		  };
 
 map_details	: /* nothing */
 		| map_details map_detail ;
@@ -344,7 +344,7 @@ monster_detail	: MONSTER_ID ':' monster_c ',' m_name ',' coordinate
 				      tmpmonst[nmons]->id = token;
 			  }
 			  nmons++;
-		  }
+		  };
 
 object_detail	: OBJECT_ID ':' object_c ',' o_name ',' coordinate
 		  {
@@ -365,7 +365,7 @@ object_detail	: OBJECT_ID ':' object_c ',' o_name ',' coordinate
 				      tmpobj[nobj]->id = token;
 			  }
 			  nobj++;
-		  }
+		  };
 
 door_detail	: DOOR_ID ':' door_state ',' coordinate
 		  {
@@ -374,7 +374,7 @@ door_detail	: DOOR_ID ':' door_state ',' coordinate
 			tmpdoor[ndoor]->y = current_coord.y;
 			tmpdoor[ndoor]->mask = $<i>3;
 			ndoor++;
-		  }
+		  };
 
 trap_detail	: TRAP_ID ':' trap_name ',' coordinate
 		  {
@@ -383,7 +383,7 @@ trap_detail	: TRAP_ID ':' trap_name ',' coordinate
 			tmptrap[ntrap]->y = current_coord.y;
 			tmptrap[ntrap]->type = $<i>3;
 			ntrap++;
-		  }
+		  };
 
 drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 		   {
@@ -398,7 +398,7 @@ drawbridge_detail: DRAWBRIDGE_ID ':' coordinate ',' DIRECTION ',' door_state
 			else
 			  yyerror("A drawbridge can only be open or closed!");
 			ndb++;
-		   }
+		   };
 
 mazewalk_detail	: MAZEWALK_ID ':' coordinate ',' DIRECTION
 		  {
@@ -407,7 +407,7 @@ mazewalk_detail	: MAZEWALK_ID ':' coordinate ',' DIRECTION
 			tmpwalk[nwalk]->y = current_coord.y;
 			tmpwalk[nwalk]->dir = $5;
 			nwalk++;
-		  }
+		  };
 
 ladder_detail	: LADDER_ID ':' coordinate ',' UP_OR_DOWN
 		  {
@@ -416,7 +416,7 @@ ladder_detail	: LADDER_ID ':' coordinate ',' UP_OR_DOWN
 			tmplad[nlad]->y = current_coord.y;
 			tmplad[nlad]->up = $<i>5;
 			nlad++;
-		  }
+		  };
 
 diggable_detail	: NON_DIGGABLE_ID ':' region
 		  {
@@ -426,7 +426,7 @@ diggable_detail	: NON_DIGGABLE_ID ':' region
 			tmpdig[ndig]->x2 = current_region.x2;
 			tmpdig[ndig]->y2 = current_region.y2;
 			ndig++;
-		  }
+		  };
 
 region_detail	: REGION_ID ':' region ',' light_state ',' room_type
 		  {
@@ -438,7 +438,7 @@ region_detail	: REGION_ID ':' region ',' light_state ',' room_type
 			tmpreg[nreg]->rlit = $<i>5;
 			tmpreg[nreg]->rtype = $<i>7;
 			nreg++;
-		  }
+		  };
 
 altar_detail	: ALTAR_ID ':' coordinate ',' alignment ',' altar_type
 		  {
@@ -452,7 +452,7 @@ altar_detail	: ALTAR_ID ':' coordinate ',' alignment ',' altar_type
 			tmpaltar[naltar]->shrine = $<i>7;
 			naltar++;
 #endif /* ALTARS */
-		  }
+		  };
 
 monster_c	: monster
 		| RANDOM_TYPE
@@ -472,13 +472,13 @@ m_name		: string
 		| RANDOM_TYPE
 		  {
 			  $$ = (char *) 0;
-		  }
+		  };
 
 o_name		: string
 		| RANDOM_TYPE
 		  {
 			  $$ = (char *) 0;
-		  }
+		  };
 
 trap_name	: string
 		  {
@@ -488,6 +488,7 @@ trap_name	: string
 			$<i>$ = token;
 		  }
 		| RANDOM_TYPE
+		  ;
 
 room_type	: string
 		  {
@@ -499,29 +500,33 @@ room_type	: string
 				$<i>$ = token;
 		  }
 		| RANDOM_TYPE
+		  ;
 
 coordinate	: coord
 		| p_register
 		| RANDOM_TYPE
 		  {
 			  current_coord.x = current_coord.y = -MAX_REGISTERS-1;
-		  }
+		  };
 
 door_state	: DOOR_STATE
 		| RANDOM_TYPE
+		  ;
 
 light_state	: LIGHT_STATE
 		| RANDOM_TYPE
+		  ;
 
 alignment	: ALIGNMENT
 		| a_register
 		| RANDOM_TYPE
 		  {
 			  $<i>$ = - MAX_REGISTERS - 1;
-		  }
+		  };
 
 altar_type	: ALTAR_TYPE
 		| RANDOM_TYPE
+		  ;
 
 p_register	: P_REGISTER '[' INTEGER ']'
 		  {
@@ -530,7 +535,7 @@ p_register	: P_REGISTER '[' INTEGER ']'
 			} else {
 				current_coord.x = current_coord.y = - $3 - 1;
 			}
-		  }
+		  };
 
 o_register	: O_REGISTER '[' INTEGER ']' 
 		  {
@@ -539,7 +544,7 @@ o_register	: O_REGISTER '[' INTEGER ']'
 			} else {
 				$<i>$ = - $3 - 1;
 			}
-		  }
+		  };
 
 m_register	: M_REGISTER '[' INTEGER ']'
 		  {
@@ -548,7 +553,7 @@ m_register	: M_REGISTER '[' INTEGER ']'
 			} else {
 				$<i>$ = - $3 - 1;
 			}
-		  }
+		  };
 
 a_register	: A_REGISTER '[' INTEGER ']'
 		  {
@@ -557,9 +562,10 @@ a_register	: A_REGISTER '[' INTEGER ']'
 			} else {
 				$<i>$ = - $3 - 1;
 			}
-		  }
+		  };
 
 place		: coord
+		  ;
 
 monster		: CHAR
 		  {
@@ -569,7 +575,7 @@ monster		: CHAR
 				yyerror("unknown monster class!");
 				$<i>$ = ERR;
 			}
-		  }
+		  };
 
 object		: CHAR
 		  {
@@ -588,8 +594,10 @@ object		: CHAR
 				yyerror("Unknown char class!");
 				$<i>$ = ERR;
 			}
-		  }
+		  };
+
 string		: STRING
+		  ;
 
 coord		: '(' INTEGER ',' INTEGER ')'
 		  {
@@ -598,7 +606,7 @@ coord		: '(' INTEGER ',' INTEGER ')'
 			    yyerror("Coordinates out of map range!");
 			current_coord.x = $2;
 			current_coord.y = $4;
-		  }
+		  };
 
 region		: '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
 		  {
@@ -611,7 +619,7 @@ region		: '(' INTEGER ',' INTEGER ',' INTEGER ',' INTEGER ')'
 			current_region.y1 = $4;
 			current_region.x2 = $6;
 			current_region.y2 = $8;
-		  }
+		  };
 
 
 %%
