@@ -1,10 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/games.d/adv.d/Makefile,v 1.3 1990-03-27 17:24:03 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/adv.d/Makefile,v 1.4 1990-04-04 21:16:47 vrs Exp $
 #
 MODEL	= -i -F 2000
 OPTIONS	= -O -DCURSED # Use -DCURSED to get the "curses" version
 ALL	= adv aland pirate
-include /etc/CONFIG
+CONFIG	= /etc/CONFIG
+include $(CONFIG)
 OBJS	= main.o alc.o str.o readin.o nxtwrd.o rdr.o init.o\
 	  play.o misc.o prt.o file.o disply.o
 SRCS	= main.c alc.c str.c readin.c nxtwrd.c rdr.c init.c\
@@ -15,10 +16,10 @@ $(OBJS): adv.h
 adv:	$(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
-aland:	../../CONFIG
+aland:	$(CONFIG)
 	echo exec $(GAMLIB)/adv $(GAMLIB)/al > $@
 
-pirate:	../../CONFIG
+pirate:	$(CONFIG)
 	echo exec $(GAMLIB)/adv $(GAMLIB)/p > $@
 
 lint:

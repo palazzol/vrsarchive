@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hangman2.d/Makefile,v 1.3 1990-03-27 17:25:48 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hangman2.d/Makefile,v 1.4 1990-04-04 21:18:58 vrs Exp $
 #
 ALL	= addword hangman2
 MODEL	= -i
-OPTIONS	= -DGAMLIB=\"$(GAMLIB) -DRAWMODE -O
+OPTIONS	= -DGAMLIB=$(GAMLIB) -DRAWMODE -O
 include /etc/CONFIG
 OBJS	= hangman.o curses.o doprnt.o
 GAME	= hangman2

@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.5 1990-03-27 17:25:39 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.6 1990-04-04 21:18:08 vrs Exp $
 #
 ALL	= hack hack1.0.3
 MODEL	= -M2l -F 2000
@@ -59,7 +59,7 @@ HACK=$$HACKDIR/hack\
 MAXNROFPLAYERS=4' $? > $@
 
 hack.onames.h:	makedefs def.objects.h
-	makedefs > hack.onames.h
+	./makedefs > hack.onames.h
 
 lint:
 # lint cannot have -p here because (i) capitals are meaningful:

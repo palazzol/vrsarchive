@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/craps.d/Makefile,v 1.3 1990-03-27 17:25:15 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/craps.d/Makefile,v 1.4 1990-04-04 21:17:50 vrs Exp $
 #
 # Use the following defines:
 #
@@ -8,7 +8,7 @@
 #
 ALL	= craps
 MODEL	= -i -F 3000
-OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
+OPTIONS	= -O -DGAMLIB=$(GAMLIB)
 include /etc/CONFIG
 SOURCES = main.c dont.c etc.c help.c makeb.c pass.c pay.c prints.c \
 	  props.c subs.c final.c random.c

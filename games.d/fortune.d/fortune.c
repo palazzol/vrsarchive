@@ -1,4 +1,4 @@
-/* $Header: /home/Vince/cvs/games.d/fortune.d/fortune.c,v 1.2 1987-06-17 19:04:39 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/fortune.d/fortune.c,v 1.3 1990-04-04 21:18:03 vrs Exp $ */
 
 # include	<sys/types.h>
 # include	<stdio.h>
@@ -335,7 +335,7 @@ getfort()
 
 	(void) fseek(Inf, (off_t) (sizeof Seekpts[0]) * fortune + sizeof Tbl,
 		     0);
-	if (fread((char *) Seekpts, (sizeof Seekpts[0]), 2, Inf) < 2) {
+	if ((int)fread((char *) Seekpts, (sizeof Seekpts[0]), 2, Inf) < 2) {
 		fprintf(stderr, "fortune data file corrupted\n");
 		exit(-2);
 	}
