@@ -98,7 +98,11 @@ slurp()
 	short i, n;
 
 	do {
+#ifdef FIONREAD
 		ioctl(0, FIONREAD, &ln);
+#else !FIONREAD
+		ln = rdchk(0);
+#endif FIONREAD
 		n = stdin->_cnt + ln;
 
 		for (i = 0; i < ln; i++) getchar();
