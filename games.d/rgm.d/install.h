@@ -32,7 +32,7 @@
  * defined, and can be either "5.2", "3.6", or "5.3"
  */
 
-# define DEFVER		"5.3"
+# define DEFVER		"3.6"
 
 /* 
  * This file is created whenever the Rog-O-Matic score file is accessed to
@@ -111,7 +111,7 @@
  * directory.
  */
 
-# define RGMDIR		"./rog/ver14/rlog"
+# define RGMDIR		GAMLIB"
 
 /* 
  * This file is created in the current directory if the snapshot command
