@@ -4,8 +4,14 @@
 
 # define	reg	register
 
-# ifndef vax
+#ifndef vax
+
+#ifdef __STDC__
+# include <stdlib.h>
+# define	MAXRAND	RAND_MAX
+#else
 # define	MAXRAND	32767L
+#endif
 
 roll(ndie, nsides)
 int	ndie, nsides; {
@@ -17,7 +23,11 @@ int	ndie, nsides; {
 	n = ndie;
 	while (n--)
 		tot += rand();
+#ifdef __STDC__
+	return (int) ((tot * (long) nsides) / ((unsigned long) MAXRAND + 1)) + ndie;
+#else
 	return (int) ((tot * (long) nsides) / ((long) MAXRAND + 1)) + ndie;
+#endif
 }
 
 # else
