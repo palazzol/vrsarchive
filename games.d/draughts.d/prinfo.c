@@ -11,7 +11,7 @@ prinfo(){
                 printw("Sorry, cannot find it\n");
                 return;
         }
-	clear();
+	erase();
         while(read(f,&c,1) == 1) {
 		addch(c);
 		getyx(stdscr,y,x);
@@ -19,7 +19,7 @@ prinfo(){
 			printw("-- More? --");
 			if (!answer())
 				break;
-			clear();
+			erase();
 		}
 	}
         (void) close(f);

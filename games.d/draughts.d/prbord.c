@@ -141,7 +141,7 @@ register int i;
 prbord(){
 register int i,*mp1;
 int bdi,xi,yi;
-	clear();
+	erase();
         pbundef();
         posit(1,5);
         printw("%s%4d : %4d %s",dsparr[3],timew,timeb,dsparr[4]);
