@@ -26,12 +26,12 @@
 /*MODIFICATION IS REQUIRED OF THE FOLLOWING DEFINE STATEMENTS*/
 
 /*file name definitions */
-#define EXEFILE		"/c03/smile/private/mygame/lib/.execute"
-#define DATAFILE 	"/c03/smile/private/mygame/lib/.data"
-#define MSGFILE		"/c03/smile/private/mygame/lib/.messages"
-#define NPCSFILE 	"/c03/smile/private/mygame/lib/.nations"
-#define HELPFILE 	"/c03/smile/private/mygame/lib/.help"
-#define NEWSFILE 	"/c03/smile/private/mygame/lib/.news"
+#define EXEFILE		DATA/.execute"
+#define DATAFILE 	DATA/.data"
+#define MSGFILE		DATA/.messages"
+#define NPCSFILE 	DATA/.nations"
+#define HELPFILE 	DATA/.help"
+#define NEWSFILE 	DATA/.news"
 
 #define OWNER	"Ed Barlow"	/*administrators name*/
 
@@ -54,8 +54,6 @@
 #define NPC 1		/*defined if non player country exists at beginning*/
 #define CMOVE 1		/*Comment this line out if you do not wish the computer
 			  to move Player nations if they forget to move*/
-#define SYS5	1	/*comment this line out if on a BSD system*/
-			/*--not that it does anything at the moment*/
 
 #define MAXNTN 28	/*number of nations (including unowned & npc ntns)*/
 			/*but not including pirates...*/
@@ -185,7 +183,7 @@ struct s_sector
 	char  altitude;  /*sector altitude */
 	char  vegitation; /*sector vegitation  */
 	short owner;      /*nation id of owner, MAXNTN+? is SPECIAL*/
-	int   people;     /*civilians in sector*/
+	long   people;     /*civilians in sector*/
 	short gold;	  /*gold production ability*/
 	short fortress;   /*fortification level (0 to 9)*/
 	short iron;	  /*amount of iron produced by sector*/
@@ -235,12 +233,12 @@ struct	 nation    /* player nation stats */
     	short  maxmove;	/* maximum movement of soldiers*/
     	short  repro;	/* reproduction rate of nation*/
     	short  score;	/* score */
-    	int    tgold;	/* gold in treasury */
-    	int    jewels;	/* raw amount of gold in treasury */
-    	int    tmil;	/* total military */
-    	int    tciv;	/* total civilians */
-    	int    tiron;	/* total real iron in nation*/
-    	int    tfood;	/* total food in nation*/
+    	long    tgold;	/* gold in treasury */
+    	long    jewels;	/* raw amount of gold in treasury */
+    	long    tmil;	/* total military */
+    	long    tciv;	/* total civilians */
+    	long    tiron;	/* total real iron in nation*/
+    	long    tfood;	/* total food in nation*/
 	long   powers;
     	short  tsctrs;	/* total number sectors */
     	short  tships;	/* number warships */
