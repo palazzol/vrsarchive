@@ -2,37 +2,39 @@
 # Makefile for the Adventure Compiler.
 # 	(c) Ken Wellsch 1985
 #
-CFLAGS = -O
-KLIB = ../kio/klib.a
-MLIB = mlib.a
+OPTIONS	= -O
+include ../../../../CONFIG
+KLIB	= ../kio/klib.a
+MAIN	= munge.c
+MLIB	= mlib.a(buffers.o) \
+	  mlib.a(compile.o) \
+	  mlib.a(fio.o) \
+	  mlib.a(glob.o) \
+	  mlib.a(majors.o) \
+	  mlib.a(parse.o) \
+	  mlib.a(symtab.o) \
+	  mlib.a(util.o)
+SRC	= buffers.c compile.c fio.c glob.c \
+	  majors.c parse.c symtab.c util.c
+OBJ	= $(SRC:.c=.o)
+HEADER	= mdefs.h
 
-MAIN = munge.c
+.PRECIOUS: mlib.a
 
-SRC =	buffers.c compile.c fio.c glob.c \
-	majors.c parse.c symtab.c util.c
+all:	munge
 
-OBJ =	buffers.o compile.o fio.o glob.o \
-	majors.o parse.o symtab.o util.o
-
-HEADER = mdefs.h
-
-munge: $(MAIN) $(MLIB)
+munge: $(MAIN) mlib.a
 	cc $(CFLAGS) $(MAIN) mlib.a $(KLIB) -o munge
 	size munge
 
 $(SRC) $(MAIN):: mdefs.h
 	touch $@
 
-$(MLIB): $(SRC)
-	-ar x $(MLIB)
-	-cc $(CFLAGS) -c $?
-	rm -f $(MLIB)
-	-ar ru $(MLIB) $(OBJ)
-	rm -f *.o
-	ranlib $(MLIB)
+mlib.a:	$(MLIB)
+	$(RANLIB) $@
 
 clean:
-	rm *.o
+	rm -f *.o mlib.a munge
 
 backup:
 	cp Makefile $(HEADER) $(MAIN) $(SRC) bkup
