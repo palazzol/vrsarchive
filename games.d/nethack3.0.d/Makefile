@@ -40,7 +40,7 @@ rumors:
 	( cd auxil ; make rumors )
 
 spec_levs:
-	( cd src ; make lev_comp )
+	( cd src ; make lev_comp$(EXE) )
 	( cd auxil ; make spec_levs )
 	
 $(SHELLDIR) $(GAMEDIR) $(GAMEDIR)/save:
