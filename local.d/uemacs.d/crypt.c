@@ -7,6 +7,9 @@
 #include	"edef.h"
 
 #if	CRYPT
+
+static int mod95();
+
 setkey(f, n)	/* reset encryption key of current buffer */
 
 int f;		/* default flag */
