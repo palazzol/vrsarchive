@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 /*
  * Written by Allan R. Black, Strathclyde University.
  * This program may be freely distributed provided that
@@ -13,13 +14,14 @@
 /* 1.7a modified by Stephen J. Muir at Lancaster University. */
 /* 1.7b modified by Vincent R. Slyngstad for XENIX Release 3 */
 
+#include <stdio.h>
 #include <curses.h>
 #include <signal.h>
 #include <pwd.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#ifdef __STDC__
+#ifndef TIOCGLTC
 #include <sys/ttold.h>
 #endif
 #ifdef M_XENIX
@@ -28,9 +30,9 @@
 #  define LOCK_EX		LK_LOCK
 #  define LOCK_UN		LK_UNLCK
 #else
-#  ifndef LOCK_EX
-#    include <unistd.h>
-#    define flock(fd,flag)	lockf(fd,flag,0L)
+#  include <unistd.h>
+#  define flock(fd,flag)	lockf(fd,flag,0L)
+#  ifdef  F_LOCK
 #    define LOCK_EX		F_LOCK
 #    define LOCK_UN		F_ULOCK
 #  endif
