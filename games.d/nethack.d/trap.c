@@ -158,10 +158,11 @@ if(uarmh) pline("Fortunately, you are wearing a helmet!");
 				if (uarmh) {
 					if (uarmh->rustfree)
 						pline("Your helmet is not affected!");
-					else {
+					else if (uarmh->spe > -6) {
 						pline("Your helmet rusts!");
 						uarmh->spe--;
-					}
+					} else
+						pline("Your helmet looks quite rusted now!");
 				}
 				break;
 			case 1:
