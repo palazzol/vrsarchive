@@ -84,7 +84,9 @@ char	*argv[];
 	load_tables();
 
 	set_term();
+#ifdef SIGTSTP
 	signal(SIGTSTP, stop_handler);
+#endif
 	signal(SIGINT, kill_handler);
 
 	initwindows();
@@ -100,7 +102,7 @@ char	*argv[];
 	done(0);			/* Fell off windows, we're done. */
 }
 
-
+#ifdef SIGTSTP
 /* Handle C-Z signal (suspend program).
  * Restore screen and exit.
  * On restart, setup screen, redraw screen, and abort to top loop.
@@ -118,6 +120,7 @@ stop_handler()
 	set_term();
 	longjmp(saved_stack, 0);
 }
+#endif /*SIGTSTP*/
 
 
 /* Handle C-C signal (kill program).
