@@ -1,5 +1,8 @@
 #include "types.h"
 #include "ext.h"
+#ifdef __STDC__
+#include <stdlib.h>
+#endif
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/file.h>
@@ -19,10 +22,9 @@
 #define STRING(x)	"x
 #define FILNAM(x)	STRING(GAMLIB)/x"
 #endif
-char *fil = FILNAM(craps.list);
+char *sfile = FILNAM(craps.list);
 char *reclock = FILNAM(craps.lock);
----
-#ifdef	SCORES
+
 #define	NAMELEN		40
 typedef struct node {
 	struct node *next;
