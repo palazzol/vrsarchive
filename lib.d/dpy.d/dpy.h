@@ -16,12 +16,15 @@
 #ifndef  TCGETA
 #  include <sys/ioctl.h>
 #endif
-#define	CTRL(c)	('c'&037)
+#define	MYCTRL(c)	(c&037)
 #undef	CERASE
-#define	CERASE	CTRL(h)
-#define	CRPRNT	CTRL(r)
-#define	CWERASE	CTRL(w)
-#define	CLNEXT	CTRL(v)
+#define	CERASE	MYCTRL('h')
+#undef CRPRNT
+#define	CRPRNT	MYCTRL('r')
+#undef CWERASE
+#define	CWERASE	MYCTRL('w')
+#undef CLNEXT
+#define	CLNEXT	MYCTRL('v')
 #ifndef M_XENIX
 #define	bcopy(from,to,size)	memcpy(to,from,size)
 #endif
