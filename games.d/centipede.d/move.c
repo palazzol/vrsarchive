@@ -54,7 +54,11 @@ movestuff()
 	refresh();
 	fflush(stdout);
 	do
+#ifndef SYSV
 	    ioctl(1,TIOCOUTQ,&count);
+#else
+	    count = 0;
+#endif
 	while (count > spiderhere * 40);
 	move_guy();
     }

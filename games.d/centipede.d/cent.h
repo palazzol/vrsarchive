@@ -4,6 +4,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
        /* stdio.h and sgtty.h are included by curses.h */
+#ifdef SYSV
+#   include <fcntl.h>
+#   include <sgtty.h>
+#endif
 
 #define FREEMAN 12000
 #define CENTLENGTH 20

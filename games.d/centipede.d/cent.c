@@ -18,15 +18,17 @@ char **argv;
 	printf("Usage: cent [-s] [savefile]\n");
 	exit(0);
     }
+#ifndef SYSV
     signal(SIGTSTP,SIG_IGN);
-    signal(SIGQUIT,quit);
+#endif
+    signal(SIGQUIT,catchint);
     signal(SIGINT,SIG_IGN);
     if (argc == 2 && !strcmp(argv[1],"-s"))
 	showscores();
     dooptions();
     strcpy(name,getlogin());
 #ifdef WIZARD
-    author = !strcmp(name,"nathan");
+    author = !strcmp(name,"keith");
     if (author && getenv("CENTNAME") != NULL)
 	strcpy(name,getenv("CENTNAME"));
 #endif
@@ -52,7 +54,9 @@ char **argv;
     else
 	instructions();
     signal(SIGINT,catchint);
+#ifndef SYSV
     signal(SIGTSTP,catchstop);
+#endif
     signal(SIGALRM,catchalarm);
     noecho();
     crmode();

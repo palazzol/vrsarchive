@@ -1,13 +1,23 @@
 #include "cent.h"
 #include "sys_dep.h"
 
+#ifdef SYSV
+#    undef getchar
+#    define getchar cget
+#endif
+
 move_guy()
 {
     register int y, x, changed = 0;
     int count,repeat = 0;
     char ch;
 
+#ifndef SYSV
     ioctl(0,FIONREAD,&count);
+#else
+    if (cready()) count = 1;
+    else count = 0;
+#endif
     while (repeat || count--)
     {
 	if (repeat)
@@ -20,6 +30,9 @@ move_guy()
 	x = guy.x;
 	switch(ch)
 	{
+	    case '\014':		/* KDW */
+		redrawscr(); refresh();
+		break;
 	    case LEFT:
 	        x--;
 		break;
@@ -113,4 +126,68 @@ move_guy()
     }
     if (changed)
 	refresh();
+}
+
+/*
+ * KDW: setblock, cready and cget from Rochkind.
+ */
+
+#define EMPTY '\0'
+
+static char cbuf = EMPTY;
+
+#define BOOLEAN int
+#define FALSE 0
+#define TRUE 1
+
+setblock (fd, on)
+    int fd;
+    BOOLEAN on;
+{
+    static int blockf, nonblockf;
+    static BOOLEAN first = TRUE;
+    int flags;
+
+    if (first)
+    {
+	first = FALSE;
+	if ((flags = fcntl(fd, F_GETFL, 0)) == -1)
+	    perror("fcntl");
+	blockf = flags & ~O_NDELAY;
+	nonblockf = flags | O_NDELAY;
+    }
+    if (fcntl(fd, F_SETFL, on ? blockf : nonblockf) == -1)
+	perror("fcntl2");
+}
+
+BOOLEAN cready ()
+{
+    if (cbuf != EMPTY)
+	return TRUE;
+    setblock(0, FALSE);
+    switch (read(0, &cbuf, 1))
+    {
+    case -1: perror("read"); break;
+    case 0:  return FALSE;
+    default: return TRUE;
+    }
+}
+
+int cget ()
+{
+    char c;
+
+    if (cbuf != EMPTY)
+    {
+	c = cbuf;
+	cbuf = EMPTY;
+	return c & 0377;
+    }
+    setblock(0, TRUE);
+    switch (read(0, &c, 1))
+    {
+    case -1: perror("read"); break;
+    case 0:  return -1;
+    default: return c & 0377;
+    }
 }

@@ -9,19 +9,30 @@ extern struct passwd *getpwnam();
 savegame()
 {
     char fil[100];
+    struct sgttyb curseterm;
 
+    strcpy(fil, "cent.save");
     if (!gamestarted)
     {
 	mvaddstr(15,60,"Too early to save");
 	refresh();
 	return;
     }
+#ifdef SYSV
+    clear();
+    refresh();
+#else
     printf("%s",CL);
+#endif
+    setblock(0, TRUE);
     nocrmode();
     echo();
     nl();
     printf("File name: ");
+    ioctl(0,TIOCGETP,&curseterm);
+    ioctl(0,TIOCSETP,&origterm);
     scanf("%s",fil);
+    ioctl(0,TIOCSETP,&curseterm);
     noecho();
     crmode();
     printf("Saving... ");
@@ -106,7 +117,7 @@ char *fil;
 dorest(fil)
 {
     int fd,n,count,tim;
-    register char ch;
+    char ch;			/* KDW: was register; blasted for portability */
     register int y,x;
     char buf[512];
     PEDE **piece = &centipede, *prev = NULL;

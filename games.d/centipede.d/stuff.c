@@ -1,5 +1,7 @@
 #include "cent.h"
 
+extern char *def_pager, *def_pager_opts;
+
 rnd(n)
 register int n;
 {
@@ -221,7 +223,10 @@ instructions()
     crmode();
     if ((ch = getchar()) != 'y' && ch != 'Y')
 	return;
-    sprintf(cmd,"/usr/ucb/more %s",helpfile);
+    if (getenv("PAGER") == NULL)
+	sprintf(cmd,"%s %s %s", def_pager, def_pager_opts, helpfile);
+    else
+	sprintf(cmd,"%s %s", getenv("PAGER"), helpfile);
     system(cmd);
     printf("[Hit return to start the game]");
     while (getchar() != '\n');

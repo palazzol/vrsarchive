@@ -19,13 +19,17 @@ endgame()
 catchint()
 {
     signal(SIGINT,SIG_IGN);
+#ifndef SYSV
     signal(SIGTSTP,SIG_IGN);
+#endif
     inter = 1;
 }
 
 catchstop()
 {
+#ifndef SYSV
     signal(SIGTSTP,SIG_IGN);
+#endif
     signal(SIGINT,SIG_IGN);
     stopped = 1;
 }
@@ -40,15 +44,19 @@ stopawhile()
     fflush(stdout);
     ioctl(0,TIOCGETP,&curseterm);
     ioctl(0,TIOCSETP,&origterm);
+#ifndef SYSV
     signal(SIGTSTP,SIG_DFL);
     kill(getpid(),SIGTSTP);
     signal(SIGTSTP,SIG_IGN);
+#endif
     stopped = 0;
     ioctl(0,TIOCSETP,&curseterm);
     redrawscr();
     ioctl(0,TIOCSETP,&curseterm);       /* Just to make sure... */
     waitboard();
+#ifndef SYSV
     signal(SIGTSTP,catchstop);
+#endif
     signal(SIGINT,catchint);
 }
 
@@ -59,7 +67,13 @@ quit()
     signal(SIGQUIT,SIG_IGN);
     mvaddstr(12,60,"Really quit?");
     refresh();
+#ifndef SYSV
     ch = getchar();
+#else
+    setblock(0, TRUE);
+    ch = getchar();
+    setblock(0, FALSE);
+#endif
     move(12,60);
     clrtoeol();
     refresh();
@@ -67,32 +81,38 @@ quit()
 	endgame();
     inter = 0;
     signal(SIGINT,catchint);
+#ifndef SYSV
     signal(SIGTSTP,catchstop);
-    signal(SIGQUIT,quit);
+#endif
+    signal(SIGQUIT,catchint);
 }
 
 waitboard()
 {
     char ch;
 
+#ifndef SYSV
     signal(SIGTSTP,SIG_IGN);
+#endif
     signal(SIGINT,SIG_IGN);
     mvaddstr(12,60,"Press return");
     mvaddstr(13,60,"when ready");
     refresh();
+    setblock(0, TRUE);
     while ((ch = getchar()) != '\r')
     {
 #ifdef WIZARD
 	if (ch == '\020')
 	    setname();
-	else if (ch == '\014')
+	else if (ch == '\014' || ch == 'r')
 #else
-	 if (ch == '\014')
+	 if (ch == '\014' || ch == 'r')
 #endif
 	    redrawscr();
 	else if (ch == 's' || ch == 'S')
 	    savegame();
     }
+    setblock(0, FALSE);
     move(12,60);
     clrtoeol();
     move(13,60);
@@ -100,7 +120,9 @@ waitboard()
     move(15,60);
     clrtoeol();
     signal(SIGINT,catchint);
+#ifndef SYSV
     signal(SIGTSTP,catchstop);
+#endif
 }
 
 catchalarm()
@@ -121,3 +143,4 @@ redrawscr()
     touchwin(stdscr);
     refresh();
 }
+

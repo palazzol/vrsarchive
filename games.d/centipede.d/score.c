@@ -1,5 +1,9 @@
 #include "cent.h"
 
+extern char *def_pager, *def_pager_opts;
+
+FILE *getpager ();
+
 struct score {
     char name[10];
     long score;
@@ -40,9 +44,9 @@ doscores()
     if (wr = needtowrite(scores,numscores,&myscore))
 	if ((fd = creat(scorefile,0600)) == -1)
 	    err();
-    if ((morefp = popen("/usr/ucb/more","w")) == NULL)
+    if ((morefp = getpager()) == NULL)
     {
-	perror("Error popen'ing more");
+	perror("Error popen'ing cat");
 	exit(1);
     }
     printf("Centipede Hall of Fame\n");
@@ -100,9 +104,9 @@ showscores()
     lockscore();
     if ((fd = open(scorefile,0)) == -1)
 	err();
-    if ((morefp = popen("/usr/ucb/more","w")) == NULL)
+    if ((morefp = getpager()) == NULL)
     {
-	perror("Error popen'ing more");
+	perror("Error popen'ing cat");
 	exit(1);
     }
     printf("Centipede Hall of Fame\n");
@@ -147,4 +151,27 @@ unlockscore()
 	perror("Error removing lockfile");
 	exit(-1);
     }
+}
+
+/*
+ * KDW: getpager: figure out what pager to use to display the score file, 
+ * and open a pipe to it.
+ */
+
+FILE *getpager ()
+{
+    FILE *morefp;
+    char *PAGER;
+
+    if ((PAGER = getenv("PAGER")) != NULL)
+    {
+	if ((morefp = popen(PAGER, "w")) != NULL)
+	    return morefp;
+    }
+    if ((morefp = popen(def_pager, "w")) != NULL)
+	return morefp;
+    if ((morefp = popen("cat", "w")) != NULL)
+	return morefp;
+    else
+	return NULL;
 }
