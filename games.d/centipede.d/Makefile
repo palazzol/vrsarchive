@@ -9,7 +9,7 @@ include $(HOME)/CONFIG
 OBJECTS	= cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
 		save.o shoot.o la.o extern.o options.o sys_dep.o
 
-cent:   $(OBJECTS)
+cent$(EXE):   $(OBJECTS)
 	$(CC) $(OBJECTS) $(LIBS) -o $@
 
 $(GAMLIB)/cent:
