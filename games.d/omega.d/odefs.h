@@ -10,15 +10,16 @@ definitions in the following section. */
 /* The average system V user should probably uncomment the following
 two definitions. */
 
+#ifdef SYS5
 /* Implementor should uncomment the following if his system uses
 string.h instead of strings.h (try man strings) */
-
-/* #define STRING */
+#define STRING /* */
 
 /* Implementor should uncomment the following if random and srandom 
    are not available  (try man random) */
 
-/* #define NORANDOM */
+#define NORANDOM /* */
+#endif /* SYS5 */
 
 /* Implementor should uncomment the following if omega appears to
 redraw the screen excessively. */
@@ -37,11 +38,13 @@ on save and restore. */
    Note the final / is necessary.
    This might usually be "/usr/games/lib/omegalib/" */
 
-#define OMEGALIB "/grad/u4/brothers/omega/lib/"
+#ifndef OMEGALIB
+#define OMEGALIB "/usr/games/lib/omega/"
+#endif
 
 /* set WIZARD to implementor's username */
 
-#define WIZARD "brothers"
+#define WIZARD "root"
 
 /* If CATCH_SIGNALS is set to 1, will not dump core, nicer for players. */
 /* dbx still intercepts the signals first, so it's ok for debugging */
@@ -1171,15 +1174,15 @@ struct terrain {
 
 /* dungeon locations */
 struct location {
-  char p_locf; /* function executed when moved on */
+  struct objectlist *things; 
+  struct monster *creature;
   int lstatus; /* seen,stopsrun,lit,secret, */
+  int aux; /* signifies various things */
+  int buildaux; /* used in constructing level */
+  char p_locf; /* function executed when moved on */
   char roomnumber; /* so room can be named */
   char locchar; /* terrain type */
   char showchar; /*char instantaneously drawn for site */
-  int aux; /* signifies various things */
-  int buildaux; /* used in constructing level */
-  struct objectlist *things; 
-  struct monster *creature;
  };
 
 

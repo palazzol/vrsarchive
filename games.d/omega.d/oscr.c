@@ -6,15 +6,13 @@
 
 #include <curses.h>
 #include <sys/types.h>
-#include <sys/timeb.h>
 #include "oglob.h"
-
-char *sprintf();
 
 #ifdef EXCESSIVE_REDRAW
 #define wclear werase
 #endif
 
+extern long time();
 
 /* note these variables are not exported to other files */
 

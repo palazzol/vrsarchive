@@ -4,6 +4,9 @@
    curses functions */
 
 #include <curses.h>
+#ifdef SYS5
+#include <sys/types.h>
+#endif
 #include <sys/file.h>
 #include "oglob.h"
 

@@ -86,8 +86,10 @@ int LastTownLocY=0;            /* previous position in village or city */
 int LastCountryLocX=0;            /* previous position in countryside */
 int LastCountryLocY=0;            /* previous position in countryside */
 char Password[64];                    /* autoteller password */
-char Str1[100],Str2[100],Str3[100],Str4[100];
-   /* Some string space, random uses */
+char Str1[100];					/* Some string space, random uses */
+char Str2[100];
+char Str3[100];
+char Str4[100];
 
 pol Condoitems=NULL;                        /* Items in condo */
 
