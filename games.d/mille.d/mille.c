@@ -3,7 +3,7 @@
 
 int	rub();
 
-char	_sobuf[BUFSIZ];
+char	sobuf[BUFSIZ];
 
 main(ac, av)
 reg int		ac;
@@ -38,13 +38,9 @@ reg char	*av[]; {
 		exit(-1);
 		/* NOTREACHED */
 	}
-	setbuf(stdout, _sobuf);
+	setbuf(stdout, sobuf);
 	Play = PLAYER;
 	initscr();
-	if (!CM) {
-		printf("Sorry.  Need cursor addressing to play mille\n");
-		exit(-1);
-	}
 	delwin(stdscr);
 	stdscr = Board = newwin(BOARD_Y, BOARD_X, 0, 0);
 	Score = newwin(SCORE_Y, SCORE_X, 0, 40);
