@@ -51,8 +51,8 @@ char lbuf[LBUFL];
 
 static jmp_buf env_con;			/* Envir ptr for connect errors */
 
-static
-conn_int() {				/* Modem read failure handler, */
+static SIG_T
+conn_int(dummy) {				/* Modem read failure handler, */
     longjmp(env_con,1);			/* notifies parent process to stop */
 }
 
