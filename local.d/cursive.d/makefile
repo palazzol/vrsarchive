@@ -1,7 +1,17 @@
-CFLAGS = -g
+MODEL	= -i
+OPTIONS	= -O
+ALL	= cursive
+include ../../CONFIG
+OBJ	= cursive.o font.o
 
-cursive: cursive.o font.o
-	$(CC) $(CFLAGS) -o $@ cursive.o font.o
+cursive: $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $(OBJ) 
 
-cursive.shar: cursive.c font.c cursive.h cursive.6 Makefile shar
-	shar cursive.c font.c cursive.h cursive.6 Makefile shar > cursive.shar
+install: $(ALL) $(BINDIR) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp cursive.6 $(MAN1)/cursive.1
+	chmod 644 $(MAN1)/cursive.1
+
+clean:
+	rm -f $(ALL) $(OBJ)
