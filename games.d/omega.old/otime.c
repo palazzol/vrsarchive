@@ -57,14 +57,11 @@ void time_clock()
       ml = ml->next;
       free((char *) tempml->m);
       free((char *) tempml);
+      continue;
     }
-    else {
-      if (Tick == ml->m->click) {
-	ml->m->click = (ml->m->click + ml->m->speed) % 50;
-	m_pulse(ml->m);
-      }
-      prevml = ml;
-      ml = ml->next;
+    if (Tick == ml->m->click) {
+      ml->m->click = (ml->m->click + ml->m->speed) % 50;
+      m_pulse(ml->m);
     }
     prevml = ml;
     ml = ml->next;
