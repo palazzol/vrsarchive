@@ -988,7 +988,7 @@
 "olivia",
 "olympus",
 "omega",
-"onlyone",
+"only1",
 "onyx",
 "open",
 "opus",
