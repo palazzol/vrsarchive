@@ -119,7 +119,8 @@ register int i;
         mvprintw(ROW0,0,"Strategies %d(w),%d(b)\n",w,b);
 }
 
-intrup(){
+SIG_T
+intrup(dummy){
         (void) signal(SIGINT,SIG_IGN);          /* no more interrupts */
         mvprintw(ROW0,0,"?");
         rdlin();
@@ -133,7 +134,8 @@ intrup(){
 
 int intflg = 0; /* interrupt while non-interruptable */
 
-intrdp(){
+SIG_T
+intrdp(dummy){
         intflg++;
         (void) signal(SIGINT,intrdp);
 }

@@ -48,7 +48,8 @@ long numbets=0;
 
 main()
 {
-	int stop(), i;
+	SIG_T stop();
+	int i;
 
 	signal(SIGINT,stop);
 	initscr();
@@ -71,6 +72,7 @@ main()
 	}
 }
 
+SIG_T
 stop()
 {
 	final();
