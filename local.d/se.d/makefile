@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.1 1987-02-07 19:02:40 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.2 1987-02-07 20:42:33 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
 # Revision 1.3  86/09/19  12:16:19  arnold
@@ -82,7 +82,7 @@ se: $(OBJS) $(LIBRARIES)
 	fi
 	-if [ -f /lib/shlib.ifile ] ; \
 	then	ld /lib/crt0s.o /lib/shlib.ifile $(OBJS) $(LIBRARIES) -o $@ ; \
-	else	$(CC) $(LDFLAGS) $(OBJS) $(LIBRARIES) `cat libs` -o $@ ; \
+	else	$(CC) `cat flags` $(LDFLAGS) $(OBJS) $(LIBRARIES) `cat libs` -o $@ ; \
 	fi
 	rm libs
 
