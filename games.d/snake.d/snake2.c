@@ -324,7 +324,6 @@ crash()
 	clear();
 	move(LINES - 1, 0);
 	refresh();
-	endwin();
 	fflush(stdout);
 	printf("Well you ran into something and the game is over.\n");
 	printf("Your final score was %d\n", score);
@@ -335,7 +334,6 @@ exit_gracefully ()
         clear();
         move(LINES - 1,0);
         refresh();
-        endwin();
         fflush(stdout);
         printf("You quit with %d points.\n",score);
         leave();
@@ -358,6 +356,7 @@ suspend()
 		sh = "/bin/sh";
 	system(sh);
 #endif
+	initscr();
 	crmode();
 	noecho();
 	setup();
