@@ -1,5 +1,5 @@
 #
-# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.5 2002-11-24 00:20:02 Vincent Exp $
+# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.6 2002-11-24 20:08:08 vrs Exp $
 #
 # Makefile for "fortune" program.  See READ_ME for details.
 #
@@ -27,7 +27,7 @@ fortunes: scene obscene
 	echo "%-" >> fortunes
 	cat obscene >> fortunes
 
-untsr: untsr.o
+unstr$(EXE): untsr.o
 	$(CC) $(CFLAGS) -o $@ unstr.o
 
 unstr.o: unstr.c strfile.h
@@ -39,7 +39,7 @@ install: $(ALL) fortunes.dat $(GAMDIR) $(GAMLIB)
 	cd $(GAMLIB); chown $(SAFEUID) fortunes.dat; chmod 600 fortunes.dat
 
 clean:
-	rm -f $(ALL) fortunes strfile unstr core $(OFILES)
+	rm -f $(ALL) fortunes strfile unstr$(EXE) core $(OFILES)
 	rm -f Spell.hlist *.sp strfile$(EXE)
 	rm -f Oscene Oobscene scene.dat obscene.dat
 
@@ -76,12 +76,12 @@ troff.obscene:
 
 sort: sort.scene sort.obscene
 
-sort.scene: strfile unstr
+sort.scene: strfile unstr$(EXE)
 	strfile -oi scene
 	mv scene Oscene
-	unstr -o scene
+	./unstr$(EXE) -o scene
 
-sort.obscene: strfile unstr
+sort.obscene: strfile unstr$(EXE)
 	strfile -oi obscene
 	mv obscene Oobscene
-	unstr -o obscene
+	./unstr$(EXE) -o obscene
