@@ -1,0 +1,407 @@
+From littlei!uunet!husc6!bloom-beacon!mit-eddie!rutgers!aramis.rutgers.edu!hedrick Sun May 29 14:39:04 PDT 1988
+Status: RO
+
+Article 799 of comp.unix.microport:
+Path: littlei!uunet!husc6!bloom-beacon!mit-eddie!rutgers!aramis.rutgers.edu!hedrick
+>From: hedrick@aramis.rutgers.edu (Charles Hedrick)
+Newsgroups: comp.unix.microport
+Subject: patches to Microemacs, Jove
+Message-ID: <May.28.21.39.51.1988.17914@aramis.rutgers.edu>
+Date: 29 May 88 01:39:52 GMT
+Organization: Rutgers Univ., New Brunswick, N.J.
+Lines: 392
+
+
+This posting contains patches to update porting information I
+gave some time ago for Microemacs 3.9e and the recently-released
+version of Jove.  It applies to Uport SV/AT 2.3.  
+
+The first patch is to jove.  It speeds up interactive response
+noticably.  The original version set things so that the program is
+activated when you type a buffer-full of characters, or after 1/10
+sec.  If you type characters one at a time, this means there is a
+delay of 1/10 of a second before echo.  If you type fast, you see them
+echo in groups.  1/10 second is long enough to feel noticeably slow.
+The patch causes the program to activate immediately.  If you have a
+multi-user system, this could increase the load, since it means that
+the display calculations are now done for every character.  For very
+slow systems it might even be that there isn't enough CPU to do the
+display management for every character.  But with an AT that isn't a
+problem.  I'd guess that the patch is appropriate for most cases.
+The diff gives that patch only.  It is independent of the diffs
+I posted previously.
+
+The second patch is a new version of the diff for Microemacs
+display.c.  This is a diff between the version from comp.unix.sources
+and my current version.  (I.e. it duplicates the changes I posted
+originally.)  It handles three issues: (1) I am now using (at least
+some of the time) Merge286.  The Merge kernel is older than the normal
+2.3.  The console terminal support uses a software cursor (i.e.  a
+whole block in reverse video) instead of a hardware cursor (a blinking
+underbar).  My patches to Microemacs included using direct
+memory-mapped I/O for the screen.  Unfortunately, when the software
+cursor is in use, this means that the display code has to recreate the
+cursor when it rewrites the line on which the cursor is sitting.  Thus
+the new version of this code has a test for detecting whether a
+software cursor is in use, and if so does the appropriate thing.  This
+version should work on both the Merge and regular kernels, since it
+does test at runtime whether the patch is needed.  Other changes since
+my last posting are (2) I am now using an EGA display.  Thus I have
+changed the default colors to black on white instead of white on
+black, and black on green for the mode line.  If you don't want this
+(and I do not recommend the change on monochrome displays that aren't
+white or on low-resolution color displays), simply omit the changes
+involving the numbers 0 and 7.  In theory you can set colors in the
+startup file, but they don't affect the screens created initially, so
+the startup file turns out not to be enough.  (3) Because EGA uses a
+different area for display memory, the magic number passed to shmget
+has changed.  The version here is appropriate for EGA.  For a
+monochrome adapter you would still use 0xb0000.  And of course the
+matching call to shmcreate must be uncommented in /etc/rc.d/shm.rc.
+The whole idea of using memory-mapped I/O may be a bit questionable,
+since it makes the program so dependent upon the particular release
+and hardware.  (That's why I put in under a conditional.)  But it does
+provide noticeably faster response.
+
+*** jove.c.ORIG	Sat Apr 30 19:05:07 1988
+--- jove.c	Sat May 28 01:30:38 1988
+***************
+*** 627,634
+  	sg2.c_iflag &= ~(INLCR|ICRNL|IGNCR);
+  	sg2.c_lflag &= ~(ISIG|ICANON|ECHO);
+  	sg2.c_oflag &= ~(OCRNL|ONLCR);
+! 	sg2.c_cc[VMIN] = sizeof smbuf;
+! 	sg2.c_cc[VTIME] = 1;
+  #else
+  	TABS = !(sg1.sg_flags & XTABS);
+  	ospeed = sg1.sg_ospeed;
+
+--- 658,670 -----
+  	sg2.c_iflag &= ~(INLCR|ICRNL|IGNCR);
+  	sg2.c_lflag &= ~(ISIG|ICANON|ECHO);
+  	sg2.c_oflag &= ~(OCRNL|ONLCR);
+! /*
+!  *	sg2.c_cc[VMIN] = sizeof smbuf;
+!  *	sg2.c_cc[VTIME] = 1;
+!  */
+! 	sg2.c_cc[VMIN] = 1;
+! 	sg2.c_cc[VTIME] = 0;
+! 
+  #else
+  	TABS = !(sg1.sg_flags & XTABS);
+  	ospeed = sg1.sg_ospeed;
+
+*** ../original/display.c	Sun Feb  7 03:00:31 1988
+--- display.c	Sat May 28 20:28:16 1988
+***************
+*** 31,36
+  #if	MEMMAP == 0
+  VIDEO   **pscreen;                      /* Physical screen. */
+  #endif
+  
+  /*
+   * Initialize the data structures used by the display code. The edge vectors
+
+--- 31,40 -----
+  #if	MEMMAP == 0
+  VIDEO   **pscreen;                      /* Physical screen. */
+  #endif
++ #if MEMMAP && UPORT
++ char *shmaddr;
++ int softcursor = 0;
++ #endif
+  
+  /*
+   * Initialize the data structures used by the display code. The edge vectors
+***************
+*** 44,49
+      register int i;
+      register VIDEO *vp;
+      char *malloc();
+  
+      TTopen();		/* open the screen */
+      TTkopen();		/* open the keyboard */
+
+--- 48,56 -----
+      register int i;
+      register VIDEO *vp;
+      char *malloc();
++ #if MEMMAP && UPORT
++     extern char *shmat();
++     int shmid = shmget(0xb8000, 32768, 0);
+  
+      shmaddr = shmat (shmid, (char *)0);
+  #endif
+***************
+*** 45,50
+      register VIDEO *vp;
+      char *malloc();
+  
+      TTopen();		/* open the screen */
+      TTkopen();		/* open the keyboard */
+      TTrev(FALSE);
+
+--- 52,60 -----
+      extern char *shmat();
+      int shmid = shmget(0xb8000, 32768, 0);
+  
++     shmaddr = shmat (shmid, (char *)0);
++ #endif
++ 
+      TTopen();		/* open the screen */
+      TTkopen();		/* open the keyboard */
+      TTrev(FALSE);
+***************
+*** 69,76
+  
+  	vp->v_flag = 0;
+  #if	COLOR
+! 	vp->v_rfcolor = 7;
+! 	vp->v_rbcolor = 0;
+  #endif
+          vscreen[i] = vp;
+  #if	MEMMAP == 0
+
+--- 79,86 -----
+  
+  	vp->v_flag = 0;
+  #if	COLOR
+! 	vp->v_rfcolor = 0;
+! 	vp->v_rbcolor = 7;
+  #endif
+          vscreen[i] = vp;
+  #if	MEMMAP == 0
+***************
+*** 172,179
+      register VIDEO      *vp;
+  
+      vp = vscreen[vtrow];
+!     while (vtcol < term.t_ncol)
+!         vp->v_text[vtcol++] = ' ';
+  }
+  
+  /* upscreen:	user routine to force a screen update
+
+--- 182,189 -----
+      register VIDEO      *vp;
+  
+      vp = vscreen[vtrow];
+! 	for (;vtcol < term.t_ncol; vtcol++)
+!         vp->v_text[vtcol] = ' ';
+  }
+  
+  /* upscreen:	user routine to force a screen update
+***************
+*** 244,249
+  		updgar();
+  
+  	/* update the virtual screen to the physical screen */
+  	updupd(force);
+  
+  	/* update the cursor and flush the buffers */
+
+--- 254,262 -----
+  		updgar();
+  
+  	/* update the virtual screen to the physical screen */
++ #if MEMMAP && UPORT
++ 	TTflush();
++ #endif
+  	updupd(force);
+  
+  	/* update the cursor and flush the buffers */
+***************
+*** 483,488
+  
+  	movecursor(0, 0);		 /* Erase the screen. */
+  	(*term.t_eeop)();
+  	sgarbf = FALSE;			 /* Erase-page clears */
+  	mpresf = FALSE;			 /* the message area. */
+  #if	COLOR
+
+--- 496,513 -----
+  
+  	movecursor(0, 0);		 /* Erase the screen. */
+  	(*term.t_eeop)();
++ #if MEMMAP && UPORT
++ /* if software cursor is in use, the screen image will show different
++  * attributes for 0,0 and others, since the cursor is now in 0,0
++  * and everything else has been cleared
++  */
++ 
++ 	TTflush();
++ 	if (*(shmaddr+1) == *(shmaddr+3))
++ 		softcursor = 0;
++ 	else
++ 		softcursor = 1;
++ #endif
+  	sgarbf = FALSE;			 /* Erase-page clears */
+  	mpresf = FALSE;			 /* the message area. */
+  #if	COLOR
+***************
+*** 567,573
+  
+  {
+  #if	COLOR
+! 	scwrite(row, vp1->v_text, vp1->v_rfcolor, vp1->v_rbcolor);
+  	vp1->v_fcolor = vp1->v_rfcolor;
+  	vp1->v_bcolor = vp1->v_rbcolor;
+  #else
+
+--- 592,601 -----
+  
+  {
+  #if	COLOR
+! 	if (vp1->v_flag & VFREQ)
+! 		scwrite(row, vp1->v_text, vp1->v_rbcolor, vp1->v_rfcolor);
+! 	else
+! 		scwrite(row, vp1->v_text, vp1->v_rfcolor, vp1->v_rbcolor);
+  	vp1->v_fcolor = vp1->v_rfcolor;
+  	vp1->v_bcolor = vp1->v_rbcolor;
+  #else
+***************
+*** 572,579
+  	vp1->v_bcolor = vp1->v_rbcolor;
+  #else
+  	if (vp1->v_flag & VFREQ)
+- 		scwrite(row, vp1->v_text, 0, 7);
+- 	else
+  		scwrite(row, vp1->v_text, 7, 0);
+  #endif
+  	vp1->v_flag &= ~(VFCHG | VFCOL);	/* flag this line as changed */
+
+--- 600,605 -----
+  	vp1->v_bcolor = vp1->v_rbcolor;
+  #else
+  	if (vp1->v_flag & VFREQ)
+  		scwrite(row, vp1->v_text, 7, 0);
+  	else
+  		scwrite(row, vp1->v_text, 0, 7);
+***************
+*** 575,580
+  		scwrite(row, vp1->v_text, 0, 7);
+  	else
+  		scwrite(row, vp1->v_text, 7, 0);
+  #endif
+  	vp1->v_flag &= ~(VFCHG | VFCOL);	/* flag this line as changed */
+  
+
+--- 601,608 -----
+  #else
+  	if (vp1->v_flag & VFREQ)
+  		scwrite(row, vp1->v_text, 7, 0);
++ 	else
++ 		scwrite(row, vp1->v_text, 0, 7);
+  #endif
+  	vp1->v_flag &= ~(VFCHG | VFCOL);	/* flag this line as changed */
+  
+***************
+*** 580,585
+  
+  }
+  
+  #else
+  
+  updateline(row, vp1, vp2)
+
+--- 608,645 -----
+  
+  }
+  
++ #if UPORT
++ /*
++  * There is no special module for Microport SysV, as this is the only
++  * system-dependent code for it.
++  */
++ 
++ scwrite(row, cp1, fg, bg)
++   int row, fg, bg;
++   register char *cp1;
++ {
++     register char *cp2;
++     register int nch;
++ 
++     cp2 = shmaddr + (160 * row);
++     for (nch = 0; nch < term.t_ncol; nch++) {
++ 	*cp2 = *cp1;
++ 	cp2++;
++ 	cp1++;
++ 	*cp2 = bg << 4 | fg;
++ 	cp2++;
++     }	
++ /* this seems to apply only to the Merge kernel, which uses
++  * software cursor.  For hardware cursor (the underbar), this
++  * is most definitely not appropriate
++  */
++     if ((softcursor != 0) && (row == ttrow)) {
++ 	cp2 = shmaddr + (160 * row) + (2 * ttcol) + 1;
++ 	*cp2 = ((*cp2 >> 4) & 0xf) | (*cp2 << 4);
++     }
++ }
++ #endif
++ 
+  #else
+  
+  updateline(row, vp1, vp2)
+***************
+*** 766,773
+      n = wp->w_toprow+wp->w_ntrows;      	/* Location. */
+      vscreen[n]->v_flag |= VFCHG | VFREQ | VFCOL;/* Redraw next time. */
+  #if	COLOR
+!     vscreen[n]->v_rfcolor = 0;			/* black on */
+!     vscreen[n]->v_rbcolor = 7;			/* white.....*/
+  #endif
+      vtmove(n, 0);                       	/* Seek to right line. */
+      if (wp == curwp)				/* mark the current buffer */
+
+--- 826,833 -----
+      n = wp->w_toprow+wp->w_ntrows;      	/* Location. */
+      vscreen[n]->v_flag |= VFCHG | VFREQ | VFCOL;/* Redraw next time. */
+  #if	COLOR
+!     vscreen[n]->v_rfcolor = 2;			/* black on */
+!     vscreen[n]->v_rbcolor = 0;			/* white.....*/
+  #endif
+      vtmove(n, 0);                       	/* Seek to right line. */
+      if (wp == curwp)				/* mark the current buffer */
+***************
+*** 918,925
+      	return;
+  
+  #if	COLOR
+!      TTforg(7);
+!      TTbacg(0);
+  #endif
+      if (eolexist == TRUE)
+  	    TTeeol();
+
+--- 978,985 -----
+      	return;
+  
+  #if	COLOR
+!      TTforg(0);
+!      TTbacg(7);
+  #endif
+      if (eolexist == TRUE)
+  	    TTeeol();
+***************
+*** 957,964
+  
+  #if	COLOR
+  	/* set up the proper colors for the command line */
+! 	TTforg(7);
+! 	TTbacg(0);
+  #endif
+  
+  	/* if we can not erase to end-of-line, do it manually */
+
+--- 1017,1024 -----
+  
+  #if	COLOR
+  	/* set up the proper colors for the command line */
+! 	TTforg(0);
+! 	TTbacg(7);
+  #endif
+  
+  	/* if we can not erase to end-of-line, do it manually */
+
+
