@@ -1,22 +1,16 @@
 #
 # Makefile for atc in distribution directory
 #
-
-LIBS =		-lm -lx # -ll
-CURSESLIBS =	-lcurses -ltermcap $(LIBS)
-
+ALL	= atc
+MODEL	= -i
+OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
+include ../../../CONFIG
 CURSESLIBR =	libatc.a
-
 OFILE =		tunable.o
-
 CFILE =		tunable.c
 
-CFLAGS =	-O -i
-
-all:		atc
-
 atc:		$(CURSESLIBR) $(OFILE)
-		$(CC) $(CFLAGS) $(OFILE) $(CURSESLIBR) $(CURSESLIBS) -o atc
+		$(CC) $(CFLAGS) $(OFILE) $(CURSESLIBR) -o $@ $(LIBS)
 
 preserve:	
 		rm tunable.c
