@@ -133,7 +133,7 @@ int_handler()
 }
 #endif
 
-int (*old_func)();		/* storage for previous signal handler */
+SIG_T (*old_func)();		/* storage for previous signal handler */
 
 /*
  *	Routine to disable (1) and enable (0) ^C interrupt.
