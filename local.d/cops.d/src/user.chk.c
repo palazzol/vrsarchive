@@ -10,20 +10,23 @@
 
 /* potentially dangerous files */
 char *ftable[] = {
-	"rhost",
-	"profile",
-	"login",
-	"cshrc",
 	"bashrc",
-	"kshrc",
-	"tcshrc",
-	"rhost",
-	"netrc",
-	"forward",
+	"calrc",
+	"cshrc",
 	"dbxinit",
 	"distfile",
 	"exrc",
-	"emacsrc"
+	"emacsrc",
+	"forward",
+	"kshrc",
+	"login",
+	"mailrc",
+	"netrc",
+	"profile",
+	"rhost",
+	"tcshrc",
+	"twmrc",
+	"xinitrc",
 };
 char *ft;
 char *ftr, *malloc();
