@@ -1,7 +1,7 @@
 #
 # Makefile for Little Smalltalk, version 2
 #
-CFLAGS = -p -O
+CFLAGS = -M2l
 
 COMMONc = memory.c names.c lex.c parser.c
 COMMONo = memory.o names.o lex.o parser.o
