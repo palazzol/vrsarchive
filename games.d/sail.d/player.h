@@ -61,7 +61,7 @@
 #ifdef SIGTSTP
 #define SCREENTEST()	(initscr() != ERR && signal(SIGTSTP, SIG_DFL) != BADSIG && STAT_R < COLS && SCROLL_Y > 0)
 #else
-#define SCREENTEST()	(initscr() != ERR && STAT_R < COLS && SCROLL_Y > 0)
+#define SCREENTEST()	(initscr(), STAT_R < COLS && SCROLL_Y > 0)
 #endif
 
 WINDOW *view_w;
