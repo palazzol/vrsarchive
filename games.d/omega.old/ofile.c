@@ -104,7 +104,7 @@ void theologyfile()
 void showfile(fd)
 FILE *fd;
 {
-  char c,d=' ';
+  int c,d=' ';
   int x,y;
   clear();
   refresh();
