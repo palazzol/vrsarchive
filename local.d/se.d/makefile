@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.5 1987-02-15 20:42:07 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.6 1987-12-26 20:57:23 vrs Exp $
 # 
 DOCS= Makefile README
 MANS= scriptse.1 se.1
@@ -10,6 +10,9 @@ OPTIONS	= -O `cat flags`
 include ../../CONFIG
 #
 # $Log: not supported by cvs2svn $
+# Version 1.5  87/02/15  20:42:07  vrs
+# Need to make clean in se_h too
+# 
 # Version 1.4  87/02/15  20:38:29  vrs
 # Make 'make clean' consistent with other Makefiles
 # 
@@ -46,9 +49,6 @@ LIBRARIES= libchangetty/libchangetty.a pat/libpat.a
 # PR is to print the files nicely.  Use pr -n if available, or else just pr
 # I use a private utility called 'prt'
 PR=pr
-
-# NROFF is for nroffing.  we use the System V nroff. 
-NROFF=nroff
 
 # INSTALL is the program to do the installation, use cp for real work
 INSTALL	= cp
