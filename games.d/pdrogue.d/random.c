@@ -60,14 +60,15 @@ rrandom()
 get_rand(x, y)
 register int x, y;
 {
-	register int r, t;
+	register long r;
+	register int t;
 
 	if (x > y) {
 		t = y;
 		y = x;
 		x = t;
 	}
-	r = (int) rrandom();
+	r = rrandom();
 	r = (r % ((y-x)+1)) + x;
 	return(r);
 }
