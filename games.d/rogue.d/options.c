@@ -32,7 +32,7 @@ struct optstruct {
 
 typedef struct optstruct	OPTION;
 
-char	*inv_t_name[];
+extern char	*inv_t_name[];
 
 int	put_bool(), get_bool(), put_str(), put_inv_t(), get_inv_t(),
 		get_str();
@@ -240,7 +240,7 @@ WINDOW *win;
 			}
 		}
 		if (sp >= &buf[MAXINP] || !(isprint(c) || c == ' '))
-			(void) putchar(CTRL(G));
+			(void) putchar(MYCTRL('G'));
 		else
 		{
 			*sp++ = c;

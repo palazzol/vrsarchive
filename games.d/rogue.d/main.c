@@ -21,7 +21,8 @@ int end_win = 0;
  * leave:
  *	Leave quickly, but curteously
  */
-leave()
+SIG_T
+leave(dummy)
 {
 	if (end_win)
 	{
@@ -164,7 +165,8 @@ char **envp;
  * endit:
  *	Exit the program abnormally.
  */
-endit()
+SIG_T
+endit(dummy)
 {
 	fatal("Ok, if you want to leave that badly, I'll have to allow it\n");
 }
@@ -210,7 +212,8 @@ register int number, sides;
  * tstp:
  *	Handle stop and start signals
  */
-tstp()
+SIG_T
+tstp(dummy)
 {
 	register int y, x;
 	register int oy, ox;
@@ -276,8 +279,8 @@ playit()
  * quit:
  *	Have player make certain, then leave.
  */
-void
-quit()
+SIG_T
+quit(dummy)
 {
 	register int oy, ox;
 	register char c;
@@ -302,7 +305,7 @@ quit()
 	else
 	{
 #ifdef WIZARD
-		if (wizard && c == CTRL(P))
+		if (wizard && c == MYCTRL('P'))
 				no_command = 0;
 #endif
 		move(0, 0);
@@ -348,8 +351,6 @@ shell()
 	}
 	else
 	{
-		int endit();
-
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
 		while (wait(&ret_status) != pid)
