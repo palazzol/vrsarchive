@@ -5,7 +5,7 @@ SHELL	= /bin/sh
 SRCS	= calend.c process.c util.c parser scanner globals.h process.h pars.h 
 MISC	= calend.1l Makefile remind.c remind.1l README addcal addcal.1l
 LOCDIR	= /usr/local
-CFLAGS	= -O
+CFLAGS	= -O -F 2000
 ScFile	= calend.sc
 
 all: calend remind
