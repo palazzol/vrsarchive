@@ -1,6 +1,10 @@
-# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.1 1987-07-26 11:29:19 vrs Exp $
+#
+# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.2 1987-07-26 15:04:43 vrs Exp $
 #
 # $Log: not supported by cvs2svn $
+# Version 1.1  87/07/26  11:29:19  vrs
+# Initial version
+# 
 # Revision 7.0.1.1  86/12/12  16:54:03  lwall
 # Frozen for net release.
 # 
@@ -8,25 +12,22 @@
 # Split into separate files.  Added amoebas and pirates.
 # 
 #
-CC = cc
-bin = /usr/games
-mansrc = /usr/man/man1
-manext = 1
-CFLAGS =  -O -M2m
-LDFLAGS =  -M2m
-CHOWNER = cron
-privlib = /usr/games/lib/warp
-NDIRC = ndir.c
-NDIRO = ndir.o
-LARGE =  
-SMALL = 
+public	= warp
+private = smap.0 smap.1 smap.2 smap.3 smap.4 smap.5 smap.6 smap.7
+ALL	= $(public) $(private)
+OPTIONS	= -O -DPRIVLIB=\"$(privlib)\"
+MODEL	= -M2m
+include ../../CONFIG
+bin	= $(GAMDIR)
+mansrc	= $(MAN6)
+CHOWNER = $(SAFEUID)
+privlib = $(GAMLIB)/warp
+manext	= 6
+NDIRC	= ndir.c
+NDIRO	= ndir.o
 
-libs =  -ltermcap   -lm
-
-public = warp
-private = warp.doc smap.0 smap.1 smap.2 smap.3 smap.4 smap.5 smap.6 smap.7
+util = Makefile makedepend makedir smap.0 smap.1 smap.2 smap.3 smap.4 smap.5 smap.6 smap.7 warp.doc
 manpages = warp.man
-util = Makefile makedepend makedir smap.0 smap.1 smap.2 smap.3 smap.4 smap.5 smap.6 smap.7
 
 sh = Makefile.SH makedepend.SH makedir.SH
 
@@ -65,49 +66,37 @@ addedbyconf = $(add1) $(add2) $(add3) $(add4) $(add5)
 SHELL = /bin/sh
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(LARGE) $*.c
-
-all: $(public) $(private) $(util)
-	touch all
+	$(CC) -c $(CFLAGS) $*.c
 
 warp: $(obj)
-	$(CC) $(LDFLAGS) $(obj) $(LARGE) $(libs) -o warp
+	$(CC) $(CFLAGS) $(obj) $(LIBS) -o $@
 
 # if a .h file depends on another .h file...
 $(h):
 	touch $@
 
-install: warp
-# won't work with csh
-	export PATH || exit 1
-	- mv $(bin)/warp $(bin)/warp.old
-	- if test `pwd` != $(bin); then cp $(public) $(bin); fi
-	- cd $(bin); chmod 755 $(public); chown '$(CHOWNER)' $(public)
-	- chmod 4711 $(bin)/warp
-	- chmod 755 makedir
-	- ./makedir `./filexp $(privlib)`
-	- \
-if test `pwd` != `./filexp $(privlib)`; then \
-cp $(private) `./filexp $(privlib)`; \
-fi
-	- \
-cd `./filexp $(privlib)`; \
-chmod 755 $(private); \
-chown '$(CHOWNER)' . $(private) \
-cp /dev/null save.blurfl
-	- \
-if test ! -f `./filexp $(privlib)/warp.news`; then \
-cp warp.news `./filexp $(privlib)`; \
-fi
-	- \
-if test `pwd` != $(mansrc); then \
-for page in $(manpages); do \
-cp $$page $(mansrc)/`basename $$page .man`.$(manext); \
-done; \
-fi
+install: $(ALL) $(bin)
+	if test `pwd` != $(bin); then cp $(public) $(bin); fi
+	cd $(bin); chmod 755 $(public); chown '$(CHOWNER)' $(public)
+	chmod 4711 $(bin)/warp
+	chmod 555 makedir
+	./makedir `./filexp $(privlib)`
+	-if test `pwd` != `./filexp $(privlib)`; then \
+		cp $(private) `./filexp $(privlib)`; \
+	fi
+	cd `./filexp $(privlib)`; chmod 755 $(private); touch save.blurfl
+	cd `./filexp $(privlib)`; chown '$(CHOWNER)' . $(private)
+	-if test ! -f `./filexp $(privlib)/warp.news`; then \
+		cp warp.news `./filexp $(privlib)`; \
+	fi
+	-if test `pwd` != $(mansrc); then \
+		for page in $(manpages); do \
+			cp $$page $(mansrc)/`basename $$page .man`.$(manext); \
+		done; \
+	fi
 
 clean:
-	rm -f warp warp.*top warp.log sm smap.* core *.o
+	rm -f $(ALL) warp.*top warp.log sm core *.o
 
 realclean:
 	rm -f warp *.o core $(addedbyconf) $(util)
@@ -137,7 +126,7 @@ smap.6: smp.6 sm
 smap.7: smp.7 sm
 	sm <smp.7 >smap.7
 sm: sm.c
-	cc sm.c $(SMALL) -o sm
+	cc sm.c -o $@
 
 depend: makedepend
 	makedepend
