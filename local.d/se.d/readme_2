@@ -1,0 +1,17 @@
+Submitted by: emoryu1!arnold (Arnold D. Robbins)
+Mod.sources: Volume 8, Issue 1
+Archive-name: se/Part01
+
+
+Here is the second release of the Georgia Tech Screen Editor, 'se'.
+There were enough changes that a whole new posting is warranted.
+
+Major Changes:
+	All Georgia Tech specific stuff removed.
+	It understands window size changes on 4.3BSD and ATT Unix PC/3B1
+	Support for the shared library on the ATT Unix PC/3B1
+	Considerable source code reorganization in certain files.
+
+Enjoy,
+
+Arnold Robbins
