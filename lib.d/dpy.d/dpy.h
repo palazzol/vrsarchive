@@ -12,9 +12,13 @@
 #ifdef  M_XENIX
 #  include <sys/types.h>
 #endif
+#ifdef __STDC__
+#include <termio.h>
+#else
 #include <sys/termio.h>
 #ifndef  TCGETA
 #  include <sys/ioctl.h>
+#endif
 #endif
 #define	MYCTRL(c)	(c&037)
 #undef	CERASE
