@@ -1,0 +1,13 @@
+Here is a new and improved version of the cxref program I posted some
+months ago.  This version fixes all known bugs, and adds two new options,
+as well as a faster driver (which fixed a bug).
+
+Enjoy,
+
+Arnold Robbins
+CSNET: arnold@gatech
+ARPA:  arnold%gatech.csnet@csnet-relay.arpa
+UUCP:  ...!{akgua, allegra, rlgvax, sb1, ut-sally}!gatech!arnold
+
+"All this digital stuff is just a fad.  Analog is the way to go."
+	-- William M. Robbins, 1984
