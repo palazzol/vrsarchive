@@ -21,7 +21,7 @@ TMPDIR = /tmp
 ALL	= xjove recover teachjove portsrv
 MODEL	= -M2m -F 2000
 OPTIONS	=
-include /usr/vrs/ws/CONFIG
+include ../../CONFIG
 MANDIR	= $(MAN1)
 MANEXT = 1
 
@@ -124,7 +124,7 @@ $(TEACH-JOVE): doc/teach-jove
 	chmod 644 $(TEACH-JOVE)
 
 doc/cmds.doc:	doc/cmds.doc.nr doc/jove.4 doc/jove.5
-	nroff doc/cmds.doc.nr doc/jove.4 doc/jove.5 > doc/cmds.doc
+	$(NROFF) doc/cmds.doc.nr doc/jove.4 doc/jove.5 > doc/cmds.doc
 
 $(CMDS.DOC): doc/cmds.doc
 	cp doc/cmds.doc $(CMDS.DOC)
