@@ -379,7 +379,6 @@ extern object level_monsters;
 char *strcpy();
 char *strncpy();
 char *strcat();
-char *sprintf();
 
 char *mon_name();
 char *get_ench_color();
@@ -436,4 +435,4 @@ extern char *CL;
 
 char *md_gdtcf();
 
-#endif CURSES
+#endif /*CURSES*/
