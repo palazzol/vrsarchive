@@ -13,7 +13,7 @@ static boolean restrap();
 #endif
 
 long lastwarntime;
-int lastwarnlev;
+uchar lastwarnlev;
 static const char *warnings[] = {
 	"white", "pink", "red", "ruby", "purple", "black" };
 struct monst *fdmon;	/* chain of dead monsters, need not to be saved */
@@ -229,7 +229,7 @@ movemon()
 	}
 #endif
 	warnlevel -= u.ulevel;
-	if(warnlevel >= SIZE(warnings))
+	if(warnlevel >= (unsigned)SIZE(warnings))
 		warnlevel = SIZE(warnings)-1;
 	if(!Blind && warnlevel >= 0)
 	if(warnlevel > lastwarnlev || moves > lastwarntime + 5){
@@ -445,7 +445,7 @@ struct obj *otmp;
 void
 mpickstuff(mtmp, str)
 	register struct monst *mtmp;
-	register char *str;
+	register const char *str;
 {
 	register struct obj *otmp;
 
@@ -942,6 +942,22 @@ xkilled(mtmp, dest)
 	}
 }
 
+#ifdef __STDC__
+#include <stdarg.h>
+void
+kludge(char *str, char *arg, ...)
+{	va_list ap;
+	char buf[BUFSZ];
+
+	va_start(ap, arg);
+	if(Blind || !flags.verbose) {
+		if(*str == '%') arg = "It";
+		else arg = "it";
+	}
+	vsprintf(buf, str, ap);
+	pline("%s", buf);
+}
+#else
 /*VARARGS2*/
 void
 kludge(str, arg, arg2, arg3)
@@ -952,6 +968,7 @@ kludge(str, arg, arg2, arg3)
 		else pline(str,"it",arg2,arg3);
 	} else pline(str,arg,arg2,arg3);
 }
+#endif
 
 void
 rescham() {	/* force all chameleons to become normal */
@@ -1071,11 +1088,17 @@ mnexto(mtmp)	/* Make monster mtmp next to you (if possible) */
 	set_apparxy(mtmp);
 }
 
+/* Make monster near (or at) location if possible */
+#ifdef __STDC__
 void
-mnearto(mtmp,x,y,gz)	/* Make monster near (or at) location if possible */
-	register struct monst *mtmp;
-	xchar x, y;
-	boolean gz;     
+mnearto(struct monst *mtmp,xchar x,xchar y,boolean gz)
+#else
+void
+mnearto(mtmp,x,y,gz)
+register struct monst *mtmp;
+xchar x, y;
+boolean gz;     
+#endif
 {
 	coord mm;
 	if(!gz || !goodpos(x,y)) {

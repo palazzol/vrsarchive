@@ -4,8 +4,6 @@
 
 #include	"hack.h"
 
-static void del_engr P((struct engr *));
-
 struct engr {
 	struct engr *nxt_engr;
 	char *engr_txt;
@@ -19,6 +17,8 @@ struct engr {
 #define MARK	4
 #define POLY	5	/* temporary type - for polymorphing engraving */
 } *head_engr;
+
+static void del_engr P((struct engr *));
 
 /* random engravings */
 const char *random_engr[] =
@@ -44,10 +44,15 @@ register struct engr *ep = head_engr;
 }
 
 #ifdef ELBERETH
+#ifdef __STDC__
+int
+sengr_at(char *s,xchar x,xchar y)
+#else
 int
 sengr_at(s,x,y)
 	register char *s;
 	register xchar x,y;
+#endif
 {
 	register struct engr *ep = engr_at(x,y);
 	register char *t;
@@ -76,8 +81,15 @@ register int cnt;
 		wipe_engr_at(u.ux, u.uy, cnt);
 }
 
+#ifdef __STDC__
 void
-wipe_engr_at(x,y,cnt) register xchar x,y,cnt; {
+wipe_engr_at(xchar x,xchar y,xchar cnt)
+#else
+ void
+wipe_engr_at(x,y,cnt)
+register xchar x,y,cnt;
+#endif
+{
 register struct engr *ep = engr_at(x,y);
 register int lth,pos;
 char ch;
@@ -139,7 +151,7 @@ register int	canfeel;
 void
 make_engr_at(x,y,s)
 register int x,y;
-register char *s;
+register const char *s;
 {
 	register struct engr *ep;
 
