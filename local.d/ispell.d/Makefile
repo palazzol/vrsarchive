@@ -16,7 +16,7 @@
 #
 #   buildhash <infile> <outfile>
 OPTIONS = -O -DUSG
-ALL	= buildhash fixdict ispell icombine munchlist isexpand $(DEFHASH)
+ALL	= ispell.hash fixdict ispell icombine munchlist isexpand $(DEFHASH)
 include ../../CONFIG
 # BINDIR, LIBDIR, DEFHASH, DEFDICT, MAN1DIR, MAN4DIR, MAN1EXT, MAN4EXT,
 # LIBS
@@ -30,7 +30,7 @@ MAN4EXT	= .4
 ispell.hash: buildhash $(DEFDICT)
 	./buildhash $(DEFDICT) $(DEFHASH)
 
-install: all
+install: $(ALL)
 	cp ispell isexpand munchlist $(BINDIR)
 	cd $(BINDIR); chmod 755 isexpand munchlist
 	cd $(BINDIR); chmod 711 ispell
