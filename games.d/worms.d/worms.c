@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <sgtty.h>
 #define cursor(col,row) tputs(tgoto(CM,col,row),1,outc)
-#define MAXINT (((unsigned)-1)>>1)
 outc(c)
 {
         putchar(c);
@@ -147,7 +146,7 @@ char *argv[];
     register char *term;
     char tcb[100];
     struct sgttyb sg;
-    setbuf(stdout,malloc(BUFSIZ));
+    setbuf(stdout, (char *)0);
     for (x=1;x<argc;x++) {
         register char *p;
         p=argv[x];
@@ -324,5 +323,5 @@ char c;
     putchar(c);
 }
 float ranf() {
-    return((float)rand()/MAXINT);
+    return((float)rand()/32767);
 }
