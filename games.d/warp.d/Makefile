@@ -1,7 +1,10 @@
 #
-# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.6 2002-11-22 22:15:17 Vincent Exp $
+# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.7 2002-11-24 03:02:07 Vincent Exp $
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2002/11/22 22:15:17  Vincent
+# Installs on CYGWIN.
+#
 # Revision 1.5  2002/11/22 22:10:26  Vincent
 # Compiles on CYGWIN.
 #
@@ -108,10 +111,8 @@ install: $(ALL) $(bin)
 	fi
 
 clean:
-	rm -f $(ALL) warp.*top warp.log sm core *.o
-
-realclean:
-	rm -f warp *.o core $(addedbyconf) $(util)
+	rm -f $(ALL) warp.*top warp.log sm$(EXE) core *.o
+	rm -rf UU
 
 # The following lint has practically everything turned on.  Unfortunately,
 # you have to wade through a lot of mumbo jumbo that can't be suppressed.

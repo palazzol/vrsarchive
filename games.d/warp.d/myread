@@ -1,3 +1,4 @@
+#!/bin/sh
 ans='!'
 while expr "X$ans" : "X!" >/dev/null; do
     read ans
