@@ -37,14 +37,14 @@ awk '{
 		n = split ($i, a, "-");
 
 		if (n == 1) {
-			print $i;
+			printf "egrep '"'^%5d'"' /tmp/hersh.'$$'\n", $i;
 		} else {
 			for (j = a[1]; j <= a[2]; j++) {
-				print j;
+				printf "egrep '"'^%5d'"' /tmp/hersh.'$$'\n", j;
 			}
 		}
 	}
-}' < $HMPFILE | xargs -i egrep "^ *{}" /tmp/hersh.$$ > $FNTFILE
+}' < $HMPFILE | sh > $FNTFILE
 
 # superficially check the resulting .fnt file for validity
 
