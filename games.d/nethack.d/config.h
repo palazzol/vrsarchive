@@ -22,8 +22,8 @@
  */
 /* #define MSDOS 	/* define for MS-DOS (actually defined by compiler) */
 #define	UNIX		/* delete if no fork(), exec() available */
-#define BSD		/* defind for 4.n BSD  */
-/* #define SYSV		/* define for System V */
+/*#define BSD		/* defind for 4.n BSD  */
+#define SYSV		/* define for System V */
 
 /* #define BETA		/* if a beta-test copy  [MRS] */
 #define VERSION	"1.3d"	/* version number. */
@@ -33,11 +33,15 @@
 /* #define STUPID		/* avoid some complicated expressions if
 			   your C compiler chokes on them */
 /* #define NOWAITINCLUDE	/* neither <wait.h> nor <sys/wait.h> exists */
+#ifdef M_XENIX
+#define	NOWAITINCLUDE
+#endif
+
 #ifdef MSDOS
 #define	NOWAITINCLUDE
 #endif
 
-#define WIZARD  "mike"	/* the person allowed to use the -D option */
+#define WIZARD  "root"	/* the person allowed to use the -D option */
 #define RECORD	"record"/* the file containing the list of topscorers */
 #define	NEWS	"news"	/* the file containing the latest hack news */
 #define	HELP	"help"	/* the file containing a description of the commands */
