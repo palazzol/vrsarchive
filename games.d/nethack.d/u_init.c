@@ -1,10 +1,14 @@
-/*	SCCS Id: @(#)u_init.c	1.3	87/07/14
+/*	SCCS Id: @(#)u_init.c	1.4	87/08/08
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* u_init.c - version 1.0.3   */
 
 #include <stdio.h>
 #include <signal.h>
 #include "hack.h"
+#ifdef GENIX
+#define	void	int
+#endif
+
 #define Strcpy	(void) strcpy
 #define	Strcat	(void) strcat
 #define	UNDEF_TYP	0
@@ -202,7 +206,7 @@ extern char readchar();
 
 	if (index("qQ", exper)) {
 		clearlocks();
-		settty((char *)0);
+		settty((char *) 0);
 		exit(0);
 	}
 
@@ -222,7 +226,12 @@ extern char readchar();
 	printf("? [%s or q(quit)] ", rolesyms);
 
 	while(pc = readchar()) {
-		if (pc == 'q' || pc == 'Q') exit(0);
+		if (pc == 'q' || pc == 'Q') {
+
+			clearlocks();
+			settty((char *) 0);
+			exit(0);
+		}
 		if('a' <= pc && pc <= 'z') pc += 'A'-'a';
 		if((i = role_index(pc)) >= 0) {
 			printf("%c\n", pc);	/* echo */
@@ -398,6 +407,9 @@ got_suffix:
 		u.uen = u.uenmax += rn2(4);
 # endif
 		ini_inv(Priest);
+# ifdef KAA
+		uwep->dknown = 1;	/* bless his primary weapon */
+# endif
 # ifdef MARKER
 		if(!rn2(10)) ini_inv(Magicmarker);
 # endif
