@@ -4,6 +4,7 @@ static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
 #endif
 
 #include "war.h"
+extern char *strchr();
 
 static	int	checkcount;		/* counter for board checking */
 static	int	didescape;		/* did escape */
@@ -632,7 +633,7 @@ readobjects(name)
 	if ((name == NULL) || (*name == '\0')) name = OBJECTFILE;
 	fd = fopen(name, "r");
 	if (fd == NULL) {
-		if (index(name, '/') == 0) {
+		if (strchr(name, '/') == 0) {
 			sprintf(altname, "%s/%s", LIBDIR, name);
 			name = altname;
 			fd = fopen(name, "r");

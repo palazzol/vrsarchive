@@ -11,7 +11,7 @@
 # include	<stdio.h>
 # ifdef MASSCOMP
 #	include		<sys/types.h>
-	char		*index();
+	char		*strchr();
 # else
 # 	include		<strings.h>
 # endif
@@ -49,7 +49,7 @@ if ( scorefd == -1 )
 		}
 lseek( scorefd, 0L, 0 );
 while( read( scorefd, temp, 80 ) == 80 )
-	if ( strncmp( temp, name, (p = index( temp, ':' )) - temp ) == 0 && atoi( p + 1 ) == id )
+	if ( strncmp( temp, name, (p = strchr( temp, ':' )) - temp ) == 0 && atoi( p + 1 ) == id )
 		{
 		found = TRUE;
 		break;
@@ -61,7 +61,7 @@ return( found );
 get_cash()
 
 {
-return( atoi( index( index( temp, ':' ) + 1, ':' ) + 1 ) );
+return( atoi( strchr( strchr( temp, ':' ) + 1, ':' ) + 1 ) );
 }
 
 
@@ -78,7 +78,7 @@ char	idstr[10];
 
 lseek( scorefd, 0L, 0 );
 while( read( scorefd, temp, 80 ) == 80 )
-	if ( strncmp( temp, name, (p = index( temp, ':' )) - temp ) == 0 && atoi( p + 1 ) == id )
+	if ( strncmp( temp, name, (p = strchr( temp, ':' )) - temp ) == 0 && atoi( p + 1 ) == id )
 		{
 		found = TRUE;
 		break;
@@ -112,7 +112,7 @@ writeln( s, "HIGH SCORE LIST" );
 writeln( s, "=====================================" );
 while( read( scorefd, temp, 80 ) == 80 )
 	{
-	strncpy( name, temp, l = ( index( temp, ':' ) - temp ) );
+	strncpy( name, temp, l = ( strchr( temp, ':' ) - temp ) );
 	name[l] = NULL;
 	score = get_cash();
 	ptr = head;
@@ -165,7 +165,7 @@ while( ptr != NULL )
 
 # ifdef MASSCOMP	/* should be in library somewhere, but where? */
 
-char	*index( str, ch )
+char	*strchr( str, ch )
 
 char	*str;		/* string to search in */
 char	ch;		/* character to look for */

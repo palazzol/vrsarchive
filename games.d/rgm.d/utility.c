@@ -125,7 +125,7 @@ char *getname ()
 
 #define EXTRASIZE 5		/* increment to add to env. size */
 
-char *index (), *malloc (), *realloc ();
+char *malloc (), *realloc ();
 int   strlen ();
 
 static int  envsize = -1;	/* current size of environment */

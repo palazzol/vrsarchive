@@ -197,11 +197,11 @@ readltm ()
 parsemonster (monster)
 char *monster;
 { register char *attrs;
-  char *index();
+  char *strchr();
   register int m;
 
   /* Separate the monster name from the attributes */
-  if ((attrs = index (monster, '|')) == NULL) return;
+  if ((attrs = strchr(monster, '|')) == NULL) return;
   *attrs++ = '\0';
 
   /* Find the monsters entry in long term memory */

@@ -25,7 +25,7 @@
 #include <netdb.h>
 #endif INET
 #ifdef MASSCOMP
-extern char *index();
+extern char *strchr();
 #else
 #include <strings.h>
 #endif MASSCOMP
@@ -143,8 +143,8 @@ int	block;		/* if nobody wants to join, wait on socket
       	readln( s, temp );
       	temp[strlen( temp ) - 1] = NULL;
       	/* don't allow colons in name because of format of score file */
-      	if ( index( temp, ':' ) != NULL )	
-      	  *index( temp, ':' ) = NULL;
+      	if ( strchr( temp, ':' ) != NULL )	
+      	  *strchr( temp, ':' ) = NULL;
       	if ( strlen( temp ) > 25 )
       	  temp[25] = NULL;
       	player[*n_players].name = strsave( temp );

@@ -1,5 +1,6 @@
 # include	"hangman.h"
 
+extern char *strchr();
 /*
  * playgame:
  *	play a game
@@ -13,7 +14,7 @@ playgame()
 	bp = Guessed;
 	while (bp < &Guessed[26])
 		*bp++ = FALSE;
-	while (Errors < MAXERRS && index(Known, '-') != NULL) {
+	while (Errors < MAXERRS && strchr(Known, '-') != NULL) {
 		prword();
 		prdata();
 		prman();

@@ -344,7 +344,7 @@ bool hurl;
 	register int hplus;
 	register int dplus;
 	register int damage;
-#ifdef SYSIII
+#ifdef USG
 	char *strchr();
 #else
 	char *index();
@@ -405,7 +405,7 @@ bool hurl;
 	for (;;)
 	{
 		ndice = atoi(cp);
-#ifdef SYSIII
+#ifdef USG
 		if ((cp = strchr(cp, 'd')) == NULL)
 			break;
 #else
@@ -426,7 +426,7 @@ bool hurl;
 			def->s_hpt -= max(0, damage);
 			did_hit = TRUE;
 		}
-#ifdef SYSIII
+#ifdef USG
 		if ((cp = strchr(cp, '/')) == NULL)
 			break;
 #else
