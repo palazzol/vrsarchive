@@ -1,25 +1,22 @@
-SHELL	= /bin/sh
-LIBRS	= berkeley.t dpy.t
-TARGETS	= adv.t adventure.t advgen.t aliens.t battleship.t battlestar.t \
-	  blackbox.t cbj.t corewar.t craps.t draughts.t fishomatic.t \
-	  flibs.t hack.t hack1.0.3.t hangman.t hangman2.t hanoi.t life.t \
-	  larn11.t larn12.t mazewar.t midway.t mille.t noughts.t ogre.t \
-	  pdrogue.t phantasia.t plane.t pm.t poker.t rain.t reversi.t \
-	  robomatic.t robots.t rogue.t sail.t smut.t snake.t sniglets.t \
-	  spaceduel.t solve.t tko.t trek73.t vtrek.t worms.t zork.t
+#
+#	$Header: /home/Vince/cvs/games.d/Makefile,v 1.2 1987-06-08 22:02:38 vrs Exp $
+#
+TODO	= phantasia rain reversi robomatic robots rogue sail smut \
+	  snake sniglets solve spaceduel tko trek73 vtrek worms
+ALL	= adv adventure advgen aliens atc battleship battlestar blackbox \
+	  cbj corewar craps draughts fishomatic flibs greed hack hack1.0.3 \
+	  hangman hangman2 hanoi larn11 larn12 life mazewar midway mille \
+	  noughts ogre pdrogue phantasia plane pm poker rain reversi \
+	  robomatic robots rogue rot sail smut snake sniglets solve spaceduel \
+	  spew tko trek73 valspeak vtrek wator worms zork
+include ../CONFIG
 
-.SUFFIXES: .d .t
-
-.d.t:
-	cd $<; make install clean
-	touch $@
-
-install: $(TARGETS)
-
-hangman2.t: $(LIBRS)
-mazewar.t: $(LIBRS)
-poker.t: $(LIBRS)
+install:
+	@for i in $(ALL); do cd $$i.d; make install; cd ..; done
 
 clean:
-	for i in $(TARGETS:.t=.d); do cd $$i; make clean; cd ..; done
-	rm -f $(TARGETS) $(LIBRS) berkeley.d/*berkeley.a dpy.d/*dpy.a
+	@for i in $(ALL); do cd $$i.d; make clean; cd ..; done
+
+hangman2: $(LIBRS)
+mazewar: $(LIBRS)
+poker: $(LIBRS)
