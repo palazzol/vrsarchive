@@ -7,7 +7,7 @@
  * kernel.  Specifically, it dispalys the cbuf free list and then
  * attempts to determine the status of each cbuf in the system.
 */
-
+#ifdef M_XENIX
 #include <sys/param.h>
 #include <sys/mmu.h>
 #include <sys/tty.h>
@@ -97,7 +97,7 @@ int num;
     else
       if (verbose)
         (void) printf("%s port %d is not open\n", str, i);
-#endif DEBUG
+#endif
   }
 }
 
@@ -131,7 +131,7 @@ char *argv[];
   }
 #ifdef DEBUG
   printf("The gdt starts at 0x%lx\n", xl[X_GDT].xl_value);
-#endif DEBUG
+#endif
   (void) lseek(kmem, xl[X_GDT].xl_value+TTY0_SEL, 0);
   (void) read(kmem, (char *)&descr, sizeof(descr));
   buf_base = (((long)descr.d_hiaddr)<<16) + descr.d_loaddr;
@@ -197,3 +197,8 @@ char *argv[];
     }
   exit(status);
 }
+#else
+main()
+{ printf("Not Ported Yet\n");
+}
+#endif
