@@ -10,7 +10,7 @@ HACKDIR	= $(GAMLIB)/$(GAME)dir
 SAVEDIR	= $(HACKDIR)/save
 OPTIONS	= -DHACKDIR=\"$(HACKDIR)\"
 MODEL	= -M2lt50 -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 # if you are cross-compiling (eg. from Xenix into a Dos environment)
 # you will have to redefine these filenames.
@@ -18,12 +18,6 @@ MAIN = unixmain.c
 TTY  = unixtty.c
 UNIX = unixunix.c
 
-# on some systems the termcap library is in -ltermcap
-TERMLIB	= -ltermlib
-CRT0	=
-LIBS	=
-CFLAGS = $(MODEL) $(OPTIONS)
-LFLAGS = $(MODEL)
 HACKCSRC = apply.c bones.c decl.c\
 	cmd.c do.c dothrow.c do_name.c do_wear.c dog.c dogmove.c eat.c end.c\
 	engrave.c fight.c fountain.c hack.c invent.c ioctl.c lev.c main.c\
