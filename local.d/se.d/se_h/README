@@ -1,0 +1,26 @@
+# 
+# $Header: /home/Vince/cvs/local.d/se.d/se_h/README,v 1.1 1987-02-07 19:06:22 vrs Exp $
+# 
+# $Log: not supported by cvs2svn $
+# Revision 1.2  86/10/07  15:17:34  arnold
+# Swt help files removed, so no longer described.
+# 
+# Revision 1.1  86/05/06  14:04:26  osadr
+# Initial revision
+# 
+# 
+# 
+README:
+
+This directory contains the help files for the Georgia Tech Software Tools/UNIX
+screen editor Se.
+
+The files should be installed in the directory /usr/local/lib/se_h for se in
+order for se to find them. File names must be in lower case, since dohelp() maps
+the file name into all lower case. (On pr1mes, case is not significant in
+file names, so the original ratfor version did not have to do this.)
+
+Arnold Robbins
+formerly of Georgia Tech
+Now with Emory University
+10/86
