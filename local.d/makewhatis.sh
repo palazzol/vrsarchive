@@ -1,8 +1,5 @@
-: Bourne shell, thank you.
 #
 #	Recompute what online manual pages exist.
-MANDIR=/usr/man
-WHATIS=/usr/local/lib/whatis
 cd $MANDIR
 for i in man?; do
   cd $i

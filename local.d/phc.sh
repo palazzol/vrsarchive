@@ -6,7 +6,6 @@ clear
 :	Init pointers to relevant files
 : '
 PHONEFILE=$HOME/phonefile
-NAMES=/usr/local/lib/names
 LOCK=/tmp/pl$$		# Set to unique name since each user now has a phonefile
 : '
 :	Obtain the data from the user.  Since this is slow, it is

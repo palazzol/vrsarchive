@@ -13,9 +13,11 @@ ret$(EXE):	$(OBJS)
 	$(CC) -o $@ $(CFLAGS) $(OBJS) $(LIBS)
 
 .sh:
-	sed '/^GAMLIB/,/^PAGER/c\
-GAMLIB=$(GAMLIB)\
-PAGER=$(PAGER)' $? > $@
+	echo '#!/bin/sh' >$@+
+	echo GAMLIB=$(GAMLIB) >>$@+
+	echo PAGER=$(PAGER) >>$@+
+	cat $? >> $@+
+	mv $@+ $@
 
 $(OBJS): words.h
 

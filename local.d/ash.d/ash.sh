@@ -1,13 +1,6 @@
-: /bin/sh
 #
-# Configurable stuff.
+# End of configurable stuff.
 #
-HELP=/usr/local/lib/ash.help
-INST=/usr/local/lib/ash.inst
-HAS=/usr/local/lib/ash.has
-PAGE=/usr/ucb/more
-E2="\c"
-FMT="pr -t -5"
 #
 OPATH=$PATH
 export PATH

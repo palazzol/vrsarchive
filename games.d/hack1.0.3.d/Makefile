@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.8 2002-11-24 00:58:17 Vincent Exp $
+#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.9 2002-11-26 07:35:57 vrs Exp $
 #
 ALL	= hack$(EXE) hack1.0.3
 MODEL	= -M2l -F 2000
@@ -53,10 +53,12 @@ hack$(EXE):	$(HOBJ)
 	$(CC) $(CFLAGS) -o $@ $(HOBJ) $(LIBS)
 
 hack1.0.3: hack.sh
-	sed '/^HACKDIR/,/^MAXNROFPLAYERS/c\
-HACKDIR=$(HACKDIR)\
-HACK=$$HACKDIR/hack\
-MAXNROFPLAYERS=4' $? > $@
+	echo '#!/bin/sh' >$@+
+	echo 'HACKDIR=$(HACKDIR)' >>$@+
+	echo 'HACK=$$HACKDIR/hack' >>$@+
+	echo 'MAXNROFPLAYERS=4' >>$@+
+	cat $? >> $@+
+	mv $@+ $@
 
 hack.onames.h:	makedefs def.objects.h
 	./makedefs > hack.onames.h

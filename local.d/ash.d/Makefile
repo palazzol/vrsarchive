@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ash.d/Makefile,v 1.5 2002-11-23 07:49:01 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/ash.d/Makefile,v 1.6 2002-11-26 07:35:59 vrs Exp $
 #
 ALL	= ash ash.has
 OPTIONS	= -O
@@ -18,13 +18,15 @@ install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
 #	Special rule does fixups needed for current system
 #
 ash:	ash.sh
-	sed '/^HELP/,/^FMT/c\
-HELP=$(LIBDIR)/ash.help\
-INST=$(LIBDIR)/ash.inst\
-HAS=$(LIBDIR)/ash.has\
-PAGE=$(PAGER)\
-E2="\\c"\
-FMT="pr -t -5"' $? > $@
+	echo "#!/bin/sh" >>$@+
+	echo HELP=$(LIBDIR)/ash.help >>$@+
+	echo INST=$(LIBDIR)/ash.inst >>$@+
+	echo HAS=$(LIBDIR)/ash.has >>$@+
+	echo PAGE=$(PAGER) >>$@+
+	echo 'E2="\c"' >>$@+
+	echo 'FMT="pr -t -5"' >> $@+
+	cat $< >>$@+
+	mv $@+ $@
 
 ash.has: has.c
 	$(CC) $(CFLAGS) has.c -o $@

@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.5 2002-11-24 05:27:12 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/espel.d/makefile,v 1.6 2002-11-26 07:35:59 vrs Exp $
 #
 ALL	= espel espel.hi$(EXE) spellin$(EXE)
 OPTIONS	= -DLIB=\"$(LIBDIR)\"
@@ -11,10 +11,12 @@ PUBLIC	= $(LIBDIR)
 OFILES	= copy.o correct.o hashtab.o hi.o main.o minigrep.o
 
 espel:	espel.sh
-	sed '/^LIB/,/^PUBLIC/c\
-LIB=$(LIBDIR)\
-SPELLIN=$(LIBDIR)/spellin$(EXE)\
-PUBLIC=$(PUBLIC)' $? > $@
+	echo '#!/bin/sh' >$@+
+	echo LIB=$(LIBDIR) >>$@+
+	echo SPELLIN=$(LIBDIR)/spellin$(EXE) >>$@+
+	echo PUBLIC=$(PUBLIC) >>$@+
+	cat $? >> $@+
+	mv $@+ $@
 
 espel.hi$(EXE): $(OFILES)
 	$(CC) $(CFLAGS) $(OFILES) -o $@

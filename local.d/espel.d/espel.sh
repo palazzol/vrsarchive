@@ -2,9 +2,6 @@
    *	espel - an enhanced spelling helper
    *		written by Eric Grimm
    *"
-LIB=/usr/local/lib
-SPELLIN=/usr/lib/spell/spellin
-PUBLIC=/usr/local/lib
 additions=/tmp/elst.$$
 badlist=/tmp/ebad.$$
 debug=x0

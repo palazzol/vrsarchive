@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.18 2002-11-25 21:42:47 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.19 2002-11-26 07:35:58 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
@@ -21,13 +21,17 @@ ALL	= $(SUBDIR) $(M0700) $(M0711) $(M0755) $(M4711)
 include $(HOME)/CONFIG
 
 makewhatis: makewhatis.sh
-	sed '/^MANDIR/,/^WHATIS/c\
-MANDIR=$(USRMAN)\
-WHATIS=$(LIBDIR)/whatis' $? > $@
+	echo '#!/bin/sh' >$@+
+	echo MANDIR=$(USRMAN) >>$@+
+	echo WHATIS=$(LIBDIR)/whatis >>$@+
+	cat $? >> $@+
+	mv $@+ $@
 
 phc:	phc.sh
-	sed '/^NAMES/c\
-NAMES=$(LIBDIR)/names' $? > $@
+	echo '#!/bin/sh' >$@+
+	echo NAMES=$(LIBDIR)/names >>$@+
+	cat $? >> $@+
+	mv $@+ $@
 
 .sh:
 	cp $@.sh $@
