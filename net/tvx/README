@@ -1,0 +1,38 @@
+	This is a mature, well debugged editor.  Unlike emacs, it
+is a two mode editor (like vi).  Recent surveys indicate that about
+40% of users prefer a two mode editor.  This code contains ifdefs
+for 4.2 BSD Unix (on Vaxen and Suns), IBM-PC DOS, Generic MS-DOS,
+CP/M-80, and the Atari 520ST.  It should be trivial to port it to
+other systems with real C compilers.  It has never been tried on
+little systems like 6502's.
+
+	I would like to act as a central clearing house for bug
+reports - I will fix all bugs I hear about.  I will post major
+bugs to net.sources.bugs as I get reports.
+
+	I would like to hear about new implementations and
+possible extensions.  I don't want to hear any complaints about the
+design or code.  This is an evolved editor, and if I were to start
+from scratch, there would be things different - but...  I think
+this will compare favorably with any public domain available.
+
+	All postings are in shar format and contain directions for
+splitting the files.
+
+	Disclaimer: This editor has been used most heavily at UNM,
+Sandia National Laboratories, and Los Alamos National Laboratories. 
+It was originally designed in 1979, so the command set and user
+interface are well debugged.  It is possible that there are some
+code bugs, and that the TERMCAP version will not work on ALL terminals,
+but it works on most. The SUN version still needs an interrupt
+handle to be completely dynamic in windows - but the '(' command
+will re-size the windows manually.  The University of New Mexico
+has not had any part in the development of the editor.  It is
+posted as is - there are no warranties of any kind with the editor.
+--
+Dr. Bruce E. Wampler
+University of New Mexico
+Department of Computer Science
+Albuquerque, NM 87131
+
+..{ucbvax | seismo!gatech | ihnp4!lanl}!unmvax!wampler

@@ -1,0 +1,49 @@
+	TVX - A full screen editor in C
+
+===========================================================================
+**************************** RELEASE NOTES ********************************
+
+Version 1/10/86
+
+	This is the USENET public domain distribution of TVX.
+
+===========================================================================
+
+	Developed by:
+		Dr. Bruce E. Wampler
+		University of New Mexico
+		Department of Computer Science
+		Farris Engineering Center
+		Albuquerque, NM 87131
+
+
+	USENET RELEASE NOTES:
+
+	Description of files included in distribution (unix versions use
+	lower case file names):
+
+	QUICKREF.TVX - text quick refernece charts for TVX
+	TVX_REF.DOC - documentation for TVX - it is ready for
+			80 col, 10 cpi, 66 line printer
+
+	Makefile    - File to make TVX on unix
+	TVX_MAKE.BAT - batch file to compile tvx + utilities with cii c-86
+			on IBM-PC or MS-DOS
+
+	TVX_1.C	   - main part of code (part 1), mostly os/terminal independent
+	TVX_2.C	   - main part of code (part 2), mostly os/terminal independent
+	TVX_LEX.C  - defaults, some os dependent stuff in here.  Major
+		     changes in defaults can be fixed by recompiling this file.
+	TVX_IO.C   - almost all I/O, including screen, confined to this file.
+	TVX_LIB.C  - misc library routines needed by TVX.
+	TVX_IBM.C  - IBM-PC screen driver
+	TVX_UNIX.C  - contains unix specific code, including termcap driver
+
+	TVX_DEFS.IC - #define's for version, os, terminal, defaults
+	TVX_GLBL.IC - global data structures
+	TVX_TERM.IC - definitions for various terminals and systems
+
+
+	TVX_CFG.C   - program used to build CONFIG.TVX file for -c switch
+	TVX_PTCH.C  - program used to patch TVX executable with CONFIG.TVX
+		      this is NOT a very polished program!

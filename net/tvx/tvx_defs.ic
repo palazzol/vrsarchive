@@ -1,0 +1,284 @@
+/* ----------------------------->>> tvx_defs.ic <<<---------------------
+  TVX - A full screen editor written in C
+
+  Revison summary:
+      Version
+	7/15/85 - Official Public Release Version
+	7/18/85 -  added -b (-b to -l, -b new) switch for Unix compatibility
+	8/22/85 -  fixed bug with setdscrl
+	9/20/85 -  major revision:   some minor bug fixes
+		   added editrpt, storerpt, execrpt, spare1, spare2
+		   major changes to file handling
+	9/30/85 -  of course, bugs...
+	10/6/85 -  I like this date.
+	10/18/85 - bug in autoindent with insert message
+	10/25/85 - 0<tab>, ^A wild to ^C because of insert problem
+	11/7/85 -  Atari version
+	11/12/85 - get find pattern added, some LASL stuff added, lex_def added
+		   ^C back to ^A
+	11/15/85 - added write save buffer
+	11/25/85 - minor bug with auto insert ### ins mode ### + reset in main
+	11/26/85 - added BUFFINDEX type for atari
+	11/27/85 - bug in lex_default with loops
+	1/10/86	 - small bug in memory with long file names
+	
+
+*********************************************************************  */
+
+#include <stdio.h>
+
+#define NEED_MISC_DEFS /**/
+/* ======================================================================== */
+#ifdef NEED_MISC_DEFS
+/* following definitons are usually not defined in most stdio.h's */
+
+#define NIL (-1)		/* nil ptr for lists */
+#define TRUE 1
+#define FALSE 0
+#define FAST static
+#define SLOW static
+
+/* following might not be defined in some C's stdio.h, but usually are */
+
+/* #define EOF (-1) */	/* standard end of file */
+/* #define EOS '\0' */	/* standard end of string */
+#endif
+/* ======================================================================== */
+
+#define VERSION " - TVX (1/10/86) - " 
+
+/* ======================================================================== */
+/* ====> Select terminal version: #define at most ONE of <================= */
+/*       the following symbols debending the terminal used. (except SUN)    */
+
+#undef IBMPC
+/* #define ATARI520 */
+/* #define VT100 */
+/* #define HP2621 */
+#define TERMCAP 			/* Unix TERMCAP version */
+/* #define SUN */		/* define for SUN in addition to TERMCAP */
+
+/* ======================================================================== */
+/* ==================> Select ONE operating system  <====================== */
+
+/* #define OSCPM */		/* CP/M-80 */
+#undef MSDOS			/* 8086 MS-DOS */
+#undef GEMDOS			/* atari 520 gemdos */
+
+#define UNIX 		/* unix is a bit different! */
+
+/* ======================================================================== */
+/* ========> select other options by defining appropriate symbols <======== */
+
+#define VB /**/		/* whether or not to create backup log version */
+
+#undef ULBD		/* supports underline, bold in ^U, ^B format */
+
+#define STATREPEAT	/* define for Rpt: on status line (undef STATCURLINE) */
+
+#undef STATCURLINE	/* define for Cur line on stat line (undef STATREPEAT) */
+
+
+/* ********************************************************************** */
+/* ********************************************************************** */
+
+/*  Other options now selected automatically depending on above #defines  */
+
+/* ********************************************************************** */
+/* ********************************************************************** */
+
+/* ---------------- Operating System dependent defintions --------------- */
+
+/* important note: max value for REPEATBUFS is 9! 			  */
+
+/* ---------------------------------------------------------------------- */
+#ifdef OSCPM			/* uses Software Toolworks C/80 */
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 2500		/* how much empty space to save in buffer */
+#define FILEREAD "rb"		/* read a file in binary */
+#define FILEWRITE "wb"		/* write a binary file */
+#define FNAMESIZE 14		/* size of file names */
+#define INT16 /**/		/* ints are 16 bits */
+#define LINELIMIT 75		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .bak file by default */
+#define MAXBUFF 40000		/* maximum number of total characters */
+#define MAXLINE 1150		/* maximum number of lines (abt. MAXBUFF/30) */
+#define REPEATBUFS 3		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed on video */
+#define FILELF /**/			/* also in files */
+#define NEWLINE 13		/* 1st line separator: CR */
+#define USECTRLZ /**/
+#define NEEDTVLIB /**/		/* need standard c lib routines */
+#define BUFFINDEX unsigned int
+#endif
+
+/* ---------------------------------------------------------------------- */
+#ifdef MSDOS
+#define HELP /**/		/* help available */
+#define FULLHELP /**/		/* all of it */
+#define CONFIGFILE /**/		/* allow -c switch */
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 3000		/* how much empty space to save in buffer */
+#define FILEREAD "rb"		/* read a file in binary */
+#define FILEWRITE "wb"		/* write a binary file */
+#define FNAMESIZE 70		/* size of file names, allows paths */
+#define INT16 /**/		/* ints are 16 bits */
+#define LINELIMIT 75		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .bak file by default */
+#define MAXBUFF 60000		/* maximum number of total characters */
+#define MAXLINE 3500		/* maximum number of lines (abt. MAXBUFF/30) */
+#define REPEATBUFS 5		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed */
+#define FILELF	/**/		/* also in files */
+#define NEWLINE 13		/* 1st line separator: CR */
+#define BUFFINDEX unsigned int
+/* #define USECTRLZ */
+#endif
+/* ---------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+#ifdef GEMDOS
+#define HELP /**/		/* help available */
+#define FULLHELP /**/		/* all of it */
+#define CONFIGFILE /**/		/* allow -c switch */
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 3000		/* how much empty space to save in buffer */
+#define FILEREAD "r"		/* read a file in binary */
+#define FILEWRITE "w"		/* write a binary file */
+#define fopen fopenb
+#define FNAMESIZE 70		/* size of file names, allows paths */
+#define INT16 /**/		/* ints are 16 bits */
+#define LINELIMIT 75		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .bak file by default */
+#define MAXBUFF 60000		/* maximum number of total characters */
+#define MAXLINE 3500		/* maximum number of lines (abt. MAXBUFF/30) */
+#define REPEATBUFS 5		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed */
+#define FILELF /**/		/* also in files */
+#define NEWLINE 13		/* 1st line separator: CR */
+#define USECTRLZ /**/
+#define BUFFINDEX long
+#endif
+/* ---------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------- */
+#ifdef UNIX
+#define getchr fgetc
+#define FLOWCONTROL /**/	/* define this if you want ^S/^Q enabled */
+#undef COMMA_BAK		/* #define if you want ".," backup files */
+#define NO_EXTEND_CHAR		/* only allow 127 displayable chars */
+
+#define HELP /**/		/* help available */
+#define FULLHELP /**/		/* all of it */
+#define CONFIGFILE /**/		/* allow -c switch */
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 4000		/* how much empty space to save in buffer */
+#define FILEREAD "r"		/* read a file in binary */
+#define FILEWRITE "w"		/* write a binary file */
+#define FNAMESIZE 80		/* size of file names, allows paths */
+#define LINELIMIT 100		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .B file by default */
+		/* change to 0 if don't want, which is like other Unix eds */
+#define MAXBUFF 120000		/* maximum number of total characters */
+#define MAXLINE 5000		/* maximum number of lines (abt. MAXBUFF/30) */
+#define NEWLINE 10
+#define REPEATBUFS 9		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed on screen */
+#define BUFFINDEX unsigned int
+#endif
+/* ---------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------- */
+/* ---------------------- Misc defintions ------------------------------- */
+
+#define ARB 100
+#define ALMOSTOUT 300   /* garbage collect when ALMOSTOUT characters left */
+#define BACKSPACE 8
+#define BEGLINE (-10)  /* marks beginning of active line */
+#define BELL 7       /* bell */
+#define CR 13 
+#define ESC 27 
+#define ENDFILE 26
+#define ENDLINE 0  /* marks end of a line */
+#define GARBAGE (-14)  /* filler character for gbgcol */
+#define LF 10 
+#define NO 0
+#define TOGUNDERLINE 21 	/* ^U for underline */
+#define TOGBOLD 2 		/* ^B for bold */
+#define TAB 9
+#define YES 1
+
+#define E0 0			/* element 0 of arrays (skipped) */
+
+/* ---------------------- Wild card values ----------------------------------- */
+#define W_letter 12		/* ^L is letter */
+#define W_digit 4		/* ^D is digit */
+#define W_alpha 1		/* ^A is alpha num */
+#define W_punc 16		/* ^P is punctuation */
+#define W_anything 24		/* ^X is any character */
+#define W_others 15		/* ^O is non-alpha */
+#define W_user 21		/* ^U is user set */
+#define W_span 23		/* ^W is "word" of */
+#define W_skip 14		/* ^N is not in word of*/
+/* -------------------- Command Definitions ----------------------------- */
+
+#define VRIGHT 1		/* lex val right, or foward one character */
+#define VLEFT 2 		/* left or backwards one character */
+#define VDOWNLINE 3		/* down line, to beg. of next line */
+#define VUPLINE 4		/* up line, to beg. of prev. line */
+#define VDOWNCOL 5		/* down in column ^D */
+#define VUPCOL 6		/* up in column ^U */
+#define VDELLAST 7		/* delete previous character */
+#define VDELNEXT 8		/* delete forward */
+#define VINSERT 9		/* insert text */
+#define VKILLALL 10		/* kill entire current line */
+#define VKILLREST 11		/* kill rest of current line */
+#define VKILLPREV 12		/* kill previous part of line */
+#define VBEGLINE 13		/* beginning of current line */
+#define VENDLINE 14		/* back of current line */
+#define VSEARCH 15		/* find a string */
+#define VNEXT 16		/* next - search across pages */
+#define VFLIP 17		/* page a screen full */
+#define VTOP 18			/* top of buffer */
+#define VBOTTOM 19		/* bottom of buffer */
+#define VFBEGIN 20		/* beginning of file */
+#define VVERIFY 21		/* verify: rewrite screen or show dot */
+#define VOPENLINE 22		/* open a new line */
+#define VREMOVE 23		/* remove last thing maniuplated */
+#define VSAVE 24		/* put text in save buffer */
+#define VGET 25			/* get or restore save buffer */
+#define VWPAGE 26		/* write current page, fetch next page */
+#define VYANK 27		/* "save" from external file */
+#define VQUIT 28		/* quit */
+#define VSAGAIN 29		/* search for the thing again */
+#define VXREPEAT 30		/* execute repeat buffer */
+#define VMEMORY 31		/* print remaining buffer space */
+#define VSETPARS 32		/* set parameters */
+#define VRMVINS 33		/* remove last, enter insert mode */
+#define VUNKILL 34		/* unkill last line killed */
+#define VMVWORD 35		/* move over a word at a time */
+#define VMVBWORD 36		/* move over words backwards */
+#define VSAPPEND 37		/* append to save buffer */
+#define VPRINTS 38		/* print screen */
+#define VHELP 39		/* show contents of repeat buffer */
+#define VHALFP 40		/* half a page down */
+#define VABORT 41		/* abort */
+#define VCHANGE 42		/* change n chars */
+#define VJUMP 43		/* jump back to prev loc */
+#define VTIDY 44		/* tidy - justify */
+#define VNOTELOC 45		/* note current location */
+#define VRETNOTE 46		/* ^N  - Return to noted loc */
+#define VSYSTEM 47		/* call operating system */
+#define VEDITRPT 48		/* edit repeat buffer n */
+#define VSTORERPT 49		/* store in repeat buffer n */
+#define VEXECRPT 50		/* execute repeat buffer k n time */
+#define VINSPAT 51		/* insert search pattern */
+#define VUSER1 52		/* spare 1 */
+#define VUSER2 53		/* spare 2 */
+
+#define SLOOPBEG '<'		/* beginning of a loop */
+#define SLOOPEND '>'		/* end of a loop */
+
+#define LEXVALUES 53		/* total number of lexical values */
+#define UNKNOWN (-5)		/* unknown lexical value */
+
+/* ********************************************************************* */

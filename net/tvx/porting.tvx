@@ -1,0 +1,55 @@
+	Additional notes for porting TVX
+
+	While the code is pretty well documented and contains some notes
+for porting TVX to new environments, I thought a few additional notes
+might be helpful.
+
+	It should be very simple to port TVX to a new machine for a
+specific terminal.  The only "hard" part comes when trying to use a
+package like TERMCAP.  Then, the 4.2 Unix code can serve as a guide.
+In effect, what that code does is get the screen controls and patch
+the regular TVX screen control locations.
+
+	Typically, however, it should be almost trivial (assuming a
+fairly standard C implementation - the current code compiles unchanged
+on 4 different C compilers) to generate a version of TVX for a specific
+terminal.  The main steps:
+
+	1. Define the control codes for the terminal.  These are explained
+in some detail in the manual.
+
+	2. Fix file I/O calls.  This may take no changes at all.  The
+main issue has been the mode argument to fopen.  TVX likes to get the
+file raw - with NO end of line handling by the C I/O system.  These
+things are identified by #define's in tvx_defs.ic.  The other issue
+is what is the end of line character.  Unix likes LF only, while
+MS-DOS and descendants like CR/LF (actually DEC RT-11 descendants).
+The #define FILELF and NEWLINE handle this.
+
+	3. The last issue is getting characters to and from the terminal.
+These are isolated in tvx_io.c.  The critical routines:
+	ttrd() [ and ttrd_() ]:  This reads one character (ANY possible
+character, except possible ^S and ^Q) from the terminal, UNECHOED.
+The routine ttinit is called to possibly initialize things, and ttclos
+at the end to undo whatever ttinit did.
+
+	ttwt() and ttwtln():  These are used to send characters
+to the screen.  ttwt sends a single character, immediately and unbuffered.
+ttwtln can be based on ttwt, but is provided and used whenever a chunk
+is available to write.  This is essential on busy time shared systems.
+
+	That's really the only problem areas.  One good thing to do
+when porting is to find all the uses of #ifdef (and #ifndef) for
+the implementations described: MSDOS, UNIX, GEMDOS.  Those certainly
+identify the areas most likely to be different on your system.
+
+	I'd be glad to answer any questions you might have about porting.
+
+--
+Dr. Bruce E. Wampler
+University of New Mexico
+Department of Computer Science
+Albuquerque, NM 87131
+
+..{ucbvax | seismo!gatech | ihnp4!lanl}!unmvax!wampler
+

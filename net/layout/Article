@@ -1,0 +1,56 @@
+This post appeares on hardware-related nets because of a recent debate
+on how to build a system. So there might be someone out there interested
+in a public domain printed circuit router. The source will appear on
+net.sources only (in 10 parts, following this post).
+
+PCB is an integrated router and editor to design printed circuits boards.
+It adopts the 'correct by construction' principle, that is it will enforce
+a certain set of design rules (such as cooper traces have to maintain a
+minimal separation, holes have to be aligned etc). PCB maintains a data base
+of the desired circuit to insure that signals of different net cannot be
+shorted, to keep track of unfinished nets, to support the routers etc. 
+
+PCB V1.24 features:
+   * Interactive layout editing functions with on-the-fly design rule
+     checking and enforcement.
+   * Interactive placement functions.
+   * Integrated routers that can be used interactively or automatically.
+     (Completion rates of >90% were achieved on a board with about 1.9
+     14 pin DIP chips / square inch)
+   * Functions to move, shorten or straighten wires.
+   * Supports the MOSIS process for 4 layer PC boards.
+   * Update functions to allow changes to the circuit data base without
+     re-routing the entire board.
+   * Support for externally supplied geometry (such as connectors,
+     text strings, logos etc).
+   * Multiple wire widths.
+   * Caltech Intermediate Form (CIF V2) output generator.
+   * Versatec Plotter output for previews.
+
+Required input files:
+   * A list of device descriptions.
+   * A list of used devices with optional placement information.
+   * A net list of the desired circuit.
+
+Required hardware:
+   * A VAX running Unix 4.1 BSD
+   * An unmodified AED-512 graphic terminal with a Bitpad-1 graphic
+     tablet and a 4 key mouse.
+   * (optional) A Versatec V-80 plotter
+
+PCB is written in 'C' and it might be possible to port it to other
+system configurations. It was successfully ported to 4.2 systems with
+a different graphic hardware, however doing so requires some hacking.
+A manual is included that gives some hints on how to port PCB.
+
+The CIF output format is probably unpopular execpt for people with
+MOSIS/Arpa connections. It is defined in the Mead & Conway book on
+VLSI systems and PCB uses only a few constructs of it. In other words,
+it should be easy to change the post-processor to produce other output
+formats (I'm interested in any such code).
+
+Please send me a message with your e-mail address if you use PCB.
+This is because of curiousity and to have a way to send out bug-fixes.
+
+  Andreas Nowatzyk       ARPA net:  agn@cmu-cs-vlsi.arpa
+                          usenet:   ...!seismo!cmu-cs-vlsi!agn
