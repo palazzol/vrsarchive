@@ -531,7 +531,8 @@ static otradhead()
 
 otradepost()
   {
-  register int i,j,value,isub,izarg;
+  register int i,j,isub,izarg;
+  long value;
   dnditm = dndcount = 0;
   nosignal = 1; /* disable signals */
   resetscroll();	otradhead();
@@ -567,7 +568,7 @@ otradepost()
 				if (izarg >= 0) value *= 2;
 				while ((izarg-- > 0) && ((value=14*(67+value)/10) < 500000));
 				}
-			lprintf("\nItem (%c) is worth %d gold pieces to us.  Do you want to sell it? ",i,(long)value);
+			lprintf("\nItem (%c) is worth %ld gold pieces to us.  Do you want to sell it? ",i,value);
 			yrepcount=0;
 			if (getyn()=='y')
 				{
