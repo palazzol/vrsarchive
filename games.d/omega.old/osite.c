@@ -979,6 +979,7 @@ void l_pawn_shop()
 	if (items[i] != NULL) {
 	  items[i]->known = 2;
 	  if (items[i]->objchar == CASH)
+	    free((char *)items[i]);
 	    items[i] = NULL;
 	}
       }
@@ -1033,7 +1034,7 @@ void l_pawn_shop()
 	    mprint("Sell?");
 	    if (ynq() == 'y') {
 	      Player.cash += ((int)(item_value(Player.possessions[i]) / 4));
-	      free((char *) items[0]);
+	      if (items[0]) free((char *) items[0]);
 	      for(j=0;j<9;j++)
 		items[j] = items[j+1];
 	      items[9] = Player.possessions[i];
