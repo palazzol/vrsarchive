@@ -1,0 +1,50 @@
+From littlei!uunet!convex!killer!osu-cis!att!cbnews!lvc Sat Jul 30 16:48:10 PDT 1988
+Status: R
+
+Article 447 of comp.sources.games.bugs:
+Path: littlei!uunet!convex!killer!osu-cis!att!cbnews!lvc
+>From: lvc@cbnews.ATT.COM (Lawrence V. Cipriani)
+Newsgroups: comp.sources.games.bugs
+Subject: 3 possible bugs in omega
+Keywords: omega,bug
+Message-ID: <737@cbnews.ATT.COM>
+Date: 29 Jul 88 13:46:43 GMT
+Organization: AT&T Bell Laboratories, Columbus
+Lines: 34
+
+I found three bugs in Omega when I ran it through my C/C++
+syntax checker.  I don't have a patch so you get this ...
+
+ocom3.c: assignment in conditional context near line 558
+    if (Player.possessions[O_BOOTS]->usef = I_BOOTS_JUMPING)
+should be:
+    if (Player.possessions[O_BOOTS]->usef == I_BOOTS_JUMPING)
+
+oitemf3.c: assignment in conditional context near line 278
+    if (response = 'w') enchant(o->blessing*2+1);
+should be:
+    if (response == 'w') enchant(o->blessing*2+1);
+
+The next one I'm not sure of, the indentation makes it look like
+there is a bug, but it might be fine.
+
+oinv.c: dangling else near line 114
+  if (Current_Environment != E_COUNTRYSIDE) 
+    if ((Level->site[x][y].locchar != ' ') &&
+	(Level->site[x][y].locchar != '0')) {
+      cpy = ((pob) malloc(sizeof(objtype)));
+      tmp = ((pol) malloc(sizeof(oltype)));
+      *cpy = *o;
+      cpy->used = FALSE;
+      tmp->thing = cpy;
+      tmp->next = Level->site[x][y].things;
+      Level->site[x][y].things = tmp;
+    }
+> else if (Level->site[x][y].p_locf == L_VOID_STATION)
+    setgamestatus(PREPARED_VOID);
+
+-- 
+
+Larry Cipriani, AT&T Network Systems, Columbus OH, (614) 860-4999
+
+
