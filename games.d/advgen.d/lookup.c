@@ -19,9 +19,9 @@ newnode(s)
 {
 #ifdef	lint
     node	*result = NNULL;
-#else	lint
+#else
     node   	*result = (node *) malloc(sizeof (node));
-#endif	lint
+#endif
 
     if (result == NNULL)
     {

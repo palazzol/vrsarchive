@@ -293,7 +293,7 @@ win:
 #ifndef CURSED
 		    if (CurWin->w_cursor.col + strlen(ip->desc) > COLS-3)
 			prt("\n");
-#else CURSED
+#else
 		    {
 		    	int	y, x;
 			getyx(CurWin, y, x);
@@ -301,7 +301,7 @@ win:
 		 	if (x + strlen(ip->desc) > COLS-3)
 				prt("\n");
 		    }
-#endif CURSED
+#endif
 		    prt(ip->desc);
 		    prt(". ");
 		}

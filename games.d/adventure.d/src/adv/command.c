@@ -108,7 +108,7 @@ int readln (words)
 		pcstat () ;
 		(void) strcpy (buffer,"LOOK\n") ;
 	}
-#endif STATUS
+#endif
 
 	cnt = 0 ;
 	for ( cnt = 0, b = buffer ; *b != '\n' && *b != '\0' ; )

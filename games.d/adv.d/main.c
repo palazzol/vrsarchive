@@ -15,7 +15,7 @@
 #ifndef	CURSED
 #undef TRUE
 #undef FALSE
-#endif CURSED
+#endif
 #undef LL
 #include <pwd.h>
 #include <ctype.h>
@@ -78,7 +78,7 @@ main(argc, argv)
 		printf ("Sorry, this program won't run on your terminal.\n");
 		exit(1);
 	}
-#endif CURSED
+#endif
 	printf("Hi %s, just a second while I create the world...\r\n", name);
 	fflush(stdout);
 
@@ -97,7 +97,7 @@ main(argc, argv)
 	Wnewline(BaseWin, 1);
 	Wnewline(TopWin, 1);
 	WSetRealCursor++;
-#else CURSED
+#else
 	initscr();
 	crmode();
 	noecho();
@@ -121,7 +121,7 @@ main(argc, argv)
 		wrefresh(stdscr);
 	}
 	scrollok(BaseWin, TRUE);
-#endif CURSED
+#endif
 
 	/*
 	 * Read in the adventure file.
@@ -134,7 +134,7 @@ main(argc, argv)
 #ifdef BSD41				/* 4.1 */
 	sigset(SIGINT, IntCatch);
 	sigset(SIGQUIT, IntCatch);
-#else					/* 4.2 */
+#else
 	signal(SIGINT, IntCatch);
 	signal(SIGQUIT, IntCatch);
 #endif
@@ -173,7 +173,7 @@ IntCatch()
 	else {
 #ifndef CURSED
 		if (BaseWin->w_cursor.col)
-#endif	CURSED
+#endif
 			Wputc('\n', BaseWin);
 		Wputs(msg, BaseWin);
 		Wputc('\n', BaseWin);

@@ -42,7 +42,7 @@ int executive (a,b)
 		case 4:
 #ifdef CACHE
 			ClrCache () ;
-#endif CACHE
+#endif
 			setval (b,0) ;
 			break ;
 

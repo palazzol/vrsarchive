@@ -13,7 +13,7 @@
 
 #ifdef SHOWOP
 	extern int CurKey ;
-#endif SHOWOP
+#endif
 
 int process (key)
   int key ;
@@ -44,7 +44,7 @@ int process (key)
 
 #ifdef SHOWOP
 		CurKey = rec ;
-#endif SHOWOP
+#endif
 		while ( bp < endb )
 		{
 			instr = codebuf [bp] ;
@@ -60,7 +60,7 @@ int process (key)
 
 #ifdef SHOWOP
 			showop (YES,instr,op) ;
-#endif SHOWOP
+#endif
 			switch (instr)
 			{
 			  case ADD:

@@ -9,7 +9,7 @@ typedef unsigned short	smallint;
 
 #ifndef	DEFINTERPRETER
 #define DEFINTERPRETER	"/usr/games/adv"	/*  Program to run output */
-#endif	DEFINTERPRETER
+#endif
 #define	DEFWORDSIZE	3	/* Number of significant chars. in vocab. */
 #define DEFINVSIZE	5
 #define	DEFLLIFE	240	/* Lamp life */
@@ -24,10 +24,10 @@ typedef unsigned short	smallint;
 
 #ifndef	MAXCODE
 #define	MAXCODE		50000	/* Generated code for daemons and rules */
-#endif	MAXCODE
+#endif
 #ifndef	MAXVOCAB
 #define	MAXVOCAB	1000	/* Words in noun or verb table */
-#endif	MAXVOCAB
+#endif
 #define	MAXROOMS	255	/* Rooms/Locations */
 #define	MAXITEMS	255	/* Items */
 #define	MAXVARS		255	/* Variable names */

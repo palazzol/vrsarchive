@@ -21,7 +21,7 @@ dl_newline()
 	Wsize(TopWin, COLS, ROWS);
 	fullsize = TRUE;
 }
-#endif CURSED
+#endif
 
 /*
  * Display the current room in the top window.
@@ -43,7 +43,7 @@ disply()
 	 */
 	if (f1 == 0)
 		Wgetframe(&f1, &f2, &f3, &f4, &f5, &f6, &f7, &f8);
-#endif CURSED
+#endif
 
 	/*
 	 * Flush pending line (if any).  Switch output to top window,
@@ -63,7 +63,7 @@ disply()
 	dlleft = TopWin->IYE;
 	oldnlproc = nl_proc;
 	nl_proc = dl_newline;
-#endif CURSED
+#endif
 
 	/*
 	 * If it's dark, just say so.  Otherwise find all the items
@@ -94,14 +94,14 @@ disply()
 #ifndef CURSED
 			if (TopWin->w_cursor.col + strlen(ip->desc) > COLS-3)
 				prt("\n");
-#else CURSED
+#else
 			{
 				int	y, x;
 				getyx(TopWin, y, x);
 				if (x + strlen(ip->desc) > COLS-3)
 					prt("\n");
 			}
-#endif CURSED
+#endif
 			prt(ip->desc);
 		}
 	}
@@ -141,7 +141,7 @@ cleanup:
 		Wsetmargins(TopWin, 0, 0, COLS, TopWin->OYE - 1);
 		fullsize = FALSE;
 	}
-#endif CURSED
+#endif
 
 	/*
 	 * Switch output back to the base window.
@@ -149,5 +149,5 @@ cleanup:
 	CurWin = BaseWin;
 #ifndef CURSED
 	nl_proc = oldnlproc;		/* restore */
-#endif CURSED
+#endif
 }

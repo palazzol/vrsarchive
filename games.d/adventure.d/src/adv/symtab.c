@@ -113,4 +113,4 @@ int pstab ()
 	return ;
 }
 
-#endif PSTAB
+#endif

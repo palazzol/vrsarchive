@@ -2,26 +2,26 @@
 #ifndef CURSED
 #include <local/window.h>
 
-#else CURSED
+#else
 #include <curses.h>
-#endif CURSED
+#endif
 #ifndef CURSED
 #define	refresh() (WRCurRow = BaseWin->w_cursor.row, \
 		   WRCurCol = BaseWin->w_cursor.col, \
 		   Wrefresh(0))
-#else CURSED
+#else
 #undef	refresh
 typedef	WINDOW	Win;
 #define	refresh() (wrefresh(TopWin), wrefresh(BaseWin))
 #define	Wrefresh(n) (n ? wrefresh(n) : (wrefresh(TopWin), wrefresh(BaseWin)))
-#define	Wclear(w, n) wclear(w)
+#define	Wclear(w, n) werase(w)
 #define	WAcursor(w, x, y) wmove(w, (x), (y))
 #define Wputs(s, w) waddstr(w, s)
 #define Wputc(c, w) waddch(w, c)
 #define	Wcleanup() endwin()
 #define	Wexit(n) (endwin(), exit(n))
 #define ROWS LINES
-#endif CURSED
+#endif
 
 #define BOOL		char
 #ifndef TRUE
@@ -46,7 +46,7 @@ Win	*TopWin;		/* Top window - room description */
 Win	*BaseWin;		/* Base window - commands, etc */
 #ifdef CURSED
 Win	*CurWin;		/* Current window */
-#endif CURSED
+#endif
 int	ROWS, COLS;		/* Screen size */
 int	ReadingTerminal;	/* True => in a getchar() */
 int	rm;			/* Current room */

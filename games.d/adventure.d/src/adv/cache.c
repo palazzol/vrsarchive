@@ -23,7 +23,7 @@ static int full = NO ;
 static struct ctabstr ctab[CACHESIZE] ;
 static short int cache[MAXCACHE] ;
 static int cachesize = 0 ;
-#endif CACHE
+#endif
 /*
 **	rdcode -- fetch the code addressed by key.
 **
@@ -42,7 +42,7 @@ int rdcode (key)
 #ifdef CACHE
 	if ( ( endb = GetCache (key) ) > 0 )	/* already in memory? */
 		return (endb) ;
-#endif CACHE
+#endif
 
 	if ( ( endb = readk (dbunit,key,codebuf,BUFSIZE*2) ) < 1 )
 		return (ERROR) ;
@@ -57,7 +57,7 @@ int rdcode (key)
 		return (endb) ;
 
 	PutCache (key,endb) ;		/* lets keep a copy around */
-#endif CACHE
+#endif
 
 	return (endb) ;
 }
@@ -200,6 +200,6 @@ int pcstat ()
 	return ;
 }
 
-#endif STATUS
+#endif
 
-#endif CACHE
+#endif

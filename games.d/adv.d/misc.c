@@ -168,7 +168,7 @@ wgets(bp, bs)
 			Wputc('\n', CurWin);
 		if (COLS - CurWin->w_cursor.col > bs)
 			bs = COLS - CurWin->w_cursor.col;
-#else CURSED
+#else
 	{
 		int	y, x;
 		getyx(CurWin, y, x);
@@ -181,7 +181,7 @@ wgets(bp, bs)
 			if (COLS - x > bs)
 				bs = COLS - x;
 		}
-#endif CURSED
+#endif
 	}
 
 	/*
@@ -213,9 +213,9 @@ wgets(bp, bs)
 		else if (c == Ctl('l'))	/* redraw screen */
 #ifndef CURSED
 			ScreenGarbaged++;
-#else CURSED
+#else
 			wrefresh(curscr);
-#endif CURSED
+#endif
 		else if (c >= ' ' && c < 0177) {
 			bp[nch++] =c;
 			if (nch > bs)

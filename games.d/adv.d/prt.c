@@ -8,7 +8,7 @@
 #ifndef CURSED
 int (*nl_proc)();		/* if not null, called before printing \n */
 
-#endif CURSED
+#endif
 static char pbuf[256];
 static int pp;
 
@@ -25,7 +25,7 @@ prt(s)
 #ifndef CURSED
 			if (nl_proc)
 				(*nl_proc)();
-#else  CURSED
+#else
 			/*
 			 * Hack by VRS to avoid using curses scrolling.
 			 * Curses refreshes every scroll, so on terminals
@@ -51,7 +51,7 @@ prt(s)
 					wmove(CurWin, y-1, x);
 				}
 			}
-#endif CURSED
+#endif
 			Wputc(*s++, CurWin);
 		}
 		else
@@ -68,15 +68,15 @@ pput(c)
 	register char *p;
 #ifdef CURSED
 	int	y, x;
-#endif CURSED
+#endif
 
 	pbuf[pp++] = c;
 #ifndef CURSED
 	if (CurWin->w_cursor.col + pp >= COLS) {
-#else CURSED
+#else
 	getyx(CurWin, y, x);
 	if (x + pp >= COLS) {
-#endif CURSED
+#endif
 		p = &pbuf[pp];
 		*p = 0;
 		while (--p >= pbuf)
@@ -92,10 +92,10 @@ pput(c)
 		if (CurWin->w_cursor.col) {
 			if (nl_proc)
 				(*nl_proc)();
-#else CURSED
+#else
 		getyx(CurWin, y, x);
 		if (x) {
-#endif CURSED
+#endif
 			Wputc('\n', CurWin);
 		}
 		while (*p == ' ')

@@ -9,7 +9,7 @@
  */
 #undef	input
 #define input() (((yytchar=yysptr>yysbuf?U(*--yysptr):nxtchr())==10?(yylineno++,yytchar):yytchar)==EOF?0:yytchar)
-#endif	NO_PRETTY_ERRORS
+#endif
 
 void	lexerror();
 %}
@@ -82,7 +82,7 @@ lexerror()
 #ifndef	NO_PRETTY_ERRORS
 #	ifndef	BUFSIZ
 #		define	BUFSIZ	1024
-#	endif	BUFSIZ
+#	endif
 
 char	linebuf[BUFSIZ+1];
 char	*bufp = CNULL;
@@ -106,7 +106,7 @@ nxtchr()
 	}
 	return c;
 }
-#endif	NO_PRETTY_ERRORS
+#endif
 
 void
 dumpline()
@@ -143,7 +143,7 @@ dumpline()
 		cp++;
 	}
 	fprintf(stderr, "^\n");
-#endif	NO_PRETTY_ERRS
+#endif
 }
 
 void

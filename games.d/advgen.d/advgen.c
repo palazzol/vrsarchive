@@ -11,10 +11,10 @@ main(nargs, args)
 #ifdef lint
     char	*optarg = CNULL;
     int		optind = 0;
-#else	lint
+#else
     extern char	*optarg;
     extern int	optind;
-#endif	lint
+#endif
     int		opt;
     bool	oflag = FALSE;
     bool	wflag = FALSE;

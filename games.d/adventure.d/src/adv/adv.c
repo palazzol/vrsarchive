@@ -21,7 +21,7 @@ main ()
 
 #ifdef PSTAB
 	pstab () ;
-#endif PSTAB
+#endif
 
 	process (INITIAL) ;
 
@@ -53,7 +53,7 @@ int setup ()
 
 #ifdef CACHE
 	ClrCache () ;
-#endif CACHE
+#endif
 
 	return ;
 }

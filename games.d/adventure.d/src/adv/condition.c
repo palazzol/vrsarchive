@@ -35,7 +35,7 @@ int condition (bp,cbuf,len)
 
 #ifdef SHOWOP
 		showop (YES,instr,op) ;
-#endif SHOWOP
+#endif
 
 		if ( instr == NOT )
 		{
@@ -166,7 +166,7 @@ int flushc (bp,cbuf,len)
 
 #ifdef SHOWOP
 		showop (NO,instr,&(cbuf[bp])) ;
-#endif SHOWOP
+#endif
 
 		if ( instr == NOT )
 			continue ;

@@ -40,7 +40,7 @@ static tstop() /* control Y	*/
 	if (predostuff==1) s2choose(); else drawscreen();
 	showplayer();	lflush();
 	}
-#endif SIGTSTP
+#endif
 
 /*
  *	subroutine to issue the needed signal traps  called from main()
@@ -61,7 +61,7 @@ sigsetup()
 	signal(SIGPIPE, sigpipe);		signal(SIGTERM, sigterm);
 #ifdef SIGTSTP
 	signal(SIGTSTP,tstop);		signal(SIGSTOP,tstop);
-#endif SIGTSTP
+#endif
 	}
 
 #ifdef BSD	/* for BSD UNIX? */
@@ -96,7 +96,7 @@ static char *signame[NSIG] = { "",
 "SIGPROF", /*	27	 profiling time alarm */
 "","","","" };
 
-#else BSD	/* for system V? */
+#else
 
 static char *signame[32] = { "",
 "SIGHUP",  /*	1	 hangup */
@@ -120,7 +120,7 @@ static char *signame[32] = { "",
 "SIGPWR",  /*	19	 power fail */
 "","","","","","","","","","","","" };
 
-#endif BSD
+#endif
 
 /*
  *	routine to process a fatal error signal
