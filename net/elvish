@@ -1,0 +1,757 @@
+The following, a response to my grammar of the Klingonese language, is
+a guide to Elvish.  It was compiled by Robert M. Schroeck of Princeton
+University, reachable on Bitnet as rms@puccuts.BITNET (via your friendly
+Bitnet gateway, probably ucbvax/Berkeley).
+
+Pointers to this appeared in the net.sf-lovers and net.nlang groups.
+
+To those of you in ARPA-land receiving this under UNIX-SOURCES, oh well.
+That's what you get for receiving a Usenet newsgroup intended for anything
+too large for normal groups.  Pass it on to those on the SF-LOVERS list.
+
+-------------------------------------------------------------------------
+
+     Okay, you can do a lot more with Elvish than you can with
+klingonaase because Tolkien left a much larger vocabulary with
+which to work -- still, it's kind of small -- 600 words more or
+less.  However, there's evidence that, like in German, you can
+hook small words together to make bigger words that represent
+other things.  Most of what's in here is generalization from what
+is left of the tongues, but it seems to work well enough.
+     First thing to remember is that there are two Elvish languages
+extant:	 Sindarin (Grey-elvish) and Quenya (High-elvish).  They
+can be used in compound forms and structures, but it is sometimes
+confusing, not generally considered good usage, except in names
+and other nouns.  Everything here will be labeled as to source
+language.
+-----------------------------------------------------------------
+			   VERBS
+			  (Quenya)
+Present	    Past       Future	       Imperative      subjunctive
+root + a    root + e   root + uva      root + e	       root + ai
+na = is	    ne = was   nuva = will be  ne! = be!       nai = may it be
+sila =	    sile =     siluva = will   sile! =	       sulai = may it
+  shines      shone	  shine		 shine!		 shine
+
+		The plural is formed by adding "r".  When
+	    the subject is plural, the verb must be, also:
+	    lassi lantar = leaves fall
+		To indicate the pronouns  I, we, and thou
+	    as subjects, the following suffixes are added:
+	    -n for I, -(l)met for we, and -lye for thou.
+	    In the case of -met, the l may take the place
+	    of the plural r:  lantalmet = we fall
+
+			(Sindarin)
+Present	   Past	       Future	    Imperative	 Participial   Auxiliary
+root + a   root + ant  root + ath   root + o	 root + iel    root + i
+na = is	   nant = was  nath = will  no! = be!	 niel = being  ni = have
+			  be					 been
+edra =	   edrant =    edrayh =	    edro! =	 edriel =      edri = have
+   open	      opened	  will open    open!	    opening	 opened
+
+	       To indicate the pronoun I is the subject, a
+	    vowel and the letter n are added:
+
+root + on  root + en   root + ath + on			       root + in
+non = I	   nen = I     nathon =	 I			       nin = I
+      am	 was	   will be				 have been
+
+	       No other pronoun structures survive in either
+	    language.
+-------------------------------------------------------------------------
+				NOUNS
+	  Compound nouns are constructed by placing the descriptive
+     element before the main element, unlike English.  The concepts
+     "of" and "of the" are expressed by word order:
+	  Dunadan "Man of the West" literally "west-man"
+	  Yavanna "Giver of Fruits" literally "fruit-gift"
+
+	  It is permissable to combine Quenya and Sindarin elements.
+     Tolkien said "Boromir" was such a combination.
+
+	  Quenya plural is formed by adding "i" to words ending in
+     one or more consonants, "r" to words ending in vowels:
+     elen -> eleni, sinda -> sindar, las -> lassi, alda -> aldar.
+	  Possessive in Quenya is formed by dropping the final vowel,
+     if there is one, and adding "o" for singular forms.  For plurals,
+     add -on, and do not drop the vowel.  Varda -> Vardo "Varda's"
+     Silmarilli -> Silmarillion "of the Silmarils".
+	  Prepositional elements come at the end of Quenya words, but
+     the final vowel is not dropped:  Oiolosse -> Oiolosseo "from Ever-
+     white", Lorien -> Loriendesse "in Lorien".
+	  In Quenya, the dual element is formed by adding "t":	maryat
+     "hands-her-two", met "us two".
+
+	  Sindarin plurals are formed by changing the vowels, as shown
+     below:
+		 adan = man, edain = men
+		 amon = hill, emyn = hills
+		 annon = gate, ennyn = gates
+		 barad = tower, beraid = towers
+		 mallorn = gold-tree, mellyrn = gold-trees
+		 orch = orc, yrch = orcs
+		 orod = mountain, ered = mountains
+
+	  Some of the rules covering these changes are:	 stressed a
+     becomes e, unstressed a becomes ai, o becomes e, i, or y.
+
+	  Collective plurals are formed in Sindarin by adding -ath
+     or, usually in the case of peoples, -rim, literally meaning
+     "a host", "a great number":  elenath "all the stars", Rohirrim
+     "all the Masters of Horses".
+	  An augmentive suffix, -on, is added to Sindarin nouns to
+     signify that the thing is very great or mighty, as in aearon
+     "great sea".
+
+-----------------------------------------------------------------------
+			      ARTICLES
+
+	  The only article in Elvish is the Quenya word "i", meaning
+     "the".  Indefinite articles in Quenya and all articles in Sin-
+     darin are apparently implied by the structure of the sentence.
+	  There exists what appears to be a compound form similar
+     to the French du and au;  it is the word "mi", translated by
+     Tolkien as "in the".  It is assumed to be a combined form
+     incorporating the pronoun i.
+
+-----------------------------------------------------------------------
+			      SYNTAX
+Acceptable structures are:
+			      Quenya
+subject-verb-object		    object-verb-subject
+hisie untopa Calaciryo miri	    tier undulave lumbule
+mist covers Calacirya's jewels	    roads drowned (by) heavy shadow
+
+	       object-subject-verb
+	       maryat Elentari ortane . . .
+	       her two hands Star-Queen lifted up . . .
+
+       Verbs occur at the end of sentences only in questions.
+	   Si man i yulma nin enquantuva?
+	   Now who the cup for me will refill?
+
+       Sentences beginning with verbs tend to be emotionally charged:
+	   Auta i lome!
+	   Passing is the night!
+
+       If there are one or more nouns before the verb, one of them will
+    usually be the subject, unless it has a prepositional suffix (-o,
+    -ello, -esse "from, "in"), in which case the subject is the noun
+    following the verb.
+	   Yeni ve linte yuldar avanier.
+	   YEARS like swift draughts have passed away.
+			 vs.
+	   sindanoriello caita mornie i falmalinnar
+	   from grey country lies DARKNESS the waves upon
+
+       Most adjectives precede the noun; adjectives of plural nouns must
+    be plural.	Adjectives are made plural by changing the final vowel to
+    "e" or adding "e" if there is no final vowel.
+       Two adjectives, or a possessive and an adjective, are never found
+    in sequence, as in "the big blue ball" or "Joey's red truck".  The
+    structure would be "the big ball blue" or "Joey's truck red".  Also,
+    possessives are never placed between a preposition and its object:
+	 Vardo nu luini tellumar    NOT	  nu Vardo luini tellumar
+	 Varda's under blue domes	  under Varda's blue domes
+
+       These are only guidelines -- in a highly inflected language such
+    as Quenya, a great amount of freedom in word order is allowed.
+
+				Sindarin
+object-verb-subject		     verb-object
+le linnathon			     na vedui Dunadan
+(to) thee chant-I-will		     (it) is (at) last Dunadan
+       (subject suffix)
+
+verb-subject			     subject-verb-object
+noro lim, Asfaloth!		     Naur dan i ngaurhoth!
+ride on, Asfaloth!		     Fire take the werewolves!
+
+	 Verbs are usually followed by their modifiers, which may
+      even come at the end of a sentence:
+	      Cuio i Pherian annan!
+	      Live the Halflings long!
+
+	 Nouns are usually followed by their modifiers.	 The concepts
+      "of" and "of the" are usually implied by word order.  Where "from"
+      or "of" is stated, the Sindarin word o stands alone, rather than
+      as a suffix:
+	      o menel,	    Celebrimbor o Eregion
+	      from heaven,  Celebrimbor of Eregion
+			    vs.
+	      Annon edhellen
+	      Door (of the) Elves
+--------------------------------------------------------------------------
+		   English to Elvish Dictionary
+
+       Q = Quenya, S = Sindarin.  Verb roots are preceded by "to", as
+       in "to abide".
+
+       Accents are indicated by characters in the line above the word:
+				/  .
+			       yavie
+       / = acute accent,    = circumflex,  and . = umlaut
+       (two small dots over a vowel).
+
+       A pronunciation key will be found at the end of the dictionary.
+
+				A
+abhorrence  :  deloth		     abhorrent	: Q saur, S thaur
+to abide  :  Q mar		     abominable :  Q saur, S thaur
+
+abroad :  S palan		     abyss :  ia
+across :  S thar, S thrad	     afar :  S palan
+again : Q en-			     air : Q vilya, Q wilya
+alas :	Q ai			     all (plural) :  Q ilye
+	       /
+the all :  Q iluve		     alone : er
+
+and :  S a, Q ar		     anger : ruth
+as :  Q ve			     ash : S lith
+							  /  .
+augmentive suffix :  S -on	     autumn : S iavas, Q yavie
+			   .
+awakening :  Q coire, cuivie, S echoir, echui
+awe :  gaya
+
+				B
+bald :	S rudh			     bane :  dagnir
+
+barrow :  S tur, plural tyrn	     battle : dagnir, ndak, dagor
+to be : Q,S n-			     be it that : Q nai
+beard : fan(g)			     beautiful (fair) : Q vana
+because (for) : Q an		     beech : neldor
+to behold : Q aiy-, el-		     to bend : lok
+beside : Q ar			     beside : Q ar
+between : S im, Q imbe		     beyond : Q pella
+								.
+birch : S brethil		     bird (small) : S aew, Q aiwe
+black : mor, vorn		     blessed : aman, man
+blood : agar, S sereg, Q serke	     bloodstained : agarwaen
+	     / .						.
+blossom : Q lote, S loth	     blue : S lhun, luin, Q luine
+						  /
+book : Q parma			     bow : cu, Q luva
+breeze : Q hwesta		     bridge : S iant, Q yanta
+			  .	 .
+brilliance : S ril, Q rilde, rille   bull : mundo
+butterfly : Q wilwarin
+
+				 C
+cave : grod, groth, rod		     chambers : S sammath
+	       /
+champion : Q arato		     to chant : S lin-
+
+children : Q hini, S hin	     chill : S ring
+to cleave : cir-, kir-, ris-	     cleaver : crist, grist, kris, hyando
+cleft : cir, cirith		     cloak : Q collo, S gollo
+
+cloud : S fan, Q fana, plural fanyar coast : falas, falath
+collective plural suffix : S -ath, S -rim, Q rimbe
+course : rant			     cold : S ring
+	     /					    /
+to come : Q tul-		     commander : Q kano, S gon
+	      /
+consumer : Q vasa		     cool : him
+to cover : Q untup-		     crow : S craban, plural crebain
+to cry : Q, S nall-		     cup : Q yulma
+to cut : cir, kir
+
+				 D
+									.
+dark : S dur, mor		     darkness : S fuin, Q huine, Q mornie
+daughter : Q,S -iel		     dauntless : S thalion
+		/
+day : S -or, Q re		     dead : S firn
+						 .   / .
+death : S gurth			     deep : Q bale, bule
+demon : S raug, rog, Q rauko	     devoted to : (n)dil, (n)dur, nil, nur
+dimness : S du, gwath, wath, weth    direction : Q men
+dog (great) : huan		     dome : Q telluma, plural tellumar
+doom : S amarth, Q ambar, umbar	     door : S annon, pl. ennyn, fen, fennas
+double : adu			     down : Q ndu, nu
+to down-lick : Q undulav-	     to down-roof : Q untup-
+draught : Q yulda, plural yuldar     to draw : S teith-
+dread : gaya, S gor, goroth	     to drown : Q undulav-
+	  / .	  / .
+dusk : S dome, Q lome, S moth	     Dwarf : S naug plural naugrim, nog,
+					       nogoth plural noegyth
+to well : Q mar-		     dwelling : S bar, Q mar
+
+				 E
+eagle : Q soron, S thoron	     ear : S lhaw
+Earth : Q Arda			     earth (dirt) : Q kemen
+					     /
+east : S rhun, run, Q rom, romen     echo : lom
+echo (great) : lammoth		     Elf : S edhel plural edhil, S eledh,
+					   Q elda plural eldar, quendi
+empty : lost			     to encircle : Q pel-
+encircling wall : S echor	     end : met
+to end : Q tel-			     Ent : S Onod plural Onodrim or Enyd
+to enter : S minn-		     even thou : Q elye
+ever : Q oi, oio, S oiale, ui	     exalted : Q varda
+eye : hen
+
+				 F
+fading : S beleth, firith, Q quelle  fair-haired : Q vana
+to fall : Q lant-		     fangs : S carach, carag, carak, carch,
+						    .
+					     Q caraxe, carca
+far : Q hae			     far and wide : Q, S palan
+						   /  .
+far-seer: Q palantir pl. palantiri   farewell : namarie
+fate : Q ambar, umbar, S amarth	     father : Q atar, S adar
+feast : mereth			     feather : Q quesse
+fell (adj., "fell beast") : aeg	     feminine name suffix : -iel
+
+fence : S iath			     fence (outer) : S ephel
+to fill : Q quant-		     to find : Q hir-, utuv-
+figure : Q fana			     to finish : Q tel-
+fire : Q nar, S naur		     first : Q minya
+		   / .
+fist : S paur, Q quare		     flame (leaping) : lach, lhach
+flame (red) : S ruin, Q runya	     flat-lands : S talath
+to flow away, to flow down : Q cel-, kel-
+	    / .
+flower : Q lote, lot, S loth	     flowing : sirith
+foam : rhos, ros, roth, ving, wing   to follow : Q khil, hil
+foot : S dal, Q tal		     for (because) : Q an
+									   .
+ford : athrad, iach		     forest : S erin pl. eryn, taur, Q taure
+forsaken : egla			     fortress : ost
+friend : (n)dil, (n)dur, nil, nur, S mellon
+from : Q -ello, Q  -o		     from on high : Q ndu
+	   / .
+fruit : Q yave
+
+				 G
+gape : faug			     gate : Q ando, S annon pl. ennyn, fen,
+					    fennas
+garlanded maiden : Q -riel	     to gaze : S dir-, Q tir-
+to gaze afar : S palantir	     gazing : S diriel
+gift : Q anna			     to give : S on-
+
+glass : S heled			     gleam : glin
+glittering : bril		     glittering white : silivren
+		      .
+gloom : S fuin, Q huine		     gloomy : dim
+glory : S aglar, Q alcar, alkar	     glorious : S aglareb, Q alcarin,
+						 alkarinque
+to go around : Q pel-		     to go away : Q cel-, kel-
+goblin : S glam pl. glamhoth, orch pl. yrch
+gold : S mal pl. mel, Q malta	     gold (color, light) S glor, lor, Q
+							      .
+	       .	.				  laure
+golden : Q laurea, laurie	     golden-brown : S baran
+golden-red : cul		     good : man
+grade : Q tyelle pl. tyeller	     gravel : S brith
+gray : S mith, thin(d), Q sinda	     green : S calen, galen pl. gelin, Q lai
+growth : loa
+
+				 H
+hair : fin			     half : Q per, S pher
+hall with arched roof : rond, thrond hall : Q mard pl. mardi
+to halt : S dar-		     hammer : S dring
+			       /		 .
+hand : S bor, cam, cham, Q kamba, ma, maite, quare
+harbor, haven : S lonn, lond, Q londe
+head : dhol, dol		     hearing : S lhaw
+	    .
+heart : Q ore			     heat : Q ur
+heaven : Q, S menel		     heavy : blung
+		/
+heir : S chil, red, Q hil pl. hildinyar
+
+helm : thol			     here : S si
+hidden : S dolen		     hiding : esgal
+					   /
+high : ar(a), arat, don, Q oro, tan, tar, tara
+hill : S amon pl. emyn		     hither : nev
+hollow (adj.) : S nov		     hollow (noun) : Q unque
+holly : ereg, reg		     holy : Q aina, aire
+home : S bar, Q mar		     hook : Q ampa
+hope : S estel			     horn : S dil, ras pl. rais, Q til
+horror : del, S gor, goroth	     horde : S hoth
+							       .
+horse : S roch, ro(h), Q rokko	     host : S hoth, rim, Q rimbe
+to be hot : Q ur		     hound : huan
+	/
+hour : lumenn'			     howl : ngwaw
+hunt : faroth
+
+				 I
+I : S im			     ice : S khelek
+icy, ice-cold : Q helka		     in : Q -esse
+in the : Q mi			     in this place : Q sinome
+in which : Q yassen		     iron : S ang, Q anga
+of iron : S angren pl. engrin	     is : Q,S na
+island : tol			     it : Q -yes (pronoun suffix)
+
+				 J
+jaws : Q anca, carka, S carach, carag, carak
+		    .
+jewel : S mir, Q mire
+
+				 K
+to keep : S cheb-		     kindler : S thon		     / .
+king : S aran pl. erain or erein     knowledge : S golodh, Q noldo, nole
+
+				 L
+lady : S hiril			     lair : torech
+lake : aelin, lin		     lamp : Q calma
+	    /  .       .		       /		   / .
+lament : Q denie, nainie	     land : S dor, (n)dor, nor, Q nore
+last : S vedui			     to be last : Q tel-
+laughter : lalaith		     lawn : S parth
+leaf : Q asea, las pl. lassi	     letter : Q tengwa pl. tengwar, S tiw
+to lie : Q cait-		     life : coi
+to lift up : Q ortan-		     light : Q cal, kal, S galad
+like : Q ve			     to live : S cui-, guin-
+
+to listen : S last-		     lofty : don, S tar, Q tara
+lonely : ereb			     long : an, and, anann
+look toward : S tir		     loop : lok
+					       / .
+lord : Q heru, S hir		     lore : Q nole
+lost : Q vanwa			     love : mel
+lover of : (n)dil, (n)dur, nil, nur
+
+				 M
+to make : S ech-		     maiden : ien, -wen
+maiden (garlanded) : -riel	     man : S adan pl. edain, Q atan pl.
+					    atani
+masculine name suffix : -ion	     mastery : tur
+may it be : Q nai		     me-for : Q nin
+meeting (of our) : omentielvo	     mesh : rem, rembe, rembre
+metal : Q tinco			     middle : en, ened
+mighty : beleg			     mind : Q ore
+	       /  .
+mist : Q his, hisie, S hith	     month : Q asta pl. astar
+moon : Q isil, S ithil		     mortal : fir
+
+mound : cerin, corol, coron, S haudh, tur pl. tyrn
+mountain : S orod pl. ered	     mouth : Q anto
+
+				 N
+name : Q esse			     near : nev
+nectar : miruvor		     net : rim, rembe, rembre
+						/
+new : vinya			     night : S du
+		 /	  /	    /	   .
+nightingale : S dulin, tinuviel, Q lomelinde, tindomerel
+noble : ar, ara, arat		     noise (din) : glam
+north : S for, forn, forod, Q formen
+	  /
+not : Q,S u- (negating prefix)	     now : Q si
+			      .
+number (great) : S rim, Q rimbe
+
+				 O		       .
+O! : S a!			     ocean : S aear, Q ear
+of : Q -ello, -eva, Q,S -o	     old : iar, iaur
+on this side of : S nef		     one : Q er
+to open : S edr-		     opression : S thang
+out : et, eth			     outflow : ethir
+outside : Q ar
+
+				 P
+pass : cirith			     to pass : Q aut-, van-
+	    / .
+people : Q nore, S waith	     petty : S nibin
+
+pillar : tarma			     pine : S thon
+place (in this) : Q sinome	     plain : lad, talath
+platform : talan		     pl. collective suffix : S -ath, -rim
+point : ae, S dil, Q til	     pool : aelin, lin
+power : S bal pl. bel, rod pl. rodyn, Q tur, val
+to praise : S egl-, Q lait-	     prince : ernil
+prison : S band, Q mando, mbando     pursue : faroth
+
+				 Q
+		     /
+queen : S bereth, Q tari
+
+				 R
+radiance : Q alata, S galad	     rage : Q aha
+rain : Q ulma			     rainbow : ninniach
+ransom : danwedh		     re- (repetition prefix) : Q en-
+			  .
+red : S car, caran, Q carne	     to refill : Q enquant-
+refuser : avar			     region : Q arda, men, S arth
+	       /
+remembrace : -rin		     rest : Q este
+reversed : Q nuquerna		     to ride : S nor-
+ridges : S pinnath		     ring : Q cor
+		    .			   .
+river : S duin, duine, hir, Q,S sir, Q luine
+roads : Q tierr			     root : thrond
+royal : ar, ara, arat		     rune : Q certa pl certar, S certhas
+					    S cirth, S gerthas
+rushing : alag, alak, asca
+
+				 S
+sad : dim			     to day : S ped-, Q quen-, quet-
+							      .
+screen : esgal			     sea : S ae, aer, gaer, Q ear
+						     .	   .
+series : Q tema pl. temar	     serpent : Q hloke, loke, S lhug, lyg
+seven : S odo, Q otso		     shadow : S ath, dae, gwath, wath, weth
+shadows (heavy) : Q lumbule	     shadows cast by light : morchaint
+sharp : S maeg, Q maika		     to shine : Q cal-, kal-, S gal-
+to shine with white or silver light : Q sil-, S thil-
+ship : cair, cir, cirya, gir	     shipwright : S cirdan
+shore : falas, falath, rast, rest    shuddering : girith
+
+sickly : engwa			     sign : Q tehta, S thiw
+	  /							    .
+silent : din			     silver : S celeb, Q telep, telpe
+silverlike : S celebrin, Q telperin  to sing : Q,S lin-
+	     .
+singer : linde			     skill : curu
+sky : Q vilya, wilya		     to slant down : S penn-
+						   .	 .
+slender, slim : fim		     snake : Q hloke, loke, leuca, S lhug
+					      plural lyg
+snowy : lossen			     son of : Q,S -ion
+
+sorcery : morgul, S gul		     south : S har, harad, harn Q hyarmen
+		     .
+spark : S gil, Q tinwe		     to sparkle : S din-, Q,S tin-, Q it-
+			    /			   tint-, tintil-
+to sparkle like jewels : S mir	     to speak : S ped-, Q quen-, quet-
+spider : ungol			     spider web : Q ungwe
+	    .	   .	  .
+spirit : Q fea, sule, thule	     spindrift, spray : ros, rhos, ving,
+			  /	 .			wing
+spring of water : Q et-kele, etele, S eithel
+				.
+spring season : S ethuil, Q tuile    stake : S ceber pl. cebir, gebir
+star : Q,S el, Q elen pl. eleni, S elen pl. elenath or elin, gil, il
+starhost : S giliath		     starlight : Q silme
+stars (of the) : elda pl. eldar, elena
+stem : Q telco			     stirring : Q coire, S echuir
+stone : S gon, gond, Q ondo	     stone (small) : sarn pl. serni
+to stray : raen-, ran-		     stream : hir, sir
+street : rath			     strong : S thalion
+sudden : bragol			     surfline : falas, falath
+sumer : S laer, Q laire		     sun : Q anar, S anor
+	     / .  / .		   .
+sunlight : Q are, aze, S aur, S aure
+						   / .
+sunrise : Q romen, S run	     sunset : Q andune, S annun
+swan : S alph, Q alqua		     sweet : Q lissi
+swift : Q linte			     sword : S megil, Q macil
+swordsman : Q macar, S vagor
+
+				 T
+tall : Q halla			     the : Q i
+thee : Q le			     them : S hain
+these : S hin			     this : S hi
+thorn : ereg, reg		     thou : Q lye, S le (usually suffixes)
+(even) thou : Q elye		     thousand : mene
+						 .
+thread : S lain			     three : nelde
+throng : Q sanga		     to thee : S le
+tobacco : galenas		     tongue : Q lambe
+tower : S barad pl. beraid, Q,S minas
+torment : Q ngwalme, nwalme, ywalme  torrent : S thor
+treasure : Q harma		     tree : Q alda pl. aldar, S galadh pl.
+					     galadhad, orn
+troll : S torog			     trumpet sound : rom
+twilight : aduial, minuial, tindome, uial, undome
+to twine : rig-			     to twinkle : Q tintil-
+
+	/			U
+un- : Q u-			     under : Q nu, nuin
+underground dwelling : S grod, groth, rod
+unto : Q tenn'			     unwilling : Q avar
+us two : Q met
+				V
+valiant : astaldo		     valley : S dun, nan, nand, imlad, tum
+					      Q tumbo
+vaulted roof : rond		     veil : Q,S fana
+
+victor : Q dacil		     void : ia
+voice : S lammen, Q oma
+
+				W
+wall : S ram, Q ramba		     to wander : raen-, ran-
+wanderer : randir		     to watch (over) : Q,S tir-
+water : nen			     waterfall : lanthir
+wave (crested) : Q falma	     way : S bad, Q pata
+						   .
+we two : Q met			     week : Q enquie pl. enquier
+		       .
+well of water : Q ehtele, S eithel   werewolf : S gaur, ngaur
+	    /		/
+west : S annun, dun, Q numen	     wet : med, nin
+white (dazzling) : S glos	     white : S nim, nimf, nimp, niph,
+					     Q ninque
+who : Q man			     whole : Q iluve
+						     .
+will (verb suffix) : Q -uva	     willow : Q tasare, S tathar, tathren
+			/
+wind : S gwae, gwai, Q sul	     window : S henneth
+						    .	   /
+wing : Q rama pl. ramar		     winter : Q hrive, S hriw
+						.
+wise, wisdom : S golodh pl. gelydh, Q noldo, nole
+without : Q ar			     wolf : draug
+				     .
+woods : S erin pl. eryn, taur, Q taure
+word : S beth, Q quetta		     to wreathe : rig-
+Wose : dru			     wright : S dan pl dain
+
+				 Y
+-y (adj. ending in English, i.e., "mist-Y") : Q -ime, S -ui
+year (solar) : loa		     year (long Elven) : Q yen pl. yeni
+
+-------------------------------------------------------------------------
+			 PRONUNCIATION KEY
+	  The following pronunciation key is adapted from the
+	  Appendix of The Silmarillion, Appendix E of The Lord
+	  of The Rings, and Tolkien's updated notes from page
+	  63 of The Road Goes Ever On.
+
+   C   always has the value of K, never of S.  Celeb 'silver' is
+       pronounced "keleb".
+   CH  always has the value of CH in the Scottish 'loch' or Ger-
+       man 'buch', never that in the English 'church'.
+
+   DH  represents the voiced TH sound in 'the', not the unvoiced
+       TH of 'thin'.  If you are pronouncing it right, you should
+       feel a vibration in your larynx when you place your hand
+       against it.  The voiced TH is found in such Elvish words
+       as Maedhros, Caradhras, and Galadhrim.
+
+   F   represents the F in 'find' except at the ends of words, as
+       in the English 'of', where it has a V sound.  Note that the
+       root nef- is spelled with a 'v' when used in the compound
+       Nevrast 'Hither Shore'.
+
+   G   is always "hard" G, as in 'get' or 'gild'.  'Gildor' begins
+       as does 'Gilbert'; 'Region' begins as does 'regulate'.
+
+   H   alone, uncombined with other consonants, has the value of H
+       in 'house' and 'behold'.	 It has special values when com-
+       bined as : CH, DH, LH, RH, TH, HW, and HY.  In Quenya, HT
+       has the value of CHT in the German 'acht'.  This combination
+       appears in 'Telumehtar'.
+
+   I   in Sindarin, when occuring at the beginning of a word and
+       followed by another vowel, has the value of consonantal Y:
+       thus Ioreth is pronounced "Yoreth".
+
+   K   is occasionally found in Elvish, and is the same as C.
+
+   L   has approximately the sound of L in 'let'.  However, between
+       E or I and a consonant, or after E or I at the end of a word,
+       L was somewhat 'palatalized', that is, pronounced with the
+       blade of the tongue, rather than the tip, against the hard
+       palate, as in 'Eldar'.
+
+   LH  represents an unvoiced, palatalized L.  In archaic Quenya,
+       this was written HL.
+
+   NG  has the value of NG in 'finger' except at the beginning and
+       end of words, where it has the value of NG in 'sing', as in
+       the Sindarin ngauroth 'werewolves'.
+
+   QU  has the sound KW.
+
+   PH  has the sound of F in find.
+
+   R   is trilled in all positions.  RH, or HR as it is written in
+       Quenya, represents a voiceless R.
+
+   S   is always voiceless, as in 'so'.	 The sound Z as in 'is' and
+       'zoo' did not occur in Elvish.
+
+   TH  has the value of the voiceless TH in 'thin'
+
+   TY  has the value of the British 'tune', not the American "toon".
+       It has some of the quality of CH, as heard in some English
+       dialect pronunciations of 'tune' as "chune", and also in the
+       phrase 'at you', as "atcha" in some American dialects.
+
+   V   has the value of the English V, not the German.
+
+   W   has the value of the English W, not the German.	HW is a voice-
+       less W, as in 'white' and 'whale'.
+
+   Y   in Quenya is used for the consonant sound of Y in 'you'.	 In
+       Sindarin, Y represented the modified U in the French 'lune'.
+       HY represents a sound similar to that in 'hew' and 'huge', as
+       in Hyarmen.  This sound is represented by the H in Quenya EHT
+       and AHT.
+
+       Consonants written twice are pronounced long.  The M in Rammas
+       Echor and Sammath Naur have the sound of M in 'roommate' rather
+       than that in 'ramming'.
+
+   A   has the sound in 'father'.
+
+   E   has the sound in 'bed' and is pronounced as a separate syllable
+       in the middle of words such as Merethrond 'Feast Hall' and at the
+			     / .				     .
+       end of words such as lome 'dusk', where it is usually marked 'e'.
+
+   I   has the sound in 'sick'.
+
+   O   has the sound in 'hot', but "rounder" than in modern English,
+       apparently with the mouth and lips held more open.
+						  /
+   U   has the sound in 'brute' even when long.	 Turin is pronounced
+       'Toorin', not 'Tyoorin'.
+							  /
+       Long vowels were marked with an acute accent, e.g. a.  These
+       vowels were long in duration rather having a different sound:
+       not as in 'ape' but as in 'apple'.  However, in Quenya, long
+       /     /
+       e and o are correctly pronounced with a 'tenser and closer'
+       sound than the short vowels, apparently with the mouth and
+       lips more closed.  In Sindarin, stressed one-syllable words
+       are marked with a circumflex accent, indicating a particularly
+						    /
+       prolonged vowel, as in dun, contrasted with Dunadan.
+
+					  /
+   AE and AI   have the sound of 'eye'.	 Dunedain ends with a syllable
+	       pronounced 'dine'.
+
+   EI	       has the sound in 'gray'.
+
+   IE	       has the vowels sounded separately and run together as in
+	       'Ni-enna'.  It does not have the sound in 'piece'.
+
+   OE and OI   have the sound of the vowels in 'boy' and 'toy'.
+
+   UI	       is pronounced as are the vowels in 'ruin', but run to-
+	       gether into one syllable.
+
+   AU and AW   have the sound in 'loud' and 'how'.  Sauron begins with
+	       a syllable pronounced 'sour'.
+
+   ER, IR, UR  before a consonant, as in Cirdan, or at the end of a
+	       word, as in Ainur, shoud be pronounced as in English
+	       AIR, EER, OOR.
+
+   EA and EO   are not run together, but form separate syllables.
+
+
+   STRESS.  In two-syllable words, the stress or accent is on the first
+       syllable.  In longer words it occurs on the next to last
+       syllable if that syllable contains a vowel followed by two or
+       more consonants, a long vowel, or a dipthong (two vowels pronounced
+       in one syllable, such as AI, EI).  IsILdur and PelARgir are
+       words of this type.  If the next to the last syllable contains
+       a short vowel followed by one or no consonants, the stress falls
+       on the syllable before it, the third from the end.  FEanor,
+       ErESsea, and DENethor are words of this type.  Digraphs, pairs
+       of consonants that make a single sound, such as CH, DH, PH, SH
+       and TH, are counted as one letter in determining stress, and are
+       written with one letter in the Eldarin alphabets.
+--------------------------------------------------------------------------
+
+		    Si quenuvalye i lamber Eldareva!
