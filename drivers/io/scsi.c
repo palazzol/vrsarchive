@@ -14,7 +14,7 @@
  *
  *	Vincent R. Slyngstad	11/01/85
  *	Modified for XEBEC controller, more internal documentation, a few bug
- *	fixes.
+ *	fixes, many enhancements.
  *
  * ABSTRACT:
  *
@@ -27,10 +27,12 @@
  * The XEBEC 1420 supports 4 units.  The first two are Winchester disk drives,
  * and the other two are floppy disk drives.
  *
- * BUGS:
- *	Formatting needs enhancement to make the format utility work as
- *	expected.  Currently the whole drive will be formatted as many
- *	times as there are cylinders, which is VERY unacceptable.
+ * Since SCSI makes cylinder 0 invisible, no physical address in cylinder
+ * zero has a logical address.  All ioctl() operations in cylinder 0 are
+ * secretly remapped onto logical address 0.  Since Cylinder 0 is not
+ * available, the partition tables describe one less cylinder.  However,
+ * the partition tables use logical addresses, so they make it look like
+ * the cylinder was stolen from the far end of the drive.
  *
  * KERNEL INTERFACE ROUTINES:
  *		scsiinit - initializes driver variables, looks for units
@@ -76,10 +78,11 @@ struct buf scsirbuf[MAX_UNITS];		/* Raw buffer headers for raw io */
 struct user_ftk scsi_ftk[MAX_UNITS];	/* Format parameter buffers */
 					/* (Augments scsirbuf) */
 
-int scsistrategy();			/* Forward references to strat */
-int m_dev;				/* currently busy device (maj/min) */
+int  scsistrategy();			/* Forward references to strat */
+int  m_dev;				/* currently busy device (maj/min) */
 char scsi_cmd[6];			/* SCSI command block */
-char scsi_mode[10];			/* data area for SCSI init format */
+char scsi_mode[10];			/* data area for extended commands */
+int  scsi_length;			/* data length for extended commands */
 char scsi_sense[4];			/* data area for SCSI request sense */
 
 /* Title:  scsiinit
@@ -142,6 +145,8 @@ scsiinit()
 scsiopen(dev)
 int  dev;		/* device minor number */
 {	register unsigned unit;		/* device unit to be opened */
+	register struct buf *bp;	/* pointer to raw I/O header */
+	register unsigned x;		/* interrupt mask */
 
 #ifdef DEBUG
 	printf("\nscsi open called");
@@ -164,15 +169,28 @@ int  dev;		/* device minor number */
 	 *	 around this is to initialize per I/O request, and I don't
 	 *	 want to pay in performance for functionality rarely used.
 	 *
-	 *	 We use physio() to handle mutex issues and talk to the
-	 *	 strategy routine.  We set up u.u_offset, u.u_count, etc.
-	 *	 because physio() wants to fill out the buffer header as if
-	 *	 input or output were being performed.
+	 *	 We cannot use physio() to handle mutex issues and talk to
+	 *	 the strategy routine because when rootdev is opened, there
+	 *	 is no user process, and physio requires one.  We fill out
+	 *	 the buffer header with dummy buffer addresses and such,
+	 *	 even though no input or output is being performed.
 	*/
-	u.u_offset = 0;
-	u.u_count = BSIZE;
-	u.u_base = sotofar(u.u_procp->p_fdsel,0);
-	physio(scsistrategy, &scsirbuf[unit], dev, B_OPEN);
+	bp = &scsirbuf[unit];
+	x = splbuf();
+	while (bp->b_flags&B_BUSY) {	/* wait for buffer */
+		bp->b_flags |= B_WANTED;
+		sleep((caddr_t)bp, PRIBIO+1);
+	}
+	splx(x);
+	bp->b_flags = B_BUSY | B_OPEN;
+	bp->b_dev = dev;
+	bp->b_paddr = 0;		/* Dummy buffer address	*/
+	bp->b_blkno = 0;		/* Dummy block number	*/
+	bp->b_bcount = BSIZE;		/* Dummy transfer size	*/
+	bp->b_error = 0;		/* No error		*/
+	scsistrategy(bp);		/* Queue the command	*/
+	iowait(bp);			/* Wait until done	*/
+	bp->b_flags &= ~B_BUSY;		/* for next time	*/
 	/*
 	 * Mutex guaranteed below because we never sleep and
 	 * close guards its clear operation on these flags.
@@ -292,10 +310,14 @@ register struct buf *bp;    /* ptr to buf header containing request info */
 	 * of the last sector requested.
 	*/
 	bp->b_resid = secno + (bp->b_bcount+media->secsiz-1)/media->secsiz;
-	if (bp->b_resid > p->p_nsec)
+	if (bp->b_resid > p->p_nsec) {
 		bp->b_resid = (bp->b_resid-p->p_nsec)*media->secsiz;
 						/* Bytes beyond end	*/
-	else
+		if (bp->b_resid == bp->b_bcount) {
+			iodone(bp);		/* No I/O of zero bytes	*/
+			return;
+		}
+	} else
 		bp->b_resid = 0;		/* Can do all		*/
 	/*
 	 * Start the requested I/O.  First, we calculate the absolute
@@ -328,7 +350,7 @@ register struct buf *bp;    /* ptr to buf header containing request info */
  *
  * Calls:	scsi_setup_dma   - sets up DMA for access operation
  * 
- * Called by:	scsi_error - after reporting error on last request
+ * Called by:	scsi_endop - after wrapup of prior request
  *		scsiintr - to resume I/O on next block
  *		scsiopen - to start I/O on any accumulated blocks
  *		scsistrategy - to start I/O on queued block
@@ -372,7 +394,6 @@ scsi_start()
 		scsi_cmd[1] = UNIT(m_dev) << 5;
 		if (bp->b_flags & B_OPEN) {
 			scsi_init_format(media);
-			scsidev.state |= INIT_FMT;
 		} else if (bp->b_flags & B_FORMAT) {
 			scsi_format(media);
 		} else if (bp->b_flags & B_READ) {
@@ -427,8 +448,7 @@ scsi_start()
  *	     signal from SCSI device.  It reads the SCSI bus phase bits to
  *	     determine what action must be taken.
  *
- *  Calls: scsi_start - start I/O
- *	   scsi_dma_start - start DMA operation
+ *  Calls: scsi_dma_start - start DMA operation
  *	   scsi_error - prints out error message and updates buffer header
  *	   iodone - kernel routine, puts buffer on free list    
  *
@@ -530,24 +550,23 @@ dev_t dev;	/* device number */
  *		assigned the unit causes mutual exclusion among processes
  *		performing raw I/O or also formatting.
  *
- * Calls:  scsistrategy - Checks request and queues it
+ * Calls:  physio - Checks request and queues it
  *	   copyin - kernel routine that copies data from user area
- *	   iowait - kernel routine, sleep on a buffer
- *	   sleep - kernel routine used to delay until I/O block ready
  *	   splx - kernel routine which enables interrupt previously disabled
  *	   splbuf - kernel routine disables all interrupts except timer
  *
  *  Called by: kernel
- */
-/* ARGSUSED */
+*/
 scsiioctl(dev, cmd, cmdarg)
 dev_t dev;		/* device number */
 int cmd;		/* command */
 faddr_t cmdarg;		/* user structure with parameters */
 {	
 	register struct scsiunit *dd;	/* unit device table */
+	struct scsicdrt *media;		/* ptr to media descr */
 	unsigned x;			/* saves old interrupt state */
-	unsigned unit;			/* floppy unit being formatted */
+	unsigned unit;			/* unit being formatted */
+	long track, alt;			/* track, alternate */
 
 #ifdef DEBUG
 	printf("\nscsi entered ioctl");
@@ -558,6 +577,7 @@ faddr_t cmdarg;		/* user structure with parameters */
 	}
 	unit = UNIT(dev);
 	dd = &scsidev.d_unit[unit];
+	media = &scsicdrt[DRTAB(dev)];
 	/*
 	 * Get the format parameters.  Note that we must mutex scsi_ftk[unit].
 	*/
@@ -567,6 +587,16 @@ faddr_t cmdarg;		/* user structure with parameters */
 	dd->flags |= U_FORMAT;
 	splx(x);
 	copyin(cmdarg, (caddr_t)&scsi_ftk[unit], sizeof scsi_ftk);
+	if (((scsi_ftk[unit].f_type&0xFF) != FORMAT_DATA)
+	&&  ((scsi_ftk[unit].f_type&0xFF) != FORMAT_BAD)) {
+		dd->flags &= ~U_FORMAT;	/* Release Mutex		*/
+		return;
+	}
+	if (scsi_ftk[unit].f_trck >= media->nhead*media->ncyl) {
+		u.u_error = ENXIO;	/* FORMAT beyond end of drive	*/
+		dd->flags &= ~U_FORMAT;	/* Release Mutex		*/
+		return;
+	}
 	/*
 	 * We use physio() to handle the mutex issues and talk to the
 	 * strategy routine.  We set up u.u_offset, u.u_count, etc. so
@@ -574,8 +604,30 @@ faddr_t cmdarg;		/* user structure with parameters */
 	*/
 	u.u_offset = 0;
 	u.u_count = BSIZE;
-	u.u_base = sotofar(u.u_procp->p_fdsel,0);
-monitor();
+	u.u_base = sotofar(u.u_procp->p_fdsel, 0);
+	if ((scsi_ftk[unit].f_type&0xFF) == FORMAT_BAD) {
+		/*
+		 * Get the track number of the bad track and the alternate.
+		*/
+		track = scsi_ftk[unit].f_trck;
+		alt  = (scsi_ftk[unit].f_pat[1]&0xFF) << 8;
+		alt += (scsi_ftk[unit].f_pat[0]&0xFF);
+		alt *= media->nhead;
+		alt += (scsi_ftk[unit].f_pat[2]&0xFF);
+		/*
+		 * Format alternate as data track.  If it is already formatted
+		 * as an alternate, XEBEC will refuse to re-use it.
+		*/
+		scsi_ftk[unit].f_trck = alt;
+		scsi_ftk[unit].f_type = FORMAT_DATA;
+		physio(scsistrategy, &scsirbuf[unit], dev, B_FORMAT);
+		/*
+		 * Now put everything back and fall through to assign the
+		 * alternate and mark the bad track.
+		*/
+		scsi_ftk[unit].f_trck = track;
+		scsi_ftk[unit].f_type = FORMAT_BAD;
+	}
 	physio(scsistrategy, &scsirbuf[unit], dev, B_FORMAT);
 	/*
 	 * Now we release the mutex on scsi_ftk[unit].
@@ -688,13 +740,16 @@ register struct iobuf *bufh;	/* static buffer header */
 	 * on the kernel stack.
 	*/
 	printf("\nentered scsi_error\n");
-	printf("scsi_sense = %x", scsi_sense[0]);
-	printf(" %x", scsi_sense[1]);
-	printf(" %x", scsi_sense[2]);
-	printf(" %x\n", scsi_sense[3]);
+	printf("scsi_sense = %x", scsi_sense[0]&0xFF);
+	printf(" %x", scsi_sense[1]&0xFF);
+	printf(" %x", scsi_sense[2]&0xFF);
+	printf(" %x\n", scsi_sense[3]&0xFF);
 #endif
-	/* output error message */
-	deverr(bufh, scsi_sense[1] & 0xFF, scsi_sense[0] & 0xFF, "SCSI");
+	/*
+	 *	Output error message.  The cmd= field really prints the
+	 *	drive number.
+	*/
+	deverr(bufh, scsi_sense[1] >> 5, scsi_sense[0] & 0x3F, "SCSI");
 	/* flag block with error status */
 	bp->b_flags |= B_ERROR;
 	bp->b_error = EIO;
@@ -807,7 +862,7 @@ scsi_s_cmd()
 		while ((inb(scsicfg.portb) & REQ) != 0)
 			;
 #ifdef DEBUGX
-	printf(" %x",scsi_cmd[i]);
+	printf(" %x",scsi_cmd[i] & 0xFF);
 #endif
 		outb(scsicfg.porta, scsi_cmd[i]);
 		/*
@@ -910,12 +965,14 @@ register struct scsicdrt *media;	/* ptr to media type in drive unit */
 	 * entries refer to the same drive.  WE FALL ON OUR
 	 * FACE IF YOU OPEN USING TWO DRTABS on a single unit.
 	*/
+	scsidev.state |= EXTND_CMD;
+	scsi_length = 10;		/* 10 bytes of extended data	*/
 	scsi_mode[0] = media->ncyl >> 8;
 	scsi_mode[1] = media->ncyl & 0xFF;	/* # Cylinders		*/
 	scsi_mode[2] = media->nhead;		/* # Heads		*/
-	scsi_mode[3] = media->fmt;
-	if (media->fmt) {
-		if (media->fmt == FLPY_FM)
+	scsi_mode[3] = media->fmt3;		/* Format parameters	*/
+	if (media->pcomp == 0) {		/* Floppy?		*/
+		if (media->fmt3 == FM)		/* Yes, what format?	*/
 			scsi_mode[4] = 0x01;	/* Sector size (128)	*/
 		else
 			scsi_mode[4] = 0x03;	/* Sector size (512)	*/
@@ -923,17 +980,16 @@ register struct scsicdrt *media;	/* ptr to media type in drive unit */
 		scsi_mode[6] = 80;	/* 800Ms motor start time	*/
 		scsi_mode[7] = 15;	/* 30Ms head load time		*/
 		scsi_mode[8] = 20;	/* 2 seconds until motor off	*/
-		scsi_mode[9] = 0;	/* Must be zero			*/
+		scsi_mode[9] = 0;	/* Must be 0			*/
 	} else {
-		/* ST-506 Non-Buffered seek - 3.0 Ms rate */
 		scsi_mode[4] = 0x2;	/* Sector size (512)		*/
 		scsi_mode[5] = media->ncyl >> 8;
 		scsi_mode[6] = media->ncyl & 0xFF;
 					/* Reduce Write Current		*/
-		scsi_mode[7] = (media->ncyl/2) >> 8;
-		scsi_mode[8] = (media->ncyl/2) & 0xFF;
+		scsi_mode[7] = media->pcomp >> 8;
+		scsi_mode[8] = media->pcomp & 0xFF;
 					/* Write Precompensation	*/
-		scsi_mode[9] = 11;	/* Bits to correct		*/
+		scsi_mode[9] = 11;	/* Bits to correct (max 11)	*/
 	}
 }
 
@@ -948,6 +1004,7 @@ scsi_format(media)
 register struct scsicdrt *media;	/* ptr to media type in drive unit */
 {
 	register unsigned unit;
+	long track;
 
 	/*
 	 * Formatting is heavily dependent on the the specific SCSI
@@ -959,31 +1016,75 @@ register struct scsicdrt *media;	/* ptr to media type in drive unit */
 	unit = UNIT(m_dev);
 	/*
 	 * Build the SCSI FORMAT command.
+	 *
+	 * There is a botch in the XEBEC manual, and the correct parameter
+	 * block for a 'format tracks' command is not shown.  The correct
+	 * parameter block looks like this:
+	 *
+	 *	Byte 0	0 0 0 0 0 1 1 0
+	 *	Byte 1	0 d d High Addr
+	 *	Byte 2	Middle Address
+	 *	Byte 3	 Low   Address
+	 *	Byte 4	0 0 0 Interleave
+	 *	Byte 5	r 0 b 0 0 0 0 0
+	 *	Followed by track count high, then track count low.
+	 *
+	 * The other piece of logic needed is to determine if format wants
+	 * to format an alternate.  Right now bad tracks are lethal.  There
+	 * will probably need to be software to remap tracks when 'access to
+	 * bad track' errors are seen (GROT).
 	*/
-	scsi_cmd[0] = FORMAT;
+	scsidev.state |= EXTND_CMD;	/* scsi_mode[] is releavent	*/
 	scsi_cmd[1] = unit << 5;
-#ifndef okformat
 	/*
-	 * Format the whole drive.  Yes, I know we were only asked to
-	 * format a single track.  See #else.
+	 *	Note that here, as in other places, drives > 1Gb give
+	 *	XEBEC fits, since only 21 bits are allowed in a sector
+	 *	number.
 	*/
-	scsi_cmd[2] = 0; /* From sector 0 */
-	scsi_cmd[3] = 0; /* From sector 0 */
-#else
+	track = address(media, (long)scsi_ftk[unit].f_trck);
+	scsi_cmd[1] += track >> 16;
+	scsi_cmd[2]  = track >> 8;
+	scsi_cmd[3]  = track;
 	/*
-	 * There is a botch in my copy of the XEBEC manual, and the
-	 * correct parameter block for a 'format tracks' command is
-	 * not shown.  If I can research this, maybe I can make the
-	 * format utility work as expected.  The other piece of logic
-	 * needed is to determine if format wants to format an
-	 * alternate.  Right now bad tracks are lethal.
+	 *	Format it as a data track or assign the alternate.
 	*/
-	scsi_cmd[2] = scsi_ftk[unit].f_track >> 8;
-	scsi_cmd[3] = scsi_ftk[unit].f_track & 0xFF;
-#endif okformat
+	if ((scsi_ftk[unit].f_type&0xFF) == FORMAT_DATA) {
+		scsi_cmd[0] = FORMAT;	/* Format a data track		*/
+		scsi_length = 2;	/* 2 bytes of extended data	*/
+		scsi_mode[0] = 0;	/* High track count is zero	*/
+		scsi_mode[1] = 1;	/* Format one data track	*/
+	} else {
+		scsi_cmd[0] = FORMATALT;/* Assign an alternate track	*/
+		/*
+		 *	The following fields encode the address of the
+		 *	alternate track to be assigned:
+		 *
+		 *	scsi_ftk[unit].f_pat[0] contains low  cylinder number
+		 *	scsi_ftk[unit].f_pat[1] contains high cylinder number
+		 *	scsi_ftk[unit].f_pat[2] contains head number
+		*/
+		track  = (scsi_ftk[unit].f_pat[1]&0xFF) << 8;
+		track += (scsi_ftk[unit].f_pat[0]&0xFF);
+		track *= media->nhead;
+		track += (scsi_ftk[unit].f_pat[2]&0xFF);
+		track  = address(media, track);
+		/*
+		 *	Now fill in scsi_mode to point to that track.
+		*/
+		scsi_length = 3;	/* 2 bytes of extended data	*/
+		scsi_mode[0] = track >> 16;
+		scsi_mode[1] = track >> 8;
+		scsi_mode[2] = track;
+	}
+	/*
+	 * Note that in general, the choices of interleave used with the
+	 * 215 will be AWFUL due to the fact that we cannot provide 1K
+	 * sectors.  Try around 3/2X or a little less, because those 512
+	 * byte sectors are smaller and take less time to spin by.
+	*/
 	scsi_cmd[4] = scsi_ftk[unit].f_intl;
-				/* use interleave requested by user */
-	scsi_cmd[5] = 0; /* reserved */
+				/* Use interleave requested by user	*/
+	scsi_cmd[5] = 0; /* No Retries */
 }
 
 /* Title:  scsi_read_write
@@ -1070,21 +1171,24 @@ scsi_write_data()
 {
 	int i;
 
-	if (scsidev.state & INIT_FMT) {
+	if (scsidev.state & EXTND_CMD) {
 		/*
 		 * Can this hack be done away with?  That is, is it possible
-		 * to DMA the scsi_mode junk just as we would regular buffer
+		 * to DMA the scsi_mode array just as we would regular buffer
 		 * data?
 		*/
 #ifdef DEBUG
-		printf("	sending INIT_FORMAT data\n");
+		printf("	sending INIT/FORMAT data\n");
 #endif
-		for (i=0; i < sizeof scsi_mode; i++) {
+		for (i=0; i < scsi_length; i++) {
+#ifdef DEBUGX
+			printf(" %x", scsi_mode[i]&0xFF);
+#endif
 			while ((inb(scsicfg.portb) & REQ) != 0)
 				;
 			outb(scsicfg.porta, scsi_mode[i]);
 		}
-		scsidev.state &= ~INIT_FMT;
+		scsidev.state &= ~EXTND_CMD;
 		return;
 	} else 
 		scsi_dma_start();
