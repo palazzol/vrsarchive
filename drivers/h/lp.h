@@ -1,25 +1,12 @@
-#define NLP 1				/* Number of line printers */
-#define SPL spl5			/* raised interrupt priority */
-#define	LPPRI	(PZERO+1)		/* allow sleepers to wakeup early */
-#define LPUNIT(dev) (minor(dev) >> 3)	/* macro to obtain device unit number */
+#define LPUNIT(dev)	(minor(dev)>>1)	/* Which printer is this?	*/
+#define	LPPRI		(PZERO+1)	/* allow sleepers to wakeup early */
+#define LPTIMEO		(10*HZ)		/* Time between not-ready checks */
 
 /*
  *	Markers
- */
+*/
 #define	LPLWAT	50	/* line printer low water mark */
 #define	LPHWAT	75	/* line printer high water mark */
-#define MAXCOL	132	/* page width */
-#define MAXLINE 66	/* page length (if device doesn't support '\f') */
-
-/*
- *	States
- */
-#define	OPEN	01	/* device is open */
-#define	ASLP	02	/* awaiting draining of printer */
-#define	TOUT	04	/* the device needed a timeout for a terminator */
-#define PALIVE	010	/* board alive indicator */
-#define RESET	020	/* this indicates if the flip-flop is reset or not*/
-#define MOD	040	/* device state has been modified */
 
 /*
  *  This is for the printer which is attached to the 8255 on the
@@ -46,11 +33,11 @@
  *       1 - 6   -   not used by the printer
  *      (note, bit 1 must be high for proper system operation)
  *           7   -   Clear Line Printer Ack Flop/
- */
+*/
 
 /*
  *	Hardware constants
- */
+*/
 #define PT_INIT 0x82	/* 8255 command word for port init */
 #define SET_PRINTER_ACK 0xf  /* set printer ACK bit */
 #define CL_PR_ACK 0xe  /* clear printer ACK bit */
@@ -63,28 +50,12 @@
 #define PT_OVERRIDE 0x2  /* written to port C to set bit 1 */
 
 /*
- *	Flags
- */
-#define CAP	1		/* from minor # force caps! */
-
-/*
  *	Device Structures
- */
+*/
 struct lpcfg {
 		int p_level;		/* intr level */
 		int p_porta;		/* data out */
 		int p_portb;		/* status in */
 		int p_portc;		/* strobe out */
 		int control;
-};
-
-struct lp_softc {
-	struct	clist lp_outq;
-	int	lp_physcol;
-	int	lp_logcol;
-	int	lp_phline;
-	int	lp_lpchar;
-	int	lp_state;
-	int	lp_flags;
-	struct lpcfg *lp_addr;
 };
