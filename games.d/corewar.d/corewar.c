@@ -67,8 +67,8 @@ char **argv;
 	address	pc;		/* address of program starting point.
 				 * filled in by load() */
 	address load();		/* loads a file */
-	int	draw();		/* what happens if we time out */
-	int	intrup();	/* or are interrupted */
+	SIG_T	draw();		/* what happens if we time out */
+	SIG_T	intrup();	/* or are interrupted */
 
 	/* allow both "corewar -f -s" and "corewar -fs" style options */
 	while (argc > 1 && argv[1][0] == '-' && argv[1][1]) {
@@ -752,12 +752,14 @@ memword x;
 	}
 }
 
+SIG_T
 draw()
 {
 	printf ("Timed out after %d seconds\n", TIMEOUT);
 	done();
 }
 
+SIG_T
 intrup()
 {
 	printf("Interrupted.\n");

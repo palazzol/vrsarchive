@@ -1,11 +1,12 @@
 #include "types.h"
 #include "ext.h"
+double getbet();
 
 make_bets()
 {
 	int i,fk,bad,y,z;
 	static int fl=0;
-	double getbet(),x,t;
+	double x, t;
 	char c, *shell = "/bin/csh",*cp="AahLyRUTKrVsc",pp[15];
 
 	pr_bets();
