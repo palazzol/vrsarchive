@@ -1,5 +1,5 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/term.c,v 1.1 1987-02-07 19:04:37 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/term.c,v 1.2 1987-02-07 20:44:24 vrs Exp $";
 #endif
 
 /*
@@ -264,7 +264,9 @@ t_exit ()
 #endif
 #endif
 
+#ifdef WINIOCTL
 static struct WINSTRUCT w;
+#endif
 
 winsize ()
 {
