@@ -84,7 +84,8 @@ main(argc,argv)
 /*
  *	now malloc the memory for the dungeon 
  */
-	cell = (struct cel *)malloc(sizeof(struct cel)*(MAXLEVEL+MAXVLEVEL)*MAXX*MAXY);
+	for (i = 0; i < MAXLEVEL+MAXLEVEL; i++)
+		cell[i] = (struct cel *)malloc(sizeof(cell[i][0])*MAXX*MAXY);
 	if (cell == 0) died(-285);	/* malloc failure */
 	lpbuf    = malloc((5* BUFBIG)>>2);	/* output buffer */
 	inbuffer = malloc((5*MAXIBUF)>>2);	/* output buffer */
