@@ -10,7 +10,9 @@
 #include <sgtty.h>
 #include <strings.h>
 
+#ifndef GAMEDIR
 #define	GAMEDIR	"/usr/tmp"		/* for UNIX domain socket names */
+#endif
 #define	SETUPFILE ".warsetups"		/* default setup file in user's HOME */
 
 #define	ROWS	24		/* rows on board */
