@@ -2,7 +2,7 @@ ALL		= maptoX maptoXrgb
 CMAP	= Xrgb.gif Xcolors.gif
 PAGES	= #maptoX.1 maptoXrgb.1
 include /etc/CONFIG
-.SUFFIXES: .uu .gif
+.SUFFIXES: .ppm .uu .gif
 
 all:	$(ALL) $(CMAP)
 
@@ -13,6 +13,12 @@ all:	$(ALL) $(CMAP)
 
 .uu.gif:
 	uudecode $<
+
+.ppm.uu:
+	ppmtogif <$< >tmp
+	uuencode tmp `basename $< .ppm`.gif >$@+
+	mv -f $@+ $@
+	rm -f tmp
 
 clean:
 	rm -f $(ALL) $(CMAP)
