@@ -9,9 +9,12 @@
 
 /*#define LSRHS		/* if this is Lincoln-Sudbury Regional High School */
 /*#define MSDOS		/* if this is MSDOS */
-#define BSD4_2		/* Berkeley 4.2 BSD */
+/*#define BSD4_2		/* Berkeley 4.2 BSD */
 /*#define BSD4_3	/* Berkeley 4.3 BSD */
 /*#define SYSV		/* for (System III/System V) UNIX systems */
+#ifdef SYS5
+#  define SYSV
+#endif
 #ifdef BSD4_3
 #   ifndef BSD4_2
 #	define BSD4_2	/* 4.3 is 4.2 only different. */
@@ -36,11 +39,11 @@
 #	define NBUF	3
 #   endif
 #
-/* #   define LOAD_AV	/* Use the load average for various commands.
+/*#   define LOAD_AV	/* Use the load average for various commands.
 #			   Do not define this if you lack a load average
 #			   system call and kmem is read protected. */
 #
-#   define JOB_CONTROL	/* if you have job stopping */
+/*#   define JOB_CONTROL	/* if you have job stopping */
 #
 #   ifdef JOB_CONTROL
 #       define MENLO_JCL
@@ -64,16 +67,16 @@
 #   define ABBREV		/* word abbreviation mode */
 #   define BACKUPFILES		/* enable the backup files code */
 #   ifndef MSDOS
-#       define BIFF		/* if you have biff (or the equivalent) */
+/*#       define BIFF		/* if you have biff (or the equivalent) */
 #       define F_COMPLETION	/* filename completion */
 #       define CHDIR		/* cd command and absolute pathnames */
 #       define	KILL0	/* kill(pid, 0) returns 0 if proc exists */
 #       define SPELL		/* spell words and buffer commands */
 #       define ID_CHAR		/* include code to IDchar */
-#       define WIRED_TERMS	/* include code for wired terminals */
+/*#       define WIRED_TERMS	/* include code for wired terminals */
 #       define ANSICODES	/* extra commands that process ANSI codes */
 #   endif
-#   define LISP			/* include the code for Lisp Mode */
+/*#   define LISP			/* include the code for Lisp Mode */
 #   define CMT_FMT		/* include the comment formatting routines */
 #endif SMALL
 
