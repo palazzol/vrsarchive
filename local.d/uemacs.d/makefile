@@ -1,4 +1,4 @@
-CFLAGS=		-O
+CFLAGS=		-O -i
 
 OFILES=		ansi.o basic.o bind.o buffer.o crypt.o dg10.o \
 		display.o eval.o exec.o file.o fileio.o \
@@ -17,6 +17,6 @@ CFILES=		ansi.c basic.c bind.c buffer.c crypt.c dg10.c \
 HFILES=		estruct.h edef.h efunc.h epath.h ebind.h evar.h
 
 emacs:		$(OFILES)
-		$(CC) $(CFLAGS) $(OFILES) -ltermcap -lc -o emacs
+		$(CC) $(CFLAGS) $(OFILES) -ltermcap -lc -o $@
 
 $(OFILES):	$(HFILES)
