@@ -1,6 +1,6 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* hack.version.c - version 1.0.3 */
-/* $Header: /home/Vince/cvs/games.d/hack1.0.3.d/hack.version.c,v 1.1 1986-09-02 19:42:17 root Exp $ */
+/* $Header: /home/Vince/cvs/games.d/hack1.0.3.d/hack.version.c,v 1.2 1987-06-13 22:24:05 root Exp $ */
 
 #include	"date.h"
 
@@ -10,7 +10,7 @@ doversion(){
 		"Quest"
 #else
 		"Hack"
-#endif QUEST
+#endif
 		), datestring);
 	return(0);
 }
