@@ -29,7 +29,7 @@ char *getenv();
 #define RUNLEN 8
 #define when break;case
 #define otherwise break;default
-#define CNTRL(p) ('p'-'A'+1)
+#define CNTRL(p) (p-'A'+1)
 
 WINDOW *tv;
 WINDOW *stw;
@@ -47,10 +47,50 @@ int start_len = LENGTH;
 char lastch;
 char outbuf[BUFSIZ];
 
+SIG_T
+leave(dummy)
+{
+	move(LINES - 1, 0);
+	refresh();
+	endwin();
+	exit(0);
+}
+
+SIG_T
+wake(dummy)
+{
+	signal(SIGALRM, wake);
+	fflush(stdout);
+	process(lastch);
+}
+
+SIG_T
+suspend(dummy)
+{
+	char *sh;
+
+	move(LINES-1, 0);
+	refresh();
+	endwin();
+	fflush(stdout);
+#ifdef SIGTSTP
+	kill(getpid(), SIGTSTP);
+	signal(SIGTSTP, suspend);
+#else
+	sh = getenv("SHELL");
+	if (sh == NULL)
+		sh = "/bin/sh";
+	system(sh);
+#endif
+	initscr();
+	crmode();
+	noecho();
+	setup();
+}
+
 main(argc, argv)
 char **argv;
 {
-	int leave(), wake(), suspend();
 	char ch;
 
 	if (argc == 2)
@@ -132,21 +172,6 @@ char chr;
 	waddch(tv, chr);
 }
 
-leave()
-{
-	move(LINES - 1, 0);
-	refresh();
-	endwin();
-	exit(0);
-}
-
-wake()
-{
-	signal(SIGALRM, wake);
-	fflush(stdout);
-	process(lastch);
-}
-
 rnd(range)
 {
 	return abs((rand()>>5)+(rand()>>5)) % range;
@@ -193,9 +218,9 @@ char ch;
 		when 'K': y--; running = RUNLEN/2; ch = tolower(ch);dir=UP;
 		when 'L': x++; running = RUNLEN; ch = tolower(ch);dir=RIGHT;
 		when '\f': setup(); return;
-		when CNTRL(Z): suspend(); return;
-		when CNTRL(C): crash(); return;
-		when CNTRL(D): crash(); return;
+		when CNTRL('Z'): suspend(); return;
+		when CNTRL('C'): crash(); return;
+		when CNTRL('D'): crash(); return;
 		otherwise: if (! running) alarm(1);
 			   return;
 	}
@@ -256,29 +281,6 @@ crash()
 	printf("Well you ran into something and the game is over.\n");
 	printf("Your final score was %d\n", score);
 	leave();
-}
-
-suspend()
-{
-	char *sh;
-
-	move(LINES-1, 0);
-	refresh();
-	endwin();
-	fflush(stdout);
-#ifdef SIGTSTP
-	kill(getpid(), SIGTSTP);
-	signal(SIGTSTP, suspend);
-#else
-	sh = getenv("SHELL");
-	if (sh == NULL)
-		sh = "/bin/sh";
-	system(sh);
-#endif
-	initscr();
-	crmode();
-	noecho();
-	setup();
 }
 
 setup()

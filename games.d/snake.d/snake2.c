@@ -32,7 +32,7 @@ char *getenv();
 #define RUNLEN 8
 #define when break;case
 #define otherwise break;default
-#define CNTRL(p) ('p'-'A'+1)
+#define CNTRL(p) (p-'A'+1)
 
 WINDOW *tv;
 WINDOW *stw;
@@ -57,10 +57,50 @@ char twist;
 char lastch;
 char outbuf[BUFSIZ];
 
+SIG_T
+suspend(dummy)
+{
+	char *sh;
+
+	move(LINES-1, 0);
+	refresh();
+	endwin();
+	fflush(stdout);
+#ifdef SIGTSTP
+	kill(getpid(), SIGTSTP);
+	signal(SIGTSTP, suspend);
+#else
+	sh = getenv("SHELL");
+	if (sh == NULL)
+		sh = "/bin/sh";
+	system(sh);
+#endif
+	initscr();
+	crmode();
+	noecho();
+	setup();
+}
+
+SIG_T
+leave(dummy)
+{
+	move(LINES - 1, 0);
+	refresh();
+	endwin();
+	exit(0);
+}
+
+SIG_T
+wake(dummy)
+{
+	signal(SIGALRM, wake);
+	fflush(stdout);
+	process(lastch);
+}
+
 main(argc, argv)
 char **argv;
 {
-	int leave(), wake(), suspend();
 	char ch;
 
 	if (argc == 2)
@@ -176,21 +216,6 @@ char chr;
 	waddch(tv, chr);
 }
 
-leave()
-{
-	move(LINES - 1, 0);
-	refresh();
-	endwin();
-	exit(0);
-}
-
-wake()
-{
-	signal(SIGALRM, wake);
-	fflush(stdout);
-	process(lastch);
-}
-
 rnd(range)
 {
 	return abs((rand()>>5)+(rand()>>5)) % range;
@@ -263,9 +288,9 @@ char ch;
                                 if (pd==UP) twist='/';
                                 if (pd==DOWN) twist='\\';};
 		when '\f': setup(); return;
-		when CNTRL(Z): suspend(); return;
-		when CNTRL(C): exit_gracefully(); return;
-		when CNTRL(D): exit_gracefully(); return;
+		when CNTRL('Z'): suspend(); return;
+		when CNTRL('C'): exit_gracefully(); return;
+		when CNTRL('D'): exit_gracefully(); return;
 		otherwise: if (! running) alarm(1);
 			   return;
 	}
@@ -337,29 +362,6 @@ exit_gracefully ()
         fflush(stdout);
         printf("You quit with %d points.\n",score);
         leave();
-}
-
-suspend()
-{
-	char *sh;
-
-	move(LINES-1, 0);
-	refresh();
-	endwin();
-	fflush(stdout);
-#ifdef SIGTSTP
-	kill(getpid(), SIGTSTP);
-	signal(SIGTSTP, suspend);
-#else
-	sh = getenv("SHELL");
-	if (sh == NULL)
-		sh = "/bin/sh";
-	system(sh);
-#endif
-	initscr();
-	crmode();
-	noecho();
-	setup();
 }
 
 setup()
