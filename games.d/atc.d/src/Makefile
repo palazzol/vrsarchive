@@ -1,4 +1,4 @@
-MODEL	= -i
+MODEL	= -i -F 2000
 OPTIONS	= -Dsrandom=srand -Drandom=rand
 CURSESLIBR= libatc.a
 ALL	= $(XLIBR) $(CURSESLIBR)
