@@ -366,7 +366,7 @@ tellme(quest, answer)
 char	*quest,
 	*answer;
 {
-#ifndef CYGWIN
+#ifndef __STDC__
 	if (stdin->_cnt <= 0)
 #endif
 	{
