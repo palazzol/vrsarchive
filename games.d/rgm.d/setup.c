@@ -8,13 +8,10 @@
 # include <stdio.h>
 # include <signal.h>
 # include "install.h"
+# include "termtokens.h"
 
 # define READ    0
 # define WRITE   1
-
-/* Define the Rog-O-Matic pseudo-terminal (Concept Based) */
-
-# define ROGUETERM "rg|rterm:am:bs:ce=^[^S:cl=^L:cm=^[a%+ %+ :co#80:li#24:so=^[D:se=^[d:pt:ta=^I:up=^[;:db:xn:"
 
 int   frogue, trogue;
 
@@ -103,7 +100,8 @@ char *argv[];
     close (1);
     dup (ctp[WRITE]);
 
-    putenv ("TERMCAP", ROGUETERM);
+    putenv ("TERM", ROGUETERM);
+    putenv ("TERMCAP", ROGUECAP);
     putenv ("ROGUEOPTS", ropts);
 
     if (oldgame)  execl (rfile, rfile, "-r", 0);
@@ -156,11 +154,7 @@ char *fname, *options;
 author()
 {
   switch (getuid())
-  { case 1337:	/* Fuzzy */
-    case 1313:	/* Guy */
-    case 1241:	/* Andrew */
-    case 345:	/* Leonard */
-    case 342:	/* Gordon */
+  { case 0:	/* root */
 		return 1;
     default:	return 0;
   }
