@@ -10,6 +10,11 @@
 #include <ctype.h>
 #include "rogue.h"
 
+#ifndef A_REVERSE	/* If not terminfo, */
+#define	erasechar()	(_tty.sg_erase)
+#define	killchar()	(_tty.sg_kill)
+#endif
+
 #define	EQSTR(a, b, c)	(strncmp(a, b, c) == 0)
 
 #define	NUM_OPTS	(sizeof optlist / sizeof (OPTION))
@@ -204,7 +209,7 @@ WINDOW *win;
 	{
 		if (c == -1)
 			continue;
-		else if (c == _tty.sg_erase)	/* process erase character */
+		else if (c == erasechar())	/* process erase character */
 		{
 			if (sp > buf)
 			{
@@ -216,7 +221,7 @@ WINDOW *win;
 			}
 			continue;
 		}
-		else if (c == _tty.sg_kill)	/* process kill character */
+		else if (c == killchar())	/* process kill character */
 		{
 			sp = buf;
 			wmove(win, oy, ox);
