@@ -1,7 +1,7 @@
 #
 #	Battelstar %W% %G%
 #
-ALL	= battlestar
+ALL	= battlestar$(EXE)
 MODEL	= -M2l
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
 include $(HOME)/CONFIG
@@ -20,21 +20,21 @@ JUNKF	= $(ALL) tags mkfile mkwlist mkobjs \
 	  wlist.c dayobjs.c nightobjs.c mkwlist.o mkobjs.o
 DATAF	= dayfile nightfile battlewords dayobjs nightobjs
 
-battlestar: $(OBJS)
+battlestar$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 $(DATAF): ;
 
-mkfile: mkfile.c
+mkfile$(EXE): mkfile.c
 	$(CC) $(CFLAGS) -o mkfile mkfile.c
 
-mkwlist: mkwlist.c
+mkwlist$(EXE): mkwlist.c
 	$(CC) $(CFLAGS) -o mkwlist mkwlist.c
 
 wlist.c: battlewords mkwlist
 	./mkwlist battlewords
 
-mkobjs: mkobjs.c
+mkobjs$(EXE): mkobjs.c
 	$(CC) $(CFLAGS) -o mkobjs mkobjs.c
 
 dayobjs.c: dayobjs mkobjs
@@ -46,10 +46,10 @@ nightobjs.c: nightobjs mkobjs
 lint: $(CFILES) 
 	lint $(LFLAGS) $(CFILES) $(LIBS) 
 
-install: $(GAMDIR)/battlestar $(MAN) $(LOGFILE) $(DAYF) $(NIGHTF)
+install: $(GAMDIR)/battlestar$(EXE) $(MAN) $(LOGFILE) $(DAYF) $(NIGHTF)
 
-$(GAMDIR)/battlestar: $(GAMDIR) battlestar
-	cp battlestar $(GAMDIR)
+$(GAMDIR)/battlestar$(EXE): $(GAMDIR) battlestar$(EXE)
+	cp battlestar$(EXE) $(GAMDIR)
 	chown $(SAFEUID) $@
 	chgrp $(SAFEGRP) $@
 	chmod 4711 $@
@@ -77,4 +77,5 @@ $(MAN): $(MAN6) battlestar.6
 	chmod 644 $@
 
 clean:
-	rm -f $(OBJS) $(JUNKF)
+	rm -f $(OBJS) $(JUNKF) $(ALL)
+	rm -f mkobjs$(EXE) mkwlist$(EXE) mkfile$(EXE)
