@@ -71,9 +71,17 @@ static char *files[] =		/* all files to create */
     srand((unsigned) time((long *) NULL));	/* prime random numbers */
 
     umask(077);				/* only owner can read/write created files */
-
+#ifdef __STDC__
+    {
+    struct passwd *pw = getpwuid(getuid());
+    if (getuid() != UIDA)
+	if (!pw || strcmp(pw->pw_name, WIZARDB))
+	    fprintf(stderr, "Warning: pw_name (%s) is not equal to %s.\n", pw->pw_name, WIZARDB);
+    }
+#else
     if ((getuid() != UIDA) && (getuid() != UIDB))
 	fprintf(stderr, "Warning: UID (%d or %d) is not equal to current uid.\n", UIDA, UIDB);
+#endif
 
     /* check Phantasia destination directory */
     if (stat(FILENM(.), &fbuf) < 0)
@@ -182,7 +190,11 @@ static char *files[] =		/* all files to create */
     printf("Compiled options:\n\n");
     printf("Phantasia destination directory:  %s\n", FILENM(.));
     printf("Wizard A:  %s   UID:  %d\n", WIZARDA, UIDA);
+#ifdef __STDC__
+    printf("Wizard B:  %s\n", WIZARDB);
+#else
     printf("Wizard B:  %s   UID:  %d\n", WIZARDB, UIDB);
+#endif
 
 #ifdef OK_TO_PLAY
     printf("Restricted playing enabled.\n");
