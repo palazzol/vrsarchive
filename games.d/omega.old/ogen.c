@@ -452,15 +452,12 @@ int index;
 
 /* is a room connected to a lower number room? */
 int connected(fromroom,toroom,level)
-{
-  int i,connected=FALSE;
+{	int i;
 
-  for (i=0;
-       ((i<Leveldata[level].rooms[fromroom].numconnections) &&
-	(! connected));
-       i++)
-    connected != (Leveldata[level].rooms[fromroom].connections[i] == toroom);
-  return(connected);
+	for (i=0; i < Leveldata[level].rooms[fromroom].numconnections; i++)
+		if (Leveldata[level].rooms[fromroom].connections[i] == toroom)
+			return(1);
+	return(0);
 }
 
 /* establishes a connection from room to a lower numbered room */
