@@ -1,0 +1,26 @@
+.TH IS_ABLE 1 "December 31, 1989"
+.UC 4
+.SH NAME
+is_writable, is_readable\- Check for write/read\-ability of a file.
+.SH SYNOPSIS
+.B is_writable
+[
+\-g
+] file
+.PP
+.B is_readable
+[
+\-g
+] file
+.SH DESCRIPTION
+By default
+.I is_writable
+and
+.I is_readable
+both check a file to see if it is writ/read-able by group all.  It
+returns a "0" if this is true.
+.PP
+options are:
+.TP
+.B \-g
+Check for group writability.

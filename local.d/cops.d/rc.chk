@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+#  Usage: rc.chk
+#
+#  This checks pathnames and files inside the shell script files /etc/rc*
+# for writability.
+#
+#  Mechanism:  The commands inside the files /etc/rc* are executed when
+# the machine is booted.  This shell script greps for commands/paths that
+# are of these forms:
+#
+#	/path/command			# or whatever
+#		or
+#	PATH=:/bin:/usr/bin:.		# or whatever
+#		or
+#	MYVAR=`/path/command`		# or whatever
+#	
+#  It then takes each potential problem-string and uses the program
+# "is_writable" to determine if it is world writable.  All results are
+# echoed to standard output.
+#
+AWK=/bin/awk
+LS=/bin/ls
+TEST=/bin/test
+EGREP=/usr/bin/egrep
+ECHO=/bin/echo
+SORT=/usr/bin/sort
+
+
+# CHANGE THIS LINE OR PUT IN FILE NAMES IF/AS NEEDED!
+#    (for example: init_files="/etc/rc /etc/rc.local")
+#
+init_files=`$LS /etc/rc*`
+
+#
+#  This should get all paths in /etc/rc* files; at least two types here.
+# First type starts with a "/", the second is either in the form :
+#
+#	PATH=:/bin:/usr/bin:.		# or whatever
+# or
+#	MYVAR=`/bin/echo "hello"`	# or whatever
+#
+#
+#   Notice also I strip out any references to /tmp, /usr/tmp,
+# /dev/*ty's, and /dev/null.
+first_pass=`$AWK '{for (i=1;i<=NF;i++) if ((index($i,"/")) && ((first=substr($i,1,1)!=">"))&& first!="#" && first!="$" && (last=substr($i,length($i),1))!="\"") print $i}' $init_files | $EGREP -v "/dev/.*ty|/tmp|/usr/tmp|/dev/null" | $SORT -u`
+
+all_files=`$ECHO $first_pass| $SORT | $UNIQ`
+
+#  First, get the ones starting with "/":
+#
+#   DANGER!  DANGER!  DANGER Will Robinson! Awk runs out of room ("bails
+# out") if too many files are here....
+all_files=`$ECHO $first_pass|$AWK 'BEGIN{RS=FS}{if(substr($0,1,1)=="/")print $0}'`
+
+for i in $all_files
+	do
+	if ./is_writable $i
+		then
+		$ECHO "Warning!  File $i (in /etc/rc*) is _World_ writable!"
+	fi
+	done
+
+# end of script

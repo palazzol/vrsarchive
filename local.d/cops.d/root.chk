@@ -1,0 +1,127 @@
+#!/bin/sh
+#
+#  Usage: root.chk
+#
+#  This shell script checks pathnames inside root's startup files for 
+# writability, improper umask settings (world writable), non-root
+# entries in /.rhosts, and to ensure that root is in /etc/ftpusers.
+# Also check for a single "+" in /etc/hosts.equiv (world is trusted).
+# Startup files are /.login /.cshrc /.profile
+#
+#  Mechanism:  These files contain paths and filenames that are stripped
+# out using "grep".  These strings are then processed by the "is_writable"
+# program to see if they are world writable.  Strings of the form:
+#
+#	path=(/bin /usr/bin .)
+#		and
+#	PATH=/bin:/usr/bin:.:
+#
+# are checked (using grep) to ensure that "." is not in the path.  All
+# results are echoed to standard output. 
+#  For umask stuff, simply grep for umask in startup files, and check
+# umask value.  For /etc/ftpuser, simple grep to check if root is in
+# the file.  For /etc/hosts.equiv, just check to see if "+" is alone
+# on a line by awking it.
+#
+#
+AWK=/bin/awk
+SED=/bin/sed
+TEST=/bin/test
+ECHO=/bin/echo
+GREP=/bin/grep
+SORT=/usr/bin/sort
+EXPR=/bin/expr
+
+csh=/.cshrc
+sh=/.profile
+rhosts=/.rhosts
+big_files="/.login /.cshrc /.profile"
+ftp=/etc/ftpusers
+equiv=/etc/hosts.equiv
+
+# parse into separate paths:
+for i in $big_files
+	do
+	if $TEST -s $i
+		then
+		./chk_strings $i
+
+		# check for umask stuff (thanks to Bruce Spence):
+		if umsk=`$GREP umask $i ` 2>/dev/null
+			then
+			mask=`$ECHO $umsk|$AWK '{if($2!=""){if(length($2)==1) print "00"$2; \
+				else if (length($2)==2) print "0"$2; \
+				else print $2} else print "000"}'`
+#			perm=`$EXPR substr $mask 3 1`
+			perm=`$ECHO $mask | $SED 's/[0-9][0-9]//'`
+			if $TEST "$perm" -lt 2 -o "$perm" = 4
+				then
+				if $TEST "$umsk"
+					then
+					$ECHO "Warning!  Root's umask set to $umsk in $i"
+					fi
+				fi
+			fi
+		fi
+	done
+
+# check to see if root is in ftpusers file
+if $TEST -s $ftp
+	then
+	if test ! `$GREP "root" $ftp`
+		then
+		$ECHO Warning!  $ftp exists and root is not in it
+		fi
+	fi
+
+# check for a "+" in hosts.equiv.  Bad.  Bad dog.
+if $TEST -f $equiv ; then
+	$AWK '{if (NF==1 && $1=="+") printf("Warning!  A \"+\" entry in %s!\n", "'$equiv'")}' $equiv
+	fi
+
+# check for non-root entries in /.rhosts
+#$AWK '{if ((NF==1&&!($1=="localhost" || $1=="root"))||(NR!=1&&$2!="root")) printf("Warning!  Non root entry in %s! %s\n", $rhosts, $0)}' $rhosts
+
+
+# echo checking paths...
+{
+#
+# Get the root paths from $csh.
+if $TEST -f $csh; then
+$GREP path $csh | $AWK '{split($0,p1,"="); \
+for (i=1;i<=NF;i++) { \
+	if (substr($i,1,1)=="/") { \
+		if (substr($i,length($i),1)!=")"){ print $i} \
+		else {print substr($i,1,length($i)-1)} \
+		} \
+	else if ($i ~ /^path/) {split($i,p2,"(");if (substr(p2[2],1,1)=="/") { \
+		print p2[2]}}} \
+	}'
+fi
+
+#
+# Get the root paths from $sh.
+if $TEST -f $sh; then
+$GREP PATH $sh | $SED 's/\(PATH=.*\);.*/\1/' |
+	$AWK -F= '{split($2,temp,":"); \
+		for (i in temp) \
+			if (temp[i] == "") print "."; \
+			else print temp[i]}'
+fi
+} |
+ $SORT -u |
+  while read i
+  do
+	# check to see if "." is in path
+	if $TEST "." = "$i"
+	then
+		$ECHO "Warning!  \".\" is in roots path!"
+	fi
+
+	if ./is_writable $i
+	then
+		$ECHO "Warning!  Directory $i is _World_ writable!"
+	fi
+  done
+
+# end of script

@@ -1,0 +1,115 @@
+#!/bin/sh
+#
+#  dev.chk [-g]
+#
+#   This shell script checks the permissions of /dev/mem, /dev/kmem, and
+# all devs listed in the file /etc/fstab (the "mount" command would be
+# a preferable way of getting the file system name, but the syntax of the
+# output is variable from machine to machine), and flags them if they are
+# readable by using the "is_readable" command.  It also checks for
+# unrestricted NFS mountings.  By default, dev_check will flag devs only
+# if world readable or writable.  The -g option tells it to print out devs
+# that are also group readable/writable.
+#
+AWK=/bin/awk
+LS=/bin/ls
+ECHO=/bin/echo
+TEST=/bin/test
+
+# locations of vital stuff...
+mtab=/etc/fstab
+exports=/etc/exports
+
+#   Optional List of assorted files that shouldn't be
+# readable (mix 'n match; add to the list as desired):
+opt_files='/usr/adm/sulog /etc/btmp /.netrc'
+
+group=no
+
+if $TEST $# -gt 1
+	then
+	$ECHO "Usage: $0 [-g]"
+	exit 2
+fi
+
+if $TEST $# -eq 1
+	then
+	if $TEST "X$1" = "X-g"
+		then
+		group=yes
+	else
+		$ECHO "Usage: $0 [-g]"
+		exit 2
+	fi
+fi
+
+#  Testing filesystems and devices for improper read/write permissions...
+
+#  NEVER want these readable!
+always_crit_files="/dev/kmem /dev/mem"
+
+# grab devices from "/etc/fstab"....
+#
+#  Format of /etc/fstab:	/dev/zd0e   +junk(:-)
+#
+#  Or NFS mounted:		uther:/usr/spaf   +junk(:-)
+#
+#  Not sure what to do with NFS stuff, so we'll ignore it.  Seems that
+# this doesn't tell us anything about what we want anyway....
+crit_devs=$always_crit_files" "`$AWK 'index($1, "/")==1 {print $1}' $mtab`
+
+# Alternate way; grab devices from "mount [-p]"....
+#   Format of output from mount (some machines use -p option, some
+# don't.  Check your local man page... :
+# crit_devs=$always_crit_files" "`/etc/mount -p|$AWK 'index($1, "/")==1
+#					{print $1} \
+#				}'`
+
+#
+# However, do check for single line entries in /etc/exports:
+if $TEST -s $exports
+	then
+	$AWK '{while(getline >0) if ($0 !~ /^#/ && NF == 1) \
+		printf("Warning!  NFS file system %s exported with no restrictions.\n",$0)}' $exports
+	fi
+
+for i in $crit_devs
+	do
+	if ./is_readable $i
+		then
+		$ECHO Warning!  $i is _World_ readable!
+	fi
+	if ./is_writable $i
+		then
+		$ECHO Warning!  $i is _World_ writable!
+	fi
+	if $TEST "$group" = "yes"
+		then
+		if ./is_readable -g $i
+			then
+			$ECHO Warning!  $i is group readable!
+		fi
+		if ./is_writable -g $i
+			then
+			$ECHO Warning!  $i is group readable!
+		fi
+	fi
+done
+
+# Do the mix 'n match assorted no-read files:
+for i in $opt_files
+	do
+	if ./is_readable $i
+		then
+		$ECHO Warning!  $i is _World_ readable!
+	fi
+	if $TEST "$group" = "yes"
+		then
+		if ./is_readable -g $i
+			then
+			$ECHO Warning!  $i is group readable!
+		fi
+	fi
+done
+
+# end of script

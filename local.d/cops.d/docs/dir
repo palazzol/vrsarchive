@@ -1,0 +1,37 @@
+.TH DIR.CHK 1 "December 31, 1989"
+.UC 4
+.SH NAME
+dir.chk  \- Checks critical directories for writability.
+.SH SYNOPSIS
+.B dir.chk
+[
+\-g
+] name ...
+.SH DESCRIPTION
+By default
+.I dir.chk
+checks all directories in the file
+.I dir.chklst
+to see if they are world writable.
+.PP
+The configuration file is merely a list of directories, one per line,
+that are checked by
+.I dir.chk.
+Any line starting with a "#" is ignored.
+.PP
+options are:
+.TP
+.B \-g
+Check for group writability as well as world.
+.SH EXAMPLE
+.Ps
+#   Lines are of the format:
+#	/path/to/file
+/etc
+/usr
+/usr/bin
+.Pe
+.SH FILES
+dir.chklst
+.SH "SEE ALSO"
+is_writable(1)

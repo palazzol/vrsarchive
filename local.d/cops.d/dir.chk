@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+#  dir.chk [-g]
+#
+#   This shell script checks the permissions of all directories listed 
+# in the configuration file "dirs.755.dirlist",  and flags them if they
+# are world-writable.  The -g option tells it to print out directories
+# that are also group writable.  See the config file for the format of
+# the configuration file.
+#
+#   Mechanism:  This shell script simply takes each line from the
+# configure file and uses the "is_writable" program to check if any of
+# the directories in question are writable by world/group.  All results
+# are written to standard output.
+#
+AWK=/bin/awk
+TEST=/bin/test
+ECHO=/bin/echo
+
+dir_list=dir.chklst
+group=no
+
+if $TEST $# -gt 1
+	then
+	$ECHO "Usage: $0 [-g]"
+	exit 2
+fi
+
+if $TEST $# -eq 1
+	then
+	if $TEST "X$1" = "X-g"
+		then
+		group=yes
+	else
+		$ECHO "Usage: $0 [-g]"
+		exit 2
+	fi
+fi
+
+#  Testing directories in file $dir_list for potential write mode problems
+
+#  Read from $dir_list (e.g. "dirs.755.dirlist") what dirs to check.
+#
+# Comments are lines starting with a "#".
+#
+while read i
+do
+	case $i in
+	 "#"* | "" )
+		continue;;
+	esac
+
+	# exit code 0 is writable, 1 is not
+	dirs=`$ECHO $i`
+	for d in $dirs
+		do
+		if ./is_writable $d
+			then
+			echo "Warning!  Directory $d is _World_ writable!"
+		fi
+	done
+
+	if $TEST "$group" = "yes"
+		then
+		for d in $dirs
+			do
+			if ./is_writable -g $d
+				then
+				echo "Warning!  Directory $d is group writable!"
+			fi
+		done
+	fi
+
+done < $dir_list
+
+# end of script

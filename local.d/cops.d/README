@@ -1,0 +1,255 @@
+
+   Welcome!  You now hold in your hands (terminal?) a collection
+of security tools that are designed specifically to aid the typical
+UNIX systems administrator, programmer, operator, or consultant in
+the oft neglected area of computer security.
+   The package, which will be henceforth be referred to as COPS
+(Computer Oracle and Password System), can be broken down into three
+key parts.  The first is the actual set of programs that attempt
+to automate security checks that are often performed manually (or
+perhaps with self written short shell scripts or programs) by a systems
+administrator.  The second part is the documentation, which details
+how to set up, operate, and to interpret any results given by the
+programs.  Finally, COPS is an evolving beast.  It includes a list
+of possible extensions that might appear in future releases, as well
+as pointers to other works in UNIX security that could not be included
+at this time, due to space or other restrictions.
+   This document contains six sections:
+
+      1) What is COPS?
+      2) What COPS is _not_
+      3) How to Configure/Install COPS
+      4) Running COPS for the 1st Time
+      5) Continued Use of COPS
+      6) Disclaimer and End Notes
+
+
+1) What is COPS?
+-----------------
+
+   COPS is a collection of about a dozen programs that each attempt
+to tackle a different problem area of UNIX security.  Among the areas
+checked are file, directory, and device permissions/modes, passwords,
+contents of password and group files, the contents of /etc/rc && cron
+files, changes in SUID status, the writability of users home directories
+and startup files (.profile, .cshrc, etc), and a few others as well.
+It also includes the Kuang expert system, written by Bob Baldwin, that
+takes a set of rules and tries to determine if your system can be
+compromised.  For a more complete list of all of the checks, look at the
+file "release.notes" or "cops.report."
+   All of the programs merely warn the user of a potential problem --
+COPS DOES NOT ATTEMPT TO CORRECT OR EXPLOIT ANY OF THE POTENTIAL PROBLEMS
+IT FINDS!  COPS either mails or creates a file (user selectable) of any
+of the problems it finds while running on your system.  And because COPS
+does not correct potential hazards it finds, it does _not_ have to be
+run by a privileged account (i.e. root or whomever.)  The only security
+check that should be run by root to get maximum results is the SUID checker;
+although it can be run as an unprivileged user, to find all the SUID files
+in a system, it should be run as root.
+   The programs are mostly written in Bourne shell (using awk, sed, grep,
+etc. as well) for (hopefully) maximum portability.  A few are written
+in C for speed (most notably the Kuang expert system and for implementing
+fast user home directory searching), but the entire system should run on
+most BSD and System V machines with a minimum of tweaking.
+
+2) What COPS is _not_
+----------------------
+
+   COPS merely provides a method of checking for common procedural errors.
+It is not meant to be used as a replacement for common sense or user/
+operator/administrative alertness!  Think of it as an aid, a first line
+of defense -- not as an impenetrable shield against security woes.  An
+experienced wrong-doer could easily circumnavigate _any_ protection that
+COPS can give.  However, COPS _can_ aid a system in protecting its users
+from (their own?) ignorance, carelessness, and the occasional malcontent
+user.
+   Once again, COPS does not correct any errors found.  There are several
+reasons for this; first and foremost, computer security is a slippery
+beast.  What is a major breach in security at one site may be a standard
+policy of openness at another site.  Additionally, in order to correct all
+problems it finds, it would have to be run as a privileged user; and I'm
+not going to go into the myriad problems of running SUID shell scripts
+(See the bibliography at the end of the technical report "cops.report"
+for pointer to a good paper on this subject by Matt Bishop.)
+   At this time, COPS does not attempt to detect bugs or features (such
+as infamous ftpd, fingerd, etc) that may cause security problems.  Although
+this may change in future versions, the current line of reasoning to avoid
+general publication of programs such as these is that all the problems that
+COPS detects can be repaired on any system it runs on.  However, many bugs
+can be readily repaired only be having source code (and possibly a good
+vendor to repair it), and many sites would have serious troubles if they
+suddenly discovered unrepairable problems that could compromise their
+livelihood.  It is possible that a more controlled release may come out
+in the future to address such problems (but don't mail to me about getting
+them -- unless you want to help write them! :-))
+
+3) How to Configure/Install COPS
+---------------------------------
+
+  System V users, other Non-BSD systems, or sites with commands in
+strange places -- you may have to run a shell script called "reconfig"
+to change the pathnames of the executable programs called when using
+COPS.  If your system does not use the paths listed in the shell
+scripts, try running "reconfig".  This will reconfigure the pathnames
+used by COPS to your system; COPS should run fine then, if it
+can find all of the commands (reconfig should tell you if it
+cannot.)  If trouble persists, you will have to change the paths
+to your executable files (awk, sed, etc) by hand.  A drag, I know.
+This all may change without notice, anyway.
+
+4) Running COPS for the 1st Time
+---------------------------------
+
+   Since most of COPS was written and tested mostly on just a few machines
+(at least compared to the total number out there!), you may have significant
+differences that were not anticipated -- unfortunately, or fortunately,
+UNIX is not quite standardized yet.
+   COPS is run by simply typing "cops".  "cops" is a Bourne shell script
+that runs each of the smaller programs, accumulates the output, and then
+mails or stores any results.  "suid.chk", since it can take a long, long time
+to run, is the only "standalone" program in the COPS package; look at
+suid.man for more information.
+
+   To run COPS for the first time, I suggest doing the following:
+
+   -- Look at the disclaimer, file "disclaimer".  Don't sue me.
+      Actually, this holds for all the times you use COPS (1/4 :-))
+   -- Type "make" to create the formatted manual pages, to compile the
+      C programs,  and to make the shell programs executable.
+   -- Read the technical report to understand what COPS is doing and
+      what is going on -- "cops.report".  This gives a look at the
+      philosophies, design notes, and finally a general outlay of the
+      COPS system and UNIX security.
+   -- Next, change lines 36 and 37 in the "cops" shell file from:
+        SECURE=/usr/foo/bar
+        SECURE_USERS="foo@bar.edu"
+      SECURE should be the same directory as the directory that contains
+      the cops programs, and SECURE_USERS should be your own login id, or
+      to whomever you designate as the recipient of the output (your enemy?)
+   -- Set "MAIL=NO" in the "cops" shell file (line 22).  This will prevent
+      a large mail file from choking the mailer.  All of the output will be
+      put into a file called "report.$$", where $$ is the process
+      number that cops had while running.
+   -- Look at the directory and file configuration files, "dir.chklst"
+      and "file.chklst".  They contain critical files that COPS checks
+      for world writability.  Add or delete whatever files/directories
+      you wish; if a file doesn't exist, COPS will effectively ignore it.
+      (If you don't know or are uncertain what files/directories are
+      important, what is given there is a good set to start with on most
+      systems.
+   -- You may wish to comment out the password checker (line 72 in the
+      "cops" shell file).  Although this is not necessary, it will speed
+      up the package if you wish for immediate gratification.
+
+  You should be ready to roll.  COPS is run by simply typing "cops" (you
+may wish to put in the background....)  If you followed my advice and
+set "MAIL=NO" in the "cops" shell file, after COPS is finished, there
+will be a report file created "report.$$" that lists the time and machine
+it was created on.  Otherwise, COPS mails the report to the user listed
+on the line 'SECURE_USERS="foo@bar.edu"'.  There is a file "warnings", which
+contains most of the warning messages COPS uses, as well as a brief
+explanation of how the message might pertain to your system as well as how
+to "fix" any problem.
+
+   NOTE: Change the shell script "cops" to reflect who you want the output
+sent to and where the location of the program is BEFORE running the program.
+
+
+5) Continued Use of COPS
+-------------------------
+
+   Once you are satisfied that COPS indeed does something useful
+(hopefully this will occur :-)), a good way to use it is to run it
+on at least a semi-regular basis.  Even if it doesn't find any problems
+immediately, the types of problems and holes it can detect are of the
+sort that can pop up at any given time.  One way of running COPS
+might be to run it as an "at" job or by cron.
+   I highly advise that whatever directory COPS is placed in is to be
+readable, writable, and executable only by the owner (typing 
+"chmod 700 /usr/foo/bar" or whatever the name is will do this) of the
+directory.  This is to prevent prying eyes from seeing any security
+problems your site may have.  Even if you don't think of them as
+important, someone else might come around and change your mind.  Since
+COPS is fairly configurable, an intruder could easily change the paths
+and files that COPS checks for, hence making it fairly worthless.  Again,
+this comes back to the point that COPS is only a tool -- don't put down
+your defensive shields merely because COPS says "all clear".  If this
+sounds paranoid, it is!  Security people are traditionally paranoid,
+for a reason....  In any case, it is probably not a good idea to advertise
+any (even) potential weaknesses.
+
+   After running COPS, if any warnings are given that compromise any
+individual users accounts (such as world writable .profiles, home
+directories, guessed passwords, etc.), and the warnings are not corrected
+immediately (or you are not sure whether or not it is worth hassling
+the user to change it), try this:
+   Edit the file "init_kuang", and add the compromised user(s) uids and
+groups in their respective target lines (below lines 21 and 27,
+respectively), and run kuang again to see if the users can compromise
+the entire system.  You may change your mind about not thinking
+they are a problem!  In addition, kuang does not have to have "root" 
+as a target (the last line).  Try putting in system administrators or
+other powerful figures to see if they are in danger as well.
+
+6) Disclaimer and End Notes
+----------------------------
+
+   COPS is meant to be a tool to aid in the tightening of security, not
+as a weapon to be used by an enemy to find security flaws in a system.
+It may be argued that allowing anyone to have access to such a tool may
+be dangerous.  But hopefully the overall benefit for systems that use
+this package will outweigh any negative impact.  To me it is akin to a
+law enforcement problem -- that although telling the public how to break
+into a house may foster a slight rise in break-in attempts, the overall
+rise in public awareness on how to defend themselves would actually result
+in a drop in break-ins.  The crackers with black hats already know how
+to crush system defenses and have similar tools, I'm sure.  It's time
+we fought back.
+
+  COPS is not the final answer to anyone's security woes.  You can use
+the system as long as you realize that COPS has no warranty, implied
+or otherwise, and that any problems that you may have with it are
+not my or any of the other authors fault.  I will certainly attempt to
+help you solve them, if I am able, but please don't try to sue me or
+anything...  Let's all make COPS a collective effort that helps people, ok?
+If you have ideas for additional programs, or a better implementation of
+any of the programs here, I would be very interested in seeing them.
+COPS was the work of a LOT of people, both in writing code and in the
+testing phase (thanks beta testers!).  For a complete list of contributors,
+look at the file "XTRA_CREDIT".
+
+   So good luck, and I hope you find COPS useful as we plunge into UNIX
+of the 1990's.
+
+   dan farmer
+   January 31, 1989
+
+
+# include "disclaimer.h"
+
+-------------------- Cut here for disclaimer -------------------------
+
+/***********************************************************************
+* Copyright 1989, 1990 by Purdue University and Dan Farmer.  All rights
+* reserved.  Some individual files may be covered by other copyrights.
+* 
+* This material was written and compiled by Dan Farmer while at Purdue
+* University in 1989 and 1990, under the direction and sponsorship of
+* Professor Gene Spafford.  Other material was contributed as noted
+* elsewhere.
+* Redistribution and use in source and binary forms are permitted
+* provided that this entire copyright notice is duplicated in all such
+* copies, and that any documentation, announcements, and other
+* materials related to such distribution and use acknowledge that the
+* software was developed at Purdue University, W. Lafayette, IN.  No
+* charge, other than an "at-cost" distribution fee, may be charged for
+* copies, derivations, or distributions of this material without the
+* express written consent of the copyright holders.  Neither the
+* name of the University, the name of the author, nor the name of this
+* project's sponsor may  be used to endorse or promote products
+* derived from this material without specific prior written permission.
+* THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+* MERCHANTIBILITY AND FITNESS FOR ANY PARTICULAR PURPOSE.
+************************************************************************/
+---------------------- End disclaimer -------------------------------

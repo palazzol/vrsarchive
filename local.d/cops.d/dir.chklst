@@ -1,0 +1,28 @@
+#
+#  This lists any/all sensitive files the administration wants to ensure
+# non-writability of.  Comments are lines starting with a "#".
+#
+#   Lines are of the format:
+#
+#	/path/to/file
+#
+/
+# /*
+/etc
+/usr
+/bin
+
+/usr/spool
+/usr/adm
+/usr/etc
+/usr/lib
+/usr/local
+/usr/local/bin
+/usr/local/lib
+/usr/bin
+/usr/etc
+/usr/spool/mail
+/usr/spool/news
+/usr/spool/uucp
+/usr/spool/at
+/Mail

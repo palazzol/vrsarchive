@@ -1,0 +1,33 @@
+#
+#  This lists any/all sensitive files the administration wants to ensure
+# non-writability of.  Comments are lines starting with a "#".
+#
+#   Lines are of the format:
+#
+#	/path/to/file
+#
+/.*
+#	/.login
+#	/.profile
+#	/.cshrc
+#	/.crontab
+#	/.rhost
+/etc/*
+#	/etc/passwd
+#	/etc/group
+#	/etc/inittab
+#	/etc/rc
+#	/etc/rc.local
+#	/etc/rc.boot
+#	/etc/hosts.equiv
+#	/etc/profile
+#	/etc/syslog.conf
+#	/etc/export
+/usr/etc/yp*
+/usr/lib/crontab
+/usr/lib/aliases
+/usr/lib/sendmail
+# /usr/spool/L.sys
+# /usr/adm/sulog
+/usr/adm/*
+/bin/*

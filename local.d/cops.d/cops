@@ -1,0 +1,107 @@
+#!/bin/sh
+#
+#  Usage: cops
+#
+#  This will change into the $SECURE directory, ensure all the security
+# programs (listed below) indeed do exist, and run all of the security
+# programs.  If any of the programs find any security problems, they
+# send mail to everyone in the $SECURE_USERS list.  It then destroys all
+# temporary files, and exits the program.  Programs that are run
+# (besides this one):
+#
+#	root.chk	dev.chk		dir.chk
+#	file.chk	group.chk	home.chk
+#	rc.chk		passwd.chk	pass.chk
+#	user.chk	cron.chk
+# The U-kuang system runs these additional programs:
+#	init_kuang	kuang		addto
+#	clearfiles	filewriters	members
+#
+#  If this is changed to "NO", the report that cops creates
+# will not be deleted and the results will not be mailed to anyone.
+MMAIL="YES"
+
+# Where is everyone?
+ECHO=/bin/echo
+TEST=/bin/test
+RM=/bin/rm
+CAT=/bin/cat
+MAIL=/bin/mail
+DATE=/bin/date
+CHMOD=/bin/chmod
+
+######################
+#  Change these lines!
+######################
+SECURE=/usr/foo/bar
+SECURE_USERS="foo@bar.edu"
+######################
+
+SECURE_PROGRAMS="root.chk dev.chk dir.chk file.chk group.chk \
+                 home.chk rc.chk passwd.chk pass.chk \
+		 cron.chk user.chk init_kuang kuang addto \
+		 clearfiles filewriters members"
+
+if $TEST ! -d "$SECURE"
+	then
+	$ECHO "Error -- Security directory $SECURE doesn't exist"
+	exit 1
+fi
+
+$CHMOD 700 $SECURE
+cd $SECURE
+
+for i in $SECURE_PROGRAMS
+	do
+	if $TEST ! -s "$i"
+		then
+		$ECHO "Error -- Security program $i doesn't exist"
+		exit 1
+	fi
+done
+
+$SECURE/root.chk		>	$SECURE/result.$$ 2> /dev/null
+$SECURE/dev.chk			>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/dir.chk			>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/file.chk		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/rc.chk			>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/cron.chk		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/group.chk		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/home.chk		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/passwd.chk		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/pass.chk 		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/user.chk		>>	$SECURE/result.$$ 2> /dev/null
+$SECURE/kuang			>	/dev/null 2> /dev/null
+if $TEST -s "$SECURE/Success"
+	then
+	$CAT $SECURE/Success >> $SECURE/result.$$
+fi
+$RM -f $SECURE/Success
+
+
+#
+#   Mail the final report to $SECURE_USERS and remove the evidence
+if $TEST -s "$SECURE/result.$$"
+	then
+	$ECHO ATTENTION:				>  $SECURE/report.$$
+	$ECHO "Security Report for "`$DATE`	>> $SECURE/report.$$
+
+	#
+	#  Thanks to arbitron for this idea...
+	HOSTNAME=`/bin/sh -c "/bin/uname -n || /usr/bin/uuname -l || /bin/hostname" 2>&-`
+	$ECHO "from host $HOSTNAME"			>> $SECURE/report.$$
+	$ECHO					>> $SECURE/report.$$
+	$ECHO					>> $SECURE/report.$$
+	$CAT $SECURE/result.$$			>> $SECURE/report.$$
+
+	if $TEST "$MMAIL" = "YES"
+		then
+		$MAIL $SECURE_USERS < $SECURE/report.$$
+		$RM -f $SECURE/report.$$
+	fi
+
+fi
+$RM -f $SECURE/result.$$
+
+#  end it all....
+exit 0

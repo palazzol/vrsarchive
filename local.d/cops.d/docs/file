@@ -1,0 +1,37 @@
+.TH FILE.CHK 1 "December 31, 1989"
+.UC 4
+.SH NAME
+file.chk  \- Checks critical files for writability.
+.SH SYNOPSIS
+.B file.chk
+[
+\-g
+] name ...
+.SH DESCRIPTION
+By default
+.I file.chk
+checks all files in the file
+.I file.chklst
+to see if they are world writable.
+.PP
+The configuration file is merely a list of files, one per line,
+that are checked by
+.I file.chk.
+Any line starting with a "#" is ignored.
+.PP
+options are:
+.TP
+.B \-g
+Check for group writability as well as world.
+.SH EXAMPLE
+.Ps
+#   Lines are of the format:
+#	/path/to/file
+/etc/*
+/.profile
+.Pe
+
+.SH FILES
+file.chklst
+.SH "SEE ALSO"
+is_writable(1)

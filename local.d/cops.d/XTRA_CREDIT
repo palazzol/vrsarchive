@@ -1,0 +1,42 @@
+
+  Code credits are where code credits are due.  If I miss anyone, please
+forgive (and notify) me!
+
+Gene Spafford -- overall design help.
+
+Robert Baldwin -- the kuang package.
+
+Craig Leres, Seth Alford, Roger Southwick, Steve Dum, and Rick Lindsley
+all get credit for the password guessing program.
+
+Prentiss Riddle -- the suid checker.
+
+  And of course lots of credit goes to my great Beta-release sweatshop team;
+especially Adri Verhoef for tightening up lots of my crummy code (cops,
+group.chk, root.chk, is_writable, dev.chk, dir.chk & file.chk among others),
+Steve Romig for good ideas _and_ letting me use a system V machine to test
+on (how many people do you know that would let you test a security
+system on their system with no strings attached!) Jason Levitt, Jim
+Kimble, Jim Rowan, Stefan Vorkoetter, Judy Scheltema, Pete Troxell (all
+the Sun C2 stuff....), Dennis Conley, and of course John Sechrest.
+Tony Petrost pointed out some of my incorrect assumptions and helped
+fix cron.chk.  Kudos also to Bruce Spence for giving me some good
+implementation ideas at LISA II.
+
+  If strings is not available to you, a version is available on uunet;
+also a nifty install program written by Kevin Braunsdorf that can be used
+as a super directory/file mode checker/security device should be
+available soon in comp.sources.unix (these programs large sizes preculudes
+their inclusion in COPS, but I recommend looking into them.)
+Both can be gotten via anonymous ftp.  Strings is in comp.unix.sources
+directory, install should be in the same.
+  Everything else not explicitely mentioned in the COPS.report.ms paper
+or here was written by me.  Not mentioned execpt in the source code are
+some small changes made by myself to make everything fit in as a cohesive
+whole; I tried to make comments in the source code if I changed it (never
+to drastic in any case.)
+
+  For a good story on the subject, you might want to read _The Cuckoo's
+Egg_, by Clifford Stoll.  This is a true tale of a sysadmin's fight 
+against beaurocracy and a hacker (the bad kind.)  Good stuff.
+
