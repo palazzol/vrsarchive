@@ -173,7 +173,7 @@ char *argv[];
 			continue;
 					/* no '.' entry means root directory */
 		if (dot == 0 && slot < 0) {
-			printf(stderr, "mwrite: No directory slots\n");
+			fprintf(stderr, "mwrite: No directory slots\n");
 			exit(1);
 		}
 					/* make the directory grow */

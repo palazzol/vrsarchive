@@ -12,16 +12,16 @@
 extern int fd, dir_len, dir_start, clus_size, fat_len, num_clus;
 extern unsigned char *fatbuf;
 extern char *mcwd;
+extern char *getenv(), *fixmcwd(), *malloc(), get_dos_ver();
+extern long lseek();
+extern void perror(), exit();
 
 int
 init(mode)
 int mode;
 {
 	int code = 0, buflen;
-	unsigned char read_fat(), fat;
-	char *getenv(), *fixmcwd(), *malloc(), version, get_dos_ver();
-	long lseek();
-	void perror(), exit();
+	unsigned char read_fat(), fat, version;
 
 					/* open the 'generic' floppy */
 	if ((fd = open(FLOPPY, mode)) < 0) {

@@ -84,7 +84,7 @@ char *argv[];
 	}
 					/* no '.' entry means root directory */
 	if (dot == 0 && slot < 0) {
-		printf(stderr, "mmd: No directory slots\n");
+		fprintf(stderr, "mmd: No directory slots\n");
 		exit(1);
 	}
 					/* make the directory grow */

@@ -1,8 +1,11 @@
 /* @(#)llib-lcurses	1.5 (Berkeley) 3/27/83 */
-
+#ifdef __STDC__
+/* LIBPROTO */
+#else
 /* LINTLIBRARY */
+#endif
 # include	"curses.h"
-
+#ifndef __STDC__
 /*
  * Fake declarations; all of these are declared as externs in curses.h,
  * but lint needs something a little more solid than that
@@ -147,3 +150,4 @@ WINDOW *subwin(o, Nl, Nc, by, bx) WINDOW *o; int Nl, Nc, by, bx; { return o; }
 	/* These really return char *'s but this will do. */
 int	wstandout(win) WINDOW *win; { return 0; }
 int	wstandend(win) WINDOW *win; { return 0; }
+#endif

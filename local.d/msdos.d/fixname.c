@@ -64,7 +64,7 @@ char *name;
 		*s = 'X';
 	}
 	if (modified)
-		printf("'%s' Contains illegal character\(s\), using '%s.%s'\n", name, temp, ext);
+		printf("'%s' Contains illegal character(s), using '%s.%s'\n", name, temp, ext);
 	ans = malloc(12);
 	sprintf(ans, "%-8.8s%-3.3s", temp, ext);
 	return(ans);

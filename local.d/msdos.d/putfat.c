@@ -6,6 +6,7 @@
 #include "msdos.h"
 #undef DUP_FAT
 
+extern void exit(), perror();
 extern int fd, fat_len, dir_chain[25];
 extern unsigned char *fatbuf;
 
@@ -59,7 +60,6 @@ int num;
 struct directory *dir;
 {
 	int skip, entry;
-	void exit(), perror();
 	static struct directory dirs[16];
 					/* which sector */
 	skip = dir_chain[num / 16];

@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "msdos.h"
 
+extern void exit();
+
 int fd;				/* the file descriptor for the floppy */
 int dir_start;			/* starting sector for directory */
 int dir_len;			/* length of directory (in sectors) */
@@ -24,8 +26,8 @@ char *mcwd;			/* the Current Working Directory */
 
 long size;
 long current;
-stripmode = 0;
-textmode = 0;
+int stripmode = 0;
+int textmode = 0;
 
 main(argc, argv)
 int argc;
@@ -36,7 +38,6 @@ char *argv[];
 	int fat, i, ismatch, entry, subdir(), c, oops;
 	char *filename, *newfile, text[4], tname[9], *getname(), *unixname();
 	char *strncpy(), *pathname, *getpath();
-	void exit();
 	struct directory *dir, *search();
 
 	if (init(0)) {
