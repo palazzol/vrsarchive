@@ -51,7 +51,7 @@ char *finam;
   if ((file1 = fopen(MORIA_HOU, "r")) != NULL)
     {
       while (fgets(in_line, 80, file1) != NULL)
-	if (strlen(in_line) > 3)
+	if (strlen(in_line) > (unsigned)3)
 	  {
 	    if (!strncmp(in_line, "SUN:", 4))
 	      (void) strcpy(days[0], in_line);
@@ -431,7 +431,7 @@ print_monsters()
 	      
 	      (void) fprintf(file1, "   --Creature attacks ==\n");
 	      (void) strcpy(attstr, c_ptr->damage);
-	      while (strlen(attstr) > 0)
+	      while (strlen(attstr) != 0)
 		{
 		  string = index(attstr, '|');
 		  if (string)

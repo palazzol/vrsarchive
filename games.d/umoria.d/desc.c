@@ -28,7 +28,7 @@ char ch;
       return(FALSE);
       break;
     }
-  return(FALSE);
+  /* NOTREACHED */
 }
 
 

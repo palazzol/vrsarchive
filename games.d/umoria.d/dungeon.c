@@ -54,7 +54,7 @@ dungeon()
     player_light = FALSE;
   /* Check for a maximum level             */
   p_ptr = &py.misc;
-  if (dun_level > p_ptr->max_lev)  p_ptr->max_lev = dun_level;
+  if ((unsigned)dun_level > p_ptr->max_lev)  p_ptr->max_lev = dun_level;
   /* Set up the character co-ords          */
   if ((char_row == -1) || (char_col == -1)) 
     new_spot(&char_row, &char_col);

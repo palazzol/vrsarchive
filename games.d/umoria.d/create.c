@@ -143,7 +143,8 @@ print_history()
 /*		All history parts are in ascending order	*/
 get_history()
 {
-  int hist_ptr, cur_ptr, test_roll;
+  int hist_ptr, cur_ptr;
+  unsigned int test_roll;
   int start_pos, end_pos, cur_len;
   int line_ctr, new_start, social_class;
   char history_block[400];

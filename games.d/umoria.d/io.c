@@ -350,7 +350,7 @@ char *command;
   int com_val;
   int res;
 
-  if (strlen(prompt) > 1)
+  if (strlen(prompt) > (unsigned)1)
     prt(prompt, 0, 0);
   inkey(command);
   com_val = (*command);
@@ -442,7 +442,7 @@ int row, col, slen;
 
   hex_value = 0;
   if (get_string(tmp_str, row, col, slen)) 
-    if (strlen(tmp_str) <= 8) 
+    if (strlen(tmp_str) <= (unsigned)8) 
       {
 	(void) sscanf(tmp_str, "%x", &hex_value);
       }
