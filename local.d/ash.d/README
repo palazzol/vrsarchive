@@ -1,0 +1,12 @@
+
+The Adventure shell.
+
+This comes from Doug Gwyn, circa February 1984.
+
+I typed it in from hardcopy, hacked on it a bit, and made it slightly more
+portable and robust to other /bin/sh variants.
+
+Still doesn't work totally.
+
+Bug?  Complaints?  I don't wanna hear about them...
+	/r$
