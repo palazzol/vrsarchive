@@ -66,6 +66,7 @@ getstr()
 }
 
 error(fmt, a, b, c, d)
+char *fmt;
 { printf(fmt, a, b, c, d);
   exit(1);
 }

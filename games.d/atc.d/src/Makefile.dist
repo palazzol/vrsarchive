@@ -3,8 +3,8 @@
 #
 ALL	= atc
 MODEL	= -i -F 2000
-OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
-include ../../../CONFIG
+OPTIONS	= -O -DGAMLIB=$(GAMLIB)
+include /etc/CONFIG
 CURSESLIBR =	libatc.a
 OFILE =		tunable.o
 CFILE =		tunable.c
