@@ -30,7 +30,12 @@
 #include <signal.h>
 #include <sys/file.h>
 #include <sys/stat.h>
-#include <sys/dir.h>
+#ifdef __STDC__
+#  include <dirent.h>
+#define direct dirent
+#else
+#  include <sys/dir.h>
+#endif
 
 #ifndef L_SET
 #	define L_SET	0
@@ -63,6 +68,7 @@ struct file_pair {
 struct rec_entry	*buflist[100] = {0};
 
 #ifndef BSD4_2
+#ifndef __STDC__
 
 typedef struct {
 	int	d_fd;		/* File descriptor for this directory */
@@ -108,6 +114,7 @@ DIR	*dp;
 	return &dir;
 }
 
+#endif /* __STDC__ */
 #endif /* BSD4_2 */
 
 /* Get a line at `tl' in the tmp file into `buf' which should be LBSIZE
@@ -169,6 +176,7 @@ char	*s;
 	return str;
 }
 
+#ifndef __STDC__
 /* Scandir returns the number of entries or -1 if the directory cannoot
    be opened or malloc fails. */
 
@@ -209,6 +217,7 @@ struct direct	*(*sorter)();
 
 	return nentries;
 }
+#endif /* __STDC__ */
 
 alphacomp(a, b)
 struct direct	**a,
@@ -357,7 +366,10 @@ tellme(quest, answer)
 char	*quest,
 	*answer;
 {
-	if (stdin->_cnt <= 0) {
+#ifndef CYGWIN
+	if (stdin->_cnt <= 0)
+#endif
+	{
 		printf("%s", quest);
 		fflush(stdout);
 	}
