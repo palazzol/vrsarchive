@@ -2,7 +2,7 @@
 # makefile: Rog-O-Matic XIV (CMU) Thu Jan 31 18:23:25 1985 - mlm
 # Copyright (C) 1985 by A. Appel, G. Jacobson, L. Hamey, and M. Mauldin
 #
-ALL	= rogomatic player rgmplot datesub histplot gene
+ALL	= rogomatic$(EXE) player$(EXE) rgmplot$(EXE) datesub$(EXE) histplot$(EXE) gene$(EXE)
 PUBDIR	= $(GAMLIB)/rgm14
 OPTIONS	= -O -DGAMDIR=$(GAMDIR) -DGAMLIB=$(PUBDIR)
 MODEL	= -M2l -F 2000
@@ -21,27 +21,27 @@ OTHERS	= setup.c findscore.c datesub.l histplot.c rgmplot.c gene.c\
 #
 # General makefile stuff:
 #
-anim: anim.c utility.o
+anim$(EXE): anim.c utility.o
 	$(CC) -o $@ anim.c utility.o $(LIBS)
-rgmplot: rgmplot.o utility.o
+rgmplot$(EXE): rgmplot.o utility.o
 	$(CC) $(CFLAGS) -o $@ rgmplot.o utility.o $(LIBS)
-rogomatic: setup.o findscore.o scorefile.o utility.o
+rogomatic$(EXE): setup.o findscore.o scorefile.o utility.o
 	$(CC) $(CFLAGS) -o $@ setup.o findscore.o scorefile.o utility.o $(LIBS)
 datesub.c: datesub.l
-	lex datesub.l
+	$(LEX) datesub.l
 	mv lex.yy.c datesub.c
-gene: gene.c rand.o learn.o stats.o utility.o types.h install.h
+gene$(EXE): gene.c rand.o learn.o stats.o utility.o types.h install.h
 	$(CC) $(CFLAGS) $(CFLAGS) -o $@ gene.c \
 		rand.o learn.o stats.o utility.o $(LIBS)
-genetest: genetest.o learn.o rand.o stats.o utility.o types.h
+genetest$(EXE): genetest.o learn.o rand.o stats.o utility.o types.h
 	$(CC) -o $@ genetest.o learn.o rand.o stats.o utility.o $(LIBS)
-histplot: histplot.o utility.o
-	$(CC) $(CFLAGS) -o histplot histplot.o utility.o $(LIBS)
+histplot$(EXE): histplot.o utility.o
+	$(CC) $(CFLAGS) -o $@ histplot.o utility.o $(LIBS)
 lint:	$(SRCS)
 	lint $(CFLAGS) $(LIBS) $(SRCS)
-player: $(OBJS)
+player$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
-testfind: testfind.o findscore.o utility.o
+testfind$(EXE): testfind.o findscore.o utility.o
 	$(CC) $(CFLAGS) -o $@ testfind.o findscore.o utility.o $(LIBS)
 #
 # Miscellaneous useful pseduo-makes
@@ -58,10 +58,12 @@ $(PUBDIR):
 	chmod 777 $@
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(PUBDIR)
-	cp rogomatic $(GAMDIR)/rogomatic
-	cd $(GAMDIR); chmod 711 rogomatic
-	cp player rgmplot datesub histplot gene $(PUBDIR)
-	cd $(PUBDIR); chmod 711 player rgmplot datesub histplot gene
+	cp rogomatic$(EXE) $(GAMDIR)/rogomatic$(EXE)
+	cd $(GAMDIR); chmod 711 rogomatic$(EXE)
+	cp player$(EXE) rgmplot$(EXE) datesub$(EXE) histplot$(EXE) $(PUBDIR)
+	cp gene$(EXE) $(PUBDIR)
+	cd $(PUBDIR); chmod 711 player$(EXE) rgmplot$(EXE) datesub$(EXE)
+	cd $(PUBDIR); chmod 711 histplot$(EXE) gene$(EXE)
 
 index: $(SRCS)
 	ctags -x $(SRCS) > index

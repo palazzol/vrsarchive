@@ -6,6 +6,7 @@
  */
 
 # include <curses.h>
+#define scroll Scroll
 # include "types.h"
 # include "globals.h"
 

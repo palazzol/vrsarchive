@@ -101,6 +101,7 @@
 #ifdef __STDC__
 #define GAME(x)	STRING(GAMDIR) "/" STRING(x)
 #else
+#define DUMMYSTR "
 #define GAME(x)	STRING(GAMDIR)/x"
 #endif
 # define ROGUE		GAME(rogue)

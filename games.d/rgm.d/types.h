@@ -7,10 +7,12 @@
 
 /* The unctrl macro for systems where curses doesn't define it */
 
+# ifndef __STDC__
 # ifndef unctrl
 extern char	*_unctrl[];
 
 # define	unctrl(ch)	(_unctrl[ch & 0177])
+# endif
 # endif
 
 /* Global Preprocessor constants */

@@ -5,8 +5,12 @@
  * This file contains all of the miscellaneous system functions which
  * determine the baud rate, time of day, etc.
  */
-
+#ifdef __STDC__
+# include <termios.h>
+# include <pwd.h>
+#else
 # include <sgtty.h>
+#endif
 # include <stdio.h>
 # include <signal.h>
 # include <sys/types.h>
@@ -26,14 +30,24 @@
 baudrate ()
 { static short  baud_convert[] =
   { 0, 50, 75, 110, 135, 150, 200, 300, 600, 1200, 1800, 2400, 4800, 9600 };
+#ifdef __STDC__
+  static struct termios sg;
+#else
   static struct sgttyb  sg;
+#endif
   static short  baud_rate;
 
+#ifdef __STDC__
+  tcgetattr (fileno (stdin), &sg);
+  baud_rate = sg.c_ospeed == 0 ? 1200
+    : sg.c_ospeed < sizeof baud_convert / sizeof baud_convert[0]
+    ? baud_convert[sg.c_ospeed] : 9600;
+#else
   gtty (fileno (stdin), &sg);
   baud_rate = sg.sg_ospeed == 0 ? 1200
     : sg.sg_ospeed < sizeof baud_convert / sizeof baud_convert[0]
     ? baud_convert[sg.sg_ospeed] : 9600;
-
+#endif
   return (baud_rate);
 }
 
@@ -77,7 +91,14 @@ char *getname ()
 { static char name[100];
   int   i;
 
+#ifdef __STDC__
+  struct passwd *pw = getpwuid(getuid());
+  name[0] = '\0';
+  if (pw)
+    strcpy(name, pw->pw_name);
+#else
   getpw (getuid (), name);
+#endif
   i = 0;
   while (name[i] != ':' && name[i] != ',')
     i++;
