@@ -11,8 +11,8 @@
  *	us re-implementing printf().  Usually all the user really wanted was
  *	a couple of simple variations easily implemented with varargs.
 */
-#ifdef M_XENIX
 #include <stdio.h>
+#ifdef M_XENIX
 
 extern FILE *_pfile;		/* Internal to printf implementation	*/
 
