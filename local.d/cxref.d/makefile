@@ -1,5 +1,5 @@
 #
-# $Header: /home/Vince/cvs/local.d/cxref.d/makefile,v 1.4 2002-11-23 07:49:05 Vincent Exp $
+# $Header: /home/Vince/cvs/local.d/cxref.d/makefile,v 1.5 2002-11-24 05:05:43 Vincent Exp $
 # makefile for cxref -- C cross referencing program
 #
 # Arnold Robbins, Information and Computer Science, Georgia Tech
@@ -9,7 +9,7 @@
 # This program may not be sold, but may be distributed
 # provided this header is included.
 #
-ALL	= cxref docxref fmtxref cxrfilt
+ALL	= cxref$(EXE) docxref$(EXE) fmtxref$(EXE) cxrfilt$(EXE)
 MODEL	= -i
 OPTIONS	= -O -DSRCDIR='"$(LIBDIR)"'
 include $(HOME)/CONFIG
@@ -21,7 +21,7 @@ SRCS	= $(SCANSRCS) cxref.c fmtxref.c cxrfilt.c
 DOCS	= README makefile cxref.1
 PRINTS	= $(INCLS) $(SRCS) $(DOCS)
 
-docxref: $(SCANOBJS)
+docxref$(EXE): $(SCANOBJS)
 	$(CC) $(SCANOBJS) -o $@
 
 cscan.o docxref.o cxrfilt.o: $(INCLS)
@@ -35,4 +35,4 @@ install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
 	cd $(MAN1); chmod 644 cxref.1
 
 clean:
-	rm -f $(SCANOBJS) $(ALL) core make.out
+	rm -f $(SCANOBJS) cxrfilt.o $(ALL) core make.out
