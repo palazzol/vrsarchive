@@ -11,6 +11,7 @@
 #include <signal.h>
 /* rain 11/3/1980 EPS/CITHEP */
 /* cc rain.c -o rain -O -ltermlib */
+extern fputchar();
 #define cursor(col,row) tputs(tgoto(CM,col,row),1,fputchar)
 #define MAXINT (((unsigned)-1)>>1)
 extern char *UP;
@@ -25,12 +26,11 @@ main(argc,argv)
 int argc;
 char *argv[];
 {
-    extern fputchar();
     char *malloc();
     char *getenv();
     char *tgetstr(), *tgoto();
     float ranf();
-    int onsig();
+    SIG_T onsig();
     register int x, y, j;
     static int xpos[5], ypos[5];
     register char *CM, *BC, *DN, *ND;
@@ -140,6 +140,8 @@ char *argv[];
         fflush(stdout);
     }
 }
+
+SIG_T
 onsig(n)
 int n;
 {

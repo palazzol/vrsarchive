@@ -108,7 +108,7 @@ char	chr;
 		*str1 = chr;
 		return(str1);
 	}
-	if (chr == CTRL(?))
+	if (chr == MYCTRL('?'))
 		return("^?");
 	*(str+1) = chr + '@';
 	return(str);

@@ -8,7 +8,7 @@ static s2choose()	/* text to be displayed if ^C during intro screen */
 	lprcat(" to continue: ");   lflush(); 
 	}
 
-static cntlc()	/* what to do for a ^C */
+static SIG_T cntlc(dummy)	/* what to do for a ^C */
 	{
 	if (nosignal) return;	/* don't do anything if inhibited */
 	signal(SIGQUIT,SIG_IGN);	signal(SIGINT,SIG_IGN);
@@ -20,19 +20,23 @@ static cntlc()	/* what to do for a ^C */
 /*
  *	subroutine to save the game if a hangup signal
  */
-static sgam()
+static SIG_T sgam(dummy)
 	{
 	savegame(savefilename);  wizard=1;  died(-257); /* hangup signal */
 	}
 
 #ifdef SIGTSTP
-static tstop() /* control Y	*/
+static SIG_T tstop(dummy) /* control Y	*/
 	{
 	if (nosignal)   return;  /* nothing if inhibited */
 	lcreat((char*)0);  clearvt100();	lflush();	  signal(SIGTSTP,SIG_DFL);
 #ifdef SIGVTALRM
+#ifdef SYS5
+	sigrelse(SIGTSTP);
+#else
 	/* looks like BSD4.2 or higher - must clr mask for signal to take effect*/
 	sigsetmask(sigblock(0)& ~BIT(SIGTSTP));
+#endif
 #endif
 	kill(getpid(),SIGTSTP);
 
@@ -45,11 +49,16 @@ static tstop() /* control Y	*/
 /*
  *	subroutine to issue the needed signal traps  called from main()
  */
-static sigill()  { sigpanic(SIGILL); }	 static sigtrap() { sigpanic(SIGTRAP); }
-static sigiot()  { sigpanic(SIGIOT); }   static sigemt()  { sigpanic(SIGEMT); }
-static sigfpe()  { sigpanic(SIGFPE); }   static sigbus()  { sigpanic(SIGBUS); }
-static sigsegv() { sigpanic(SIGSEGV); }  static sigsys()  { sigpanic(SIGSYS); }
-static sigpipe() { sigpanic(SIGPIPE); }  static sigterm() { sigpanic(SIGTERM); }
+static SIG_T sigill(dummy)  { sigpanic(SIGILL); }
+static SIG_T sigtrap(dummy) { sigpanic(SIGTRAP); }
+static SIG_T sigiot(dummy)  { sigpanic(SIGIOT); }
+static SIG_T sigemt(dummy)  { sigpanic(SIGEMT); }
+static SIG_T sigfpe(dummy)  { sigpanic(SIGFPE); }
+static SIG_T sigbus(dummy)  { sigpanic(SIGBUS); }
+static SIG_T sigsegv(dummy) { sigpanic(SIGSEGV); }
+static SIG_T sigsys(dummy)  { sigpanic(SIGSYS); }
+static SIG_T sigpipe(dummy) { sigpanic(SIGPIPE); }
+static SIG_T sigterm(dummy) { sigpanic(SIGTERM); }
 sigsetup()
 	{
 	signal(SIGQUIT, cntlc); 		signal(SIGINT,  cntlc); 

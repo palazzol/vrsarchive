@@ -4,7 +4,7 @@
 #include	<time.h>
 
 typedef	struct stat	STAT;
-typedef	struct tm	TIME;
+typedef	long	TIME;
 
 char	*ctime();
 

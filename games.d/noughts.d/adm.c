@@ -3,7 +3,8 @@
 # include <signal.h>
 
 /* If you push BREAK you are a cheater */
-cheat(){
+SIG_T
+cheat(dummy){
 	signal(SIGINT, cheat);
 	pos(1, YZIZE + 2);
 	if(!slf)

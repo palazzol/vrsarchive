@@ -9,6 +9,7 @@
  *         gain or profit.
  *
  */
+#include <stdio.h>
 
 #ifdef CURSES
 
@@ -36,8 +37,6 @@
  *      ":do=\n"  This will help cursor motion optimization.  If line-feed
  *      won't work, then a short escape sequence will do.  Same goes for "up"
  */
-
-#include <stdio.h>
 #include "rogue.h"
 
 boolean tc_tname();

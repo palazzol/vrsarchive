@@ -158,7 +158,8 @@ stop_window()
 	md_control_keybord(1);
 }
 
-byebye()
+SIG_T
+byebye(dummy)
 {
 	md_ignore_signals();
 	if (ask_quit) {
@@ -169,7 +170,8 @@ byebye()
 	md_heed_signals();
 }
 
-onintr()
+SIG_T
+onintr(dummy)
 {
 	md_ignore_signals();
 	if (cant_int) {
@@ -181,7 +183,8 @@ onintr()
 	md_heed_signals();
 }
 
-error_save()
+SIG_T
+error_save(dummy)
 {
 	save_is_interactive = 0;
 	save_into_file(error_file);

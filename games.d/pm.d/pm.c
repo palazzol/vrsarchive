@@ -74,7 +74,7 @@ reg	char	**argv;
 		}
 		if ((timer < MAX_BLINKS) && !(timer % 4))
 			warning();		/* warn every four moves*/
-		m_move();			/* move the monsters	*/
+		mons_move();			/* move the monsters	*/
 	}
 	quitit();
 	exit(0);

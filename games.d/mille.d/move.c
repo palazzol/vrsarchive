@@ -1,6 +1,6 @@
 #include	"mille.h"
 
-#define	CTRL(c)		(c - 'A' + 1)
+#define	MKCTRL(c)		(c - 'A' + 1)
 
 char	*Movenames[] = {
 		"M_DISCARD", "M_DRAW", "M_PLAY", "M_ORDER"
@@ -325,7 +325,7 @@ getmove()
 			wrefresh(Score);
 			break;
 		  case 'R':		/* Redraw screen */
-		  case CTRL('L'):
+		  case MKCTRL('L'):
 			clearok(curscr, TRUE);
 			newboard();
 			prboard();

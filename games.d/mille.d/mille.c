@@ -1,7 +1,7 @@
 # include	"mille.h"
 # include	<signal.h>
 
-int	rub();
+SIG_T	rub();
 
 char	sobuf[BUFSIZ];
 
@@ -95,7 +95,8 @@ reg char	*av[]; {
  *	Routine to trap rubouts, and make sure they really want to
  * quit.
  */
-rub() {
+SIG_T
+rub(dummy) {
 
 	signal(SIGINT, SIG_IGN);
 	if (getyn("Really? "))

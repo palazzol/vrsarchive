@@ -18,10 +18,18 @@
 extern void srand();
 extern long time();
 
+SIG_T
+handler(dummy) {
+
+    clear_screen();
+    reset_term();
+    exit(0);
+
+}
+
 main(argc, argv)
 char **argv;
 {
-    int handler();
     int mark;
 
     signal(SIGINT, handler);
@@ -66,14 +74,6 @@ char **argv;
         check_over(); 
 
     }
-
-}
-
-handler() {
-
-    clear_screen();
-    reset_term();
-    exit(0);
 
 }
 

@@ -410,7 +410,7 @@ unsigned short gr_what_is();
 long rrandom();
 long lget_number();
 long xxx();
-int byebye(), onintr(), error_save();
+SIG_T byebye(), onintr(), error_save();
 
 struct rogue_time {
 	short year;		/* >= 1987 */

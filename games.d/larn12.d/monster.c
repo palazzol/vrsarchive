@@ -1145,7 +1145,7 @@ spattack(x,xx,yy)
 					lprintf(p,lastmonst); disappear(xx,yy); beep();
 					bottomgold();  return(1);
 
-		case 9:	for(j=50; ; )	/* disenchant */
+		case 9:	j=50;	/* disenchant */
 					{
 					i=rund(26);  m=iven[i]; /* randomly select item */
 					if (m>0 && ivenarg[i]>0 && m!=OSCROLL && m!=OPOTION)
@@ -1158,7 +1158,6 @@ spattack(x,xx,yy)
 						{
 						p="\nThe %s nearly misses"; break;
 						}
-					break;
 					}		
 				break;
 

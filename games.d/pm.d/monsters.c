@@ -54,11 +54,11 @@ void	p_monsters ()
 }
 
 /*
-** m_move()	- move the monsters
+** mons_move()	- move the monsters
 **		- if they are eatable, then skip them half the time
 **		- if they are inside, skip them a third of the time
 */
-void	m_move ()
+void	mons_move ()
 {
 	reg	int	i;
 
@@ -553,7 +553,7 @@ reg	coord	*pos;
 			if (m->mo_pos.x > pos->x)	/* not facing	*/
 				return(FALSE);
 		otherwise:
-			msg("default in can_see: \%03o", m->mo_ch);
+			msg("default in can_see: %%03o", m->mo_ch);
 			return(FALSE);
 	}
 	/*

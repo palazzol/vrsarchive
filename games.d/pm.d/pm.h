@@ -67,25 +67,25 @@
 #define	MKP_RIGHT	'6'		/* key pad move right		*/
 #define	MKP_STOP	'5'		/* key pad stop movement	*/
 #define	MQUIT		'q'		/* quit game			*/
-#define	MREDRAW		CTRL(L)		/* redraw the screen		*/
+#define	MREDRAW		MYCTRL('L')		/* redraw the screen		*/
 #define	MSHELL		'!'		/* shell escape			*/
 #define	MHELP		'?'		/* give list of commands	*/
 #define	MFAST		'f'		/* toggle looping in make_move	*/
 #define	MQUIET		'b'		/* toggle beeping		*/
 #define	MPAUSE		'p'		/* hang on getch()		*/
-#define	MHUH		CTRL(R)		/* reprint last message		*/
+#define	MHUH		MYCTRL('R')		/* reprint last message		*/
 #define	MNULL		'\0'
 /*
 ** special input defines (cheating)
 */
-#define	MWIZARD		CTRL(P)		/* request to become wizard	*/
+#define	MWIZARD		MYCTRL('P')		/* request to become wizard	*/
 #define	MSTATUS		's'		/* print debugging info		*/
 #define	MMONS		'm'		/* print monster  ""    ""	*/
 #define	MPM		'@'		/* request for more pm's	*/
-#define	MUP_LVL		CTRL(U)		/* up a level			*/
-#define	MDN_LVL		CTRL(D)		/* down a level			*/
-#define	MEAT		CTRL(E)		/* make them eatable		*/
-#define	MMEAN		CTRL(M)		/* make them non-eatable	*/
+#define	MUP_LVL		MYCTRL('U')		/* up a level			*/
+#define	MDN_LVL		MYCTRL('D')		/* down a level			*/
+#define	MEAT		MYCTRL('E')		/* make them eatable		*/
+#define	MMEAN		MYCTRL('M')		/* make them non-eatable	*/
 #define	MSLOW		'r'		/* change null padding		*/
 
 /*
@@ -241,8 +241,8 @@ typedef	struct
 #define	DIST()		rnd(4, 15)
 #define	IS_FRUIT(c)	(c == fr_ch)	/* ...			*/
 #define	SLOWER()	slow(FALSE)
-#ifndef	CTRL
-#	define	CTRL(ch)	('ch' & '\037')
+#ifndef	MYCTRL
+#	define	MYCTRL(ch)	(ch & '\037')
 #endif
 #define	AT(pos1, pos2)	(((pos1)->x == (pos2)->x) && ((pos1)->y == (pos2)->y))
 #define	OUTOFTUNN(pos)	(((pos)->y != 0) && ((pos)->y != 52))
@@ -278,7 +278,7 @@ extern	void	add_fruit(), aggressive(), chg_lvl(), check_scrs(),
 		commands(), delay(), die(), directions(),
 		draw_screen(), eat_pm(), init(),
 		m_eat_pm(),
-		mons_init(), m_move(), msg(), msg_erase(), msleep(),
+		mons_init(), mons_move(), msg(), msg_erase(), msleep(),
 		mv_mon(), new_screen(), old_screen(), p_barriers(), p_dots(),
 		p_energizers(), p_fruits(), p_info(), p_monsters(),
 		p_pm(), p_pms(), p_scores(), place_m(), pm_eat_m(),

@@ -6,7 +6,7 @@ main(argc)
 int argc;
 {
 	int pr, pc;
-	int interrupt();
+	SIG_T interrupt();
 	register int n;
 	int vec[3];
 	int uid;

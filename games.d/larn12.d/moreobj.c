@@ -21,8 +21,6 @@ oaltar()
 	unsigned long k;
 
 	lprcat("\nDo you (p) pray  (d) desecrate"); iopts();
-	while (1)
-	  {
 	  while (1) switch(getchar())
 		{
 		case 'p':	lprcat(" pray\nDo you (m) give money or (j) just pray? ");
@@ -91,7 +89,6 @@ oaltar()
 				  if (rnd(100)<30)	{ createmonster(makemonst(level+1)); c[AGGRAVATE] += rnd(450); }
 					else	lprcat("\nnothing happens");
 					return;
-		};
 	  }
 	}
 
@@ -119,8 +116,6 @@ othrone(arg)
 	register int i,k;
 
 	lprcat("\nDo you (p) pry off jewels, (s) sit down"); iopts();
-	while (1)
-	  {
 	  while (1) switch(getchar())
 		{
 		case 'p':	lprcat(" pry off");  k=rnd(101);
@@ -152,7 +147,6 @@ othrone(arg)
 
 		case 'i':
 		case '\33': ignore(); return;
-		};
 	  }
 	}
 
@@ -161,8 +155,6 @@ odeadthrone()
 	register int k;
 
 	lprcat("\nDo you (s) sit down"); iopts();
-	while (1)
-	  {
 	  while (1) switch(getchar())
 		{
 		case 's': 	lprcat(" sit down");  k=rnd(101);
@@ -172,7 +164,6 @@ odeadthrone()
 
 		case 'i':
 		case '\33': ignore(); return;
-		};
 	  }
 	}
 
@@ -187,8 +178,6 @@ ochest()
 	{
 	register int i,k;
 	lprcat("\nDo you (t) take it, (o) try to open it"); iopts();
-	while (1)
-	  {
 	  while (1) switch(getchar())
 		{
 		case 'o':	lprcat(" open it");  k=rnd(101);
@@ -229,7 +218,6 @@ ochest()
 
 		case 'i':
 		case '\33': ignore(); return;
-		};
 	  }
 	}
 
