@@ -86,7 +86,7 @@ do_comm() {
 				fseek(outf, 0L, 0);
 				if (s_lock_sc())
 				{
-						register int	(*fp)();
+						register void	(*fp)();
 
 						fp = signal(SIGINT, SIG_IGN);
 						s_encwrite((char *) Top_ten, sizeof Top_ten, outf);
