@@ -133,7 +133,7 @@ static sigpanic(sig)
 	sprintf(buf,"\nLarn - Panic! Signal %d received [%s]",sig,signame[sig]);
 	write(2,buf,strlen(buf));  sleep(2);
 	sncbr();
-	savegame(savefilename); 
+	if (nosignal == 0) savegame(savefilename); 
 	setuid(getuid());	/* Allow a dump if set-uid	*/
 	kill(getpid(),sig);	/* this will terminate us	*/
 	}
