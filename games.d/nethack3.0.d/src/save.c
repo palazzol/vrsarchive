@@ -457,12 +457,23 @@ register int fd;
       /*printf("bflush()"); getret();*/
 }
 
+#ifdef __STDC__
+void
+bwrite(fd, locp, num)
+register int fd;
+genericptr_t locp;
+register unsigned num;
+#else
 void
 bwrite(fd, loc, num)
 register int fd;
 register char *loc;
 register unsigned num;
+#endif
 {
+#ifdef __STDC__
+      register char *loc = (char *)locp;
+#endif
       bwritefd = fd;
       for (; num; num--, loc++) {
 	      if (*((char *)loc) == RLESC) { /* One more char in run */

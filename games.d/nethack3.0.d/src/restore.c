@@ -704,12 +704,23 @@ minit()
     inrunlength = -1;
 }
 
+#ifdef __STDC__
+int
+mread(fd, bufp, len)
+int fd;
+genericptr_t bufp;
+register unsigned len;
+#else
 int
 mread(fd, buf, len)
 int fd;
 register char *buf;
 register unsigned len;
+#endif
 {
+#ifdef __STDC__
+    register char *buf = (char *)bufp;
+#endif
     /*register int readlen = 0;*/
     mreadfd = fd;
     while (len--) {
