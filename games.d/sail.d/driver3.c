@@ -179,6 +179,8 @@ register struct ship *from, *to;
 	return from < to;
 }
 
+int dtab[];
+
 step(com, sp, moved)
 char com;
 register struct ship *sp;

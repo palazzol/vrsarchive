@@ -3,4 +3,4 @@
  */
 #include "externs.h"
 
-int dtab[];
+/*int dtab[];*/
