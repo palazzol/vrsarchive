@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/craps.d/Makefile,v 1.5 2002-11-23 04:09:37 Vincent Exp $
+#	$Header: /home/Vince/cvs/games.d/craps.d/Makefile,v 1.6 2002-11-24 19:30:11 vrs Exp $
 #
 # Use the following defines:
 #
@@ -15,7 +15,7 @@ SOURCES = main.c dont.c etc.c help.c makeb.c pass.c pay.c prints.c \
 OBJECTS = main.o dont.o etc.o help.o makeb.o pass.o pay.o prints.o \
 	  props.o subs.o final.o random.o
 
-craps:	$(OBJECTS)
+craps$(EXE):	$(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(LIBS)
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
