@@ -1,23 +1,28 @@
+#
 #    Makefile for ARC
-
-CFLAGS = -O -M2l
-
+#
+ALL	= arc
+OPTIONS	= -O
+MODEL	= -M2l
+include ../../CONFIG
 OBJS = arc.o arcadd.o arccode.o arccvt.o arcdel.o arcdos.o \
        arcext.o arcio.o arclst.o arclzw.o arcmatch.o arcmisc.o \
        arcpack.o arcsq.o arcsvc.o arctst.o arcunp.o arcusq.o
+SRCS = $(OBJS:.o=.c)
 
-SRCS = arc.c arcadd.c arccode.c arccvt.c arcdel.c arcdos.c \
-       arcext.c arcio.c arclst.c arclzw.c arcmatch.c arcmisc.c \
-       arcpack.c arcsq.c arcsvc.c arctst.c arcunp.c arcusq.c
+arc:	$(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
-arc:            ${OBJS}
-	cc  ${CFLAGS} -o arc ${OBJS}
-${OBJS}:        arc.h
-arc.h:          arcs.h
+$(OBJS):arc.h
+arc.h:	arcs.h
 	touch arc.h
+
+install:$(ALL) $(BINDIR)
+	cp $(ALL) $(BINDIR)/
+	cd $(BINDIR)/; chmod 711 $(ALL)
 
 lint:
 	lint $(SRCS) | tee lint.out
 
 clean:
-	rm -f arc $(OBJS)
+	rm -f $(ALL) $(OBJS)
