@@ -2,6 +2,7 @@
 
 endgame()
 {
+    setblock(0, TRUE);
     signal(SIGINT,SIG_IGN);
     mvaddstr(22,60,"[Press return");
     mvaddstr(23,60," to continue]");
@@ -19,7 +20,7 @@ endgame()
 catchint()
 {
     signal(SIGINT,SIG_IGN);
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,SIG_IGN);
 #endif
     inter = 1;
@@ -27,7 +28,7 @@ catchint()
 
 catchstop()
 {
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,SIG_IGN);
 #endif
     signal(SIGINT,SIG_IGN);
@@ -44,7 +45,7 @@ stopawhile()
     fflush(stdout);
     ioctl(0,TIOCGETP,&curseterm);
     ioctl(0,TIOCSETP,&origterm);
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,SIG_DFL);
     kill(getpid(),SIGTSTP);
     signal(SIGTSTP,SIG_IGN);
@@ -54,7 +55,7 @@ stopawhile()
     redrawscr();
     ioctl(0,TIOCSETP,&curseterm);       /* Just to make sure... */
     waitboard();
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,catchstop);
 #endif
     signal(SIGINT,catchint);
@@ -81,7 +82,7 @@ quit()
 	endgame();
     inter = 0;
     signal(SIGINT,catchint);
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,catchstop);
 #endif
     signal(SIGQUIT,catchint);
@@ -91,7 +92,7 @@ waitboard()
 {
     char ch;
 
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,SIG_IGN);
 #endif
     signal(SIGINT,SIG_IGN);
@@ -99,7 +100,7 @@ waitboard()
     mvaddstr(13,60,"when ready");
     refresh();
     setblock(0, TRUE);
-    while ((ch = getchar()) != '\r')
+    while ((ch = getchar()) != '\n')
     {
 #ifdef WIZARD
 	if (ch == '\020')
@@ -120,7 +121,7 @@ waitboard()
     move(15,60);
     clrtoeol();
     signal(SIGINT,catchint);
-#ifndef SYS5
+#ifdef SIGTSTP
     signal(SIGTSTP,catchstop);
 #endif
 }
