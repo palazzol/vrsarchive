@@ -65,7 +65,7 @@ static char revhex[] = "084c2a6e195d3b7f";
 					putchar(revhex[(b)>>4]); putchar(',');
 #endif
 
-#undef EXP
+#define EXP
 #ifdef EXP
 static unsigned char luminance[64] = {
 	254, 235, 217, 201, 186, 172, 159, 147, 
