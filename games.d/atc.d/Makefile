@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/atc.d/Makefile,v 1.7 2002-11-23 23:59:34 Vincent Exp $
+#	$Header: /home/Vince/cvs/games.d/atc.d/Makefile,v 1.8 2002-11-24 18:42:40 vrs Exp $
 #
 ALL	= makesrc distrib
 include $(HOME)/CONFIG
@@ -23,7 +23,7 @@ install:	$(ALL) $(DIST)
 		cd $(GAMDIR); chown $(SAFEUID) $(GAME)
 		cd $(GAMDIR); chmod 4755 $(GAME)
 
-distrib:	$(DIST)/Makefile $(DIST)/$(TUNABLE) \
+distrib:	$(DIST) $(DIST)/Makefile $(DIST)/$(TUNABLE) \
 		$(DIST)/$(CURSESLIBR)
 
 makesrc:	
