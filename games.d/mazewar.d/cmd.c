@@ -65,7 +65,11 @@ ttychar()
 #ifdef FIONREAD
 	if (playing && (ioctl(STDIN, FIONREAD, &n) == 0) && (n <= 0))
 #else
+#ifdef TIOCINQ
+	if (playing && (ioctl(STDIN, TIOCINQ, &n) == 0) && (n <= 0))
+#else
 	if (playing && !rdchk(STDIN))
+#endif
 #endif
 	{
 		scaneof();		/* no char available now */
