@@ -555,7 +555,7 @@ void vault()
   clearmsg();
 
   if (Player.possessions[O_BOOTS] != NULL)
-    if (Player.possessions[O_BOOTS]->usef = I_BOOTS_JUMPING)
+    if (Player.possessions[O_BOOTS]->usef == I_BOOTS_JUMPING)
       jumper = 2;
   if (Player.status[IMMOBILE] > 0) {
     resetgamestatus(FAST_MOVE);
