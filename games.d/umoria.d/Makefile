@@ -1,7 +1,7 @@
 # BINDIR is the directory where the moria binary while be put
 ALL	= moria
 OPTIONS	= -DUSG -DKEY_BINDINGS=ROGUE_LIKE -DLIBDIR=\"$(LIBDIR)
-MODEL	= -M2lt20 -F 2000
+MODEL	= -M2lt20 -F 8000
 include ../../CONFIG
 LIBDIR = $(GAMLIB)/moriadir
 
