@@ -1,0 +1,94 @@
+.TH READ20 1 RAND
+.SH NAME
+read20 \- read a tape produced by the TOPS20 Dumper Program
+.SH SYNOPSIS
+.B read20
+\%[\-f tapefile] \%[\-t] \%[-n number] \fIstring\fR
+.SH DESCRIPTION
+.I Read20
+reads tapes produced by the TOPS20 backup and archival program
+\fIDumper20\fR, producing directory listings and
+optionally extracting files.
+
+If no \fIstring\fR is specified, just a directory of the tape
+is produced.  Otherwise, every file that contains \fIstring\fR
+in its filename
+will be extracted to the current working directory.
+The UNIX filenames of extracted files are generated from the
+filename on the tape by stripping off the device name, directory
+names and the version number.
+
+It should be noticed that \fIstring\fR is
+.B not
+a generalized
+pattern, just a string that is matched against all the characters
+in the filenames.  Special characters (such as '\<' and '\>') must
+be quoted to get past the shell.
+
+The directory listing prints out for every file
+.IP
+the size in pages of the file (on the twenty)
+.br
+the number of bytes in the file
+.br
+the \fIbytesize\fR (or number of bits per byte) of the file
+.br
+the time and date the file was last modified
+.br
+the full pathname of the file.
+
+.LP
+This program currently only extracts text files.  It decides
+whether or not a file is text by examining the
+\fIbytesize\fR of the file.  If it has 7-bit bytes, it is assumed to
+be a text file.  If it is anything else, it is assumed to be
+a binary file and requests to extract it are ignored.
+
+Occasionally, text files have a \fIbytesize\fR 36 instead of the proper
+\fIbytesize\fR 7.
+The \-t flag forces these files to be considered as
+text files and extracted (but only if their names contain the \fIstring\fR).
+
+Alternate tape devices may be specified with the \-f flag.
+
+Occasionally, the first 14 characters of extracted files can be
+the same.  If this is the case, use the \-n flag.  This will cause
+the Unix filenames to be numeric (starting with the number following
+the -n).  The mapping between the number Unix filenames and the
+original Tops-20 names is appended to the file "Logfile".
+
+.SH DEFAULTS
+/dev/rmt0 is the default tapefile.
+.SH AUTHOR
+Jim Guyton, The Rand Corporation
+.SH BUGS
+The
+.I string
+must be upper case to match the filename on the tape.
+
+There is no option yet for discarding the carriage-return
+from the newline sequence.  This can be done with most
+editors or with the command
+.IP
+tr \-d '\\015' < file > newfile
+.LP
+
+TOPS20 allows longer filenames than the current version of UNIX.
+Very long filenames are truncated as they are extracted, which
+opens up the possibility of multiple tape files being
+written to the same UNIX file.  There is currently no checking
+done to prevent this.
+
+Files which span tape boundaries are handled poorly.  To extract
+such a file, extract each piece and then combine the files under
+UNIX.
+
+Files which have been
+.I archived
+can show up in directory listings with a
+.I bytesize
+of zero.
+
+When extracting files, you still get a full directory listing;
+this has led some folks to believe they were extracting the
+entire tape.
