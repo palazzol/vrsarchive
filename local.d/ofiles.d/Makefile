@@ -1,16 +1,16 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ofiles.d/Makefile,v 1.5 2002-11-23 07:51:55 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/ofiles.d/Makefile,v 1.6 2002-11-24 17:36:17 vrs Exp $
 #	Ofiles %W%, %G% cspencer
 #
-ALL	= ofiles
+ALL	= ofiles$(EXE)
 MODEL	= -Me
 OPTIONS	= -O
 include $(HOME)/CONFIG
 OBJS	= ofiles.o fstab.o
 
-all: ofiles
+all: ofiles$(EXE)
 
-ofiles:	$(OBJS)
+ofiles$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 install: $(ALL) $(BINDIR) $(MAN8)
