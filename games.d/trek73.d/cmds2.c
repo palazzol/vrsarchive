@@ -12,6 +12,8 @@
 #include "externs.h"
 #include <ctype.h>
 
+extern float round();
+
 pos_report(sp)
 struct ship *sp;
 {
