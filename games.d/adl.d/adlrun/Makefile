@@ -13,14 +13,14 @@ B = ..
 D = adlrun/
 
 # Where adlrun will reside, after make install
-BIN = /users/cunniff/bin
+#BIN = /users/cunniff/bin
 
 # Flags for CC
-CFLAGS = -I${INC} -O
+CFLAGS = -I${INC} -M2l -O
 
 # Flags for the linker - you may need to change -lcurses to -ltermcap
 # or -ltermlib.
-LIBS = -lcurses
+#LIBS = -lcurses
 
 # Flags for lint.
 LFLAGS = ${DFLAGS} -DLINT -I${INC} -C
@@ -75,7 +75,7 @@ clean		:
 	rm -f ${OBJS} core adlrun1.shar adlrun2.shar adlrun
 
 adlrun		: ${OBJS} ${UTIL}
-	cc -o adlrun ${OBJS} ${UTIL} ${LIBS}
+	$(CC) $(CFLAGS) -o $@ ${OBJS} ${UTIL} ${LIBS}
 
 adlerr.o	: adlerr.c	${HDRS}
 

@@ -11,10 +11,10 @@ B = ..
 D = adlcomp/
 
 # Where adlcomp will be installed, with make install.
-BIN = /users/cunniff/bin
+#BIN = /users/cunniff/bin
 
 # Flags for CC
-CFLAGS = -I${INC} -O '-DADL_NAME="${BIN}"'
+CFLAGS = -I${INC} -M2l -O '-DADL_NAME="${BIN}"'
 
 # Flags for lint
 LFLAGS = -DLINT -I${INC} -C
@@ -65,7 +65,7 @@ lint		:
 		routcomp.c compdict.c adlglob.c ${UTL}/*.c
 
 adlcomp		: ${OBJS} ${UTIL}
-	cc -o adlcomp ${OBJS} ${UTIL}
+	$(CC) $(CFLAGS) -o $@ ${OBJS} ${UTIL}
 
 codegen.o	: codegen.c	${HDRS}
 
