@@ -56,7 +56,11 @@ int nxtchar = -1;	/* character held from type ahead    */
 
 #if	USG			/* System V */
 #include	<signal.h>
+#include	<sys/types.h>	/* XENIX 3.4 is almost USG */
 #include	<termio.h>
+#ifndef TCGETA
+#include	<sys/ioctl.h>	/* XENIX 3.4 */
+#endif
 #include	<fcntl.h>
 int kbdflgs;			/* saved keyboard fd flags	*/
 int kbdpoll;			/* in O_NDELAY mode			*/
@@ -169,7 +173,7 @@ ttopen()
 	ntermio.c_line = otermio.c_line;
 	ntermio.c_cc[VMIN] = 1;
 	ntermio.c_cc[VTIME] = 0;
-	ioctl(0, TCSETA, &ntermio);	/* and activate them */
+	ioctl(0, TCSETAF, &ntermio);	/* and activate them */
 	kbdflgs = fcntl( 0, F_GETFL, 0 );
 	kbdpoll = FALSE;
 #endif
@@ -239,7 +243,7 @@ ttclose()
 #endif
 
 #if	USG
-	ioctl(0, TCSETA, &otermio);	/* restore terminal settings */
+	ioctl(0, TCSETAF, &otermio);	/* restore terminal settings */
 	fcntl(0, F_SETFL, kbdflgs);
 #endif
 
@@ -487,6 +491,7 @@ typahead()
 	{
 		if( !kbdpoll && fcntl( 0, F_SETFL, kbdflgs | O_NDELAY ) < 0 )
 			return(FALSE);
+		kbdpoll = TRUE;	/* From: karl@sugar.UUCP (Karl Lehenbauer) */
 		kbdqp = (1 == read( 0, &kbdq, 1 ));
 	}
 	return ( kbdqp );
