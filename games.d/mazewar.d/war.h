@@ -8,10 +8,9 @@
 #include <signal.h>
 #include <errno.h>
 #include <sgtty.h>
+#include <strings.h>
 
-#define	GAMEDIR	"/tmp"			/* for UNIX domain socket names */
-#define	LIBDIR	"/usr/games/lib"	/* object file library area */
-#define	OBJECTFILE "/usr/games/lib/objects.war"	/* default object file */
+#define	GAMEDIR	"/usr/tmp"		/* for UNIX domain socket names */
 #define	SETUPFILE ".warsetups"		/* default setup file in user's HOME */
 
 #define	ROWS	24		/* rows on board */
