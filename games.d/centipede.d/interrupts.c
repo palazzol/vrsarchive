@@ -19,7 +19,7 @@ endgame()
 catchint()
 {
     signal(SIGINT,SIG_IGN);
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,SIG_IGN);
 #endif
     inter = 1;
@@ -27,7 +27,7 @@ catchint()
 
 catchstop()
 {
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,SIG_IGN);
 #endif
     signal(SIGINT,SIG_IGN);
@@ -44,7 +44,7 @@ stopawhile()
     fflush(stdout);
     ioctl(0,TIOCGETP,&curseterm);
     ioctl(0,TIOCSETP,&origterm);
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,SIG_DFL);
     kill(getpid(),SIGTSTP);
     signal(SIGTSTP,SIG_IGN);
@@ -54,7 +54,7 @@ stopawhile()
     redrawscr();
     ioctl(0,TIOCSETP,&curseterm);       /* Just to make sure... */
     waitboard();
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,catchstop);
 #endif
     signal(SIGINT,catchint);
@@ -67,7 +67,7 @@ quit()
     signal(SIGQUIT,SIG_IGN);
     mvaddstr(12,60,"Really quit?");
     refresh();
-#ifndef SYSV
+#ifndef SYS5
     ch = getchar();
 #else
     setblock(0, TRUE);
@@ -81,7 +81,7 @@ quit()
 	endgame();
     inter = 0;
     signal(SIGINT,catchint);
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,catchstop);
 #endif
     signal(SIGQUIT,catchint);
@@ -91,7 +91,7 @@ waitboard()
 {
     char ch;
 
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,SIG_IGN);
 #endif
     signal(SIGINT,SIG_IGN);
@@ -120,7 +120,7 @@ waitboard()
     move(15,60);
     clrtoeol();
     signal(SIGINT,catchint);
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,catchstop);
 #endif
 }

@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <sys/types.h>
-#ifndef SYSV
+#ifndef SYS5
 #include <sys/timeb.h>
 #endif
 
@@ -16,7 +16,7 @@ double d;
         return (d-floor(d));
 }
 
-#ifdef SYSV
+#ifdef SYS5
 rninit()
 {
     RandSeed = (double) time((long *) 0);

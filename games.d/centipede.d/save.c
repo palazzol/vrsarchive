@@ -18,7 +18,7 @@ savegame()
 	refresh();
 	return;
     }
-#ifdef SYSV
+#ifdef SYS5
     clear();
     refresh();
 #else

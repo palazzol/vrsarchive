@@ -54,7 +54,7 @@ movestuff()
 	refresh();
 	fflush(stdout);
 	do
-#ifndef SYSV
+#ifndef SYS5
 	    ioctl(1,TIOCOUTQ,&count);
 #else
 	    count = 0;

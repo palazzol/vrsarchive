@@ -69,7 +69,7 @@ extern float version;
 extern double maxload;
 
 extern PEDE *getpede();
-extern char *addcommas(),*getlogin(),*getenv(),*index();
+extern char *addcommas(),*getlogin(),*getenv(),*strchr();
 extern int catchint(),catchstop(),stopawhile(),quit(),catchalarm();
 extern FILE *popen();
 

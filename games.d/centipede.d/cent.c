@@ -18,7 +18,7 @@ char **argv;
 	printf("Usage: cent [-s] [savefile]\n");
 	exit(0);
     }
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,SIG_IGN);
 #endif
     signal(SIGQUIT,catchint);
@@ -54,7 +54,7 @@ char **argv;
     else
 	instructions();
     signal(SIGINT,catchint);
-#ifndef SYSV
+#ifndef SYS5
     signal(SIGTSTP,catchstop);
 #endif
     signal(SIGALRM,catchalarm);

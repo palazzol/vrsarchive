@@ -46,7 +46,7 @@ dooptions()
 	SETOPT("pa",PAUSEKEY);
 	else
 	    badopts();
-	if ((tmp = index(optline,',')) == NULL)
+	if ((tmp = strchr(optline,',')) == NULL)
 	    break;
 	optline = tmp + 1;
     }

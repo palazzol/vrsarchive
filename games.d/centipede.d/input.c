@@ -1,7 +1,7 @@
 #include "cent.h"
 #include "sys_dep.h"
 
-#ifdef SYSV
+#ifdef SYS5
 #    undef getchar
 #    define getchar cget
 #endif
@@ -12,7 +12,7 @@ move_guy()
     int count,repeat = 0;
     char ch;
 
-#ifndef SYSV
+#ifndef SYS5
     ioctl(0,FIONREAD,&count);
 #else
     if (cready()) count = 1;

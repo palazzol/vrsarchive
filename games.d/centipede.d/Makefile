@@ -1,9 +1,12 @@
+#
 # makefile for centipede
 # edit sys_dep.c to adjust pathnames for your system
 #
-CFLAGS = -O -DSYSV -Dindex=strchr
-
-OBJECTS = cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
+ALL	= cent
+OPTIONS	= -O
+MODEL	= -i
+include ../../CONFIG
+OBJECTS	= cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
 		save.o shoot.o la.o extern.o options.o sys_dep.o
 
 cent:   $(OBJECTS)
