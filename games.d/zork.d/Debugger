@@ -1,0 +1,32 @@
+From reed!tektronix!hplabs!pesnta!amd!intelca!qantel!lll-lcc!lll-crg!nike!think!husc6!husc4!dormitzer Mon Sep 29 21:51:08 PDT 1986
+Article 2125 of net.games:
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!hplabs!pesnta!amd!intelca!qantel!lll-lcc!lll-crg!nike!think!husc6!husc4!dormitzer
+>From: dormitzer@husc4.harvard.edu (paul dormitzer)
+Newsgroups: net.games
+Subject: Re: zork: use of the "gdt" command
+Message-ID: <265@husc6.HARVARD.EDU>
+Date: 28 Sep 86 18:42:29 GMT
+Date-Received: 29 Sep 86 14:20:50 GMT
+References: <438@comp.lancs.ac.uk>
+Sender: news@husc6.HARVARD.EDU
+Reply-To: dormitzer@husc4.UUCP (paul dormitzer)
+Distribution: net
+Organization: Harvard Uinversity Science Center
+Lines: 11
+Keywords: gdt incant,
+Summary: incant,
+
+Gdt is the game debugging tool in unix zork.  To get into it, type
+"gdt" to the game.  It then gives you a 6-char sequence.  Suspend
+your zork session, start up another one, and type "incant, XXXXXX" to
+the new one, where XXXXXX is the sequence given by the first one.
+It will respond with YYYYYY.  Exit the new zork game, restart the first
+one, and type YYYYYY (given by the other game) as a response to the XXXXXX
+query.  This puts you into the debugger, and lets you enter and leave the
+debugger at will with no further passwords.  Typing "HE" to the GDT> prompt
+will give you a brief summary of commands available within GDT.
+
+	Paul Dormitzer (dormitzer@husc4.ARPA) (formerly h-sc4)
+
+

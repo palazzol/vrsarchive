@@ -1,0 +1,75 @@
+.V= : wator.6 84/12/18 $
+.TH WATOR 6 "\*(V)" "Local" "\*(O)"
+.SH NAME
+wator  \-  A computer recreation from Scientific American
+.SH SYNOPSIS
+.B wator
+[
+.B \-hs
+] [
+.B #sharks sbreed #fish fbreed starve
+]
+.SH DESCRIPTION
+.ad b
+This program manipulates an ocean inhabited by sharks and fish.  Both swim and
+breed.  The sharks eat fish, and starve if they don't eat for a while.  The
+ocean is displayed as a grid of 23 by 80 cells.  If you move up and off the
+screen you "wrap around" to the bottom.  The same action occurs for the sides.
+Empty cells are blank, sharks are displayed as "O", fish as ".".  Time
+progresses as cycles called "chronons".
+.PP
+Each chronon, the program examines each fish in sequence.  A fish will choose
+one adjacent empty cell at random and move to it.  If sufficient chronons
+have passed to cause the fish to breed, a new fish will be placed at the
+location that this fish has just vacated.  Both fish would then have their
+ages set to 0.  If no empty location exists, fish will not be able to move
+or breed, though the age will increase.
+.PP
+Each chronon sharks will be examined in a manner similar to that for the
+fish.  The sharks will first examine all adjacent cells to see if any contain
+fish.  An adjacent cell containing a fish would be chosen at random and
+eaten, with the shark moving to the location which had held the fish.
+Should no fish be found in adjacent cells the shark would just choose at
+random an adjacent empty cell.  Sharks breed in the same manner as fish,
+though the number of chronons between breeding is independent of the time
+required for fish to breed.
+.PP
+Sharks starve if they do not eat for some number of chronons.
+Fish only decline by being eaten.  The definition of
+.B adjacent
+is a compile time option.  It may refer to the four cells on the sides
+of a cell, or may refer to all eight cells surrounding another cell.
+.PP
+Arguments may be supplied like so:
+.TP
+.B \-h
+print a help message
+.TP
+.B \-s
+generate statistics for each chronon in a file
+.B wator.stat
+.PP
+A series of numbers may be given to specify: the initial number of sharks,
+the number of chronons required for sharks to breed, the initial number of
+fish, the number of chronons required for fish to breed, and then number of
+chronons required for sharks to starve.  With no input values some
+reasonable starting conditions are chosen at random.
+.PP
+Information shown on the bottom line is:
+generation, #sharks, #fish, when sharks and fish breed, and when sharks
+starve.
+.SH FILES
+/etc/termcap
+.SH AUTHOR
+Dale Mosby
+.SH SEE ALSO
+December 1984 Scientific American, Vol 251 Number 6, Page 14
+Article "Computer Recreations" by A. K. Dewdney
+.SH BUGS
+Very little time went into the argument parsing, and almost all testing
+and use of the program has been with no arguments, just letting the
+program choose values.
+.PP
+The ability to redraw the screen after the job is stopped and then restarted
+was a quick addition and sometimes causes a partial cursor sequence
+to be displayed.
