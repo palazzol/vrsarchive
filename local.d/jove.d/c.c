@@ -596,5 +596,4 @@ char	*format;
 	DelNChar();
 }
 
-#endif CMT_FMT
-
+#endif /*CMT_FMT*/
