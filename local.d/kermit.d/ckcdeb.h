@@ -45,12 +45,8 @@
 
 /* Unix Kernel Dependencies */
 
-#ifdef SVR3
 /* Sys V R3 declares signal() differently from other systems. */
-typedef void SIGTYP;
-#else
-typedef int SIGTYP;
-#endif
+typedef SIG_T SIGTYP;
 
 /* C Compiler Dependencies */
 
