@@ -27,7 +27,7 @@ MAN4DIR	= $(MAN4)
 MAN1EXT	= .1
 MAN4EXT	= .4
 
-ispell.hash: buildhash $(DEFDICT)
+ispell.hash: buildhash$(EXE) $(DEFDICT)
 	./buildhash$(EXE) $(DEFDICT) $(DEFHASH)
 
 install: $(ALL) $(MAN1DIR) $(MAN4DIR)
