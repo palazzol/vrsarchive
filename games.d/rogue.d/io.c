@@ -7,6 +7,7 @@
 #include "curses.h"
 #include <ctype.h>
 #include "rogue.h"
+#include <varargs.h>
 
 /*
  * msg:
@@ -17,10 +18,14 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /*VARARGS1*/
-msg(fmt, args)
-char *fmt;
-char *args;
+msg(va_alist)
+va_dcl
 {
+    va_list ap;
+    char *fmt;
+
+    va_start(ap);
+    fmt = va_arg(ap, char *);
     /*
      * if the string is "", just clear the line
      */
@@ -34,19 +39,26 @@ char *args;
     /*
      * otherwise add to the message and flush it out
      */
-    doadd(fmt, &args);
+    vsprintf(msgbuf+newpos, fmt, ap);
+    newpos = strlen(msgbuf);
     endmsg();
 }
 
 /*
  * add things to the current message
  */
-/*VARARGS1*/
-addmsg(fmt, args)
-char *fmt;
-char *args;
+/*VARARGS*/
+void
+addmsg(va_alist)
+va_dcl
 {
-    doadd(fmt, &args);
+	va_list ap;
+	char *fmt;
+
+	va_start(ap);
+	fmt = va_arg(ap, char *);
+	vsprintf(msgbuf+newpos, fmt, ap);
+	newpos = strlen(msgbuf);
 }
 
 /*
@@ -72,35 +84,10 @@ endmsg()
     wrefresh(stdscr);
 }
 
-doadd(fmt, args)
-char *fmt;
-char **args;
-{   static FILE junk;
-#ifdef SYSIII
-    extern FILE *_pfile;
-#endif
-
-    /*
-     * Do the printf into buf
-     */
-    junk._flag = _IOWRT + _IOSTRG;
-    junk._ptr = &msgbuf[newpos];
-    junk._cnt = 32767;
-#ifdef SYSIII
-    _pfile = &junk;
-    _print(fmt, &args);
-#else
-    _doprnt(fmt, args, &junk);
-#endif
-    (void) putc('\0', &junk);
-    newpos = strlen(msgbuf);
-}
-
 /*
  * step_ok:
  *	returns true if it is ok to step on ch
  */
-
 step_ok(ch)
 {
     switch (ch)
