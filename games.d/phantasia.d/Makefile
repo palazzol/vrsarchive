@@ -1,8 +1,12 @@
 #
-# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.2 1987-06-08 21:27:29 vrs Exp $
+# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.3 1987-06-14 17:42:37 vrs Exp $
 #
+OPTIONS	= -DDEST=\"$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"vrs\" \
+	  -DUIDA=0 -DUIDB=244 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
+MODEL	= -M2m
 GAME	= phantasia
-ALL	= phantasia setup
+ALL	= $(GAME) setup
+include ../../CONFIG
 # To create the game:
 #
 # 1)  Set up a directory where the game and its support files will live.
@@ -56,9 +60,6 @@ LIBGAM	= $(GAMLIB)/phant3.3.2
 # define SYS5 for System V
 # If you don't have 'strchr()', put '-Dstrchr=index' below.
 # May need '-I/usr/include/sys' for 4.2bsd.
-CFLAGS	= -DSYS3 -DDEST=\"$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"vrs\" \
-	  -DUIDA=0 -DUIDB=244 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY \
-	  -M2m -DSYS3 # -O
 CFILES	= main.c fight.c io.c interplayer.c gamesupport.c misc.c phantglobs.c
 OFILES	= main.o fight.o io.o interplayer.o gamesupport.o misc.o phantglobs.o
 HFILES	= phantdefs.h phantstruct.h macros.h include.h
@@ -67,20 +68,24 @@ all:		$(GAME) setup phant.help
 
 # Make the game.
 $(GAME):	$(OFILES)
-		$(CC) -M2m $(OFILES) $(LIBS) -o $@
+		$(CC) $(CFLAGS) $(OFILES) $(LIBS) -o $@
 
 $(OFILES):	$(HFILES)
 
 # Make the initialization program.
 setup:		phantglobs.o setup.o monsters.asc
-		$(CC) -M2m phantglobs.o setup.o $(LIBS) -o setup
+		$(CC) $(CFLAGS) phantglobs.o setup.o $(LIBS) -o $@
 
 setup.o:	$(HFILES)
 
 # Make documentation.
 # The flags below on tbl and nroff are to make a line printable version.
 phant.help:	phant.nr
-		nroff -man phant.nr > phant.help
+		$(TROFF) -man phant.nr > $@
+
+$(LIBGAM):
+		mkdir $@
+		chmod 755 $@
 
 # Install game and documentation.  Initialize.
 install:	$(ALL) $(GAMDIR) $(GAMLIB) $(LIBGAM)
@@ -89,7 +94,7 @@ install:	$(ALL) $(GAMDIR) $(GAMLIB) $(LIBGAM)
 		cp $(GAME) $(GAMDIR)
 		chmod 4711 $(LIBGAM)/phantasia $(GAMDIR)/$(GAME)
 		chmod 644 $(LIBGAM)/phant.help
-		setup
+		echo Phantasia 3.3.2 | ./setup > /dev/null
 
 # Make Phantasia map.
 # Change the map commands reflect your installation.
