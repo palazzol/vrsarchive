@@ -1,113 +1,106 @@
+#
 # makefile: Rog-O-Matic XIV (CMU) Thu Jan 31 18:23:25 1985 - mlm
 # Copyright (C) 1985 by A. Appel, G. Jacobson, L. Hamey, and M. Mauldin
 #
-BINARIES=   rogomatic player rgmplot datesub histplot gene
-BINDIR=     $(GAMLIB)/test
-PUBDIR=     $(GAMLIB)/rgm/src14
-CCFLAGS=    -g
-LDFLAGS=    
-OBJS=	    arms.o command.o database.o debug.o explore.o io.o learn.o\
-	    ltm.o main.o mess.o monsters.o pack.o rand.o replay.o rooms.o\
-	    scorefile.o search.o stats.o strategy.o survival.o tactics.o\
-	    things.o titlepage.o utility.o worth.o 
-SRCS=	    arms.c command.c database.c debug.c explore.c io.c learn.c\
-	    ltm.c main.c mess.c monsters.c pack.c rand.c replay.c rooms.c\
-	    scorefile.c search.c stats.c strategy.c survival.c tactics.c\
-	    things.c titlepage.c utility.c worth.c 
-HDRS=	    types.h globals.h install.h termtokens.h
-OTHERS=     setup.c findscore.c datesub.l histplot.c rgmplot.c gene.c\
-	    rplot Bugreport
-#
-# The following commands are declared:
-#
-all: $(BINARIES)
-	echo -n "" >/dev/tty
-#
+ALL	= rogomatic player rgmplot datesub histplot gene
+PUBDIR	= $(GAMLIB)/rgm14
+OPTIONS	= -O -DGAMDIR=\"$(GAMDIR) -DGAMLIB=\"$(PUBDIR)
+MODEL	= -M2l -F 2000
+include ../../CONFIG
+OBJS	= arms.o command.o database.o debug.o explore.o io.o learn.o\
+	  ltm.o main.o mess.o monsters.o pack.o rand.o replay.o rooms.o\
+	  scorefile.o search.o stats.o strategy.o survival.o tactics.o\
+	  things.o titlepage.o utility.o worth.o 
+SRCS	= arms.c command.c database.c debug.c explore.c io.c learn.c\
+	  ltm.c main.c mess.c monsters.c pack.c rand.c replay.c rooms.c\
+	  scorefile.c search.c stats.c strategy.c survival.c tactics.c\
+	  things.c titlepage.c utility.c worth.c 
+HDRS	= types.h globals.h install.h termtokens.h
+OTHERS	= setup.c findscore.c datesub.l histplot.c rgmplot.c gene.c\
+	  rplot Bugreport
 #
 # General makefile stuff:
 #
 arms.o: types.h globals.h
-	cc -c $(CCFLAGS) arms.c
+	cc -c $(CFLAGS) arms.c
 command.o: types.h globals.h
-	cc -c $(CCFLAGS) command.c
+	cc -c $(CFLAGS) command.c
 database.o: types.h globals.h
-	cc -c $(CCFLAGS) database.c
+	cc -c $(CFLAGS) database.c
 datesub.c: datesub.l
 	lex datesub.l
 	mv lex.yy.c datesub.c
 datesub.o: datesub.c
-	cc -c $(CCFLAGS) datesub.c
+	cc -c $(CFLAGS) datesub.c
 datesub: datesub.o
-	cc $(LDFLAGS) -o datesub datesub.o
+	cc $(CFLAGS) -o datesub datesub.o
 debug.o: types.h globals.h install.h
-	cc -c $(CCFLAGS) debug.c
+	cc -c $(CFLAGS) debug.c
 explore.o: types.h globals.h
-	cc -c $(CCFLAGS) explore.c
+	cc -c $(CFLAGS) explore.c
 findscore.o: install.h
-	cc -c $(CCFLAGS) findscore.c
+	cc -c $(CFLAGS) findscore.c
 gene: gene.c rand.o learn.o stats.o utility.o types.h install.h
-	cc $(CCFLAGS) $(LDFLAGS) -o gene gene.c \
+	cc $(CFLAGS) $(CFLAGS) -o gene gene.c \
 		rand.o learn.o stats.o utility.o -lm
 histplot: histplot.o utility.o
-	cc $(LDFLAGS) -o histplot histplot.o utility.o
-histplot.o:
-	cc -c histplot.c
-io.o: types.h globals.h termtokens.h
-	cc -c $(CCFLAGS) io.c
+	cc $(CFLAGS) -o histplot histplot.o utility.o
+io.o: types.h globals.h termtokens.h install.h
+	cc -c $(CFLAGS) io.c
 mess.o: types.h globals.h
-	cc -c $(CCFLAGS) mess.c
-learn.o: types.h  install.h
-	cc -c $(CCFLAGS) learn.c
-ltm.o: types.h globals.h
-	cc -c $(CCFLAGS) ltm.c
+	cc -c $(CFLAGS) mess.c
+learn.o: types.h
+	cc -c $(CFLAGS) learn.c
+ltm.o: types.h globals.h install.h
+	cc -c $(CFLAGS) ltm.c
 main.o: install.h termtokens.h types.h globals.h
-	cc -c $(CCFLAGS) main.c
+	cc -c $(CFLAGS) main.c
 monsters.o: types.h globals.h
-	cc -c $(CCFLAGS) monsters.c
+	cc -c $(CFLAGS) monsters.c
 pack.o: types.h globals.h
-	cc -c $(CCFLAGS) pack.c
+	cc -c $(CFLAGS) pack.c
 player: $(OBJS)
-	cc $(LDFLAGS) -o player $(OBJS) -lm -lcurses -ltermcap
+	cc $(CFLAGS) -o player $(OBJS) -lm -lcurses -ltermcap
 	size player
 rand.o: rand.c
-	cc -c $(CCFLAGS) rand.c
+	cc -c $(CFLAGS) rand.c
 replay.o: types.h globals.h
-	cc -c $(CCFLAGS) replay.c
+	cc -c $(CFLAGS) replay.c
 rgmplot.o: rgmplot.c
-	cc -c $(CCFLAGS) rgmplot.c
+	cc -c $(CFLAGS) rgmplot.c
 rgmplot: rgmplot.o utility.o
-	cc $(LDFLAGS) -o rgmplot rgmplot.o utility.o
+	cc $(CFLAGS) -o rgmplot rgmplot.o utility.o
 rogomatic: setup.o findscore.o scorefile.o utility.o
-	cc $(LDFLAGS) -o rogomatic setup.o findscore.o scorefile.o utility.o
+	cc $(CFLAGS) -o rogomatic setup.o findscore.o scorefile.o utility.o
 	size rogomatic
 rooms.o: types.h globals.h
-	cc -c $(CCFLAGS) rooms.c
+	cc -c $(CFLAGS) rooms.c
 scorefile.o: types.h globals.h install.h
-	cc -c $(CCFLAGS) scorefile.c
+	cc -c $(CFLAGS) scorefile.c
 search.o: types.h globals.h
-	cc -c $(CCFLAGS) search.c
-setup.o: install.h
-	cc -c $(CCFLAGS) setup.c
+	cc -c $(CFLAGS) search.c
+setup.o: install.h termtokens.h
+	cc -c $(CFLAGS) setup.c
 stats.o: types.h
-	cc -c $(CCFLAGS) stats.c
+	cc -c $(CFLAGS) stats.c
 strategy.o: types.h globals.h install.h
-	cc -c $(CCFLAGS) strategy.c
+	cc -c $(CFLAGS) strategy.c
 survival.o: types.h globals.h
-	cc -c $(CCFLAGS) survival.c
-tactics.o: types.h globals.h
-	cc -c $(CCFLAGS) tactics.c
+	cc -c $(CFLAGS) survival.c
+tactics.o: types.h globals.h install.h
+	cc -c $(CFLAGS) tactics.c
 testfind: testfind.o findscore.o utility.o
-	cc $(LDFLAGS) -o testfind testfind.o findscore.o utility.o
+	cc $(CFLAGS) -o testfind testfind.o findscore.o utility.o
 things.o: types.h globals.h
-	cc -c $(CCFLAGS) things.c
+	cc -c $(CFLAGS) things.c
 titlepage.o: titlepage.c
-	cc -c $(CCFLAGS) titlepage.c
+	cc -c $(CFLAGS) titlepage.c
 titler.o: titler.c
 	cc -c titler.c
-utility.o:
-	cc -c $(CCFLAGS) utility.c
+utility.o: install.h
+	cc -c $(CFLAGS) utility.c
 worth.o: types.h globals.h
-	cc -c $(CCFLAGS) worth.c
+	cc -c $(CFLAGS) worth.c
 #
 # Miscellaneous useful pseduo-makes
 #
@@ -116,13 +109,18 @@ backup:
 	tar cvf backup.tar *.c *.h *.l rogomatic.6 makefile
 	chmod ugo-w backup.tar
 clean:
-	rm -f *.CKP *.o datesub.c core
-	strip $(BINARIES)
-install:
-	rm -f $(BINDIR)/player
-	ln player $(BINDIR)/player
-	rm -f $(BINDIR)/rogomatic
-	ln rogomatic $(BINDIR)/rogomatic
+	rm -f $(ALL) *.CKP *.o datesub.c core
+
+$(PUBDIR):
+	mkdir $@
+	chmod 777 $@
+
+install: $(ALL) $(GAMDIR) $(GAMLIB) $(PUBDIR)
+	cp rogomatic $(GAMDIR)/rogomatic
+	cd $(GAMDIR); chmod 711 rogomatic
+	cp player rgmplot datesub histplot gene $(PUBDIR)
+	cd $(PUBDIR); chmod 711 player rgmplot datesub histplot gene
+
 titler: titler.c
 	cc -o titler titler.c -lcurses -ltermcap
 anim: anim.c utility.o
