@@ -329,7 +329,7 @@ wipeoff()
 		}
 		return(1);		/* still busy */
 	}
-	pline("You're face feels clean now.");
+	pline("Your face feels clean now.");
 	u.ucreamed = 0;
 	return(0);
 }
@@ -345,7 +345,7 @@ dowipe()
 #endif
 		return(1);
 	}
-	pline("You're face is already clean.");
+	pline("Your face is already clean.");
 	return(1);
 }
 #endif
