@@ -1,6 +1,6 @@
 /* vmhsbr.c - routines to help vmh along */
 #ifndef	lint
-static char ident[] = "@(#)$Id: vmhsbr.c,v 1.1 1990-04-12 13:29:39 vrs Exp $";
+static char ident[] = "@(#)$Id: vmhsbr.c,v 1.2 1990-05-07 06:27:00 vrs Exp $";
 #endif	lint
 
 /* TODO (for vrsn 2):
@@ -42,9 +42,10 @@ int	rfd,
     PEERrfd = rfd;
     PEERwfd = wfd;
 
+	(void) sprintf (buffer, "%s.out", invo_name);
     if ((cp = getenv ("MHVDEBUG"))
 	    && *cp
-	    && (fp = fopen (sprintf (buffer, "%s.out", invo_name), "w"))) {
+	    && (fp = fopen (buffer, "w"))) {
 	(void) fseek (fp, 0L, 2);
 	fprintf (fp, "%d: rcinit (%d, %d)\n", getpid (), rfd, wfd);
 	(void) fflush (fp);
