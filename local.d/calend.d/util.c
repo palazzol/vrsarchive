@@ -7,7 +7,7 @@
 FILE	*popen();
 char	*getlogin();
 struct passwd	*getpwuid();
-int	onintr();
+SIG_T	onintr();
 
 #define MAIL "mail -s 'Reminder Service' %s"
 
@@ -71,7 +71,7 @@ get_plus_parts()
 
 char *datestr(datenum,mtype,forward)
 int datenum,mtype,forward; {
-    register char dstri[BUFSIZ];
+    char dstri[BUFSIZ];
     int ddiff;
 
     if ((mtype == 3) && (abs(ddiff = reldiff(datenum,tdate,forward)) < 3))
@@ -199,8 +199,8 @@ send_mail ()
 }
 
 run_remind() {
-	register char time[BUFSIZ];
-	register char restmsg[BUFSIZ];
+	char time[BUFSIZ];
+	char restmsg[BUFSIZ];
 	int tmp;
 
 	time[0] = '0';	/* Force 24 hour clock from remind (vrs) */

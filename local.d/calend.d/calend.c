@@ -63,7 +63,8 @@
 
 struct tm	*localtime();
 
-onintr()
+SIG_T
+onintr(dummy)
 {
     char tmname[BUFSIZ];
     int i;
