@@ -270,6 +270,7 @@ char *fn;
  */
 
 int filelength (f)
+char *f;
 { struct stat sbuf;
 
   if (stat (f, &sbuf) == 0)
@@ -318,7 +319,7 @@ reset_int ()
  */
 
 int_exit (exitproc)
-int (*exitproc)();
+SIG_T (*exitproc)();
 {
   if (signal (SIGINT, SIG_IGN) != SIG_IGN)  signal (SIGINT, exitproc);
   if (signal (SIGPIPE, SIG_IGN) != SIG_IGN) signal (SIGPIPE, exitproc);
