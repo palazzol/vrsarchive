@@ -8,7 +8,9 @@ char *list[] = {
   0,				/* Filled in with user's login name	*/
   0,				/* Filled in with system name		*/
 #include "primo.h"	/* These have worked before			*/
+#ifdef TRYHARD
 #include "crack.h"	/* These haven't worked yet			*/
+#endif
   0
 };
 
