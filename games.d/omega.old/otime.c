@@ -42,7 +42,7 @@ void time_clock()
     Player.click = (Player.click + Player.speed) % 50;
     if (! Skipplayer) do p_process(); while (Skipmonsters);
   }
-  Skipplayer = FALSE;
+  if (Player.status[SLEPT] <= 0) Skipplayer = FALSE;
 
   drawmonsters(FALSE);
 
