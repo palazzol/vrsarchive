@@ -17,10 +17,10 @@
 # parse it into seperate paths and check each one in turn.
 #
 AWK=/bin/awk
-EGREP=/usr/bin/egrep
+EGREP=/bin/egrep
 TEST=/bin/test
 ECHO=/bin/echo
-SORT=/usr/bin/sort
+SORT=/bin/sort
 STRINGS=/usr/ucb/strings
 
 if test ! -s $STRINGS

@@ -35,8 +35,8 @@ AWK=/bin/awk
 SED=/bin/sed
 ECHO=/bin/echo
 TEST=/bin/test
-SORT=/usr/bin/sort
-UNIQ=/usr/bin/uniq
+SORT=/bin/sort
+UNIQ=/bin/uniq
 YPCAT=/usr/bin/ypcat
 RM=/bin/rm
 

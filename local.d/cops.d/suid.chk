@@ -18,7 +18,7 @@
 #
 
 #  CHANGE THIS LINE!
-INFORM="foo@bar.edu"
+INFORM="root@lint.intel.com"
 #
 
 TEST=/bin/test
@@ -28,13 +28,13 @@ LS=/bin/ls
 CAT=/bin/cat
 MAIL=/bin/mail
 CHMOD=/bin/chmod
-SORT=/usr/bin/sort
-COMM=/usr/bin/comm
-FIND=/usr/bin/find
+SORT=/bin/sort
+COMM=/bin/comm
+FIND=/bin/find
 RM=/bin/rm
 
 SECURE=.
-SEARCH=.
+SEARCH=/
 STOP=./stop.sample
 TEMPOLD=./fsold$$
 TEMPCUR=./fscur$$

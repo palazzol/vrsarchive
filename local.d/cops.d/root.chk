@@ -29,7 +29,7 @@ SED=/bin/sed
 TEST=/bin/test
 ECHO=/bin/echo
 GREP=/bin/grep
-SORT=/usr/bin/sort
+SORT=/bin/sort
 EXPR=/bin/expr
 
 csh=/.cshrc

@@ -22,9 +22,9 @@
 AWK=/bin/awk
 LS=/bin/ls
 TEST=/bin/test
-EGREP=/usr/bin/egrep
+EGREP=/bin/egrep
 ECHO=/bin/echo
-SORT=/usr/bin/sort
+SORT=/bin/sort
 
 
 # CHANGE THIS LINE OR PUT IN FILE NAMES IF/AS NEEDED!
