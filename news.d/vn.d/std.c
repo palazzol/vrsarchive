@@ -5,6 +5,9 @@
 #include "server.h"
 #include "config_std.h"
 #include "std.h"
+#ifndef MAXPATHLEN
+#define MAXPATHLEN BUFSIZ
+#endif
 
 extern NODE *hashfind();
 extern FILE *fopen();
