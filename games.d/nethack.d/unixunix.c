@@ -48,7 +48,6 @@ getyear()
 	return(1900 + getlt()->tm_year);
 }
 
-#ifndef __STDC__
 char *
 get_date()
 {
@@ -61,7 +60,6 @@ get_date()
 	if(datestr[4] == ' ') datestr[4] = '0';
 	return(datestr);
 }
-#endif
 
 phase_of_the_moon()			/* 0-7, with 0: new, 4: full */
 {					/* moon period: 29.5306 days */
