@@ -77,9 +77,9 @@ typedef struct player_type
       vtype sex;	/* Sex of character	*/
       vtype title;	/* Character's title	*/
       vtype tclass;	/* Character's class	*/
-      int max_exp;	/* Max experience*/
-      int exp;	        /* Cur experience	*/
-      int au;	        /* Gold		*/
+      long int max_exp;	/* Max experience*/
+      long int exp;	/* Cur experience	*/
+      long int au;	/* Gold		*/
       wordint age;	/* Characters age*/
       wordint ht;	/* Height	*/
       wordint wt;	/* Weight	*/
