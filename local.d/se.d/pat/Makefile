@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/pat/Makefile,v 1.1 1987-02-07 19:05:54 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/pat/Makefile,v 1.2 1987-02-07 20:31:12 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
 # Revision 1.2  86/07/11  15:25:14  osadr
@@ -12,13 +12,14 @@
 # 
 # makefile for pattern library for 'se'
 
-CFLAGS=-O
+CFLAGS = -O `cat ../flags`
 
 PR=pr
 
 libpat.a: pat.o
 	/bin/ar ruv libpat.a pat.o
-	if test -r /usr/bin/ranlib; then /usr/bin/ranlib libpat.a; fi
+	if test -x /usr/bin/ranlib; then /usr/bin/ranlib libpat.a; fi
+	if test -x /bin/ranlib; then /bin/ranlib libpat.a; fi
 
 pat.o: pat.c
 
