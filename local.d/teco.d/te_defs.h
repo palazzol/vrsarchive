@@ -12,7 +12,15 @@
 #include <ctype.h>
 #ifdef TERMIO
 # include <sys/types.h>
-# include <sys/termio.h>
+# ifdef __STDC__
+#   include <termios.h>
+#   ifndef TCGETA
+#     include <termio.h>
+#   endif
+# endif
+# ifndef TCGETA
+#   include <sys/termio.h>
+# endif
 # ifndef TCGETA
 #   include <sys/ioctl.h>
 # endif
