@@ -138,6 +138,7 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVEDIR)
 clean:
 	rm -f $(ALL) *.o a.out core makedefs
 	rm -f makedefs.[1-9]* main.c tty.c unix.c onames.h
+	chmod a-w data.base date.h rumors.base rumors.kaa rumors.mrx trap.h
 
 bones.o:  hack.h
 decl.o:  hack.h mkroom.h
