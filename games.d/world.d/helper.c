@@ -4,7 +4,9 @@
 #include "arrays.h"
 #include "qtext.inc"
 
+#ifndef Q1TEXT
 #define Q1TEXT	"/usr/games/lib/q1text.dat"
+#endif
 
 /* World C Version 1.00 copyright 1987 J.D.McDonald 
    Use as you like for non-commercial purposes, but please
