@@ -43,15 +43,21 @@ May your terminal be truly VT100 compatible!
                  /TMP
 
 */
+#ifdef SYS5
+#define USG
+#endif
+#ifdef SIII
+#define USG
+#endif
+#ifdef USG
+#define UNIX
+#endif
 
 /* Implementation dependent stuff for the Sargasso C compiler  */
-
-/*#define XENIX             /* XENIX implies UNIX */
-/*#define SIII              /* SIII  implies UNIX, (NDELAY a la System III) */
-#define UNIX
 #ifdef SARGASSO
 #define _UNIXCON            /* Make UNIX-flavored I/O      */
 #endif
+
 #include <stdio.h>          /* Make UNIX-flavored I/O      */
 #ifdef SARGASSO
 /*#strings low                /* put strings in lowseg mem   */
@@ -59,10 +65,15 @@ May your terminal be truly VT100 compatible!
 #endif
 #ifdef UNIX
 #include <ctype.h>
+#ifdef USG
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <termio.h>
+#include <fcntl.h>
+struct termio sgttyOrg, sgttyNew;
+#else
 #include <sgtty.h>
 struct sgttyb sgttyOrg, sgttyNew;
-#ifdef SIII
-#include <fcntl.h>
 #endif
 #endif
 
@@ -862,9 +873,15 @@ TAB*    qQ   wW   eE   rR   tT   yY   uU   iI   oO   pP   [{   ]}      DEL
   }
   cup(22,1);
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag &= ~ICRNL;
+  sgttyNew.c_lflag &= ~(ICANON|ISIG|ECHO);
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags &= ~CRMOD;
   sgttyNew.sg_flags &= ~ECHO;
   stty(0, &sgttyNew);
+#endif
 #endif
   inflush();
   printf("Press each key, both shifted and unshifted. Finish with RETURN:");
@@ -964,8 +981,13 @@ TAB*    qQ   wW   eE   rR   tT   yY   uU   iI   oO   pP   [{   ]}      DEL
   }
 
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag |= ICRNL;
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags |= CRMOD;
   stty(0, &sgttyNew);
+#endif
 #endif
   ed(2);
   cup(5,1);
@@ -981,8 +1003,14 @@ TAB*    qQ   wW   eE   rR   tT   yY   uU   iI   oO   pP   [{   ]}      DEL
   println("Finish with a single RETURN.");
 
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag &= ~ICRNL;
+  sgttyNew.c_lflag &= ~(ICANON|ISIG|ECHO);
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags &= ~CRMOD;
   stty(0, &sgttyNew);
+#endif
 #endif
   do {
     cup(17,1);
@@ -1002,8 +1030,14 @@ TAB*    qQ   wW   eE   rR   tT   yY   uU   iI   oO   pP   [{   ]}      DEL
   }
   cup(19,1);
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag |= ICRNL;
+  sgttyNew.c_lflag |= ICANON|ISIG|ECHO;
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags |= CRMOD;
   stty(0, &sgttyNew);
+#endif
 #endif
   println(
   "Push each CTRL-key TWICE. Note that you should be able to send *all*");
@@ -1012,12 +1046,15 @@ TAB*    qQ   wW   eE   rR   tT   yY   uU   iI   oO   pP   [{   ]}      DEL
   println(
   "Finish with DEL (also called DELETE or RUB OUT), or wait 1 minute.");
 #ifdef UNIX
-#ifdef SIII
+#ifdef USG
+  sgttyNew.c_iflag &= ~(ICRNL|IXON);
+  sgttyNew.c_lflag &= ~(ICANON|ISIG|ECHO);
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags &= ~CBREAK;
-  stty(0, &sgttyNew);
-#endif
   sgttyNew.sg_flags |= RAW;
   stty(0, &sgttyNew);
+#endif
 #endif
   ttybin(1);
   do {
@@ -1036,10 +1073,14 @@ TAB*    qQ   wW   eE   rR   tT   yY   uU   iI   oO   pP   [{   ]}      DEL
     }
   } while (kbdc != '\177');
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag |= ICRNL|IXON;
+  sgttyNew.c_lflag &= ~ICANON;
+  sgttyNew.c_lflag |= ISIG|ECHO;
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags &= ~RAW;
   sgttyNew.sg_flags |= ECHO;
-  stty(0, &sgttyNew);
-#ifdef SIII
   sgttyNew.sg_flags |= CBREAK;
   stty(0, &sgttyNew);
 #endif
@@ -1083,8 +1124,14 @@ tst_reports() {
   };
 
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_lflag &= ~(ICANON|ISIG|ECHO);
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags &= ~ECHO;
+  sgttyNew.sg_flags |= RAW;
   stty(0, &sgttyNew);
+#endif
 #endif
   ed(2);
   cup(5,1);
@@ -1107,8 +1154,14 @@ tst_reports() {
   cup(3,1);
   sm("20");
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag &= ~ICRNL;
+  sgttyNew.c_lflag &= ~(ICANON|ISIG|ECHO);
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags &= ~CRMOD;
   stty(0, &sgttyNew);
+#endif
 #endif
   printf("NewLine mode set. Push the RETURN key: ");
   report = instr();
@@ -1128,8 +1181,13 @@ tst_reports() {
   else                         printf(" -- Not expected");
   cup(9,1);
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_iflag |= ICRNL;
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags |= CRMOD;
   stty(0, &sgttyNew);
+#endif
 #endif
   pause1();
 
@@ -1237,8 +1295,14 @@ tst_reports() {
   cup(24,1);
   pause1();
 #ifdef UNIX
+#ifdef USG
+  sgttyNew.c_lflag |= ECHO|ISIG;
+  ioctl(0, TCSETA, &sgttyNew);
+#else
   sgttyNew.sg_flags |= ECHO;
+  sgttyNew.sg_flags &= ~RAW;
   stty(0, &sgttyNew);
+#endif
 #endif
 }
 
@@ -1483,13 +1547,22 @@ initterminal() {
 
 #ifdef UNIX
   setbuf(stdout,NULL);
+#ifdef USG
+  ioctl(0, TCGETA, &sgttyOrg);
+  ioctl(0, TCGETA, &sgttyNew);
+  sgttyNew.c_lflag &= ~ICANON;
+  sgttyNew.c_lflag |= ISIG;
+  sgttyNew.c_cc[VMIN]  = 1;
+  sgttyNew.c_cc[VTIME] = 0;
+  ioctl(0, TCSETA, &sgttyNew);
+  close(2);
+  open("/dev/tty",O_RDWR|O_NDELAY);
+#else
+  setbuf(stdout,NULL);
   gtty(0,&sgttyOrg);
   gtty(0,&sgttyNew);
   sgttyNew.sg_flags |= CBREAK;
   stty(0,&sgttyNew);
-#ifdef SIII
-  close(2);
-  open("/dev/tty",O_RDWR|O_NDELAY);
 #endif
 #endif
 #ifdef SARGASSO
@@ -1533,7 +1606,11 @@ bye () {
   printf("\n\n\n");
   inflush();
 #ifdef UNIX
+#ifdef USG
+  ioctl(0, TCSETA, &sgttyOrg);
+#else
   stty(0,&sgttyOrg);
+#endif
 #endif
   exit();
 }
@@ -1634,16 +1711,12 @@ inflush () {
   int val;
 
 #ifdef UNIX
-#ifdef XENIX
-  while(rdchk(0)) read(0,&val,1);
-#else
-#ifdef SIII
+#ifndef FIONREAD
   while(read(2,&val,1));
 #else
   long l1;
   ioctl (0, FIONREAD, &l1);
   while(l1-- > 0L) read(0,&val,1);
-#endif
 #endif
 #endif
 #ifdef SARGASSO
@@ -1696,13 +1769,7 @@ char *instr() {
 #endif
 #ifdef UNIX
   sleep(1);             /* can't sleep 0.1 seconds in vanilla UNIX */
-#ifdef XENIX
-  while(rdchk(0)) {
-    read(0,result+i,1);
-    if (i++ == 78) break;
-  }
-#else
-#ifdef SIII
+#ifndef FIONREAD
   while(read(2,result+i,1) == 1)
     if (i++ == 78) break;
 #else
@@ -1713,7 +1780,6 @@ char *instr() {
     }
   }
 out1:
-#endif
 #endif
 #endif
 #ifdef SARGASSO
