@@ -1,0 +1,33 @@
+Larn, version 12.0 is now being posted to the net.  Larn is a dungeon type game,
+you against the machine, that is similar to rogue and hack, but with a different
+approach.  Many things have been changed from version 11; here are some of them:
+
+- Larn can now use termcap.  Larn should now be able to run on any terminal.
+- Playerid's instead of userid's are now supported for scoreboard entries.
+- Some monsters move with the intelligent monster movement method.  This makes
+	some of those beasties very hard to get away from.
+- The spell "gen" has been implemented.
+- savefilenames can now be specified in the larnopts file
+- no-beep option has been added
+- Miscellaneous items can now be sold in the store.
+- Spelling errors have been corrected.
+
+as well as bug fixes, and other changes.  Consult the file "Fixed.Bugs" for
+the complete change list.
+
+James D. McNamara (harvard!bu-cs!jim) has volunteered to keep organized
+any bugs and patches that larn may need.  Bug reports, source or patch
+requests can be directed to Jim or myself (panda!condor!noah), and we'll try
+to respond promptly.
+
+Thanks to all of you who helped out in describing problems, and for the ideas
+to augment the wish list.  I am planning another round of enhancements sometime
+this fall.  For the moment though, 12.0 will the latest version available.
+
+			Happy Larning!
+
+			  ___	Prince of Gems (alias Noah Morgan)
+			 /.  \	panda!condor!noah
+			 \   /	at GenRad Inc.  Bolton MA
+			  \ /
+			   v
