@@ -5,9 +5,7 @@
 /* also some in ofile.c */
 
 #include <curses.h>
-#include <strings.h>
 #include <sys/types.h>
-#include <sys/timeb.h>
 #include "oglob.h"
 
 /* from ofile */
@@ -54,7 +52,7 @@ char mcigetc();
 
 void phaseprint()
 {
-  wclear(Phasew);
+  werase(Phasew);
   wprintw(Phasew,"Moon's Phase:\n");
   switch(Phase/2) {
   case 0: wprintw(Phasew,"NEW"); break;
@@ -86,7 +84,7 @@ void show_screen(y)
 int y;
 {
   int i,j,seen,top,bottom;
-  wclear(Levelw);
+  werase(Levelw);
   switch(y) {
   case 0:
     top = TOPEDGE;
@@ -169,14 +167,14 @@ char ynq()
 /* for external call */
 void clearmsg()
 {
-  wclear(Msgw);
+  werase(Msgw);
   wrefresh(Msgw);
 }
 
 
 void erase_level()
 {
-  wclear(Levelw);
+  werase(Levelw);
 }
 
 
@@ -190,7 +188,7 @@ char *s;
     getyx(Msgw,y,x);
     if (x+strlen(s) > 64) {
       morewait();
-      wclear(Msgw);
+      werase(Msgw);
     }
     wprintw(Msgw,s);
     waddch(Msgw,' '); 
@@ -258,16 +256,16 @@ void initgraf()
 
   scrollok(Msgw,TRUE);
 
-  wclear(Msgw);
-  wclear(Locw);
-  wclear(Levelw);
-  wclear(Timew);
-  wclear(Flagw);
-  wclear(Phasew);
-  wclear(Dataw);
-  wclear(Menuw1);
-  wclear(Menuw2);
-  wclear(Comwin);
+  werase(Msgw);
+  werase(Locw);
+  werase(Levelw);
+  werase(Timew);
+  werase(Flagw);
+  werase(Phasew);
+  werase(Dataw);
+  werase(Menuw1);
+  werase(Menuw2);
+  werase(Comwin);
 
   clear();
   refresh();
@@ -487,7 +485,7 @@ int x,y,showmonster;
 
 void commanderror()
 {
-  wclear(Msgw);
+  werase(Msgw);
   wrefresh(Msgw);
   wprintw(Msgw,"%c : unknown command",Cmd);
   wrefresh(Msgw);
@@ -495,7 +493,7 @@ void commanderror()
 
 void timeprint()
 {
-  wclear(Timew);
+  werase(Timew);
   wprintw(Timew,"%d",showhour());
   wprintw(Timew,hour()>11 ? " PM \n" : " AM \n");
   wprintw(Timew,month());
@@ -507,7 +505,7 @@ void timeprint()
 
 void comwinprint()
 {
-  wclear(Comwin);
+  werase(Comwin);
   wprintw(Comwin,"Hit: %d  \n",Player.hit);
   wprintw(Comwin,"Dmg: %d  \n",Player.dmg);
   wprintw(Comwin,"Def: %d  \n",Player.defense);
@@ -518,7 +516,7 @@ void comwinprint()
 
 void dataprint()
 {
-  wclear(Dataw);
+  werase(Dataw);
   wprintw(Dataw,"HP:%d/%d MANA:%d/%d AU:%d LEVEL:%d/%d CARRY:%d/%d \n",
 	  Player.hp,Player.maxhp,Player.mana,Player.maxmana,Player.cash,
 	  Player.level,Player.xp,Player.itemweight,Player.maxweight);
@@ -533,7 +531,7 @@ void dataprint()
 void displaystats(statpoints)
 int statpoints;
 {
-wclear(Dataw);
+werase(Dataw);
 wprintw(Dataw,"       Statistic Points Left: %d \n",statpoints);
 wprintw(Dataw,"STR:%d  CON:%d  DEX:%d  AGI:%d  INT:%d  POW:%d  ",
 	Player.maxstr,Player.maxcon,Player.maxdex,Player.maxagi,Player.maxiq,
@@ -552,7 +550,7 @@ void redraw()
 /* redraw each permanent window */
 void xredraw()
 {
-  wclear(Rightside);
+  werase(Rightside);
   wrefresh(Rightside);
   scrollok(Msgw,FALSE);
   touchwin(Msgw);
@@ -606,20 +604,20 @@ void morewait()
 {
   int display;
   do {
-    wclear(Morew);
+    werase(Morew);
     if (display) wprintw(Morew,"***  MORE  ***");
     else wprintw(Morew,"+++  MORE  +++");
     display = ! display;
     wrefresh(Morew);
   } while (wgetch(Msgw) != SPACE);
-  wclear(Morew);
+  werase(Morew);
   wrefresh(Morew);
 }
 
 void menuclear()
 {
-  wclear(Menuw1);
-  wclear(Menuw2);
+  werase(Menuw1);
+  werase(Menuw2);
   wrefresh(Menuw1);
   wrefresh(Menuw2);
   CurrentMenu = Menuw1;
@@ -748,7 +746,7 @@ char *msgscanstring()
 void locprint(s)
 char *s;
 {
-  wclear(Locw);
+  werase(Locw);
   wprintw(Locw,s);
   wrefresh(Locw);
 }
@@ -931,7 +929,7 @@ void showflags()
 {
 
   phaseprint();
-  wclear(Flagw);
+  werase(Flagw);
   if (Player.food > 20)
     wprintw(Flagw,"Satiated\n");
   else if (Player.food < 0)
