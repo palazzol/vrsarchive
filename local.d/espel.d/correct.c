@@ -3,7 +3,7 @@
 extern	int	Debug;
 extern	ENTRY	*table[ HASHSIZE ];
 
-char	inline[ LNSIZE ];
+char	in_line[ LNSIZE ];
 char	outline[ LNSIZE ];
 
 FILE	*infile;
@@ -22,9 +22,9 @@ correct( source, scratch )
 	OPEN( infile, source, "r" );
 	OPEN( outfile, scratch, "w" );
 
-	while ( fgets( inline, LNSIZE, infile ) != NULL )
+	while ( fgets( in_line, LNSIZE, infile ) != NULL )
 	{
-		exhange( inline, outline );
+		exhange( in_line, outline );
 		fprintf( outfile, "%s\n", outline );
 	}
 
@@ -94,13 +94,13 @@ lookup_and_replace( t )
 {
 	register	ENTRY	*p;
 	
-	for( p = table[ index( t ) ]; p != NULL; p = p->e_next )
+	for( p = table[ in_dex( t ) ]; p != NULL; p = p->e_next )
 		if ( strcmp( p->e_target, t ) == 0 )
 			/*
 			 * if t in table then replace
 			 * with replacement e_replace
 			 */
-			if ( strlen(inline) + strlen(p->e_replace) < LNSIZE) {
+			if ( strlen(in_line) + strlen(p->e_replace) < LNSIZE) {
 				strcpy( t, p->e_replace );
 				break;
 			}
