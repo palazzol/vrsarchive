@@ -159,7 +159,7 @@ robomatic ()
   while (playing)
   { 
     /* If the user types anything, execute his commands */
-    while (charsavail (stdin))
+    while (charsavail (READ))
     { switch (getchar ())
       { case 'd':	debug++; 
 			break;
@@ -219,8 +219,8 @@ blankscreen ()
  ****************************************************************/
 
 getrobot ()
-{ int   r, c, ch, done=0;
-  register int i, j;
+{ int ch, done=0;
+  register int i;
   char *d, *h, buf[BUFSIZ];
 
   d = "robot food";			/* FSM to check for death */
@@ -301,7 +301,6 @@ getrobot ()
       case EOF:	/* End of file */
 	playing = 0;
 	return;
-        break;
 
       case UP:	/* Cursor up */
         row--;
@@ -384,11 +383,9 @@ char keymap[3][3] = {
   'h', '.', 'l',
   'b', 'j', 'n'
 };
-char *keydir = "ykuh.lbjn";
 
 strategy ()
-{ register int k, r, c, ch, cmd;
-  int tr=0, tc=0, hr=0, hc=0;
+{ int cmd, tr=0, tc=0, hr=0, hc=0;
 
   /* Find closest robot and find a heap to block him with */
   if (closest (&tr, &tc, '=') )
@@ -437,8 +434,7 @@ int *rp, *cp, type;
 
   *rp=tr; *cp=tc;
 
-  dwait ("Closest %s is at (%d,%d).",
-         type == '=' ? "robot" : "scrap heap", tr, tc);
+  dwait ("Closest %c is at (%d,%d).", type, tr, tc);
 
   return (dist < 999);
 }
@@ -670,6 +666,7 @@ int gy, gx;
     if (safe(atrow+dr, atcol+dc))
       return(keymap[1+dr][1+dc]);
   }
+  return(0);
 }
 
 /*****************************************************************
@@ -678,17 +675,18 @@ int gy, gx;
  * a terminal around if the user is typing at us.
  *****************************************************************/
 
-charsavail ()
+charsavail (fd)
+int fd;
 { long n;
+#ifdef FIONREAD
   int retc;
 
-#ifdef FIONREAD
-  if (retc = ioctl (READ, FIONREAD, &n))
+  if (retc = ioctl (fd, FIONREAD, &n))
   { fprintf (stderr, "Ioctl returns %d, n=%ld.\n", retc, n);
     n=0;
   }
 #else
-  if ((n = rdchk(READ)) < 0)
+  if ((n = rdchk(fd)) < 0)
   { fprintf (stderr, "rdchk returns %ld.\n", n);
     n=0;
   }
@@ -704,8 +702,7 @@ charsavail ()
 dwait (f, a1, a2, a3, a4)
 char *f;
 int a1, a2, a3, a4;
-{ char buf[BUFSIZ];
-  register int c;
+{ register int c;
 
   if (debug)
   { mvprintw (0, 0, "[%d,%d] ", atrow, atcol);
@@ -758,8 +755,9 @@ int a1, a2, a3, a4;
 
 #define EXTRASIZE 5		/* increment to add to env. size */
 
-char *index (), *malloc (), *realloc ();
-int   strlen ();
+extern char  *malloc (), *realloc (), *strcpy ();
+extern int   strlen ();
+extern void  free ();
 
 static int  envsize = -1;	/* current size of environment */
 extern char **environ;		/* the global which is your env. */
@@ -791,7 +789,7 @@ char *name, *value;
 	if (moreenv () < 0)
 	  return (-1);
       }
-      p = malloc (strlen (name) + strlen (value) + 2);
+      p = malloc ((unsigned)(strlen (name) + strlen (value) + 2));
       if (p == 0)		/* not enough core */
 	return (-1);
       environ[i + 1] = 0;	/* new end of env. */
@@ -799,7 +797,7 @@ char *name, *value;
     else
     {				/* name already in env. */
       p = realloc (environ[i],
-	  strlen (name) + strlen (value) + 2);
+	  (unsigned)(strlen (name) + strlen (value) + 2));
       if (p == 0)
 	return (-1);
     }
@@ -840,7 +838,7 @@ char *name;
 
 static int  newenv ()
 { register char **env, *elem;
-  register int  i, esize;
+  register unsigned i, esize;
 
   for (i = 0; environ[i]; i++);
   esize = i + EXTRASIZE + 1;
@@ -849,7 +847,7 @@ static int  newenv ()
     return (-1);
 
   for (i = 0; environ[i]; i++)
-  { elem = malloc (strlen (environ[i]) + 1);
+  { elem = malloc ((unsigned)(strlen (environ[i]) + 1));
     if (elem == 0)
       return (-1);
     env[i] = elem;
@@ -863,11 +861,11 @@ static int  newenv ()
 }
 
 static int  moreenv ()
-{ register int  esize;
+{ register unsigned esize;
   register char **env;
 
   esize = envsize + EXTRASIZE;
-  env = (char **) realloc (environ, esize * sizeof (*env));
+  env = (char **) realloc ((char *)environ, esize * sizeof (*env));
   if (env == 0)
     return (-1);
   environ = env;
