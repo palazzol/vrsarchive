@@ -1,0 +1,18 @@
+Here's a simple visual Star Trek game that I recently wrote.
+It's pretty much the same as other Star Trek games,  but the
+visual aspect makes it a bit more entertaining.
+
+This version seems to work OK here at purdue-ecn (4.2,4.3bsd).  It
+should work on other Unix OS's with little or no changes.
+It will work on CP/M if you have the Aztec C compiler and
+64K of ram.  It will work on the IBM PC & compatibles with 
+minor changes.
+
+Send flames to /dev/null.  Please mail be a copy of any major
+enhancements/modifications that you make.
+
+You are free to distribute copies to anyone who wants the game,
+as long as you don't sell it.
+
+				dug patrick
+				ihnp4!pur-ee!dug
