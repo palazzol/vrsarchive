@@ -1,0 +1,7 @@
+#!/bin/sh
+for i in dmain.F np.F np1.F
+do
+	echo fixing $i
+	mv $i $i.standard
+	sed -f no.octals <$i.standard >$i
+done

@@ -1,0 +1,6 @@
+#!/bin/sh
+for i in dmain.F np.F np1.F
+do
+	echo unfixing $i
+	mv $i.standard $i
+done
