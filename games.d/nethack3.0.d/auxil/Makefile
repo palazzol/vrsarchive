@@ -6,7 +6,8 @@ VARAUX = data rumors
 all:	Guidebook $(VARAUX) spec_levs
 
 Guidebook:	Guidebook.mn
-	nroff -mn Guidebook.mn > Guidebook
+	nroff tmac.n Guidebook.mn > $@.out
+	mv $@.out $@
 
 clean:
 		rm -f Guidebook castle endgame tower[123]
