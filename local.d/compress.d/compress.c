@@ -22,12 +22,12 @@
 #  define BITS 	12	/* max bits/code for 16-bit machine */
 #  ifdef USERMEM
 #    undef USERMEM 
-#  endif USERMEM
-#else pdp11
+#  endif /* USERMEM */
+#else /* pdp11 */
 #  ifndef USERMEM
 #    define USERMEM 750000	/* default user memory */
 #  endif
-#endif !SHORT_INT
+#endif /* !SHORT_INT */
 
 /* 
  * Define FBITS for machines with several MB of physical memory, to use
@@ -51,19 +51,19 @@
 #  if USERMEM >= (4718592+SACREDMEM)
 #   define FBITS		13
 #   define PBITS	16
-#  else 2.5M <= USERMEM < 4.5M
+#  else /* 2.5M <= USERMEM < 4.5M */
 #   define FBITS		12
 #   define PBITS	16
-#  endif USERMEM <=> 4.5M
-# else USERMEM < 2.5M
+#  endif /* USERMEM <=> 4.5M */
+# else /* USERMEM < 2.5M */
 #  if USERMEM >= (1572864+SACREDMEM)
 #   define FBITS		11
 #   define PBITS	16
-#  else USERMEM < 1.5M
+#  else /* USERMEM < 1.5M */
 #   if USERMEM >= (1048576+SACREDMEM)
 #    define FBITS		10
 #    define PBITS	16
-#   else USERMEM < 1M
+#   else /* USERMEM < 1M */
 #    if USERMEM >= (631808+SACREDMEM)
 #     define PBITS	16
 #    else
@@ -82,16 +82,16 @@
 #     endif
 #    endif
 #    undef USERMEM
-#   endif USERMEM <=> 1M
-#  endif USERMEM <=> 1.5M
-# endif USERMEM <=> 2.5M
-#endif USERMEM
+#   endif /* USERMEM <=> 1M */
+#  endif /* USERMEM <=> 1.5M */
+# endif /* USERMEM <=> 2.5M */
+#endif /* USERMEM */
 
 #ifdef PBITS		/* Preferred BITS for this memory size */
 # ifndef BITS
 #  define BITS PBITS
-# endif BITS
-#endif PBITS
+# endif /* BITS */
+#endif /* PBITS */
 
 #if BITS == 16
 # define HSIZE	69001		/* 95% occupancy */
@@ -137,9 +137,9 @@ typedef long int	  count_int;
 
 #ifdef NO_UCHAR
  typedef char	char_type;
-#else UCHAR
+#else /* UCHAR */
  typedef	unsigned char	char_type;
-#endif UCHAR
+#endif /* UCHAR */
 char_type magic_header[] = { "\037\235" };	/* 1F 9D */
 
 /* Defines for third byte of header */
@@ -160,8 +160,11 @@ char_type magic_header[] = { "\037\235" };	/* 1F 9D */
  *		James A. Woods		(decvax!ihnp4!ames!jaw)
  *		Joe Orost		(decvax!vax135!petsd!joe)
  *
- * $Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.1 1987-02-06 18:31:36 vrs Exp $
+ * $Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.2 1987-12-26 20:19:21 vrs Exp $
  * $Log: not supported by cvs2svn $
+ * Version 1.1  87/02/06  18:31:36  vrs
+ * Initial version
+ * 
  * Revision 3.0   84/11/27  11:50:00  petsd!joe
  * Set HSIZE depending on BITS.  Set BITS depending on USERMEM.  Unrolled
  * loops in clear routines.  Added "-C" flag for 2.0 compatability.  Used
@@ -241,8 +244,8 @@ char_type magic_header[] = { "\037\235" };	/* 1F 9D */
  *
  */
 #ifndef lint
-static char rcs_ident[] = "$Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.1 1987-02-06 18:31:36 vrs Exp $";
-#endif !lint
+static char rcs_ident[] = "$Header: /home/Vince/cvs/local.d/compress.d/compress.c,v 1.2 1987-12-26 20:19:21 vrs Exp $";
+#endif /* !lint */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -258,9 +261,9 @@ code_int maxcode;			/* maximum code, given n_bits */
 code_int maxmaxcode = 1 << BITS;	/* should NEVER generate this code */
 #ifdef COMPATIBLE		/* But wrong! */
 # define MAXCODE(n_bits)	(1 << (n_bits) - 1)
-#else COMPATIBLE
+#else /* COMPATIBLE */
 # define MAXCODE(n_bits)	((1 << (n_bits)) - 1)
-#endif COMPATIBLE
+#endif /* COMPATIBLE */
 
 /*
  * One code could conceivably represent (1<<BITS) characters, but
@@ -271,9 +274,9 @@ code_int maxmaxcode = 1 << BITS;	/* should NEVER generate this code */
  */
 #ifdef SHORT_INT
 # define MAXSTACK    5000		/* size of output stack */
-#else !SHORT_INT
+#else /* !SHORT_INT */
 # define MAXSTACK    8000		/* size of output stack */
-#endif !SHORT_INT
+#endif /* !SHORT_INT */
 
 count_int htab [HSIZE];
 unsigned short codetab [HSIZE];
@@ -286,7 +289,7 @@ char_type  	tab_suffix[1<<BITS];	/* last char in this entry */
 #ifdef USERMEM
 short ftable [(1 << FBITS) * 256];
 count_int fcodemem [1 << FBITS];
-#endif USERMEM
+#endif /* USERMEM */
 
 code_int free_ent = 0;			/* first unused entry */
 int exit_stat = 0;
@@ -298,10 +301,10 @@ Usage() {
 fprintf(stderr,"Usage: compress [-dDvqfFc] [-b maxbits] [file ...]\n");
 }
 int debug = 0;
-#else DEBUG
+#else /* DEBUG */
 fprintf(stderr,"Usage: compress [-dfFqc] [-b maxbits] [file ...]\n");
 }
-#endif DEBUG
+#endif /* DEBUG */
 int nomagic = 0;	/* Use a 2 byte magic number header, unless old file */
 int zcat_flg = 0;	/* Write output on stdout, suppress messages */
 int quiet = 0;		/* don't tell me about compression */
@@ -326,8 +329,8 @@ int force = 0;
 char ofname [100];
 #ifdef DEBUG
 int verbose = 0;
-#endif DEBUG
-int (*bgnd_flag)();
+#endif /* DEBUG */
+SIG_T (*bgnd_flag)();
 
 /*****************************************************************
  * TAG( main )
@@ -387,7 +390,7 @@ register int argc; char **argv;
 
 #ifdef COMPATIBLE
     nomagic = 1;	/* Original didn't have a magic number */
-#endif COMPATIBLE
+#endif /* COMPATIBLE */
 
     filelist = fileptr = (char **)(malloc(argc * sizeof(*argv)));
     *filelist = NULL;
@@ -407,7 +410,7 @@ register int argc; char **argv;
 #ifdef BSD4_2
     /* 4.2BSD dependent - take it out if not */
     setlinebuf( stderr );
-#endif BSD4_2
+#endif /* BSD4_2 */
 
     /* Argument Processing
      * All flags are optional.
@@ -433,7 +436,7 @@ register int argc; char **argv;
 		    case 'v':
 			verbose = 1;
 			break;
-#endif DEBUG
+#endif /* DEBUG */
 		    case 'd':
 			do_decomp = 1;
 			break;
@@ -548,11 +551,11 @@ register int argc; char **argv;
 		    hsize = 35023;
 		else if ( fsize < 47000 )
 		    hsize = 50021;
-#endif HSIZE > 35023
-#endif HSIZE > 18013
-#endif HSIZE > 9001
+#endif /* HSIZE > 35023 */
+#endif /* HSIZE > 18013 */
+#endif /* HSIZE > 9001 */
 		else
-#endif HSIZE > 5003
+#endif /* HSIZE > 5003 */
 		    hsize = HSIZE;
 		/* Generate output filename */
 		strcpy(ofname, *fileptr);
@@ -563,7 +566,7 @@ register int argc; char **argv;
 		    fprintf(stderr,"%s: filename too long to tack on .Z\n",cp);
 		    continue;
 		}
-#endif  BSD4_2		/* Long filenames allowed */
+#endif /*  BSD4_2	Long filenames allowed */
 		strcat(ofname, ".Z");
 	    }
 	    /* Check for overwrite of existing file */
@@ -602,11 +605,11 @@ register int argc; char **argv;
 	    if (do_decomp == 0)	compress();
 #ifndef DEBUG
 	    else			decompress();
-#else   DEBUG
+#else   /* DEBUG */
 	    else if (debug == 0)	decompress();
 	    else			printcodes();
 	    if (verbose)		dump_tab();
-#endif DEBUG
+#endif /* DEBUG */
 	    if(zcat_flg == 0) {
 		copystat(*fileptr, ofname);	/* Copy stats */
 		if(exit_stat || (!quiet))
@@ -640,11 +643,11 @@ register int argc; char **argv;
 	    }
 #ifndef DEBUG
 	    decompress();
-#else   DEBUG
+#else   /* DEBUG */
 	    if (debug == 0)	decompress();
 	    else		printcodes();
 	    if (verbose)	dump_tab();
-#endif DEBUG
+#endif /* DEBUG */
 	}
     }
     exit(exit_stat);
@@ -702,7 +705,7 @@ compress() {
 	putchar(magic_header[0]); putchar(magic_header[1]);
 	putchar((char)(maxbits | block_compress));
     }
-#endif COMPATIBLE
+#endif /* COMPATIBLE */
 
     offset = 0;
     bytes_out = 0;
@@ -742,7 +745,7 @@ if ( maxbits <= FBITS && (fsize >= 30000) ) {	/* use hashing on small files */
     }
     goto fin;
 }
-#endif USERMEM
+#endif /* USERMEM */
 
     chog = CHOG;		/* assumed character for the hog */
     cstat_flg = 0;
@@ -768,9 +771,9 @@ if ( maxbits <= FBITS && (fsize >= 30000) ) {	/* use hashing on small files */
 	fcode = (long) (((long) c << maxbits) + ent);
 #ifdef SHORT_INT
 	i = (((c + 12347) * ent) & 077777) % HSIZE;	/* avoid 'lrem' call */
-#else !SHORT_INT
+#else /* !SHORT_INT */
 	i = fcode % hsize_reg;			/* division hashing */
-#endif SHORT_INT
+#endif /* SHORT_INT */
 
 	if ( htab [i] == fcode ) {
 	    ent = codetab [i];
@@ -828,10 +831,10 @@ fin:
 	fprintf( stderr, "\tCompression as in compact: %5.2f%%\n",
 		100.0 * ( in_count - bytes_out ) / (double) in_count );
 	fprintf( stderr, "\tLargest code was %d (%d bits)\n", free_ent - 1, n_bits );
-#else DEBUG
+#else /* DEBUG */
 	fprintf( stderr, "Compression: %5.2f%%",
 		100.0 * ( in_count - bytes_out ) / (double) in_count );
-#endif DEBUG
+#endif /* DEBUG */
     }
     if(bytes_out > in_count)	/* exit(2) if no savings */
 	exit_stat = 2;
@@ -860,14 +863,14 @@ static char buf[BITS];
 #ifndef vax
 char_type lmask[9] = {0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80, 0x00};
 char_type rmask[9] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
-#endif !vax
+#endif /* !vax */
 
 output( code )
 code_int  code;
 {
 #ifdef DEBUG
     static int col = 0;
-#endif DEBUG
+#endif /* DEBUG */
 
     /*
      * On the VAX, it is important to have the register declarations
@@ -881,7 +884,7 @@ code_int  code;
 	if ( verbose )
 	    fprintf( stderr, "%5d%c", code,
 		    (col+=6) >= 74 ? (col = 0, '\n') : ' ' );
-#endif DEBUG
+#endif /* DEBUG */
 #ifdef vax
 	/* VAX DEPENDENT!! Implementation on other machines may be
 	 * difficult.
@@ -891,7 +894,7 @@ code_int  code;
 	 */
 	0;	/* C compiler bug ?? */
 	asm( "insv	4(ap),r11,r10,(r9)" );
-#else not a vax
+#else /* not a vax */
 /* WARNING: byte/bit numbering on the vax is simulated by the following code
 */
 	/*
@@ -916,7 +919,7 @@ code_int  code;
 	/* Last bits. */
 	if(bits)
 	    *bp = code;
-#endif vax
+#endif /* vax */
 	offset += n_bits;
 	if ( offset == (n_bits << 3) ) {
 	    bp = buf;
@@ -961,7 +964,7 @@ code_int  code;
 		fprintf( stderr, "\nChange to %d bits\n", n_bits );
 		col = 0;
 	    }
-#endif DEBUG
+#endif /* DEBUG */
 	}
     } else {
 	/*
@@ -975,7 +978,7 @@ code_int  code;
 #ifdef DEBUG
 	if ( verbose )
 	    fprintf( stderr, "\n" );
-#endif DEBUG
+#endif /* DEBUG */
 	if( ferror( stdout ) )
 		writeerr();
     }
@@ -1028,9 +1031,9 @@ decompress() {
 	 */
 #ifdef interdata
 	while ( ((unsigned long)code) >= ((unsigned long)256) ) {
-#else !interdata
+#else /* !interdata */
 	while ( code >= 256 ) {
-#endif interdata
+#endif /* interdata */
 	    stack[--stack_top] = tab_suffix[code];
 	    code = tab_prefix[code];
 	}
@@ -1114,7 +1117,7 @@ getcode() {
     bits = n_bits;
 #ifdef vax
     asm( "extzv   r10,r9,(r8),r11" );
-#else not a vax
+#else /* not a vax */
 	/*
 	 * Get to the first byte.
 	 */
@@ -1123,24 +1126,24 @@ getcode() {
 	/* Get first part (low order bits) */
 #ifdef NO_UCHAR
 	code = ((*bp++ >> r_off) & rmask[8 - r_off]) & 0xff;
-#else  NO_UCHAR
+#else  /* NO_UCHAR */
 	code = (*bp++ >> r_off);
-#endif NO_UCHAR
+#endif /* NO_UCHAR */
 	bits -= (8 - r_off);
 	r_off = 8 - r_off;		/* now, offset into code word */
 	/* Get any 8 bit parts in the middle (<=1 for up to 16 bits). */
 	if ( bits >= 8 ) {
 #ifdef NO_UCHAR
 	    code |= (*bp++ & 0xff) << r_off;
-#else  NO_UCHAR
+#else  /* NO_UCHAR */
 	    code |= *bp++ << r_off;
-#endif NO_UCHAR
+#endif /* NO_UCHAR */
 	    r_off += 8;
 	    bits -= 8;
 	}
 	/* high order bits. */
 	code |= (*bp & rmask[bits]) << r_off;
-#endif vax
+#endif /* vax */
     offset += n_bits;
 
     return code;
@@ -1228,7 +1231,7 @@ dump_tab()	/* dump string table */
 	stack_top = 4 * MAXSTACK;
     }
 }
-#endif DEBUG
+#endif /* DEBUG */
 
 /*****************************************************************
  * TAG( writeerr )
@@ -1258,7 +1261,7 @@ char *ifname, *ofname;
 	perror(ifname);
 	return;
     }
-    if ((statbuf.st_mode & S_IFMT/*0170000*/) != S_IFREG/*0100000*/) {
+    if ((statbuf.st_mode & S_IFMT) != S_IFREG) {
 	if(quiet)
 		fprintf(stderr, "%s: ", ifname);
 	fprintf(stderr, " -- not a regular file: unchanged");
@@ -1324,7 +1327,7 @@ clear ()		/* table clear for block compress */
 	if(debug)
     		fprintf ( stderr, "count: %ld ratio: %f\n", in_count,
      		(double) in_count / (double) bytes_out );
-#endif DEBUG
+#endif /* DEBUG */
 
     checkpoint = in_count + CHECK_GAP;
     if ( (double) in_count / (double) bytes_out > ratio )
@@ -1336,7 +1339,7 @@ clear ()		/* table clear for block compress */
 	    for ( i = (1 << maxbits) - 1; i >= 0; i-- )
 		ftable [fcodemem [i]] = 0;	/* indirect thru "shadow" */
 	else 
-#endif USERMEM					/* hash table clear */
+#endif /* USERMEM				hash table clear */
 	{
 	    endp = &htab [hsize];
 	    for ( p = &htab [0], q = &codetab [0]; p < endp; ) {
@@ -1351,7 +1354,7 @@ clear ()		/* table clear for block compress */
 #ifdef DEBUG
 	if(debug)
     		fprintf ( stderr, "clear\n" );
-#endif DEBUG
+#endif /* DEBUG */
     }
 }
 
