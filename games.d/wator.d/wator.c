@@ -30,7 +30,7 @@
 
 #include <stdio.h>
 #include "wator.h"
-#ifdef FOUR2
+#ifndef SYS5
 #include <signal.h>
 #endif
 
@@ -38,7 +38,7 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
-#ifdef FOUR2
+#ifndef SYS5
 	struct sigvec vec, ovec;
 	int sc();
 
@@ -71,7 +71,7 @@ main(argc, argv)
 	done_msg();
 }
 
-#ifdef FOUR2
+#ifndef SYS5
 /*
  * After we get the continue signal, assume screen is messed up so redraw it.
  * If we get clobbered in the middle of some IO there could be a botched cursor

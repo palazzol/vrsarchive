@@ -1,10 +1,8 @@
 /*
- * Header information for wator.  Two user definable variables of note:
- *   FOUR2  -- define this to use 4.2 routines (random number generation)
+ * Header information for wator.  User definable variables of note:
  *   CHECK8 -- look in 8 adjacent cells instead of 4 (see fill_adj)
  */
 
-#define FOUR2		1		/* use 4.2 routines */
 #define CHECK8		1		/* look in 8 cells instead of 4 */
 
 #define EMPTY		0
@@ -44,7 +42,7 @@ int	lines;				/* # lines on display */
 int	wide;				/* # columns on display */
 int	seed;				/* seed for random # generator */
 char	*C_move;			/* string for cursor movement */
-#ifdef FOUR2
+#ifndef SYS5
 char	state[128];			/* for random num generator */
 #endif
 

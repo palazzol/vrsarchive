@@ -125,7 +125,7 @@ again:		x = r_num(0, wide-1);
  * in a range: low <= r_num <= high.
  */
 
-#ifdef FOUR2
+#ifndef SYS5
 extern long random();
 #endif
 
@@ -138,7 +138,7 @@ r_num(low, high)
 
 again:	;
 
-#ifdef FOUR2
+#ifndef SYS5
 	rval = (long) random();
 #else
 	rval = rand();
@@ -170,7 +170,7 @@ again:	;
 init()
 {
 	seed = getpid();
-#ifdef FOUR2
+#ifndef SYS5
 	(void) initstate((unsigned) seed, state, sizeof(state));
 #else
 	(void) srand(seed);
