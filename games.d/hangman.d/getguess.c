@@ -23,7 +23,7 @@ getguess()
 			else
 				break;
 		}
-		else if (ch == CTRL(D))
+		else if (ch == MKCTRL('D'))
 			die();
 		else
 			mvprintw(MESGY, MESGX, "Not a valid guess: '%s'",
@@ -60,7 +60,7 @@ readch()
 			if (++cnt > 100)
 				die();
 		}
-		else if (ch == CTRL(L)) {
+		else if (ch == MKCTRL('L')) {
 			wrefresh(curscr);
 			mvcur(0, 0, curscr->_cury, curscr->_curx);
 		}
