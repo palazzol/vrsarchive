@@ -352,10 +352,15 @@ nopick:
 
 /* returns 0 if object doesn't break	*/
 /* returns 1 if object broke 		*/
+#ifdef __STDC__
+int
+breaks(struct obj *obj,boolean loose)
+#else
 int
 breaks(obj, loose)
 register struct obj   *obj;
 register boolean loose;		/* if not loose, obj is in fobj chain */
+#endif
 {
 	switch(obj->otyp) {
 #ifdef MEDUSA

@@ -56,7 +56,7 @@ experience(mtmp, nk)	/* return # of exp points for mtmp after nk killed */
 	    else if((tmp2 == AD_DRLI) || (tmp2 == AD_STON)) tmp += 50;
 	    else if(tmp != AD_PHYS) tmp += mtmp->m_lev;
 		/* extra heavy damage bonus */
-	    if((ptr->mattk[i].damd * ptr->mattk[i].damn) > 23)
+	    if((ptr->mattk[i].damd * ptr->mattk[i].damn) > (unsigned)23)
 		tmp += mtmp->m_lev;
 	}
 

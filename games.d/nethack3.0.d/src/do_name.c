@@ -32,7 +32,7 @@ coord	*cc;
 int force; char *goal;
 {
 	register int cx, cy, i, c;
-	char *sdp = flags.num_pad ? ndir : sdir;
+	const char *sdp = flags.num_pad ? ndir : sdir;
 	if(flags.verbose) pline("(For instructions type a ?)");
 	cx = u.ux;
 	cy = u.uy;
@@ -339,7 +339,7 @@ int vb;
 
 	switch(mtmp->data->mlet) {
 	    case S_GHOST:
-		{ register char *gn = (char *) mtmp->mextra;
+		{ register const char *gn = (char *) mtmp->mextra;
 		  if(!*gn) {		/* might also look in scorefile */
 		    gn = ghostnames[rn2(SIZE(ghostnames))];
 			Strcpy((char *) mtmp->mextra, !rn2(5) ? plname : gn);

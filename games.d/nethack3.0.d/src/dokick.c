@@ -185,9 +185,14 @@ register long amount;
 
 }
 
+#ifdef __STDC__
+boolean
+bad_kick_throw_pos(xchar x,xchar y)
+#else
 boolean
 bad_kick_throw_pos(x,y)
 xchar x,y;
+#endif
 {
 	register struct rm *lvl = &(levl[x][y]);
 

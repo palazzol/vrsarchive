@@ -136,6 +136,41 @@ register struct monst *mtmp;
 boolean panicking;
 extern boolean hu;	/* from save.c */
 
+#ifdef __STDC__
+#include <stdarg.h>
+void
+panic(char *str, ...)
+{	va_list ap;
+
+	va_start(ap, str);
+	if(panicking++)
+	    (void) abort();    /* avoid loops - this should never happen*/
+	home(); cls();
+	(void) puts(" Suddenly, the dungeon collapses.");
+#ifdef WIZARD
+# ifndef MSDOS
+	if(!wizard) {
+	    pline("Report error to %s and it may be possible to rebuild.",WIZARD);
+	    more();
+	}
+	Sprintf (SAVEF, "%s.e", SAVEF);
+	hu = FALSE;
+	(void) dosave0();
+# endif
+#endif
+	(void) fputs(" ERROR:  ", stdout);
+	va_arg(ap, char *);
+	vprintf(str, ap);
+	more();				/* contains a fflush() */
+#ifdef WIZARD
+# ifdef UNIX
+	if (wizard)	
+		(void) abort();	/* generate core dump */
+# endif
+#endif
+	done("panicked");
+}
+#else
 void
 panic(str,a1,a2,a3,a4,a5,a6)
 char *str;
@@ -173,6 +208,7 @@ char *str;
 #endif
 	done("panicked");
 }
+#endif
 
 /* called with arg "died", "drowned", "escaped", "quit", "choked", "panicked",
    "burned", "starved", "stoned", or "tricked" */

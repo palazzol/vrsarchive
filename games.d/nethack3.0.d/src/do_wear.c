@@ -1390,10 +1390,15 @@ doddoremarm() {
 	else		 return(0);
 }
 
+#ifdef __STDC__
+void
+adj_abon(struct obj *otmp,schar delta)
+#else
 void
 adj_abon(otmp, delta)
 register struct obj *otmp;
 register schar delta;
+#endif
 {
 	if (uarmg && otmp->otyp == GAUNTLETS_OF_DEXTERITY) {
 		ABON(A_DEX) += (delta);

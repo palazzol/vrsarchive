@@ -252,9 +252,15 @@ register struct obj *obj;
 }
 
 /* return roomnumber or -1 */
+#ifdef __STDC__
 int
-inroom(x,y) xchar x,y; {
-	register struct mkroom *croom = &rooms[0];
+inroom(xchar x,xchar y)
+#else
+int
+inroom(x,y)
+xchar x,y;
+#endif
+{	register struct mkroom *croom = &rooms[0];
 	while(croom->hx >= 0){
 		if(croom->hx >= x-1 && croom->lx <= x+1 &&
 		   croom->hy >= y-1 && croom->ly <= y+1)

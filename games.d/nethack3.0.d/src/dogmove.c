@@ -214,7 +214,7 @@ long allowflags;
 			if(levl[nx][ny].mmask) {
 			    register struct monst *mtmp2 = m_at(nx,ny);
 
-			    if(mtmp2->m_lev >= mtmp->m_lev+2 ||
+			    if(mtmp2->m_lev >= (unsigned)(mtmp->m_lev+2) ||
 			       (mtmp2->data->mlet == S_COCKATRICE &&
 				!(mtmp->data->mflags1 & M1_STON_RES)))
 				continue;

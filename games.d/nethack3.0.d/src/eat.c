@@ -502,7 +502,7 @@ doeat() {
 	    if (otmp->otyp != FORTUNE_COOKIE &&
 		otmp->otyp != DEAD_LIZARD &&
 		(otmp->cursed ||
-		 ((moves - otmp->age) > otmp->blessed ? 50 : 30)) &&
+		 ((moves - otmp->age) > (int)otmp->blessed ? 50 : 30)) &&
 		  !rn2(7)) {
 
 		rottenfood();
@@ -719,8 +719,15 @@ unfaint() {
 	return 0;
 }
 
+#ifdef __STDC__
 void
-newuhs(incr) boolean incr; {
+newuhs(boolean incr)
+#else
+void
+newuhs(incr)
+boolean incr;
+#endif
+{
 	register int newhs, h = u.uhunger;
 
 	newhs = (h > 1000) ? SATIATED :
