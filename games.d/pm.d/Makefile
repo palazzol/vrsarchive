@@ -1,5 +1,5 @@
 #
-#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.2 1987-06-08 21:27:53 vrs Exp $
+#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.3 1987-06-14 17:44:32 vrs Exp $
 #
 #	Tunables:
 #		PM_ROLL -	pathname of score file
@@ -23,9 +23,9 @@ include ../../CONFIG
 # Files
 #
 HDRS	= pm.h
-OBJS	= config.o flsbuf.o init.o make_moves.o \
+OBJS	= config.o init.o make_moves.o \
 	  misc.o monsters.o msg.o pm.o random.o \
-	  rip.o score.o screen.o timing.o warning.o _doprnt.o
+	  rip.o score.o screen.o timing.o warning.o #flsbuf.o _doprnt.o
 SRCS1	= config.c flsbuf.c init.c make_moves.c \
 	 misc.c monsters.c msg.c
 SRCS2	= pm.c random.c rip.c score.c screen.c timing.c warning.c
@@ -39,7 +39,7 @@ EX1	= $(REST) $(SRCS2)
 EX2	= $(SRCS1)
 
 pm:		$(OBJS)
-		$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+		$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 install:	$(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
 		cp $(ALL) $(GAMDIR)
