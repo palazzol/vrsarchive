@@ -3,50 +3,37 @@
 #
 # Based on the work of Alan W. Paeth
 #
-
 SHELL = /bin/sh
-
 #SITE DEPENDENCIES
 #
 # Uncomment out the version appropriate for your site.
 # At present dependencies for sysV UNIX and Silicon Graphics IRIS exist
 #
-#LOCAL=-DSYSV -Dindex=strchr
+LOCAL=-DSYSV -Dindex=strchr
 #LOCAL= -Zf
 #
 # put the Yale Star Catalog file path here: because the yale.star is
 # static (stars don't change so often :->), consider using some static
 # library path here - relative one is used for quick testing
-
 #STAR = "/usr/lib/starchart/yale.star"
 STAR = "./yale.star"
-
 # similarly assign the Messier file path:
-
 #MESS = "/usr/lib/starchart/messier.star"
 MESS = "./messier.star"
-
 # and the constellation finder file:
-
 #CONS = "/usr/lib/starchart/con.locs"
 CONS = "./con.locs"
-
 # put the planet position file path here: it should be preferably
 # relative, thus allowing everyone to change planet positions according
 # to their interests.  This file changes when the 'planet' program is
 # executed
-
 PLANET = "./planet.star"
-
 # notice that starchart.o and planet are made dependent on Makefile, due
 # to the STARFILE, MESSFILE, CONSTFILE and PLANETFILE definitions here
-
 # put the installation directory here
-
 BINDIR = "/usr/local/bin"
-
-CFLAGS = -g -DSTARFILE='$(STAR)' -DPLANETFILE='$(PLANET)' -DCONSTFILE='$(CONS)' -DMESSFILE='$(MESS)'\
-	$(LOCAL)
+CFLAGS = -g -DSTARFILE='$(STAR)' -DPLANETFILE='$(PLANET)' \
+	 -DCONSTFILE='$(CONS)' -DMESSFILE='$(MESS)' $(LOCAL)
 LFLAGS = -g
 
 # star chart calculation routine file
@@ -58,20 +45,19 @@ COBJ = starchart.o
 
 BINS = epoch moonphase planet startek stardsp starpic staruplot starhp starlaser starpost
 
-test:
-	stardsp -c ori
-
-all:	\
+all:	epoch\
+	moonphase\
 	planet\
-	starhp\
-	staruplot\
 	stardsp\
-	startek\
+	starhp\
+	starlaser\
 	starpic\
 	starpost\
-	starlaser\
-	epoch\
-	moonphase
+	startek\
+	staruplot
+
+test:
+	stardsp -c ori
 
 install: all
 	strip $(BINS)
