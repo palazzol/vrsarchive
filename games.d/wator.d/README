@@ -1,0 +1,19 @@
+This program is based on the December 1984 Scientific American
+Computer Recreations feature by A. K. Dewdney.
+
+The program is somewhat like "life".  The screen displays a grid
+in which sharks and fish exist.  Both move at random.  Sharks eat
+the fish.
+
+Note that I have only run this under 4.2, but have put in some
+ifdef's (FOUR2) to aid non 4.2 systems.  To extract, save
+this as "wator.src", place in an empty directory, edit and remove
+from beginning through line marked "cut here".  Trim end of file
+as necessary.  Extract as: "sh wator.src".  Then "make".
+If you make enhancements (or bug fixes) send me mail.
+--
+{ pur-ee hp-pcd teklabs } !ogcvax!sequent!dale
+Dale Mosby			   503-626-5700
+Sequent Computer Systems, Inc.
+14360 NW Science Park Dr.
+Portland, OR 97229
