@@ -286,7 +286,7 @@ short owner;
 	char	buf[256];	/* line buffer */
 	char 	*ptr;		/* pointer into the line; used in parsing */
 	char	*ip;		/* pointer into the line; used in parsing */
-	char	*index();
+	char	*strchr();
 	char	error;		/* error flag printed at beginning of each 
 				 * listing line; currently either ' ' or 'E' */
 	address	start;		/* address of first executable instruction */
@@ -330,10 +330,10 @@ short owner;
 	{
 		error = ' ';			/* no error yet */
 		/* zap trailing newline to make listing generation easier */
-		if ( (ptr = index(buf, '\n')) != NULL ) *ptr = '\0';
+		if ( (ptr = strchr(buf, '\n')) != NULL ) *ptr = '\0';
 
 		/* zap comment */
-		if ( (ptr = index(buf, '/')) != NULL ) *ptr = '\0';
+		if ( (ptr = strchr(buf, '/')) != NULL ) *ptr = '\0';
 		 
 		/* decode instruction */
 
