@@ -1,10 +1,15 @@
+#define _POSIX_SOURCE
+#define _ALL_SOURCE
 #ifndef lint
-static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.3 1992-05-26 18:27:20 vrs Exp $";
+static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.4 1992-09-09 17:36:50 vrs Exp $";
 #endif
 /*
  *	This code was shamelessly stolen from XRN by vrs.
 */
 #include <signal.h>
+
+extern char *mktemp(char *);
+
 #define GROUP_NAME_SIZE	128
 #define NO_GROUP    	-1
 #define CHAR_OK     	'2'
@@ -23,6 +28,7 @@ char *str, *a1;
 }
 void
 ehErrorExitXRN(msg)
+char *msg;
 {
 	perror(msg);
 	exit(1);
@@ -71,7 +77,7 @@ void start_server();
 #  define DECNET
 # endif
 #endif
-#endif notdef
+#endif /*notdef*/
 
 #ifdef DECNET
 #include <netdnet/dn.h>
@@ -243,7 +249,7 @@ char	*machine;
 #ifdef h_addr
 	int x = 0;
 	register char **cp;
-#endif h_addr
+#endif /*h_addr*/
 	struct	sockaddr_in sin;
 	struct	servent *getservbyname(), *sp;
 	struct	hostent *gethostbyname(), *hp;
@@ -703,7 +709,7 @@ long artnumber;  /* number of article in the current group to retrieve */
 			continue;
 			}
 			if (fputs(msg, articlefp) <= 0) {
-			    mesgPane("write error %d on temporary file", ferror(articlefp));
+			    mesgPane("write error %d on temporary file %s", ferror(articlefp), filename);
 			    (void) fclose(articlefp);
 			    (void) unlink(filename);
 			    errno = EIO;

@@ -1,9 +1,13 @@
+#define _POSIX_SOURCE
 /*
  *   For each suitable active file line, suck up the news.
  */
 #include <stdio.h>
 #include <sys/stat.h>
 #include <errno.h>
+
+extern FILE *nntp_active();
+extern FILE *nntp_open(char *);
 
 int n = 1;	/* Output file number */
 

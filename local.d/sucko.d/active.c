@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
+extern FILE *nntp_active();
+
 int n = 1;	/* Output file number */
 
 int
