@@ -4,7 +4,7 @@
 
 #ifdef INET
 #  ifndef PORT
-#    define	PORT		55142
+#    define	PORT		/*5*/5142
 #  endif
 #  ifndef HOST
 #    define	HOST		"ritcv"
