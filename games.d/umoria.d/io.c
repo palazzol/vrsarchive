@@ -224,6 +224,11 @@ flush()
 #ifdef USG
   raw();
   noraw();
+#ifdef use_crmode
+  crmode();
+#else
+  cbreak();
+#endif
 #else
   int arg;
 
