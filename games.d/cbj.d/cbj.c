@@ -80,7 +80,7 @@ struct playertemplate {
 float amount_user_won = 1.0;  /* These two variables are initialized to 1 */
 float amount_user_lost = 1.0; /* instead of 0 to prevent zerodivide in update() */
 int deck[52*MAXDECKS];
-int leave();
+SIG_T leave();
 char *cptr;
 char user_name[100];
 char *getlogin();
@@ -327,7 +327,7 @@ placebets()
 	}
     sscanf(response, "%ld", &players[USER].bet[0]);
     /* In case the user bet fractional parts of a dollar*/
-    while (!check_bet(players[USER].bet[0])) goto BET;
+    if (!check_bet(players[USER].bet[0])) goto BET;
     players[USER].bank_roll -= players[USER].bet[0];
     players[USER].original_bet = players[USER].bet[0];
     if (players[USER].bank_roll < 0 && players[USER].credit == FALSE) {
@@ -395,6 +395,7 @@ char str[];
     }
 
 /* Print statistics and exit the game */
+SIG_T
 leave()
 {
     int i;

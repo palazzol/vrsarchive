@@ -2,7 +2,7 @@
 # Makefile for chess program
 #
 ALL	= chess
-OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
+OPTIONS	= -O -DGAMLIB=$(GAMLIB)
 MODEL	= -i
 include /etc/CONFIG
 
