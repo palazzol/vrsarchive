@@ -469,6 +469,21 @@ register int c,ct;
 	if(ct == 0) askname();
 }
 
+#ifdef __STDC__
+#include <stdarg.h>
+void
+impossible(char *s, ...)
+{	va_list ap;
+	char buf[BUFSZ];
+
+	va_start(ap, s);
+	va_arg(ap, char *);
+	vsprintf(buf, s, ap);
+	va_end(ap);
+	pline("%s", buf);
+	pline("Program in disorder - perhaps you'd better Quit.");
+}
+#else
 /*VARARGS1*/
 void
 impossible(s,x1,x2)
@@ -477,6 +492,7 @@ register char *s, *x1, *x2;
 	pline(s,x1,x2);
 	pline("Program in disorder - perhaps you'd better Quit.");
 }
+#endif
 
 #ifdef CHDIR
 static void
