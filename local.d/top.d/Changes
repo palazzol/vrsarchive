@@ -1,0 +1,33 @@
+Tue Oct 23 1984 - wnl (1.4)
+	Finally fixed the hash table bug that caused processes owned by
+	root to sometimes appear with either no name or a different name
+	that had UID 0 (such as "operator").  Removed all the ifdef DEBUG
+	blocks to make top ready for distribution to the real world.
+
+Sun Apr  8 1984 - wnl (still 1.3)
+	Made some slight changes to the display format.  It now looks more
+	aesthetically pleasing.  Added some preprocessor constants so that
+	the two defaults (number of processes and seconds of delay) easier
+	to change.
+
+Thu Apr  5 1984 - wnl (1.3)
+	Changed the order in which things are done at initialization time.
+	This way, if an error occurs before starting the main loop, curses
+	will never get started.  Also changed other error handlers so that
+	endwin() is called before any flavor of exit.  Specifying a number
+	of processes that is more than the screen can handle is no longer
+	fatal.  It displays a warning message and pretends the user
+	specified the maximum for the screen.  Finally cured all the TSTP
+	blues (well, almost all).  I removed my TSTP handler and convinced
+	the system to always use the one that curses sets up.  Turns out
+	that "sleep" was stepping all over it during a pause.  So, I don't
+	use sleep anymore.  The only problem that remains with it now is
+	redrawing the old display before updating it after a pause.
+
+Tue Apr  3 1984 - wnl (from 1.0 to 1.2)
+	I changed the format of the TIME column from just "seconds" to
+	"minutes:seconds".  I also made pausing work correctly.  Screen
+	redraws with an up to date display.  For compatability with 4.2, I
+	changed the name of the "zero" function to "bzero".  The makefile
+	has been altered to handle versions for 4.1 and 4.2, and README
+	has been updated to reflect these recent changes.

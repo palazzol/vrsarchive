@@ -1,0 +1,30 @@
+# Makefile for 4.2 version of "top"
+
+# values for two defaults in "top"
+TOPN = 10
+DELAY = 5
+
+MAN = man
+TROFF = xtroff
+TARFILES = Makefile Makefile4.1 Makefile4.2 Changes README top.c bzero.c top.1
+CFLAGS = -DFOUR_TWO -O
+
+top: top.o
+	cc $(CFLAGS) -o top top.o -lcurses -ltermcap -lm
+
+top.o: top.c
+	cc -c $(CFLAGS) -DDefault_TOPN=$(TOPN) -DDefault_DELAY=$(DELAY) top.c
+
+# This will switch the Makefile over to a 4.1 version
+4.1:
+	rm Makefile
+	ln Makefile4.1 Makefile
+
+man:
+	nroff -$(MAN) -rN$(TOPN) -rD$(DELAY) top.1 | cat -s >top.cat
+
+troff:
+	$(TROFF) -man -rN$(TOPN) -rD$(DELAY) top.1
+
+tar:
+	tar cvf top.tar $(TARFILES)

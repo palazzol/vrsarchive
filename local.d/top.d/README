@@ -1,0 +1,76 @@
+This file contains a few comments about "top".
+
+"top" is a program that will give continual reports about the state of the
+system, including a list of the top cpu using processes.  It requires read
+access to the memory files "/dev/kmem" and "/dev/mem" as well as the system
+image "/vmunix".  Some installations have these files protected from general
+access.  These sites would have to install this program in the same way that
+programs such as "ps" are installed.
+
+There are a few things that need to be checked before compiling the program:
+
+The most important item is the internal hash table size.  This size is
+defined in the program with the preprocessor variable "Table_size".  This
+constant MUST be larger than the number of lines in the file /etc/passwd.
+It is advisable that this number be about twice the number of lines, and
+that it be a prime number (since it dictates the size of the hash table).
+Make sure this is checked before compilation.
+
+The next thing is the routine called "bzero".  This function simply zeros
+a block of memory.  The file "bzero.c" in this distribution is written for
+a VAX and will not work on any other type of machine.  This routine is not
+needed under 4.2, since it is already defined in the C run time library.
+The routine is very easy to write, but it is something that should be as
+fast as possible.  If the local machine is not a VAX then "bzero.c" will
+have to be replaced with something else.  If you can't come up with a
+slick method, there is a very simple C equivalent (although it will not be
+very fast) that will work:
+
+	bzero(memory, amount)
+	
+	char *memory;
+	int amount;
+	
+	{
+	    while (amount > 0)
+	    {
+		*memory++ = 0;
+		amount--;
+	    }
+	}
+
+There are two Makefiles in this distribution.  One makes a version of top
+for a 4.1 system (called "Makefile4.1") and the other makes a version for a
+4.2 system (called "Makefile4.2").  Rename or link the version that is
+appropriate for your machine to "Makefile" before running make.  There are
+some differences compiling and linking the different versions.  For example:
+"bzero" is already defined in the 4.2 C library, so that routine is not needed
+under 4.2.  There are also differences in the source, which are
+conditionally compiled.  Both of these cases are handled correctly by the
+appropriate Makefile.
+
+Finally, there are two preprocessor variables that are defined at compile
+time by the makefile.  These are "Default_TOPN" and "Default_DELAY".  Their
+values are the defaults used for the top number of processes to be displayed
+and the number of seconds to delay between displays, respectively.  They are
+set by the Makefile variables "TOPN" and "DELAY", respecitvely.  These
+constants are preset as follows:  TOPN=10, DELAY=5.  These can be overriden
+by either changing the Makefile or by specifying the change on the make
+command line (with something like "make TOPN=15").
+
+If you make a change to "top" that you feel would be beneficial to others
+who use this program, or if you find and fix a bug, feel free to send me the
+change.
+
+Enjoy!
+
+                                William LeFebvre
+				Department of Computer Science
+				Rice University
+                                ARPANet address: <phil@Rice.arpa>
+
+				U.S. Mail address:
+				    William LeFebvre
+				    P.O. Box 1892
+				    Department of Computer Science
+				    Houston, TX  77251
