@@ -6,14 +6,17 @@
 */
 
 #include "talk.h"
-#include <errno.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <time.h>
 
 extern int	errno;
 extern int	sys_nerr;
+#ifdef __STDC__
+#include <errno.h>
+#else
 extern char	*sys_errlist[];
+#endif
 extern unsigned alarm();
 
 SIG_T
