@@ -51,7 +51,7 @@ init_check()
 				if (author())
 						printf("However, since you're a good guy, it's up to you\n");
 				else
-						exit(1);
+						leave();
 		}
 #endif
 }
