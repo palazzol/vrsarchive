@@ -1,31 +1,24 @@
 #
 #	%W%	%G%
 #
-CFLAGS	= -O
-GAMEDIR	= /usr/games
-USRMAN	= /usr/man
-MANDIR	= $(USRMAN)/man6
-SHELL	= /bin/sh
+OPTIONS	= -O
+MODEL	= -i
+ALL	= solve
+include ../../CONFIG
 OBJS	= solve.o
 CFILES	= solve.c
 
-all: solve
+solve: $(OBJS)
+	$(CC) -o $@ $(OBJS) $(LIBS)
 
 tags:	$(CFILES)
 	ctags $(CFILES)
 
-install: solve $(GAMEDIR) $(USRMAN) $(MANDIR)
-	cp solve $(GAMEDIR)/solve
-	chmod 711 $(GAMEDIR)/solve
-	cp solve.6 $(MANDIR)/solve.6
-	chmod 644 $(MANDIR)/solve.6
-
-solve: $(OBJS)
-	$(CC) -o solve $(OBJS)
+install: $(ALL) $(GAMDIR) $(MAN6)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp solve.6 $(MAN6)/solve.6
+	chmod 644 $(MAN6)/solve.6
 
 clean:
-	rm -f $(OBJS) solve core make.out
-
-$(GAMEDIR) $(USRMAN) $(MANDIR):
-	mkdir $@
-	chmod 755 $@
+	rm -f $(OBJS) $(ALL) core make.out
