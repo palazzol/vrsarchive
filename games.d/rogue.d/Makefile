@@ -109,10 +109,10 @@ distmod.o: $(DOBJS) xs.o
 	@rm -f x.c
 	-$(LD) -r -x -o distmod.o xs.o $(DOBJS)
 
-findpw: findpw.c
+findpw$(EXE): findpw.c
 	$(CC) -s -o findpw findpw.c
 
-prob: prob.o extern.o xs.o
+prob$(EXE): prob.o extern.o xs.o
 	$(CC) $(CFLAGS) -o prob prob.o extern.o xs.o
 
 prob.o: prob.c rogue.h
