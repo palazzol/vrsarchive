@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.5 1990-04-04 21:31:31 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.6 2002-11-22 04:12:21 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.5 1990-04-04 21:31:31 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.6 2002-11-22 04:12:21 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  1990/04/04 21:31:31  vrs
+ * Changes for V.4 and ANSI C
+ *
  * Version 1.4  87/12/25  20:50:39  vrs
  * Check in 4.0 version from the net
  * 
@@ -216,7 +219,7 @@ struct ship *sp;
 	}
 	printf("   display to [%d-%d] ", MIN_SENSOR_RANGE, MAX_SENSOR_RANGE);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	range = atoi(buf1);
 	if (range < MIN_SENSOR_RANGE || range > MAX_SENSOR_RANGE)
@@ -318,7 +321,7 @@ struct ship *sp;
 	}
 	printf("   Mr. %s, pursue [who] ", nav);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	ep = ship_name(buf1);
 	if (ep == NULL)
@@ -330,7 +333,7 @@ struct ship *sp;
 	printf("   Mr. %s, warp factor [-%.2f to %.2f] ", helmsman, 
 	    sp->max_speed, sp->max_speed);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	warp = atof(buf1);
 	if (fabs(warp) > 1.0 && is_dead(sp, S_WARP)) {
@@ -372,7 +375,7 @@ struct ship *sp;
 	}
 	printf("   Mr. %s, elude [who] ", nav);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	ep = ship_name(buf1);
 	if (ep == NULL)
@@ -386,7 +389,7 @@ struct ship *sp;
 	printf("   Mr. %s, warp factor [-%.2f to %.2f] ", helmsman, 
 	    sp->max_speed, sp->max_speed);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	warp = (float) atof(buf1);
 	if (fabs(warp) > 1.0 && is_dead(sp, S_WARP)) {
@@ -417,7 +420,7 @@ struct ship *sp;
 
 	printf("   Mr. %s, come to course [0-359] ", nav);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	course = atof(buf1);
 	if (course < 0.0 || course >= 360.0)
@@ -425,7 +428,7 @@ struct ship *sp;
 	printf("   Mr. %s, warp factor [-%.2f to %.2f] ", helmsman, 
 	    sp->max_speed, sp->max_speed);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	warp = (float) atof(buf1);
 	if (fabs(warp) > 1.0 && is_dead(sp, S_WARP)) {
@@ -466,7 +469,7 @@ struct ship *sp;
 
 	printf("   %s, scan [who] ", science);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	if (buf1[0] == '#') {
 		strcpy(buf1,buf1+1);

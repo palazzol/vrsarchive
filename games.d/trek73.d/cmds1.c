@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v 1.3 1987-12-25 20:50:35 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v 1.4 2002-11-22 04:12:21 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v 1.3 1987-12-25 20:50:35 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v 1.4 2002-11-22 04:12:21 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  1987/12/25 20:50:35  vrs
+ * Check in 4.0 version from the net
+ *
  * Revision 1.1  87/10/09  11:00:47  11:00:47  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -37,14 +40,14 @@ struct ship *sp;
 		typed[i] = 0;
 	printf("   fire phasers [1-%d] ", sp->num_phasers);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL) {
+	if (buf1[0] == 0) {
 		printf("%s:  Belay that order!\n", captain);
 		return 0;
 	}
 	printf("   spread [%d-%d] ", MIN_PHASER_SPREAD,
 	    MAX_PHASER_SPREAD);
 	(void) Gets(buf2, sizeof(buf2));
-	if (buf2[0] == NULL) {
+	if (buf2[0] == 0) {
 		printf("%s:  Belay that order!\n", captain);
 		return 0;
 	}
@@ -90,7 +93,7 @@ struct ship *sp;
 		typed[i] = 0;
 	printf("   fire tubes [1-%d] ", sp->num_tubes);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL) {
+	if (buf1[0] == 0) {
 		printf("%s:  Belay that order!\n", captain);
 		return 0;
 	}
@@ -159,11 +162,11 @@ struct ship *sp;
 	}
 	printf("   lock phasers [1-%d] ", sp->num_phasers);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	printf("   onto [whom] ");
 	(void) Gets(buf2, sizeof(buf2));
-	if (buf2[0] == NULL)
+	if (buf2[0] == 0)
 		return 0;
 	ep = ship_name(buf2);
 	if (ep == NULL)
@@ -220,11 +223,11 @@ struct ship *sp;
 	}
 	printf("   lock tubes [1-%d] ", sp->num_tubes);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	printf("   onto whom ");
 	(void) Gets(buf2, sizeof(buf2));
-	if (buf2[0] == NULL)
+	if (buf2[0] == 0)
 		return 0;
 	ep = ship_name(buf2);
 	if (ep == NULL)
@@ -273,11 +276,11 @@ struct ship *sp;
 		typed[i] = 0;
 	printf("   turn phasers [1-%d] ", sp->num_phasers);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	printf("   to [0-360] ");
 	(void) Gets(buf2, sizeof(buf2));
-	if (buf2[0] == NULL)
+	if (buf2[0] == 0)
 		return 0;
 	j = atof(buf2);
 	if (j < 0.0 || j > 360.0)
@@ -323,11 +326,11 @@ struct ship *sp;
 		typed[i] = 0;
 	printf("   turn tubes [1-%d] ", sp->num_tubes);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	printf("   to [0-360] ");
 	(void) Gets(buf2, sizeof(buf2));
-	if (buf2[0] == NULL)
+	if (buf2[0] == 0)
 		return 0;
 	j = atof(buf2);
 	if (j < 0.0 || j > 360.0)
@@ -376,7 +379,7 @@ struct ship *sp;
 	load = 0;
 	printf("   [load or unload] ");
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	if (*buf1 == 'l' || *buf1 == 'L')
 		load++;
@@ -384,7 +387,7 @@ struct ship *sp;
 		return 0;
 	printf("   tubes [1-%d] ", sp->num_tubes);
 	(void) Gets(buf2, sizeof(buf2));
-	if (buf2[0] == NULL)
+	if (buf2[0] == 0)
 		return 0;
 	if (strcmp(buf2, "all") && strcmp(buf2, "ALL"))
 		for (i=0; c = buf2[i]; i++) {
@@ -458,21 +461,21 @@ struct ship *sp;
 	printf("%s: %d pods available.\n", engineer, (int)sp->energy);
 	printf("%s: Number to launch [%d+] is ", captain, MIN_PROBE_CHARGE);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		goto bad_param;
 	pods = atoi(buf1);
 	if (pods < MIN_PROBE_CHARGE || pods > sp->energy)
 		goto bad_param;
 	printf("   set time delay to [0-%d] ", MAX_PROBE_DELAY);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		goto bad_param;
 	delay = atoi(buf1);
 	if (delay < 0 || delay > MAX_PROBE_DELAY)
 		goto bad_param;
 	printf("   set proximity delay to [%d+] ", MIN_PROBE_PROX);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		goto bad_param;
 	prox = atoi(buf1);
 	if (prox < MIN_PROBE_PROX)
@@ -491,7 +494,7 @@ struct ship *sp;
 	} else {
 		printf("   course [0-360] ");
 		(void) Gets(buf1, sizeof(buf1));
-		if (buf1[0] == NULL)
+		if (buf1[0] == 0)
 			goto bad_param;
 		course = atof(buf1);
 		if (course < 0.0 || course > 360.0)
@@ -584,7 +587,7 @@ struct ship *sp;
 	printf("%s:  Detonate all probes?\n", nav);
 	printf("%s:  [yes or no] ", captain);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] != NULL && (*buf1 == 'Y' || *buf1 == 'y')) {
+	if (buf1[0] != 0 && (*buf1 == 'Y' || *buf1 == 'y')) {
 		printf("%s:  Aye, %s\n", nav, title);
 		for (i=0; i<pnum; i++)
 			probes[i]->timedelay = 0.0;
@@ -593,7 +596,7 @@ struct ship *sp;
 	}
 	printf("   control probe [#] ");
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	probenum = atoi(buf1);
 	for (i=0; i < pnum; i++)
@@ -605,14 +608,14 @@ struct ship *sp;
 	printf("%s:  Detonate it?\n", nav);
 	printf("%s:  [yes or no] ", captain);
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] != NULL && (*buf1 == 'y' || *buf1 == 'Y')) {
+	if (buf1[0] != 0 && (*buf1 == 'y' || *buf1 == 'Y')) {
 		probes[probenum]->timedelay = 0.;
 		sp->probe_status = PR_DETONATE;
 		return 1;
 	}
 	printf("   lock it onto [whom, if anyone] ");
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] != NULL) {
+	if (buf1[0] != 0) {
 		ep = ship_name(buf1);
 		if (ep != NULL) {
 			sp->probe_status = PR_LOCK;
@@ -629,7 +632,7 @@ struct ship *sp;
 	}
 	printf("   set it to course [0-360] ");
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL)
+	if (buf1[0] == 0)
 		return 0;
 	sp->probe_status = PR_LOCK;
 	j = atof(buf1);

@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.5 1987-12-25 21:54:04 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.6 2002-11-22 04:12:23 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/save.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.5 1987-12-25 21:54:04 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.6 2002-11-22 04:12:23 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  1987/12/25 21:54:04  vrs
+ * SYSV -> SYS5 (use CONFIG)
+ *
  * Version 1.4  87/12/25  20:52:06  vrs
  * Check in 4.0 version from the net
  * 
@@ -31,6 +34,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
+#ifdef __STDC__
+#include <termios.h>
+#endif
 
 #define MAXSTR	256
 
@@ -40,6 +46,9 @@ extern char *sys_errlist[], version[], encstr[];
 extern int errno;
 
 char *sbrk();
+#ifdef __STDC__
+#define brk(x) (sbrk(x-sbrk(0)))
+#endif
 
 STAT sbuf;
 
@@ -49,7 +58,9 @@ set_save()
 {
 	register char		*env;
 	register struct passwd	*pw;
+#ifndef __STDC__
 	struct passwd		*getpwuid();
+#endif
 	char			*getpass();
 	unsigned short		getuid();
 	extern char		home[];
@@ -106,7 +117,11 @@ over:
 
     do
     {
+#ifdef __STDC__
+	tcflush(fileno(stdin), TCIFLUSH);
+#else
 	stdin->_cnt = 0;
+#endif
 	printf("File name: ");
 	buf[0] = '\0';
 	gets(buf);
@@ -118,7 +133,11 @@ gotfile:
 	{
 	    for (;;)
 	    {
+#ifdef __STDC__
+		tcflush(fileno(stdin), TCIFLUSH);
+#else
 		stdin->_cnt = 0;
+#endif
 		printf("\nFile exists.  Do you wish to overwrite it?");
 		if (c == 'y' || c == 'Y')
 		    break;
@@ -251,7 +270,11 @@ char **envp;
 #endif
 
     environ = envp;
+#ifdef __STDC__
+    tcflush(fileno(stdin), TCIFLUSH);
+#else
     stdin->_cnt = 0;
+#endif
     playit();
 #ifdef PARANOID
     syml = syml;		/* LINT */

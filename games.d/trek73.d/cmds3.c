@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v 1.3 1987-12-25 20:50:42 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v 1.4 2002-11-22 04:12:22 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v 1.3 1987-12-25 20:50:42 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v 1.4 2002-11-22 04:12:22 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  1987/12/25 20:50:42  vrs
+ * Check in 4.0 version from the net
+ *
  * Revision 1.1  87/10/09  11:02:23  11:02:23  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -94,7 +97,7 @@ struct ship *sp;
 		printf("   Detonate anyway? ");
 		printf("%s:  [yes or no] ", captain);
 		(void) Gets(buf, sizeof(buf));
-		if ((buf[0] == NULL)
+		if ((buf[0] == 0)
 		    || ((buf[0] != 'y') && (buf[0] != 'Y')))
 			return 0;
 		else 

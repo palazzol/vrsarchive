@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.6 1990-04-04 21:31:34 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.7 2002-11-22 04:12:23 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/main.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.6 1990-04-04 21:31:34 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.7 2002-11-22 04:12:23 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  1990/04/04 21:31:34  vrs
+ * Changes for V.4 and ANSI C
+ *
  * Version 1.5  87/12/25  21:43:59  vrs
  * Remove tokens after preprocessor directives
  * 
@@ -52,6 +55,9 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
+#ifdef __STDC__
+#include <termios.h>
+#endif
 
 static jmp_buf	jumpbuf;
 
@@ -65,7 +71,7 @@ quitgame(dummy)
 	(void) signal(SIGINT, SIG_IGN);
 	puts("\n\nDo you really wish to stop now?  Answer yes or no:");
 	(void) Gets(answer, sizeof(answer));
-	if(answer[0] == NULL || answer[0] == 'y' || answer[0] == 'Y')
+	if(answer[0] == '\0' || answer[0] == 'y' || answer[0] == 'Y')
 		exit(0);
 	(void) signal(SIGINT, quitgame);
 	if(timeleft)
@@ -82,7 +88,11 @@ int sig;
 	if (sig) {
 		puts("\n** TIME **");
 		(void) signal(sig, alarmtrap);
+#ifdef __STDC__
+		tcflush(fileno(stdin), TCIFLUSH);
+#else
 		stdin->_cnt = 0;
+#endif
 	}
 	for (i = 1; i <= shipnum; i++)
 		shiplist[i]->strategy(shiplist[i]);
@@ -100,6 +110,9 @@ int argc;
 char *argv[];
 char *envp[];
 {
+#ifdef __STDC__
+	setbuf(stdin, 0);
+#endif
 	if (buffering(stdout) < 0)
 		perror("cannot fstat stdout");
 	(void) signal(SIGALRM, alarmtrap);
@@ -149,10 +162,10 @@ next:
 		(void) alarm((unsigned) time_delay);
 #ifdef PARSER
 		(void) Gets(Input, sizeof(Input));
-		if (Input[0] != NULL) {
+		if (Input[0] != '\0') {
 #else
 		(void) Gets(buf1, sizeof(buf1));
-		if (buf1[0] != NULL) {
+		if (buf1[0] != '\0') {
 #endif /*PARSER*/
 			(void) alarm(0);
 #ifdef PARSER

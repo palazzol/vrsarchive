@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/init.c,v 1.2 1987-12-25 20:52:03 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/init.c,v 1.3 2002-11-22 04:12:23 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/init.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/init.c,v 1.2 1987-12-25 20:52:03 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/init.c,v 1.3 2002-11-22 04:12:23 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  1987/12/25 20:52:03  vrs
+ * Check in 4.0 version from the net
+ *
  * Revision 1.1  87/10/09  11:07:33  11:07:33  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -115,7 +118,7 @@ init_ships()
 getships:
 	printf("   I'm expecting [1-9] enemy vessels ");
 	(void) Gets(buf1, sizeof(buf1));
-	if (buf1[0] == NULL) {
+	if (buf1[0] == 0) {
 		printf("%s:  %s, Starfleet Command reports that you have been\n",
 		    com, title);
 		puts("   relieved of command for dereliction of duty.");

@@ -1,7 +1,7 @@
 #
 # Makefile for TREK73
 #
-ALL	= trek73 printships shipyard
+ALL	= trek73$(EXE) printships$(EXE) shipyard$(EXE)
 #
 # Options that you should think about setting
 #
@@ -22,7 +22,7 @@ ALL	= trek73 printships shipyard
 #
 OPTIONS	= -O -DPARSER #-DTRACE
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 #
 # Select whether or not to include the getopt.o module.
 # Generally, AT&T-derived systems will have getopt.o already
@@ -61,13 +61,13 @@ FLUFF = parsit.o lex.yy.c y.tab.c grammar.c grammar.o\
 #
 # If you are not using the parser, you do not need the lex and yacc libs
 #
-trek73:	$(T73OBJECTS) grammar.o parsit.o
-	$(CC) $(CFLAGS) -o $@ $(T73OBJECTS) grammar.o parsit.o $(LIBS) -ll -ly
+trek73$(EXE):	$(T73OBJECTS) grammar.o parsit.o
+	$(CC) $(CFLAGS) -o $@ $(T73OBJECTS) grammar.o parsit.o $(LIBS) #-ll -ly
 
-printships:	$(PRTOBJECTS)
+printships$(EXE):	$(PRTOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(PRTOBJECTS) $(LIBS)
 
-shipyard:	$(DYOOBJECTS)
+shipyard$(EXE):	$(DYOOBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(DYOOBJECTS) $(LIBS)
 
 install: $(ALL) $(GAMDIR) $(MAN6) $(GAMLIB)
@@ -85,13 +85,13 @@ $(PRTOBJECTS): $(HEADS)
 $(DYOOBJECTS): $(HEADS)
 
 grammar.o: grammar.y union.h command.l
-	lex command.l
-	yacc grammar.y
+	$(LEX) command.l
+	$(YACC) grammar.y
 	mv y.tab.c grammar.c
-	cc -c $(CFLAGS) grammar.c
+	$(CC) -c $(CFLAGS) grammar.c
 
 parsit.o: parsit.c
-	cc -c $(CFLAGS) parsit.c
+	$(CC) -c $(CFLAGS) parsit.c
 
 tags: $(T73CFILES)
 	ctags $(T73CFILES) $(HEADS)

@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.4 1987-12-25 21:54:02 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.5 2002-11-22 04:12:22 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/externs.h,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.4 1987-12-25 21:54:02 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.5 2002-11-22 04:12:22 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  1987/12/25 21:54:02  vrs
+ * SYSV -> SYS5 (use CONFIG)
+ *
  * Version 1.3  87/12/25  20:52:02  vrs
  * Check in 4.0 version from the net
  * 
@@ -28,6 +31,9 @@
 #include <strings.h>
 #endif /*BSD*/
 #include <math.h>
+#ifdef __STDC__
+#define round Round
+#endif
 
 /* UNIX extern declarations of functions used which do not
    return int plus any extern variable declarations    */

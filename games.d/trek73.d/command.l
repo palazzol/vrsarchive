@@ -1,12 +1,16 @@
+%option lex-compat
 %p 3000
 %{
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/command.l,v 1.1 1987-12-25 20:56:12 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/command.l,v 1.2 2002-11-22 04:12:22 Vincent Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/command.l,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/command.l,v 1.1 1987-12-25 20:56:12 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/command.l,v 1.2 2002-11-22 04:12:22 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  1987/12/25 20:56:12  vrs
+ * Initial version
+ *
  * Revision 1.2  87/10/09  12:20:33  12:20:33  okamoto (Jeff Okamoto)
  * Added more positions for lex, added some null keywords
  * 
@@ -16,6 +20,14 @@
 	double	atof();
 	char	Input[BUFSIZ];
 	char	*Inptr;
+
+#ifdef FLEX_SCANNER
+#define YY_INPUT(buf, result, max_size) \
+	{ \
+	int c = *Inptr++; \
+	result = (c == EOF)? YY_NULL : (buf[0] = c, 1); \
+	}
+#endif
 %}
 
 WS	[ \t]*
@@ -101,7 +113,7 @@ with			;
 \n			{ return(-1); }
 .			;
 %%
-
+#ifndef FLEX_SCANNER
 #undef input
 #undef unput
 
@@ -118,3 +130,4 @@ char c;
 {
 	Inptr--;
 }
+#endif
