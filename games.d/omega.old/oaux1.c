@@ -724,7 +724,7 @@ struct monster *m;
 	  }
 	}
 	else {
-	  menuprint("\Not without a weapon!");
+	  menuprint("Not without a weapon!");
 	  morewait();
 	}
       }

@@ -1672,7 +1672,7 @@ void pickpocket()
     
     if ((! inbounds(Player.x+dx, Player.y+dy)) ||
 	(Dungeon[Dlevel][Player.x+dx][Player.y+dy].creature == NULL)) {
-      printm("\There's nothing there to steal from!!!");
+      printm("There's nothing there to steal from!!!");
       Skipmonsters = TRUE;
     }
     else {
@@ -1735,7 +1735,7 @@ void tunnel()
 {
   int dir,ox,oy;
 
-  printm("\Tunnel");
+  printm("Tunnel");
   dir = getdir();
   if (dir == ABORT)
     Skipmonsters = TRUE;

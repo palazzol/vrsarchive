@@ -591,7 +591,7 @@ int blessing;
     newthing = ((pob) calloc(1,sizeof(objtype)));
     newthing->id = -1;
     
-    mprint("Acquire which kind of item: !?][}{)/=\%%\\");
+    mprint("Acquire which kind of item: !?][}{)/=%%\\");
     otype = mgetc();
     mprint("Item ID?");
     switch (otype) {

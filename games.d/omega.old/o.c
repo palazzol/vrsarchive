@@ -128,7 +128,7 @@ int Championlevel,Priestlevel[7],Hiscore,Hilevel;
 
 /* o.c functions */
 void intercycle(),initrand();
-int game_restore(),signalexit(),main();
+SIG_T signalexit();
 
 /* bookkeeping between monster and player moves. Is executed every move */
 
@@ -239,7 +239,7 @@ char *argv[];
   
 }
 
-int signalexit()
+SIG_T signalexit(dummy)
 {
   mprint("Yikes!");
   morewait();

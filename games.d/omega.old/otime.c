@@ -7,7 +7,7 @@
 #include "oglob.h"
 
 /* from oscr */
-void drawmonsters(),dataprint();;
+void drawmonsters(),dataprint();
 
 /* from omon */
 void m_pulse();

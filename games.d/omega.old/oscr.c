@@ -846,7 +846,7 @@ char *source;
   printw("\n");
   printw(Str4);
   printw(".");
-  printw("\n\n\n\n\n\Hit any key to continue.");
+  printw("\n\n\n\n\nHit any key to continue.");
   refresh();
   wgetch(stdscr);
   clear();
@@ -869,7 +869,7 @@ void display_win()
     printw(" triumphed in omega with %d points!",calc_points());
     printw("\nDeepest penetration was level %d.",Deepest);
   }
-  printw("\n\n\n\n\n\Hit any key to continue.");
+  printw("\n\n\n\n\nHit any key to continue.");
   refresh();
   wgetch(stdscr);
   clear();
@@ -887,7 +887,7 @@ void display_quit()
   strcpy(Str4,"A quitter.");
   printw(" wimped out on level %d with %d points!",Dlevel,calc_points());
   printw("\nDeepest penetration was level %d.",Deepest);
-  printw("\n\n\n\n\n\Hit any key to continue.");
+  printw("\n\n\n\n\nHit any key to continue.");
   refresh();
   wgetch(stdscr);
   clear();
