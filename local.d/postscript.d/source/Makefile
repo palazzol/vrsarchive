@@ -1,10 +1,11 @@
-OBJECTS=array.o boolean.o config.o control.o dictionary.o file.o\
-	integer.o main.o math.o misc.o name.o operator.o\
-	poly.o property.o real.o save.o stack.o string.o unix.o
-LIBS=libww.a -lsuntool -lsunwindow -lpixrect -g
-GRAPHICS=cache.o colour.o device.o fill.o font.o gsave.o image.o mat.o matrix.o\
-	pat.o path.o state.o stroke.o
-CFLAGS=-O
+OBJECTS	= array.o boolean.o config.o control.o dictionary.o file.o\
+	  integer.o main.o math.o misc.o name.o operator.o\
+	  poly.o property.o real.o save.o stack.o string.o unix.o
+LIBS	= libww.a -lsuntool -lsunwindow -lpixrect -g
+GRAPHICS= cache.o colour.o device.o fill.o font.o gsave.o image.o mat.o \
+	  matrix.o pat.o path.o state.o stroke.o
+CFLAGS	= -O -DSYS5
+RANLIB	= : ranlib
 
 PS:	$(OBJECTS) $(GRAPHICS) hard.o canon.a
 	cc $(CFLAGS)  $(OBJECTS) $(GRAPHICS) hard.o canon.a -lm `libs` -o PS
@@ -23,7 +24,7 @@ XPS:	$(OBJECTS) $(GRAPHICS) X.o
 
 canon.a:	canon.o screen.o trapezoid.o paint.o
 	ar ruv canon.a canon.o screen.o trapezoid.o paint.o
-	ranlib canon.a
+	$(RANLIB) canon.a
 
 viewer:	protocol.o viewer.o hard.o canon.a
 	cc protocol.o viewer.o hard.o canon.a `libs` -o viewer
