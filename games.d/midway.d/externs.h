@@ -40,7 +40,7 @@
 #define ZEROMIN 34
 #define ZERODAY  3
 
-extern struct torpedo {
+struct torpedo {
 	int row, col;
 	int course;
 	int fromship;
@@ -49,7 +49,7 @@ extern struct torpedo {
 };
 extern struct torpedo *amfish, *japfish;
 
-extern struct ship {
+struct ship {
 	int row, col;
 	int course;
 	int type;
@@ -63,7 +63,7 @@ extern struct ship {
 	int turrets, calibre, aa, belt, deck;
 };
 
-extern struct squadron {
+struct squadron {
 	int row, col;
 	int course;
 	int type;
