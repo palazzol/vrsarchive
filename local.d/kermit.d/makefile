@@ -202,7 +202,7 @@ ckutio.o: ckutio.c ckcker.h ckcdeb.h
 
 ckucon.o: ckucon.c ckcker.h ckcdeb.h
 
-wart: ckwart.o
+wart$(EXE): ckwart.o
 	$(CC) $(CFLAGS) -o wart ckwart.o $(LIBS)
 
 ckwart.o: ckwart.c
