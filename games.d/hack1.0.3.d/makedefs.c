@@ -10,7 +10,7 @@ int fd;
 char string[STRSZ];
 
 main(){
-register int index = 0;
+register int ind = 0;
 register int propct = 0;
 register char *sp;
 	fd = open(DEF_FILE, 0);
@@ -21,7 +21,7 @@ register char *sp;
 	skipuntil("objects[] = {");
 	while(getentry()) {
 		if(!*string){
-			index++;
+			ind++;
 			continue;
 		}
 		for(sp = string; *sp; sp++)
@@ -35,15 +35,15 @@ register char *sp;
 		for(sp = string; *sp; sp++) capitalize(sp);
 		/* avoid trouble with stupid C preprocessors */
 		if(!strncmp(string, "WORTHLESS_PIECE_OF_", 19))
-			printf("/* #define %s	%d */\n", string, index);
+			printf("/* #define %s	%d */\n", string, ind);
 		else
-			printf("#define	%s	%d\n", string, index);
-		index++;
+			printf("#define	%s	%d\n", string, ind);
+		ind++;
 	}
 	printf("\n#define	CORPSE	DEAD_HUMAN\n");
 	printf("#define	LAST_GEM	(JADE+1)\n");
 	printf("#define	LAST_RING	%d\n", propct);
-	printf("#define	NROFOBJECTS	%d\n", index-1);
+	printf("#define	NROFOBJECTS	%d\n", ind-1);
 	exit(0);
 }
 
