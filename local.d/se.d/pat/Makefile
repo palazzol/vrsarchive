@@ -1,7 +1,10 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/pat/Makefile,v 1.2 1987-02-07 20:31:12 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/pat/Makefile,v 1.3 1987-02-13 10:07:58 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Version 1.2  87/02/07  20:31:12  vrs
+# Need to include ../flags
+# 
 # Revision 1.2  86/07/11  15:25:14  osadr
 # Changed to ensure that the proper 'ar' program gets used.
 # 
@@ -11,31 +14,25 @@
 # 
 # 
 # makefile for pattern library for 'se'
-
-CFLAGS = -O `cat ../flags`
+ALL	= libpat.a
+MODEL	= -M2l
+OPTIONS = -O `cat ../flags`
+include ../../../CONFIG
 
 PR=pr
 
 libpat.a: pat.o
-	/bin/ar ruv libpat.a pat.o
+	ar ruv libpat.a pat.o
 	if test -x /usr/bin/ranlib; then /usr/bin/ranlib libpat.a; fi
 	if test -x /bin/ranlib; then /bin/ranlib libpat.a; fi
 
-pat.o: pat.c
-
-install: libpat.a
-	cp libpat.a /usr/lib
+install: ;
 
 print:
-	$(PR) pat.c makefile | lpr -b 'pat lib'
-	touch print2
+	$(PR) pat.c Makefile | lpr -b 'pat lib'
 
-print2: pat.c makefile
+print2: pat.c Makefile
 	$(PR) $? | lpr -b 'new pat lib'
-	touch print2
 
 clean:
-	rm -f pat.o
-
-clobber: clean
-	rm -f libpat.a print2
+	rm -f pat.o $(ALL)
