@@ -58,7 +58,11 @@
 #include "header.h"
 
 #ifdef SYSV	/* system III or system V */
+#include <sys/types.h>
 #include <termio.h>
+#ifndef TCGETA
+#include <sys/ioctl.h>
+#endif !TCGETA
 #define sgttyb termio
 #define stty(_a,_b) ioctl(_a,TCSETA,_b)
 #define gtty(_a,_b) ioctl(_a,TCGETA,_b)
