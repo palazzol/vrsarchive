@@ -12,7 +12,7 @@ char *xprname();
 #ifndef NOWORM
 #include	"def.wseg.h"
 extern struct wseg *wsegs[32];
-#endif NOWORM
+#endif
 
 #define	NOINVSYM	'#'
 
@@ -174,7 +174,7 @@ register x,y;
 	register struct monst *mtmp;
 #ifndef NOWORM
 	register struct wseg *wtmp;
-#endif NOWORM
+#endif
 
 	m_atseg = 0;
 	for(mtmp = fmon; mtmp; mtmp = mtmp->nmon){
@@ -188,7 +188,7 @@ register x,y;
 			return(mtmp);
 		    }
 		}
-#endif NOWORM
+#endif
 	}
 	return(0);
 }
@@ -316,7 +316,7 @@ register char *let,*word;
 
 	ilet = 'a';
 	for(otmp = invent; otmp; otmp = otmp->nobj){
-	    if(!*let || index(let, otmp->olet)) {
+	    if(!*let || strchr(let, otmp->olet)) {
 		bp[foo++] = flags.invlet_constant ? otmp->invlet : ilet;
 
 		/* ugly check: remove inappropriate things */
@@ -375,7 +375,7 @@ register char *let,*word;
 			pline("No count allowed with this command.");
 			continue;
 		}
-		if(index(quitchars,ilet))
+		if(strchr(quitchars,ilet))
 			return((struct obj *)0);
 		if(ilet == '-') {
 			return(allownone ? &zeroobj : (struct obj *) 0);
@@ -418,7 +418,7 @@ register char *let,*word;
 		}
 		break;
 	}
-	if(!allowall && let && !index(let,otmp->olet)) {
+	if(!allowall && let && !strchr(let,otmp->olet)) {
 		pline("That is a silly thing to %s.",word);
 		return(0);
 	}
@@ -461,7 +461,7 @@ xchar allowgold = (u.ugold && !strcmp(word, "drop")) ? 1 : 0;	/* BAH */
 		if(allowgold) ilets[iletct++] = '$';
 		ilets[iletct] = 0;
 		while(otmp) {
-			if(!index(ilets, otmp->olet)){
+			if(!strchr(ilets, otmp->olet)){
 				ilets[iletct++] = otmp->olet;
 				ilets[iletct] = 0;
 			}
@@ -493,8 +493,8 @@ xchar allowgold = (u.ugold && !strcmp(word, "drop")) ? 1 : 0;	/* BAH */
 		} else
 		if(sym == 'a' || sym == 'A') allflag = TRUE; else
 		if(sym == 'u' || sym == 'U') ckfn = ckunpaid; else
-		if(index("!%?[()=*/\"0", sym)){
-			if(!index(olets, sym)){
+		if(strchr("!%?[()=*/\"0", sym)){
+			if(!strchr(olets, sym)){
 				olets[oletct++] = sym;
 				olets[oletct] = 0;
 			}
@@ -528,7 +528,7 @@ register int cnt = 0;
 	for(otmp = objchn; otmp; otmp = otmp2){
 		if(ilet == 'z') ilet = 'A'; else ilet++;
 		otmp2 = otmp->nobj;
-		if(olets && *olets && !index(olets, otmp->olet)) continue;
+		if(olets && *olets && !strchr(olets, otmp->olet)) continue;
 		if(ckfn && !(*ckfn)(otmp)) continue;
 		if(!allflag) {
 			pline(xprname(otmp, ilet));
@@ -615,7 +615,7 @@ register char *lets;
 	ilet = 'a';
 	for(otmp = invent; otmp; otmp = otmp->nobj) {
 	    if(flags.invlet_constant) ilet = otmp->invlet;
-	    if(!lets || !*lets || index(lets, ilet)) {
+	    if(!lets || !*lets || strchr(lets, ilet)) {
 		    cornline(1, xprname(otmp, ilet));
 		    any[ct++] = ilet;
 	    }
@@ -644,7 +644,7 @@ dotypeinv ()				/* free after Robert Viduya */
 	if(u.ugold) stuff[stct++] = '$';
 	stuff[stct] = 0;
 	for(otmp = invent; otmp; otmp = otmp->nobj) {
-	    if (!index (stuff, otmp->olet)) {
+	    if (!strchr (stuff, otmp->olet)) {
 		stuff[stct++] = otmp->olet;
 		stuff[stct] = 0;
 	    }
@@ -659,7 +659,7 @@ dotypeinv ()				/* free after Robert Viduya */
 	    pline ("What type of object [%s] do you want an inventory of? ",
 		stuff);
 	    c = readchar();
-	    if(index(quitchars,c)) return(0);
+	    if(strchr(quitchars,c)) return(0);
 	} else
 	    c = stuff[0];
 
@@ -769,7 +769,7 @@ merged(otmp,obj,lose) register struct obj *otmp, *obj; {
 	  obj->spe == otmp->spe &&
 	  obj->dknown == otmp->dknown &&
 	  obj->cursed == otmp->cursed &&
-	  (index("%*?!", obj->olet) ||
+	  (strchr("%*?!", obj->olet) ||
 	    (obj->known == otmp->known &&
 		(obj->olet == WEAPON_SYM && obj->otyp < BOOMERANG)))) {
 		otmp->quan += obj->quan;

@@ -4,7 +4,7 @@
 #include	"config.h"		/* for typedefs */
 #include	"def.objects.h"
 #include	"hack.onames.h"		/* for LAST_GEM */
-extern char *index();
+extern char *strchr();
 
 int
 letindex(let) register char let; {
