@@ -9,6 +9,9 @@
 #include <signal.h>
 #include "pm.h"
 #include <sys/times.h>
+#ifdef __STDC__
+#include <termios.h>
+#endif
 
 /*
 ** delay()	- coordinate with tty speed (let the driver do it)
@@ -16,9 +19,15 @@
 void	delay ()
 {
 #ifndef TCGETA
+#ifdef __STDC__
+	struct termios buf;
+	tcgetattr(1, &buf);
+	tcsetattr(1, TCSADRAIN, &buf);
+#else
 	struct sgttyb buf;
 	ioctl(1, TIOCGETP, &buf);
 	ioctl(1, TIOCSETP, &buf);
+#endif
 #else
 	struct termio buf;
 	ioctl(1, TCGETA, &buf);
