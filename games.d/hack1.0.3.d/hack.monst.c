@@ -44,7 +44,7 @@ struct permonst mons[CMNUM+2] = {
 	{ "wumpus",		'w',8,3,2,3,6,0 },
 #else
 	{ "long worm",		'w',8,3,5,1,4,0 },
-#endif NOWORM
+#endif
 	{ "large dog",		'd',6,15,4,2,4,0 },
 	{ "leocrotta",		'l',6,18,4,3,6,0 },
 	{ "mimic",		'M',7,3,7,3,4,0 },
@@ -75,5 +75,5 @@ struct permonst pm_wizard = {
 };
 #ifdef MAIL
 struct permonst pm_mail_daemon = { "mail daemon", '2', 100, 1, 10, 0, 0, 0 };
-#endif MAIL
+#endif
 struct permonst pm_eel = { "giant eel", ';', 15, 6, -3, 3, 6, 0 };

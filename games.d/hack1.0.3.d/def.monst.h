@@ -34,7 +34,7 @@ struct monst {
 	Bitfield(mnamelth,6);	/* length of name (following mxlth) */
 #ifndef NOWORM
 	Bitfield(wormno,5);	/* at most 31 worms on any level */
-#endif NOWORM
+#endif
 	unsigned mtrapseen;	/* bitmap of traps we've been trapped in */
 	long mlstmv;	/* prevent two moves at once */
 	struct obj *minvent;

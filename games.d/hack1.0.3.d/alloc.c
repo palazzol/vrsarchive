@@ -44,4 +44,4 @@ register unsigned lth;
 	return((long *) nptr);
 }
 
-#endif LINT
+#endif

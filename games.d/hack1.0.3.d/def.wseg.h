@@ -10,4 +10,4 @@ struct wseg {
 };
 
 #define newseg()	(struct wseg *) alloc(sizeof(struct wseg))
-#endif NOWORM
+#endif

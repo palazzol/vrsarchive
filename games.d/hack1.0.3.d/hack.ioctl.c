@@ -6,7 +6,7 @@
    define the same constants, and the C preprocessor complains. */
 #include <stdio.h>
 #include "config.h"
-#ifdef BSD
+#ifndef SYS5
 #include	<sgtty.h>
 struct ltchars ltchars, ltchars0;
 #else
@@ -14,25 +14,25 @@ struct ltchars ltchars, ltchars0;
 #include	<termio.h>	/* also includes part of <sgtty.h> */
 #ifndef TCGETA
 #include	<sys/ioctl.h>
-#endif !TCGETA
+#endif
 struct termio termio;
-#endif BSD
+#endif
 
 getioctls() {
-#ifdef BSD
+#ifdef TIOCGLTC
 	(void) ioctl(fileno(stdin), (int) TIOCGLTC, (char *) &ltchars);
 	(void) ioctl(fileno(stdin), (int) TIOCSLTC, (char *) &ltchars0);
 #else
 	(void) ioctl(fileno(stdin), (int) TCGETA, &termio);
-#endif BSD
+#endif
 }
 
 setioctls() {
-#ifdef BSD
+#ifdef TIOCSLTC
 	(void) ioctl(fileno(stdin), (int) TIOCSLTC, (char *) &ltchars);
 #else
 	(void) ioctl(fileno(stdin), (int) TCSETA, &termio);
-#endif BSD
+#endif
 }
 
 #ifdef SUSPEND		/* implies BSD */
@@ -49,9 +49,9 @@ dosuspend() {
 	} else {
 		pline("I don't think your shell has job control.");
 	}
-#else SIGTSTP
+#else
 	pline("Sorry, it seems we have no SIGTSTP here. Try ! or S.");
-#endif SIGTSTP
+#endif
 	return(0);
 }
-#endif SUSPEND
+#endif
