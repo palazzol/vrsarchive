@@ -1,7 +1,21 @@
 %{
+#include <stdio.h>
+#include <ctype.h>
 #include "hoc.h"
 #define code2(c1,c2)    code(c1); code(c2)
 #define code3(c1,c2,c3) code(c1); code(c2); code(c3)
+
+char    *progname;
+int     lineno = 1;
+#include <signal.h>
+#include <setjmp.h>
+jmp_buf begin;
+int     indef;
+char    *infile;                /* input file name */
+FILE    *fin;                   /* input file pointer */
+char    **gargv;                /* global argument list */
+int     gargc;
+int c;		/* global for use by warning */
 %}
 %union {
 	Symbol  *sym;  /* symbol table pointer */
@@ -114,19 +128,6 @@ arglist:  /* nothing */         { $$ = 0; }
 	;
 %%
        /* end of grammar */
-#include <stdio.h>
-#include <ctype.h>
-char    *progname;
-int     lineno = 1;
-#include <signal.h>
-#include <setjmp.h>
-jmp_buf begin;
-int     indef;
-char    *infile;                /* input file name */
-FILE    *fin;                   /* input file pointer */
-char    **gargv;                /* global argument list */
-int     gargc;
-int c;		/* global for use by warning */
 yylex()                  /*hoc6 */
 {
 
