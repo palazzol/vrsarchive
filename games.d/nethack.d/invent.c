@@ -1,4 +1,4 @@
-/*	SCCS Id: @(#)invent.c	1.3	87/07/14
+/*	SCCS Id: @(#)invent.c	1.4	87/08/08
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* invent.c - version 1.0.3 */
 
@@ -279,7 +279,7 @@ register long q;
 
 	otmp = newobj(0);
 	/* should set o_id etc. but otmp will be freed soon */
-	otmp->olet = '$';
+	otmp->olet = GOLD_SYM;
 	u.ugold -= q;
 	OGOLD(otmp) = q;
 	flags.botl = 1;
@@ -310,11 +310,11 @@ register char *let,*word;
 	long cnt;
 
 	if(*let == '0') let++, allowcnt = 1;
-	if(*let == '$') let++, allowgold = TRUE;
+	if(*let == GOLD_SYM) let++, allowgold = TRUE;
 	if(*let == '#') let++, allowall = TRUE;
 	if(*let == '-') let++, allownone = TRUE;
 	if(allownone) *bp++ = '-';
-	if(allowgold) *bp++ = '$';
+	if(allowgold) *bp++ = GOLD_SYM;
 	if(bp > buf && bp[-1] == '-') *bp++ = ' ';
 
 	ilet = 'a';
@@ -378,7 +378,6 @@ register char *let,*word;
 			pline("What do you want to %s [%s or ?*]? ",
 				word, buf);
 		}
-
 		cnt = 0;
 		ilet = readchar();
 		while(digit(ilet) && allowcnt) {
@@ -393,12 +392,14 @@ register char *let,*word;
 			pline("No count allowed with this command.");
 			continue;
 		}
-		if(index(quitchars,ilet))
+		if(index(quitchars,ilet)) {
+			pline("Never mind.");
 			return((struct obj *)0);
+		}
 		if(ilet == '-') {
 			return(allownone ? &zeroobj : (struct obj *) 0);
 		}
-		if(ilet == '$') {
+		if(ilet == GOLD_SYM) {
 			if(!allowgold){
 				pline("You cannot %s gold.", word);
 				continue;
@@ -479,7 +480,7 @@ xchar allowgold = (u.ugold && !strcmp(word, "drop")) ? 1 : 0;	/* BAH */
 		register struct obj *otmp = invent;
 		register int uflg = 0;
 
-		if(allowgold) ilets[iletct++] = '$';
+		if(allowgold) ilets[iletct++] = GOLD_SYM;
 		ilets[iletct] = 0;
 		while(otmp) {
 			if(!index(ilets, otmp->olet)){
@@ -505,7 +506,7 @@ xchar allowgold = (u.ugold && !strcmp(word, "drop")) ? 1 : 0;	/* BAH */
 	olets[0] = 0;
 	while(sym = *ip++){
 		if(sym == ' ') continue;
-		if(sym == '$') {
+		if(sym == GOLD_SYM) {
 			if(allowgold == 1)
 				(*fn)(mkgoldobj(u.ugold));
 			else if(!u.ugold)
@@ -715,7 +716,7 @@ dotypeinv ()				/* free after Robert Viduya */
 	}
 
 	stct = 0;
-	if(u.ugold) stuff[stct++] = '$';
+	if(u.ugold) stuff[stct++] = GOLD_SYM;
 	stuff[stct] = 0;
 	for(otmp = invent; otmp; otmp = otmp->nobj) {
 	    if (!index (stuff, otmp->olet)) {
@@ -743,7 +744,7 @@ dotypeinv ()				/* free after Robert Viduya */
 	} else
 	    c = stuff[0];
 
-	if(c == '$')
+	if(c == GOLD_SYM)
 	    return(doprgold());
 
 	if(c == 'x' || c == 'X') {
@@ -785,7 +786,7 @@ dolook() {
     int fd = 0;
 
 #ifdef KAA
-    if(!Blind) read_engr_at(u.ux, u.uy); /* Eric Backus */
+    read_engr_at(u.ux, u.uy); /* Eric Backus */
 #endif
     if(!u.uswallow) {
 	otmp0 = o_at(u.ux, u.uy);
