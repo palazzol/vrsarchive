@@ -675,7 +675,7 @@ boomhit(dx,dy) {
 char
 dirlet(dx,dy) register dx,dy; {
 	return
-		(dx == dy) ? '\' : (dx && dy) ? '/' : dx ? HWALL_SYM : VWALL_SYM;
+		(dx == dy) ? '\\' : (dx && dy) ? '/' : dx ? HWALL_SYM : VWALL_SYM;
 }
 
 /* type == -1: monster spitting fire at you */
