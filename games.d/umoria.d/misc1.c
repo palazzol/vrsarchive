@@ -153,6 +153,8 @@ int maxval;
 {
   long randval;
 
+  if (!maxval)
+    return(0);		/* Avoid divide fault */
 #ifdef USG
   randval = rand(); /* only returns numbers from 0 to 2**15-1 */
 #else
