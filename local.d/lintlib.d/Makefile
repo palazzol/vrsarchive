@@ -1,7 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/lintlib.d/Makefile,v 1.1 1987-04-18 21:55:49 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/lintlib.d/Makefile,v 1.2 1987-04-18 21:59:37 vrs Exp $
 #
-ALL	= llibcurses.ln
+OBJECTS	= llibcurses.ln
+SRCS	= $(OBJECTS:.ln=)
+ALL	= $(OBJECTS) $(SRCS)
 include ../../CONFIG
 
 llibcurses.ln: llibcurses
@@ -12,4 +14,4 @@ install: $(ALL)
 	cd $(LIBDIR); chmod 644 $(ALL)
 
 clean:
-	rm -f $(ALL)
+	rm -f $(OBJECTS)
