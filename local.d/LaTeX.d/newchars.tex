@@ -1,0 +1,117 @@
+\documentstyle{report}
+\setlength{\topmargin}{.25in}
+\setlength{\oddsidemargin}{0in}  %  needs negative value
+\setlength{\headheight}{.75in}
+\setlength{\headsep}{.5in}
+%\setlength{\footheight}{1in} 	%dont need them for qms, but
+%\setlength{\footskip}{1.5in}	%for imagen, yes.
+\setlength{\textheight}{8in}
+\setlength{\textwidth}{5.5in} 
+\setlength{\marginparwidth}{0in}
+\setlength{\marginparsep}{0in}
+\setlength{\marginparpush}{0in}
+\renewcommand{\baselinestretch}{1.5}  % for kind of double spacing
+
+\begin{document}
+\newcommand{\circlems}{\circle{1.0}}
+\newcommand{\circlescs}{\circle{2.0}}
+\newcommand{\circlecs}{\circle*{1.0}}
+\setlength{\unitlength}{1mm}
+
+\section*{A Variety Of Characters For Latex}
+
+{\raggedleft Sunil Podar (podar@sbcs)}
+
+\medskip
+This document contains my experiments and their results at 
+discovering new characters that can be plotted in the pic environment of 
+LaTeX. My main motivation has been for plotting points on graphs but
+certainly the characters listed below and their construction is not limited
+to just graphs.
+These are in addition to the
+standard \verb+\circle+ and \verb+\circle*+ characters. Since for other 
+characters one
+doesn't have explicit control over the size, one has to play around with the
+fonttypes, sizes, etc. and quite interestingly one can virtually get
+anything, or close to anything, desired. Somewhere hidden in THE manual is the
+important bit of information that the macros \verb+\makebox & \framebox+ are
+available outside the pic environment \& so is \verb+\shortstack+.
+
+\medskip
+The essential idea is using a \verb+\makebox(0,0){.........}+ so that the 
+\verb+\put+
+statement will put the specified box "right on the dot". The actual arguements
+for the box size might vary depending on document pointsize, unitlength,
+etc., particularly when it comes to centering circles in boxes.
+Using such a setup of boxes of size (0,0), one has a whole new range
+of mathematical symbols available; of course, the useful ones are the 
+symmetric symbols. 
+Some of the other possible candidates among the math symbols:
+\verb+\times, \ast, \star, \oplus, \Diamond, \bigoplus,+ etc.
+See pages 49-51 of THE manual.
+One interesting feature I discoverd is that
+one can use framebox of appropiate size around any object or no object at all.
+Also it seems not all the fonts can be used for characters since the
+characters are not necessarily centered in their own little ``font-boxes'' (I
+don't know what the technical term is, perhaps raster ); e.g. I tried the
+character {\tt +} in the tt font and it is a bit off-center; same story with
+the {\tt *}. Obviously the {\it italic} font is out of the question.
+
+\medskip
+The following are with all with unitlength = 1mm.
+Also they are all set in 10pt size, so other sizes will produce
+correspondingly bigger characters, I think. 
+The characters seem to not get centered properly, but that is because they
+are getting lined up with the bottom of the line. I have tried them all in
+actual graphs and they all appear exactly on the coordinates specified.
+
+\newpage
+\medskip
+\begin{tabular}{@{}cl}
+\underline{\bf character} & \underline{\bf LaTeX command.}\\[2ex]
+{\makebox(0,0){$\bigotimes$}}	
+		& \verb+{\makebox(0,0){$\bigotimes$}}+ \\
+{\makebox(0,0){\LARGE $\otimes$}} 
+		& \verb+{\makebox(0,0){\LARGE $\otimes$}}+ \\
+{\makebox(0,0){\large $\otimes$}} 
+		& \verb+{\makebox(0,0){\large $\otimes$}}+\\
+{\makebox(0,0){$\textstyle \otimes$}} 
+		& \verb+{\makebox(0,0){$\textstyle \otimes$}}+ \\
+{\makebox(0,0){$\scriptstyle \otimes$}}	
+		& \verb+{\makebox(0,0){$\scriptstyle \otimes$}}+ \\
+{\makebox(0,0){$\scriptscriptstyle \otimes$}} 
+		& \verb+{\makebox(0,0){$\scriptscriptstyle \otimes$}}+ \\
+{\makebox(0,0){\framebox(1.5,1.5){}}} 
+		& \verb+{\makebox(0,0){\framebox(1.5,1.5){}}}+ \\
+{\makebox(0,0){\framebox(2,2){$+$}}} 
+		& \verb={\makebox(0,0){\framebox(2,2){$+$}}}= \\
+{\makebox(0,0){\framebox(2,2)[lb]{\put(1,1){\circlecs}}}} 
+	& \verb+{\makebox(0,0){\framebox(2,2)[lb]{\put(1,1){\circlecs}}}}+ \\
+{\makebox(0,0){\framebox(1.5,1.5){.}}} 
+		& \verb+{\makebox(0,0){\framebox(1.5,1.5){.}}}+ \\
+{\makebox(0,0){\framebox(1.5,1.5){\Large .}}} 
+		& \verb+{\makebox(0,0){\framebox(1.5,1.5){\Large .}}}+ \\
+{\makebox(0,0){$\bigodot$}}	
+		& \verb+{\makebox(0,0){$\bigodot$}}+ \\
+{\makebox(0,0){\LARGE $\odot$}} 
+		& \verb+{\makebox(0,0){\LARGE $\odot$}}+ \\
+{\makebox(0,0){\large $\odot$}} 
+		& \verb+{\makebox(0,0){\large $\odot$}}+\\
+{\makebox(0,0){$\textstyle \odot$}} 
+		& \verb+{\makebox(0,0){$\textstyle \odot$}}+ \\
+{\makebox(0,0){$\scriptstyle \odot$}}	
+		& \verb+{\makebox(0,0){$\scriptstyle \odot$}}+ \\
+{\makebox(0,0){$\scriptscriptstyle \odot$}} 
+		& \verb+{\makebox(0,0){$\scriptscriptstyle \odot$}}+ \\
+{\makebox(0,0){\LARGE $\heartsuit$}}
+		& \verb+{\makebox(0,0){\LARGE $\heartsuit$}}+ \\[1ex]
+{\makebox(0,0){$\textstyle \oplus$}} 
+		& \verb+{\makebox(0,0){$\textstyle \oplus$}}+ \\
+{\makebox(0,0){$\textstyle \star$}} 
+		& \verb+{\makebox(0,0){$\textstyle \star$}}+ \\
+{\makebox(0,0){\rule{2mm}{2mm}}}
+		& \verb+{\makebox(0,0){\rule{2mm}{2mm}}}+ \\
+&
+\end{tabular}
+
+\end{document}
