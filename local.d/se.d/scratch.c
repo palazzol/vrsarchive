@@ -1,5 +1,5 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/scratch.c,v 1.1 1987-02-07 19:03:04 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/scratch.c,v 1.2 1987-02-07 20:41:09 vrs Exp $";
 #endif
 
 /*
@@ -586,7 +586,7 @@ int n1, n2, n3;
 /* reverse -- reverse buf[n1]..buf[n2] */
 
 reverse (n1, n2)
-register int n1, n2;
+int n1, n2;
 {
 	LINEDESC temp;
 
