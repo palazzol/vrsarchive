@@ -11,11 +11,14 @@
 #include "../h/mh.h"
 #include <stdio.h>
 
-#if defined (BSD42)  || defined (hpux)
+#if defined (BSD42)  || defined (hpux) || defined(__STDC__)
 #include <errno.h>
 #include <sys/param.h>
 #include <sys/file.h>
 #endif BDS42
+#if defined(__STDC__)
+#include <unistd.h>
+#endif __STDC__
 #ifdef	SYS5DIR
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -28,7 +31,7 @@ register char *dir;
 {
     int     pid;
     register char  *cp;
-#if defined (BSD42)  || defined (hpux)
+#if defined (BSD42)  || defined (hpux) || defined (SYS5DIR)
     register char  *c;
     char path[MAXPATHLEN];
 #endif BSD42
