@@ -1,0 +1,138 @@
+				A QUICK GUIDE TO ESPERANTO
+
+The following guide defines, in a technical sense, most of what you need
+to know about Esperanto, as I currently understand it.  It is very succinct,
+and I would certainly urge you to take, for instance, the Free Postal Course
+in order to get a better introduction, but this should at least demonstrate
+how simple the rules are.
+(Disclaimer: I am relatively new to this stuff, so I may have missed a few
+things or explained them badly, but this is the best I could do.  Most of
+the material is adapted from the "Esperanto Dictionary", by J. C. Wells).
+
+		The Alphabet
+a b c ^c d e f g ^g h ^h i j ^j k l m n o p r s ^s t u ^u v z
+Note that, e.g., the letter ^c should appear with the ^ above the c.
+	A filter for line-printer output to do this is included below.  Actually,
+	the character above the u should be an upside-down ^.  As per the ASCII
+	standard, the circumflex appears before the character in ASCII text.
+	I won't go into the details of pronunciation, but each letter has
+	one unique sound.
+
+			The Original 16 rules of Esperanto Grammar
+
+		Parts of Speech
+
+1. There is no indefinite article; there is only one definite article, la,
+	which is invariable.
+2. Nouns (substantives) are formed by adding o to the root.  To form the plural,
+	j is added.  There are two cases, nominative and accusative; the accusative
+	is formed by adding n to the nominative.  Equivalents of other cases
+	are formed by the use of prepositions (e.g. de mia patro == my father's).
+3. Adjectives are formed by adding a to the root.  They agree in case and number
+	with the noun they qualify, forming plural and accusative in the same way.
+	The comparative is formed by the word pli, the superlative by plej.
+	"Than" is rendered by ol.
+4. The basic cardinal numerals, which do not vary for case, are
+	unu, du, tri, kvar, kvin, ses, sep, ok, na^u, dek, cent, mil.
+	Tens and hundreds are formed by simple junction of the numerals,
+	e.g. 583 == kvincent okdek tri.  Ordinals are formed by the addition of a,
+	e.g. 4th == kvara.  Multiples, fractions and collective numerals are
+	formed by the use of the suffixes -obl-, -on-, and -op-, respectively.
+	Distributives are expressed with the help of the preposition po.
+	Adverbials add e, e.g. firstly == unue.
+5. The personal pronouns me, you, he, she, it, thou (rare), we, they, one are
+	mi, vi, li, ^si, ^gi, si, ni, ili, oni.  Possessive pronouns are formed
+	by adding a to these.  Declension is as for nouns.
+6. Verbs do not vary for person or number.  Verb endings and participial
+	formatives are described in the summary below.
+7. Adverbs are formed by adding e to the root; comparison is as for adjectives.
+8. All prepositions are followed by the nominative case.
+
+		General Rules
+
+9. Every word is pronounced as it is spelt.
+10. The accent is on the second-to-last syllable.
+11. Compound words are formed by simple junction of roots (the chief word coming
+	at the end).  Grammatical endings count for this purpose as separate words
+	(i.e. morphemes).
+12. There isno multiple negation: if a clause contains another negative word it
+	does not need "ne" (== not).
+13. To show motion towards, words take the accusative ending.
+14. Each preposition has a definite fixed meaning; but if the sense does not
+	indicate which should be used, recourse may be had to the preposition
+	je, which has no meaning of its own.  Alternatively, the accusative
+	without a preposition may be used.
+15. The so-called foreign words, which the majority of languages have taken
+	from one source, undergo no change in the International Language beyond
+	conforming to its orthography.  Derivatives, however, are preferably
+	formed from one basic root according to the rules of Esperanto grammar.
+16. The a of the definite article and the final o of nouns may be dropped
+	and replaced by an apostrophe ("poetical license").
+
+		Grammatical Summary
+
+  -a	adjective: ama = of love, loving; telefona telephonic
+  -as	verb, present tense: mi amas = I love; li telefonas = he telephones
+  -e	adverb: ame = lovingly; telefone = by telephone, telephonically
+  -i	verb, infinitive: ami = to love; telefoni = to telephone
+  -is	verb, past tense: mi amis = I loved; li telefonis = he telephoned
+  -j	plural: novaj telefonoj = new telephones
+  -n	accusative: mi amas lin = I love him; li amas mian filon = he loves my son;
+		kien? = where to?
+  -o	noun: amo love; telefono = a telephone
+  -os	verb, future tense: mi amos = I shal love, I'll love;
+		li telefonos = he will telephone, he'll be telephoning
+  -u	verb, imperative: amu! = love!;  li telefonu = let him telephone
+  -us	verb, conditional: mi amus = I would love (if ...);
+		li telefonus = he would telephone
+
+		Participial Formatives
+
+  -ant-	present active: konstruanta = building
+  -at-	present passive: konstruata = being built
+  -int-	past active: konstruinta = having built
+  -it-	past passive: konstruita = built
+  -ont-	future active: konstruonta = going to build
+  -ot-	future passive: konstruota = going to be built
+
+		Correlatives
+
+The correlative nouns, adjectives, adverbs and pronouns are much more systematic in
+	Esperanto than in English.  They are based on combinations of five initial
+	elements with nine final elements, as follows:
+
+  ti-	demonstrative: that
+  ki-	interrogative and relative: which
+  i-	indefinite: some
+  ^ci	universal: every
+  neni-	negative: no
+
+  -o	pronoun: thing
+  -u	pronoun and adjective: individual, one
+  -a	adjective: kind of
+  -es	possessive: one's
+  -e	locative adverb: place
+  -el	adverb of manner: way
+  -om	adverb of quantity: amount
+  -al	adverb of motive: reason
+  -am	tempotal adverb: time
+
+	The meaning of any correlative may be deduced from its composition.
+	Thus io = some+thing = something; tiam = that+time = then;
+	kiom = which+amount = how much;  ^cie = every+place = everywhere;
+	neniam = no+time = never.
+
+Other quick notes:
+	word order is almost arbitrary 
+	questions usually begin with ^cu (= whether) or a ki- correlative.
+	all Esperanto verbs are either transitive or intransitive, unlike
+	  English.  "ig" will make an intransitive verb transitive, and
+	  "i^g, will make a transitive verb intransitive.  Thus:
+
+	  we walked in the park (intransitive) = ni promenis en la parko
+	  we walked a dog in the park	       = ni promenigis hundon en la parko
+
+	  we sold a lot of books (transitive) = ne vendis multajn librojn
+	  the books sold well		      = la libroj bone vendi^gis
+
+Good luck!
