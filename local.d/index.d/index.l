@@ -33,9 +33,6 @@
                           strcpy(ident,yytext);
                         }
 %%
-#ifndef PR
-#  define PR "pr"
-#endif
 
 parseone()
 {
@@ -52,6 +49,7 @@ int argc;
 char *argv[];
 { int piped[2];
 
+#ifdef PR
   pipe(piped);
   if (fork() != 0) {
     close(0);
@@ -64,6 +62,7 @@ char *argv[];
   dup(piped[1]);
   close(piped[0]);
   close(piped[1]);
+#endif
   pipe(piped);
   if (fork() != 0) {
     close(0);
