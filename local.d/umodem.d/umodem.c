@@ -1398,11 +1398,16 @@ char speed;
                 case B38400 : fprintf (stderr, "19200"); break;
 #endif
 #ifdef EXTA
+#ifndef B19200
                 case EXTA : fprintf (stderr, "External A"); break;
 #endif
+#endif
 #ifdef EXTB
+#ifndef B38400
                 case EXTB : fprintf (stderr, "External B"); break;
 #endif
+#endif
+
 #endif
 
                 default    : fprintf (stderr, "Error"); break;
