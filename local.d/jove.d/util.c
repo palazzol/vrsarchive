@@ -92,8 +92,8 @@ add_stroke(c)
 	key_p += strlen(key_p);
 }
 
-void
-slowpoke()
+SIG_T
+slowpoke(dummy)
 {
 	if (slowp)
 		*slowp = YES;
@@ -121,7 +121,7 @@ int	*slow;
 #endif
 	unsigned int	old_time;
 	int	c;
-	int	(*oldproc)();
+	SIG_T	(*oldproc)();
 #else /* MSDOS or MAC */
 	long sw, time();
 #endif /* UNIX */
@@ -317,7 +317,7 @@ length(line)
 Line	*line;
 {
 	return strlen(lcontents(line));
-};
+}
 
 void
 to_word(dir)
@@ -690,7 +690,7 @@ jmp_buf	savejmp;
 }
 
 #ifdef LOAD_AV
-# if defined(BSD4_2) && !defined(BSD2_10)
+# if (defined(BSD4_2) || defined(SYSV)) && !defined(BSD2_10)
 #   if defined(PURDUE_EE) && (defined(vax) || defined(gould))
 
 void
@@ -871,6 +871,7 @@ char	*to,
 
 #ifndef MSDOS
 #ifndef MAC
+#ifndef __STDC__
 void
 strcpy(t, f)
 register char	*t,
@@ -879,7 +880,7 @@ register char	*t,
 	while (*t++ = *f++)
 		;
 }
-
+#endif
 #endif /* MAC */
 #endif /* MSDOS */
 

@@ -5,13 +5,19 @@
  * included in all the files.                                              *
  ***************************************************************************/
 
+#include <signal.h>
+#include <varargs.h>
 #include "jove.h"
 #include "re.h"
-#include <varargs.h>
 
 #ifdef IPROCS
+#ifdef BSD4_2
+#   include <sys/wait.h>
+#else
+#   include <wait.h>
+#endif
 
-int	proc_child();
+SIG_T	proc_child();
 
 #ifdef PIPEPROCS
 #   include "iproc-pipes.c"
@@ -95,7 +101,7 @@ register Process	*p;
 {
 	if (isdead(p))
 		return;
-	if (killpg(p->p_pid, sig) == -1)
+	if (kill(-p->p_opid, sig) == -1)
 		s_mess("Cannot kill %s!", proc_buf(p));
 }
 
@@ -155,7 +161,7 @@ ProcList()
 	Typeout(fmt, "------", "------", "--- ", "-------");
 	for (p = procs; p != 0; p = next) {
 		next = p->p_next;
-		sprintf(pidstr, "%d", p->p_pid);
+		sprintf(pidstr, "%d", p->p_opid);
 		Typeout(fmt, proc_buf(p), pstate(p), pidstr, p->p_name);
 		if (isdead(p)) {
 			free_proc(p);
@@ -286,16 +292,25 @@ Iprocess()
 	proc_strt(scratch, YES, Shell, ShFlags, command, (char *) 0);
 }
 
-proc_child()
+SIG_T
+proc_child(dummy)
 {
+#ifndef SYSV
 	union wait	w;
+#else
+	int w;
+#endif
 	register int	pid;
 
 	for (;;) {
+#ifdef SYSV
+		pid = waitpid(0, &w, (WNOHANG | WUNTRACED));
+#else
 #ifndef BSD4_2
 		pid = wait2(&w.w_status, (WNOHANG | WUNTRACED));
 #else
 		pid = wait3(&w, (WNOHANG | WUNTRACED), (struct rusage *) 0);
+#endif
 #endif
 		if (pid <= 0)
 			break;
@@ -305,7 +320,11 @@ proc_child()
 
 kill_off(pid, w)
 register int	pid;
+#ifndef SYSV
 union wait	w;
+#else
+int w;
+#endif
 {
 	register Process	*child;
 
@@ -320,7 +339,7 @@ union wait	w;
 		if (WIFEXITED(w))
 			child->p_howdied = EXITED;
 		else if (WIFSIGNALED(w)) {
-			child->p_reason = w.w_termsig;
+			child->p_reason = WTERMSIG(w);
 			child->p_howdied = KILLED;
 		}
 		{

@@ -5,18 +5,24 @@
  * included in all the files.                                              *
  ***************************************************************************/
 
+#include <signal.h>
+#include <varargs.h>
+
+#include <sys/ioctl.h>
 #include "jove.h"
 #include "io.h"
 #include "termcap.h"
-
-#include <signal.h>
-#include <varargs.h>
 
 #ifdef MSDOS
 #include <io.h>
 #include <process.h>
 #endif
 
+#ifdef BSD4_2
+#   include <sys/wait.h>
+#else
+#   include <wait.h>
+#endif
 
 #ifdef	LINT_ARGS
 private void
@@ -340,35 +346,6 @@ MakeErrors()
 #ifdef SPELL
 
 void
-SpelBuffer()
-{
-	char	*Spell = "Spell",
-		com[100];
-	Window	*savewp = curwind;
-
-	put_bufs(0);
-	sprintf(com, "spell %s", curbuf->b_fname);
-	(void) UnixToBuf(Spell, YES, EWSize, YES, Shell, ShFlags, com, (char *) 0);
-	message("[Delete the irrelevant words and then type C-X C-C]");
-	ToFirst();
-	Recur();
-	SetWind(savewp);
-	SpelParse(Spell);
-}
-
-void
-SpelWords()
-{
-	char	*buftospel;
-	Buffer	*wordsb = curbuf;
-
-	if ((buftospel = ask_buf((Buffer *) 0)) == 0)
-		return;
-	SetBuf(do_select(curwind, buftospel));
-	SpelParse(wordsb->b_name);
-}
-
-void
 SpelParse(bname)
 char	*bname;
 {
@@ -402,6 +379,35 @@ char	*bname;
 	add_mess("Done.");
 	SetBuf(buftospel);
 	ShowErr();
+}
+
+void
+SpelBuffer()
+{
+	char	*Spell = "Spell",
+		com[100];
+	Window	*savewp = curwind;
+
+	put_bufs(0);
+	sprintf(com, "spell %s", curbuf->b_fname);
+	(void) UnixToBuf(Spell, YES, EWSize, YES, Shell, ShFlags, com, (char *) 0);
+	message("[Delete the irrelevant words and then type C-X C-C]");
+	ToFirst();
+	Recur();
+	SetWind(savewp);
+	SpelParse(Spell);
+}
+
+void
+SpelWords()
+{
+	char	*buftospel;
+	Buffer	*wordsb = curbuf;
+
+	if ((buftospel = ask_buf((Buffer *) 0)) == 0)
+		return;
+	SetBuf(do_select(curwind, buftospel));
+	SpelParse(wordsb->b_name);
 }
 
 #endif /* SPELL */
@@ -491,24 +497,26 @@ int	pid,
 		;
 #else
 
-#ifdef BSD4_2
-#   include <sys/wait.h>
+#ifdef SYSV
+	int	w;
 #else
-#   include <wait.h>
-#endif
-
 	union wait	w;
+#endif
 	int	rpid;
 
 	for (;;) {
+#ifdef SYSV
+		rpid = waitpid(0, &w, 0);
+#else
 #ifndef BSD4_2
 		rpid = wait2(&w.w_status, 0);
 #else
 		rpid = wait3(&w, 0, (struct rusage *) 0);
 #endif
+#endif
 		if (rpid == pid) {
 			if (status)
-				*status = w.w_status;
+				*status = WEXITSTATUS(w);
 			break;
 		} else
 			kill_off(rpid, w);
@@ -545,7 +553,7 @@ va_dcl
 	char	*argv[32],
 		*mess;
 	File	*fp;
-	int	(*old_int)();
+	SIG_T	(*old_int)();
 
 	va_start(ap);
 	make_argv(argv, ap);

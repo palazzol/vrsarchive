@@ -332,7 +332,7 @@ Chdir()
 }
 
 #ifdef UNIX
-#ifndef JOB_CONTROL
+#if (!defined(JOB_CONTROL)) || defined(SYSV)
 char *
 getwd()
 {
@@ -1101,9 +1101,9 @@ private int	max_bno = -1,
 void (*blkio)();
 #else
 #ifdef LINT_ARGS
-private int	(*blkio)(Block *, int (*)());
+private void	(*blkio)(Block *, int (*)());
 #else
-private int (*blkio)();
+private void (*blkio)();
 #endif
 #endif /* MAC */
 
@@ -1133,7 +1133,7 @@ register int	(*iofcn)();
 private void
 fake_blkio(b, iofcn)
 register Block	*b;
-register int	(*iofcn)();
+register void	(*iofcn)();
 {
 	tmpinit();
 	blkio = real_blkio;
