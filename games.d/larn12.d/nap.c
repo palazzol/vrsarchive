@@ -16,7 +16,7 @@
 #ifndef HZ
 #define HZ 60	/* Take a guess */
 #endif !HZ
-#define MS	(1000/KERNELHZ)	/* Milliseconds per clock tick	*/
+#define MS	(1000/HZ)	/* Milliseconds per clock tick	*/
 
 /*
  *	routine to take a nap for n milliseconds
