@@ -14,10 +14,27 @@
  *****************************************************************/
 
 # include <curses.h>
+#ifndef A_REVERSE
+#define chtype	char
+#include <fcntl.h>
+nodelay(scr, tf)
+{	static int fcntlflgs;
+
+	fcntlflgs = fcntl(0, F_GETFL, 0);
+	if (fcntlflgs < 0) {
+		perror("fcntl");
+		exit(1);
+	}
+	if (tf == TRUE)
+		fcntl(0, F_SETFL, fcntlflgs|O_NDELAY);
+	else
+		fcntl(0, F_SETFL, fcntlflgs&~O_NDELAY);
+}
+#endif
 # include <signal.h>
 
 # define NEWROBOT	GAMLIB/robots"
-# define ROBOT		GAMLIB/robots"
+# define ROBOT		GAMDIR/robots"
 
 # define READ		0
 # define WRITE		1
@@ -31,25 +48,37 @@
 
 /* Define the Rob-O-Matic pseudo-terminal */
 
-# define ROBOTTERM "rb|rterm:am:bs:ce=^E:cl=^L:cm=^F%+ %+ :co#80:li#24:pt:ta=^I:up=^A:do=^B:nd=^C:db:xn:"
 # define ctrl(C) ((C)&037)
-# define BL ctrl('G')
-# define BS ctrl('H')
+#ifdef OLDWAY
+# define ROBOTTERM "rterm"
+# define ROBOTCAP "rb|rterm:am:bs:ce=^E:cl=^L:cm=^F%+ %+ :co#80:li#24:pt:ta=^I:up=^A:do=^B:nd=^C:db:xn:"
 # define CE ctrl('E')
 # define CL ctrl('L')
 # define CM ctrl('F')
-# define CR ctrl('M')
 # define DO ctrl('B')
 # define LF ctrl('J')
 # define ND ctrl('C')
-# define TA ctrl('I')
 # define UP ctrl('A')
+#else	/* Use a real terminal type to keep terminfo happy */
+# define ROBOTTERM "vc404"
+# define ROBOTCAP "M8|vc404:am:bs:ce=^V:cl=^X:cm=^P%+ %+ :co#80:li#24:up=^Z:do=^J:nd=^U:"
+# define CE ctrl('V')
+# define CL ctrl('X')
+# define CM ctrl('P')
+# define DO ctrl('J')
+# define ND ctrl('U')
+# define UP ctrl('Z')
+#endif
+# define BL ctrl('G')
+# define BS ctrl('H')
+# define CR ctrl('M')
+# define NL ctrl('@')
+# define TA ctrl('I')
 
 int   child;
 int   frobot, trobot;
 int   debug=0;
 FILE *trace=NULL;
-struct sgttyb ttsave;
 /****************************************************************
  * Main routine
  ****************************************************************/
@@ -60,9 +89,6 @@ char *argv[];
 
 { int   ptc[2], ctp[2];
   char *rfile=NULL;
-
-  /* Save initial tty state */
-  gtty(2, &ttsave);
 
   /* Get the options from the command line */
   while (--argc > 0 && (*++argv)[0] == '-')
@@ -107,31 +133,33 @@ char *argv[];
     close (1);
     dup (ctp[WRITE]);
 
-    putenv ("TERMCAP", ROBOTTERM);
-    execl (rfile, rfile, 0);
-    _exit (1);
+    put_env ("TERM", ROBOTTERM);
+    put_env ("TERMCAP", ROBOTCAP);
+    execl (rfile, rfile, (char *)0);
+    exit (1);
   }
-
   /* Call Robomatic as the Parent Process */
   robomatic ();
+  return (0);
 }
 
 /****************************************************************
  * Panic: Abort child, reset terminal, and exit.
  ****************************************************************/
+void
 panic()
 { send('q');
   send('\n');
+  close(frobot);
   while (wait((int *)0) != child)
-    ;
+    perror("panic");
   move (ROWS-1, 0); clrtoeol (); refresh ();
-  endwin (); nocrmode (); noraw (); echo ();
-  stty(2, &ttsave);
+  nocrmode (); noraw (); echo (); resetty (); endwin ();
   exit (0);
 }
 
 /****************************************************************
- * Robomatic: Play Robots.  Read the scrren, choose a move, and send it
+ * Robomatic: Play Robots.  Read the screen, choose a move, and send it
  ****************************************************************/
 
 char screen[ROWS][COLS];
@@ -145,8 +173,7 @@ robomatic ()
   signal(SIGINT, panic);
 
   /* Initialize the Curses package */
-  initscr (); crmode (); noecho (); clear (); refresh ();
-  savetty();
+  initscr (); savetty (); crmode (); noecho (); clear (); refresh ();
 
   /* Clear the screen array */
   blankscreen ();
@@ -156,18 +183,20 @@ robomatic ()
   getrobot ();	/* Read screen updates until a bell */
 
   /* Main loop, send a command and then read the screen */
-  while (playing)
-  { 
+  while (playing) {
+    int ch;
     /* If the user types anything, execute his commands */
-    while (charsavail (READ))
-    { switch (getchar ())
-      { case 'd':	debug++; 
+    nodelay(stdscr, TRUE);
+    while ((ch = getch()) != ERR) {
+      switch (ch) {
+        case 'd':	debug++; 
 			break;
-        case 'r':	resetty(); clear (); drawscreen (); refresh (); 
+        case 'r':	clear (); drawscreen (); refresh (); 
 			break;
 	default:	break;
       }
     }
+    nodelay(stdscr, FALSE);
 
     /* Choose a command and send it */
     cmd = strategy ();
@@ -184,21 +213,20 @@ robomatic ()
   send ('\n');
 
   /* Wait for robots to get through, just in case */
+  close(frobot);
   while (wait((int *)0) != child)
-    ;
+    perror("dead");
 
   /* Now wait for the user to type a character before finishing */
-  resetty();
   refresh ();
   getchar ();
 
   /* Print termination messages */
   move (ROWS-1, 0); clrtoeol (); refresh ();
-  endwin (); nocrmode (); noraw (); echo ();
+  nocrmode (); noraw (); echo (); resetty (); endwin ();
 
   deadrobot ();
 
-  stty(2, &ttsave);
   exit (0);
 }
 
@@ -215,7 +243,7 @@ blankscreen ()
 }
 
 /****************************************************************
- * getrobot: Read the Robot screen, stop when you read a bell
+ * getrobot: Read the Robot screen; stop when you read a bell
  ****************************************************************/
 
 getrobot ()
@@ -245,7 +273,8 @@ getrobot ()
     /* Now figure out what the character means */
     switch (ch)
     { case BL:	/* Bell */
-        done++;
+        done++;	/* FALL THROUGH */
+      case NL:	/* Pad character */
         break;
 
       case BS: /* BackSpace */
@@ -285,10 +314,12 @@ getrobot ()
         row++;
         break;
 
+#ifdef LF
       case LF:	/* Line Feed */
         row++;
         col = 0;
         break;
+#endif
 
       case ND:	/* Non-destructive space (cursor right) */
         col++;
@@ -317,7 +348,7 @@ getrobot ()
 	/* Printing character */
 	if (ch == 'I')
 	{  atrow = row; atcol = col; }
-        mvaddch (row, col, ch);
+        mvaddch (row, col, (chtype)ch);
         screen[row][col++] = ch;
         break;
     }
@@ -363,7 +394,7 @@ drawscreen ()
 
   for (r=0; r<ROWS; r++)
     for (c=0; c<COLS; c++)
-      mvaddch (r, c, screen[r][c]);
+      mvaddch (r, c, (chtype)screen[r][c]);
 }
 
 /****************************************************************
@@ -669,36 +700,10 @@ int gy, gx;
   return(0);
 }
 
-/*****************************************************************
- * charsavail: How many characters are there at the terminal? If any
- * characters are found, 'noterm' is reset, since there is obviously
- * a terminal around if the user is typing at us.
- *****************************************************************/
-
-charsavail (fd)
-int fd;
-{ long n;
-#ifdef FIONREAD
-  int retc;
-
-  if (retc = ioctl (fd, FIONREAD, &n))
-  { fprintf (stderr, "Ioctl returns %d, n=%ld.\n", retc, n);
-    n=0;
-  }
-#else
-  if ((n = rdchk(fd)) < 0)
-  { fprintf (stderr, "rdchk returns %ld.\n", n);
-    n=0;
-  }
-#endif
-
-  return ((int) n);
-}
-
 /****************************************************************
  * dwait: Debugging message
  ****************************************************************/
-
+/*VARARGS1*/
 dwait (f, a1, a2, a3, a4)
 char *f;
 int a1, a2, a3, a4;
@@ -716,14 +721,14 @@ int a1, a2, a3, a4;
       default:	break;
     }
     for (c=0; c<COLS; c++)
-    { mvaddch (0, c, screen[0][c]); }
+    { mvaddch (0, c, (chtype)screen[0][c]); }
   }
 }
 
 /*
- *  putenv  --  put value into environment
+ *  put_env  --  put value into environment
  *
- *  Usage:  i = putenv (name,value)
+ *  Usage:  i = put_env (name,value)
  *	int i;
  *	char *name, *value;
  *
@@ -733,7 +738,7 @@ int a1, a2, a3, a4;
  *
  *  Putenv may need to add a new name into the environment, or to
  *  associate a value longer than the current value with a particular
- *  name.  So, to make life simpler, putenv() copies your entire
+ *  name.  So, to make life simpler, put_env() copies your entire
  *  environment into the heap (i.e. malloc()) from the stack
  *  (i.e. where it resides when your process is initiated) the first
  *  time you call it.
@@ -742,14 +747,13 @@ int a1, a2, a3, a4;
  * 14-Oct-85 Michael Mauldin (mlm) at Carnegie-Mellon University
  *      Ripped out of CMU lib for Rob-O-Matic portability
  * 20-Nov-79  Steven Shafer (sas) at Carnegie-Mellon University
- *	Created for VAX.  Too bad Bell Labs didn't provide this.  It's
- *	unfortunate that you have to copy the whole environment onto the
- *	heap, but the bookkeeping-and-not-so-much-copying approach turns
- *	out to be much hairier.  So, I decided to do the simple thing,
- *	copying the entire environment onto the heap the first time you
- *	call putenv(), then doing realloc() uniformly later on.
- *	Note that "putenv(name,getenv(name))" is a no-op; that's the reason
- *	for the use of a 0 pointer to tell putenv() to delete an entry.
+ *	Created for VAX.  It's unfortunate that you have to copy the whole
+ *	environment onto the heap, but the bookkeeping-and-not-so-much-copying
+ *	approach turns out to be much hairier.  So, I decided to do the simple
+ *	thing, copying the entire environment onto the heap the first time you
+ *	call put_env(), then doing realloc() uniformly later on.
+ *	Note that "put_env(name,getenv(name))" is a no-op; that's the reason
+ *	for the use of a 0 pointer to tell put_env() to delete an entry.
  *
  */
 
@@ -766,13 +770,13 @@ static int  findenv ();		/* look for a name in the env. */
 static int  newenv ();		/* copy env. from stack to heap */
 static int  moreenv ();		/* incr. size of env. */
 
-int   putenv (name, value)
+int   put_env (name, value)
 char *name, *value;
 { register int  i, j;
   register char *p;
 
   if (envsize < 0)
-  {				/* first time putenv called */
+  {				/* first time put_env called */
     if (newenv () < 0)		/* copy env. to heap */
       return (-1);
   }
