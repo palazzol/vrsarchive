@@ -62,7 +62,8 @@ char	**argv;
 	finish ("Done!");
 	}
 
-onint ()
+SIG_T
+onint (dummy)
 	{
 	signal (SIGINT, SIG_IGN);
 	finish ("...interrupted");
@@ -83,7 +84,6 @@ char	**argv;
 	int 	errflg = 0;   /* any option errors? */
 	int 	C;            /* the option flag name */
 	extern	char *optarg; /* defined in getopt */
-	extern	onint();      /* called if user interrupts */
 	while ((C = getopt (argc, argv, "tfn:")) != EOF)
 		{
 		switch (C)

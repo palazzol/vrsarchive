@@ -24,32 +24,9 @@
 #define RESET 0
 unsigned char universe[XMAX][YMAX];     /* Max expected size of screen */
 int singlestep; /* Boolean - if TRUE, single step (wait for char to continue) */
-main(argc, argv)
-int argc;
-char *argv[];
-{
-    int i, j;
-    int die();
 
-    initscr();          /* Initialize screen package */
-    if (evalargs(argc, argv) == 0)    /* Evaluate arguments */
-	for (i = 0; i < XMAX; i++)
-	    for (j = 0; j < YMAX; j++) universe[i][j] = RESET;
-
-    signal(SIGINT, die);        /* Set to restore tty stats */
-    crmode();           /* set for char-by-char */
-    noecho();           /*      input */
-    nonl();             /* For optimization */
-
-    getstart();         /* Get starting position */
-    for (;;) {
-	prboard();      /* Print out current board */
-	update();       /* Update board position */
-	if (singlestep) getchar();
-	}
-    }
-
-die() {
+SIG_T
+die(dummy) {
     char str[80];
     int fp1, i, j;
 
@@ -82,6 +59,30 @@ die() {
 	close(fp1);
 	}
     exit(0);
+    }
+
+main(argc, argv)
+int argc;
+char *argv[];
+{
+    int i, j;
+
+    initscr();          /* Initialize screen package */
+    if (evalargs(argc, argv) == 0)    /* Evaluate arguments */
+	for (i = 0; i < XMAX; i++)
+	    for (j = 0; j < YMAX; j++) universe[i][j] = RESET;
+
+    signal(SIGINT, die);        /* Set to restore tty stats */
+    crmode();           /* set for char-by-char */
+    noecho();           /*      input */
+    nonl();             /* For optimization */
+
+    getstart();         /* Get starting position */
+    for (;;) {
+	prboard();      /* Print out current board */
+	update();       /* Update board position */
+	if (singlestep) getchar();
+	}
     }
 
 getstart() {
