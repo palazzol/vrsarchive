@@ -14,6 +14,7 @@ int *pty_fd;
 int *pty_pid;
 
 char *ptynames[] = {
+#ifdef M_XENIX
 	"/dev/ptyv0",
 	"/dev/ptyv1",
 	"/dev/ptyv2",
@@ -22,6 +23,16 @@ char *ptynames[] = {
 	"/dev/ptyv5",
 	"/dev/ptyv6",
 	"/dev/ptyv7",
+#else
+	"/dev/p000",
+	"/dev/p001",
+	"/dev/p002",
+	"/dev/p003",
+	"/dev/p004",
+	"/dev/p005",
+	"/dev/p006",
+	"/dev/p007",
+#endif
 	0,
 };
 
