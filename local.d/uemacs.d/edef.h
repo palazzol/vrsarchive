@@ -1,5 +1,5 @@
 /*	EDEF:		Global variable definitions for
-			MicroEMACS 3.2
+			MicroEMACS 3.9
 
 			written by Dave G. Conroy
 			modified by Steve Wilhite, George Jones
@@ -8,21 +8,25 @@
 
 /* some global fuction declarations */
 
-char *malloc();
-char *strcpy();
-char *strcat();
-char *strncpy();
-char *itoa();
+char *flook();
+char *getctext();
+char *getfname();
 char *getval();
 char *gtenv();
-char *gtusr();
 char *gtfun();
-char *token();
+char *gtusr();
+char *itoa();
 char *ltos();
-char *flook();
-char *mkupper();
+char *malloc();
 char *mklower();
+char *mkupper();
+char *strcat();
+char *strcpy();
+char *strncpy();
+char *token();
+char *transbind();
 unsigned int getckey();
+unsigned int stock();
 
 #ifdef	maindef
 
@@ -43,6 +47,7 @@ char	*modename[] = {			/* name of modes		*/
 	"MAGIC", "CRYPT", "ASAVE"};
 char	modecode[] = "WCSEVOMYA";	/* letters to represent modes	*/
 int	gmode = 0;			/* global editor mode		*/
+int	gflags = GFREAD;		/* global control flag		*/
 int	gfcolor = 7;			/* global forgrnd color (white)	*/
 int	gbcolor	= 0;			/* global backgrnd color (black)*/
 int	gasave = 256;			/* global ASAVE size		*/
@@ -89,6 +94,14 @@ char	truem[] = "TRUE";	/* true literal			*/
 char	falsem[] = "FALSE";	/* false litereal		*/
 int	cmdstatus = TRUE;	/* last command status		*/
 char	palstr[49] = "";	/* palette string		*/
+int	saveflag = 0;		/* Flags, saved with the $target var */
+char	*fline = NULL;		/* dynamic return line */
+int	flen = 0;		/* current length of fline */
+int	rval = 0;		/* return value of a subprocess */
+#if	CALLED
+int	eexitflag = FALSE;	/* EMACS exit flag */
+int	eexitval = 0;		/* and the exit return value */
+#endif
 
 /* uninitialized global definitions */
 
@@ -117,7 +130,7 @@ char	rpat[NPAT];			/* replacement pattern		*/
  * The variable patmatch holds the string that satisfies
  * the search command.
  * The variables matchline and matchoff hold the line and
- * offset position of the start of match.
+ * offset position of the *start* of match.
  */
 unsigned int	matchlen = 0;
 unsigned int	mlenold  = 0;
@@ -127,14 +140,32 @@ int		matchoff = 0;
 
 #if	MAGIC
 /*
- * The variable magical determines if there are actual
- * metacharacters in the string - if not, then we don't
- * have to use the slower MAGIC mode search functions.
+ * The variables magical and rmagical determine if there
+ * were actual metacharacters in the search and replace strings -
+ * if not, then we don't have to use the slower MAGIC mode
+ * search functions.
  */
 short int	magical = FALSE;
+short int	rmagical = FALSE;
 MC		mcpat[NPAT];		/* the magic pattern		*/
 MC		tapcm[NPAT];		/* the reversed magic pattern	*/
+RMC		rmcpat[NPAT];		/* the replacement magic array	*/
 
+#endif
+
+/* directive name table:
+	This holds the names of all the directives....	*/
+
+char *dname[] = {
+	"if", "else", "endif",
+	"goto", "return", "endm",
+	"while", "endwhile", "break",
+	"force"
+};
+
+#if	DEBUGM
+/*	vars needed for macro debugging output	*/
+char outline[NSTRING];		/* global string to hold debug line text */
 #endif
 
 #else
@@ -158,6 +189,7 @@ extern	char	modecode[];		/* letters to represent modes	*/
 extern	KEYTAB keytab[];		/* key bind to functions table	*/
 extern	NBIND names[];			/* name to function table	*/
 extern	int	gmode;			/* global editor mode		*/
+extern	int	gflags;			/* global control flag		*/
 extern	int	gfcolor;		/* global forgrnd color (white)	*/
 extern	int	gbcolor;		/* global backgrnd color (black)*/
 extern	int	gasave;			/* global ASAVE size		*/
@@ -202,6 +234,14 @@ extern	char	truem[];		/* true literal			*/
 extern	char	falsem[];		/* false litereal		*/
 extern	int	cmdstatus;		/* last command status		*/
 extern	char	palstr[];		/* palette string		*/
+extern	int	saveflag;		/* Flags, saved with the $target var */
+extern	char	*fline;			/* dynamic return line */
+extern	int	flen;			/* current length of fline */
+extern	int	rval;			/* return value of a subprocess */
+#if	CALLED
+extern	int	eexitflag;		/* EMACS exit flag */
+extern	int	eexitval;		/* and the exit return value */
+#endif
 
 /* uninitialized global external declarations */
 
@@ -224,18 +264,25 @@ extern	char    pat[];                  /* Search pattern		*/
 extern	char	tap[];			/* Reversed pattern array.	*/
 extern	char	rpat[];			/* replacement pattern		*/
 
-extern	unsigned int	matchlen;	/* length of found string	*/
-extern	unsigned int	mlenold;	/* previous length of found str	*/
-extern	char	*patmatch;		/* the found string		*/
-extern	LINE	*matchline;		/* line pointer to found string	*/
-extern	int	matchoff;		/* offset to the found string	*/
+extern unsigned int matchlen;
+extern unsigned int mlenold;
+extern char *patmatch;
+extern LINE *matchline;
+extern int matchoff;
 
 #if	MAGIC
+extern short int magical;
+extern short int rmagical;
+extern MC mcpat[NPAT];		/* the magic pattern		*/
+extern MC tapcm[NPAT];		/* the reversed magic pattern	*/
+extern RMC rmcpat[NPAT];	/* the replacement magic array	*/
+#endif
 
-extern	short int	magical;	/* meta-characters in pattern?	*/
-extern	MC		mcpat[];	/* the magic pattern		*/
-extern	MC		tapcm[];	/* the reversed magic pattern	*/
+extern char *dname[];		/* directive name table		*/
 
+#if	DEBUGM
+/*	vars needed for macro debugging output	*/
+extern char outline[];		/* global string to hold debug line text */
 #endif
 
 #endif

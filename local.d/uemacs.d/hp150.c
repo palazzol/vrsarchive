@@ -341,6 +341,10 @@ ckeyon()	/* turn control-C trapping on */
 	intdos(&r, &r);
 }
 
+#ifdef	unsigned
+#undef	unsigned
+#endif
+
 agios(buf, len)	/* perform an AGIOS call */
 
 char *buf;	/* sequence of bytes in command */

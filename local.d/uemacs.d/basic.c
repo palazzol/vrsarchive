@@ -89,7 +89,7 @@ gotoline(f, n)		/* move to a particular line.
 
 	/* get an argument if one doesnt exist */
 	if (f == FALSE) {
-		if ((status = mlreply("Line to GOTO: ", arg, "")) != TRUE) {
+		if ((status = mlreply("Line to GOTO: ", arg, NSTRING)) != TRUE) {
 			mlwrite("[Aborted]");
 			return(status);
 		}

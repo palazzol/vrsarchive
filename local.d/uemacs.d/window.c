@@ -145,6 +145,7 @@ int n;
  */
 mvupwind(f, n)
     int n;
+
     {
     register LINE *lp;
     register int i;
@@ -337,7 +338,7 @@ int f, n;	/* default flag and numeric argument */
                 return (FALSE);
         }
         if ((wp = (WINDOW *) malloc(sizeof(WINDOW))) == NULL) {
-                mlwrite("Cannot allocate WINDOW block");
+                mlwrite("[OUT OF MEMORY]");
                 return (FALSE);
         }
         ++curbp->b_nwnd;                        /* Displayed twice.     */
@@ -668,6 +669,8 @@ int f;	/* default flag */
 int n;	/* numeric argument */
 
 {
+	register WINDOW *wp;
+
 	/* if the command defaults, assume the largest */
 	if (f == FALSE)
 		n = term.t_mcol;
@@ -682,7 +685,32 @@ int n;	/* numeric argument */
 	term.t_ncol = n;
 	term.t_margin = n / 10;
 	term.t_scrsiz = n - (term.t_margin * 2);
-	curwp->w_flag |= WFHARD | WFMOVE | WFMODE;
+
+	/* florce all windows to redraw */
+	wp = wheadp;
+	while (wp) {
+		wp->w_flag |= WFHARD | WFMOVE | WFMODE;
+		wp = wp->w_wndp;
+	}
 	sgarbf = TRUE;
+
 	return(TRUE);
+}
+
+int getwpos()	/* get screen offset of current line in current window */
+
+{
+	register int sline;	/* screen line from top of window */
+	register LINE *lp;	/* scannile line pointer */
+
+	/* search down the line we want */
+	lp = curwp->w_linep;
+	sline = 1;
+	while (lp != curwp->w_dotp) {
+		++sline;
+		lp = lforw(lp);
+	}
+
+	/* and return the value */
+	return(sline);
 }

@@ -207,7 +207,7 @@ char *undolock(fname)
 	  	  return(NULL);
 }
 
-#endif bsdunix
+#endif
 
 /******************
  * end dolock module

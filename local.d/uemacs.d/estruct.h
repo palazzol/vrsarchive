@@ -1,9 +1,9 @@
-/*	ESTRUCT:	Structure and preprocesser defined for
-			MicroEMACS 3.8
+/*      ESTRUCT:        Structure and preprocesser defined for
+                        MicroEMACS 3.9
 
-			written by Dave G. Conroy
-			modified by Steve Wilhite, George Jones
-			greatly modified by Daniel Lawrence
+                        written by Dave G. Conroy
+                        modified by Steve Wilhite, George Jones
+                        substantially modified by Daniel Lawrence
 */
 
 #ifdef	LATTICE
@@ -21,6 +21,9 @@
 #ifdef	EGA
 #undef	EGA
 #endif
+#ifdef	CTRLZ
+#undef	CTRLZ
+#endif
 
 /*	Program Identification.....
 
@@ -31,25 +34,27 @@
 */
 
 #define	PROGNAME	"MicroEMACS"
-#define	VERSION		"3.8i"
+#define	VERSION		"3.9e"
 
 /*	Machine/OS definitions			*/
 
 #define AMIGA   0                       /* AmigaDOS			*/
 #define ST520   0                       /* ST520, TOS                   */
-#define MSDOS   0                       /* MS-DOS                       */
+#define MSDOS   1                       /* MS-DOS                       */
 #define V7      0                       /* V7 UNIX or Coherent or BSD4.2*/
 #define	BSD	0			/* UNIX BSD 4.2	and ULTRIX	*/
-#define	USG	1			/* UNIX system V		*/
+#define	USG	0			/* UNIX system V		*/
 #define VMS     0                       /* VAX/VMS                      */
 #define CPM     0                       /* CP/M-86                      */
 #define	FINDER	0			/* Macintosh OS			*/
 
 /*	Compiler definitions			*/
-#define MWC86   0	/* marc williams compiler */
+#define	UNIX	0	/* a random UNIX compiler */
+#define MWC	0	/* Marc Williams C */
 #define	LATTICE	0	/* Lattice 2.14 thruough 3.0 compilers */
-#define	AZTEC	0	/* Aztec C 3.20e */
+#define	AZTEC	1	/* Aztec C 3.20e */
 #define	MSC	0	/* MicroSoft C compile version 3 & 4 */
+#define	TURBO	0	/* Turbo C/MSDOS */
 
 /*	Debugging options	*/
 #define	RAMSIZE	0	/* dynamic RAM memory usage tracking */
@@ -58,7 +63,8 @@
 /*   Special keyboard definitions            */
 
 #define WANGPC	0		/* WangPC - mostly escape sequences     */
- 
+#define VT100   0               /* Handle VT100 style keypad.   */
+
 /*	Terminal Output definitions		*/
 
 #define ANSI    0			/* ANSI escape sequences	*/
@@ -66,10 +72,9 @@
 #define	HP110	0			/* HP110 screen driver		*/
 #define	VMSVT	0			/* various VMS terminal entries	*/
 #define VT52    0                       /* VT52 terminal (Zenith).      */
-#define VT100   0                       /* Handle VT100 style keypad.   */
 #define RAINBOW 0                       /* Use Rainbow fast video.      */
-#define TERMCAP 1                       /* Use TERMCAP                  */
-#define	IBMPC	0			/* IBM-PC CGA/MONO/EGA driver	*/
+#define TERMCAP 0                       /* Use TERMCAP                  */
+#define	IBMPC	1			/* IBM-PC CGA/MONO/EGA driver	*/
 #define	DG10	0			/* Data General system/10	*/
 #define	TIPC	0			/* TI Profesional PC driver	*/
 #define	Z309	0			/* Zenith 100 PC family	driver	*/
@@ -79,14 +84,14 @@
 /*	Configuration options	*/
 
 #define CVMVAS  1	/* arguments to page forward/back in pages	*/
-#define	NFWORD	1	/* forward word jumps to beginning of word	*/
 #define	CLRMSG	0	/* space clears the message line with no insert	*/
-#define	ACMODE	0	/* auto CMODE on .C and .H files		*/
 #define	CFENCE	1	/* fench matching in CMODE			*/
 #define	TYPEAH	1	/* type ahead causes update to be skipped	*/
 #define DEBUGM	1	/* $debug triggers macro debugging		*/
 #define	VISMAC	0	/* update display during keyboard macros	*/
 #define	CTRLZ	0	/* add a ^Z at end of files under MSDOS only	*/
+#define ADDCR	0	/* ajout d'un CR en fin de chaque ligne (ST520) */
+#define	NBRACE	1	/* new style brace matching command		*/
 
 #define	REVSTA	1	/* Status line appears in reverse video		*/
 #define	COLOR	1	/* color commands and windows			*/
@@ -98,44 +103,68 @@
 #define	APROP	1	/* Add code for Apropos command			*/
 #define	CRYPT	1	/* file encryption enabled?			*/
 #define MAGIC	1	/* include regular expression matching?		*/
-#define	AEDIT	1	/* advanced editing options:
-			   en/detabbing, rectangular regions [later]	*/
+#define	AEDIT	1	/* advanced editing options: en/detabbing	*/
 #define	PROC	1	/* named procedures				*/
+#define	CLEAN	0	/* de-alloc memory on exit			*/
+#define	CALLED	0	/* is emacs a called subroutine? or stand alone */
 
 #define ASCII	1	/* always using ASCII char sequences for now	*/
 #define EBCDIC	0	/* later IBM mainfraim versions will use EBCDIC	*/
 
 /*	System dependant library redefinitions, structures and includes	*/
 
+#if	TURBO
+#include      <dos.h>
+#include      <mem.h>
+#undef peek
+#undef poke
+#define       peek(a,b,c,d)   movedata(a,b,FP_SEG(c),FP_OFF(c),d)
+#define       poke(a,b,c,d)   movedata(FP_SEG(c),FP_OFF(c),a,b,d)
+#endif
+
+#if	VMS
+#define	atoi	xatoi
+#define	abs	xabs
+#define	getname	xgetname
+#endif
+
+#if	LATTICE
+#define	unsigned
+#endif
+
 #if	AZTEC
 #undef	fputc
 #undef	fgetc
 #if	MSDOS
 #define	fgetc	a1getc
-#else
-#define	fgetc	agetc
-#endif
-#define	fputc	aputc
 #define	int86	sysint
 #define	intdos(a, b)	sysint(33, a, b)
 #define	inp	inportb
 #define	outp	outportb
+#else
+#define	fgetc	agetc
+#endif
+#define	fputc	aputc
 
 struct XREG {
-	int ax,bx,cx,dx,si,di;
+	unsigned ax,bx,cx,dx,si,di,ds,es;
 };
 
 struct HREG {
-	char al,ah,bl,bh,cl,ch,dl,dh;
+	char al,ah,bl,bh,cl,ch,dl,dh,d1,d2,e1,e2;
 };
 
 union REGS {
 	struct XREG x;
 	struct HREG h;
 };
+
+struct SREGS {
+	unsigned cs, ss, ds, es;
+};
 #endif
 
-#if	MSDOS & MWC86
+#if	MSDOS & MWC
 #include	<dos.h>
 #define	int86(a, b, c)	intcall(b, c, a)
 #define	inp	in
@@ -174,19 +203,23 @@ union REGS {
 #define	unlink(a)	delete(a)
 #endif
 
-/*	define memory mapped flag	*/
+/*	define some ability flags */
 
+#if	IBMPC | Z309
+#define	MEMMAP	1
+#else
 #define	MEMMAP	0
-
-#if	IBMPC
-#undef	MEMMAP
-#define	MEMMAP	1
 #endif
 
-#if	Z309
-#undef	MEMMAP
-#define	MEMMAP	1
+#if	MSDOS | V7 | USG | BSD | (ST520 & MWC)
+#define	ENVFUNC	1
+#else
+#define	ENVFUNC	0
 #endif
+
+/*	Emacs global flag bit definitions (for gflags)	*/
+
+#define	GFREAD	1
 
 /*	internal constants	*/
 
@@ -209,16 +242,36 @@ union REGS {
 #define CTLX    0x0400                  /* ^X flag, or'ed in            */
 #define	SPEC	0x0800			/* special key (function keys)	*/
 
+#ifdef	FALSE
+#undef	FALSE
+#endif
+#ifdef	TRUE
+#undef	TRUE
+#endif
+
 #define FALSE   0                       /* False, no, bad, etc.         */
 #define TRUE    1                       /* True, yes, good, etc.        */
 #define ABORT   2                       /* Death, ^G, abort, etc.       */
 #define	FAILED	3			/* not-quite fatal false return	*/
-#define	RET	4			/* a return from buffer		*/
-#define	GOLINE	5			/* exit flagging a GOTO		*/
 
 #define	STOP	0			/* keyboard macro not in use	*/
 #define	PLAY	1			/*		  playing	*/
 #define	RECORD	2			/*		  recording	*/
+
+/*	Directive definitions	*/
+
+#define	DIF		0
+#define DELSE		1
+#define DENDIF		2
+#define DGOTO		3
+#define DRETURN		4
+#define DENDM		5
+#define DWHILE		6
+#define	DENDWHILE	7
+#define	DBREAK		8
+#define DFORCE		9
+
+#define NUMDIRS		10
 
 /*
  * PTBEG, PTEND, FORWARD, and REVERSE are all toggle-able values for
@@ -233,7 +286,7 @@ union REGS {
 #define FIOFNF  1                       /* File I/O, file not found.    */
 #define FIOEOF  2                       /* File I/O, end of file.       */
 #define FIOERR  3                       /* File I/O, error.             */
-#define	FIOLNG	4			/* line longer than allowed len	*/
+#define	FIOMEM	4			/* File I/O, out of memory	*/
 #define	FIOFUN	5			/* File I/O, eod of file/bad line*/
 
 #define CFCPCN  0x0001                  /* Last command was C-P, C-N    */
@@ -267,7 +320,7 @@ union REGS {
 /*	Internal defined functions					*/
 
 #define	nextab(a)	(a & ~7) + 8
-#ifdef abs
+#ifdef	abs
 #undef	abs
 #endif
 
@@ -300,6 +353,14 @@ union REGS {
 #if	RAMSIZE
 #define	malloc	allocate
 #define	free	release
+#endif
+
+/*	De-allocate memory always on exit (if the operating system or
+	main program can not
+*/
+
+#if	CLEAN
+#define	exit(a)	cexit(a)
 #endif
 
 /*
@@ -367,6 +428,7 @@ typedef struct  BUFFER {
 
 #define BFINVS  0x01                    /* Internal invisable buffer    */
 #define BFCHG   0x02                    /* Changed since last write     */
+#define	BFTRUNC	0x04			/* buffer was truncated when read */
 
 /*	mode flags	*/
 #define	NUMMODES	9		/* # of defined modes		*/
@@ -488,12 +550,40 @@ typedef struct {
 	kill buffer is logically a stream of ascii characters, however
 	due to its unpredicatable size, it gets implemented as a linked
 	list of chunks. (The d_ prefix is for "deleted" text, as k_
-	was taken up by the keycode structure)			*/
+	was taken up by the keycode structure)
+*/
 
 typedef	struct KILL {
 	struct KILL *d_next;	/* link to next chunk, NULL if last */
 	char d_chunk[KBLOCK];	/* deleted text */
 } KILL;
+
+/*	When emacs' command interpetor needs to get a variable's name,
+	rather than it's value, it is passed back as a VDESC variable
+	description structure. The v_num field is a index into the
+	appropriate variable table.
+*/
+
+typedef struct VDESC {
+	int v_type;	/* type of variable */
+	int v_num;	/* ordinal pointer to variable in list */
+} VDESC;
+
+/*	The !WHILE directive in the execution language needs to
+	stack references to pending whiles. These are stored linked
+	to each currently open procedure via a linked list of
+	the following structure
+*/
+
+typedef struct WHBLOCK {
+	LINE *w_begin;		/* ptr to !while statement */
+	LINE *w_end;		/* ptr to the !endwhile statement*/
+	int w_type;		/* block type */
+	struct WHBLOCK *w_next;	/* next while */
+} WHBLOCK;
+
+#define	BTWHILE		1
+#define	BTBREAK		2
 
 /*
  * Incremental search defines.
@@ -519,19 +609,18 @@ typedef	struct KILL {
 #endif
 
 #if	MAGIC
-
 /*
- * Defines for the metacharacters in the regular expressions in search
- * routines.
+ * Defines for the metacharacters in the regular expression
+ * search routines.
  */
-
 #define	MCNIL		0	/* Like the '\0' for strings.*/
-#define	LITCHAR		1
+#define	LITCHAR		1	/* Literal character, or string.*/
 #define	ANY		2
 #define	CCL		3
 #define	NCCL		4
 #define	BOL		5
 #define	EOL		6
+#define	DITTO		7
 #define	CLOSURE		256	/* An or-able value.*/
 #define	MASKCL		CLOSURE - 1
 
@@ -543,7 +632,7 @@ typedef	struct KILL {
 #define	MC_BOL		'^'	/* Beginning of line.*/
 #define	MC_EOL		'$'	/* End of line.*/
 #define	MC_CLOSURE	'*'	/* Closure - does not extend past newline.*/
-
+#define	MC_DITTO	'&'	/* Use matched string in replacement.*/
 #define	MC_ESC		'\\'	/* Escape - suppress meta-meaning.*/
 
 #define	BIT(n)		(1 << (n))	/* An integer with one bit set.*/
@@ -552,10 +641,13 @@ typedef	struct KILL {
 /* HICHAR - 1 is the largest character we will deal with.
  * HIBYTE represents the number of bytes in the bitmap.
  */
-
 #define	HICHAR		256
 #define	HIBYTE		HICHAR >> 3
 
+/* Typedefs that define the bitmap type for searching (BITMAP),
+ * the meta-character structure for MAGIC mode searching (MC),
+ * and the meta-character structure for MAGIC mode replacment (RMC).
+ */
 typedef char	*BITMAP;
 
 typedef	struct {
@@ -565,5 +657,10 @@ typedef	struct {
 		BITMAP	cclmap;
 	} u;
 } MC;
+
+typedef	struct {
+	short int	mc_type;
+	char	*rstr;
+} RMC;
 #endif
 

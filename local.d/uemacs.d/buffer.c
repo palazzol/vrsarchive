@@ -269,13 +269,14 @@ int iflag;	/* list hidden buffer flag */
         if ((s=bclear(blistp)) != TRUE)         /* Blow old text away   */
                 return (s);
         strcpy(blistp->b_fname, "");
-        if (addline("AC MODES        Size Buffer        File") == FALSE
-        ||  addline("-- -----        ---- ------        ----") == FALSE)
+        if (addline("ACT MODES        Size Buffer        File") == FALSE
+        ||  addline("--- -----        ---- ------        ----") == FALSE)
                 return (FALSE);
         bp = bheadp;                            /* For all buffers      */
 
 	/* build line to report global mode settings */
 	cp1 = &line[0];
+	*cp1++ = ' ';
 	*cp1++ = ' ';
 	*cp1++ = ' ';
 	*cp1++ = ' ';
@@ -310,7 +311,14 @@ int iflag;	/* list hidden buffer flag */
                         *cp1++ = '*';
                 else
                         *cp1++ = ' ';
-                *cp1++ = ' ';                   /* Gap.                 */
+
+		/* report if the file is truncated */
+                if ((bp->b_flag&BFTRUNC) != 0)
+                        *cp1++ = '#';
+                else
+                        *cp1++ = ' ';
+
+                *cp1++ = ' ';	/* space */
 
 		/* output the mode codes */
 		for (i = 0; i < NUMMODES; i++) {
@@ -336,7 +344,7 @@ int iflag;	/* list hidden buffer flag */
                         *cp1++ = c;
                 cp2 = &bp->b_fname[0];          /* File name            */
                 if (*cp2 != 0) {
-                        while (cp1 < &line[2+1+5+1+6+1+NBUFN])
+                        while (cp1 < &line[3+1+5+1+6+4+NBUFN])
                                 *cp1++ = ' ';
                         while ((c = *cp2++) != 0) {
                                 if (cp1 < &line[128-1])

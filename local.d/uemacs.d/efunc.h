@@ -198,6 +198,9 @@ extern	int	entab();		/* entab rest of line */
 extern	int	storeproc();		/* store names procedure */
 extern	int	execproc();		/* execute procedure */
 #endif
+extern	int	nullproc();		/* does nothing... */
+extern	int	ovstring();		/* overwrite a string */
+extern	int	execprg();		/* execute a program */
 
 /*	Name to function binding table
 
@@ -304,6 +307,7 @@ NBIND	names[] = {
 #if	PROC
 	{"execute-procedure",		execproc},
 #endif
+	{"execute-program",		execprg},
 	{"exit-emacs",			quit},
 #if	WORDPRO
 	{"fill-paragraph",		fillpara},
@@ -350,7 +354,9 @@ NBIND	names[] = {
 #endif
 	{"next-window",			nextwind},
 	{"next-word",			forwword},
+	{"nop",				nullproc},
 	{"open-line",			openline},
+	{"overwrite-string",		ovstring},
 	{"pipe-command",		pipecmd},
 	{"previous-line",		backline},
 	{"previous-page",		backpage},

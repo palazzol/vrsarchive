@@ -63,6 +63,7 @@ KEYTAB  keytab[NBINDS] = {
 	{CTLX|'!',		spawn},
 	{CTLX|'@',		pipecmd},
 	{CTLX|'#',		filter},
+	{CTLX|'$',		execprg},
 	{CTLX|'=',		showcpos},
 	{CTLX|'(',		ctlxlp},
 	{CTLX|')',		ctlxrp},
@@ -334,7 +335,8 @@ KEYTAB  keytab[NBINDS] = {
 
 	/* special internal bindings */
 	SPEC|META|'W',		wrapword,	/* called on word wrap */
-
+	SPEC|META|'C',		nullproc,	/*  every command input */
+	SPEC|META|'R',		nullproc,	/*  on file read */
 	{0,			NULL}
 };
 

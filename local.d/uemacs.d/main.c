@@ -1,11 +1,11 @@
 /*
- *	MicroEMACS 3.8
+ *	MicroEMACS 3.9
  * 			written by Dave G. Conroy.
- *			greatly modified by Daniel M. Lawrence
+ *			substatially modified by Daniel M. Lawrence
  *
  *	(C)opyright 1987 by Daniel M. Lawrence
- *	MicroEMACS 3.8 can be copied and distributed freely for any
- *	non-commercial purposes. MicroEMACS 3.8 can only be incorporated
+ *	MicroEMACS 3.9 can be copied and distributed freely for any
+ *	non-commercial purposes. MicroEMACS 3.9 can only be incorporated
  *	into commercial software with the permission of the current author.
  *
  * This file contains the main driving routine, and some keyboard processing
@@ -644,6 +644,7 @@
  *	  one strcpy() before stomping on the returned value. ALWAYS call
  *	  getval() ONLY from within a strcpy() call.
  *	- made $curcol return a 1 based value instead of a zero based one.
+ *	  [changed this back later for 3.8o   it was simply wrong.....]
  *	16-apr-87
  *	- re-wrote strncpy() for AZTEC & MSDOS so it null terminates the
  *	  string.
@@ -651,26 +652,208 @@
  *	  UNIX systems
  *	24-apr-87
  *	- changed open parameters on AMIGA window open to 0/0/640/200
+ *	[Froze and released v3.8i via BBS net]
+ *	14-may-87
+ *	- added nop (M-FNC) that gets called on every command loop
+ *	- added $wline, returns and sets # lines in current window
+ *	- added $cwline, returns and set current line within window
+ *	- added $target, returns/sets target for line moves
+ *	- added $search, returns/sets default search string
+ *	- added $replace, returns/sets default replace string
+ *	- added $match, returns last matched string in magic search
+ *	29-may-87
+ *	- rewrote word deletes to not kill trailing non-whitespace after
+ *	  the last word. Also a zero argument will cause it to just delete
+ *	  the word and nothing else.
+ *	- more fixes for the search pattern environment variables
+ *	30-may-87
+ *	- forced all windows to redraw on a width change
+ *	2-jun-87
+ *	- forced clear-message-line to overide $discmd
+ *	- added mlforce() routine and call it in clear-message-line,
+ *	  write-message and when $debug is TRUE
+ *	- recoded the startup sequence in main()....Much Better...
+ *	4-jun-87
+ *	- forced interactive arguments ( @"question" ) to ALWAYS be echoed
+ *	  regardless of the setting of $discmd.
+ *	7-jun-87
+ *	- started adding support for Turbo C under MSDOS
+ *	11-jun-87
+ *	- words now include ONLY upper/lower case alphas and digits
+ *	- fixed some more bugs with the startup..(ORed in the global modes)
+ *	- took more limits off the self-insert list....
+ *	16-jun-87
+ *	- macro debugging now displays the name of the current macro.
+ *	- fixed a problem in expandp() in search.c that kept high-byte
+ *	  characters from working in search strings
+ *	18-jun-87
+ *	- added &sindex <str1> <str2> function which searches for string 2
+ *	  within string 1
+ *	[released verion 3.8o internally]
+ *	19-jun-87
+ *	- added $cmode and $gmode to return and set the mode of the
+ *	  current buffer and the global mode
+ *	- separated findvar() out from setvar() so it could be used in
+ *	  the !LOOP directive (which got canned....read on)
+ *	- %No such variable message now types the name of the offending
+ *	  variable
+ *	22-jun-87
+ *	- fixed startup bug when editing the startup file
+ *	- added the !LOOP <var> <label> directive
+ *	26-jun-87
+ *	- dumped !LOOP......added !WHILE. This needed and caused a vaste
+ *	  reorginization in exec.c which mainly involved moving all the
+ *	  directive handling from docmd() to dobuf(), in the process
+ *	  getting rid of a lot of junk and making the result smaller
+ *	  than it started.....(yea!)
+ *	- added $tpause to control the fence flashing time in CMODE.
+ *	  The value is machine dependant, but you can multiply the
+ *	  original in macros to stay machine independant. (as
+ *	  suggested by Baron O.A. Grey)
+ *	- added hook to execute M-FNR (null) during a file read, after
+ *	  the name is set and right before the file is read. Took out
+ *	  any auto-CMODE code, as this is now handled with a macro.
+ *	  (also suggested by Baron O.A. Grey)
+ *	- Added Baron O.A. Grey's SYSTEM V typeahead() code...I hope
+ *	  this works....if you check this out, drop me a line.
+ *	- Added new variable $pending, returns a logical telling if
+ *	  a typed ahead character is pending.
+ *	29-jun-87
+ *	- Made adjustmode() use curbp-> instead of curwp->w_bufp-> which
+ *	  fixed some bugs in the startup routines.
+ *	- added $lwidth to return the length of the current line
+ *	2-jul-87
+ *	- Added &env <str> which returns the value of the environment
+ *	  variable <str> where possible
+ *	- Fixed a NASTY bug in execbuf()..the buffer for the name
+ *	  of the buffer to execute was NBUFN long, and got overflowed
+ *	  with a long interactive argument.
+ *	3-jul-87
+ *	- Moved the loop to match a key against its binding out of execute()
+ *	  to getbind() so it could be used later elsewhere.
+ *	- Added &bind <keyname> which returns the function bound to the
+ *	  named key
+ *	- changed execute-file to look in the executable path first...
+ *	6-jul-87
+ *	- changed $curchar to return a newline at the end of a line and
+ *	  it no longer advances the cursor
+ *	- a lot of minor changes sent by various people....
+ *	7-jul-87
+ *	- some amiga specific fixes as suggested by Kenn Barry
+ *	- added $line [read/write] that contains the current line in the
+ *	  current buffer
+ *	- changed $curcol so setting it beyond the end of the line will
+ *	  move the cursor to the end of the line and then fail.
+ *	10-jul-87
+ *	- added a number of fixes and optimizations along with the rest
+ *	  of the TURBO-C support as submited by John Maline
+ *	13-jun-87
+ *	- caused dobuf() to copy lastflag to thisflag so the first
+ *	  command executed will inherit the lastflag from the command
+ *	  before the execute-buffer command. (needed this for smooth
+ *	  scrolling to work)
+ *	- made flook() look first in the $HOME directory, then in the
+ *	  current directory, then down the $PATH, and then in the
+ *	  list in epath.h
+ *	14-jul-87
+ *	- added some fixes for VMS along with support for the SMG
+ *	  screen package as submited by Curtis Smith
+ *	15-jul-87
+ *	- fixed M-^H (delete-previous-word) so it can delete the first
+ *	  word in a file....I think there may be more of this kind of thing
+ *	  to fix.
+ *	16-jul-87
+ *	- added code to allow arbitrary sized lines to be read from files..
+ *	  speed up file reading in the process.
+ *	- made out of memory conditions safer.. especial on file reads
+ *	- fixed a bug in bind having to do with uppercasing function
+ *	  key names (submitted by Jari Salminen)
+ *	- made ST520 exit in the same resolution that EMACS was started in
+ *	  (for the 1040ST)
+ *	[FROZE development and released version 3.9 to USENET]
+ *	{It never made it.....got killed by comp.unix.sources}
+ *	15-sep-87
+ *	- added support for Mark Williams C on the Atari ST
+ *	- made the MALLOC debugging package only conditional on RAMSIZE
+ *	- added code for flagging truncated buffers
+ *	23-sep-87
+ *	- fixed &RIGHT to return the <arg2> rightmost characters
+ *	- fixed a buffer in getval() to be static....things are stabler
+ *	  now.
+ *	- moved all the stack size declarations to after include "estruct.h"
+ *	  they work a lot better now....... (rather than not at all)
+ *	- made Atari ST spawns all work with MWshell
+ *	- fixed spawning on the 1040ST under MWC
+ *	27-sep-87
+ *	- added &exist function to check to see if a named file exist
+ *	- added &find function to find a file along the PATH
+ *	- added -A switch to run "error.cmd" from command line
+ *	- added $gflags to control startup behavior....
+ *	03-oct-87
+ *	- changed ":c\" to "c:" in epath.h for the AMIGA as suggested
+ *	  by Tom Edds
+ *	- added binary and, or, and xor functions as submited by John Maline
+ *	  (&band   &bor    and  &bxor)
+ *	- added binary not (&bnot) function
+ *	- added fixes for gotoline() and nextarg() as submited by David
+ *	  Dermott
+ *	- fixed return value of $curwidth as submitted by David Dermott
+ *	- fixed several calls to ldelete() to have a long first argument
+ *	  (pointed out by David Dermott)
+ *	- Fixed a bug in stock() which prevented uppercase FN bindings as
+ *	  pointed out by many people
+ *	- changed dofile() to make sure all executed files don't conflict
+ *	  with existing buffer names. Took out cludged code in main.c to
+ *	  handle this problem... this solution is better (suggested by
+ *	  Don Nash)
+ *	05-oct-87
+ *	- added in John Gamble's code to allow for a replacement regular
+ *	  expresion character in MAGIC mode
+ *	[note: under MSDOS  we are still TOO BIG!!!!]
+ *	- added overwrite-string as a new user callable function, and
+ *	  lowrite(c) as an internal function for overwriting characters
+ *	- added &xlate function to translate strings according to a
+ *	  translation table
+ *	10-oct-87
+ *	- added code to allow emacs to clean its own buffers on exit.
+ *	  useful if emacs is used as a subprogram. Conditional on
+ *	  the CLEAN definition in estruct.h
+ *	14-oct-87
+ *	- swallowed very hard and switched to LARGE code/LARGE data model
+ *	- packaged and released version 3.9c internally
+ *	  (MSDOS executables compiled with TURBO C Large model) 
+ *	16-oct-87
+ *	- temporary fix for FUNCTION keys now includes the Meta-O sequence
+ *	  if VT100 is definined (submited by Jeff Lomicka)
+ *	- an VT100 also triggers input.c to force ESC to always
+ *	  be interpeted as META as well as the currently bound key
+ *	- fixed a bug in the VMSVT driver as pointed out by Dave Dermott
+ *	- added a size parameter to token() to eliminate problems with
+ *	  long variable names. (as sugested by Ray Wallace)
+ *	18-oct-87
+ *	- fixed a bug in the free ram code that did not clear the buffer
+ *	  flag causing emacs to ask for more confirnmations on the way out.
+ *	19-oct-87
+ *	- added ^X-$ execute-program call to directly execute a program
+ *	  without going through a shell... not all environments have this
+ *	  code completed yet (uses shell-command where not)
+ *	[Froze for 3.9d release internally]
+ *	28-oct-87
+ *	- added code for Atari ST DENSE mode and new bell as submited
+ *	  by J. C. Benoist
+ *	- made extra CR for ST files conditional on ADDCR. This is only
+ *	  needed to make the desktop happy...and is painful for porting
+ *	  files (with 2 CR's) elsewhere (Also from J. C. Benoist)
+ *	- added optional more intellegent (and larger) close brace
+ *	  insertion code (also from J. C. Benoist)
+ *	4-nov-87
+ *	- fixed AZTEC spawning... all MSDOS spawns should work now
+ *	- a META key while debugging will turn $debug to false
+ *	  and continue execution.
+ *	[Froze for version 3.9e USENET release]
  */
 
 #include        <stdio.h>
-
-/* for MSDOS, increase the default stack space */
-
-#if	MSDOS & LATTICE
-unsigned _stack = 32767;
-#endif
-
-#if	ATARI & LATTICE
-int _mneed = 256000;		/* reset memory pool size */
-#endif
-
-#if	MSDOS & AZTEC
-int _STKSIZ = 32767/16;		/* stack size in paragraphs */
-int _STKRED = 1024;		/* stack checking limit */
-int _HEAPSIZ = 4096/16;		/* (in paragraphs) */
-int _STKLOW = 0;		/* default is stack above heap (small only) */
-#endif
 
 /* make global definitions not external */
 #define	maindef
@@ -679,6 +862,27 @@ int _STKLOW = 0;		/* default is stack above heap (small only) */
 #include	"efunc.h"	/* function declarations and name table	*/
 #include	"edef.h"	/* global definitions */
 #include	"ebind.h"	/* default key bindings */
+
+/* for MSDOS, increase the default stack space */
+
+#if	MSDOS & LATTICE
+unsigned _stack = 32766;
+#endif
+
+#if	ATARI & MWC
+long _stksize = 32766L;		/* reset stack size (must be even) */
+#endif
+
+#if	MSDOS & AZTEC
+int _STKSIZ = 32766/16;		/* stack size in paragraphs */
+int _STKRED = 1024;		/* stack checking limit */
+int _HEAPSIZ = 4096/16;		/* (in paragraphs) */
+int _STKLOW = 0;		/* default is stack above heap (small only) */
+#endif
+
+#if	MSDOS & TURBO
+extern unsigned _stklen = 32766;
+#endif
 
 #if     VMS
 #include        <ssdef.h>
@@ -689,154 +893,163 @@ int _STKLOW = 0;		/* default is stack above heap (small only) */
 #define GOOD    0
 #endif
 
+#if	CALLED
+emacs(argc, argv)
+#else
 main(argc, argv)
-char    *argv[];
+#endif
+int argc;	/* # of arguments */
+char *argv[];	/* argument strings */
+
 {
-        register int    c;
-        register int    f;
-        register int    n;
-        register int    mflag;
-	register BUFFER *bp;
-	register int	ffile;		/* first file flag */
+        register int    c;		/* command character */
+        register int    f;		/* default flag */
+        register int    n;		/* numeric repeat count */
+        register int    mflag;		/* negative flag on repeat */
+	register BUFFER *bp;		/* temp buffer pointer */
+	register int	firstfile;	/* first file flag */
 	register int	carg;		/* current arg to scan */
-	register int	startf;		/* startup executed flag */
+	register int	startflag;	/* startup executed flag */
+	BUFFER *firstbp = NULL;		/* ptr to first buffer in cmd line */
 	int basec;			/* c stripped of meta character */
 	int viewflag;			/* are we starting in view mode? */
         int gotoflag;                   /* do we need to goto a line at start? */
         int gline;                      /* if so, what line? */
         int searchflag;                 /* Do we need to search at start? */
+	int saveflag;			/* temp store for lastflag */
+	int errflag;			/* C error processing? */
         char bname[NBUFN];		/* buffer name of file to read */
 #if	CRYPT
-	int eflag;			/* encrypting on the way in? */
+	int cryptflag;			/* encrypting on the way in? */
 	char ekey[NPAT];		/* startup encryption key */
 #endif
 	char *strncpy();
+	extern *pathname[];		/* startup file path/name array */
 
-	/* initialize the editor and process the command line arguments */
-        strcpy(bname, "main");	/* default buffer name */
-        vtinit();		/* Displays.            */
-        edinit(bname);		/* Buffers, windows.    */
+	/* initialize the editor */
+        vtinit();		/* Display */
+        edinit("main");		/* Buffers, windows */
 	varinit();		/* user variables */
+
 	viewflag = FALSE;	/* view mode defaults off in command line */
 	gotoflag = FALSE;	/* set to off to begin with */
 	searchflag = FALSE;	/* set to off to begin with */
-	ffile = TRUE;		/* no file to edit yet */
-	startf = FALSE;		/* startup file not executed yet */
+	firstfile = TRUE;	/* no file to edit yet */
+	startflag = FALSE;	/* startup file not executed yet */
+	errflag = FALSE;	/* not doing C error parsing */
 #if	CRYPT
-	eflag = FALSE;		/* no encryption by default */
+	cryptflag = FALSE;	/* no encryption by default */
 #endif
-#if	COLOR
-	curwp->w_fcolor = gfcolor;		/* and set colors	*/
-	curwp->w_bcolor = gbcolor;
+#if	CALLED
+	eexitflag = FALSE;	/* not time to exit yet */
 #endif
 
-	/* scan through the command line and get the files to edit */
+	/* Parse the command line */
 	for (carg = 1; carg < argc; ++carg) {
-		/* if its a switch, process it */
+
+		/* Process Switches */
 		if (argv[carg][0] == '-') {
 			switch (argv[carg][1]) {
-				case 'v':	/* -v for View File */
-				case 'V':
-					viewflag = TRUE;
+				/* Process Startup macroes */
+				case 'a':	/* process error file */
+				case 'A':
+					errflag = TRUE;
 					break;
 				case 'e':	/* -e for Edit file */
 				case 'E':
 					viewflag = FALSE;
-					break;
-				case 's':	/* -s for initial search string */
-				case 'S':
-					searchflag = TRUE;
-					strncpy(pat,&argv[carg][2],NPAT);
 					break;
 				case 'g':	/* -g for initial goto */
 				case 'G':
 					gotoflag = TRUE;
 					gline = atoi(&argv[carg][2]);
 					break;
+#if	CRYPT
+				case 'k':	/* -k<key> for code key */
+				case 'K':
+					cryptflag = TRUE;
+					strcpy(ekey, &argv[carg][2]);
+					break;
+#endif
 				case 'r':	/* -r restrictive use */
 				case 'R':
 					restflag = TRUE;
 					break;
-#if	CRYPT
-				case 'k':	/* -k<key> for code key */
-				case 'K':
-					eflag = TRUE;
-					strcpy(ekey, &argv[carg][2]);
+				case 's':	/* -s for initial search string */
+				case 'S':
+					searchflag = TRUE;
+					strncpy(pat,&argv[carg][2],NPAT);
 					break;
-#endif
+				case 'v':	/* -v for View File */
+				case 'V':
+					viewflag = TRUE;
+					break;
 				default:	/* unknown switch */
 					/* ignore this for now */
 					break;
 			}
-		} else 	/* check for a macro file */
-			if (argv[carg][0]== '@') {
 
+		} else if (argv[carg][0]== '@') {
+
+			/* Process Startup macroes */
 			if (startup(&argv[carg][1]) == TRUE)
-				startf = TRUE;	/* don't execute emacs.rc */
+				/* don't execute emacs.rc */
+				startflag = TRUE;
 
-		} else {	/* process a file name */
-			/* if we haven't run emacs.rc, do it now */
-			if (startf == FALSE) {
-				startup("");
-				startf = TRUE;
-#if	COLOR
-				curwp->w_fcolor = gfcolor;
-				curwp->w_bcolor = gbcolor;
-#endif
-			}
+		} else {
+
+			/* Process an input file */
 
 			/* set up a buffer for this file */
 	                makename(bname, argv[carg]);
 			unqname(bname);
 
-#if	CRYPT
-			/* set up for de-cryption if needed */
-			if (eflag) {
-				curbp->b_mode |= MDCRYPT;
-				strncpy(curbp->b_key, ekey, NPAT);
-				crypt((char *)NULL, 0);
-				crypt(curbp->b_key, strlen(curbp->b_key));
-			}
-#endif
-
-			/* if this is the first file, read it in */
-			if (ffile) {
-				bp = curbp;
-				strcpy(bp->b_bname, bname);
-				strcpy(bp->b_fname, argv[carg]);
-				if (readin(argv[carg], (viewflag==FALSE))
-								== ABORT) {
-					strcpy(bp->b_bname, "main");
-					strcpy(bp->b_fname, "");
-				}
-				bp->b_dotp = bp->b_linep;
-				bp->b_doto = 0;
-				ffile = FALSE;
-			} else {
-				/* set this to inactive */
-				bp = bfind(bname, TRUE, 0);
-				strcpy(bp->b_fname, argv[carg]);
-				bp->b_active = FALSE;
+			/* set this to inactive */
+			bp = bfind(bname, TRUE, 0);
+			strcpy(bp->b_fname, argv[carg]);
+			bp->b_active = FALSE;
+			if (firstfile) {
+				firstbp = bp;
+				firstfile = FALSE;
 			}
 
-			/* set the view mode appropriatly */
+			/* set the modes appropriatly */
 			if (viewflag)
 				bp->b_mode |= MDVIEW;
+#if	CRYPT
+			if (cryptflag) {
+				bp->b_mode |= MDCRYPT;
+				crypt((char *)NULL, 0);
+				crypt(ekey, strlen(ekey));
+				strncpy(bp->b_key, ekey, NPAT);
+			}
+#endif
 		}
 	}
 
-	/* if invoked with nothing, run the startup file here */
-	if (startf == FALSE) {
-		startup("");
-		startf = TRUE;
-#if	COLOR
-		curwp->w_fcolor = gfcolor;
-		curwp->w_bcolor = gbcolor;
-#endif
+	/* if we are C error parsing... run it! */
+	if (errflag) {
+		if (startup("error.cmd") == TRUE)
+			startflag = TRUE;
 	}
 
-        /* Deal with startup gotos and searches */
+	/* if invoked with no other startup files,
+	   run the system startup file here */
+	if (startflag == FALSE) {
+		startup("");
+		startflag = TRUE;
+	}
 
+	/* if there are any files to read, read the first one! */
+	bp = bfind("main", FALSE, 0);
+	if (firstfile == FALSE && (gflags & GFREAD)) {
+		swbuffer(firstbp);
+		curbp->b_mode |= gmode;
+		zotbuf(bp);
+	} else
+		bp->b_mode |= gmode;
+
+        /* Deal with startup gotos and searches */
         if (gotoflag && searchflag) {
         	update(FALSE);
 		mlwrite("[Can not search and goto at the same time!]");
@@ -853,12 +1066,27 @@ char    *argv[];
 
 	/* setup to process commands */
         lastflag = 0;                           /* Fake last flags.     */
-	curbp->b_mode |= gmode;			/* and set default modes*/
-	curwp->w_flag |= WFMODE;		/* and force an update	*/
 
 loop:
-        update(FALSE);                          /* Fix up the screen    */
-        c = getcmd();
+
+#if	CALLED
+	/* if we were called as a subroutine and want to leave, do so */
+	if (eexitflag)
+		return(eexitval);
+#endif 
+
+	/* execute the "command" macro...normally null */
+	saveflag = lastflag;	/* preserve lastflag through this */
+	execute(META|SPEC|'C', FALSE, 1);
+	lastflag = saveflag;
+
+	/* Fix up the screen    */
+        update(FALSE);
+
+	/* get the next command from the keyboard */
+	c = getcmd();
+
+	/* if there is something on the command line, clear it */
         if (mpresf != FALSE) {
                 mlerase();
                 update(FALSE);
@@ -996,18 +1224,17 @@ char    bname[];
  */
 execute(c, f, n)
 {
-        register KEYTAB *ktp;
-        register int    status;
+        register int status;
+	int (*execfunc)();		/* ptr to function to execute */
+	int (*getbind())();
 
-        ktp = &keytab[0];                       /* Look in key table.   */
-        while (ktp->k_fp != NULL) {
-                if (ktp->k_code == c) {
-                        thisflag = 0;
-                        status   = (*ktp->k_fp)(f, n);
-                        lastflag = thisflag;
-                        return (status);
-                }
-                ++ktp;
+	/* if the keystroke is a bound function...do it */
+	execfunc = getbind(c);
+        if (execfunc != NULL) {
+		thisflag = 0;
+		status	 = (*execfunc)(f, n);
+		lastflag = thisflag;
+		return (status);
         }
 
         /*
@@ -1020,12 +1247,7 @@ execute(c, f, n)
 	    (curwp->w_bufp->b_mode & MDVIEW) == FALSE)
 		execute(META|SPEC|'W', FALSE, 1);
 
-        if ((c>=0x20 && c<=0x7E)                /* Self inserting.      */
-#if	IBMPC
-        ||  (c>=0x80 && c<=0xFE)) {
-#else
-        ||  (c>=0xA0 && c<=0xFE)) {
-#endif
+        if ((c>=0x20 && c<=0xFF)) {	/* Self inserting.      */
                 if (n <= 0) {                   /* Fenceposts.          */
                         lastflag = 0;
                         return (n<0 ? FALSE : TRUE);
@@ -1081,16 +1303,22 @@ execute(c, f, n)
 quickexit(f, n)
 {
 	register BUFFER *bp;	/* scanning pointer to buffers */
+        register BUFFER *oldcb; /* original current buffer */
 	register int status;
+
+        oldcb = curbp;                          /* save in case we fail */
 
 	bp = bheadp;
 	while (bp != NULL) {
 	        if ((bp->b_flag&BFCHG) != 0	/* Changed.             */
         	&& (bp->b_flag&BFINVS) == 0) {	/* Real.                */
 			curbp = bp;		/* make that buffer cur	*/
-			mlwrite("[Saving %s]\n",bp->b_fname);
-                	if ((status = filesave(f, n)) != TRUE)
+			mlwrite("[Saving %s]",bp->b_fname);
+			mlwrite("\n");
+                	if ((status = filesave(f, n)) != TRUE) {
+                		curbp = oldcb;	/* restore curbp */
                 		return(status);
+                	}
 		}
 	bp = bp->b_bufp;			/* on to the next buffer */
 	}
@@ -1120,10 +1348,13 @@ quit(f, n)
 		}
 #endif
                 vttidy();
-                exit(GOOD);
+		if (f)
+			exit(n);
+		else
+	                exit(GOOD);
         }
 	mlwrite("");
-        return (s);
+        return(s);
 }
 
 /*
@@ -1212,6 +1443,11 @@ resterr()
 	return(FALSE);
 }
 
+nullproc()	/* user function that does NOTHING */
+
+{
+}
+
 meta()	/* dummy function for binding to meta prefix */
 {
 }
@@ -1241,7 +1477,7 @@ int size;	/* number of bytes to move */
 }
 #endif
 
-#if	AZTEC & MSDOS
+#if	MSDOS | AMIGA | ST520
 /*	strncpy:	copy a string...with length restrictions
 			ALWAYS null terminate
 */
@@ -1263,7 +1499,7 @@ int maxlen;	/* maximum length */
 }
 #endif
 
-#if	RAMSIZE & LATTICE & MSDOS
+#if	RAMSIZE
 /*	These routines will allow me to track memory usage by placing
 	a layer on top of the standard system malloc() and free() calls.
 	with this code defined, the environment variable, $RAM, will
@@ -1303,9 +1539,8 @@ char *mp;	/* chunk of RAM to release */
 	unsigned *lp;	/* ptr to the long containing the block size */
 
 	if (mp) {
-		lp = ((unsigned *)mp) - 1;
-
 		/* update amount of ram currently malloced */
+		lp = ((unsigned *)mp) - 1;
 		envram -= (long)*lp - 2;
 		free(mp);
 #if	RAMSHOW
@@ -1334,4 +1569,55 @@ dspram()	/* display the amount of RAM currently malloced */
 	movecursor(term.t_nrow, 0);
 }
 #endif
+#endif
+
+/*	On some primitave operation systems, and when emacs is used as
+	a subprogram to a larger project, emacs needs to de-alloc its
+	own used memory
+*/
+
+#if	CLEAN
+cexit(status)
+
+int status;	/* return status of emacs */
+
+{
+	register BUFFER *bp;	/* buffer list pointer */
+	register WINDOW *wp;	/* window list pointer */
+	register WINDOW *tp;	/* temporary window pointer */
+
+	/* first clean up the windows */
+	wp = wheadp;
+	while (wp) {
+		tp = wp->w_wndp;
+		free(wp);
+		wp = tp;
+	}
+	wheadp = NULL;
+
+	/* then the buffers */
+	bp = bheadp;
+	while (bp) {
+		bp->b_nwnd = 0;
+		bp->b_flag = 0;	/* don't say anything about a changed buffer! */
+		zotbuf(bp);
+		bp = bheadp;
+	}
+
+	/* and the kill buffer */
+	kdelete();
+
+	/* and the video buffers */
+	vtfree();
+
+	/* and now.. we leave [pick the return if we are a subprogram] */
+#if	CALLED
+	eexitflag = TRUE;	/* flag a program exit */
+	eexitval = status;
+	return(status);
+#else
+#undef	exit
+	exit(status);
+#endif
+}
 #endif

@@ -7,21 +7,16 @@
 #include	"estruct.h"
 #include        "edef.h"
 
-#if	MEGAMAX & ST520
-overlay	"termio"
+#if   MSDOS & TURBO
+#include <conio.h>
 #endif
 
 #if     AMIGA
-#define NEW 1006
+#define NEW 1006L
 #define AMG_MAXBUF      1024L
 static long terminal;
 static char     scrn_tmp[AMG_MAXBUF+1];
 static long     scrn_tmp_p = 0;
-#endif
-
-#if ST520 & MEGAMAX
-#include <osbind.h>
-	int STscancode = 0;	
 #endif
 
 #if     VMS
@@ -50,7 +45,7 @@ short   iochan;                  /* TTY I/O channel             */
 #include        <bdos.h>
 #endif
 
-#if     MSDOS & (LATTICE | MSC | AZTEC | MWC86)
+#if     MSDOS & (LATTICE | MSC | TURBO | AZTEC | MWC86)
 union REGS rg;		/* cpu register for use of DOS calls */
 int nxtchar = -1;	/* character held from type ahead    */
 #endif
@@ -60,12 +55,13 @@ int nxtchar = -1;	/* character held from type ahead    */
 #endif
 
 #if	USG			/* System V */
-#include	<sys/types.h>
 #include	<signal.h>
 #include	<termio.h>
-#ifndef TCGETA
-#include	<sys/ioctl.h>
-#endif
+#include	<fcntl.h>
+int kbdflgs;			/* saved keyboard fd flags	*/
+int kbdpoll;			/* in O_NDELAY mode			*/
+int kbdqp;			/* there is a char in kbdq	*/
+char kbdq;			/* char we've already read	*/
 struct	termio	otermio;	/* original terminal characteristics */
 struct	termio	ntermio;	/* charactoristics to use inside */
 #endif
@@ -95,7 +91,18 @@ char tobuf[TBUFSIZ];		/* terminal output buffer */
 ttopen()
 {
 #if     AMIGA
-        terminal = Open("RAW:0/0/640/200/MicroEMACS 3.8i/Amiga", NEW);
+	char oline[NSTRING];
+#if	AZTEC
+	extern	Enable_Abort;	/* Turn off ctrl-C interrupt */
+
+	Enable_Abort = 0;	/* for the Manx compiler */
+#endif
+	strcpy(oline, "RAW:0/0/640/200/");
+	strcat(oline, PROGNAME);
+	strcat(oline, " ");
+	strcat(oline, VERSION);
+	strcat(oline, "/Amiga");
+        terminal = Open(oline, NEW);
 #endif
 #if     VMS
         struct  dsc$descriptor  idsc;
@@ -163,6 +170,8 @@ ttopen()
 	ntermio.c_cc[VMIN] = 1;
 	ntermio.c_cc[VTIME] = 0;
 	ioctl(0, TCSETA, &ntermio);	/* and activate them */
+	kbdflgs = fcntl( 0, F_GETFL, 0 );
+	kbdpoll = FALSE;
 #endif
 
 #if     V7 | BSD
@@ -195,9 +204,17 @@ ttopen()
 ttclose()
 {
 #if     AMIGA
+#if	LATTICE
         amg_flush();
         Close(terminal);
 #endif
+#if	AZTEC
+        amg_flush();
+	Enable_Abort = 1;	/* Fix for Manx */
+        Close(terminal);
+#endif
+#endif
+
 #if     VMS
         int     status;
         int     iosb[1];
@@ -223,6 +240,7 @@ ttclose()
 
 #if	USG
 	ioctl(0, TCSETA, &otermio);	/* restore terminal settings */
+	fcntl(0, F_SETFL, kbdflgs);
 #endif
 
 #if     V7 | BSD
@@ -238,7 +256,7 @@ ttclose()
  * MS-DOS (use the very very raw console output routine).
  */
 ttputc(c)
-#if     AMIGA | (ST520 & MEGAMAX)
+#if     AMIGA
         char c;
 #endif
 {
@@ -246,9 +264,6 @@ ttputc(c)
         scrn_tmp[scrn_tmp_p++] = c;
         if(scrn_tmp_p>=AMG_MAXBUF)
                 amg_flush();
-#endif
-#if	ST520 & MEGAMAX
-	Bconout(2,c);
 #endif
 #if     VMS
         if (nobuf >= NOBUF)
@@ -335,18 +350,6 @@ ttgetc()
         Read(terminal, &ch, 1L);
         return(255 & (int)ch);
 #endif
-#if	ST520 & MEGAMAX
-	long ch;
-/*
- * blink the cursor only if nothing is happening, this keeps the
- * cursor on steadily during movement making it easier to track
- */
-	STcurblink(TRUE);  /* the cursor blinks while we wait */
-	ch = Bconin(2);
-	STcurblink(FALSE); /* the cursor is steady while we work */
-	STscancode = (ch >> 16) & 0xff;
-       	return(255 & (int)ch);
-#endif
 #if     VMS
         int     status;
         int     iosb[2];
@@ -396,7 +399,7 @@ ttgetc()
         return (getcnb());
 #endif
 
-#if	MSDOS & (LATTICE | MSC | AZTEC)
+#if	MSDOS & (LATTICE | MSC | TURBO | AZTEC)
 	int c;		/* character read */
 
 	/* if a char already is ready, return it */
@@ -413,12 +416,26 @@ ttgetc()
 	return(c & 255);
 #endif
 
-#if     V7 | USG | BSD
+#if     V7 | BSD
         return(127 & fgetc(stdin));
+#endif
+
+#if	USG
+	if( kbdqp )
+		kbdqp = FALSE;
+	else
+	{
+		if( kbdpoll && fcntl( 0, F_SETFL, kbdflgs ) < 0 )
+			return FALSE;
+		kbdpoll = FALSE;
+		while (read(0, &kbdq, 1) != 1)
+			;
+	}
+	return ( kbdq & 127 );
 #endif
 }
 
-#if	TYPEAH & (~ST520 | ~LATTICE)
+#if	TYPEAH & (~ST520)
 /* typahead:	Check to see if any characters are already in the
 		keyboard buffer
 */
@@ -426,16 +443,16 @@ ttgetc()
 typahead()
 
 {
-#if	MSDOS & (LATTICE | AZTEC | MWC86)
-	int c;		/* character read */
-	int flags;	/* cpu flags from dos call */
-
-#if	MSC
+#if	MSDOS & (MSC | TURBO)
 	if (kbhit() != 0)
 		return(TRUE);
 	else
 		return(FALSE);
 #endif
+
+#if	MSDOS & (LATTICE | AZTEC | MWC86)
+	int c;		/* character read */
+	int flags;	/* cpu flags from dos call */
 
 	if (nxtchar >= 0)
 		return(TRUE);
@@ -463,9 +480,18 @@ typahead()
 	int x;	/* holds # of pending chars */
 
 	return((ioctl(0,FIONREAD,&x) < 0) ? 0 : x);
-#else
-	return(FALSE);
 #endif
+
+#if	USG
+	if( !kbdqp )
+	{
+		if( !kbdpoll && fcntl( 0, F_SETFL, kbdflgs | O_NDELAY ) < 0 )
+			return(FALSE);
+		kbdqp = (1 == read( 0, &kbdq, 1 ));
+	}
+	return ( kbdqp );
+#endif
+	return(FALSE);
 }
 #endif
 

@@ -42,7 +42,7 @@ char drvname[][8] = {			/* screen resolution names	*/
 };
 long scadd;				/* address of screen ram	*/
 int *scptr[NROW];			/* pointer to screen lines	*/
-int sline[NCOL];			/* screen line image		*/
+unsigned int sline[NCOL];		/* screen line image		*/
 int egaexist = FALSE;			/* is an EGA card available?	*/
 extern union REGS rg;			/* cpu register for use of DOS calls */
 
@@ -104,8 +104,6 @@ TERM    term    = {
 #endif
 };
 
-extern union REGS rg;
-
 #if	COLOR
 ibmfcol(color)		/* set the current output color */
 
@@ -136,8 +134,8 @@ ibmmove(row, col)
 ibmeeol()	/* erase to the end of the line */
 
 {
-	int attr;	/* attribute byte mask to place in RAM */
-	int *lnptr;	/* pointer to the destination line */
+	unsigned int attr;	/* attribute byte mask to place in RAM */
+	unsigned int *lnptr;	/* pointer to the destination line */
 	int i;
 	int ccol;	/* current column cursor lives */
 	int crow;	/*	   row	*/
@@ -341,6 +339,7 @@ int type;	/* type of adapter to init for */
 		addr.laddr = scadd + (long)(NCOL * i * 2);
 		scptr[i] = addr.paddr;
 	}
+	return(TRUE);
 }
 
 /* getboard:	Determine which type of display board is attached.
@@ -351,7 +350,7 @@ int type;	/* type of adapter to init for */
 		CDEGA	Extended graphics Adapter
 */
 
-/* getbaord:	Detect the current display adapter
+/* getboard:	Detect the current display adapter
 		if MONO		set to MONO
 		   CGA		set to CGA	EGAexist = FALSE
 		   EGA		set to CGA	EGAexist = TRUE
@@ -416,8 +415,8 @@ int forg;	/* forground color of string to write */
 int bacg;	/* background color */
 
 {
-	int attr;	/* attribute byte mask to place in RAM */
-	int *lnptr;	/* pointer to the destination line */
+	unsigned int attr;	/* attribute byte mask to place in RAM */
+	unsigned int *lnptr;	/* pointer to the destination line */
 	int i;
 
 	/* build the attribute byte and setup the screen pointer */
@@ -462,3 +461,4 @@ ibmhello()
 {
 }
 #endif
+

@@ -13,9 +13,9 @@ typedef struct UVAR {
 
 /*	current user variables (This structure will probably change)	*/
 
-#define	MAXVARS		100
+#define	MAXVARS		255
 
-UVAR uv[MAXVARS];	/* user variables */
+UVAR uv[MAXVARS + 1];	/* user variables */
 
 /*	list of recognized environment variables	*/
 
@@ -42,6 +42,21 @@ char *envars[] = {
 	"progname",		/* returns current prog name - "MicroEMACS" */
 	"seed",			/* current random number seed */
 	"disinp",		/* display command line input characters */
+	"wline",		/* # of lines in current window */
+	"cwline",		/* current screen line in window */
+	"target",		/* target for line moves */
+	"search",		/* search pattern */
+	"replace",		/* replacement pattern */
+	"match",		/* last matched magic pattern */
+	"kill",			/* kill buffer (read only) */
+	"cmode",		/* mode of current buffer */
+	"gmode",		/* global modes */
+	"tpause",		/* length to pause for paren matching */
+	"pending",		/* type ahead pending flag */
+	"lwidth",		/* width of current line */
+	"line",			/* text of current line */
+	"gflags",		/* global internal emacs flags */
+	"rval",			/* child process return value */
 };
 
 #define	NEVARS	sizeof(envars) / sizeof(char *)
@@ -70,6 +85,21 @@ char *envars[] = {
 #define	EVPROGNAME	19
 #define	EVSEED		20
 #define	EVDISINP	21
+#define	EVWLINE		22
+#define EVCWLINE	23
+#define	EVTARGET	24
+#define	EVSEARCH	25
+#define	EVREPLACE	26
+#define	EVMATCH		27
+#define	EVKILL		28
+#define	EVCMODE		29
+#define	EVGMODE		30
+#define	EVTPAUSE	31
+#define	EVPENDING	32
+#define	EVLWIDTH	33
+#define	EVLINE		34
+#define	EVGFLAGS	35
+#define	EVRVAL		36
 
 /*	list of recognized user functions	*/
 
@@ -113,6 +143,16 @@ UFUNC funcs[] = {
 	"gtk", NILNAMIC,	/* get 1 charater */
 	"rnd", MONAMIC,		/* get a random number */
 	"abs", MONAMIC,		/* absolute value of a number */
+	"sin", DYNAMIC,		/* find the index of one string in another */
+	"env", MONAMIC,		/* retrieve a system environment var */
+	"bin", MONAMIC,		/* loopup what function name is bound to a key */
+	"exi", MONAMIC,		/* check if a file exists */
+	"fin", MONAMIC,		/* look for a file on the path... */
+ 	"ban", DYNAMIC,		/* bitwise and   9-10-87  jwm */
+ 	"bor", DYNAMIC,		/* bitwise or    9-10-87  jwm */
+ 	"bxo", DYNAMIC,		/* bitwise xor	 9-10-87  jwm */
+	"bno", MONAMIC,		/* bitwise not */
+	"xla", TRINAMIC,	/* XLATE character string translation */
 };
 
 #define	NFUNCS	sizeof(funcs) / sizeof(UFUNC)
@@ -148,3 +188,13 @@ UFUNC funcs[] = {
 #define	UFGTKEY		26
 #define	UFRND		27
 #define	UFABS		28
+#define	UFSINDEX	29
+#define	UFENV		30
+#define	UFBIND		31
+#define	UFEXIST		32
+#define	UFFIND		33
+#define UFBAND		34
+#define UFBOR		35
+#define UFBXOR		36
+#define	UFBNOT		37
+#define	UFXLATE		38

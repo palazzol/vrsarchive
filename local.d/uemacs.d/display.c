@@ -85,6 +85,25 @@ vtinit()
         }
 }
 
+#if	CLEAN
+/* free up all the dynamically allocated video structures */
+
+vtfree()
+{
+	int i;
+	for (i = 0; i < term.t_mrow; ++i) {
+		free(vscreen[i]);
+#if	MEMMAP == 0
+		free(pscreen[i]);
+#endif
+	}
+	free(vscreen);
+#if	MEMMAP == 0
+	free(pscreen);
+#endif
+}
+#endif
+
 /*
  * Clean up the virtual terminal system, in anticipation for a return to the
  * operating system. Move down to the last line and clear it out (the next
@@ -739,9 +758,9 @@ modeline(wp)
     register int c;
     register int n;		/* cursor position count */
     register BUFFER *bp;
-    register i;			/* loop index */
-    register lchar;		/* character to draw line in buffer with */
-    register firstm;		/* is this the first mode? */
+    register int i;		/* loop index */
+    register int lchar;		/* character to draw line in buffer with */
+    register int firstm;	/* is this the first mode? */
     char tline[NLINE];		/* buffer for part of mode line */
 
     n = wp->w_toprow+wp->w_ntrows;      	/* Location. */
@@ -761,8 +780,11 @@ modeline(wp)
 #endif
 		lchar = '-';
 
-    vtputc(lchar);
     bp = wp->w_bufp;
+    if ((bp->b_flag&BFTRUNC) != 0)
+	vtputc('#');
+    else
+	vtputc(lchar);
 
     if ((bp->b_flag&BFCHG) != 0)                /* "*" if changed. */
         vtputc('*');
@@ -996,6 +1018,24 @@ char *arg;	/* pointer to first argument to print */
 		TTeeol();
 	TTflush();
 	mpresf = TRUE;
+}
+
+/*	Force a string out to the message line regardless of the
+	current $discmd setting. This is needed when $debug is TRUE
+	and for the write-message and clear-message-line commands
+*/
+
+mlforce(s)
+
+char *s;	/* string to force out */
+
+{
+	register int oldcmd;	/* original command display flag */
+
+	oldcmd = discmd;	/* save the discmd value */
+	discmd = TRUE;		/* and turn display on */
+	mlwrite(s);		/* write the string out */
+	discmd = oldcmd;	/* and restore the original setting */
 }
 
 /*

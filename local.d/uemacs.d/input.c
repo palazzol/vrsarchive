@@ -1,4 +1,4 @@
-/*	INPUT:	Various input routines for MicroEMACS 3.7
+/*	INPUT:	Various input routines for MicroEMACS
 		written by Daniel Lawrence
 		5/9/86						*/
 
@@ -350,12 +350,23 @@ getcmd()
 	c = get1key();
 
 	/* process META prefix */
+#if	VT100
+	/* if ESC must be recognized.... change this to a 1 */
+	if (c == metac || c == (CTRL | '['))
+#else
 	if (c == metac) {
+#endif
 		c = get1key();
 	        if (islower(c))		/* Force to upper */
         	        c ^= DIFCASE;
 	        if (c>=0x00 && c<=0x1F)		/* control key */
 	        	c = CTRL | (c+'@');
+#if	VT100
+		if (c == '[' || c == 'O') {
+			c = get1key();
+			return(SPEC | c);
+		}
+#endif
 		return(META | c);
 	}
 
@@ -483,7 +494,7 @@ int eolchar;
 	}
 }
 
-outstring(s)	/* output a string of characters */
+outstring(s)	/* output a string of input characters */
 
 char *s;	/* string to output */
 
@@ -492,3 +503,14 @@ char *s;	/* string to output */
 		while (*s)
 			TTputc(*s++);
 }
+
+ostring(s)	/* output a string of output characters */
+
+char *s;	/* string to output */
+
+{
+	if (discmd)
+		while (*s)
+			TTputc(*s++);
+}
+

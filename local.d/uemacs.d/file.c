@@ -185,14 +185,14 @@ int lockfl;		/* check the file for locks? */
 }
 
 /*
- * Read file "fname" into the current
- * buffer, blowing away any text found there. Called
- * by both the read and find commands. Return the final
- * status of the read. Also called by the mainline,
- * to read in a file specified on the command line as
- * an argument. If the filename ends in a ".c", CMODE is
- * set for the current buffer.
- */
+	Read file "fname" into the current buffer, blowing away any text
+	found there.  Called by both the read and find commands.  Return
+	the final status of the read.  Also called by the mainline, to
+	read in a file specified on the command line as an argument. 
+	The command bound to M-FNR is called after the buffer is set up
+	and before it is read. 
+*/
+
 readin(fname, lockfl)
 
 char    fname[];	/* name of file to read */
@@ -207,9 +207,8 @@ int	lockfl;		/* check for file locks? */
         register int    s;
         register int    nbytes;
         register int    nline;
-	register char	*sptr;		/* pointer into filename string */
 	int		lflag;		/* any lines longer than allowed? */
-        char            line[NLINE];
+	char mesg[NSTRING];
 
 #if	FILOCK
 	if (lockfl && lockchk(fname) == ABORT)
@@ -224,37 +223,30 @@ int	lockfl;		/* check for file locks? */
         if ((s=bclear(bp)) != TRUE)             /* Might be old.        */
                 return (s);
         bp->b_flag &= ~(BFINVS|BFCHG);
-#if	ACMODE
-	if (strlen(fname) > 1) {		/* check if a 'C' file	*/
-		sptr = fname + strlen(fname) - 2;
-		if (*sptr == '.' &&
-		   (*(sptr + 1) == 'c' || *(sptr + 1) == 'h'))
-			bp->b_mode |= MDCMOD;
-	}
-#endif
         strcpy(bp->b_fname, fname);
+
+	/* let a user macro get hold of things...if he wants */
+	execute(META|SPEC|'R', FALSE, 1);
 
 	/* turn off ALL keyboard translation in case we get a dos error */
 	TTkclose();
 
         if ((s=ffropen(fname)) == FIOERR)       /* Hard file open.      */
                 goto out;
+
         if (s == FIOFNF) {                      /* File not found.      */
                 mlwrite("[New file]");
                 goto out;
         }
+
+	/* read the file in */
         mlwrite("[Reading file]");
         nline = 0;
 	lflag = FALSE;
-        while ((s=ffgetline(line, NLINE)) == FIOSUC || s == FIOLNG
-            || s == FIOFUN) {
-		if (s == FIOLNG) {
-			lflag = TRUE;
-			--nline;
-		}
-                nbytes = strlen(line);
+        while ((s=ffgetline()) == FIOSUC) {
+                nbytes = strlen(fline);
                 if ((lp1=lalloc(nbytes)) == NULL) {
-                        s = FIOERR;             /* Keep message on the  */
+                        s = FIOMEM;             /* Keep message on the  */
                         break;                  /* display.             */
                 }
                 lp2 = lback(curbp->b_linep);
@@ -263,25 +255,24 @@ int	lockfl;		/* check for file locks? */
                 lp1->l_bp = lp2;
                 curbp->b_linep->l_bp = lp1;
                 for (i=0; i<nbytes; ++i)
-                        lputc(lp1, i, line[i]);
+                        lputc(lp1, i, fline[i]);
                 ++nline;
-                if (s == FIOFUN)
-                	break;
         }
         ffclose();                              /* Ignore errors.       */
-	strcpy(line, "[");
-	if (lflag)
-		strcat(line, "Long lines wrapped, ");
-	if (s == FIOFUN)
-		strcat(line, "Funny line at EOF, ");
-        if (s == FIOEOF || s == FIOFUN) {        /* Don't zap message!   */
-		sprintf(&line[strlen(line)], "Read %d line", nline);
-                if (nline > 1)
-			strcat(line, "s");
-		strcat(line, "]");
-        }
-	if (s != FIOERR)
-		mlwrite(line);
+	strcpy(mesg, "[");
+	if (s==FIOERR) {
+		strcat(mesg, "I/O ERROR, ");
+		curbp->b_flag |= BFTRUNC;
+	}
+	if (s == FIOMEM) {
+		strcat(mesg, "OUT OF MEMORY, ");
+		curbp->b_flag |= BFTRUNC;
+	}
+	sprintf(&mesg[strlen(mesg)], "Read %d line", nline);
+        if (nline > 1)
+		strcat(mesg, "s");
+	strcat(mesg, "]");
+	mlwrite(mesg);
 
 out:
 	TTkopen();	/* open the keyboard again */
@@ -427,6 +418,15 @@ filesave(f, n)
                 mlwrite("No file name");
                 return (FALSE);
         }
+
+	/* complain about truncated files */
+	if ((curbp->b_flag&BFTRUNC) != 0) {
+		if (mlyesno("Truncated file..write it out") == FALSE) {
+			mlwrite("[Aborted]");
+			return(FALSE);
+		}
+	}
+
         if ((s=writeout(curbp->b_fname)) == TRUE) {
                 curbp->b_flag &= ~BFCHG;
                 wp = wheadp;                    /* Update mode lines.   */
@@ -466,7 +466,7 @@ char    *fn;
 		TTkopen();
                 return (FALSE);
         }
-	mlwrite("[Writing..]");			/* tell us were writing */
+	mlwrite("[Writing...]");		/* tell us were writing */
         lp = lforw(curbp->b_linep);             /* First line.          */
         nline = 0;                              /* Number of lines.     */
         while (lp != curbp->b_linep) {
@@ -541,7 +541,7 @@ char    fname[];
         register int    nbytes;
         register int    nline;
 	int		lflag;		/* any lines longer than allowed? */
-        char            line[NLINE];
+	char mesg[NSTRING];
 
         bp = curbp;                             /* Cheap.               */
         bp->b_flag |= BFCHG;			/* we have changed	*/
@@ -567,15 +567,10 @@ char    fname[];
 
         nline = 0;
 	lflag = FALSE;
-        while ((s=ffgetline(line, NLINE)) == FIOSUC || s == FIOLNG
-            || s == FIOFUN) {
-		if (s == FIOLNG) {
-			lflag = TRUE;
-			--nline;
-		}
-                nbytes = strlen(line);
+        while ((s=ffgetline()) == FIOSUC) {
+                nbytes = strlen(fline);
                 if ((lp1=lalloc(nbytes)) == NULL) {
-                        s = FIOERR;             /* Keep message on the  */
+                        s = FIOMEM;             /* Keep message on the  */
                         break;                  /* display.             */
                 }
 		lp0 = curwp->w_dotp;	/* line previous to insert */
@@ -590,26 +585,26 @@ char    fname[];
 		/* and advance and write out the current line */
 		curwp->w_dotp = lp1;
                 for (i=0; i<nbytes; ++i)
-                        lputc(lp1, i, line[i]);
+                        lputc(lp1, i, fline[i]);
                 ++nline;
-                if (s == FIOFUN)
-                	break;
         }
         ffclose();                              /* Ignore errors.       */
 	curwp->w_markp = lforw(curwp->w_markp);
-	strcpy(line, "[");
-	if (lflag)
-		strcat(line, "Long lines wrapped, ");
-	if (s == FIOFUN)
-		strcat(line, "Funny line at EOF, ");
-        if (s == FIOEOF || s == FIOFUN) {        /* Don't zap message!   */
-		sprintf(&line[strlen(line)], "Inserted %d line", nline);
-                if (nline > 1)
-			strcat(line, "s");
-		strcat(line, "]");
-        }
-	if (s != FIOERR)
-		mlwrite(line);
+	strcpy(mesg, "[");
+	if (s==FIOERR) {
+		strcat(mesg, "I/O ERROR, ");
+		curbp->b_flag |= BFTRUNC;
+	}
+	if (s == FIOMEM) {
+		strcat(mesg, "OUT OF MEMORY, ");
+		curbp->b_flag |= BFTRUNC;
+	}
+	sprintf(&mesg[strlen(mesg)], "Inserted %d line", nline);
+        if (nline > 1)
+		strcat(mesg, "s");
+	strcat(mesg, "]");
+	mlwrite(mesg);
+
 out:
 	/* advance to the next line and mark the window for changes */
 	curwp->w_dotp = lforw(curwp->w_dotp);

@@ -11,7 +11,7 @@
 #if TERMCAP
 
 #define	MARGIN	8
-#define	SCRSIZ	48			/* scroll for long lines */
+#define	SCRSIZ	64
 #define	NPAUSE	10			/* # times thru update to pause */
 #define BEL     0x07
 #define ESC     0x1B
@@ -232,4 +232,4 @@ hello()
 {
 }
 
-#endif TERMCAP
+#endif

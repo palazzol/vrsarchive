@@ -1,4 +1,4 @@
-/*	PATH:	This file contains certain info needed to locate the
+/*	EPATH:	This file contains certain info needed to locate the
 		MicroEMACS files on a system dependant basis.
 
 									*/
@@ -12,8 +12,12 @@ char *pathname[] =
 	".emacsrc",
 	"emacs.hlp",
 	"",
-	":c/",
-	":t/"
+	"sys:c/",
+	"sys:t/",
+	"sys:s/",
+	"c:/",
+	":t/",
+	":s/"
 };
 #endif
 

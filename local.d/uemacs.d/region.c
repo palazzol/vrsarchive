@@ -68,6 +68,7 @@ copyregion(f, n)
                         ++loffs;
                 }
         }
+	mlwrite("[region copied]");
         return (TRUE);
 }
 
@@ -208,3 +209,4 @@ register REGION *rp;
         mlwrite("Bug: lost mark");
         return (FALSE);
 }
+

@@ -1,13 +1,14 @@
 /*
  * The routines in this file read and write ASCII files from the disk. All of
- * the knowledge about files are here. A better message writing scheme should
- * be used.
+ * the knowledge about files are here.
  */
+
 #include        <stdio.h>
 #include	"estruct.h"
 #include        "edef.h"
 
-FILE    *ffp;                           /* File pointer, all functions. */
+FILE	*ffp;		/* File pointer, all functions. */
+int eofflag;		/* end-of-file flag */
 
 /*
  * Open a file for reading.
@@ -17,6 +18,7 @@ char    *fn;
 {
         if ((ffp=fopen(fn, "r")) == NULL)
                 return (FIOFNF);
+	eofflag = FALSE;
         return (FIOSUC);
 }
 
@@ -46,11 +48,17 @@ char    *fn;
  */
 ffclose()
 {
+	/* free this since we do not need it anymore */
+	if (fline) {
+		free(fline);
+		fline = NULL;
+	}
+
 #if	MSDOS & CTRLZ
 	fputc(26, ffp);		/* add a ^Z at the end of the file */
 #endif
 	
-#if     V7 | USG | BSD | (MSDOS & (LATTICE | MSC))
+#if     V7 | USG | BSD | (MSDOS & (LATTICE | MSC | TURBO)) | (ST520 & MWC)
         if (fclose(ffp) != FALSE) {
                 mlwrite("Error closing file");
                 return(FIOERR);
@@ -88,7 +96,7 @@ char    buf[];
                 fputc(buf[i]&0xFF, ffp);
 #endif
 
-#if	ST520
+#if	ST520 & ADDCR
         fputc('\r', ffp);
 #endif        
         fputc('\n', ffp);
@@ -107,52 +115,87 @@ char    buf[];
  * at the end of the file that don't have a newline present. Check for I/O
  * errors too. Return status.
  */
-ffgetline(buf, nbuf)
-register char   buf[];
+ffgetline()
+
 {
-        register int    c;
-        register int    i;
+        register int c;		/* current character read */
+        register int i;		/* current index into fline */
+	register char *tmpline;	/* temp storage for expanding line */
 
+	/* if we are at the end...return it */
+	if (eofflag)
+		return(FIOEOF);
+
+	/* dump fline if it ended up too big */
+	if (flen > NSTRING) {
+		free(fline);
+		fline = NULL;
+	}
+
+	/* if we don't have an fline, allocate one */
+	if (fline == NULL)
+		if ((fline = malloc(flen = NSTRING)) == NULL)
+			return(FIOMEM);
+
+	/* read the line in */
         i = 0;
-
         while ((c = fgetc(ffp)) != EOF && c != '\n') {
-                if (i >= nbuf-2) {
-			buf[nbuf - 2] = c;	/* store last char read */
-			buf[nbuf - 1] = 0;	/* and terminate it */
-                        mlwrite("File has long line");
-#if	CRYPT
-			if (cryptflag)
-				crypt(buf, strlen(buf));
-#endif
-                        return (FIOLNG);
+                fline[i++] = c;
+		/* if it's longer, get more room */
+                if (i >= flen) {
+                	if ((tmpline = malloc(flen+NSTRING)) == NULL)
+                		return(FIOMEM);
+                	strncpy(tmpline, fline, flen);
+                	flen += NSTRING;
+                	free(fline);
+                	fline = tmpline;
                 }
-                buf[i++] = c;
         }
 
 #if	ST520
-	if(buf[i-1] == '\r')
+	if(fline[i-1] == '\r')
 		i--;
 #endif
+
+	/* test for any errors that may have occured */
         if (c == EOF) {
                 if (ferror(ffp)) {
                         mlwrite("File read error");
-                        return (FIOERR);
+                        return(FIOERR);
                 }
 
-                if (i != 0) {
-                	buf[i] = 0;
-                        return(FIOFUN);
-                }
-
-                return (FIOEOF);
+                if (i != 0)
+			eofflag = TRUE;
+		else
+			return(FIOEOF);
         }
 
-        buf[i] = 0;
+	/* terminate and decrypt the string */
+        fline[i] = 0;
 #if	CRYPT
 	if (cryptflag)
-		crypt(buf, strlen(buf));
+		crypt(fline, strlen(fline));
 #endif
-        return (FIOSUC);
+        return(FIOSUC);
+}
+
+int fexist(fname)	/* does <fname> exist on disk? */
+
+char *fname;		/* file to check for existance */
+
+{
+	FILE *fp;
+
+	/* try to open the file for reading */
+	fp = fopen(fname, "r");
+
+	/* if it fails, just return false! */
+	if (fp == NULL)
+		return(FALSE);
+
+	/* otherwise, close it and report true */
+	fclose(fp);
+	return(TRUE);
 }
 
 #if	AZTEC & MSDOS

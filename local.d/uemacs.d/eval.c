@@ -8,8 +8,6 @@
 #include	"edef.h"
 #include	"evar.h"
 
-char value[NSTRING];		/* buffer to return value in */
-
 varinit()		/* initialize the user variable list */
 
 {
@@ -26,10 +24,16 @@ char *fname;		/* name of function to evaluate */
 {
 	register int fnum;		/* index to function to eval */
 	register int status;		/* return status */
+	register char *tsp;		/* temporary string pointer */
 	char arg1[NSTRING];		/* value of first argument */
 	char arg2[NSTRING];		/* value of second argument */
 	char arg3[NSTRING];		/* value of third argument */
 	static char result[2 * NSTRING];	/* string result */
+	char *flook();			/* look file up on path */
+	char *xlat();			/* translate a char string */
+#if	ENVFUNC
+	char *getenv();			/* get environment string */
+#endif
 
 	/* look the function up in the function table */
 	fname[3] = 0;	/* only first 3 chars significant */
@@ -71,7 +75,8 @@ char *fname;		/* name of function to evaluate */
 		case UFCAT:	strcpy(result, arg1);
 				return(strcat(result, arg2));
 		case UFLEFT:	return(strncpy(result, arg1, atoi(arg2)));
-		case UFRIGHT:	return(strcpy(result, &arg1[atoi(arg2)-1]));
+		case UFRIGHT:	return(strcpy(result,
+					&arg1[(strlen(arg1) - atoi(arg2))]));
 		case UFMID:	return(strncpy(result, &arg1[atoi(arg2)-1],
 					atoi(arg3)));
 		case UFNOT:	return(ltos(stol(arg1) == FALSE));
@@ -81,7 +86,7 @@ char *fname;		/* name of function to evaluate */
 		case UFSEQUAL:	return(ltos(strcmp(arg1, arg2) == 0));
 		case UFSLESS:	return(ltos(strcmp(arg1, arg2) < 0));
 		case UFSGREAT:	return(ltos(strcmp(arg1, arg2) > 0));
-		case UFIND:	return(getval(arg1));
+		case UFIND:	return(strcpy(result, getval(arg1)));
 		case UFAND:	return(ltos(stol(arg1) && stol(arg2)));
 		case UFOR:	return(ltos(stol(arg1) || stol(arg2)));
 		case UFLENGTH:	return(itoa(strlen(arg1)));
@@ -97,6 +102,24 @@ char *fname;		/* name of function to evaluate */
 				return(result);
 		case UFRND:	return(itoa((ernd() % abs(atoi(arg1))) + 1));
 		case UFABS:	return(itoa(abs(atoi(arg1))));
+		case UFSINDEX:	return(itoa(sindex(arg1, arg2)));
+		case UFENV:
+#if	ENVFUNC
+				tsp = getenv(arg1);
+				return(tsp == NULL ? "" : tsp);
+#else
+				return("");
+#endif
+		case UFBIND:	return(transbind(arg1));
+		case UFEXIST:	return(ltos(fexist(arg1)));
+		case UFFIND:
+				tsp = flook(arg1, TRUE);
+				return(tsp == NULL ? "" : tsp);
+ 		case UFBAND:	return(itoa(atoi(arg1) & atoi(arg2)));
+ 		case UFBOR:	return(itoa(atoi(arg1) | atoi(arg2)));
+ 		case UFBXOR:	return(itoa(atoi(arg1) ^ atoi(arg2)));
+		case UFBNOT:	return(itoa(~atoi(arg1)));
+		case UFXLATE:	return(xlat(arg1, arg2, arg3));
 	}
 
 	exit(-11);	/* never should get here */
@@ -111,15 +134,15 @@ char *vname;		/* name of user variable to fetch */
 	register int vnum;	/* ordinal number of user var */
 
 	/* scan the list looking for the user var name */
-	for (vnum = 0; vnum < MAXVARS; vnum++)
+	for (vnum = 0; vnum < MAXVARS; vnum++) {
+		if (uv[vnum].u_name[0] == 0)
+			return(errorm);
 		if (strcmp(vname, uv[vnum].u_name) == 0)
-			break;
+			return(uv[vnum].u_value);
+	}
 
-	/* return errorm on a bad reference */
-	if (vnum == MAXVARS)
-		return(errorm);
-
-	return(uv[vnum].u_value);
+	/* return errorm if we run off the end */
+	return(errorm);
 }
 
 char *gtenv(vname)
@@ -128,6 +151,7 @@ char *vname;		/* name of environment variable to retrieve */
 
 {
 	register int vnum;	/* ordinal number of var refrenced */
+	char *getkill();
 
 	/* scan the list, looking for the referenced name */
 	for (vnum = 0; vnum < NEVARS; vnum++)
@@ -142,11 +166,11 @@ char *vname;		/* name of environment variable to retrieve */
 	switch (vnum) {
 		case EVFILLCOL:	return(itoa(fillcol));
 		case EVPAGELEN:	return(itoa(term.t_nrow + 1));
-		case EVCURCOL:	return(itoa(getccol(FALSE) + 1));
+		case EVCURCOL:	return(itoa(getccol(FALSE)));
 		case EVCURLINE: return(itoa(getcline()));
 		case EVRAM:	return(itoa((int)(envram / 1024l)));
 		case EVFLICKER:	return(ltos(flickcode));
-		case EVCURWIDTH:return(itoa(term.t_nrow));
+		case EVCURWIDTH:return(itoa(term.t_ncol));
 		case EVCBUFNAME:return(curbp->b_bname);
 		case EVCFNAME:	return(curbp->b_fname);
 		case EVSRES:	return(sres);
@@ -156,15 +180,60 @@ char *vname;		/* name of environment variable to retrieve */
 		case EVASAVE:	return(itoa(gasave));
 		case EVACOUNT:	return(itoa(gacount));
 		case EVLASTKEY: return(itoa(lastkey));
-		case EVCURCHAR:	return(itoa(
-					lgetc(curwp->w_dotp,curwp->w_doto)));
+		case EVCURCHAR:
+			return(curwp->w_dotp->l_used ==
+					curwp->w_doto ? itoa('\n') :
+				itoa(lgetc(curwp->w_dotp, curwp->w_doto)));
 		case EVDISCMD:	return(ltos(discmd));
 		case EVVERSION:	return(VERSION);
 		case EVPROGNAME:return(PROGNAME);
 		case EVSEED:	return(itoa(seed));
 		case EVDISINP:	return(ltos(disinp));
+		case EVWLINE:	return(itoa(curwp->w_ntrows));
+		case EVCWLINE:	return(itoa(getwpos()));
+		case EVTARGET:	saveflag = lastflag;
+				return(itoa(curgoal));
+		case EVSEARCH:	return(pat);
+		case EVREPLACE:	return(rpat);
+		case EVMATCH:	return((patmatch == NULL)? "": patmatch);
+		case EVKILL:	return(getkill());
+		case EVCMODE:	return(itoa(curbp->b_mode));
+		case EVGMODE:	return(itoa(gmode));
+		case EVTPAUSE:	return(itoa(term.t_pause));
+		case EVPENDING:
+#if	TYPEAH
+				return(ltos(typahead()));
+#else
+				return(falsem);
+#endif
+		case EVLWIDTH:	return(itoa(llength(curwp->w_dotp)));
+		case EVLINE:	return(getctext());
+		case EVGFLAGS:	return(itoa(gflags));
+		case EVRVAL:	return(itoa(rval));
 	}
 	exit(-12);	/* again, we should never get here */
+}
+
+char *getkill()		/* return some of the contents of the kill buffer */
+
+{
+	register int size;	/* max number of chars to return */
+	char value[NSTRING];	/* temp buffer for value */
+
+	if (kbufh == NULL)
+		/* no kill buffer....just a null string */
+		value[0] = 0;
+	else {
+		/* copy in the contents... */
+		if (kused < NSTRING)
+			size = kused;
+		else
+			size = NSTRING - 1;
+		strncpy(value, kbufh->d_chunk, size);
+	}
+
+	/* and return the constructed value */
+	return(value);
 }
 
 int setvar(f, n)		/* set a variable */
@@ -173,11 +242,12 @@ int f;		/* default flag */
 int n;		/* numeric arg (can overide prompted value) */
 
 {
-	register int vnum;	/* ordinal number of var refrenced */
 	register int status;	/* status return */
-	register int vtype;	/* type of variable to set */
-	register int c;		/* translated character */
-	register char * sp;	/* scratch string pointer */
+#if	DEBUGM
+	register char *sp;	/* temp string pointer */
+	register char *ep;	/* ptr to end of outline */
+#endif
+	VDESC vd;		/* variable num/type */
 	char var[NVSIZE+1];	/* name of variable to fetch */
 	char value[NSTRING];	/* value to set variable to */
 
@@ -188,11 +258,94 @@ int n;		/* numeric arg (can overide prompted value) */
 			return(status);
 	} else {	/* macro line argument */
 		/* grab token and skip it */
-		execstr = token(execstr, var);
+		execstr = token(execstr, var, NVSIZE + 1);
 	}
 
 	/* check the legality and find the var */
-sv01:	vtype = -1;
+	findvar(var, &vd, NVSIZE + 1);
+	
+	/* if its not legal....bitch */
+	if (vd.v_type == -1) {
+		mlwrite("%%No such variable as '%s'", var);
+		return(FALSE);
+	}
+
+	/* get the value for that variable */
+	if (f == TRUE)
+		strcpy(value, itoa(n));
+	else {
+		status = mlreply("Value: ", &value[0], NSTRING);
+		if (status != TRUE)
+			return(status);
+	}
+
+	/* and set the appropriate value */
+	status = svar(&vd, value);
+
+#if	DEBUGM
+	/* if $debug == TRUE, every assignment will echo a statment to
+	   that effect here. */
+	
+	if (macbug) {
+		strcpy(outline, "(((");
+
+		/* assignment status */
+		strcat(outline, ltos(status));
+		strcat(outline, ":");
+
+		/* variable name */
+		strcat(outline, var);
+		strcat(outline, ":");
+
+		/* and lastly the value we tried to assign */
+		strcat(outline, value);
+		strcat(outline, ")))");
+
+		/* expand '%' to "%%" so mlwrite wont bitch */
+		sp = outline;
+		while (*sp)
+			if (*sp++ == '%') {
+				/* advance to the end */
+				ep = --sp;
+				while (*ep++)
+					;
+				/* null terminate the string one out */
+				*(ep + 1) = 0;
+				/* copy backwards */
+				while(ep-- > sp)
+					*(ep + 1) = *ep;
+
+				/* and advance sp past the new % */
+				sp += 2;					
+			}
+
+		/* write out the debug line */
+		mlforce(outline);
+		update(TRUE);
+
+		/* and get the keystroke to hold the output */
+		if (get1key() == abortc) {
+			mlforce("[Macro aborted]");
+			status = FALSE;
+		}
+	}
+#endif
+
+	/* and return it */
+	return(status);
+}
+
+findvar(var, vd, size)	/* find a variables type and name */
+
+char *var;	/* name of var to get */
+VDESC *vd;	/* structure to hold type and ptr */
+int size;	/* size of var array */
+
+{
+	register int vnum;	/* subscript in varable arrays */
+	register int vtype;	/* type to return */
+
+fvar:	vtype = -1;
 	switch (var[0]) {
 
 		case '$': /* check for legal enviromnent var */
@@ -225,26 +378,33 @@ sv01:	vtype = -1;
 			var[4] = 0;
 			if (strcmp(&var[1], "ind") == 0) {
 				/* grab token, and eval it */
-				execstr = token(execstr, var);
+				execstr = token(execstr, var, size);
 				strcpy(var, getval(var));
-				goto sv01;
+				goto fvar;
 			}
 	}
 
-	/* if its not legal....bitch */
-	if (vtype == -1) {
-		mlwrite("%%No such variable");
-		return(FALSE);
-	}
+	/* return the results */
+	vd->v_num = vnum;
+	vd->v_type = vtype;
+	return;
+}
 
-	/* get the value for that variable */
-	if (f == TRUE)
-		strcpy(value, itoa(n));
-	else {
-		status = mlreply("Value: ", &value[0], NSTRING);
-		if (status != TRUE)
-			return(status);
-	}
+int svar(var, value)		/* set a variable */
+
+VDESC *var;	/* variable to set */
+char *value;	/* value to set to */
+
+{
+	register int vnum;	/* ordinal number of var refrenced */
+	register int vtype;	/* type of variable to set */
+	register int status;	/* status return */
+	register int c;		/* translated character */
+	register char * sp;	/* scratch string pointer */
+
+	/* simplify the vd structure (we are gonna look at it a lot) */
+	vnum = var->v_num;
+	vtype = var->v_type;
 
 	/* and set the appropriate value */
 	status = TRUE;
@@ -296,12 +456,13 @@ sv01:	vtype = -1;
 				break;
 		case EVLASTKEY:	lastkey = atoi(value);
 				break;
-		case EVCURCHAR:	ldelete(1, FALSE);	/* delete 1 char */
+		case EVCURCHAR:	ldelete(1L, FALSE);	/* delete 1 char */
 				c = atoi(value);
 				if (c == '\n')
 					lnewline(FALSE, 1);
 				else
 					linsert(1, c);
+				backchar(FALSE, 1);
 				break;
 		case EVDISCMD:	discmd = stol(value);
 				break;
@@ -311,6 +472,37 @@ sv01:	vtype = -1;
 				break;
 		case EVDISINP:	disinp = stol(value);
 				break;
+		case EVWLINE:	status = resize(TRUE, atoi(value));
+				break;
+		case EVCWLINE:	status = forwline(TRUE,
+						atoi(value) - getwpos());
+				break;
+		case EVTARGET:	curgoal = atoi(value);
+				thisflag = saveflag;
+				break;
+		case EVSEARCH:	strcpy(pat, value);
+				rvstrcpy(tap, pat);
+#if	MAGIC
+				mcclear();
+#endif
+				break;
+		case EVREPLACE:	strcpy(rpat, value);
+				break;
+		case EVMATCH:	break;
+		case EVKILL:	break;
+		case EVCMODE:	curbp->b_mode = atoi(value);
+				curwp->w_flag |= WFMODE;
+				break;
+		case EVGMODE:	gmode = atoi(value);
+				break;
+		case EVTPAUSE:	term.t_pause = atoi(value);
+				break;
+		case EVPENDING:	break;
+		case EVLWIDTH:	break;
+		case EVLINE:	putctext(value);
+		case EVGFLAGS:	gflags = atoi(value);
+				break;
+		case EVRVAL:	break;
 		}
 		break;
 	}
@@ -367,10 +559,6 @@ int i;	/* integer to translate to a string */
 	register int sign;		/* sign of resulting number */
 	static char result[INTWIDTH+1];	/* resulting string */
 
-	/* eliminate the trivial 0 */
-	if (i == 0)
-		return("0");
-
 	/* record the sign...*/
 	sign = 1;
 	if (i < 0) {
@@ -381,11 +569,11 @@ int i;	/* integer to translate to a string */
 	/* and build the string (backwards!) */
 	sp = result + INTWIDTH;
 	*sp = 0;
-	while (i) {
+	do {
 		digit = i % 10;
 		*(--sp) = '0' + digit;	/* and install the new digit */
 		i = i / 10;
-	}
+	} while (i);
 
 	/* and fix the sign */
 	if (sign == -1) {
@@ -436,16 +624,19 @@ char *token;		/* token to evaluate */
 	register int status;	/* error return */
 	register BUFFER *bp;	/* temp buffer pointer */
 	register int blen;	/* length of buffer argument */
-	char pad[20];		/* pad 20 bytes on stack for safety */
-	char buf[NSTRING];	/* string buffer for some returns */
+	register int distmp;	/* temporary discmd flag */
+	static char buf[NSTRING];/* string buffer for some returns */
 
 	switch (gettyp(token)) {
 		case TKNUL:	return("");
 
 		case TKARG:	/* interactive argument */
 				strcpy(token, getval(&token[1]));
+				distmp = discmd;	/* echo it always! */
+				discmd = TRUE;
 				status = getstring(token,
 					   buf, NSTRING, ctoec('\n'));
+				discmd = distmp;
 				if (status == ABORT)
 					return(errorm);
 				return(buf);
@@ -495,19 +686,11 @@ char *token;		/* token to evaluate */
 		case TKENV:	return(gtenv(token+1));
 		case TKFUN:	return(gtfun(token+1));
 		case TKDIR:	return(errorm);
-		case TKLBL:	return(itoa(gtlbl(token)));
+		case TKLBL:	return(errorm);
 		case TKLIT:	return(token);
 		case TKSTR:	return(token+1);
 		case TKCMD:	return(token);
 	}
-}
-
-gtlbl(token)	/* find the line number of the given label */
-
-char *token;	/* label name to find */
-
-{
-	return(1);
 }
 
 int stol(val)	/* convert a string to a numeric logical */
@@ -581,4 +764,76 @@ int ernd()	/* returns a random integer */
 {
 	seed = abs(seed * 1721 + 10007);
 	return(seed);
+}
+
+int sindex(source, pattern)	/* find pattern within source */
+
+char *source;	/* source string to search */
+char *pattern;	/* string to look for */
+
+{
+	char *sp;	/* ptr to current position to scan */
+	char *csp;	/* ptr to source string during comparison */
+	char *cp;	/* ptr to place to check for equality */
+
+	/* scanning through the source string */
+	sp = source;
+	while (*sp) {
+		/* scan through the pattern */
+		cp = pattern;
+		csp = sp;
+		while (*cp) {
+			if (!eq(*cp, *csp))
+				break;
+			++cp;
+			++csp;
+		}
+
+		/* was it a match? */
+		if (*cp == 0)
+			return((int)(sp - source) + 1);
+		++sp;
+	}
+
+	/* no match at all.. */
+	return(0);
+}
+
+/*	Filter a string through a translation table	*/
+
+char *xlat(source, lookup, trans)
+
+char *source;	/* string to filter */
+char *lookup;	/* characters to translate */
+char *trans;	/* resulting translated characters */
+
+{
+	register char *sp;	/* pointer into source table */
+	register char *lp;	/* pointer into lookup table */
+	register char *rp;	/* pointer into result */
+	static char result[NSTRING];	/* temporary result */
+
+	/* scan source string */
+	sp = source;
+	rp = result;
+	while (*sp) {
+		/* scan lookup table for a match */
+		lp = lookup;
+		while (*lp) {
+			if (*sp == *lp) {
+				*rp++ = trans[lp - lookup];
+				goto xnext;
+			}
+			++lp;
+		}
+
+		/* no match, copy in the source char untranslated */
+		*rp++ = *sp;
+
+xnext:		++sp;
+	}
+
+	/* terminate and return the result */
+	*rp = 0;
+	return(result);
 }

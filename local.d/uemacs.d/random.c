@@ -159,13 +159,12 @@ int pos;	/* position to set cursor */
                         ++col;
                 ++col;
         }
-	/* if not long enough... */
-	if (col < pos)
-		return(FALSE);
 
-	/* otherwise...set us at the new position */
+	/* set us at the new position */
 	curwp->w_doto = i;
-	return(TRUE);
+
+	/* and tell weather we made it */
+	return(col >= pos);
 }
 
 /*
@@ -268,7 +267,7 @@ int f,n;	/* default flag and numeric repeat count */
 		while (curwp->w_doto < llength(curwp->w_dotp)) {
 			/* if we have a tab */
 			if (lgetc(curwp->w_dotp, curwp->w_doto) == '\t') {
-				ldelete(1, FALSE);
+				ldelete(1L, FALSE);
 				insspace(TRUE, 8 - (curwp->w_doto & 7));
 			}
 			forwchar(FALSE, 1);
@@ -317,7 +316,7 @@ int f,n;	/* default flag and numeric repeat count */
 		/* there is a bug here dealing with mixed space/tabed
 		   lines.......it will get fixed		*/
 					backchar(TRUE, ccol - fspace);
-					ldelete(ccol - fspace, FALSE);
+					ldelete((long)(ccol - fspace), FALSE);
 					linsert(1, '\t');	
 					fspace = -1;
 				}
@@ -487,9 +486,7 @@ cinsert()	/* insert a newline and indentation for C */
 		return(FALSE);
 
 	/* and the saved indentation */
-	i = 0;
-	while (ichar[i])
-		linsert(1, ichar[i++]);
+	linstr(ichar);
 
 	/* and one more tab for a brace */
 	if (bracef)
@@ -498,6 +495,88 @@ cinsert()	/* insert a newline and indentation for C */
 	return(TRUE);
 }
 
+#if	NBRACE
+insbrace(n, c)	/* insert a brace into the text here...we are in CMODE */
+
+int n;	/* repeat count */
+int c;	/* brace to insert (always } for now) */
+
+{
+	register int ch;	/* last character before input */
+	register int oc;	/* caractere oppose a c */
+	register int i, count;
+	register int target;	/* column brace should go after */
+	register LINE *oldlp;
+	register int  oldoff;
+
+	/* if we aren't at the beginning of the line... */
+	if (curwp->w_doto != 0)
+
+	/* scan to see if all space before this is white space */
+		for (i = curwp->w_doto - 1; i >= 0; --i) {
+			ch = lgetc(curwp->w_dotp, i);
+			if (ch != ' ' && ch != '\t')
+				return(linsert(n, c));
+		}
+
+	/* chercher le caractere oppose correspondant */
+	switch (c) {
+		case '}': oc = '{'; break;
+		case ']': oc = '['; break;
+		case ')': oc = '('; break;
+		default: return(FALSE);
+	}
+	
+	oldlp = curwp->w_dotp;
+	oldoff = curwp->w_doto;
+	
+	count = 1; backchar(FALSE, 1);
+	
+	while (count > 0) {
+		if (curwp->w_doto == llength(curwp->w_dotp))
+			ch = '\n';
+		else
+			ch = lgetc(curwp->w_dotp, curwp->w_doto);
+
+		if (ch == c)  ++count;
+		if (ch == oc) --count;
+		
+		backchar(FALSE, 1);
+		if (boundry(curwp->w_dotp, curwp->w_doto, REVERSE))
+			break;
+	}
+	
+	if (count != 0) {	/* no match */
+		curwp->w_dotp = oldlp;
+		curwp->w_doto = oldoff;
+		return(linsert(n, c));
+	}
+	
+	curwp->w_doto = 0;		/* debut de ligne */
+	/* aller au debut de la ligne apres la tabulation */
+	while ((ch = lgetc(curwp->w_dotp, curwp->w_doto)) == ' ' || ch == '\t')
+		forwchar(FALSE, 1);
+
+	/* delete back first */
+	target = getccol(FALSE);	/* c'est l'indent que l'on doit avoir */
+	curwp->w_dotp = oldlp;
+	curwp->w_doto = oldoff;
+	
+	while (target != getccol(FALSE)) {
+		if (target < getccol(FALSE))	/* on doit detruire des caracteres */
+			while (getccol(FALSE) > target)
+				backdel(FALSE, 1);
+		else {				/* on doit en inserer */
+			while (target - getccol(FALSE) >= 8)
+				linsert(1,'\t');
+			linsert(target - getccol(FALSE), ' ');
+		}
+	}
+
+	/* and insert the required brace(s) */
+	return(linsert(n, c));
+}
+#else
 insbrace(n, c)	/* insert a brace into the text here...we are in CMODE */
 
 int n;	/* repeat count */
@@ -529,6 +608,7 @@ int c;	/* brace to insert (always { for now) */
 	/* and insert the required brace(s) */
 	return(linsert(n, c));
 }
+#endif
 
 inspound()	/* insert a # into the text here...we are in CMODE */
 
@@ -745,7 +825,7 @@ int global;	/* true = global flag,	false = current buffer flag */
 {
 	register char *scan;		/* scanning pointer to convert prompt */
 	register int i;			/* loop index */
-	register status;		/* error return on input */
+	register int status;		/* error return on input */
 #if	COLOR
 	register int uflag;		/* was modename uppercase?	*/
 #endif
@@ -813,12 +893,12 @@ int global;	/* true = global flag,	false = current buffer flag */
 				if (global)
 					gmode |= (1 << i);
 				else
-					curwp->w_bufp->b_mode |= (1 << i);
+					curbp->b_mode |= (1 << i);
 			else
 				if (global)
 					gmode &= ~(1 << i);
 				else
-					curwp->w_bufp->b_mode &= ~(1 << i);
+					curbp->b_mode &= ~(1 << i);
 			/* display new mode line */
 			if (global == 0)
 				upmode();
@@ -839,7 +919,7 @@ clrmes(f, n)
 int f, n;	/* arguments ignored */
 
 {
-	mlwrite("");
+	mlforce("");
 	return(TRUE);
 }
 
@@ -856,7 +936,6 @@ int f, n;	/* arguments ignored */
 	register int status;
 	char buf[NPAT];		/* buffer to recieve message into */
 	char nbuf[NPAT*2];	/* buffer to expand string into */
-	int oldcmd;		/* discmd global save value */
 
 	if ((status = mlreply("Message to write: ", buf, NPAT - 1)) != TRUE)
 		return(status);
@@ -871,12 +950,8 @@ int f, n;	/* arguments ignored */
 	}
 	*np = '\0';
 
-	/* save discmd and turn it on */
-	oldcmd = discmd;
-	discmd = TRUE;
-
-	mlwrite(nbuf);
-	discmd = oldcmd;	/* restore discmd */
+	/* write the message out */
+	mlforce(nbuf);
 	return(TRUE);
 }
 
@@ -1033,7 +1108,6 @@ istring(f, n)	/* ask for and insert a string into the current
 int f, n;	/* ignored arguments */
 
 {
-	register char *tp;	/* pointer into string to add */
 	register int status;	/* status return code */
 	char tstring[NPAT+1];	/* string to add */
 
@@ -1049,18 +1123,34 @@ int f, n;	/* ignored arguments */
 		n = - n;
 
 	/* insert it */
-	while (n--) {
-		tp = &tstring[0];
-		while (*tp) {
-			if (*tp == 0x0a)
-				status = lnewline();
-			else
-				status = linsert(1, *tp);
-			++tp;
-			if (status != TRUE)
-				return(status);
-		}
-	}
-
-	return(TRUE);
+	while (n-- && (status = linstr(tstring)))
+		;
+	return(status);
 }
+
+ovstring(f, n)	/* ask for and overwite a string into the current
+		   buffer at the current point */
+
+int f, n;	/* ignored arguments */
+
+{
+	register int status;	/* status return code */
+	char tstring[NPAT+1];	/* string to add */
+
+	/* ask for string to insert */
+	status = mlreplyt("String to overwrite<META>: ", tstring, NPAT, metac);
+	if (status != TRUE)
+		return(status);
+
+	if (f == FALSE)
+		n = 1;
+
+	if (n < 0)
+		n = - n;
+
+	/* insert it */
+	while (n-- && (status = lover(tstring)))
+		;
+	return(status);
+}
+

@@ -7,17 +7,7 @@
 #include        "edef.h"
 
 #if     AMIGA
-#define  NEW   1006
-#endif
-
-#if		ST520 & MEGAMAX
-#include <osbind.h>
-#include <string.h>
-#define LOAD_EXEC 0 	/* load and execute the program */
-char	*STcmd,		/* the command filename & path  */
-	*STargs,	/* command args (if any)        */
-	*STenv,		/* environment                  */
-	*STwork;	/* work area			*/
+#define  NEW   1006L
 #endif
 
 #if     VMS
@@ -38,9 +28,8 @@ extern  short   iochan;                         /* In "termio.c"        */
 extern int vttidy();
 #endif
 
-#if	MSDOS & MSC
+#if	MSDOS & (MSC | TURBO)
 #include	<process.h>
-#define	system(a)	spawnlp(P_WAIT, a, NULL)
 #endif
 
 /*
@@ -66,11 +55,9 @@ spawncli(f, n)
 		return(resterr());
 
 #if	AMIGA
-        newcli = Open("CON:0/0/639/199/MicroEmacs Subprocess", NEW);
         mlwrite("[Starting new CLI]");
         sgarbf = TRUE;
-        Execute("", newcli, 0);
-        Close(newcli);
+        Execute("NEWCLI \"CON:0/0/640/200/MicroEMACS Subprocess\"", 0L, 0L);
         return(TRUE);
 #endif
 
@@ -84,14 +71,20 @@ spawncli(f, n)
 #if     CPM
         mlwrite("Not in CP/M-86");
 #endif
-#if	ST520
-	mlwrite("Not in TOS");
-#endif
-#if     MSDOS & AZTEC
+#if     MSDOS & (AZTEC | MSC | TURBO)
         movecursor(term.t_nrow, 0);             /* Seek to last line.   */
         TTflush();
 	TTkclose();
-	system("command.com");
+	shellprog("");
+	TTkopen();
+        sgarbf = TRUE;
+        return(TRUE);
+#endif
+#if     ST520 & MWC
+	mlerase();	/* clear the message line */
+        TTflush();
+	TTkclose();
+	system("msh.prg");
 	TTkopen();
         sgarbf = TRUE;
         return(TRUE);
@@ -118,7 +111,7 @@ spawncli(f, n)
                 system("exec /bin/sh");
 #endif
         sgarbf = TRUE;
-        sleep(2);
+	sleep(2);
         TTopen();
         return(TRUE);
 #endif
@@ -153,11 +146,6 @@ spawn(f, n)
         register int    s;
         char            line[NLINE];
 
-#if	ST520 & MEGAMAX
-	int i,j,k;
-	char *sptr,*tptr;
-#endif
-
 #if     AMIGA
         long newcli;
 #endif
@@ -169,77 +157,14 @@ spawn(f, n)
 #if	AMIGA
         if ((s=mlreply("!", line, NLINE)) != TRUE)
                 return (s);
-        newcli = Open("CON:0/0/639/199/MicroEmacs Subprocess", NEW);
-        Execute(line,0,newcli);
+        newcli = Open("CON:0/0/640/200/MicroEMACS Subprocess", NEW);
+        Execute(line, 0L, newcli);
         Close(newcli);
         tgetc();     /* Pause.               */
         sgarbf = TRUE;
         return(TRUE);
 #endif
-#if     ST520 & MEGAMAX
-        if ((s=mlreply("!", line, NLINE)) != TRUE)
-                return(s);
-	movecursor(term.t_nrow - 1, 0);
-	TTclose();
-/*
- * break the line into the command and its args
- * be cute about it, if there is no '.' in the filename, try
- * to find .prg, .tos or .ttp in that order
- * in any case check to see that the file exists before we run 
- * amok
- */
-	STenv = NULL;
-	if((tptr = index(&line[0],' ')) == NULL) { /* no args */
-		STcmd = (char *)malloc(strlen(line) + 1);
-		strcpy(STcmd,line);
-		STargs = NULL;
-	}
-	else {  /* seperate out the args from the command */
-		/* resist the temptation to do ptr arithmetic */
-		STcmd = (char *)malloc(strlen(line) + 1);
-		for(i = 0,sptr = &line[0]; sptr != tptr; sptr++,i++)
-			STcmd[i] = *sptr;
-		STcmd[i] = '\0';
-		for(; *tptr == ' ' || *tptr == '\t'; tptr++);
-		if(*tptr == '\0')
-			STargs = NULL;
-		else {
-			STargs = (char *)malloc(strlen(tptr) + 2);
-/* first byte of STargs is the length of the string */
-			STargs[0] = strlen(tptr);
-			STargs[1] = NULL; /* fake it for strcat */
-			strcat(STargs,tptr);
-		}
-	}
-/*
- * before we issue the command look for the '.', if it's not there
- * try adding .prg, .tos and .ttp to see if they exist, if not
- * issue the command as is
- */
-	if((tptr = index(STcmd,'.')) == NULL) {
- 		STwork = (char *)malloc(strlen(STcmd) + 4);
- 		strcpy(STwork,STcmd);
- 		strcat(STwork,".prg");
- 		tptr = index(STwork,'.');
- 		if(Fsfirst(1,STwork) != 0) { /* try .tos */
- 			strcpy(tptr,".tos");
- 			if(Fsfirst(1,STwork) != 0) { /* try .ttp */
- 				strcpy(tptr,".ttp");
- 				if(Fsfirst(1,STwork) != 0) /* never mind */
- 					*STwork = NULL;
- 				}
- 			}
- 	}
- 	if(*STwork != NULL)
-	        Pexec(LOAD_EXEC,STwork,STargs,STenv); 		
-	else
-	        Pexec(LOAD_EXEC,STcmd,STargs,STenv);
-	TTopen();
-        mlputs("\r\n\n[End]");                  /* Pause.               */
-        TTgetc();			     /* Pause.               */
-        sgarbf = TRUE;
-        return (TRUE);
-#endif
+
 #if     VMS
         if ((s=mlreply("!", line, NLINE)) != TRUE)
                 return (s);
@@ -256,10 +181,119 @@ spawn(f, n)
         mlwrite("Not in CP/M-86");
         return (FALSE);
 #endif
-#if     MSDOS | (ST520 & LATTICE)
+#if     MSDOS
         if ((s=mlreply("!", line, NLINE)) != TRUE)
                 return(s);
 	movecursor(term.t_nrow - 1, 0);
+	TTkclose();
+        shellprog(line);
+	TTkopen();
+	/* if we are interactive, pause here */
+	if (clexec == FALSE) {
+	        mlputs("\r\n\n[End]");
+        	tgetc();
+        }
+        sgarbf = TRUE;
+        return (TRUE);
+#endif
+#if     ST520 & MWC
+        if ((s=mlreply("!", line, NLINE)) != TRUE)
+                return(s);
+	mlerase();
+	TTkclose();
+        system(line);
+	TTkopen();
+	/* if we are interactive, pause here */
+	if (clexec == FALSE) {
+	        mlputs("\r\n\n[End]");
+        	tgetc();
+        }
+        sgarbf = TRUE;
+        return (TRUE);
+#endif
+#if     V7 | USG | BSD
+        if ((s=mlreply("!", line, NLINE)) != TRUE)
+                return (s);
+        TTputc('\n');                /* Already have '\r'    */
+        TTflush();
+        TTclose();                              /* stty to old modes    */
+        system(line);
+        TTopen();
+        mlputs("[End]");                        /* Pause.               */
+        TTflush();
+        while ((s = tgetc()) != '\r' && s != ' ')
+                ;
+        sgarbf = TRUE;
+        return (TRUE);
+#endif
+}
+
+/*
+ * Run an external program with arguments. When it returns, wait for a single
+ * character to be typed, then mark the screen as garbage so a full repaint is
+ * done. Bound to "C-X $".
+ */
+
+execprg(f, n)
+
+{
+        register int    s;
+        char            line[NLINE];
+
+#if     AMIGA
+        long newcli;
+#endif
+
+	/* don't allow this command if restricted */
+	if (restflag)
+		return(resterr());
+
+#if	AMIGA
+        if ((s=mlreply("!", line, NLINE)) != TRUE)
+                return (s);
+        newcli = Open("CON:0/0/640/200/MicroEMACS Subprocess", NEW);
+        Execute(line, 0L, newcli);
+        Close(newcli);
+        tgetc();     /* Pause.               */
+        sgarbf = TRUE;
+        return(TRUE);
+#endif
+
+#if     VMS
+        if ((s=mlreply("!", line, NLINE)) != TRUE)
+                return (s);
+        TTputc('\n');                /* Already have '\r'    */
+        TTflush();
+        s = sys(line);                          /* Run the command.     */
+        mlputs("\r\n\n[End]");                  /* Pause.               */
+        TTflush();
+        tgetc();
+        sgarbf = TRUE;
+        return (s);
+#endif
+#if     CPM
+        mlwrite("Not in CP/M-86");
+        return (FALSE);
+#endif
+#if     MSDOS
+        if ((s=mlreply("$", line, NLINE)) != TRUE)
+                return(s);
+	movecursor(term.t_nrow - 1, 0);
+	TTkclose();
+        execprog(line);
+	TTkopen();
+	/* if we are interactive, pause here */
+	if (clexec == FALSE) {
+	        mlputs("\r\n\n[End]");
+        	tgetc();
+        }
+        sgarbf = TRUE;
+        return (TRUE);
+#endif
+#if     ST520 & MWC
+        if ((s=mlreply("!", line, NLINE)) != TRUE)
+                return(s);
+	mlerase();
 	TTkclose();
         system(line);
 	TTkopen();
@@ -304,10 +338,10 @@ pipecmd(f, n)
 	static char filnam[] = "ram:command";
         long newcli;
 #else
-	static char filnam[] = "command";
+	static char filnam[NSTRING] = "command";
 #endif
 
-#if	MSDOS
+#if     MSDOS | (ST520 & MWC)
 	char *tmp;
 	char *getenv();
 	FILE *fp;
@@ -321,8 +355,10 @@ pipecmd(f, n)
 #if	MSDOS
 	if ((tmp = getenv("TMP")) == NULL)
 		strcpy(filnam, "command");
-	else
+	else {
 		strcpy(filnam, tmp);
+                strcat(filnam,"\\command");
+        }
 #endif
 
 #if     VMS
@@ -355,20 +391,24 @@ pipecmd(f, n)
 	}
 
 #if     AMIGA
-        newcli = Open("CON:0/0/639/199/MicroEmacs Subprocess", NEW);
+        newcli = Open("CON:0/0/640/200/MicroEMACS Subprocess", NEW);
 	strcat(line, " >");
 	strcat(line, filnam);
-        Execute(line,0,newcli);
+        Execute(line, 0L, newcli);
 	s = TRUE;
         Close(newcli);
         sgarbf = TRUE;
 #endif
-#if     MSDOS
+#if     MSDOS | (ST520 & MWC)
 	strcat(line," >>");
 	strcat(line,filnam);
 	movecursor(term.t_nrow - 1, 0);
 	TTkclose();
-        system(line);
+#if	MSDOS
+        shellprog(line);
+#else
+	system(line);
+#endif
 	TTkopen();
         sgarbf = TRUE;
 	if ((fp = fopen(filnam, "r")) == NULL) {
@@ -470,18 +510,22 @@ filter(f, n)
 	}
 
 #if     AMIGA
-        newcli = Open("CON:0/0/639/199/MicroEmacs Subprocess", NEW);
+        newcli = Open("CON:0/0/640/200/MicroEMACS Subprocess", NEW);
 	strcat(line, " <ram:fltinp >ram:fltout");
-        Execute(line,0,newcli);
+        Execute(line,0L,newcli);
 	s = TRUE;
         Close(newcli);
         sgarbf = TRUE;
 #endif
-#if     MSDOS
+#if     MSDOS | (ST520 & MWC)
 	strcat(line," <fltinp >fltout");
 	movecursor(term.t_nrow - 1, 0);
 	TTkclose();
-        system(line);
+#if	MSDOS
+        shellprog(line);
+#else
+	system(line);
+#endif
 	TTkopen();
         sgarbf = TRUE;
 	s = TRUE;
@@ -558,7 +602,7 @@ register char   *cmd;
 }
 #endif
 
-#if	~AZTEC & MSDOS
+#if	~AZTEC & ~MSC & ~TURBO & MSDOS
 
 /*
  * This routine, once again by Bob McNamara, is a C translation of the "system"
@@ -572,7 +616,7 @@ sys(cmd, tail)
 char    *cmd;
 char    *tail;
 {
-#if MWC_86
+#if MWC
         register unsigned n;
         extern   char     *__end;
 
@@ -584,10 +628,6 @@ char    *tail;
 
 #if LATTICE
         return(forklp(cmd, tail, (char *)NULL));
-#endif
-
-#if	MSC
-	return(spawnlp(P_WAIT, cmd, tail, NULL));
 #endif
 }
 #endif
@@ -636,5 +676,161 @@ char *cmd;	/*  Incoming command line to execute  */
 	}
 
 	return (ferr ? ferr : wait());
+}
+#endif
+
+#if	MSDOS & LATTICE
+extern int _oserr;
+#endif
+
+#if	MSDOS & AZTEC
+extern int errno;
+#endif
+
+#if	MSDOS & (TURBO | LATTICE | AZTEC)
+/*	SHELLPROG: Execute a command in a subshell		*/
+
+shellprog(cmd)
+
+char *cmd;	/*  Incoming command line to execute  */
+
+{
+	char *shell;		/* Name of system command processor */
+	char *p;		/* Temporary pointer */
+	char swchar;		/* switch character to use */
+	union REGS regs;	/* parameters for dos call */
+	char comline[NSTRING];	/* constructed command line */
+	char *getenv();
+
+	/*  detect current switch character and set us up to use it */
+	regs.h.ah = 0x37;	/*  get setting data  */
+	regs.h.al = 0x00;	/*  get switch character  */
+	intdos(&regs, &regs);
+	swchar = (char)regs.h.dl;
+
+	/*  get name of system shell  */
+	if ((shell = getenv("COMSPEC")) == NULL) {
+		return(FALSE);		/*  No shell located  */
+	}
+
+	/* trim leading whitespace off the command */
+	while (*cmd == ' ' || *cmd == '\t')	/*  find out if null command */
+		cmd++;
+
+	/**  If the command line is not empty, bring up the shell  **/
+	/**  and execute the command.  Otherwise, bring up the     **/
+	/**  shell in interactive mode.   **/
+
+	if (*cmd) {
+		strcpy(comline, shell);
+		strcat(comline, " ");
+		comline[strlen(comline) + 1] = 0;
+		comline[strlen(comline)] = swchar;
+		strcat(comline, "c ");
+		strcat(comline, cmd);
+		return(execprog(comline));
+	} else
+		return(execprog(shell));
+}
+
+/*	EXECPROG:	A function to execute a named program
+			with arguments
+*/
+
+execprog(cmd)
+
+char *cmd;	/*  Incoming command line to execute  */
+
+{
+	char *sp;		/* temporary string pointer */
+	char f1[38];		/* FCB1 area (not initialized */
+	char f2[38];		/* FCB2 area (not initialized */
+	char prog[NSTRING];	/* program filespec */
+	char tail[NSTRING];	/* command tail with length byte */
+	union REGS regs;	/* parameters for dos call  */
+	struct SREGS segreg;	/* segment registers for dis call */
+	struct pblock {		/* EXEC parameter block */
+		short envptr;	/* 2 byte pointer to environment string */
+		char *cline;	/* 4 byte pointer to command line */
+		char *fcb1;	/* 4 byte pointer to FCB at PSP+5Ch */
+		char *fcb2;	/* 4 byte pointer to FCB at PSP+6Ch */
+	} pblock;
+	char *flook();
+
+	/* parse the command name from the command line */
+	sp = prog;
+	while (*cmd && (*cmd != ' ') && (*cmd != '\t'))
+		*sp++ = *cmd++;
+	*sp = 0;
+
+	/* and parse out the command tail */
+	while (*cmd && ((*cmd == ' ') || (*cmd == '\t')))
+		++cmd;
+	*tail = (char)(strlen(cmd)); /* record the byte length */
+	strcpy(&tail[1], cmd);
+	strcat(&tail[1], "\r");
+
+	/* look up the program on the path trying various extentions */
+	if ((sp = flook(prog, TRUE)) == NULL)
+		if ((sp = flook(strcat(prog, ".exe"), TRUE)) == NULL) {
+			strcpy(&prog[strlen(prog)-4], ".com");
+			if ((sp = flook(prog, TRUE)) == NULL)
+				return(FALSE);
+		}
+	strcpy(prog, sp);
+
+	/* get a pointer to this PSPs environment segment number */
+	segread(&segreg);
+
+	/* set up the EXEC parameter block */
+	pblock.envptr = 0;	/* make the child inherit the parents env */
+	pblock.fcb1 = f1;		/* point to a blank FCB */
+	pblock.fcb2 = f2;		/* point to a blank FCB */
+        pblock.cline = tail;		/* parameter line pointer */
+
+	/* and make the call */
+	regs.h.ah = 0x4b;	/* EXEC Load or Execute a Program */
+	regs.h.al = 0x00;	/* load end execute function subcode */
+#if	AZTEC
+	regs.x.ds = ((unsigned long)(prog) >> 16);	/* program name ptr */
+#else
+	segreg.ds = ((unsigned long)(prog) >> 16);	/* program name ptr */
+#endif
+	regs.x.dx = (unsigned int)(prog);
+#if	AZTEC
+	regs.x.es = regs.x.ds;
+	/*regs.x.es = ((unsigned long)(&pblock) >> 16);	* set up param block ptr */
+#else
+	segreg.es = ((unsigned long)(&pblock) >> 16);	/* set up param block ptr */
+#endif
+	regs.x.bx = (unsigned int)(&pblock);
+#if	LATTICE
+#define	CFLAG	1
+	if ((intdosx(&regs, &regs, &segreg) & CFLAG) == 0) {
+		regs.h.ah = 0x4d;	/* get child process return code */
+		intdos(&regs, &regs);	/* go do it */
+		rval = regs.x.ax;	/* save child's return code */
+	} else
+		rval = -_oserr;		/* failed child call */
+#endif
+#if	AZTEC
+#define	CFLAG	1
+	if ((sysint(0x21, &regs, &regs) & CFLAG) == 0) {
+		regs.h.ah = 0x4d;	/* get child process return code */
+		sysint(0x21, &regs, &regs);	/* go do it */
+		rval = regs.x.ax;	/* save child's return code */
+	} else
+		rval = -errno;		/* failed child call */
+#endif
+#if	TURBO
+	intdosx(&regs, &regs, &segreg);
+	if (regs.x.cflag == 0) {
+		regs.h.ah = 0x4d;	/* get child process return code */
+		intdos(&regs, &regs);	/* go do it */
+		rval = regs.x.ax;	/* save child's return code */
+	} else
+		rval = -_doserrno;	/* failed child call */
+#endif
+	return((rval < 0) ? FALSE : TRUE);
 }
 #endif
