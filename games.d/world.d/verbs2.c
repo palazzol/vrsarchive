@@ -1432,7 +1432,7 @@ vwear()
 	} else if (plce == 2) {
 	    spk = 68;
 	    if (plural)
-		spk = 147;
+		spk = 187;
 	} else if ((obpprp[d] & 64) != 64 && d != ZDEET)
 	    spk = 85;
 	else if ((d == RPANT && obloc[LPANT] == 3000) ||
