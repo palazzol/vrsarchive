@@ -7,8 +7,7 @@
 */
 #include "pm.h"
 #include <pwd.h>
-
-extern	int	fwrite(), fread();
+#include <stdio.h>
 
 /*
 ** check_scrs()	- print out the pm roll (only for score enquiries)
@@ -248,13 +247,15 @@ reg	int	flag;
 reg	score	*scrs;
 {
 	reg	FILE	*fp;
-	reg	int	(*func)();
+	reg	int	retval;
 
 	if (!(fp = fopen(pm_roll, flag ? "w" : "r")))
 		return(TRUE);
-	func = flag ? fwrite : fread;
-	if ((*func)(scrs, sizeof(*scrs), MAX_SCORES, fp) != MAX_SCORES)
-	{
+	if (flag)
+		retval = fwrite(scrs, sizeof(*scrs), MAX_SCORES, fp);
+	else
+		retval = fwrite(scrs, sizeof(*scrs), MAX_SCORES, fp);
+	if (retval != MAX_SCORES) {
 		perror(pm_roll);
 		fclose(fp);
 		return(TRUE);
@@ -274,13 +275,15 @@ reg	int	flag;
 reg	char	*buf;
 {
 	reg	FILE	*fp;
-	reg	int	(*func)();
+	reg	int 	retval;
 
 	if (!(fp = fopen(pm_user, flag ? "w" : "r")))
 		return(TRUE);
-	func = flag ? fwrite : fread;
-	if ((*func)(buf, sizeof(*buf), MAX_BYTES, fp) != MAX_BYTES)
-	{
+	if (flag)
+		retval = fwrite(buf, sizeof(*buf), MAX_BYTES, fp);
+	else
+		retval = fread(buf, sizeof(*buf), MAX_BYTES, fp);
+	if (retval != MAX_BYTES) {
 		perror(pm_user);
 		fclose(fp);
 		return(TRUE);

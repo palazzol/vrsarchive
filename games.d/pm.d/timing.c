@@ -15,7 +15,7 @@
 */
 void	delay ()
 {
-#ifdef TIOCGETP
+#ifndef TCGETA
 	struct sgttyb buf;
 	ioctl(1, TIOCGETP, &buf);
 	ioctl(1, TIOCSETP, &buf);
