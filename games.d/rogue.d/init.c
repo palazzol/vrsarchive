@@ -313,8 +313,8 @@ init_names()
 		*--cp = '\0';
 		s_names[i] = malloc((unsigned) strlen(prbuf)+1);
 		if (s_names[i] == NULL) {
-			printf("\nNo memory for scroll name\n");
-			exit(1);
+			printw("\nNo memory for scroll name\n");
+			leave();
 		}
 		s_know[i] = FALSE;
 		s_guess[i] = NULL;
