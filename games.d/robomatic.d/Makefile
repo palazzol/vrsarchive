@@ -2,7 +2,7 @@
 #	robomatic @(#)Makefile	1.7 10/19/85
 #
 ALL	= robomatic
-OPTIONS	= -O -DGAMDIR=\"$(GAMDIR) -DGAMLIB=\"$(GAMLIB)
+OPTIONS	= -O -DGAMDIR=$(GAMDIR) -DGAMLIB=$(GAMLIB)
 MODEL	= -i -F 2000
 include /etc/CONFIG
 

@@ -4,7 +4,7 @@
 #
 ALL	= rogomatic player rgmplot datesub histplot gene
 PUBDIR	= $(GAMLIB)/rgm14
-OPTIONS	= -O -DGAMDIR=\"$(GAMDIR) -DGAMLIB=\"$(PUBDIR)
+OPTIONS	= -O -DGAMDIR=$(GAMDIR) -DGAMLIB=$(PUBDIR)
 MODEL	= -M2l -F 2000
 include /etc/CONFIG
 OBJS	= arms.o command.o database.o debug.o explore.o io.o learn.o\

@@ -2,7 +2,7 @@
 #	Robots %W%
 #
 ALL	= robots
-OPTIONS	= -DALLSCORES -DOLDSCORES -DGAMLIB=\"$(GAMLIB)
+OPTIONS	= -DALLSCORES -DOLDSCORES -DGAMLIB=$(GAMLIB)
 MODEL	= -i -F 2000	# Required for XENIX only
 include /etc/CONFIG
 
