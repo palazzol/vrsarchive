@@ -520,7 +520,7 @@ struct cmd	commands[] = {
 	FUNCTION, "search-reverse", WIRED_CMD(RevSearch),
 	FUNCTION, "search-reverse-nd", WIRED_CMD(RSrchND),
 	FUNCTION, "select-buffer", WIRED_CMD(BufSelect),
-#ifdef MSDOS
+/*#ifdef MSDOS*/
 	FUNCTION, "select-buffer-1", WIRED_CMD(Buf1Select),
 	FUNCTION, "select-buffer-2", WIRED_CMD(Buf2Select),
 	FUNCTION, "select-buffer-3", WIRED_CMD(Buf3Select),
@@ -531,7 +531,7 @@ struct cmd	commands[] = {
 	FUNCTION, "select-buffer-8", WIRED_CMD(Buf8Select),
 	FUNCTION, "select-buffer-9", WIRED_CMD(Buf9Select),
 	FUNCTION, "select-buffer-10", WIRED_CMD(Buf10Select),
-#endif /* MSDOS */
+/*#endif /* MSDOS */
 	FUNCTION, "self-insert", WIRED_CMD(SelfInsert),
 	FUNCTION, "set", WIRED_CMD(SetVar),
 	FUNCTION, "set-mark", WIRED_CMD(SetMark),
