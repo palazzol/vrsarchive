@@ -1,0 +1,19 @@
+This is for all those sites that do NOT run 2.10.2 (or better :-) news.
+Take the list that spaf presents, and shove it into the script
+Update.active.  It strips and cleans it, then allows you to edit
+the results, and will then perform 'rmgroup' (included) on the
+resulting file.
+
+Edit Mkdead, changing 'sdnet', and 'ca' to reflect your local
+groups you want saved.
+
+Try them out bit at a time just to make sure they work.
+
+[You should get 'End of distribution' if you got the whole thing]
+
+Enjoy.....
+
+	barto (david barto)	Tele : (619) 271 9940
+	uucp : {decvax || ucbvax || ihnp4}!sdcsvax!celerity!barto
+	uucp : akgua!celerity!barto
+	arpa : sdcsvax!celerity!barto@NOSC
