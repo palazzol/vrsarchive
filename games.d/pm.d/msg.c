@@ -5,6 +5,7 @@
 */
 #include <signal.h>
 #include "pm.h"
+#include <varargs.h>
 
 /*
 ** strucpy()	- copy string using punctrl for things
@@ -32,25 +33,28 @@ reg	int	len;
 */
 static char msgbuf[BUFSIZ];
 
-/*VARARGS1*/
-void	msg (fmt, args)
-char	*fmt;
-int	args;
+/*VARARGS*/
+void msg(va_alist)
+va_dcl
 {
+	va_list ap;
+	char *fmt;
+
 	alarm(0);
+	va_start(ap);
+	fmt = va_arg(ap, char *);
 	/*
-	** if the string is "", just clear the line
-	*/
-	if (*fmt == '\0')
-	{
+	 * if the string is "", just clear the line
+	 */
+	if (*fmt == '\0') {
 		move(5, 55);
 		clrtoeol();
 		return;
 	}
 	/*
-	** otherwise print the message and flush it out
-	*/
-	doadd(fmt, &args);
+	 * otherwise printto the message and flush it out
+	 */
+	vsprintf(msgbuf, fmt, ap);
 	move(5, 55);
 	addstr(msgbuf);
 	clrtoeol();
@@ -72,22 +76,6 @@ void	msg_erase ()
 	alarm(0);
 	move(5, 55);
 	addstr("                       ");
-}
-
-void	doadd (fmt, args)
-char	**fmt;
-int	***args;
-{
-	static	FILE	junk;
-
-	/*
-	** Do the printf into buf
-	*/
-	junk._flag = _IOWRT + _IOSTRG;
-	junk._ptr = &msgbuf[0];
-	junk._cnt = 32767;
-	_doprnt(fmt, args, &junk);
-	putc('\0', &junk);
 }
 
 /*
