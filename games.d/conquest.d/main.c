@@ -15,6 +15,8 @@
 #include <signal.h>
 #include "header.h"
 
+extern char *getpass();
+
 /*initialization data*/
 /*Movement costs*/
 char *ele=       "#^%-~";
@@ -42,7 +44,7 @@ struct nation ntn[NTOTAL];   /* player nation stats */
 short occ[MAPX][MAPY];
 short movecost[MAPX][MAPY];
 extern int armornvy;
-int startgold=0;
+long startgold=0;
 
 /*offset of upper left hand corner*/
 short xoffset=0,yoffset=0;
