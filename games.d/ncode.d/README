@@ -1,0 +1,36 @@
+You should now have README, ncode.c, ncode.1 ncode.sample.1 and ncode.sample.2.
+
+The program will now handle arbitrarily large files (you can even #include
+/usr/dict/words) and runs much quicker than the first one I posted.
+
+This source is known to compile and run on 4.3 BSD and on Sun 3.0.  I
+understand that it compiles fine on sysV if you replace the calls to random()
+and srandom() with calls to rand() and srand().  Non 4.3 users will probably
+also have to replace the innards of a_random_number() with something that
+works on your system.  You basically want some number to seed the random
+number generator.  A getpid() doesn't change very quickly but will work;
+calls to the real-time clock work better.  This version of a_random_number()
+was written by pixar!brighton who insists that all the baroque bit twiddling
+helps.  I just know that it works.
+
+Compile it "cc ncode.c -O -o ncode" and then try
+
+	ncode ncode.sample.1
+
+For more fun, try
+
+	ncode -n 5 ncode.sample.1
+
+And for a good education say
+
+	ncode -g "I had a date with FOX\" ncode.sample.1
+
+Then you might want to read the man page, ncode.1, to learn about how it
+works.  You can make it pretty with "nroff -man ncode.1".  If all of this
+leaves you hopelessly confused, send mail to {sun,ucbvax}!pixar!good and
+I'll send you more confusing sample files.  If I feel like it.
+
+
+		--Craig
+		...{ucbvax,sun}!pixar!good
+
