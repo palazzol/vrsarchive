@@ -1,3 +1,16 @@
+Tue Nov 20 1984 - wnl (1.6)
+	Added an "exit" if sbrk's fail.  Added changes from Jonathon
+	Feiber at Sun:  ifdef SUN to make top work on Suns (they don't use
+	doubles in the proc structure), register declarations, check for
+	getting a user structure that has disappeared since the proc array
+	was read (it used to die, now it just shows the process as swapped).
+
+Tue Nov 13 1984 - wnl (1.5)
+	If the number of displayable processes ("active_procs") was less
+	than the number of requested processes ("topn"), top would
+	segmentation fault.  This bug has been fixed.  Thanks to Prentiss
+	Riddle at ut-sally for pointing out the existence of this bug.
+
 Tue Oct 23 1984 - wnl (1.4)
 	Finally fixed the hash table bug that caused processes owned by
 	root to sometimes appear with either no name or a different name
