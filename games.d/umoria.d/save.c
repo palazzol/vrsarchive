@@ -396,6 +396,7 @@ char *fnam;
   error |= !fread((char *)&max_panel_rows, sizeof(max_panel_rows), 1, f1);
   error |= !fread((char *)&max_panel_cols, sizeof(max_panel_cols), 1, f1);
 
+  blank_cave();
   for (i = 0; i < MAX_HEIGHT; i++)
     for (j = 0; j < MAX_WIDTH; j++)
       {
