@@ -46,9 +46,10 @@
 #CFLAGS = -O -DJOBCONTROL
 #
 # "vanilla" SYSV:
-#LIBS = -ltermcap
-#EXTRAOBJS = tmpnam.o
-#CFLAGS = -O -DSYSV -Dregfree=free -Dindex=strchr -Drindex=strrchr
+ALL	= vn
+OPTIONS = -O -DSYSV -Dregfree=free -Dindex=strchr -Drindex=strrchr
+include ../../CONFIG
+EXTRAOBJS = tmpnam.o
 #
 # BSD with strtok() / regex(), such as ULTRIX.  These are the rules
 # used for our installation (rtech is a microvax running ULTRIX):
@@ -72,7 +73,16 @@ VNOBJS=	hash.o envir_set.o pagefile.o reader.o storage.o sig_set.o term_set.o tt
 # uncomment one of the three sets of LIBS / EXTRAOBJS & CFLAGS definitions
 # above.
 #
-vn:
-	@echo "PLEASE READ THE MAKEFILE"
-#vn:	$(VNOBJS) $(EXTRAOBJS) $(SERVEROBJS)
-#	cc -o vn $(VNOBJS) $(EXTRAOBJS) $(SERVEROBJS) $(LIBS)
+#vn:
+#	@echo "PLEASE READ THE MAKEFILE"
+vn:	$(VNOBJS) $(EXTRAOBJS) $(SERVEROBJS)
+	cc -o vn $(VNOBJS) $(EXTRAOBJS) $(SERVEROBJS) $(LIBS)
+
+install: $(ALL) $(BINDIR) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 vn
+	cp vn.man $(MAN1)/vn.1
+	chmod 644 $(MAN1)/vn.1
+
+clean:
+	rm -f $(ALL) *.o
