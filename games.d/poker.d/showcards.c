@@ -42,22 +42,29 @@ for(i=1; i<n_players; i++)	/* don't show cards to computer */
 		}
 }
 
-void show( player, temp, i, j )
+#define SORTORDER(x)	(card(x)*4+suit(x))
 
+void show( player, temp, i, j )
 PLAYER	player[];
 char	temp[];
 int	i;		/* whose cards to show */
 int	j;		/* who to show them to */
+{ int	c, c2, t;
 
-{
-int	c;
-
-sprintf( temp, "C%d", i );		/* cards for player i */
-write( player[j].socket, temp, 2 );
-for(c=0; c<5; c++)
-	{
-	sprintf( temp, "%c%c ", rank(player[i].cards[c]), color(player[i].cards[c]));
-	write( player[j].socket, temp, 3 );
-	}
-write( player[j].socket, "\n", 1 );
+  sprintf( temp, "C%d", i );		/* cards for player i		*/
+  write( player[j].socket, temp, 2 );
+#ifndef UNSORTED
+  for (c = 0; c < 5; c++)
+    for (c2 = c+1; c2 < 5; c2++)	/* Bubble sort the cards	*/
+      if (SORTORDER(player[i].cards[c]) > SORTORDER(player[i].cards[c2])) {
+        t = player[i].cards[c];
+        player[i].cards[c] = player[i].cards[c2];
+        player[i].cards[c2] = t;
+    }
+#endif UNSORTED
+  for (c = 0; c < 5; c++) {
+    sprintf(temp, "%c%c ", rank(player[i].cards[c]), color(player[i].cards[c]));
+    write( player[j].socket, temp, 3 );
+  }
+  write( player[j].socket, "\n", 1 );
 }
