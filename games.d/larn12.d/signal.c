@@ -98,7 +98,7 @@ static char *signame[NSIG] = { "",
 
 #else BSD	/* for system V? */
 
-static char *signame[NSIG] = { "",
+static char *signame[32] = { "",
 "SIGHUP",  /*	1	 hangup */
 "SIGINT",  /*	2	 interrupt */
 "SIGQUIT", /*	3	 quit */
