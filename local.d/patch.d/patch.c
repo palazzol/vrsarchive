@@ -1,6 +1,6 @@
 /* patch - a program to apply diffs to original files
  *
- * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.6 1986-10-05 12:08:08 root Exp $
+ * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.7 1986-10-05 12:31:15 root Exp $
  *
  * Copyright 1984, Larry Wall
  *
@@ -8,6 +8,9 @@
  * money off of it, or pretend that you wrote it.
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.6  86/10/05  12:08:08  root
+ * Smarter handling of SCCS sub-directories.
+ * 
  * Revision 1.2.1.4  84/12/06  11:14:15  lwall
  * Made smarter about SCCS subdirectories.
  * 
@@ -516,7 +519,7 @@ LINENUM where;
 do_ed_script()
 {
     FILE *pipefp, *popen();
-    bool this_line_is_command = FALSE;
+    bool line_is_command = FALSE;
     register char *t;
     long beginning_of_this_line;
 
@@ -531,9 +534,9 @@ do_ed_script()
 	    break;
 	}
 	for (t=buf; isdigit(*t) || *t == ','; t++) ;
-	this_line_is_command = (isdigit(*buf) &&
+	line_is_command = (isdigit(*buf) &&
 	  (*t == 'd' || *t == 'c' || *t == 'a') );
-	if (this_line_is_command) {
+	if (line_is_command) {
 	    fputs(buf,pipefp);
 	    if (*t != 'd') {
 		while (pgets(buf,sizeof buf,pfp) != Nullch) {
@@ -1074,7 +1077,7 @@ intuit_diff_type()
     long previous_line;
     long first_command_line = -1;
     bool last_line_was_command = FALSE;
-    bool this_line_is_command = FALSE;
+    bool line_is_command = FALSE;
     register int indent;
     register char *s, *t;
     char *oldname = Nullch;
@@ -1084,7 +1087,7 @@ intuit_diff_type()
     Fseek(pfp,p_base,0);
     for (;;) {
 	previous_line = this_line;
-	last_line_was_command = this_line_is_command;
+	last_line_was_command = line_is_command;
 	this_line = ftell(pfp);
 	indent = 0;
 	if (fgets(buf,sizeof buf,pfp) == Nullch) {
@@ -1105,9 +1108,9 @@ intuit_diff_type()
 		indent++;
 	}
 	for (t=s; isdigit(*t) || *t == ','; t++) ; 
-	this_line_is_command = (isdigit(*s) &&
+	line_is_command = (isdigit(*s) &&
 	  (*t == 'd' || *t == 'c' || *t == 'a') );
-	if (first_command_line < 0L && this_line_is_command) { 
+	if (first_command_line < 0L && line_is_command) { 
 	    first_command_line = this_line;
 	    p_indent = indent;		/* assume this for now */
 	}
