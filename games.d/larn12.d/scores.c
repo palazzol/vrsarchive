@@ -615,7 +615,7 @@ static int havepid= -1;	/* playerid # if previously done */
 getplid(nam)
 	char *nam;
 	{
-	int fd7,high=999,no;
+	int fd7,high=-1,no;
 	register char *p,*p2;
 	char name[80];
 	if (havepid != -1) return(havepid);	/* already did it */
