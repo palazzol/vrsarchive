@@ -1,0 +1,1410 @@
+From littlei!reed!tektronix!cae780!amdcad!ames!rutgers!seismo!mcvax!botter!ark!Frodo Sun Aug 23 15:37:07 PDT 1987
+Article 1101 of rec.games.hack:
+Path: littlei!reed!tektronix!cae780!amdcad!ames!rutgers!seismo!mcvax!botter!ark!Frodo
+>From: Frodo@cs.vu.nl (Maarten Jan Huisjes)
+Newsgroups: rec.games.hack
+Subject: SPOILERS ON NETHACK.
+Message-ID: <1086@ark.cs.vu.nl>
+Date: 13 Aug 87 22:28:03 GMT
+Reply-To: Frodo@cs.vu.nl ()
+Distribution: world
+Organization: VU Informatica, Amsterdam
+Lines: 412
+
+
+Are You Sure??
+
+________________________________________________________________________________
+FOOD
+
+
+Name			Chance	Weight	NutritionRemarks
+
+food ration 		46,	4, 	800
+tripe ration		16,	2, 	200
+pancake			3,	1,	200
+dead lizard		3,	1,	40	Try when turning to stone.
+fortune cookie		7,	1,	40
+carrot			2,	1,	50
+slice of pizza		5,	1,	250
+cream pie		3,	1,	100
+tin			7,	1,	0	Spinach makes you strong.
+orange			1,	1,	80
+apple			1,	1,	50
+pear			1,	1,	50
+melon			1,	1,	100
+banana			1,	1,	80
+candy bar		1,	1,	100
+egg			1,	1,	80
+clove of garlic		1,	1,	40
+lump of royal jelly 	0,	1,	200	Sometimes strength++.
+
+Name			Chance	Weight	NutritionRemarks
+
+dead human		0,	40,	400	 Permanent aggravate monster.
+dead giant ant		0,	3,	30
+dead giant bat		0,	3,	30
+dead centaur		0,	50,	500
+dead dragon		0,	150,	1500	 Makes you fire resistant.
+dead floating eye	0,	1,	10	 Gives you telepathy.
+dead freezing sphere	0,	1,	10	 Makes you Cold resistant.
+dead gnome		0,	10,	100
+dead hobgoblin		0,	20,	200
+dead stalker		0,	40,	400	 Gives you see invisible.
+dead jackal		0,	10,	100
+dead kobold		0,	10,	100
+dead leprechaun		0,	40,	400	 Makes you teleport. 
+dead mimic		0,	40,	400	 Mimic a treasure chest.
+dead nymph		0,	40,	400	 Makes you teleport. 
+dead orc		0,	20,	200
+dead purple worm	0,	70,	700
+dead quantum mechanic 	0,	20,	200	 Makes you teleport.
+dead rust monster	0,	50,	500
+
+Name			Chance	Weight	NutritionRemarks
+
+dead snake		0,	10,	100
+dead troll		0,	40,	400
+dead umber hulk		0,	50,	500
+dead vampire		0,	40,	400
+dead wraith		0,	1,	10	  Gain level.
+dead xorn		0,	70,	700
+dead yeti		0,	70,	700	  Cold resistance.
+dead zombie		0,	3,	30
+dead acid blob		0,	3,	30	  Try when turning to stone.
+dead giant beetle	0,	1,	10
+dead cockatrice		0,	3,	30	  If you want to be a statue.
+dead dog		0,	20,	200	  Aggravate monsters.
+dead ettin		0,	3,	30
+dead fog cloud		0,	1,	10
+dead gelatinous cube	0,	10,	100
+dead homunculus		0,	20,	200
+dead imp		0,	1,	10
+dead jaguar		0,	30,	300
+dead killer bee		0,	1,	10	  Makes you poison resistant.
+
+Name			Chance	Weight	Nutrition
+
+dead leocrotta		0,	50,	500
+dead minotaur		0,	70,	700	 
+dead nurse		0,	40,	400	  Aggravate monsters.
+dead owlbear		0,	70,	700
+dead piercer		0,	20,	200
+dead quivering blob	0,	10,	100
+dead giant rat		0,	3,	30
+dead giant scorpion	0,	10,	100	  Same as killer bee.
+dead tengu		0,	30,	300	  Makes tou teleport.
+dead unicorn		0,	30,	300
+dead violet fungus	0,	10,	100	  Cosmic indeed (Oh wow ).
+dead long worm		0,	50,	500
+dead xan		0,	30,	300
+dead yellow light	0,	1,	10
+dead zruty		0,	60,	600
+dead giant		0,	70,	700	  Strength++.
+dead daemon		0,	80,	800
+
+________________________________________________________________________________
+WEAPONS.
+
+AXE, SWORD, KATANA, THSWORD are good for worm-cutting.
+(PICK-)AXE, DAGGER, CRYSKNIFE are good for tin-opening. 
+SPEAR is good against X, D, n, e.
+
+Name		Chance	Weight	Small/Large-damage	
+
+arrow		6,	 0, 	 6, 	 6
+sling bullet	6,	 0,	 4,	 6
+crossbow bolt	6,	 0,	 4,	 6
+dart		6,	 0,	 3,	 2
+shuriken	3,	 0,	 8,	 6
+rock		4,	 1,	 3,	 3
+boomerang	1,	 3,	 9,	 9
+mace		6,	 3,	 6,	 7 /* +1 small */
+axe		5,	 3,	 6,	 4
+flail		5,	 3,	 6,	 5 /* +1 small,	 +1d4 large */
+long sword	5,	 3,	 8,	 12
+two handed sword4,	 4,	 12,	 6 /* +2d6 large */
+dagger		4,	 3,	 4,	 3
+worm tooth	0,	 4,	 2,	 2
+crysknife	0,	 3,	 10,	 10
+aklys		1,	 3,	 6,	 3	 
+bardiche	1,	 3,	 4,	 4 /* +1d4 small,	 +2d4 large */
+bec de corbin	1,	 3,	 8,	 6
+
+Name		Chance	Weight	Small/Large-damage	
+
+bill-guisarme	1,	 3,	 4,	 10 /* +1d4 small */
+club		1,	 3,	 6,	 3
+fauchard	1,	 3,	 6,	 8
+glaive		1,	 3,	 6,	 10
+guisarme	1,	 3,	 4,	 8 /* +1d4 small */
+halberd		1,	 3,	 10,	 6 /* +1d6 large */
+lucern hammer	1,	 3,	 4,	 6 /* +1d4 small */
+javelin		1,	 3,	 6,	 6
+katana		1,	 3,	 12,	 12
+lance		1,	 3,	 6,	 8
+morning star	1,	 3,	 4,	 6 /* +d4 small,	 +1 large */
+partisan	1,	 3,	 6,	 6 /* +1 large */
+ranseur		1,	 3,	 4,	 4 /* +d4 both */
+scimitar	1,	 3,	 8,	 8	 
+spetum		1,	 3,	 6,	 6 /* +1 small,	 +d6 large */
+broad sword	1,	 3,	 4,	 6 /* +d4 small,	 +1 large */
+short sword	1,	 3,	 6,	 8
+trident		1,	 3,	 6,	 4 /* +1 small,	 +2d4 large */
+voulge		1,	 3,	 4,	 4 /* +d4 both */
+
+Name		Chance	Weight	Small/Large-damage	
+
+spear		4,	 3,	 6,	 8
+bow		4,	 3,	 4,	 6
+sling		4,	 3,	 6,	 6
+crossbow	5,	 3,	 4,	 6
+
+
+________________________________________________________________________________
+ARMOR.
+
+Name		Chance	Weight	Ac	Protection against special effects.
+
+helmet		 3, 	1, 	9,	0
+plate mail	 5,	5,	3,	2
+splint mail	 7,	5,	4,	1
+banded mail	 9,	5,	4,	0
+chain mail	10,	5,	5,	1
+scale mail	10,	5,	6,	0
+ring mail	12,	5,	7,	0
+
+ The armors below do not rust.
+
+studded leather 12,	3,	7,	1
+elfin chain mail 1,	1,	5,	3
+bronzeplate mail 6,	5,	4,	0
+crystalplate mail1,	5,	3,	2
+leather armor	15,	3,	8,	0
+elven cloak	 5,	0,	9,	3
+shield		 3,	0,	9,	0
+pair of gloves	 1,	1,	9,	0
+
+
+________________________________________________________________________________
+SCROLLS.
+
+All scrolls give strange effects when confused or hallucinating.
+
+Name		Chance	Remarks
+
+enchant armor	6	Do not try more than a +4 armor or it might evaporate.
+destroy armor	5
+confuse monster	5
+scare monster	4
+blank paper	3
+remove curse	6
+enchant weapon	6	Save until your weapon is +5.
+damage weapon	5
+create monster	5
+taming		1
+genocide	2	Have you ever tried genocide '@'.
+light		10
+teleportation	5
+gold detection	4
+food detection	1
+identify	18
+magic mapping	5
+amnesia		3
+fire		5
+punishment	1
+
+________________________________________________________________________________
+WANDS
+
+Name			Chance	
+
+light			10
+secret door detection	5
+create monster		5
+wishing			1	Actually this chance is even smaller.
+striking		7
+nothing			2
+slow monster		5
+speed monster		5
+undead turning		5
+polymorph		5	Use it on wands and you might find another.
+cancellation		5	Do not zap this wand.
+teleportation		5
+make invisible		7
+probing			2
+digging			5
+magic missile		10
+fire			5
+sleep			5
+cold			5
+death			1	Use with care, it might bounce.
+
+
+________________________________________________________________________________
+SPELLS
+
+Name			Chance	Level.
+
+magic missile		4	2
+fireball		2	4
+sleep			6	1
+cone of cold		1	5
+finger of death		1	7
+healing			6	1
+detect monsters		5	1
+force bolt		4	1
+light			5	1
+confuse monster		5	2
+cure blindness		3	2
+slow monster		4	2
+create monster		4	2
+detect food		5	2
+haste self		3	3
+cause fear		4	3
+cure sickness		3	3
+detect unseen		4	3
+extra healing		3	3
+
+Name			Chance	Level.
+
+charm monster		3	3
+levitation		3	4
+restore strength	2	4
+invisibility		3	4
+detect treasure		3	4
+dig			2	5
+remove curse		2	5
+magic mapping		2	5
+identify		1	5
+turn undead		1	6
+polymorph		1	6
+create familiar		1	6
+teleport away		2	6
+cancellation		1	7
+genocide		1	7
+
+
+________________________________________________________________________________
+RINGS.
+
+Name
+
+adornment
+teleportation
+regeneration
+searching
+see invisible
+stealth
+levitation
+poison resistance
+aggravate monster
+hunger
+fire resistance
+cold resistance
+protection from shape changers
+conflict
+gain strength
+increase damage
+protection
+warning
+teleport control
+
+
+________________________________________________________________________________
+GEMS.
+
+Name			Chance	Pecunia
+
+dilithium crystal	1,	4500
+diamond			1,	4000
+ruby			1,	3500
+sapphire		1,	3000
+emerald			1,	2500
+turquoise		1,	2000
+aquamarine		1,	1500
+tourmaline		1,	1000
+topaz			1,	900
+opal			1,	800
+garnet			1,	700
+amethyst		1,	650
+agate			2,	600
+onyx			2,	550
+jasper			2,	500
+jade			2,	450
+
+And now for someything completely differfent :
+
+ Name			 Message(s)
+
+restore strength	Wow!  This makes you feel great!
+			... looks sound and hale again!	     (Thrown to monster)
+gain energy		Magical energies course through your body.
+			You feel feverish.			      (Confused)
+booze			Ooph!  This tastes like liquid fire!
+			You feel somewhat dissy.			(Vapour)
+invisibility		Gee!  All of a sudden, you can't see yourself.
+			For an instance you couldn't see you rigth hand.(Vapour)
+			You feel rather airy.			       (Blinded)
+fruit juice		This tastes like fruit juice.
+healing			You begin to feel better.
+			... looks sound and hale again!	     (Thrown to monster)
+paralysis		Your feet are frozen to the floor!
+			Something seems to be holding you. 		(Vapour)
+			You are motionlessly suspended.		     (Levitated)
+monster detection	You sense the presence of monsters.
+			You feel threatened. 			   (No monsters)
+object detection	You sense the presence of objects.
+			You sense the presence of objects close nearby.
+			You feel a pull downward.    		    (No objects)
+sickness		Yech! This stuff tastes like poison.
+			... looks rather ill.		     (Thrown to monster)
+confusion		Huh, What?  Where am I?
+			What a trippy feeling.			 (Hallucinating)
+			You feel somewhat dissy.			(Vapour)
+gain strength		Wow do you feel strong!
+			... looks sound and hale again!	     (Thrown to monster)
+speed			You are suddenly moving much faster.
+			Your knees seem more flexible now.		(Vapour)
+			Your legs get new energy.			  (Fast)
+blindness		A cloud of darkness falls upon you.
+			It suddenly gets dark.				(Vapour)
+			Bummer!  Everything is dark!  Help!	 (Hallucinating)
+gain level		You feel more experienced.
+extra healing		You feel much better.
+			... looks sound and hale again!	     (Thrown to monster)
+levitation
+			Oh wow!  Yoy're floating in the air!     (Hallucinating)
+hallucination		Oh wow!  Everything looks so cosmic!
+			You have a vision for a moment. 		(Vapour)
+holy water		You feel full of awe.
+			This burns like acid.  (When you are 'Z','V','W' or '&')
+			... shrieks in pain!  (Thrown to 'Z','V','W',' ' or '&')
+
+Something to be said about the command '#'
+
+#dip
+	Use for every potion that you want to quaff the #dip command, 
+	dip arrows or darts in the potion and if it was a potion of :
+	Sickeness or Paralysis --> your dipped weapon gets stronger.
+	Holy water --> your weapon gets blessed and is better in use 
+			against the undead.
+	
+	Call your long sword 'Excalibur' and dip it in a fountain.
+	Mostly this will harm your sword but finally it will make 
+		it a +5 long sword called Excalibur.
+
+#pray
+	You can pray after each 500 turns.
+	You can also use the option time to see how much time has passed.
+	Nothing bad will happen, but be sure that your time has come.
+
+#sit
+	Use this command while you are on an throne (\).
+	You might get a wish (Chance 1 in 86) but also you can lose 
+		your gold or your possessions get cursed or identified!!
+
+#wipe
+	Clean your face when dirty.
+
+#breath 
+	First polymorph yourself in a Dragon.
+
+#remove
+	First polymorph into a Nymph
+
+
+
+		KHFT hgcnb vcNHGCnjhgbv,
+			oops just quaffed a potion of ....
+
+
+-- 
+
+			Maarten Jan  Huisjes.  (maartenj@cs.vu.nl)
+			{seismo|decvax|philabs}!mcvax!vu44!maartenj
+
+
+From littlei!reed!tektronix!cae780!amdcad!ames!sdcsvax!ucbvax!hplabs!sdcrdcf!trwrb!wiley!doug Sat Sep 12 11:01:35 PDT 1987
+Article 1315 of rec.games.hack:
+Path: littlei!reed!tektronix!cae780!amdcad!ames!sdcsvax!ucbvax!hplabs!sdcrdcf!trwrb!wiley!doug
+>From: doug@wiley.UUCP (Doug Rudoff)
+Newsgroups: rec.games.hack
+Subject: nethack bugs/features/comments (some spoilers)
+Message-ID: <1333@ryan.UUCP>
+Date: 9 Sep 87 22:17:08 GMT
+Reply-To: doug@wiley.UUCP ()
+Distribution: world
+Organization: TRW Inc., Redondo Beach, CA
+Lines: 24
+
+
+1) I have found a way to find yourself when invisible by "cheating".
+The 'C' command places the cursor on your current location so you can
+name objects around you, even if you are invisible. When invisible,
+the cursor should stay at the top of the screen.
+
+2) After dipping an object into one of the two potions that have
+effects on objects, nethack does not ask what to call the potion. This
+leaves the player with having to remember the color of the potion
+after it has disappeared.
+
+3) In my opinion, level teleportation traps are bad. Their major fault
+is that you rarely can plan in advance for them. When you are sent
+down to a much lower level you often do not have enough experience to
+survive. What is worse is when you are teleported to Hell. You don't
+even have a chance to survive unless you've eaten a dragon or leave a
+ring of fire resistance on at all times. I wouldn't complain as much
+about them if nethack never teleported you to Hell, or if you only got
+teleported to Hell when you had fire resistance.
+
+-- 
+=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Doug RUDOFF  TRW Inc. {cit-vax,trwrb}!wiley!doug | wiley!doug@csvax.caltech.edu
+=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+From littlei!reed!tektronix!cae780!amdcad!ames!sdcsvax!ucsdhub!hp-sdd!hplabs!sdcrdcf!ism780c!ico!cadnetix.UUCP!plhayes Sun Sep 20 16:20:06 PDT 1987
+Article 1352 of rec.games.hack:
+Path: littlei!reed!tektronix!cae780!amdcad!ames!sdcsvax!ucsdhub!hp-sdd!hplabs!sdcrdcf!ism780c!ico!cadnetix.UUCP!plhayes
+>From: plhayes@cadnetix.UUCP (Paul Hayes)
+Newsgroups: rec.games.hack
+Subject: Re: Those damnable demons
+Summary: SPOILER,   SPOILER,   SPOILER
+Message-ID: <861@cadnetix.UUCP>
+Date: 15 Sep 87 20:32:21 GMT
+References: <502@leah.Albany.Edu>
+Organization: Cadnetix Corp., Boulder, CO
+Lines: 6
+
+
+Demons, it would seem, are a form of undead, and thus can be dealt with by
+using a wand of undead turning.  Also, if you can get a blessed weapon (by
+various methods) said weapon can be particularly effective against them.
+
+You're welcome in retrospect.
+
+
+From littlei!reed!tektronix!cae780!amdcad!ames!sri-spam!rutgers!ucla-cs!zen!cory.Berkeley.EDU!tsang Sat Sep 26 21:12:23 PDT 1987
+Article 1400 of rec.games.hack:
+Path: littlei!reed!tektronix!cae780!amdcad!ames!sri-spam!rutgers!ucla-cs!zen!cory.Berkeley.EDU!tsang
+>From: tsang@cory.Berkeley.EDU (Donald Tsang)
+Newsgroups: rec.games.frp,rec.games.hack
+Subject: Re: archaic weaponry
+Keywords: ignorance
+Message-ID: <3922@zen.berkeley.edu>
+Date: 23 Sep 87 22:04:51 GMT
+References: <858@uhccux.UUCP>
+Sender: news@zen.berkeley.edu
+Reply-To: tsang@cory.Berkeley.EDU.UUCP (Donald Tsang)
+Followup-To: rec.games.hack
+Organization: University of California, Berkeley
+Lines: 48
+Xref: littlei rec.games.frp:1186 rec.games.hack:1400
+
+In article <858@uhccux.UUCP> carole@uhccux.UUCP (Carole Chang) writes:
+>Any of you people  familiar with the compugame  Nethack?   Well, I really would
+>like to know what all those new  weapons look like.   Could anyone post or send
+>me  physical  descriptions  of  the following  weapons?   I  know that I could 
+>probably  find them in some  D&D  book,  but  Hawaii doesn't  seem to have many
+>stores that carry role-playing paraphernalia.  Sob.  Anyway, thanks for any and
+>all help!
+>
+>*************************** List o' Weapons ***********************************
+>
+>Crysknife
+A knife made of a crystalline substance (sandworm tooth?), from _Dune_.
+
+>Glaive, Halberd, Bill-Guisarme, Fauchard, Bec-de-corbin, Guisarme,
+>Spetum, Partisan, Lucern hammer, Voulge, Ranseur, Bardiche
+All pole-arms (weapons on the end of poles).  Find a friend that plays,
+and look in his copy of _Unearthed Arcana_.
+
+Some examples: The Glaive is a "cleaver on a stick", Spetum a spear with
+two extra side points (sort of like a pitchfork, but the secondary
+tines are back a bit).  The Lucern Hammer is a stick with an armor-punching
+thing that sort of looks like a ball-pean hammer with spikes.  Halberds
+are used by the Swiss Guard at the Vatican...
+
+>Morning star
+A stick with a big spiked ball on the end, with or without a chain.
+If it has smaller balls and a chain, it is called a flail, while the
+ones with the stick and ball both of metal is a mace.
+
+>Aklys
+I think it's a stick attached to a long leather thong
+
+>And...
+>	What are the differences between Long, Two-handed, Short, and Broad
+>	swords?
+>
+Short sword is less than 2 1/2 feet long; broad sword is up to about 3 1/2
+with a broad blade, long up to 4, bastard sword to 5 feet, and the two-handed
+sword anything from 5 to 7 feet long.
+>
+>					-carole
+>					 carole@uhcc.uhccux.hawaii.edu
+
+Donald Tsang
+tsang@cory.Berkeley.EDU
+...!ucbvax!cory!tsang
+
+Post followups to rec.games.hack...
+
+
+From littlei!reed!tektronix!decvax!ucbvax!ucbcad!ames!lll-tis!lll-lcc!ptsfa!ihnp4!homxb!mtuxo!mtune!codas!killer!billw Sat Sep 26 21:35:06 PDT 1987
+Article 1415 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!ucbcad!ames!lll-tis!lll-lcc!ptsfa!ihnp4!homxb!mtuxo!mtune!codas!killer!billw
+>From: billw@killer.UUCP (Bill Wisner)
+Newsgroups: rec.games.hack
+Subject: Re: "Hand of Elbereth" (Spoilers)
+Keywords: Crown Throne Question
+Message-ID: <1620@killer.UUCP>
+Date: 24 Sep 87 12:54:04 GMT
+References: <1294@ilium.swatsun.UUCP>
+Organization: HASA
+Lines: 21
+
+pomeranz@swatsun (Harold Pomeranz):
+
+> I was playing a great game the other day, and I used the #pray command.  Much
+> to my surprise, "A voice boomed out":  "We crown thee 'HAND OF ELBERETH'".
+> Can anyone tell me what this does for one?  My theory is that once this has
+> happened to you, you will no longer "feel somewhat out of place..." when
+> sitting on thrones, but I never found another throne room after this 
+> happened so I can't be sure.  Can anyone give me any info or check the 
+> source code?  Also, is there a surefire method to get this to happen, or is
+> it just luck (I was very lucky that game, thanks to several unicorns...)?
+
+How does intrinsic invisibility, intrinsic see invisible, instrinsic cold
+resistance, intrinsic fire resistance, and intrinsic poison resistance sound?
+
+And you HAVE to be very lucky, this is pretty rare. There's no surefire way
+to make it happen, except to get lots and lots and lots of unicorns..
+-- 
+Bill Wisner, HASA			..ihnp4!killer!billw
+
+'An it harms none, do what thou will.'
+Everything in this message may be wrong.
+
+
+From littlei!reed!tektronix!decvax!ucbvax!sdcsvax!nosc!humu!uhmanoa!uhccux!carole Sun Sep 27 18:35:21 PDT 1987
+Article 1418 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!sdcsvax!nosc!humu!uhmanoa!uhccux!carole
+>From: carole@uhccux.UUCP (Carole Chang)
+Newsgroups: rec.games.hack,rec.games.frp
+Subject: archaic weaponry
+Keywords: thanks to everyone!  here's the results:
+Message-ID: <882@uhccux.UUCP>
+Date: 25 Sep 87 21:53:48 GMT
+Organization: U. of Hawaii, Manoa (Honolulu)
+Lines: 115
+Xref: littlei rec.games.hack:1418 rec.games.frp:1204
+
+
+For all those interested, here's a compilation of replies to my question 
+about the weapons in Nethack.  Thanks to:
+
+	Paul Anderson		pha@net1.ucsd.edu
+	Vernon Lee		scorpion@rice.edu
+	Bryan Ewbank		ihlph!bdewbank
+
+P.S.  The pictures you guys gave are really great!!!
+
+------------------------ List o' weapons -------------------------------
+
+Crysknife - this is a creation from Frank Herbet's "Dune", which,
+	like in "hack" (Idaknow about nethack), was made from the teeth
+	of giant worms. -- called Shai Halud.
+
+The following weapons are all "pole arms", meaning that they are
+wooden shafts (5-9' long) capped with a particular weapon-head:
+
+Glaive - this has a straight blade at the end of the shaft
+
+Halberd - this was an extremely popular weapon in Europe from
+	the Dark Ages to the pre-modern world; you can find them in
+	pictures of royal or elite Spanish, English, and French
+	guardsmen. A halberd's shaft ends with a single axe-head,
+	backed by a spike and tipped by a spear-head.
+
+			     ^ <- sword point
+			 __ | |		I wish I could draw it
+			/  \| |		better, but hopefully
+	Axe blade ->   |      |		you get the idea
+		       |      |
+			\__/| |
+			    (pole)
+
+Bill-Guisarme - ends in a spear-head with a spike on one side
+	and a hook on the other
+
+Fauchard - topped by a curved sickle-blade 
+
+Bec-de-corbin - ends in a stout spear-point, with a small axe-head
+	on one side and a "crow's beak" (i.e. beak-shaped spike) on the
+	other. This weapon was designed for puncturing heavy armor.
+
+Guisarme - ends with a sharpened pruning hook
+
+Spetum - ends with a spear-blade that has a smaller blade jutting
+	at an angle from either side; the idea was to catch an opponent's
+	weapon between two blades and disarm him with a twist of the shaft.
+
+Partisan - has a spear-head with a small axe-head to either side 
+
+Lucern hammer - ends in a forward-pointing and one or more curved, 
+	downward-pointing (i.e.perpendicular) spikes.  
+
+Voulge - this has a straight single-edged blade depending from one side of 
+	the shaft's end.  
+
+Ranseur -ends with a broad spear-head with a flat base, and a broader
+	"hilt" (often a straight piece with sharpened ends) behind it. Like
+	the spetum, the idea was to catch weapons between the blade and "hilt".
+
+Bardiche - a short shaft (5') with an enormous long axe-head, connected
+	at at least two places. Basically a huge axe (or a short voulge.)
+
+Morning star - this is the old spiked-ball-on-a-stick (-on-a-chain's are
+	flails)
+
+Aklys -	This is a primitive weapon that is a cross between a sling
+	and a bow and arrow:
+		1. take two spears of the same length.
+		2. replace the point of spear (b) with a
+		   spoon-type arrangement, and bend the spoon
+		   to a 90 degree angle from the shaft of the
+		   spear.
+		3. place the spears so that the shaft end of
+		   spear (a) fits into the spoon at the point
+		   of spear (b).
+		4. grasp *only* spear (b), with spear (a) balanced
+		   on top of spear (b).
+		5. swing as if for an overhand shot in {tennis,
+		   racketball, etc}.  *do* *not* let go of spear (b)
+		6. spear (a) will be thrust forward at an amazing
+		   speed.
+
+	In pictures (sort of):
+
+		  ------------------------>	spear (a)
+		|__________________________	spear (b)
+
+		`---- this is the spoon at the end of spear (b)
+
+	The weapon fires to the right of the picture.  In actual
+	implementation of the weapon, spear (b) [the handle] is
+	replaced with something fairly flexible and springy.  This
+	gives more power to the projectile.
+
+
+Swords -
+	Short swords are 2-3' long and used for stabbing. Long and Broad swords
+	are 3-4' long; Broad swords have sharpened edged for chopping and 
+	cleaving, Long swords are narrower with sharpened tips for stabbing
+	and slashing. Two-handed swords are 5-6' long, with long handles
+	because they require both hands to use. If you ever find a bastard
+	sword, it's a cleaving weapon 4-5' long, which can be wielded with
+	one or (more efficiently) two hands.
+
+
+-------------------------------------------------------------------------------
+Carole Chang		carole@uhcc.uhccux.hawaii.edu
+			(and trying to forward my mail from 
+				carole@citromeo.bitnet)
+
+		        "Are we having fun yet?"
+-------------------------------------------------------------------------------
+
+
+From littlei!reed!tektronix!decvax!ucbvax!sdcsvax!ames!amdahl!drivax!holloway Wed Sep 30 14:36:08 PDT 1987
+Article 1426 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!sdcsvax!ames!amdahl!drivax!holloway
+>From: holloway@drivax.UUCP (Bruce Holloway)
+Newsgroups: rec.games.hack
+Subject: Nethack Suggestions
+Message-ID: <2448@drivax.UUCP>
+Date: 25 Sep 87 21:58:41 GMT
+Reply-To: holloway@drivax.UUCP (Bruce Holloway)
+Distribution: world
+Organization: Compact (was DRI)
+Lines: 59
+
+Nethack is too easy. Especially once you're above eighth, ninth level.
+Every few hundred turns, you can #pray, and perhaps get some new
+intrinsic abilities. Spellbooks remove the need for scrolls and wands,
+once you have them....
+
+So for #pray - Allow this only when you're first and second level. This
+gives your character the chance to get a couple of extra abilities, if
+lucky enough, without overbalancing the game.
+
+And spellbooks - well, really magical energy. Don't allow magical energy
+to be regained. Once you use some, it's gone forever. This would make those
+drain energy traps particularly nasty. You'd still gain energy when climbing
+levels, and perhaps by praying (with blessing, the only function that'd
+still work past the first couple of levels). Potions of gain energy would
+still work, except that there'd be no upward limit on energy.
+
+The Amulet of Yendor should negate all intrinsic abilities when carried.
+This is the big bubba of treasures... let's give it a REASON to be down
+in the darkest pits. The Amulet should aggravate all monsters, and also
+create them at a rate of one every few hundred turns. And these should
+all be killer monsters. Disallow level transportation when holding the
+Amulet - it should be TOUGH to get back to the surface! No teleporting to
+level 0.
+
+Monsters. There need to be some really high-level killer monsters to make
+life interesting on the way back to the surface (assuming you don't cheat
+and teleport).
+
+The Wizard is wimpy. No adventurer who can survive the 40th level has much
+to fear from the wizard. The Wiz just sits there while you beat on him.
+Give him some teeth. Have him polymorph you into a Floating Eye. Or a
+Gelatinous Cube. This should be the climactic battle of the entire adventure.
+
+How about a Sorceress, who can drain wand charges, your magical energy,
+and/or reflects spells back at you? Goes around making lit rooms dark.
+Definite anti-magic, here.
+
+Janitor - turns off the lights, removes doors from walls (better yet, it
+makes them secret again), and picks up anything found on the floor.
+
+A thief who goes around setting traps... And usually right in front of doors.
+
+A stone golem that, once killed, turns into several cockatrices. Flesh golems
+turn into xans, Iron golems into rust monsters, Clay golems into rock moles.
+
+Doppelganger - looks just like you, and does the same amount of damage
+(based on weapon type).
+
+Elf-lord, who shoots with a bow and arrow, has double the normal movement rate,
+always hits, and does a significant amount of damage with each shot.
+
+A Polymorph trap!
+
+Wand of cloning - duplicates the monster it's shot at. Creates doppleganger
+if shot at yourself.
+-- 
+*******************************************************************************
+* Bruce Holloway - Terminal Netnews Addict       uunet!amdahl!drivax!holloway *
+* ALBATROSS, ATARI*TROS @ Plink                            ALBATROSS @ Delphi *
+*******************************************************************************
+
+
+From littlei!reed!tektronix!decvax!ucbvax!sdcsvax!net1!pha Wed Sep 30 14:36:28 PDT 1987
+Article 1427 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!sdcsvax!net1!pha
+>From: pha@net1.ucsd.edu (Paul Anderson)
+Newsgroups: rec.games.frp,rec.games.hack
+Subject: Maces, Morningstars & Flails
+Message-ID: <3969@sdcsvax.UCSD.EDU>
+Date: 27 Sep 87 21:27:22 GMT
+Sender: nobody@sdcsvax.UCSD.EDU
+Reply-To: pha@net1.UUCP (Paul Anderson)
+Organization: UCSD Office of Academic Computing
+Lines: 36
+Xref: littlei rec.games.frp:1215 rec.games.hack:1427
+
+
+In article <10710@sri-spam.istc.sri.com> robert@sri-spam.UUCP (Robert Allen) writes:
+>	Isn't a ball on a stick (w or w/out spikes on said ball) a
+>	"mace", a ball on a chain a "morning start", and several chains
+>	on a stick a "flail"?
+
+The terms "morningstar" and "flail" have long been used interchangably.
+In a situation where the three names each mean a particular weapon (such
+as an RPG, or weapons history (I can't substantiate that)), the following
+distinctions are used:
+
+Mace: a heavy, blunt head on a stick (usually also metal) - note that
+	mace-heads can be flanged balls, cylinders, round ringed affairs,
+	the popular plus-shaped-cross-section shape, or just about anything.
+	The point is, they're heavy, metal, and blunt (desined for smashing
+	things, such as thick metal helmets)
+
+Morningstar: a spiked ball on a stick. Note "spiked"; these weapons
+	thrash as well as smash. This accounts for two rules in AD&D -
+	one, the MM always says to treat spiked clubs as morningstar;
+	two, clerics can't use them (spikes=edges)
+
+Flail: one or more heads of almost any shape - iron balls, flanged
+	balls, spiked balls, spiked sticks, etc. - attached by chains
+	to a handle. You attack by "flailing" them around. In AD&D, 
+	clerics can use these, since they can be blunt.
+
+Please don't flame me about the whole clerics-and-blunt-weapons
+fallacy. I am not advocating it, I am citing it as an example.
+The last thing we need is another "AD&D-sucks-because-[rule#x]-
+is-stupid" debate.
+
+Look for my short note on aklys'...
+
+Paul Anderson
+pha@net1.uucp pha@net1.ucsd.edu
+
+
+From littlei!reed!tektronix!decvax!ucbvax!sdcsvax!net1!pha Thu Oct  1 08:57:22 PDT 1987
+Article 1428 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!sdcsvax!net1!pha
+>From: pha@net1.ucsd.edu (Paul Anderson)
+Newsgroups: rec.games.frp,rec.games.hack
+Subject: archaic weapons - that's not an aklys!
+Message-ID: <3970@sdcsvax.UCSD.EDU>
+Date: 27 Sep 87 21:28:42 GMT
+Sender: nobody@sdcsvax.UCSD.EDU
+Reply-To: pha@net1.UUCP (Paul Anderson)
+Organization: UCSD Office of Academic Computing
+Lines: 24
+Xref: littlei rec.games.frp:1216 rec.games.hack:1428
+
+
+In article <882@uhccux.UUCP> carole@uhccux.UUCP (Carole Chang) writes:
+>Aklys -	This is a primitive weapon that is a cross between a sling
+>	and a bow and arrow:
+>	(desciption...)
+>
+>	In pictures (sort of):
+>
+>		  ------------------------>	spear (a)
+>		|__________________________	spear (b)
+>
+>		`---- this is the spoon at the end of spear (b)
+
+Almost, not quite...what you have described is almost universally
+called an "atlatl" (many of the rogue-hack games feature these).
+Easy to cofnuse the names.
+
+An "aklys" is a long thong with a weight at the end. Holding the
+other end of the thong, you throw the weight; the thong entangles
+the target, and the weight whaps it. So, in nethack, I recommend
+you try throwing it.
+
+Paul Anderson
+pha@net1.UUCP pha@net1.ucsd.edu
+
+
+From littlei!reed!tektronix!decvax!linus!mdh Thu Oct  1 09:03:02 PDT 1987
+Article 1430 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!linus!mdh
+>From: mdh@linus.UUCP (Mike, no not that one, no, the other one)
+Newsgroups: rec.games.hack
+Subject: Re: Nethack Suggestions
+Summary: Some are good, and some are bad.
+Message-ID: <14156@linus.UUCP>
+Date: 28 Sep 87 13:23:04 GMT
+References: <2448@drivax.UUCP>
+Reply-To: mdh@linus.UUCP (Mike, no not that one, no, the other one)
+Distribution: world
+Organization: SOON to be, The Orginization of Procrastinators
+Lines: 111
+
+In Message-ID: <2448@drivax.UUCP> From: holloway@drivax.UUCP (Bruce Holloway)
+
+> Nethack is too easy. Especially once you're above eighth, ninth level.
+> Every few hundred turns, you can #pray, and perhaps get some new
+> intrinsic abilities. Spellbooks remove the need for scrolls and wands,
+> once you have them....
+
+  I must agree, Nethack is too easy once you are a high level character, 
+basically once you get to level 12-13, and meet a nurse, not much can kill
+you other than shere stupidity... (that's usually the way I die...)
+
+> So for #pray - Allow this only when you're first and second level. This
+> gives your character the chance to get a couple of extra abilities, if
+> lucky enough, without overbalancing the game.
+
+  Well, actually getting this on when your first or second level doesn't last
+that long.  And probably not as long as you have to wait before you can actually
+pray, and not be damned.. 
+  When I play, one acid blob, and a leprechan, and I am at level 4 or so..
+2 leprechans brings one up to about level 5.
+
+> And spellbooks - well, really magical energy. Don't allow magical energy
+> to be regained. Once you use some, it's gone forever. This would make those
+> drain energy traps particularly nasty. You'd still gain energy when climbing
+> levels, and perhaps by praying (with blessing, the only function that'd
+> still work past the first couple of levels). Potions of gain energy would
+> still work, except that there'd be no upward limit on energy.
+
+   This has some merit, but instead of making it go away for ever, I think
+that just making it come back slower, (I mean slower.. @-) would suffice.
+
+> The Wizard is wimpy. No adventurer who can survive the 40th level has much
+> to fear from the wizard. The Wiz just sits there while you beat on him.
+> Give him some teeth. Have him polymorph you into a Floating Eye. Or a
+> Gelatinous Cube. This should be the climactic battle of the entire adventure.
+
+   The Wizard is a wimp.  But, I don't know about the polymorph.  Maybe 
+something more to the extent of a lightning bolt. or similliar spell that 
+the adventurer can't already have resistance for.
+
+> How about a Sorceress, who can drain wand charges, your magical energy,
+> and/or reflects spells back at you? Goes around making lit rooms dark.
+> Definite anti-magic, here.
+
+  Well, if you would implement the slow gain of energy points, or no gain
+of energy point, A Sorceress could be like a nurse, and take away your
+energy if you are armed, or have armour on, and give you energy points if 
+you don't.   Likewise, set a maximum number of points a nurse or a Sorceress 
+could give you.  To win, all you have to do is find a nurse, wear a ring
+of conflict, and you basically can easily gain 50+ hitpoints by just finding
+and staying with her.
+
+> Janitor - turns off the lights, removes doors from walls (better yet, it
+> makes them secret again), and picks up anything found on the floor.
+
+  This is a really interresting Idea, and it would make escaping much harder,
+for you can't leave food, or other things lying around to be picked up.
+
+  Although, there could be, (like the vaults) a janitorial closet, that could
+contain some food, or other misc. things.
+
+> A thief who goes around setting traps... And usually right in front of doors.
+
+  Of course after killing a thief, you could probably find a lock-pick set, so
+that you might be able to remove the chain, or the Heavy Ball. make a command
+#pick, or #disarm. that will unlock something or disarm a trap. Because a 
+teleport trap right in front of a door to the room with the staircase is rather
+a pain in the Royal Killer Bee Hive...
+
+> A stone golem that, once killed, turns into several cockatrices. Flesh golems
+> turn into xans, Iron golems into rust monsters, Clay golems into rock moles.
+
+  I am sorry, but I think that these Ideas are stupid.  Nothing should 
+transform itself when it is dead into something living.  There is kind of a 
+paradox here...  Although, Stone golems, Iron golems, Xorns, and other monsters,
+might be given a chance to have the players weapon break on scorring a hit, or
+just making it duller, (lower its magic number...)
+
+> Doppelganger - looks just like you, and does the same amount of damage
+> (based on weapon type).
+
+  This is the best Idea yet,  Actually tring to kill something as strong as
+you.  This is a way to make getting at the Amulet harder.  Instead of Hounds
+gaurding the Wizard, put a doppelganger there.  Have to kill him, to get to the
+Wizard. Also, a Doppelganger might not be affected by a ring of conflict...
+
+>Elf-lord, who shoots with a bow and arrow, has double the normal movement rate,
+> always hits, and does a significant amount of damage with each shot.
+
+  Sorry, but like the golems, this isn't really a good idea, unless the bow is
+magic, and it can get left behind, with the arrows.  I don't know about Always
+hit either. 
+
+> A Polymorph trap!
+
+  This is a great idea.  It is both good, polymorph into a giant, but you 
+would of course loose all of your body armour, and bad, polymorph into a 
+wimpy little Kop.
+
+> Wand of cloning - duplicates the monster it's shot at. Creates doppleganger
+> if shot at yourself.
+
+  This is another goody...
+
+> * Bruce Holloway - Terminal Netnews Addict    uunet!amdahl!drivax!holloway *
+
+-- 
+  Mike  Houle                         |   A Hacker is a Computer Programer that 
+                                      | likes to explore other Computer systems.
+  ! UUCP ->   decvax!linus!mdh        |   A Computer Scientist is a Hacker that
+  ! ARPA ->   mdh%linus@mitre-bedford | doesn't get caught.
+
+
+From littlei!reed!psu-cs!qiclab!leonard Thu Oct  1 09:04:29 PDT 1987
+Article 1432 of rec.games.hack:
+Path: littlei!reed!psu-cs!qiclab!leonard
+>From: leonard@qiclab.pdx.com (Leonard Erickson)
+Newsgroups: rec.games.hack,rec.games.frp
+Subject: Re: archaic weaponry
+Message-ID: <820@qiclab.pdx.com>
+Date: 29 Sep 87 03:45:26 GMT
+References: <882@uhccux.UUCP> <10710@sri-spam.istc.sri.com>
+Reply-To: leonard@qiclab.UUCP (Leonard Erickson)
+Organization: Qic Laboratories, Portland, Oregon.
+Lines: 23
+Xref: littlei rec.games.hack:1432 rec.games.frp:1220
+
+In article <10710@sri-spam.istc.sri.com> robert@sri-spam.UUCP (Robert Allen) writes:
+<	Isn't a ball on a stick (w or w/out spikes on said ball) a
+<	"mace", a ball on a chain a "morning start", and several chains
+<	on a stick a "flail"?
+
+Actually, a flail is a "stick" attached to a chain, which is attached to
+a pole. D*mn vicious weapon! "Typical" configuration is a 5-6 *foot* handle
+at least 3 feet of chain and then 3 feet of stick. The "stick" may be
+something along the lines of a spiked piece of steel pipe.
+
+Before the SCA outlawed "flexible" weapons, I had the opportunity to try using
+a "tourney legal" flail. It takes a lot of skill to avoid bashing *yourself*.
+And who (or what) ever you hit is *not* going to shrug it off!
+
+Some flails may have had the spiked balls instead of the stick. But the 
+*essential* point is that the flail is a "pole arm". (ie has a "handle"
+over 5 foot long)
+
+-- 
+Leonard Erickson		...!tektronix!reed!percival!bucket!leonard
+CIS: [70465,203]		...!tektronix!reed!qiclab!leonard
+"I used to be a hacker. Now I'm a 'microcomputer specialist'.
+You know... I'd rather be a hacker."
+
+
+From littlei!reed!tektronix!decvax!ucbvax!ucbcad!ames!amdcad!sun!pitstop!sundc!rlgvax!vrdxhq!bisanabi Sun Oct  4 17:22:54 PDT 1987
+Article 1441 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!ucbvax!ucbcad!ames!amdcad!sun!pitstop!sundc!rlgvax!vrdxhq!bisanabi
+>From: bisanabi@vrdxhq.UUCP (Paul Paloski)
+Newsgroups: rec.games.hack
+Subject: Re: Nethack Suggestions
+Summary: Some further comments...
+Message-ID: <4706@vrdxhq.UUCP>
+Date: 29 Sep 87 12:33:54 GMT
+References: <2448@drivax.UUCP> <14156@linus.UUCP>
+Organization: Verdix Corporation, Chantilly, VA
+Lines: 111
+
+In article <14156@linus.UUCP>, mdh@linus.UUCP (Mike, no not that one, no, the other one) writes:
+> In Message-ID: <2448@drivax.UUCP> From: holloway@drivax.UUCP (Bruce Holloway)
+> 
+> > Nethack is too easy...  <rest deleted>
+> 
+>   I must agree... <rest deleted>
+>
+Ditto !
+
+>   When I play, one acid blob, and a leprechan, and I am at level 4 or so..
+> 2 leprechans brings one up to about level 5.
+>
+This is ridiculous.  If Lep's are going to appear at a low level and be worth
+so much, then experience level 2 needs to be moved up an order of magnitude
+of experience points.
+
+> > The Wizard is wimpy. No adventurer who can survive the 40th level has much
+> > to fear from the wizard. The Wiz just sits there while you beat on him.
+> > Give him some teeth. Have him polymorph you into a Floating Eye. Or a
+> > Gelatinous Cube.
+> 
+>    The Wizard is a wimp.  But, I don't know about the polymorph.
+>
+Why not ?  Why can't the Wizard (or *any* 'monster') have the ability to
+cast *all* spells ??  Especially the wizard !  He has this amazing dungeon,
+all these followers, a wide variety of traps, and acquired the Amulet in the
+first place.  With all these spell books, scrolls, wands, etc. strewn all
+about his home, wouldn't it be likely that he knows a little magic himself ??
+Seems awefully one-sided to assume a mere player character can achieve the
+powers of a near-God, but the wizard is limited to fight with his hands, or
+a select spell or two.  Give him the full range, open up the area near him
+to provide more fighting room (plus traps and henchmen), and let the final
+battle be a battle.  A player should leave scuffed-up, bleeding, and proud
+because s/he survived.  It shouldn't be a walk in the park.  Let the number
+of total winners be limited, so that it means something to get there.
+
+> 
+> > How about a Sorceress, who can drain wand charges, your magical energy,
+> > and/or reflects spells back at you? Goes around making lit rooms dark.
+> > Definite anti-magic, here.
+> 
+>   Well, if you would implement the slow gain of energy points, or no gain
+> of energy point, A Sorceress could be like a nurse, and take away your
+> energy if you are armed, or have armour on, and give you energy points if 
+> you don't.   Likewise, set a maximum number of points a nurse or a Sorceress 
+> could give you.  To win, all you have to do is find a nurse, wear a ring
+> of conflict, and you basically can easily gain 50+ hitpoints by just finding
+> and staying with her.
+> 
+Why does everything have to have a good side-effect ??  The nurse, if treated
+right, can totally unbalance the game by providing unlimited hit points.
+The Sorceress can be made to provide unlimited energy points.  Ughh !  Either
+put a limit to the amount a nurse can provide, or do the following :
+  (treat a nurse like a unicorn)
+   1) it hits  (same effects as current)
+   2) random chance for it to teleport away (if you are already healed - after
+all, the nurse is looking for hurt people to heal)
+   3) random chance it will teleport to another level looking for hurt people
+
+This automatically limits the nurse to his/her original function of healing,
+and *not* raise max hit points through the roof.  Currently it is neither
+realistic nor preferable.  The game is too easy as is.
+
+> > Janitor - turns off the lights, removes doors from walls (better yet, it
+> > makes them secret again), and picks up anything found on the floor.
+> 
+>   This is a really interresting Idea, and it would make escaping much harder,
+> for you can't leave food, or other things lying around to be picked up.
+> 
+>   Although, there could be, (like the vaults) a janitorial closet, that could
+> contain some food, or other misc. things.
+> 
+
+Again, there is no need to balance this effect.  I find it a pain to have
+unicorns swipe my identified gems from piles of junk on the ground.  After
+collecting (read stealing) items from several shops, I have my own 'shop' on
+some level where I keep coming back to in order to resupply worn out wands,
+get more food, etc.  I had 20,000+ gold in a pile and a dragon swiped it.
+When I killed it, I only got 10,000 back.  Let the Janitors clean up this
+'mess'. Similarly, make the Nymphs and new Janitors have a random chance of
+*not* maintaining the item in their possession. This isn't logical (it has
+to be some place!) but would make the game more interesting.  The nymphs are
+just a pain right now, since they aren't hard to kill.  It just takes
+patience to track them down.  Make the encounters something to be avoided.
+
+> > A Polymorph trap!
+> 
+>   This is a great idea.  It is both good, polymorph into a giant, but you 
+> would of course loose all of your body armour, and bad, polymorph into a 
+> wimpy little Kop.
+> 
+  The armor should be damaged beyond repair, or at least lose several +'s,
+when you polymorph into a Purple worm or Giant.  Logically, the straps
+would at least break so you couldn't wear it again; at least not very well.
+Full armor would be ripped beyond repair.  The player should remember to
+remove the armor first !
+  Does polymorphing into a wimpy Kop give you a 'you collapse under your
+load' message ??  Does polymorphing into a giant allow you to carry boulders
+and many more items ??  It should.  Also, polymorphing into a floating Eye
+should result in all items falling to the floor (they don't have arms, do
+they?)  Let's make a backpack as an item.  They have different size
+capacities, and may be magical to feel lighter.  The above armor damage from
+polymorphing can ruin a backpack, resulting in only carrying one item in
+each hand and whatever you can wear.
+
+-Paul
+-- 
+
+-- Paul
+
+:
+
+
+From littlei!reed!tektronix!cae780!hplabs!hp-sdd!ucsdhub!sdcsvax!ames!ll-xn!husc6!bloom-beacon!gatech!rayssd!djb Sun Oct  4 17:38:08 PDT 1987
+Article 1448 of rec.games.hack:
+Path: littlei!reed!tektronix!cae780!hplabs!hp-sdd!ucsdhub!sdcsvax!ames!ll-xn!husc6!bloom-beacon!gatech!rayssd!djb
+>From: djb@rayssd.RAY.COM (Douglas J. Bonn)
+Newsgroups: rec.games.hack
+Subject: nethack ramblings
+Keywords: observations questions comments
+Message-ID: <1604@rayssd.RAY.COM>
+Date: 1 Oct 87 19:42:15 GMT
+Sender: djb@rayssd.RAY.COM (Douglas J. Bonn @ Raytheon Company, Portsmouth RI)
+Organization: Raytheon Company, Portsmouth RI
+Lines: 62
+
+Observations:
+
+O1	Eating a dead leocrotta will help to restore your xan-pricked legs
+	as will a potion of haste self.
+
+O2	My tourist character blinded a couple of Orcs and then engraved
+	"Elbereth". The blinded Orcs stumbled into him in their blindness
+	which was treated as a valid attack (don't know if they got any minuses
+	"to hit" or "damage" though).
+
+O3	Eating a deceased Leprechaun, Nymph, tegnu or Quantum Mechanic sets
+	the inherent telepathy bit.
+
+O4	It seems that a Healer can apply his stethoscope to hostile creatures:
+	it acts as a wand of probing (it doesn't even get the Shopkeepers
+	angry); and it is useful to find secret doors.
+
+O5	My caveman acquired a "blessed katana" by praying while sitting on an
+	opulent throne (am not sure which caused the blessing). He later died
+	and my next caveman found his ghost. The blessed katana was not cursed
+	even though it was in the ghost's horde. 
+
+Questions:
+
+Q1	What is the Wizard's magic marker used for? I Engraved "Elbereth" with
+	it, hoping that it would act as a dropped "scare monster" scroll, but
+	it smudged as does dust.
+
+Q2	How does one correctly use the spell "cause fear"? All it has ever done
+	for me is to create laughter from the monsters around me, as does
+	reading a scare monster scroll. Perhaps there is a way to write the
+	spell with a magic marker on a scroll of blank paper thus creating
+	a scroll of scare monster...?
+
+Q3	What are the differences between chain mail and elfin chain mail?
+	According to D&D, elfin chain mail should be rustproof, but unable to
+	be enchanted.  (I agree with Professor Tolkien that the spelling should
+	be "elven", not "elfin".)
+
+Q4	What does blessing do to a weapon? My caveman's blessed katana could
+	croak an owlbear with a single blow, but he had 18/** strength and was
+	11th level, too.  (Any source readers out there?)
+
+Comments:
+
+C1	The Healer class is the most desperate. He ought to be given something
+	more that apples, healing potions (both types), and a stethoscope. He is
+	weak on strength, armor, and weapons.  How about a dagger and at least
+	a cloak? Some projectile weapons would be helpful.
+
+C2	Orcs should not come until the 4th dungeon level or so, rather than on
+	the 2nd.  Very low level characters are just not ready for many Orcs
+	that quickly.
+
+C3	Monsters should not "just appear" in the room beside you.  Many times I
+	have been trying on various pieces of armor in Pakka Pakka's Used Armor
+	Shop and before I could complete my dressing maneuver, I am completel
+	surrounded by Orcs. ("Pity me, Pity me" :-)
+-- 
+Douglas J. Bonn, Esq.  djb@rayssd.ray.com
+
+"As far as we can determine, our system has never had an undetected error..."
+
+
+From littlei!reed!tektronix!uunet!husc6!ut-sally!rice!titan!retrac Sun Oct 25 18:40:37 PST 1987
+Article 1527 of rec.games.hack:
+Path: littlei!reed!tektronix!uunet!husc6!ut-sally!rice!titan!retrac
+>From: retrac@titan.rice.edu (John Carter)
+Newsgroups: rec.games.hack
+Subject: Re: Making Nethack harder
+Message-ID: <406@ra.rice.edu>
+Date: 16 Oct 87 00:34:55 GMT
+References: <7380@reed.UUCP> <306@kosman.UUCP> <17601@yale-celray.yale.UUCP>
+Sender: usenet@rice.edu
+Reply-To: retrac@titan.rice.edu (John Carter)
+Distribution: na
+Organization: Rice University, Houston
+Lines: 74
+
+In article <17601@yale-celray.yale.UUCP> moran@yale-zoo-suned.UUCP (William Moran) writes:
+>
+>I would agree that any changes in nethack difficulty levels should be
+>implemented as preprocessor switches. I find nethack to be much easier
+>than hack on average
+
+I agree on these two points.
+
+> but I wouldn't say it's easy.
+
+But I disagree here :-).
+
+>Of course, I don't
+>believe in "checkpointing" the games i.e. saving every once in a while
+>so that if I die it's not a total loss. I suspect that many of the people
+>who complain about its being too easy are doing this.
+
+Never!  There are enough other things that make it too easy that I can
+hardly bring myself to do that I wouldn't even consider this.
+
+Anyway, I guess I'm in the "[Net]hack is too easy if you know some of the
+'tricks' and damned near impossible if you don't" camp.  Several of us here
+have been toying with the idea of doing mods (with preprocessor switches)
+that make it more challenging.  [Of course, first I'm gonna track down that
+&%$#@ bug that loves to cause seg faults while I've got about 500 dilithium
+crystals...].  We were thinking of calling it "qhack" for "quicheless hack"
+- "hack for real men" seemed too sexist :-).  I'm interested in hearing
+ideas on making it harder from other people that would like this.  Some of
+our ideas are:
+
+	* No wands of wishing, or at least a serious constraint on
+	  their power (like maybe, <= 3 wishes per game, max).
+	* Limit the number of genocides by having the Gods get angry after
+	  you try to use too many -
+"Do you think yourself a GOD, mortal, playing with entire species as you do?"
+	* No spellbooks of { polymorph, genocide, finger of death, identify,
+	  & lots of others that I can't think of right now}.
+	* Kops would no longer carry items - its like raiding a shop twice
+	  now with all the junk they leave you!
+	* Make Kops get tougher as the dungeon level increases.
+	  You get bigger Kops in tougher neighborhoods, right?!
+	* Polymorph would only affect 1 item per square (again).
+	* Polymorphing wands would not keep the same number of charges -
+	  have some notion of "power left" in the wand.  15 charges in
+	  a wand of light != 15 wishes in power!!!!  This isn't important
+	  if wishing is limited.
+	* Kill the "Excalibur" trick; if you know and use it, its too easy!
+	  I was told about it, but don't use it (anymore :-).
+	* No creating an Amulet via wish and polymorph!
+	* No level teleporting once you've acquired the Amulet (you've
+	  got to WALK all the way back to the surface)!
+	* Have the dungeon begin collapsing from the bottom up once you've
+	  got the Amulet (the wizard was the stabilizing force) - this
+	  keeps you from messing around after you've got it.  Something
+	  else will be needed to stop you from messing around too long
+	  before you've got it (like monsters get tougher depending on
+	  elapsed time in addition to dungeon level).
+
+    There were other things that we'd thought of that I don't remember off
+hand.  I certainly don't promise to ever actually DO this (hey, I gotta get
+that PhD SOMETIME), but its an idea...  What do other people think?
+
+    In a totally unrelated vein, I think the most interesting way I've seen
+someone die was:
+ 14 151958   scorpion-N was killed on level 26 [max 40] by a visit to heaven.
+
+John Carter
+Dept. of Computer Science - Rice University
+=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+*   UUCP: ...{ cbosgd, ut-sally, cornell, sun, pyramid, ...}!rice!retrac     =
+=     - OR - ...{Your favorite Arpa site}!rice.edu!retrac                    *
+*   ARPA:  retrac@rice.edu                                                   =
+=   CSNET: retrac@rice.csnet                                                 *
+*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+
+
+From littlei!reed!tektronix!uunet!husc6!linus!raybed2!rayssd!brunix!nancy!rph Sun Oct 25 20:04:34 PST 1987
+Article 1529 of rec.games.hack:
+Path: littlei!reed!tektronix!uunet!husc6!linus!raybed2!rayssd!brunix!nancy!rph
+>From: rph@nancy (Richard Hughey)
+Newsgroups: rec.games.hack
+Subject: Hack Mods & Re: genocide
+Message-ID: <19439@brunix.UUCP>
+Date: 15 Oct 87 19:15:56 GMT
+Sender: root@brunix.UUCP
+Reply-To: rph@brunix.UUCP (Richard Hughey)
+Organization: Brown University Computer Science Dept.
+Lines: 47
+
+In article <8VPwLQy00W0NA881uS@andrew.cmu.edu> pb1p+@andrew.cmu.edu (Peter Glen Berger) writes:
+>
+>
+>Ah, but spells of genocide do NOT make the game that much easier.  Consider:
+>if you destroy a certain type of monster, nethack continues to make those
+>monsters that have not been genocided.  So yes, a few genocide spells make
+>
+
+Neither do wands of wishing:  it all depends on what you wish for, and
+nobody's requiring you to wish for +3 elven cloak, ring of tport control,
+spellbook of polymorph, spellbook of genocide...  
+
+Gencoding everything but BaOGHJK& will certainly not make life all that
+hard.  I think the spellbook of polymorph is much worse, since
+you can get ANYTHING with that (if you have plenty of patience).
+
+In the version here, I've implemented the spellbooks to eventually become
+illegible, depending on the spell level (ie genocide might last 3 times or
+so, while healing might be good for 10 shots).  This brings them down to the
+power of wands, a reasonable spot.
+
+If anyone is interested in my various mods, let me know. They include: 
+
+  a nastier shopkeepers,
+  a medusa to help the wiz along,
+  a modified endgame, 
+  polymorph traps (suggested on the net),
+  only going up one level at a time (i.e killing a L at 
+    level 1 gets you up to (exp needed for level 3) -1.  The scoring
+    experience is unchanged.),
+  wands, weapons and dragon fire through doorways (most of the time),
+  named monster corpses, 
+  greater likelyhood of praying backfiring,
+  increasing of monster limits (and elimination in the case of
+    'swarming' monsters: OKk&), 
+  a small chances of finding previously unfound useful items 
+    (can openers, pick-axes, mirrors (new), etc).
+
+I've already sent them off to Mike Stephenson for possible inclusion in 2.0.
+
+
+			-- Richard
+
+ ------------------------------
+    Richard Hughey 		CSNET:  rph%cs.brown.edu@relay.cs.net
+    Brown University  		BITNET:  rph@browncs
+				(decvax, ihnp4, allegra)!brunix!rph
+
+
