@@ -20,6 +20,9 @@
 #include <sgtty.h>
 #else
 #include <termio.h>
+#ifndef TCGETA
+#include <sys/ioctl.h>
+#endif
 #endif SYSV
 #include <fcntl.h>
 
@@ -29,8 +32,10 @@ struct ltchars	ls1,
 #endif TIOCSLTC
 
 #ifdef TIOCGETC
+#ifndef SYSV
 struct tchars	tc1,
 		tc2;
+#endif
 #endif
 
 #ifdef BRLUNIX
@@ -472,6 +477,7 @@ ttinit()
 #endif
 
 #ifdef TIOCGETC
+#ifndef SYSV
 	/* Change interupt and quit. */
 	(void) ioctl(0, TIOCGETC, (struct sgttyb *) &tc1);
 	tc2 = tc1;
@@ -481,6 +487,7 @@ ttinit()
 		tc2.t_stopc = (char) -1;
 		tc2.t_startc = (char) -1;
 	}
+#endif SYSV
 #endif TIOCGETC
 	do_sgtty();
 }
@@ -560,7 +567,9 @@ ttyset(n)
 #endif SYSV
 
 #ifdef TIOCSETC
+#ifndef SYSV
 	(void) ioctl(0, TIOCSETC, n == 0 ? (struct sgttyb *) &tc1 : (struct sgttyb *) &tc2);
+#endif SYSV
 #endif TIOCSETC
 #ifdef TIOCSLTC
 	(void) ioctl(0, TIOCSLTC, n == 0 ? (struct sgttyb *) &ls1 : (struct sgttyb *) &ls2);
