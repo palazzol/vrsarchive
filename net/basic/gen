@@ -16,9 +16,13 @@ case $1 in
 	pyramid)
 		make -f pyramid/Makefile ;;
 
+	x286)
+		make -f x286/Makefile ;;
+
 	clean)
 		rm -f *.o cursor.c term.c core basic ;;
 
 	*)
-	  echo "please specify one of vax pdp11fp pdp11nofp m68000 pyramid" ;;
+		echo "Please specify one of:"
+ 		echo "  vax pdp11fp pdp11nofp m68000 pyramid x286" ;;
 esac
