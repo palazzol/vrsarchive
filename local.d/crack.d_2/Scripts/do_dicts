@@ -1,0 +1,72 @@
+#!/bin/sh 
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# These operations have been abstracted out so that they may be done on
+# the most powerful machine so that the weakest machine doesn't wind up
+# making the dictionaries
+###
+
+crack_arch=$1
+shift
+
+###
+# Go home
+###
+
+cd $CRACK_HOME || exit 1
+
+###
+# Go make the preprocessor
+###
+
+echo "$0: Checking preprocessor $crack_arch/crack-pp."
+
+if [ ! -d $crack_arch ]
+then
+	Scripts/do_install $crack_arch || exit 1
+fi
+
+cd $crack_arch || exit 1
+
+make crack-pp || exit 1
+
+cd $CRACK_HOME || exit 1
+
+###
+# Double check the processed dictionary directory
+###
+
+if [ ! -d Dicts ]
+then
+	echo "Crack: error: There is no directory or file Dicts."
+	echo "Crack: warning: Creating directory Dicts"
+	mkdir Dicts || exit 1
+else
+	rm -f Dicts/dict*
+fi
+
+###
+# Run the preprocessor
+###
+
+$crack_arch/crack-pp $*
+
+###
+# Tidy this up a bit
+###
+
+echo "Compacting. This may take some time..."
+
+for i in dict.*
+do
+	sort -r $i | uniq > Dicts/$i
+	rm -f $i
+	echo Done $i
+done
+
+exit 0

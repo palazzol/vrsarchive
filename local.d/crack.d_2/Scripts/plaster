@@ -1,0 +1,21 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# This program provides a quick network murder if running "Crack -network"
+###
+# The name is Chris Samuel's fault... "Plaster the Cracks" indeed...
+# Mail admiration of this joke to ccs7@aber.ac.uk
+###
+
+for i in Runtime/die.*
+do
+	echo $i
+	$i
+done
+
+exit 0

@@ -1,0 +1,216 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# This program reads the network.conf and breaks up the sorted password
+# file and kicks "Crack" up on all the machines and feeds the file to it.
+###
+
+###
+# Okay, if you don't like this bit of code, YOU think of a totally
+# portable way to do this - in shell scripts without using PERL - Alec.
+###
+
+cf=Scripts/network.conf
+tf=/tmp/mcp.$$
+
+###
+# Check that the config file is in place
+###
+
+if [ ! -f $cf -o ! -s $cf ]
+then
+	echo "Crack.network: empty or missing config file: $cf"
+	exit 1
+fi
+
+###
+# Parse arguments
+###
+
+args=""
+files=""
+localfeedback=""
+
+for i in $*
+do
+	if [ -f "$i" ]
+	then
+		files="$files $i"
+	else
+		case $i in
+			-f*)
+				echo "Crack: -f option on COMMAND LINE incompatible with networking - Ignored"
+				;;
+			-F*)
+				localfeedback="-F"
+				args="$args $i"
+				;;
+			*)
+				args="$args $i"
+				;;
+		esac
+	fi
+done
+
+###
+# Do the dictionaries locally !
+###
+# We don't know what the architecture of the local host is, nor am I
+# compelled to try looking it up in the network.conf, so, lets cheat and
+# say it's DEFAULT_BIN, imported from "Crack".
+#
+# Very few ppl are going to put the word 'generic' into a network.conf, so
+# that should be safe, and anyway, we are only going to be compiling
+# crack-pp, so, barring an extra directory, there is no wastage.
+###
+
+echo "Making dictionaries locally, assuming local architecture $DEFAULT_BIN"
+
+CRACK_ARCH=$CRACK_HOME/$DEFAULT_BIN ; export CRACK_ARCH
+
+make -f Scripts/crack.mf dictstamp || exit 1
+
+CRACK_ARCH=""
+
+echo "Dictionaries done ok."
+
+###
+# Get on with your proper job
+###
+
+echo "Merging input data."
+
+if [ "$CRACK_OUT" != "" ]
+then
+	warn=$CRACK_OUT/out.init.$$
+else
+	warn=out.init.$$
+fi
+
+Scripts/do_join $localfeedback $warn $files > $tf
+
+###
+# Statistics gathering
+###
+
+lines=`wc -l < $tf`
+saltlines=`Scripts/saltcount < $tf`
+
+# Must not quote $lines/$saltlines here for comparison to work
+
+if [ $lines = 0 -o $saltlines = 0 ]
+then
+	echo "Crack: no uncracked input to distribute."
+	exit 1
+fi
+
+echo "Starting analysis for Network-Crack."
+
+cat $cf |
+grep -v '^#' |
+sort -t: +2 -n |
+awk -F: '
+BEGIN {
+	hostcount = 0;
+	totalweight = 0;
+	linecount = '"$lines"';
+	saltlinecount = '"$saltlines"';
+	iargs = "'"$args"'";
+	file = "'"$tf"'";
+}
+
+/^[a-zA-Z0-9]/ {
+	hostname[hostcount] = $1;
+
+	bintype[hostcount] = $2;
+
+	relpow[hostcount] = $3;
+
+	powtot += $3;
+
+	if (index($6, "-f") == 0)
+	{
+		asynch[hostcount] = "";
+	} else
+	{
+		asynch[hostcount] = "-asynch";
+	}
+
+	crackf[hostcount] = $6 " " iargs;  # useropts go second get priority
+
+	if ($4 == "")
+	{
+		rshuser[hostcount] = "";
+	} else
+	{
+		rshuser[hostcount] = "-l " $4;
+		crackf[hostcount] = crackf[hostcount] " -U" $4;
+	}
+
+	if ($5 == "")
+	{
+		crackp[hostcount] = "$CRACK_HOME_UNRES/Crack";
+	} else
+	{
+		crackp[hostcount] = $5;
+	}
+	crackf[hostcount] = iargs " " $6;
+	hostcount++;
+}
+
+END {
+	# Improvements to load balancing algorithm by chris stassen@com.alc
+	done = 1;
+	slice = 0.0;
+	remainder = 0.0;
+	todo = saltlinecount;
+	print "echo Users:", linecount;
+	print "echo Salts:", saltlinecount;
+	print "echo Remote Hosts:", hostcount;
+	print "echo Total power:", powtot;
+
+	for (i = 0; i < hostcount; i++)
+	{
+		if (i < hostcount - 1)
+		{
+			slice = relpow[i] / powtot;		# fraction
+			slice *= saltlinecount;			# percentage
+			slice = slice + remainder;		# add excess
+			remainder = slice - int(slice);		# remove excess
+			slice = int(slice);			# round down
+			todo -= slice;				# remainder
+		} else
+		{
+			slice = todo;	# fastest machine gets the rest.
+			todo = 0;
+		}
+		if (slice > 0)
+		{
+			print "echo Calling", hostname[i], "for", slice, "different salts";
+
+			line = sprintf( \
+	   "Scripts/RCrack %s %d %d %s %s \"%s\" -remote %s %s < %s", \
+				asynch[i], \
+				done, \
+				done + slice - 1, \
+				hostname[i], \
+				rshuser[i], \
+				crackp[i], \
+				crackf[i], \
+				bintype[i], \
+				file);
+#			print "echo", line;
+			print line;
+		}
+		done += slice;
+	}
+}'| sh		# I'll bet you didn't expect this...
+
+rm $tf
+
+exit 0

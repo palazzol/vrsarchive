@@ -1,0 +1,279 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# CRACK_HOME: You must put DOUBLE QUOTES around this and have /bin/csh if
+# you work relative to ~username - this is the Crack installation directory.
+###
+
+CRACK_HOME=`pwd`
+
+###
+# CRACK_OUT: This is the directory into which all the password guesser
+# output files are to be stored. This affects only the "out.*" files, and
+# not "die.*" or "point.*", due to restraints on the support scripts.
+###
+
+CRACK_OUT="$CRACK_HOME"
+
+###
+# Umask for security's sake - stops files being world readable (if you
+# don't have it in your .login)
+###
+
+umask 077
+
+###
+# DEFAULT_BIN : For non-network cracks, you can leave this as 'generic'.
+#
+# For Network Cracks, DEFAULT_BIN is slightly more important because it
+# specifies the binary type of the local machine upon which dictionaries
+# are made - however, yo don't REALLY have to change it from 'generic',
+# unless you intend to have the binary type 'generic' named in your
+# "network.conf".
+#
+# Setting this to `arch` is non-portable.
+###
+
+DEFAULT_BIN="generic"
+
+############### FROM HERE ON IN IT'S ALL MY FAULT ###############
+
+version="3.3c --- RELEASE ---"
+remote=""
+foreground=""
+feedback=""
+trash="/dev/null"
+tmpfile="/tmp/pw.$$"	# This variable name is referenced in PWC for deletion
+net_cf="Scripts/network.conf"
+
+CRACK_HOME_UNRES="$CRACK_HOME"
+
+if [ -f "/bin/csh" ]	# -x bombs on Ultrix, why ? I dunno...
+then
+	# Note that csh must be invoked with -f as some versions
+	# of csh echo the user prompt without it. bct@hull.cs
+
+	CRACK_HOME=` /bin/csh -fc "echo $CRACK_HOME" `
+	CRACK_OUT=` /bin/csh -fc "echo $CRACK_OUT" `
+fi
+
+if [ ! -d "$CRACK_OUT" ]
+then
+	CRACK_OUT="."
+fi
+
+export CRACK_HOME
+export CRACK_OUT
+export DEFAULT_BIN
+export CRACK_HOME_UNRES		# so that ~user still works...
+
+###
+# Check existance of a home directory
+###
+
+if [ "$CRACK_HOME" != "" -a -d "$CRACK_HOME" ]
+then
+
+	cd $CRACK_HOME || exit 1
+else
+	echo "Error: The directory $CRACK_HOME does not exist."
+	echo ""
+	echo "Please set the value of CRACK_HOME in the Crack script to the CRACK31"
+	echo "installation directory."
+	echo ""
+	echo "The current working directory is" `pwd`
+	exit 1
+fi
+
+###
+# Announce ourselves.
+###
+
+echo "Crack $version Password Cracker by ADE Muffett, 1991"
+
+###
+# Check that we have arguments
+###
+
+if [ $# = 0 ]
+then
+
+	echo "Usage:    $0 [options] [bindir] passwdfile [...]"
+	echo "Or:       $0 -network [options] passwdfile [...]"
+	echo "With options:-"
+	echo "	-f		- to run in foreground (output to stdout)"
+	echo "	-v              - to produce verbose output (if configured)"
+	echo "	-F		- to create/use feedback files"
+	echo "	-nnicevalue     - to run niced to 'nicevalue'"
+	echo "	-rpointfile     - to recover a crashed-out job"
+	echo "	-Rpointfile     - to recover (with verify) a crashed-out job"
+	exit 1
+fi
+
+###
+# Parse command line
+###
+
+echo "Invoked as: $0 $*"
+
+if [ "x$1" = "x-network" ]	          	# Push onto the remote machines
+then
+	shift
+	Scripts/Crack.network $*
+	exit 0
+fi
+
+argl=""
+
+while :
+do
+	case $1 in
+		-network)
+			echo "Error: -network (if specified) must be first argument"
+			exit 0
+			;;         		# Redundant
+
+		-remote)           		# This is being called remotely
+			remote="-N"
+			shift
+			;;
+
+		-f*)				# Foreground
+			foreground="-f"
+			shift
+			;;
+
+		-F*)				# Feedback
+			feedback="-F"
+			shift
+			;;
+
+		-v*|-n*|-r*|-R|-U*)		# Valid options
+			argl="$argl $1"
+			shift
+			;;
+
+		-*)
+			echo "Crack: unknown argument $1"
+			shift
+			;;
+
+		*)
+			break
+			;;                 		# Redundant
+	esac
+done
+
+###
+# Test first non-switch argument for existance
+###
+
+if [ -f "$1" ]
+then
+
+	crack_arch="$CRACK_HOME/$DEFAULT_BIN"
+else
+	crack_arch="$CRACK_HOME/$1"
+	shift
+fi
+
+###
+# Now to tidy up the source directory up a bit
+###
+
+make -f Scripts/crack.mf cleanprogs > /dev/null 2>&1
+
+###
+# State our intentions - calls to do_install made by do_pwc & do_dicts
+###
+
+echo "Using Binaries in directory: $crack_arch"
+
+###
+# Do the dictionaries
+###
+# The problem is that the crack_arch variable has got to go through the
+# Makefile invisibly and portably, otherwise I wouldn't be using
+# environment variables.
+###
+
+CRACK_ARCH=$crack_arch ; export CRACK_ARCH
+
+make -f Scripts/crack.mf dictstamp || exit 1
+
+###
+# Make the password cracker
+###
+
+Scripts/do_pwc $crack_arch || exit 1
+
+###
+# Check how we have been invoked : ergo how we get our data.
+###
+
+if [ "x$remote" = "x-N" ]
+then
+	cat > $tmpfile                                  # Use stdin
+else
+	warn=$CRACK_OUT/out.init.$$
+
+	Scripts/do_join $feedback $warn $* > $tmpfile || exit 1
+
+	if [ "x$foreground" = "x-f" ]
+	then
+		cat $warn || exit 1
+		rm $warn
+	fi
+fi
+
+
+###
+# Check the runtime scratch file directory for pwc
+###
+
+if [ ! -d Runtime ]
+then
+	echo "Creating Runtime Directory."
+	mkdir Runtime || exit 1
+fi
+
+###
+# Kick it off into the background ?
+###
+# This is the message which has drawn the most complaints...  However, I
+# have no way of knowing the name in advance, and I can't have crack-pwc
+# print it on stdout due to hanging file descriptors which bollox a
+# network crack.  Hence I HAVE to be vague...
+###
+
+if [ "x$foreground" = "x-f" ]
+then
+	echo "Running program..."
+
+	$CRACK_ARCH/crack-pwc $argl -f -i$tmpfile $remote $feedback \
+		Dicts/dict.* < /dev/null
+else
+	echo "Backgrounding program..."
+
+	nohup $CRACK_ARCH/crack-pwc $argl -i$tmpfile $remote $feedback \
+		Dicts/dict.* </dev/null >$trash 2>&1 &
+
+	echo "Output will be written to a file in directory $CRACK_OUT"
+	echo "named 'out.<something>'"
+
+	sleep 3		# FOR MY PEACE OF MIND
+fi
+
+sleep 1
+
+test -f nohup.out && rm nohup.out
+
+###
+# There are horrible timeraces involved in removing $tmpfile, so I dont.
+# Crack-pwc does.
+###

@@ -1,0 +1,787 @@
+
+
+
+
+
+
+
+
+
+                    "Crack Version 3.3c"
+           A Sensible Password Checker for UNIX-
+
+
+                     Alec D.E. Muffett
+
+         Computer Unit, University College of Wales
+                Aberystwyth, Wales, SY23 3DB
+                       aem@aber.ac.uk
+                       +44 970 622492
+
+
+                          ABSTRACT
+
+          Crack[1]  is  a  freely   available   program
+     designed to find standard UNIX eight-character DES
+     encrypted passwords  by  standard  guessing  tech-
+     niques outlined below.  It is written to be flexi-
+     ble, configurable and fast, and to be able to make
+     use  of  several  networked hosts via the Berkeley
+     rsh program (or similar), where possible.
+
+
+
+1.  Intent of this program
+
+My intentions, whilst writing this program, were
+
+1)   To provide the average system manager  with  a  simple,
+     flexible and fast tool to find passwords which would be
+     easily compromised by a dictionary search.
+
+2)   To weaken the complacency which has  developed  amongst
+     many (in)?experienced UNIX systems managers about pass-
+     word security. Just because the crypt() function cannot
+     be  reversed  does  not  mean  that  your passwords are
+     secure.  If this program helps  to  raise  the  overall
+     quotient  of paranoia just one little bit, then it will
+     have served its purpose and is all to the good.
+
+I am quite certain that some childish morons out there  will
+abuse  the  work that I have put into creating this program.
+It's up to them how they use it, but if it's used  for  some
+illegal  purpose it's not my intention, nor my fault. I hope
+_________________________
+  [1]
+- UNIX is a trademark of Bell Laboratories.
+  [1] Crack  is  available  for  anonymous   FTP   from
+wuarchive.wustl.edu (128.252.135.4) in ~/packages
+
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 2 -
+
+
+they get caught.
+
+Crack was not designed to do anything nasty, other  than  to
+attack  passwords  in  sensible order.  This is why I feel I
+can post it to the net without fear of recrimination.   This
+version  of  Crack  is  supplied with a (hopefully) portable
+version of fcrypt(), for speed reasons.  Fcrypt() is not yet
+widely  available, but several versions have now been posted
+to USENET, and with the growing ability to access  anonymous
+FTP  databases like Archie, I believe that people who really
+want access to such programs as fcrypt() will be able to get
+them  easily.   People who need them but don't have the time
+to look, on the other hand, will not get them.  This is  not
+a  good thing if you are a systems manager, because it gives
+the crackers an advantage.  My philosophy  is:  give  it  to
+everyone, then at least the people who need it can get it.
+
+2.  Fcrypt() Statistics
+
+The version of fcrypt() that comes  with  Crack  is  several
+times  faster  than the version that was originally supplied
+to me, and should outperform most others which are  publicly
+available.   I  haven't tried many speed-demon style tricks,
+but rather I have gone for portability, elegance and simpli-
+city,  where  applicable  8-).   On  a  DECStation 5000/200,
+fcrypt() iterates about 580 times per second, and overall, I
+measure  this  to  be  about  15  times faster than standard
+crypt().  There are faster versions available, but at  least
+I feel free to redistribute this version without stepping on
+anyones toes.
+
+A final note about my motives: If you  think  that  I  am  a
+moron  for  writing  and then distributing this program, and
+you think that the program is in itself dangerous, I suggest
+that  you  carefully  consider the fact that any moron could
+have written this program.  Flames to /dev/null, please.
+
+3.  Implementation
+
+I have tried to make Crack as portable as  possible  without
+compromising speed.  Needless to say, it is imperfect in the
+this respect, but I have tried.  If you have  problems  get-
+ting  Crack  up, please let me know what these problems are,
+and what system you were trying  to  put  Crack  up  on.   I
+believe  that  Crack will work on Xenix and various versions
+of System V, but it may require a little effort if your UNIX
+is not fairly modern.
+
+To use the Crack -network option, you must have  rsh,  or  a
+similar  program.   rsh is a BSD-ism which has become fairly
+common on non-BSD systems.  If you don't have  it  or  some-
+thing  similar,  let  me  know what you do have which might,
+with a little ingenuity, do the job, and I shall see what  I
+can do.  Have a look in Scripts/RCrack and feel free to play
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 3 -
+
+
+around.
+
+     Note: Xenix users and some others have a rcmd pro-
+     gram instead of rsh.  Similarly, HP-UX has a remsh
+     command.  I'm not sure of the correct  syntax  for
+     these  programs,  but  it  should  not  be hard to
+     integrate them, if they do not already work. There
+     is a note about these commands in Scripts/RCrack
+
+     On System V based systems, users may also be miss-
+     ing  the  BSD  function gethostname().  If this is
+     so, but you  do  have  the  uname()  system  call,
+     define  the  macro  CRACK_UNAME  in Sources/conf.h
+     instead. This ought to fix the problem, but it may
+     need  a little user intervention first (it depends
+     where your header file for  uname()  is).   Caveat
+     Emptor!
+
+4.  Method of Password Cracking
+
+Crack does not take the serial approach to password guessing
+that  other  programs  like  the COPS password cracker does.
+Rather, Crack makes two  passes  over  the  users'  password
+entries.
+
+The first pass bases its guesses  on  the  contents  of  the
+gecos field (containing the users' real name), and the user-
+name itself.  The first pass is fast and usually very fruit-
+ful, and completes quite quickly.  You would be surprised at
+the number of spods who still think that their middle  name,
+backwards and capitalised, is a good password.
+
+The second pass is made by encrypting several  pre-processed
+dictionaries  on  the  fly,  and  comparing the results with
+users passwords.  Crack optimises the number of calls to the
+encryption  function  by sorting the user passwords by their
+encryption salt before loading,  so  that  the  dictionaries
+only  have  to  be  encrypted  once for each different salt.
+This generally saves about 30% of the calls you  would  have
+to make to crypt().
+
+The preprocessed dictionaries are  created  by  merging  the
+source  dictionaries found in the directory DictSrc and then
+truncating, sorting and uniq'ing the output from the prepro-
+cessor.   The default dictionaries named are /usr/dict/words
+which  provides  the   bulk   of   the   input   data,   and
+DictSrc/bad_pws.dat  which  is meant to provide all of those
+non-dictionary passwords, such as 12345678 or qwerty.[2]
+_________________________
+  [2] Extra dictionaries (those used in Dan Klein's pa-
+per,  below)  can  be  obtained  via anonymous FTP from
+uunet.uu.net (192.48.96.2) as ~/pub/dictionaries.tar.Z
+
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 4 -
+
+
+If you wish to add a dictionary of your own,  just  copy  it
+into  the  DictSrc directory and then delete the contents of
+the  Dicts  directory  (run  Scripts/spotless  from   within
+$CRACK_HOME).   Your new dictionary will be merged in on the
+next run.  Do not worry about replication of  data,  as  the
+preprocessor's  driver  script  sorts  and  uniq's  the data
+before putting it into the Dicts directory.
+
+The formats of the output dictionaries are:
+
+a)   Unique words that have been forced lowercase, forwards.
+     These are the most common passwords you will find, thus
+     they are tried first.
+
+b)   Dictionary words which have been  artificially  plural-
+     ised, because not many dictionaries contain plurals.
+
+c)   Dictionary words forced capitalised (eg: Capitalised).
+
+d)   Dictionary words, forced lowercase, with a  trailing  0
+     or  1  (this  may be extended by hacking Sources/crack-
+     pp.c).
+
+e)   Dictionary words forced lowercase and backwards.
+
+f)   Dictionary words, forced lowercase, with a leading 0 or
+     1 (this may be extended by hacking Sources/crack-pp.c).
+
+g)   Dictionary words, forced uppercase, forwards.
+
+h)   Dictionary words, forced uppercase, backwards.
+
+i)   Dictionary  words  forced  capitalised,  reversed  (eg:
+     desilatipaC).
+
+
+This choice of attack is entirely  empirical,  my  own,  and
+made  up  on  the spot.  It is also horrendously successful,
+and because Crack uses each of these dictionaries  in  turn,
+it  tends  to  get  passwords faster than a program like the
+COPS password cracker which tries words every-which-way  for
+each user.[3]
+
+     Optimisation  Note:  Crack  has  an   compile-time
+     option,  called CRACK_SHORT_PASSWDS, which, if not
+     defined, makes the dictionary  preprocessor  throw
+     away  words which are less than 5 characters long.
+_________________________
+  [3] For more information, see "Foiling the Cracker: A
+Survey  of,  and Improvements to, Password Security" by
+Daniel  Klein,  available   from   ftp.sei.cmu.edu   in
+~/pub/dvk/passwd.*.   Also, read the APPENDIX file sup-
+plied with this distribution.
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 5 -
+
+
+     The reasoning for this is that many sites, with  a
+     semi-sensible  passwd program, will not have pass-
+     words shorter than 5 characters long.
+
+     It is up to you whether you bother  testing  these
+     short passwords, but I would recommend that you do
+     so at least once, to be safe.  (Setting the option
+     also  leads  to  having smaller pre-processed dic-
+     tionaries.  The option,  however,  is  defined  by
+     default).
+
+5.  Installation
+
+Crack is one of those most  unusual  of  beasties,  a  self-
+installing   program.    Once  the  necessary  configuration
+options have been set, the executables are created via  make
+by running the Crack shellscript .
+
+Some people have complained about this  apparent  weirdness,
+but  it has grown up with Crack ever since the earliest net-
+work version, when I could  not  be  bothered  to  log  into
+several  different machines with several different architec-
+tures, just in order to build the binaries.
+
+Down to the nitty-gritty.  Crack needs to know where it  has
+been  installed.  You will have to edit the CRACK_HOME vari-
+able in the Crack shellscript to the  correct  value.   This
+variable should be set to an absolute path name (relative to
+~user should be OK, so long as you have some  sort  of  csh)
+through which the directory containing Crack may be accessed
+on all the machines that Crack will be run on.  There  is  a
+similar  variable  CRACK_OUT  which  specifies  where  Crack
+should put its output files - by default, this is  the  same
+as $CRACK_HOME.
+
+The next thing you will have to  do  is  to  edit  the  file
+Sources/conf.h  and work out which switches to enable.  Each
+#define has a small note explaining its  purpose.   Where  I
+have  been in doubt about the portability of certain library
+functions, usually I have re-written it, so  you  should  be
+OK.  Let me know of your problems, if you have any.
+
+One of the most important switches in the conf.h file is the
+CRACK_NETWORK  symbol.   This  forces Crack to create all of
+its output files with an embedded hostname (obtained by  the
+gethostname()  routine) so that you can keep track of output
+from all over the network.  If you have no gethostname() but
+have  a  uname()  system  call, you can use that by defining
+CRACK_UNAME in Sources/conf.h.
+
+If you will be using CRACK_NETWORK, you will  then  have  to
+generate  a  Scripts/network.conf file. This contains a list
+of hostnames to rsh to, what their binary  type  is  (useful
+when   running   a   network   Crack  on  several  different
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 6 -
+
+
+architectures), a guesstimate of their relative power  (take
+your  slowest machine as unary, and measure all others rela-
+tive to it), and a list of per-host flags to  add  to  those
+specified on the Crack command line, when calling that host.
+There is an example of such a file provided in  the  Scripts
+directory - take a look at it.
+
+If ever you wish to specify a more precise figure as to  the
+relative  power  of  your  machines,  or you are simply at a
+loss, play with the command make tests in  the  source  code
+directory.   This  will  provide  you  with  the  number  of
+fcrypt()s that your machine can do per second,  which  is  a
+number that you can plug into your network.conf as a measure
+of your machines' power (after  rounding  the  value  to  an
+integer).
+
+6.  Crack Usage
+
+
+Crack [options] [bindir] /etc/passwd [...other passwd files]
+
+Crack -network [options] /etc/passwd [...other passwd files]
+
+
+Where bindir is the optional name of the directory where you
+want  the binaries installed.  This is useful where you want
+to be able to run versions of  Crack  on  several  different
+architectures.  If  bindir does not exist, a warning will be
+issued, and the directory created.
+
+     Note: bindir defaults to the name generic  if  not
+     supplied.
+
+     Notes for Yellow Pages (NIS)  Users:  I  have  had
+     some queries about how to get Crack running from a
+     YP password file.  There are several methods,  but
+     by far the simplest is to generate a passwd format
+     file by running:-
+
+                    ypcat passwd > passwd.yp
+
+     and then running Crack on this file.
+
+7.  Options
+
+-f   Runs Crack in foreground mode, ie: the password cracker
+     is  not backgrounded, and messages appear on stdout and
+     stderr as you would expect.  This option is only really
+     useful  for  small  password files, or when you want to
+     put a wrapper script around Crack, or  after  you  have
+     been running in feedback mode.
+
+     Foreground mode is disabled if you  try  running  Crack
+     -network  -f,  on  the  command  line,  because  of the
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 7 -
+
+
+     insensibility of rshing to several  machines  in  turn,
+     waiting for each one to finish before calling the next.
+     However, please read the section about Network Cracking
+     without NFS/RFS, below.
+
+-F   Puts Crack into feedback mode, ie: when a  run  of  the
+     password  cracker  terminates  normally,  the  software
+     writes a list of the DES encrypted passwords which were
+     (or  were  not)  cracked,  into  a feedback file, named
+     Runtime/fbk.<pid>, or  similar.   When  Crack  is  next
+     invoked  with  the  -F  option,  Crack removes from its
+     input all encrypted passwords which can be found in one
+     of the feedback files, and reports on them immediately.
+     This prevents Crack from wasting time trying  to  crack
+     passwords that it has cracked (or not cracked) before.
+
+     Obviously, use of the -F option is not recommended when
+     amendments  have  been made to the source dictionaries,
+     because new words may have been added which would guess
+     someones  password.   After  such  amendments have been
+     made, it is recommended that all the preprocessed  dic-
+     tionaries  are removed and the feedback files tidied by
+     running Scripts/spotless, and then a full run should be
+     done.
+
+     Use of feedback mode is dependent on defining the  sym-
+     bol CRACK_PRINTOUT in Sources/conf.h.
+
+     Please note that for feedback  mode  to  work  properly
+     during  network cracks, the -F option must be specified
+     on the Crack command line and not  in  the  crack-flags
+     field  of  the Scripts/network.conf file. If you do not
+     specify -F on the command line, the program  will  fail
+     to  filter  unguessable  users  from the input password
+     files, and will therefore waste much time.
+
+-v   Sets verbose mode, whereby Crack will print every guess
+     it is trying on a per-user basis.  This is a very quick
+     way of flooding your filestore.  If  you  undefine  the
+     CRACK_VERBOSE  symbol  in  Sources/conf.h, verbose mode
+     will be permanently disabled.
+
+-nvalue
+     Sets the process to be nice()ed to value, so  that  the
+     switch -n19 sets the Crack process to run at the lowest
+     priority.
+
+-network
+     Throws Crack into network mode, in which it  reads  the
+     Scripts/network.conf file, splits its input into chunks
+     which are sized according to the power  of  the  target
+     machine,  and  calls  rsh to run Crack on that machine.
+     Options for Crack running on the target machine may  be
+     supplied  on  the  command line (eg: verbose or recover
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 8 -
+
+
+     mode), or in the network.conf file if they  pertain  to
+     specific hosts (eg: nice() values).
+
+-r<pointfile>
+     This is only for use  when  running  in  recover  mode.
+     When  a  running  Crack  starts pass 2, it periodically
+     saves its state in a file  in  the  directory  Runtime,
+     named  pnt.<pid>  or  pnt.<hostname>.<pid> depending on
+     your naming convention (see Installation, above).  This
+     file  can  be  used  to recover where you were should a
+     host crash.  Simply invoke Crack in  exactly  the  same
+     manner  as  the  last  time, with the addition of the -
+     rRuntime/pnt.file.name switch.  Crack will startup  and
+     read  the  file,  and  jump to slightly before where it
+     left off.  If you are cracking a  very  large  password
+     file, this can save oodles of time after a crash.
+
+     If you are running a network Crack, then the jobs  will
+     again  be spawned onto all the machines of the original
+     Crack.  The program will then check that the host it is
+     running   on  is  the  same  as  is  mentioned  in  the
+     pointfile.  If it is not, it will silently die.   Thus,
+     assuming that you supply the same input data and do not
+     change your network.conf file,  Crack  should  pick  up
+     exactly  where  it  left off.  This is a bit inelegant,
+     but it's better than nothing at the moment.
+
+8.  Support Scripts
+
+The Scripts directory contains a small number of support and
+utility  scripts,  some  of which are designed to help Crack
+users check their progress.  Briefly, the most  useful  ones
+are:-
+
+Scripts/shadmrg
+     This is a small (but  hopefully  readable)  script  for
+     merging  /etc/passwd  and /etc/shadow on System V style
+     shadow password systems.  It produces the  merged  data
+     to stdout, and will need redirecting into a file before
+     Crack can work on it.  The script is meant to be fairly
+     lucid,  on the grounds that I worry that there are many
+     shadowing schemes out there, and perhaps not  all  have
+     the same data format.
+
+Scripts/plaster
+     which is named after a dumb joke, but is a simple fron-
+     tend to the Runtime/die.* script each copy of the pass-
+     word cracker generates. Invoking  Scripts/plaster  will
+     kill  off  all  copies  of the password cracker you are
+     running, over the network or otherwise.
+
+Scripts/status
+     This script rshes to  each  machine  mentioned  in  the
+     Scripts/network.conf    file,    and    provides   some
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 9 -
+
+
+     information about processes and uptime on that machine.
+     This  is useful when you want to find out just how well
+     your password crackers are getting on  during  a  Crack
+     -network.
+
+Scripts/{clean,spotless}
+     These are really just frontends to a makefile. Invoking
+     Scripts/clean  tidies  up the Crack home directory, and
+     removes probably unwanted files, but  leaves  the  pre-
+     processed  dictionaries  intact.  Scripts/spotless does
+     the same as Scripts/clean but obliterates  the  prepro-
+     cessed   dictionaries   and   output   files  too,  and
+     compresses the feedback files into one.
+
+Scripts/guess2fbk
+     Only useful if  CRACK_PRINT  is  defined.  This  script
+     takes  your  out.* files as arguments and reformats the
+     'Guessed' lines into a slightly  messy  feedback  file,
+     suitable for storing with the others.
+
+     An occasion where this might be  useful  is  when  your
+     cracker  has  guessed  many peoples passwords, and then
+     died for some reason before writing out the guesses  to
+     a feedback file. Running
+
+     Scripts/guess2fbk out.* > Runtime/fbk.new
+
+     will save the work that has been done.
+
+9.  Multiprocessing and parallelism
+
+The method of error recovery outlined above causes headaches
+for  users who want to do multiprocessing on parallel archi-
+tectures.  Crack is in no way parallel, and because  of  the
+way  it's  structured,  readind stdin from shellscript fron-
+tends, it is a pain  to  divide  the  work  amongst  several
+processes via fork()ing.
+
+The hack solution to get several copies of Crack running  on
+one  machine  with n processors at the moment is to run with
+the CRACK_NETWORK option enabled, and insert n copies of the
+entry     for     your    parallel    machine    into    the
+Scripts/network.conf file. If you use the -r option in these
+circumstances   however,  you  will  get  n  copies  of  the
+recovered process running, only one of them  will  have  the
+correct  input data.  I'm working on this.  My current solu-
+tion is to save the current username in the point file,  and
+test  it  on startup, but doing this may break your recovery
+if you supply different input data  (so  that  the  data  is
+sorted  even  slightly differently).  Hohum.  If you want to
+use this verify username facility, use -R in place of -r.
+
+As for not using the network.conf file to provide  multipro-
+cessing, I'm still working on it.
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 10 -
+
+
+10.  Network Cracking without NFS/RFS
+
+For those users who have some form of rsh  command,  but  do
+not  have  a  a  networked  filestore running between hosts,
+there is now a solution which will allow you to do networked
+cracking,  forwarded  to me by Brian Tompsett at Hull.  Per-
+sonally, I consider the idea to be potty, but  it  fills  in
+missing functionality in a wonderfully tacky manner.
+
+From the documentation above, you will note that Crack  will
+undo  the -f (output in foreground) option, if it is invoked
+with the -network switch at the same time (see  the  Options
+section  above).  This is true, but it does not apply if you
+specify -f option in the network.conf file.
+
+The practical upshot of doing this is that remote copies  of
+Crack  can  be  made  to read from stdin and write to stdout
+over a network link, and thus remote  processing  is  accom-
+plished.   I  have  tweaked  Crack in such a way, therefore,
+that if the -f option is specified amongst  the  crack-flags
+of  a  host  in  the network.conf, rather than backgrounding
+itself on the remote host, the rsh command on the server  is
+backgrounded, and output is written directly to the files on
+the server's filestore.
+
+There are restrictions upon this  method,  mostly  involving
+the number of processes that a user may run on the server at
+any one time, and the fact that if you run in feedback mode,
+you  will have to collect the feedback output together manu-
+ally (dropping it into the Runtime directory on the server).
+However,  it  works.  Also, if you try to use rsh as another
+user, you will suffer problems if  rsh  insists  on  reading
+something  from your terminal (eg: a password for the remote
+account).  Also, checkpointing goes out  the  window  unless
+you specify the name of the pointfile on the remote machine.
+
+11.  Notes on fast crypt() implementations
+
+The stdlib version of the crypt() subroutine  is  incredibly
+slow.   It is a massive bottleneck to the execution of Crack
+and on typical platforms that you get at universities, it is
+rare to find a machine which will achieve more than 50 stan-
+dard crypt()s per second.  On low-end diskless workstations,
+you  may  expect 2 or 3 per second.  It was this slowness of
+the crypt() algorithm which originally supplied much of  the
+security UNIX needed.[4]
+
+However, there are now many implementations of  faster  ver-
+sions  of  crypt() to be found on the network.  The one sup-
+plied with Crack v3.2 and upwards is called fcrypt().
+_________________________
+  [4] See: "Password Security, A Case History"  by  Bob
+Morris & Ken Thomson, in the UNIX Programmer Docs.
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 11 -
+
+
+fcrypt() was  originally  written  in  May  1986  by  Robert
+Baldwin at MIT, and is a good version of the crypt() subrou-
+tine.  I received a copy from Icarus Sparry at Bath  Univer-
+sity,  who  had made a couple of portability enhancements to
+the code.
+
+I rewrote most of the tables and the KeySchedule  generating
+algorithm  in  the original fdes-init.c to knock 40% off the
+execution overhead of fcrypt()  in  the  form  that  it  was
+shipped  to  me.   I inlined a bunch of stuff, put it into a
+single file, got  some  advice  from  Matt  Bishop  and  Bob
+Baldwin  [both  of whom I am greatly indebted to] about what
+to do to the xform() routine  and  to  the  fcrypt  function
+itself,  and  tidied  up some algorithms.  I have also added
+more lookup tables and reduced several  formula  for  faster
+use.   fcrypt() is now barely recognisable as being based on
+its former incarnation.
+
+On a DecStation 5000/200, it is also about 15  times  faster
+than  the  standard  crypt (your mileage may vary with other
+architectures and compilers).  This speed puts fcrypt() into
+the  "moderately  fast" league of crypt implementations.  By
+using fcrypt() with Crack, I extracted 135 passwords from my
+standard  1087  user  password  file in a little over 1 hour
+using 3 networked machines.  This is from a moderately  good
+password file.
+
+Why am I saying this sort of thing ? Am I  scaremongering  ?
+In a word, yes.
+
+If a fast version of crypt() is wired into  a  program  like
+Crack it can break a poorly passworded site open in minutes.
+There are such programs available, eg: the "Killer  Cracker"
+written  by the anonymous "Doctor Dissector", with anonymous
+motives.  It comes with  a  modified  version  of  Baldwin's
+fcrypt, as a MS-DOS executable with a GNU copyleft licence.
+
+The point that needs to be  hammered  home  is  that  unless
+something  is done, and done soon, about the general quality
+of passwords on UNIX systems, then in the  near  future  our
+doors  will  be  wide  open to people who have programs like
+Crack and questionable motives.
+
+12.  Solutions and Conclusions
+
+What can be done about this form of attack ?
+
+You must get  a  drop-in  replacement  for  the  passwd  and
+yppasswd  commands; one which will stop people from choosing
+bad passwords in the first place.  There  are  several  pro-
+grams  to  do this; Matt Bishop's passwd+ and Clyde Hoover's
+npasswd program are good examples which  are  freely  avail-
+able.   Consult an Archie database for more details on where
+you can get them from.
+
+
+
+                     September 19, 1991
+
+
+
+
+
+                           - 12 -
+
+
+A little common-sense is all that is required to  vet  pass-
+words:   I   enclose  a  module  in  the  Sources  directory
+goodpass.c which I use in a modified version of the yppasswd
+in order to provide some security.  It is quite heavily cus-
+tomised for use in the UK, but it should be easily portable.
+The routine is invoked:
+
+
+           char *retval = GoodPass(char *input);
+
+
+where input is the password under test, and retval  will  be
+set  either to NULL (if the password is OK) or to a diagnos-
+tic string which says what is wrong with the  password.   It
+is far less complex than a system such as passwd+, but still
+effective enough to make a password  file  (probably)  with-
+stand  Crack.   It would be nice if an organisation (such as
+CERT?) could be persuaded to supply  skeletons  of  sensible
+passwd  commands  for the public good, as well as an archive
+of security related utilities[5] on  top  of  the  excellent
+COPS.  However, for UNIX security to  improve  on  a  global
+scale, we will also require pressure on the vendors, so that
+programs are written correctly from the beginning.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_________________________
+  [5] COPS  is  available  for   anonymous   FTP   from
+cert.sei.cmu.edu (128.237.253.5) in ~/cops
+
+
+
+
+                     September 19, 1991
+
+

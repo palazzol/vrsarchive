@@ -1,0 +1,46 @@
+   File Name		Archive #	Description
+-----------------------------------------------------------
+ APPENDIX                   3	Miscellaneous stuff
+ BUGS                       2	List of known bugs
+ CHANGES                    3	List of changes to code
+ Crack                      2	The "Crack" driver script in sh
+ DictSrc                    1	Directory of source dictionaries
+ DictSrc/bad_pws.dat        2	A sample source dictionary
+ Dicts                      1	Holding store for processed dicts
+ Docs                       1	Documentation directory
+ Docs/README.ms             4	Source code for laconic documentation
+ Docs/README.ps             5	Prettified laconic documentation
+ MANIFEST                   1	This shipping list
+ README                     1	Laconic documentation
+ README.FIRST               1	Introductory Laconic documentation
+ Runtime                    1	Runtime data directory
+ Scripts                    1	Shellscripts & config files directory
+ Scripts/Crack.network      2	The network driver configuration interface
+ Scripts/RCrack             2	Frontend to the network program (eg: rsh)
+ Scripts/clean              1	Diddy little tidy up script
+ Scripts/crack.mf           1	Miscellaneous Makefile called from everywhere
+ Scripts/do_dicts           1	Frontend to dictionary preprocessor
+ Scripts/do_install         1	boring shellscript
+ Scripts/do_join            1	Formatter for passwd files
+ Scripts/do_pwc             1	Frontend to password cracker
+ Scripts/guess2fbk          1	Crash recovery aid
+ Scripts/install.mf         1	Another Makefile called from everywhere
+ Scripts/mrgfbk             1	Crack feedback-mode maintence script
+ Scripts/network.conf       2	Example config file to hack up
+ Scripts/plaster            1	Diddy little kill script
+ Scripts/saltcount          1	Utility script for RCrack
+ Scripts/shadmrg            1	Diddy SysV utility script
+ Scripts/spotless           1	Diddy little tidy up script
+ Scripts/status             1	Diddy little monitor script
+ Sources                    1	Cracker source code directory
+ Sources/Makefile           1	With a name like that, what do you reckon ?
+ Sources/conf.h             2	CONFIGURATION HEADER FILE
+ Sources/crack-fcrypt.c     4	fcrypt() [Shock, horror]
+ Sources/crack-lib.c        2	Diddy little string manipulation fn()s
+ Sources/crack-port.c       1	Portability hooks src
+ Sources/crack-pp.c         2	Preprocessor src
+ Sources/crack-pwc.c        3	Password cracker src
+ Sources/crack.h            1	General header file
+ Sources/goodpass.c         2	Example of a sensible password filter
+ Sources/speeds.c           1	Test s/w
+ Sources/tester.c           1	Test s/w

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), September 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# Count the number of individual salts in do_join format...
+###
+
+awk -f: '
+substr($3, 1, 2) != last {
+	i++;
+	last = substr($3, 1, 2);
+}
+END {
+	print i;
+}'
+
+exit 0

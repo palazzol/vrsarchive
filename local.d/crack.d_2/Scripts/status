@@ -1,0 +1,24 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+cat Scripts/network.conf | 
+awk -F: '
+/^[A-Za-z]/{
+	print "echo ::: Calling", $1, " :-";
+
+	if ($4 == "")
+	{
+		rshf = "-n";
+	} else
+	{
+		rshf = "-n -l " $4;
+	}
+	print "rsh ", $1, rshf, "\"uptime ; ps x\"";
+} ' |
+sh
+
+exit 0

@@ -1,0 +1,32 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+crack_arch=$1
+
+cd $CRACK_HOME || exit 1
+
+###
+# Is there a binaries directory ?
+###
+
+if [ ! -d $crack_arch ]
+then
+	mkdir $crack_arch || exit 1
+fi
+
+cd $crack_arch || exit 1                        # Can we get there from here ?
+
+###
+# Install makefiles in our directory if necessary.
+###
+
+if [ ! -f Makefile ]
+then
+	cp $CRACK_HOME/Scripts/install.mf Makefile
+fi
+
+exit 0

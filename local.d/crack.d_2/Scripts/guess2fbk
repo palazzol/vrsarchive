@@ -1,0 +1,24 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), September 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# guess2fbk : generates a 'feedback' file on stdout from output format
+# data.  On occasions when emergency construction is useful.
+###
+
+if [ $# = 0 ]
+then
+	echo "Usage:	$0 outputfile [...]"
+	exit 1
+fi
+
+cat $* |
+awk '
+/Guessed/ {
+	print "!fb!:" $NF ":Y:" substr($(NF-1), 2, length($(NF-1))-2);
+}' |
+sort

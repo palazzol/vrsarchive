@@ -1,0 +1,45 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), September 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# mrgfbk - a shell script to merge all of your feedback files into one
+# before starting a Crack -F on a set of new dictionaries. This program
+# is called from "Scripts/spotless"
+###
+# mrgfbk takes all the feedback files and filters out all the GUESSED
+# passwords, and saves them to a new feedback file.  The UNGUESSED
+# passwords are deleted, so that the new dictionaries can have a go at
+# them
+###
+
+tf=./mfb$$
+
+echo ""
+echo "Saving all CRACKABLE passwords. Do you also want to save your UNCRACKABLE"
+echo "passwords ? Answer NO if you have modified to your source dictionaries"
+echo "(default: yes)"
+
+read answer
+
+case $answer in
+	[Nn]*)
+		cat Runtime/fbk.* |
+		awk -F: '$3 == "Y"' |
+		sort |
+		uniq > $tf
+		;; 
+	*)
+		cat Runtime/fbk.* |
+		sort |
+		uniq > $tf
+		;; 
+esac		
+
+rm -f Runtime/fbk.*
+cp $tf Runtime/fbk.merged
+rm -f $tf
+exit 0

@@ -1,0 +1,181 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# Amendments (especially of the rsh variety) suggested by bct@hull.cs
+###
+# For those ignorant of 'rsh', what I am trying to build is a line of
+# the form
+#	      rsh hostname [-n] [-l remoteuser] command [args ...]
+#
+###
+machine=`(uname) 2>&1`			# What architecture are we on ?
+
+###
+# Map architecture to rsh-equivalent...
+###
+
+case $machine in
+	"HP_UX")			# Hewlett Packard boxen
+		remote_shell="remsh"
+		;;
+# 	"XENIX"|"Xenix")		# Just a suggestion...
+#		remote_shell="rcmd"
+#		;;
+	*)				# default
+		remote_shell="rsh"
+		;;
+esac
+
+###
+# Are we going to kick rsh into the background, or are we going to
+# background the thing on the remote end ?
+###
+
+asynch_mode=""
+
+if [ "x$1" = "x-asynch" ]
+then
+	echo "(asynchronous $remote_shell mode)"
+	asynch_mode="$1"
+	shift
+else
+	echo "(remotely backgrounded mode)"
+fi
+
+###
+# Segments of input data to read.
+###
+
+startline=$1
+shift
+stopline=$1
+shift
+
+###
+# Let the user know what we are doing.
+###
+
+dataf=/tmp/rcrk.$1.$$		# temporary data file
+
+###
+# Awk reads from stdin... Create an input file for rsh...
+###
+
+awk -F: '
+BEGIN {
+	usercount = 0;
+	saltcount = 0;
+	startsalt = '"$startline"';
+	stopsalt = '"$stopline"';
+}
+
+{
+	if (substr($3, 1, 2) != last)
+	{
+	    saltcount++;
+	    last = substr($3, 1, 2);
+	}
+
+	if (saltcount >= startsalt && saltcount <= stopsalt)
+	{
+		usercount++;
+		print $0;
+	}
+}' > $dataf
+
+###
+# Test that we should actually bother to do anything.
+###
+
+numlines=`wc -l < $dataf`
+
+# Must not quote $numlines here for comparison to work
+
+if [ $numlines = 0 ]
+then
+	echo "RCrack: Nothing left to dispatch to remote host."
+	rm -f $dataf
+	exit 0
+else
+	echo Salted Segment comprises $numlines users	# Don't quote this...
+fi	
+
+###
+# Now for the important bits.
+###
+
+if [ "x$asynch_mode" = "x-asynch" ]
+then
+	# variable setup
+
+	dief=Runtime/die.$1.$$
+	outfile=$CRACK_OUT/out.$1.$$
+
+	# We know where we're going, but we don't know who we are...
+
+	remhost=$1
+	remuser=`awk -F: '$1=="'"$remhost"'"{print $4}' <Scripts/network.conf`
+
+	if [ "$remuser" != "" ]
+	then
+		remuser="-l $remuser"	# THIS IS THE FORMAT FOR THE USER FLAGS
+	fi
+
+	# create a die file which points to the remote plaster
+	# reading from the network.conf
+
+	awk -F: '
+BEGIN {
+	rsh = "'"$remote_shell"'";
+	host = "'"$remhost"'";
+}
+
+$1 == host {
+	if ($4 != "")		# rsh user
+	{
+		rshf = "-l " $4 " -n";
+	} else
+	{
+		rshf = "-n";
+	}
+
+	if ($5 != "")		# assemble new crack home
+	{
+		nf = split($5, path, "/");
+		ch = path[1];
+		for (i = 2; i < nf; i++)	# Up to last but one...
+		{
+			ch = ch "/" path[i];
+		}
+	} else
+	{
+		ch = "'"$CRACK_HOME_UNRES"'";
+	}
+}
+
+END {
+	print "#!/bin/sh";
+	print "rm $0 && " rsh, host, rshf, "\"cd " ch "; Scripts/plaster\"";
+}' < Scripts/network.conf > $dief
+
+	# Make diefile executable
+	chmod 700 $dief
+
+	# Run the 'rsh' ... Shouldn't this be "nohup"ed or something ?
+	# Nope... experimentally it's fine... rsh survives the sh exiting
+
+	echo "Invoking: $remote_shell $@ < $dataf > $outfile 2>&1 && rm -f $dataf $dief &"
+	$remote_shell "$@" < $dataf > $outfile 2>&1 && rm -f $dataf $dief &
+else
+	# Perfectly ordinary network crack.
+	echo "Invoking: $remote_shell $@ < $dataf"
+	$remote_shell "$@" < $dataf
+	rm -f $dataf
+fi
+
+exit 0

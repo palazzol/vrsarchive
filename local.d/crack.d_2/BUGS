@@ -1,0 +1,68 @@
+---------------------------------------------------------------------------
+Known bugs as of Sept 18th, 1991.
+---------------------------------------------------------------------------
+* At least one version of Crack has gotten away from me with the
+  DEVELOPMENT_VERSION symbol #defined.  This is OK if you are on a DEC
+  Risc-Ultrix box, but probably not otherwise.  Doublecheck this.
+
+  STATUS - check this one out during installation.
+---------------------------------------------------------------------------
+* AWK : Someone at Nottingham complained that "RCrack" fell over when he
+  ran it, because he was using version 2 of "awk".  I'm not sure
+  he meant "nawk" by this, but he said that it was fixed by editing
+  "RCrack" and invoking "/bin/awk" literally.  This MAY also affect
+  "joinfiles" and "Crack.network".
+
+  STATUS - SHOULD BE FIXED in v3.2b and upwards.  Some versions of AWK need
+  a newline between statements
+---------------------------------------------------------------------------
+* There was a major bug in the pre-release of v3.2a crack-pwc.c which
+  I have fixed.  Around line 633 of Sources/crack-pwc.c, there is a line
+  which read:-
+
+		if (!TryManyUsers (head, scratch))
+
+  and this was changed to :-
+
+		if (!TryManyUsers (head, scratch->word))
+
+  for Crack to function properly.  If you are reading this, it is fixed
+  in this distribution.
+
+  STATUS - FIXED in v3.2a RELEASE and upwards.
+---------------------------------------------------------------------------
+* "Scripts/do_dicts" - some people complain that the 'sort' command in
+  this script fills the "/tmp" filestore whilst compacting the
+  dictionaries.  There is little I can do about this, unless you have
+  the option to specify the directory where "sort" keeps its temp files
+  (usually this is the "-T" option) - check your man pages.
+
+  If you edit line 67 to read:-
+
+ 	sort -r -T /big/filestore/area $i | uniq > Dicts/$i
+
+  the problem should clear up.  If your current partition is large
+  enough, use "." in place of /big/filestore/area
+
+  STATUS - FIX is NON PORTABLE but simple, and problem sporadic, and so
+  is left to user to implement.
+---------------------------------------------------------------------------
+* "Scripts/crack.mf" - contains the name of one dictionary which is
+  assumed to exist on every machine : /usr/dict/words.  On other
+  architectures, this may become /usr/lib/dist/words, or something
+  completely other.  Amend this if necessary.
+
+  STATUS - what the hell, I'm not a perfectionist really
+---------------------------------------------------------------------------
+* "Scripts/RCrack" - when running in non-NFS mode on NFS filestore, if
+  you use the same filing tree your die files can recurse over the
+  network.  Server calls client which calls client which calls client...
+
+  STATUS - Don't do it. If you have NFS, use it.
+---------------------------------------------------------------------------
+* "Scripts/RCrack" - when running in non-NFS mode, specifying an
+  alternative username for 'rsh' to work under can cause problems if
+  "rsh" insists on reading a password from your /dev/tty (bad .rhost setup)
+
+  STATUS - Don't do it. Bugger all I can do about it anyway.
+---------------------------------------------------------------------------

@@ -1,0 +1,26 @@
+This is Crack, v3.3c : A Sensible Password Cracker for Unix.
+
+Many improvements have been made, mostly to portability across many
+systems and architectures, bugfixes, and improvements to the dictionary
+preprocessor and fcrypt() algorithms, + password file feedback, extra
+network flexibility, and so on.
+
+Apology: Version 3.2b never made it to the public because of the major
+rewiring I had to do so that network-crack would utilise resources a bit
+more efficiently.  Some person decided to release their own patches and
+call it v3.2b anyway...  pity the patches cocked things up. 
+
+Bugs which caused sporadic coredumping on Sun-3's have been solved (I
+certinly hope), as well as mistakes which prevented 'gcc' from compiling
+fcrypt() effectively, and the ENDIANITIS problem has been clarified in
+the configuration files (This stopped fcrypt() working on RS/6000s, HP's
+and several other bigendian platforms).
+
+As ever - start from the README and BUGS files and work on from there.
+
+		- alec 'just another password cracker' muffett.
+			(with apologies to Randal Schwartz...)
+--
+INET: aem@aber.ac.uk      JANET: aem@uk.ac.aber      BITNET: aem%aber@ukacrl
+UUCP: ...!mcsun!ukc!aber!aem         ARPA: aem%uk.ac.aber@nsfnet-relay.ac.uk
+SNAIL: Alec Muffett, Computer Unit, Llandinam UCW, Aberystwyth, UK, SY23 3DB

@@ -1,0 +1,391 @@
+Changes file:-
+
+-> Crack 2.7
+
+* Not documented as were expected to be internal only.  Ha bloody ha.
+
+-> Late July 1991
+
+* Posted Crack v2.7 to the net and was immediately swamped with email
+
+* Arranged archiving @ wuarchive.wustl.edu - ~/packages
+
+-> 31 July 1991 v3.1
+
+* First release of Crack 3.1.
+
+* Decided to post future releases with fcrypt() installed.
+
+* Put another 100eps on xform() by using direct addressing of Sn[]
+  arrays in the main loop of xform()
+
+* Oddly enough, using a direct addressing trick instead of (*dp STEP)
+  slows things down on the 5000/200 - I'll leave it as it was.
+
+-> 1 Aug 1991 v3.1b
+
+* Modified Scripts/joinfiles to filter out locked/null account passwords
+  - This fixes a load imbalance on Crack -network.  O/P > crack.inital.
+
+* Removed CRACK_USERNAME as a option - make it mandatory, it's silly to
+  bother turning it off.  Ditto CRACK_USERNAME2
+
+* Modified method of argument parsing in Crack script for more
+  flexibility
+
+* Added a few extra comments to Crack
+
+* Changed Scripts/crack.mf for clarity
+
+* Crack-pwc now uses linked lists for dictionary handling - dicts can be
+  read in until you run out of memory and it crashes.  Fun, eh ?
+
+* Since linked list handling uses pushdown lists, I reversed order of
+  sort in Scripts/makedicts to counteract dictionary reversal - passwords
+  are more common towards the start of the alphabet.  Lazy or what ?
+
+* Removed CRACK_WARN/CRACK_NULLED as options as these jobs are done by
+  Scripts/joinfiles now.  Code left in crack-pwc though, just in case.
+
+* Crack-pwc now creates the output file, not Crack
+
+* Crack-pwc now does checkpointing.  Will need to write recover code
+  soon.
+
+* Renamed output files to "out.*" instead of "crack.*" - also uses the
+  same PID
+
+* Crack-pwc now uses getopt()
+
+* Put -V (verbose) option in : defining CRACK_VERBOSE is still necessary
+  to be able to use this option, however.  It generated a 1Mb file in 90
+  seconds though, so I'm gonna keep it switched off, personally.
+
+* Changed CRACK_NICE to -Nnumber option
+
+* Changed crack-pwc so that input is from stdin _or_ "-Ifilename"
+
+-> August 2 1991 v3.1b
+
+* Paranoia is cracking me up.  in "Crack" when I invoke "-network" with
+  the crack-pwc >& /dev/null < /dev/null - nothing happens.  Well, rather
+  nothing happened.  Until I tried it again this morning.  Now it works.
+  Hmmmmmmm.
+
+* Checkpointing recover code in now spattered all over crack-pwc.c
+
+* The whole idea is that you invoke Crack EXACTLY as before, with the
+  attition of the "-Rpoint.filename.pid" switch.
+
+* If it's not a network Crack, the job will restart where it left off.
+
+* If it IS a network Crack, the whole "rsh" schmeer will take place
+  again, but "crack-pwc" will be left running ONLY on the machine named in
+  the pointfile.  If you need to run it on a different host, change the
+  name of the host in the pointfile. This could cause problems tho.
+
+* Fixed Scripts/Crack.network to parse arguments and allow network.conf
+  to contain per-hostname Crack arguments.
+
+* Fixed Scripts/RCrack to support the above
+
+* Started reworking README in ms macros
+
+-> August 5 1991 v3.1b
+
+* Totally rewritten README
+
+* Doublechecked fcrypt() still works on Sun 4/330 - works fine.
+
+* Tidied fcrypt() configuration symbols into conf.h and reworked some
+  comments in conf.h for readability
+
+-> 7/8 Aug 1991 v3.1b
+
+* *!*!*!*!*!* LOWERCASED ALL OPTION SWITCHES
+
+* Added new -R as distinct from -r in that it recovers with a username
+  check.
+
+* Introduced Sources/crack-port.c with a version of gethostname() which
+  uses uname() on SysV like systems.  Use CRACK_UNAME switch in
+  Sources/conf.h to enable this.
+
+* Edited Scripts/RCrack to put 'rsh' into a variable name for easier
+  access to SysV or SCO ppl who want to change it to 'rcmd'.
+
+* Fixed up the README a bit more
+
+* Redid CRACK_PW_TRUNCATE to be more clever, as CRACK_PW_VERIFY
+
+-> 9 Aug 1991 v3.1c
+
+* Removed library type stuff from Sources/Makefile - Chris Lewis pointed
+  out problems this would generate with portability.
+
+* Batching alternative version of Crack script written in 'sh'
+
+* Crack.sh finished and documented (slightly)
+
+* Fixed remaining bug left from lowercasing switches...  next time I'll
+  be quicker to check my getopt() string
+
+* Did a better MANIFEST file
+
+* Found a bug in Scripts/crack.mf - there was no target for $(DICTSRC) -
+  fixed.  This showed up when 'makekit' dropped the bad_pws.dat file
+
+-> 12 Aug 1991 v3.2a
+
+* Putting a simplified numerics pass into the preprocessor to create an
+  additional dictionary.
+
+* Got a mail message from a guy telling me that I should sort&uniq my
+  dictionaries - evidently he hasn't been reading the shellscripts, just
+  the code.  Ah well.
+
+* Revamped docs for things I'd missed
+
+* Made o/p of pwc in Crack a variable - that way I can select it at the
+  top of the file
+
+* Fixed a bug in GetPoint - didnt always return NULL when it should
+
+* Found a pointing bug in Pass2 - if data HAD changed, program could
+  have walked off the end of the linked list.
+
+* Emptied network.conf for distribution
+
+* Bought the new 'Jam' CD compilation
+
+* Attempted to wrap progs up for testing.
+
+-> Aug 19th 1991 v3.2a
+
+* Got back from Cropredy with a list of things to do.
+
+* Created new way of putting dicts into crack - just drop them into
+  DictSrc and the program should take care of the rest of it.  Saves
+  editing files and with dictionaries.tar.Z now available, it will save
+  a lot of bother for people - they just have to drop them into the
+  directory.  Updated docs accordingly.
+
+* Created APPENDIX file for people who query my methods and sanity.
+
+* added personalisation to conf.h for my purposes only.  Also, according
+  to one guy, his system barfed the comments in conf.h because they
+  started on the same line as a #undef.
+
+* Crack-pp now ignores dictionary lines beginning with '#' - this allows
+  the Klein dictionaries to be dropped straight into the DictSrc
+  directory.
+
+* Crack-pwc now tries a username+reversed username permutation that
+  someone suggested, I've forgotten who and it's buried in 3Mb of email.
+
+* Redid the manifest (again) .
+
+* Modified CRACK_TRAILING to do a leading-digits pass.
+
+* Crack-pwc.c now skips empty dictionaries.
+
+* I found that in using wildcards in Scripts/crack.mf, I created a
+  problem.  The DICTSRC target contined a member DictSrc/* which was
+  always out of date, because it was never made when I called 'make
+  dictstamp' - Make looks for something literally called 'DictSrc/*' and
+  not the individual files.  Hopefully, removing the (blank) dependency
+  for $(DICTSRC) will fix this.  Subtle and annoying.
+
+-> Aug 20th 1991 v3.2a
+
+* Tagged a few extra comments onto APPENDIX
+
+-> Aug 21st 1991 v3.2a
+
+* Cleaned up a bit of the README files. Ready for release.
+
+* Last minute check - found that using 'gcc' as opposed to 'cc' made
+  fcrypt() slow and incompatible with the standard crypt() - this is not
+  nice.
+
+-> Aug 22nd 1991 v3.2a
+
+* First bug reports coming back.  AIX doesnt like fcrypt(), possibly due
+  to putting numbers > 255 in a u_char in fcrypt() - fixed this.
+
+-> Aug 23rd 1991 v3.2a
+
+* Second major bug report in "plaster" - should not assume '.' is in the
+  path, is a security hole.  Fixed.
+
+* Apparently fixing the >8bit bytes does not help fcrypt() on AIX - it
+  still fails.  Bother.
+
+-> Aug 27 1991 v3.2b
+
+* Put newlines in AWK script embedded in Scripts/RCrack - apparently
+  some awks need linebreaks
+
+* Pointfile now contains a datestamp obtained from ctime() - saves on
+  headaches.
+
+* crack-fcrypt.c: removed use of R[] block by finding the ONE place it
+  was referenced and replacing it with a modified reference to L[].
+  This means that the new L[] is the old R[] + L[].  There are no more
+  contiguity problems, so 'gcc' now works, but it is slower than the
+  output of 'cc' on my DECStation.  Caveat Emptor.
+
+* Crack rewritten in 'sh'
+
+* Scripts rewired for greater flexibility
+
+-> 28 Aug 1991 v3.3a
+
+* Fixed bug in init() stuff - a tmpE array was declared with size [32]
+  and not [48] - this was causing problems on a Sun 3, causing coredumps.
+
+* Clarified Endianitis in conf.h - definitely traced to fcrypt problems
+  on RS/6000 and HP's.
+
+* Added Chris Stassens (?) improvements to the load balancing algorithm
+  in Crack.network
+
+* Wired -N switch into crack-pwc to prevent Crack.network working unless
+  CRACK_NETWORK defined.
+
+-> 29 Aug 1991 v3.3a
+
+* Fixed up a few filenames which > 14 chars long.  Probably missed a
+  few.  Hohum.
+
+* Added env variable CRACK_OUT to Crack, as a directory to put output files.
+
+* Spent rest of day playing with Oraperl.
+
+-> 29 Aug 1991 v3.3a
+
+* Fixed up crack-pp dictionary preprocessor to be more flexible about
+  when it generates plurals...  I originally restricted it to lowercase
+  words in order to keep it under control, but it has proved so horribly
+  successful that it needs extending.
+
+* Put "umask 077 in Crack"
+
+* Touched up README.FIRST in anticipation of the next release.
+
+* Touched up README.
+
+-> 3rd Sep 1991 v3.3a
+
+* crack-pwc now unlinks "die" and "point" files on exit
+
+* Scripts/do_join now traps passwords with '*' '!' and SPCs anywhere
+  in the string, and logs them to file.
+
+* Found some people are posting patches to comp.sources.bugs without
+  telling me all about it.  Most annoying, but at least it means that
+  the fixes are going out.  Hohum.  I suppose you must get used to it if
+  you go round casting your pearls before swine...  8-)
+
+-> 4th Sep 1991 v3.3a
+
+* Crack now can run in foreground mode (-f option) :- useful for
+  invocation from other programs.  Unlike the patches which other ppl
+  supply to do this job, Crack 3.3 actually does a bit of sanity
+  checking of arguments (eg: no foreground mode for Crack -network),
+  and it warns of the importance of the out.init.$$ file.
+
+* Crack-pp now does somewhat better pluralisation.  If any linguists
+  dare tell me about the weak points and exceptions, they can go stuff
+  themselves.  8-)
+
+* Crack.network now distributes load on basis of salted lines -
+  splitting salts evenly over the network.  This satisfies some pedants,
+  and to be honest, even I was quite surprised at the way that the load
+  rebalances.
+
+* Changes name of point.<host>.<pid> to pnt.<host>.<pid>
+
+* Put feedback code into crack-pwc
+
+* Created simple feedback script in Scripts directory.
+
+-> 4th Sep 1991 v3.3a
+
+* Tidied up feedback code in crack-pwc.c
+
+* Put all runtime diagnostic files into directory 'Runtime'
+
+* Got rid of the MCB pass - it never showed anything up anyway.  No
+  doubt someone will attack me for this though...
+
+* Inserted feedback-filter code into Crack
+
+* Had lunch in the arts centre with my sister.
+
+* After a few hours fighting with fcrypt(), basically inlining the whole
+  of toBA64(), I measure fcrypt() as 15 times faster than standard.
+  Found a compiler weirdness too - read the bottom of the XForm()
+  function in crack-fcrypt.c
+
+-> 5th Sep 1991 v3.3a
+
+* Fixed a bug in crack-lib.c - Initcap wasn't working properly
+
+* Fixed up feedback mode to lookup guessable and non-guessable
+  passwords, and wired code into do_join instead of independent utility.
+
+* NEW FORMAT NETWORK.CONF - allows specification of different usernames
+  for 'rsh', and ability to specify a copy of Crack OTHER than that you
+  are using.
+
+* Created a slightly duboius Scripts/shadmrg script, to merge
+  /etc/shadow on Sys V systems
+
+* Fixed CRACK_GECOS so that it took in info AFTER a ','
+
+-> 9th Sep 1991 v3.3a
+
+* reinstated MCB pass as reverse forced capitalised
+
+-> 11th Sep 1991
+
+* Installed serries of patches back from bct@hull.cs, lots of minor
+  for protability probs and a new feature - smart rsh-ing.
+
+-> 13th Sep 1991
+
+* Okay, I won't go into detail because its horribly complex, but at
+  least simpler that Brian's solution (grin)...  Crack can do remote
+  processing on machines without NFS by invoking them with the '-f'
+  option (specified in network.conf) and backgrounding the rsh on the
+  server, rather than letting it exit.  Functionally identical but a bit
+  neater.
+
+* Trivial bugfix - crack-pp no longer exits when it finds it cannot read
+  a source dictionary.  It just warns about it.
+
+-> Wed 18th Sep 1991
+
+* Got Gilly to proofread the README file...  tidied it up quite a bit.
+
+* Got some more back off BCT about the state of Crack 3.3c.  There was a
+  fencing error in saltcount and it RCrack needed a sanity check
+  installing to prevent it from rshing to another machine with no data
+  to crack.  Have installed similar trap in Crack.network.  Removed
+  reference to /dev/tty in RCrack's big awk script.
+
+* Found bugs in the pluralisation algorithms, mostly to do with over
+  zealout fprintfs.  Reimplemented more elegantly.
+
+-> 19th Sep 1991
+
+* Added/documented guess2fbk script
+
+-> 20th Sep 1991
+
+* Packaged v3.3 up ready to go.
+
+* Had a great idea.
+
+* Started work on v4.0.

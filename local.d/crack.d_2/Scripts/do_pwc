@@ -1,0 +1,23 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+crack_arch=$1
+
+if [ ! -d $crack_arch ]
+then
+	Scripts/do_install $crack_arch || exit 1
+fi
+
+cd $crack_arch || exit 1                        # Can we get there from here ?
+
+###
+# Make the password cracker
+###
+
+make crack-pwc || exit 1                        # Check binaries are OK
+
+exit 0

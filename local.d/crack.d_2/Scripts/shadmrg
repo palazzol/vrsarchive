@@ -1,0 +1,46 @@
+#!/bin/sh
+
+shadow=/etc/shadow
+passwd=/etc/passwd
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), September 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# Merge /etc/shadow & /etc/passwd for Crack.  Assume 7 fields for /etc/passwd,
+# and less for /etc/shadow
+###
+
+cat $passwd $shadow |
+awk -F: '
+BEGIN {
+	OFS = ":";
+}
+
+NF == 7 {
+	pwents[$1] = $0;
+}
+
+NF < 7 {
+	shadow_pw[$1] = $2;
+}
+
+END {
+	for (pw_name in pwents)
+	{
+		fields = split(pwents[pw_name], pwd, ":");
+
+		if (shadow_pw[pwd[1]] != "LOCKED")
+		{
+			print 	pwd[1], \
+				shadow_pw[pwd[1]], \
+				pwd[3], \
+				pwd[4], \
+			        pwd[5], \
+			        pwd[6], \
+			        pwd[7];
+		}
+	}
+}'

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+echo "Are you sure that you want to do this ? (no)"
+read ans
+
+case $ans in
+	[Yy]*)
+		make -f Scripts/crack.mf spotless
+		;;
+	*)
+		;;
+esac
+
+exit 0

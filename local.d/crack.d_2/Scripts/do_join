@@ -1,0 +1,111 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# Are we to run Feedback ?
+###
+
+if [ "x$1" = "x-F" ]
+then
+	shift
+
+	fbkfiles=`sh -c "echo Runtime/fbk.*"`
+
+	if [ "$fbkfiles" = "Runtime/fbk.*" ]
+	then
+		fbkfiles=""
+	fi
+fi
+
+###
+# Empty the output file, Error if cannot create
+###
+
+warn=$1
+
+shift
+
+cp /dev/null $warn || exit 1
+
+
+###
+# As Walt Disney would say, we start with a simple bracket:-
+###
+
+(
+	if [ "$fbkfiles" != "" ]
+	then
+		cat $fbkfiles
+	fi
+
+	(
+		for file in $*
+		do
+			awk '/^[A-Za-z0-9]/ {print "'"$file"':" $0;}' < $file
+		done
+	) |
+	sort -t: +2
+) |
+awk -F: '
+BEGIN {
+	FS = ":";
+	warn="'"$warn"'";
+	date = "'"`date`"'";
+	date = substr(date, 5, 15);
+}
+
+/^!fb!/ {
+	if ($3 == "N")
+	{
+		guessable[$2] = "N";
+	} else if ($3 == "Y")
+	{
+		guessable[$2] = "Y";
+		decrypt[$2] = $4;
+	} else
+	{
+		print "Strange feedback: ", $0 >> "/dev/tty";
+	}
+	next;
+}
+
+index($3, "*") != 0 || \
+index($3, "!") != 0 || \
+index($3, " ") != 0 {
+	printf("join: %s User %s (in %s) has a locked password:- %s\n", \
+		date, $2, $1, $3) >> warn;
+	next;
+}
+
+$3 == "" {
+	printf("join: %s Warning! %s (%s in %s) has a NULL password!\n", \
+		date, $2, $7, $1) >> warn;
+	next;
+}
+
+{
+	if (guessable[$3] == "N")
+	{
+		next;
+	} else if (guessable[$3] == "Y")
+	{
+		if ($4 == 0)
+		{
+			msg = "ROOT PASSWORD ";
+		} else
+		{
+			msg = "";
+		}
+		printf("join: %s Guessed %s%s (%s in %s) [%s] %s\n", \
+			date, $2, msg, $8, $1, decrypt[$3], $3) >> warn;
+	} else
+	{
+		print $0;
+	}
+}'
+
+exit 0

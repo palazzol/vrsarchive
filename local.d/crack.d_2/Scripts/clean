@@ -1,0 +1,10 @@
+#!/bin/sh
+
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+make -f Scripts/crack.mf clean
+
+exit 0

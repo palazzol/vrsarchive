@@ -1,0 +1,873 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.02
+%%DocumentNeededResources: font Times-Bold
+%%+ font Times-Italic
+%%+ font Times-Roman
+%%+ font Courier
+%%DocumentSuppliedResources: procset grops 1.02 0
+%%Pages: 7
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.02 0
+
+/setpacking where {
+	pop
+	currentpacking
+	true setpacking
+} if
+
+/grops 120 dict dup begin 
+
+% The ASCII code of the space character.
+/SC 32 def
+
+/A /show load def
+/B { 0 SC 3 -1 roll widthshow } bind def
+/C { 0 exch ashow } bind def
+/D { 0 exch 0 SC 5 2 roll awidthshow } bind def
+/E { 0 rmoveto show } bind def
+/F { 0 rmoveto 0 SC 3 -1 roll widthshow } bind def
+/G { 0 rmoveto 0 exch ashow } bind def
+/H { 0 rmoveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+/I { 0 exch rmoveto show } bind def
+/J { 0 exch rmoveto 0 SC 3 -1 roll widthshow } bind def
+/K { 0 exch rmoveto 0 exch ashow } bind def
+/L { 0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+/M { rmoveto show } bind def
+/N { rmoveto 0 SC 3 -1 roll widthshow } bind def
+/O { rmoveto 0 exch ashow } bind def
+/P { rmoveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+/Q { moveto show } bind def 
+/R { moveto 0 SC 3 -1 roll widthshow } bind def
+/S { moveto 0 exch ashow } bind def
+/T { moveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+
+% name size font SF -
+
+/SF {
+	findfont exch
+	[ exch dup 0 exch 0 exch neg 0 0 ] makefont
+	dup setfont
+	[ exch /setfont cvx ] cvx bind def
+} bind def
+
+% name a c d font MF -
+
+/MF {
+	findfont
+	[ 5 2 roll
+	0 3 1 roll % b
+	neg 0 0 ] makefont
+	dup setfont
+	[ exch /setfont cvx ] cvx bind def
+} bind def
+
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+
+% BP -
+
+/BP {
+	/level0 save def
+	1 setlinecap
+	1 setlinejoin
+	72 RES div dup scale
+	LS {
+		90 rotate
+	} {
+		0 PL translate
+	} ifelse
+	1 -1 scale
+} bind def
+
+/EP {
+	level0 restore
+	showpage
+} bind def
+
+
+% centerx centery radius startangle endangle DA -
+
+/DA {
+	newpath arcn stroke
+} bind def
+
+% x y SN - x' y'
+% round a position to nearest (pixel + (.25,.25))
+
+/SN {
+	transform 
+	.25 sub exch .25 sub exch
+	round .25 add exch round .25 add exch
+	itransform
+} bind def
+	
+% endx endy startx starty DL -
+% we round the endpoints of the line, so that parallel horizontal
+% and vertical lines will appear even
+
+/DL {
+	SN
+	moveto
+	SN
+	lineto stroke
+} bind def
+
+% centerx centery radius DC -
+
+/DC {
+	newpath 0 360 arc closepath
+} bind def
+
+
+/TM matrix def
+
+%  width height centerx centery DE -
+
+/DE {
+	TM currentmatrix pop
+	translate scale newpath 0 0 .5 0 360 arc closepath
+	TM setmatrix
+} bind def
+
+% these are for splines
+
+/RC /rcurveto load def
+/RL /rlineto load def
+/ST /stroke load def
+/MT /moveto load def
+/CL /closepath load def
+
+% fill the last path
+
+% amount FL -
+
+/FL {
+	currentgray exch setgray fill setgray
+} bind def
+
+% fill with the ``current color''
+
+/BL /fill load def
+
+/LW /setlinewidth load def
+% new_font_name encoding_vector old_font_name RE -
+
+/RE {
+	findfont
+	dup maxlength dict begin
+	{
+		1 index /FID ne { def } { pop pop } ifelse
+	} forall
+	/Encoding exch def
+	dup /FontName exch def
+	currentdict end definefont pop
+} bind def
+
+/DEFS 0 def
+
+% hpos vpos EBEGIN -
+
+/EBEGIN {
+	moveto
+	DEFS begin
+} bind def
+
+/EEND /end load def
+
+/CNT 0 def
+/level1 0 def
+
+% llx lly newwid wid newht ht newllx newlly PBEGIN -
+
+/PBEGIN {
+	/level1 save def
+	translate
+	div 3 1 roll div exch scale
+	neg exch neg exch translate
+	% set the graphics state to default values
+	0 setgray
+	0 setlinecap
+	1 setlinewidth
+	0 setlinejoin
+	10 setmiterlimit
+	[] 0 setdash
+	/setstrokeadjust where {
+		pop
+		false setstrokeadjust
+	} if
+	/setoverprint where {
+		pop
+		false setoverprint
+	} if
+	newpath
+	/CNT countdictstack def
+	/showpage {} def
+} bind def
+
+/PEND {
+	clear
+	countdictstack CNT sub { end } repeat
+	level1 restore
+} bind def
+
+end def
+
+/setpacking where {
+	pop
+	setpacking
+} if
+%%EndResource
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-Italic
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Courier
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72 def/PL
+792 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron/scaron/zcaron
+/Ydieresis/trademark/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/space/exclam
+/quotedbl/numbersign/dollar/percent/ampersand/quoteright/parenleft/parenright
+/asterisk/plus/comma/hyphen/period/slash/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J
+/K/L/M/N/O/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/circumflex
+/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
+/braceleft/bar/braceright/tilde/.notdef/quotesinglbase/guillemotleft
+/guillemotright/bullet/florin/fraction/perthousand/dagger/daggerdbl/endash
+/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut/dotaccent/breve
+/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash/quotedblbase/OE/Lslash
+/.notdef/exclamdown/cent/sterling/currency/yen/brokenbar/section/dieresis
+/copyright/ordfeminine/guilsinglleft/logicalnot/minus/registered/macron/degree
+/plusminus/twosuperior/threesuperior/acute/mu/paragraph/periodcentered/cedilla
+/onesuperior/ordmasculine/guilsinglright/onequarter/onehalf/threequarters
+/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis/Eth
+/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis/multiply/Oslash/Ugrave
+/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls/agrave/aacute/acircumflex
+/atilde/adieresis/aring/ae/ccedilla/egrave/eacute/ecircumflex/edieresis/igrave
+/iacute/icircumflex/idieresis/eth/ntilde/ograve/oacute/ocircumflex/otilde
+/odieresis/divide/oslash/ugrave/uacute/ucircumflex/udieresis/yacute/thorn
+/ydieresis]def/Courier@0 ENC0/Courier RE/Times-Roman@0 ENC0/Times-Roman RE
+/Times-Italic@0 ENC0/Times-Italic RE/Times-Bold@0 ENC0/Times-Bold RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 12/Times-Bold@0 SF("Crack V)232.734 123 Q(ersion 3.3c")-1.104 E 3(AS)
+184.428 138 S(ensible Password Checker for)202.764 138 Q/F1 9.6/Times-Bold@0 SF
+(UNIX)3 E F0<ae>A/F2 10/Times-Italic@0 SF(Alec D.E. Muffett)253.005 162 Q/F3 10
+/Times-Roman@0 SF(Computer Unit, University College of W)198.685 180 Q(ales)-.8
+E(Aberystwyth, W)222.99 192 Q(ales, SY23 3DB)-.8 E F2(aem@aber)254.52 204 Q
+(.ac.uk)-1.11 E F3(+44 970 622492)255.18 216 Q F2(ABSTRACT)264.385 252 Q/F4 10
+/Times-Bold@0 SF(Crack)133 279.6 Q/F5 7/Times-Roman@0 SF(1)159.66 275.5 Q F3
+.018(is a freely available program designed to \214nd standard)165.678 279.6 R
+/F6 8/Times-Roman@0 SF(UNIX)2.518 E F3(eight-character)2.518 E .744
+(DES encrypted passwords by standard guessing techniques outlined below)108
+291.6 R 5.745(.I)-.65 G 3.245(ti)423.73 291.6 S 3.245(sw)432.535 291.6 S
+(ritten)446.89 291.6 Q 1.431(to be \215exible, con\214gurable and fast, and to\
+ be able to make use of several networked)108 303.6 R(hosts via the Berkeley)
+108 315.6 Q/F7 10/Courier@0 SF(rsh)2.5 E F3
+(program \(or similar\), where possible.)2.5 E F4 2.5(1. Intent)72 351.6 R
+(of this pr)2.5 E(ogram)-.18 E F3
+(My intentions, whilst writing this program, were)72 367.2 Q 14.17(1\) T)72
+382.8 R 2.828(op)-.7 G .328(rovide the average system manager with a simple, \
+\215exible and fast tool to \214nd passwords which)115.238 382.8 R
+(would be easily compromised by a dictionary search.)97 394.8 Q 14.17(2\) T)72
+410.4 R 4.295(ow)-.7 G 1.794
+(eaken the complacency which has developed amongst many \(in\)?experienced)
+118.925 410.4 R F6(UNIX)4.294 E F3(systems)4.294 E .526
+(managers about password security)97 422.4 R 3.026(.J)-.65 G .526
+(ust because the)244.814 422.4 R F7(crypt\(\))3.026 E F3 .526
+(function cannot be reversed does not)3.026 F .582
+(mean that your passwords are secure.)97 434.4 R .582
+(If this program helps to raise the overall quotient of paranoia)5.582 F(just \
+one little bit, then it will have served its purpose and is all to the good.)97
+446.4 Q 2.769(Ia)72 462 S 2.769(mq)82.539 462 S .269(uite certain that some ch\
+ildish morons out there will abuse the work that I have put into creating this)
+98.088 462 R 2.794(program. It')72 474 R 2.794(su)-.55 G 2.794(pt)134.248 474 S
+2.794(ot)144.822 474 S .294(hem how they use it, but if it')155.396 474 R 2.794
+(su)-.55 G .294(sed for some illegal purpose it')286.918 474 R 2.793(sn)-.55 G
+.293(ot my intention, nor)423.671 474 R(my fault. I hope they get caught.)72
+486 Q .252(Crack was not designed to do anything)72 501.6 R F2(nasty)2.752 E F3
+2.752(,o)C .252(ther than to attack passwords in sensible order)263.166 501.6 R
+5.253(.T)-.55 G .253(his is why)462.934 501.6 R 2.877(If)72 513.6 S .376
+(eel I can post it to the net without fear of recrimination.)81.537 513.6 R
+.376(This version of Crack is supplied with a \(hope-)5.376 F .697
+(fully\) portable version of)72 525.6 R F7(fcrypt\(\))3.197 E F3 3.197(,f)C
+.697(or speed reasons.)234.575 525.6 R .698
+(Fcrypt\(\) is not yet widely available, but several)5.697 F 2.148
+(versions have now been posted to USENET)72 537.6 R 4.648(,a)-.74 G 2.148
+(nd with the growing ability to access anonymous FTP)271.266 537.6 R 1.081
+(databases like)72 549.6 R F4(Ar)3.581 E(chie)-.18 E F3 3.581(,Ib)C 1.082(elie\
+ve that people who really want access to such programs as fcrypt\(\) will be)
+179.174 549.6 R .388(able to get them easily)72 561.6 R 5.388(.P)-.65 G .388
+(eople who need them but don')176.34 561.6 R 2.888(th)-.18 G .387
+(ave the time to look, on the other hand, will not)310.138 561.6 R .013
+(get them.)72 573.6 R .013
+(This is not a good thing if you are a systems manager)5.013 F 2.513(,b)-.4 G
+.013(ecause it gives the crackers an advantage.)337.592 573.6 R
+(My philosophy is:)72 585.6 Q F2
+(give it to everyone, then at least the people who need it can get it)2.5 E F3
+(.)A F4 2.5(2. Fcrypt\(\))72 609.6 R(Statistics)2.5 E F3 .955(The version of f\
+crypt\(\) that comes with Crack is several times faster than the version that \
+was originally)72 625.2 R 1.593(supplied to me, and should outperform most oth\
+ers which are publicly available.)72 637.2 R 4.094(Ih)6.594 G(aven')430.452
+637.2 Q 4.094(tt)-.18 G 1.594(ried many)462.136 637.2 R .738
+(speed-demon style tricks, but rather I have gone for portability)72 649.2 R
+3.238(,e)-.65 G .738(legance and simplicity)338.68 649.2 R 3.237(,w)-.65 G .737
+(here applicable)442.453 649.2 R F7(8-\).)72 661.2 Q F3 .191(On a DECStation 5\
+000/200, fcrypt\(\) iterates about 580 times per second, and overall, I measur\
+e this)5.191 F .317(to be about 15 times faster than standard crypt\(\).)72
+673.2 R .316(There are faster versions available, but at least I feel free)
+5.316 F(to redistribute this version without stepping on anyones toes.)72 685.2
+Q .32 LW 144 708.2 72 708.2 DL/F8 5.6/Times-Roman@0 SF(1)82 716.72 Q/F9 8
+/Courier@0 SF(Crack)2 3.28 M F6(is available for anonymous FTP from)2 E/F10 8
+/Times-Italic@0 SF(wuar)2 E(chive.wustl.edu)-.296 E F6(\(128.252.135.4\) in)2 E
+F10(~/packages)2 E EP
+%%Page: 2 2
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-2-)282.17 48 Q 3.378<418c>72 84 S .879(nal note about\
+ my motives: If you think that I am a moron for writing and then distributing \
+this pro-)88.158 84 R .824(gram, and you think that the program is in itself d\
+angerous, I suggest that you carefully consider the fact)72 96 R
+(that any moron could have written this program.)72 108 Q(Flames to)5 E/F1 10
+/Courier@0 SF(/dev/null)2.5 E F0 2.5(,p)C(lease.)375.98 108 Q/F2 10
+/Times-Bold@0 SF 2.5(3. Implementation)72 132 R F0 4.031(Ih)72 147.6 S 1.531
+(ave tried to make Crack as portable as possible without compromising speed.)
+84.361 147.6 R 1.531(Needless to say)6.531 F 4.032(,i)-.65 G 4.032(ti)490.518
+147.6 S(s)500.11 147.6 Q .592(imperfect in the this respect, but I have tried.)
+72 159.6 R .591(If you have problems getting Crack up, please let me know)5.592
+F .869
+(what these problems are, and what system you were trying to put Crack up on.)
+72 171.6 R 3.369(Ib)5.869 G .869(elieve that Crack will)415.573 171.6 R .187
+(work on)72 183.6 R F2(Xenix)2.687 E F0 .186(and various versions of)2.686 F F2
+.186(System V)2.686 F F0 2.686(,b)C .186(ut it may require a little ef)282.536
+183.6 R .186(fort if your)-.18 F/F3 8/Times-Roman@0 SF(UNIX)2.686 E F0 .186
+(is not fairly)2.686 F(modern.)72 195.6 Q 2.834 -.7(To u)72 211.2 T 1.434
+(se the).7 F F1 1.434(Crack -network)3.934 F F0 1.434(option, you must have)
+3.934 F F1(rsh)3.934 E F0 3.934(,o)C 3.934(ras)335.69 211.2 S 1.434
+(imilar program.)355.218 211.2 R F1(rsh)6.434 E F0 1.435(is a BSD-ism)3.934 F
+.611(which has become fairly common on non-BSD systems.)72 223.2 R .611
+(If you don')5.611 F 3.111(th)-.18 G .611(ave it or something similar)363.794
+223.2 R 3.111(,l)-.4 G .611(et me)481.449 223.2 R .059
+(know what you do have which might, with a little ingenuity)72 235.2 R 2.56(,d)
+-.65 G 2.56(ot)321.16 235.2 S .06(he job, and I shall see what I can do.)331.5
+235.2 R(Have)5.06 E 2.5(al)72 247.2 S(ook in)81.72 247.2 Q F1(Scripts/RCrack)
+2.5 E F0(and feel free to play around.)2.5 E F2 .468(Note: Xenix)97 262.8 R F0
+.467(users and some others have a)2.968 F F1(rcmd)2.967 E F0 .467
+(program instead of)2.967 F F1(rsh)2.967 E F0 5.467(.S)C(imilarly)410.853 262.8
+Q(,)-.65 E F2(HP-UX)2.967 E F0 .875(has a)97 274.8 R F1(remsh)3.375 E F0 3.375
+(command. I'm)3.375 F .875
+(not sure of the correct syntax for these programs, but it should)3.375 F .871
+(not be hard to integrate them, if they do not already work.)97 286.8 R .871
+(There is a note about these com-)5.871 F(mands in)97 298.8 Q F1
+(Scripts/RCrack)2.5 E F0(On)97 314.4 Q F2 .202(System V)2.702 F F0 .202
+(based systems, users may also be missing the BSD function)2.702 F F1
+(gethostname\(\))2.703 E F0(.)A .703(If this is so, but you)97 326.4 R F2(do)
+3.203 E F0 .703(have the)3.203 F F1(uname\(\))3.202 E F0 .702
+(system call, de\214ne the macro)3.202 F F1(CRACK_UNAME)3.202 E F0(in)3.202 E
+F1(Sources/conf.h)97 338.4 Q F0 .529
+(instead. This ought to \214x the problem, but it)3.029 F/F4 10/Times-Italic@0
+SF(may)3.029 E F0 .53(need a little user inter)3.03 F(-)-.2 E
+(vention \214rst \(it depends where your header \214le for)97 350.4 Q F1
+(uname\(\))2.5 E F0(is\).)2.5 E F4(Caveat Emptor!)5 E F2 2.5(4. Method)72 374.4
+R(of Password Cracking)2.5 E F0 .268(Crack does not take the serial approach t\
+o password guessing that other programs like the)72 390 R F2(COPS)2.768 E F0
+(password)2.768 E(cracker does.)72 402 Q(Rather)5 E 2.5(,C)-.4 G
+(rack makes two passes over the users' password entries.)167.68 402 Q .372
+(The \214rst pass bases its guesses on the contents of the)72 417.6 R F4(gecos)
+2.872 E F0 .372(\214eld \(containing the users' real name\), and the)2.872 F
+.283(username itself.)72 429.6 R .283(The \214rst pass is fast and usually ver\
+y fruitful, and completes quite quickly)5.283 F 5.283(.Y)-.65 G .283
+(ou would be)453.995 429.6 R 1.182(surprised at the number of spods who still \
+think that their middle name, backwards and capitalised, is a)72 441.6 R
+(good password.)72 453.6 Q 1.219(The second pass is made by encrypting several\
+ pre-processed dictionaries on the \215y)72 469.2 R 3.719(,a)-.65 G 1.219
+(nd comparing the)431.572 469.2 R .196(results with users passwords.)72 481.2 R
+.197
+(Crack optimises the number of calls to the encryption function by sorting the)
+5.197 F .876(user passwords by their)72 493.2 R F4 .876(encryption salt)3.376 F
+F0 .875(before loading, so that the dictionaries only have to be encrypted)
+3.376 F 1.823(once for each dif)72 505.2 R 1.823(ferent salt.)-.18 F 1.823
+(This generally saves about 30% of the calls you would have to make to)6.823 F
+F1(crypt\(\))72 517.2 Q F0(.)A .282
+(The preprocessed dictionaries are created by mer)72 532.8 R .282
+(ging the source dictionaries found in the directory)-.18 F F1(Dict-)2.782 E
+(Src)72 544.8 Q F0 .944
+(and then truncating, sorting and uniq'ing the output from the preprocessor)
+3.444 F 5.945(.T)-.55 G .945(he default dictionaries)413.24 544.8 R 6.629
+(named are)72 556.8 R F1(/usr/dict/words)9.129 E F0 6.628
+(which provides the bulk of the input data, and)9.129 F F1(Dict-)9.128 E
+(Src/bad_pws.dat)72 568.8 Q F0 .498
+(which is meant to provide all of those non-dictionary passwords, such as)2.998
+F F4(12345678)2.999 E F0(or)72 580.8 Q F4(qwerty)2.5 E F0(.)A/F5 7
+/Times-Roman@0 SF(2)112.55 576.7 Q F0 .738
+(If you wish to add a dictionary of your own, just copy it into the)72 596.4 R
+F1(DictSrc)3.239 E F0 .739(directory and then delete the)3.239 F 1.484
+(contents of the)72 608.4 R F1(Dicts)3.984 E F0 1.484(directory \(run)3.984 F
+F1(Scripts/spotless)3.984 E F0 1.483(from within)3.984 F F1($CRACK_HOME)3.983 E
+F0 3.983(\). Y)B 1.483(our new)-1 F .336(dictionary will be mer)72 620.4 R .336
+(ged in on the next run.)-.18 F .336
+(Do not worry about replication of data, as the preprocessor)5.336 F -.55('s)
+.37 G(driver script sorts and uniq')72 632.4 Q 2.5(st)-.55 G
+(he data before putting it into the)191.16 632.4 Q F1(Dicts)2.5 E F0(directory)
+2.5 E(.)-.65 E(The formats of the output dictionaries are:)72 648 Q 14.73
+(a\) Unique)72 663.6 R 1.145(words that have been forced lowercase, forwards.)
+3.645 F 1.144(These are the most common passwords)6.145 F
+(you will \214nd, thus they are tried \214rst.)97 675.6 Q .32 LW 144 698.2 72
+698.2 DL/F6 5.6/Times-Roman@0 SF(2)82 706.72 Q F3 1.32
+(Extra dictionaries \(those used in Dan Klein')2 3.28 N 3.32(sp)-.44 G(aper)
+245.576 710 Q 3.319(,b)-.32 G 1.319
+(elow\) can be obtained via anonymous FTP from)268.343 710 R/F7 8
+/Times-Italic@0 SF(uunet.uu.net)72 720 Q F3(\(192.48.96.2\) as)2 E F7
+(~/pub/dictionaries.tar)2 E(.Z)-.888 E EP
+%%Page: 3 3
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-3-)282.17 48 Q 14.17(b\) Dictionary)72 84 R .473(word\
+s which have been arti\214cially pluralised, because not many dictionaries con\
+tain plu-)2.973 F(rals.)97 96 Q 14.73(c\) Dictionary)72 111.6 R
+(words forced capitalised \(eg:)2.5 E/F1 10/Times-Italic@0 SF(Capitalised)2.5 E
+F0(\).)A 14.17(d\) Dictionary)72 127.2 R 2.675(words, forced lowercase, with a\
+ trailing 0 or 1 \(this may be extended by hacking)5.176 F
+(Sources/crack-pp.c\).)97 139.2 Q 14.73(e\) Dictionary)72 154.8 R
+(words forced lowercase and backwards.)2.5 E 15.84(f\) Dictionary)72 170.4 R
+2.639(words, forced lowercase, with a leading 0 or 1 \(this may be extended by\
+ hacking)5.138 F(Sources/crack-pp.c\).)97 182.4 Q 14.17(g\) Dictionary)72 198 R
+(words, forced uppercase, forwards.)2.5 E 14.17(h\) Dictionary)72 213.6 R
+(words, forced uppercase, backwards.)2.5 E 16.39(i\) Dictionary)72 229.2 R
+(words forced capitalised, reversed \(eg:)2.5 E F1(desilatipaC)2.5 E F0(\).)A
+.532
+(This choice of attack is entirely empirical, my own, and made up on the spot.)
+72 256.8 R .532(It is also horrendously suc-)5.532 F .949(cessful, and because\
+ Crack uses each of these dictionaries in turn, it tends to get passwords fast\
+er than a)72 268.8 R(program like the)72 280.8 Q/F2 10/Times-Bold@0 SF(COPS)2.5
+E F0(password cracker which tries words every-which-way for each user)2.5 E(.)
+-.55 E/F3 7/Times-Roman@0 SF(3)441.62 276.7 Q F0 2.115
+(Optimisation Note: Crack has an)97 296.4 R F2(compile-time)4.615 E F0 2.115
+(option, called)4.615 F/F4 10/Courier@0 SF(CRACK_SHORT_PASSWDS)4.615 E F0(,)A
+.094(which, if)97 308.4 R F2(not)2.594 E F0 .094
+(de\214ned, makes the dictionary preprocessor)2.594 F F1(thr)2.594 E .094
+(ow away)-.37 F F0 .095(words which are less than)2.594 F 2.644(5c)97 320.4 S
+.144(haracters long.)109.084 320.4 R .144
+(The reasoning for this is that many sites, with a semi-sensible)5.144 F F4
+(passwd)2.644 E F0(pro-)2.644 E
+(gram, will not have passwords shorter than 5 characters long.)97 332.4 Q .561
+(It is up to you whether you bother testing these short passwords, but I would\
+ recommend that)97 348 R 1.983(you do so at least once, to be safe.)97 360 R
+1.983(\(Setting the option also leads to having smaller pre-)6.983 F
+(processed dictionaries.)97 372 Q(The option, however)5 E 2.5(,i)-.4 G 2.5(sd)
+283.51 372 S(e\214ned by default\).)294.9 372 Q F2 2.5(5. Installation)72 396 R
+F0 .212
+(Crack is one of those most unusual of beasties, a self-installing program.)72
+411.6 R .212(Once the necessary con\214guration)5.212 F
+(options have been set, the executables are created via)72 423.6 Q F4(make)2.5
+E F0(by running the Crack shellscript .)2.5 E .122(Some people have complained\
+ about this apparent weirdness, but it has grown up with Crack ever since the)
+72 439.2 R .714(earliest network version, when I could not be bothered to log \
+into several dif)72 451.2 R .715(ferent machines with several)-.18 F(dif)72
+463.2 Q(ferent architectures, just in order to build the binaries.)-.18 E 1.749
+(Down to the nitty-gritty)72 478.8 R 6.749(.C)-.65 G 1.748
+(rack needs to know where it has been installed.)187.796 478.8 R -1(Yo)6.748 G
+4.248(uw)1 G 1.748(ill have to edit the)424.788 478.8 R F4(CRACK_HOME)72 490.8
+Q F0 .105(variable in the Crack shellscript to the correct value.)2.605 F .106
+(This variable should be set to an abso-)5.105 F .55
+(lute path name \(relative to)72 502.8 R F1(~user)3.05 E F0 .55
+(should be OK, so long as you have some sort of)3.05 F F4(csh)3.05 E F0 3.05
+(\)t)C .55(hrough which the)432.91 502.8 R .284
+(directory containing Crack may be accessed on)72 514.8 R F2(all)2.785 E F0
+.285(the machines that Crack will be run on. There is a simi-)2.785 F 1.029
+(lar variable)72 526.8 R F4(CRACK_OUT)3.529 E F0 1.028(which speci\214es where\
+ Crack should put its output \214les - by default, this is the)3.529 F(same as)
+72 538.8 Q F4($CRACK_HOME)2.5 E F0(.)A .582
+(The next thing you will have to do is to edit the \214le)72 554.4 R F4
+(Sources/conf.h)3.083 E F0 .583(and work out which switches to)3.083 F 3.599
+(enable. Each)72 566.4 R F4(#define)3.599 E F0 1.099
+(has a small note explaining its purpose.)3.599 F 1.099
+(Where I have been in doubt about the)6.099 F .515(portability of certain libr\
+ary functions, usually I have re-written it, so you should be OK.)72 578.4 R
+.516(Let me know of)5.516 F(your problems, if you have any)72 590.4 Q(.)-.65 E
+.408(One of the most important switches in the conf.h \214le is the)72 606 R F4
+(CRACK_NETWORK)2.908 E F0 2.908(symbol. This)2.908 F .408(forces Crack)2.908 F
+.322(to create all of its output \214les with an embedded hostname \(obtained \
+by the)72 618 R F4(gethostname\(\))2.822 E F0 .322(routine\) so)2.822 F .317
+(that you can keep track of output from all over the network.)72 630 R .317
+(If you have no)5.317 F F4(gethostname\(\))2.817 E F0 .316(but have a)2.816 F
+F4(uname\(\))72 642 Q F0(system call, you can use that by de\214ning)2.5 E F4
+(CRACK_UNAME)2.5 E F0(in)2.5 E F4(Sources/conf.h)2.5 E F0(.)A .01
+(If you will be using)72 657.6 R F4(CRACK_NETWORK)2.51 E F0 2.51(,y)C .01
+(ou will then have to generate a)240.89 657.6 R F4(Scripts/network.conf)2.51 E
+F0(\214le.)2.51 E .067(This contains a list of hostnames to)72 669.6 R F4(rsh)
+2.567 E F0 .067(to, what their)2.567 F F1 .067(binary type)2.567 F F0 .067
+(is \(useful when running a network Crack)2.567 F 1.677(on several dif)72 681.6
+R 1.677(ferent architectures\), a guesstimate of their)-.18 F F1 -.37(re)4.177
+G 1.677(lative power).37 F F0 1.677(\(take your slowest machine as)4.177 F .32
+LW 144 689.6 72 689.6 DL/F5 5.6/Times-Roman@0 SF(3)82 698.12 Q/F6 8
+/Times-Roman@0 SF .151(For more information, see "Foiling the Cracker: A Surve\
+y of, and Improvements to, Password Security" by)2 3.28 N 1.136
+(Daniel Klein, available from)72 711.4 R/F7 8/Times-Italic@0 SF
+(ftp.sei.cmu.edu)3.136 E F6(in)3.136 E F7(~/pub/dvk/passwd.*)3.136 E F6 5.136
+(.A)C 1.136(lso, read the)305.704 711.4 R/F8 8/Courier@0 SF(APPENDIX)3.136 E F6
+1.136(\214le supplied)3.136 F(with this distribution.)72 721.4 Q EP
+%%Page: 4 4
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-4-)282.17 48 Q(unary)72 84 Q 3.728(,a)-.65 G 1.228
+(nd measure all others relative to it\), and a list of per)104.788 84 R(-host)
+-.2 E/F1 10/Times-Italic@0 SF(\215ags)3.728 E F0(to)3.728 E/F2 10/Times-Bold@0
+SF(add)3.728 E F0 1.228(to those speci\214ed on the)3.728 F/F3 10/Courier@0 SF
+(Crack)72 96 Q F0 .777(command line, when calling that host.)3.277 F .777
+(There is an example of such a \214le provided in the Scripts)5.777 F
+(directory - take a look at it.)72 108 Q .232(If ever you wish to specify a mo\
+re precise \214gure as to the relative power of your machines, or you are sim-)
+72 123.6 R .89(ply at a loss, play with the command)72 135.6 R F3 .89
+(make tests)3.39 F F0 .89(in the source code directory)3.39 F 5.89(.T)-.65 G
+.89(his will provide you)421.05 135.6 R .062(with the number of fcrypt\(\)s th\
+at your machine can do per second, which is a number that you can plug into)72
+147.6 R(your)72 159.6 Q F3(network.conf)2.5 E F0(as a measure of your machines\
+' power \(after rounding the value to an integer\).)2.5 E F2 2.5(6. Crack)72
+183.6 R(Usage)2.5 E F3(Crack)148.285 205.2 Q F0([)2.5 E F1(options)A F0 2.5(][)
+C F1(bindir)222.725 205.2 Q F0(])A F3(/etc/passwd)2.5 E F0
+([...other passwd \214les])2.5 E F3(Crack -network)148.285 229.2 Q F0([)2.5 E
+F1(options)A F0(])A F3(/etc/passwd)2.5 E F0([...other passwd \214les])2.5 E
+(Where)72 250.8 Q F2(bindir)3.421 E F0 .921
+(is the optional name of the directory where you want the binaries installed.)
+3.421 F .922(This is useful)5.922 F .944
+(where you want to be able to run versions of Crack on several dif)72 262.8 R
+.944(ferent architectures. If)-.18 F F2(bindir)3.444 E F0 .943(does not)3.443 F
+(exist, a warning will be issued, and the directory created.)72 274.8 Q(Note:)
+97 290.4 Q F2(bindir)2.5 E F0(defaults to the name)2.5 E F3(generic)2.5 E F0
+(if not supplied.)2.5 E F2 .06(Notes for Y)97 306 R .06
+(ellow Pages \(NIS\) Users:)-1.11 F F0 2.561(Ih)2.56 G .061
+(ave had some queries about how to get Crack running)263.211 306 R .874
+(from a YP password \214le.)97 318 R .873
+(There are several methods, but by far the simplest is to generate a)5.874 F
+(passwd format \214le by running:-)97 330 Q F3(ypcat passwd > passwd.yp)216 348
+Q F0(and then running Crack on this \214le.)97 366 Q F2 2.5(7. Options)72 390 R
+(-f)72 405.6 Q F0 .28(Runs Crack in)97 405.6 R F1(for)2.78 E(egr)-.37 E(ound)
+-.37 E F0 .281
+(mode, ie: the password cracker is not backgrounded, and messages appear)2.78 F
+.479(on stdout and stderr as you would expect.)97 417.6 R .479
+(This option is only really useful for small password \214les,)5.479 F .503(or\
+ when you want to put a wrapper script around Crack, or after you have been ru\
+nning in feedback)97 429.6 R(mode.)97 441.6 Q 1.51
+(Foreground mode is disabled if you try running)97 457.2 R F3 1.509
+(Crack -network -f)4.009 F F0 4.009(,o)C 4.009(nt)417.813 457.2 S 1.509
+(he command line,)429.602 457.2 R 1.381(because of the insensibility of)97
+469.2 R F3(rsh)3.881 E F0 1.381
+(ing to several machines in turn, waiting for each one to \214nish)B .36
+(before calling the next. However)97 481.2 R 2.86(,p)-.4 G .36
+(lease read the section about)239.75 481.2 R F1 .36
+(Network Cracking without NFS/RFS)2.86 F F0(,)A(below)97 493.2 Q(.)-.65 E F2
+(-F)72 508.8 Q F0 .17(Puts Crack into)97 508.8 R F1(feedback)2.67 E F0 .171
+(mode, ie: when a run of the password cracker terminates normally)2.67 F 2.671
+(,t)-.65 G .171(he soft-)473.559 508.8 R .19(ware writes a list of the DES enc\
+rypted passwords which were \(or were not\) cracked, into a)97 520.8 R F1
+(feedback)2.69 E(\214le)97 532.8 Q F0 3.586(,n)C(amed)120.306 532.8 Q F3
+(Runtime/fbk.<pid>)3.587 E F0 3.587(,o)C 3.587(rs)258.64 532.8 S(imilar)269.447
+532.8 Q 6.087(.W)-.55 G 1.087(hen Crack is next invoked with the)310.814 532.8
+R F3(-F)3.587 E F0(option,)3.587 E 1.172(Crack removes from its input all encr\
+ypted passwords which can be found in one of the feedback)97 544.8 R .402
+(\214les, and reports on them immediately)97 556.8 R 5.402(.T)-.65 G .402
+(his prevents Crack from wasting time trying to crack pass-)266.252 556.8 R
+(words that it has cracked \(or not cracked\) before.)97 568.8 Q(Obviously)97
+584.4 Q 4.214(,u)-.65 G 1.714(se of the)149.734 584.4 R F3(-F)4.214 E F0 1.713
+(option is)4.214 F F2(not)4.213 E F0 1.713
+(recommended when amendments have been made to the)4.213 F 1.229(source dictio\
+naries, because new words may have been added which would guess someones pass-)
+97 596.4 R 3.225(word. After)97 608.4 R .724(such amendments have been made, i\
+t is recommended that all the preprocessed dictio-)3.225 F .651
+(naries are removed and the feedback \214les tidied by running)97 620.4 R F3
+(Scripts/spotless)3.152 E F0 3.152(,a)C .652(nd then a full)448.994 620.4 R
+(run should be done.)97 632.4 Q 6.36(Use of feedback mode is)97 648 R F2
+(dependent)8.86 E F0 6.36(on de\214ning the symbol)8.86 F F3(CRACK_PRINTOUT)
+8.86 E F0(in)8.86 E F3(Sources/conf.h)97 660 Q F0(.)A .716(Please note that fo\
+r feedback mode to work properly during network cracks, the)97 675.6 R F3(-F)
+3.217 E F0 .717(option must be)3.217 F 7.657(speci\214ed on the)97 687.6 R F3
+(Crack)185.24 687.6 Q F2 7.656(command line)225.396 687.6 R F0 7.656
+(and not in the crack-\215ags \214eld of the)303.488 687.6 R F3
+(Scripts/network.conf)97 699.6 Q F0 .755(\214le. If you do not specify)3.255 F
+F3(-F)3.256 E F0 .756(on the command line, the program will)3.256 F(fail to \
+\214lter unguessable users from the input password \214les, and will therefore\
+ waste much time.)97 711.6 Q EP
+%%Page: 5 5
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-5-)282.17 48 Q/F1 10/Times-Bold@0 SF(-v)72 84 Q F0
+.851
+(Sets verbose mode, whereby Crack will print every guess it is trying on a per)
+97 84 R .85(-user basis.)-.2 F .85(This is a)5.85 F 2.852
+(very quick way of \215ooding your \214lestore.)97 96 R 2.852
+(If you unde\214ne the)7.852 F/F2 10/Courier@0 SF(CRACK_VERBOSE)5.353 E F0
+2.853(symbol in)5.353 F F2(Sources/conf.h)97 108 Q F0 2.5(,v)C
+(erbose mode will be permanently disabled.)191 108 Q F1(-nvalue)72 123.6 Q F0
+.547(Sets the process to be)97 135.6 R F2(nice\(\))3.047 E F0 .547(ed to)B/F3
+10/Times-Italic@0 SF(value)3.046 E F0 3.046(,s)C 3.046(ot)278.744 135.6 S .546
+(hat the switch)289.57 135.6 R F2(-n19)3.046 E F0 .546
+(sets the Crack process to run at)3.046 F(the lowest priority)97 147.6 Q(.)-.65
+E F1(-network)72 163.2 Q F0 .774
+(Throws Crack into network mode, in which it reads the)97 175.2 R F2
+(Scripts/network.conf)3.275 E F0 .775(\214le, splits its)3.275 F .252
+(input into chunks which are sized according to the power of the tar)97 187.2 R
+.251(get machine, and calls)-.18 F F2(rsh)2.751 E F0 .251(to run)2.751 F 1.216
+(Crack on that machine.)97 199.2 R 1.216(Options for Crack running on the tar)
+6.216 F 1.217(get machine may be supplied on the)-.18 F .998(command line \(eg\
+: verbose or recover mode\), or in the network.conf \214le if they pertain to \
+speci\214c)97 211.2 R(hosts \(eg:)97 223.2 Q F2(nice\(\))2.5 E F0(values\).)2.5
+E F1(-r<point\214le>)72 238.8 Q F0 .582(This is only for use when running in)97
+250.8 R F3 -.37(re)3.082 G(cover).37 E F0 3.082(mode. When)3.082 F 3.082(ar)
+3.082 G .583(unning Crack starts pass 2, it periodi-)350.794 250.8 R 7.002
+(cally saves its state in a \214le in the directory)97 262.8 R F2(Runtime)9.502
+E F0 9.502(,n)C(amed)401.006 262.8 Q F2(pnt.<pid>)9.502 E F0(or)9.502 E F2
+(pnt.<hostname>.<pid>)97 274.8 Q F0 .595
+(depending on your naming convention \(see)3.095 F F3(Installation)3.096 E F0
+3.096(,a)C 3.096(bove\). This)455.354 274.8 R .394
+(\214le can be used to recover where you were should a host crash.)97 286.8 R
+.393(Simply invoke Crack in)5.393 F F1(exactly)2.893 E F0(the)2.893 E 1.817
+(same manner as the last time, with the addition of the)97 298.8 R F2
+(-rRuntime/pnt.file.name)4.317 E F0(switch.)4.317 E .016(Crack will startup an\
+d read the \214le, and jump to slightly before where it left of)97 310.8 R
+2.516(f. If)-.18 F .016(you are cracking a)2.516 F(very lar)97 322.8 Q
+(ge password \214le, this can save oodles of time after a crash.)-.18 E .284
+(If you are running a)97 338.4 R F3(network)2.784 E F0 .284
+(Crack, then the jobs will again be spawned onto all the machines of the)2.784
+F .005(original Crack.)97 350.4 R .005(The program will then check that the ho\
+st it is running on is the same as is mentioned)5.005 F .645
+(in the point\214le.)97 362.4 R .645(If it is not, it will silently die.)5.645
+F .646(Thus, assuming that you supply the same input data)5.645 F .079
+(and do not change your)97 374.4 R F2(network.conf)2.579 E F0 .079
+(\214le, Crack should pick up)2.579 F F1(exactly)2.579 E F0 .079
+(where it left of)2.579 F 2.578(f. This)-.18 F(is)2.578 E 2.5(ab)97 386.4 S
+(it inelegant, but it')108.94 386.4 Q 2.5(sb)-.55 G
+(etter than nothing at the moment.)193.67 386.4 Q F1 2.5(8. Support)72 410.4 R
+(Scripts)2.5 E F0(The)72 426 Q F2(Scripts)2.59 E F0 .09(directory contains a s\
+mall number of support and utility scripts, some of which are designed)2.59 F
+(to help Crack users check their progress.)72 438 Q(Brie\215y)5 E 2.5(,t)-.65 G
+(he most useful ones are:-)274.37 438 Q F1(Scripts/shadmrg)72 453.6 Q F0 .679
+(This is a small \(but hopefully readable\) script for mer)97 465.6 R(ging)-.18
+E F2(/etc/passwd)3.179 E F0(and)3.179 E F2(/etc/shadow)3.179 E F0(on)3.179 E
+.191(System V style shadow password systems.)97 477.6 R .191
+(It produces the mer)5.191 F .192(ged data to stdout, and will need redi-)-.18
+F .367(recting into a \214le before Crack can work on it.)97 489.6 R .367
+(The script is meant to be fairly lucid, on the grounds)5.367 F .07(that I wor\
+ry that there are many shadowing schemes out there, and perhaps not all have t\
+he same data)97 501.6 R(format.)97 513.6 Q F1(Scripts/plaster)72 529.2 Q F0
+1.156(which is named after a dumb joke, but is a simple frontend to the)97
+541.2 R F2(Runtime/die.*)3.655 E F0 1.155(script each)6.155 F .14
+(copy of the password cracker generates. Invoking)97 553.2 R F2
+(Scripts/plaster)2.641 E F0 .141(will kill of)2.641 F 2.641(fa)-.18 G .141
+(ll copies of the)444.417 553.2 R
+(password cracker you are running, over the network or otherwise.)97 565.2 Q F1
+(Scripts/status)72 580.8 Q F0 .36(This script)97 592.8 R F2(rsh)2.86 E F0 .359
+(es to each machine mentioned in the)B F2(Scripts/network.conf)2.859 E F0 .359
+(\214le, and provides)2.859 F .231
+(some information about processes and uptime on that machine.)97 604.8 R .232
+(This is useful when you want to \214nd)5.231 F
+(out just how well your password crackers are getting on during a)97 616.8 Q F2
+(Crack -network)2.5 E F0(.)A F1(Scripts/{clean,spotless})72 632.4 Q F0 .547
+(These are really just frontends to a make\214le. Invoking)97 644.4 R F2
+(Scripts/clean)3.047 E F0 .547(tidies up the Crack home)3.047 F(directory)97
+656.4 Q 4.566(,a)-.65 G 2.066(nd removes probably unwanted \214les, but leaves\
+ the pre-processed dictionaries intact.)143.956 656.4 R F2(Scripts/spotless)97
+668.4 Q F0 .36(does the same as)2.86 F F2(Scripts/clean)2.86 E F0 .36
+(but obliterates the preprocessed dictio-)2.86 F
+(naries and output \214les too, and compresses the feedback \214les into one.)
+97 680.4 Q F1(Scripts/guess2fbk)72 696 Q F0 1.586
+(Only useful if CRACK_PRINT is de\214ned. This script takes your)97 708 R F2
+(out.*)4.086 E F0 1.586(\214les as ar)6.586 F 1.586(guments and)-.18 F
+(reformats the 'Guessed' lines into a slightly messy)97 720 Q F3(feedback)2.5 E
+F0(\214le, suitable for storing with the others.)2.5 E EP
+%%Page: 6 6
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-6-)282.17 48 Q .546(An occasion where this might be u\
+seful is when your cracker has guessed many peoples passwords,)97 84 R(and the\
+n died for some reason before writing out the guesses to a feedback \214le. Ru\
+nning)97 96 Q/F1 10/Courier@0 SF(Scripts/guess2fbk out.* > Runtime/fbk.new)97
+120 Q F0(will save the work that has been done.)97 144 Q/F2 10/Times-Bold@0 SF
+2.5(9. Multipr)72 168 R(ocessing and parallelism)-.18 E F0 .788(The method of \
+error recovery outlined above causes headaches for users who want to do multip\
+rocessing)72 183.6 R .499(on parallel architectures.)72 195.6 R .499
+(Crack is in no way parallel, and because of the way it')5.499 F 2.998(ss)-.55
+G .498(tructured, readind stdin)409.964 195.6 R(from shellscript frontends, it\
+ is a pain to divide the work amongst several processes via)72 207.6 Q F1
+(fork\(\))2.5 E F0(ing.)A .423
+(The hack solution to get several copies of Crack running on one machine with)
+72 223.2 R/F3 10/Times-Italic@0 SF(n)2.924 E F0 .424(processors at the moment)
+2.924 F 1.546(is to run with the)72 235.2 R F1(CRACK_NETWORK)4.046 E F0 1.545
+(option enabled, and insert)4.045 F F3(n)4.045 E F0 1.545
+(copies of the entry for your parallel)4.045 F .697(machine into the)72 247.2 R
+F1(Scripts/network.conf)3.197 E F0 .697(\214le. If you use the)3.197 F F1(-r)
+3.197 E F0 .697(option in these circumstances how-)3.197 F(ever)72 259.2 Q
+3.172(,y)-.4 G .672(ou will get)99.482 259.2 R F3(n)3.172 E F0 .671(copies of \
+the recovered process running, only one of them will have the correct input)
+3.172 F 2.893(data. I'm)72 271.2 R .393(working on this.)2.893 F .394(My curre\
+nt solution is to save the current username in the point \214le, and test it)
+5.393 F 1.083(on startup, but doing this)72 283.2 R F3(may)3.583 E F0 1.083
+(break your recovery if you supply dif)3.583 F 1.082
+(ferent input data \(so that the data is)-.18 F .477(sorted even slightly dif)
+72 295.2 R 2.977(ferently\). Hohum. If)-.18 F .477(you want to use this)2.977 F
+F3 .477(verify username)2.977 F F0(facility)2.977 E 2.977(,u)-.65 G(se)445.858
+295.2 Q F1(-R)2.977 E F0 .478(in place)2.977 F(of)72 307.2 Q F1(-r)2.5 E F0(.)A
+(As for not using the)72 322.8 Q F1(network.conf)2.5 E F0
+(\214le to provide multiprocessing, I'm)2.5 E F3(still)2.5 E F0(working on it.)
+2.5 E F2 2.5(10. Network)72 346.8 R(Cracking without NFS/RFS)2.5 E F0 .982
+(For those users who have some form of)72 362.4 R F1(rsh)3.482 E F0 .981
+(command, but do not have a a networked \214lestore running)3.482 F .269(betwe\
+en hosts, there is now a solution which will allow you to do networked crackin\
+g, forwarded to me by)72 374.4 R .518(Brian T)72 386.4 R .518(ompsett at Hull.)
+-.7 F(Personally)5.518 E 3.018(,Ic)-.65 G .517(onsider the idea to be potty)
+231.248 386.4 R 3.017(,b)-.65 G .517
+(ut it \214lls in missing functionality in a)352.301 386.4 R
+(wonderfully tacky manner)72 398.4 Q(.)-.55 E .289
+(From the documentation above, you will note that Crack will undo the)72 414 R
+F1(-f)2.79 E F3 .29(\(output in for)2.79 F(egr)-.37 E(ound\))-.37 E F0 .29
+(option, if)2.79 F .125(it is invoked with the)72 426 R F1(-network)2.624 E F0
+.124(switch at the same time \(see the)2.624 F F3(Options)2.624 E F0 .124
+(section above\).)2.624 F .124(This is true, but)5.124 F
+(it does not apply if you specify)72 438 Q F1(-f)2.5 E F0(option in the)2.5 E
+F1(network.conf)2.5 E F0(\214le.)2.5 E .437(The practical upshot of doing this\
+ is that remote copies of Crack can be made to read from)72 453.6 R F3(stdin)
+2.937 E F0 .437(and write)2.937 F(to)72 465.6 Q F3(stdout)2.693 E F0 .192
+(over a network link, and thus remote processing is accomplished.)2.693 F 2.692
+(Ih)5.192 G .192(ave tweaked Crack in such a)388.91 465.6 R(way)72 477.6 Q
+3.931(,t)-.65 G 1.431(herefore, that if the)97.221 477.6 R F1(-f)3.931 E F0
+1.431(option is speci\214ed amongst the crack-\215ags of a host in the network\
+.conf,)3.931 F .22(rather than backgrounding itself on the remote host, the)72
+489.6 R F1(rsh)2.72 E F0 .22(command on the)2.72 F F2(server)2.72 E F0 .22
+(is backgrounded, and)2.72 F
+(output is written directly to the \214les on the server)72 501.6 Q 1.1 -.55
+('s \214).37 H(lestore.).55 E .644(There are restrictions upon this method, mo\
+stly involving the number of processes that a user may run on)72 517.2 R .373
+(the server at any one time, and the fact that if you run in)72 529.2 R F3
+(feedback)2.873 E F0 .372(mode, you will have to collect the feed-)2.873 F .197
+(back output together manually \(dropping it into the)72 541.2 R F1(Runtime)
+2.697 E F0 .198(directory on the server\).)2.697 F(However)5.198 E 2.698(,i)-.4
+G 2.698(tw)471.582 541.2 S(orks.)484.28 541.2 Q .685(Also, if you try to use)72
+553.2 R F1(rsh)3.184 E F0 .684(as another user)3.184 F 3.184(,y)-.4 G .684
+(ou will suf)258.644 553.2 R .684(fer problems if)-.18 F F1(rsh)3.184 E F0 .684
+(insists on reading something)3.184 F 1.397
+(from your terminal \(eg: a password for the remote account\).)72 565.2 R 1.398
+(Also, checkpointing goes out the window)6.397 F
+(unless you specify the name of the point\214le on the remote machine.)72 577.2
+Q F2 -.55(11)72 601.2 S 5(.N).55 G(otes on fast crypt\(\) implementations)96.17
+601.2 Q F0 .58(The stdlib version of the)72 616.8 R F1(crypt\(\))3.08 E F0 .58
+(subroutine is incredibly slow)3.08 F 5.58(.I)-.65 G 3.08(ti)348.58 616.8 S
+3.08(sa)357.22 616.8 S F3(massive)A F0 .58(bottleneck to the execu-)3.08 F .838
+(tion of Crack and on typical platforms that you get at universities, it is ra\
+re to \214nd a machine which will)72 628.8 R .343
+(achieve more than 50 standard)72 640.8 R F1(crypt\(\))2.842 E F0 2.842(sp)C
+.342(er second.)252.134 640.8 R .342
+(On low-end diskless workstations, you may expect)5.342 F 3.026(2o)72 652.8 S
+3.026(r3p)85.026 652.8 S .526(er second.)104.408 652.8 R .527
+(It was this slowness of the)5.526 F F1(crypt\(\))3.027 E F0 .527
+(algorithm which originally supplied much of the)3.027 F(security)72 664.8 Q/F4
+8/Times-Roman@0 SF(UNIX)2.5 E F0(needed.)2.5 E/F5 7/Times-Roman@0 SF(4)159.472
+660.7 Q F0(However)72 680.4 Q 2.557(,t)-.4 G .057(here are now)116.087 680.4 R
+F1(many)2.557 E F0 .057(implementations of faster versions of)2.557 F F1
+(crypt\(\))2.558 E F0 .058(to be found on the network.)2.558 F
+(The one supplied with Crack v3.2 and upwards is called)72 692.4 Q F1
+(fcrypt\(\))2.5 E F0(.)A .32 LW 144 708.2 72 708.2 DL/F6 5.6/Times-Roman@0 SF
+(4)82 716.72 Q F4 .216(See: "Password Security)2 3.28 N 2.216(,AC)-.52 G .215
+(ase History" by Bob Morris & Ken Thomson, in the)182.624 720 R/F7 6.4
+/Times-Roman@0 SF(UNIX)2.215 E F4 .215(Programmer Docs.)2.215 F EP
+%%Page: 7 7
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(-7-)282.17 48 Q/F1 10/Courier@0 SF(fcrypt\(\))72 84 Q
+F0 .898(was originally written in May 1986 by Robert Baldwin at MIT)3.398 F
+3.398(,a)-.74 G .897(nd is a good version of the)392.516 84 R F1(crypt\(\))72
+96 Q F0 2.837(subroutine. I)2.837 F .338
+(received a copy from Icarus Sparry at Bath University)2.837 F 2.838(,w)-.65 G
+.338(ho had made a couple of)404.28 96 R(portability enhancements to the code.)
+72 108 Q 3.167(Ir)72 123.6 S .667(ewrote most of the tables and the KeySchedul\
+e generating algorithm in the original)81.827 123.6 R/F2 10/Times-Italic@0 SF
+(fdes-init.c)3.167 E F0 .666(to knock)3.166 F .406(40% of)72 135.6 R 2.906(ft)
+-.18 G .406(he execution overhead of)110.402 135.6 R F1(fcrypt\(\))2.906 E F0
+.407(in the form that it was shipped to me.)2.906 F 2.907(Ii)5.407 G .407
+(nlined a bunch of)433.069 135.6 R(stuf)72 147.6 Q 1.11(f, put it into a singl\
+e \214le, got some advice from Matt Bishop and Bob Baldwin [both of whom I am)
+-.18 F .002(greatly indebted to] about what to do to the)72 159.6 R F1
+(xform\(\))2.502 E F0 .002
+(routine and to the fcrypt function itself, and tidied up)2.502 F 2.399
+(some algorithms.)72 171.6 R 4.899(Ih)7.399 G 2.399
+(ave also added more lookup tables and reduced several formula for faster use.)
+163.917 171.6 R F1(fcrypt\(\))72 183.6 Q F0
+(is now barely recognisable as being based on its former incarnation.)2.5 E .5
+(On a DecStation 5000/200, it is also about 15 times faster than the standard \
+crypt \(your mileage may vary)72 199.2 R .74
+(with other architectures and compilers\).)72 211.2 R .739(This speed puts)
+5.739 F F1(fcrypt\(\))3.239 E F0 .739(into the "moderately fast" league of)
+3.239 F 1.464(crypt implementations.)72 223.2 R 1.464(By using)6.464 F F1
+(fcrypt\(\))3.964 E F0 1.465
+(with Crack, I extracted 135 passwords from my standard)3.964 F .035
+(1087 user password \214le in a little over 1 hour using 3 networked machines.)
+72 235.2 R .034(This is from a moderately good)5.035 F(password \214le.)72
+247.2 Q
+(Why am I saying this sort of thing ? Am I scaremongering ? In a word, yes.)72
+262.8 Q .087(If a fast version of)72 278.4 R F1(crypt\(\))2.587 E F0 .088
+(is wired into a program like Crack it can break a poorly passworded site open)
+2.587 F .249(in minutes.)72 290.4 R .249(There are such programs available, eg\
+: the "Killer Cracker" written by the anonymous "Doctor)5.249 F .326
+(Dissector", with anonymous motives.)72 302.4 R .326
+(It comes with a modi\214ed version of Baldwin')5.326 F 2.826(sf)-.55 G .326
+(crypt, as a MS-DOS)421.922 302.4 R(executable with a GNU copyleft licence.)72
+314.4 Q .239(The point that needs to be hammered home is that unless something\
+ is done, and done soon, about the gen-)72 330 R .81
+(eral quality of passwords on)72 342 R/F3 8/Times-Roman@0 SF(UNIX)3.31 E F0
+.811(systems, then in the near future our doors will be wide open to people)
+3.31 F(who have programs like Crack and questionable motives.)72 354 Q/F4 10
+/Times-Bold@0 SF 2.5(12. Solutions)72 378 R(and Conclusions)2.5 E F0
+(What can be done about this form of attack ?)72 393.6 Q -1(Yo)72 409.2 S 2.754
+(um)1 G .253(ust get a drop-in replacement for the)98.754 409.2 R F1(passwd)
+2.753 E F0(and)2.753 E F1(yppasswd)2.753 E F0 .253
+(commands; one which will stop peo-)2.753 F .79
+(ple from choosing bad passwords in the \214rst place.)72 421.2 R .791
+(There are several programs to do this; Matt Bishop')5.791 F(s)-.55 E F1
+(passwd+)72 433.2 Q F0 .315(and Clyde Hoover)2.815 F -.55('s).37 G F1(npasswd)
+3.365 E F0 .314(program are good examples which are freely available.)2.815 F
+(Consult)5.314 E(an)72 445.2 Q F4(Ar)2.5 E(chie)-.18 E F0
+(database for more details on where you can get them from.)2.5 E 3.046(Al)72
+460.8 S .546(ittle common-sense is all that is required to vet passwords: I en\
+close a module in the Sources directory)85.046 460.8 R F2(goodpass.c)72 472.8 Q
+F0 1.017(which I use in a modi\214ed version of the)3.517 F F1(yppasswd)3.517 E
+F0 1.016(in order to provide some security)3.517 F 6.016(.I)-.65 G 3.516(ti)
+491.034 472.8 S(s)500.11 472.8 Q
+(quite heavily customised for use in the UK, but it should be easily portable.)
+72 484.8 Q(The routine is invoked:)5 E F1
+(char *retval = GoodPass\(char *input\);)177 514.8 Q F0(where)72 536.4 Q F1
+(input)2.848 E F0 .348(is the password under test, and)2.848 F F1(retval)2.848
+E F0 .349(will be set either to NULL \(if the password is OK\))2.848 F .436
+(or to a diagnostic string which says what is wrong with the password.)72 548.4
+R .435(It is far less complex than a system)5.435 F .185(such as)72 560.4 R F2
+(passwd+)2.685 E F0 2.685(,b)C .185(ut still ef)150.415 560.4 R .186
+(fective enough to make a password \214le \(probably\) withstand)-.18 F F1
+(Crack)2.686 E F0 5.186(.I)C 2.686(tw)473.534 560.4 S(ould)486.22 560.4 Q 1.222
+(be nice if an or)72 572.4 R 1.221(ganisation \(such as)-.18 F F4(CER)3.721 E
+(T)-.35 E F0 3.721(?\) could)B 1.221(be persuaded to supply skeletons of)3.721
+F F2(sensible)3.721 E F0(passwd)3.721 E 1.078(commands for the public good, as\
+ well as an archive of security related utilities)72 584.4 R/F5 7/Times-Roman@0
+SF(5)403.18 580.3 Q F0 1.078(on top of the excellent)410.258 584.4 R F1(COPS)72
+596.4 Q F0 5.441(.H)C(owever)111.161 596.4 Q 2.941(,f)-.4 G(or)148.962 596.4 Q
+F3(UNIX)2.941 E F0 .441(security to improve on a global scale, we will also re\
+quire pressure on the ven-)2.941 F
+(dors, so that programs are written correctly from the beginning.)72 608.4 Q
+.32 LW 144 708.2 72 708.2 DL/F6 5.6/Times-Roman@0 SF(5)82 716.72 Q/F7 8
+/Courier@0 SF(COPS)2 3.28 M F3(is available for anonymous FTP from)2 E/F8 8
+/Times-Italic@0 SF(cert.sei.cmu.edu)2 E F3(\(128.237.253.5\) in)2 E F8(~/cops)2
+E EP
+%%Trailer
+end
+%%EOF
