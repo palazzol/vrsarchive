@@ -32,7 +32,6 @@
 #define T_EXIT		2
 #define T_AIRPORT	3
 
-#define S_NONE		0
 #define S_GONE		1
 #define S_MARKED	2
 #define S_UNMARKED	3
