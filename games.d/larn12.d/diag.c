@@ -119,7 +119,7 @@ dcount(l)
 	for (i=0; i<MAXX; i++)
 		for (j=0; j<MAXY; j++)
 			for (p=0; p<MAXLEVEL; p++)
-				if (cell[p*MAXX*MAXY+i*MAXY+j].item == l) k++;
+				if (cell[p][i*MAXY+j].item == l) k++;
 	return(k);
 	}
 
@@ -163,7 +163,7 @@ savegame(fname)
 	lwrite((char*)beenhere,MAXLEVEL+MAXVLEVEL);
 	for (k=0; k<MAXLEVEL+MAXVLEVEL; k++)
 		if (beenhere[k])
-			lwrite((char*)&cell[k*MAXX*MAXY],sizeof(struct cel)*MAXY*MAXX);
+			lwrite((char*)cell[k],sizeof(cell[k][0])*MAXX*MAXY);
 	times(&cputime);	/* get cpu time */
 	c[CPUTIME] += (cputime.tms_utime+cputime.tms_stime)/60;
 	lwrite((char*)&c[0],100*sizeof(long));
@@ -207,7 +207,7 @@ restoregame(fname)
 	lrfill((char*)beenhere,MAXLEVEL+MAXVLEVEL);
 	for (k=0; k<MAXLEVEL+MAXVLEVEL; k++)
 		if (beenhere[k])
-			lrfill((char*)&cell[k*MAXX*MAXY],sizeof(struct cel)*MAXY*MAXX);
+			lrfill((char*)cell[k],sizeof(cell[k][0])*MAXX*MAXY);
 
 	lrfill((char*)&c[0],100*sizeof(long));	gtime = lrint();
 	level = c[CAVELEVEL] = lgetc();
