@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/fft.d/Makefile,v 1.3 1990-04-13 15:06:36 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/fft.d/Makefile,v 1.4 2002-11-23 07:46:09 Vincent Exp $
 #
 ALL	= Slibfft.a Mlibfft.a Llibfft.a
 OPTIONS	= -O -I.
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= fft2.o
 SOBJS	= $(OBJS:.o=.S)
 MOBJS	= $(OBJS:.o=.M)

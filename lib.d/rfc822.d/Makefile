@@ -1,6 +1,6 @@
 OPTIONS	= -O
 ALL		= atest
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= addr.o rfc822.o
 SRCS	= addr.c rfc822.c atest.c
 

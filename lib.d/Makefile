@@ -1,9 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/Makefile,v 1.2 1990-04-13 15:06:22 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/Makefile,v 1.3 2002-11-23 07:45:50 Vincent Exp $
 #
 TODO	= plot
-ALL	= berkeley dir dpy fft
-include /etc/CONFIG
+#ALL	= berkeley dir dpy fft
+ALL	= dir dpy fft
+include $(HOME)/CONFIG
 
 install:
 	@for i in $(ALL); do cd $$i.d; make install; cd ..; done

@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.6 1990-04-13 15:06:26 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.7 2002-11-23 07:46:04 Vincent Exp $
 #
 ALL	= Slibdpy.a Mlibdpy.a Llibdpy.a libdpy.a
 OPTIONS	= -DUSG
-include /etc/CONFIG
+include $(HOME)/CONFIG
 HFILES	= dpy.h
 #
 OBJS	= dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o dpywindow.o
