@@ -1,5 +1,5 @@
 #ifndef lint
-static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.2 1992-04-07 20:10:07 vrs Exp $";
+static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.3 1992-05-26 18:27:20 vrs Exp $";
 #endif
 /*
  *	This code was shamelessly stolen from XRN by vrs.
@@ -58,6 +58,7 @@ void start_server();
 #include <netdb.h>
 #include <ctype.h>
 #include <assert.h>
+#include <errno.h>
 #include <sys/param.h>
 
 #define BUFFER_SIZE 1024
@@ -604,8 +605,11 @@ int size;       /* size of the response buffer */
 /*
  * retrieve article number 'artnumber' in the current group, update structure
  *
- *   returns:  filename that the article is stored in or NULL if
+ *   returns:  FILE that the article is stored in or NULL if
  *             the article is not avaiable
+ *   errno = ENOENT if the article is not available from the server.
+ *   errno = EIO if the article is not available for internal reasons.
+ *   errno = 0 if the article is available.
  *
  */
 static FILE *
@@ -632,17 +636,20 @@ long artnumber;  /* number of article in the current group to retrieve */
 
     if (*message != CHAR_OK) {
 		/* can't get article */
+		errno = ENOENT;
 		return(NULL);
     }
 
     (void) sprintf(dummy, "/tmp/xrn%ld-XXXXXX", artnumber);
     if ((filename = mktemp(dummy)) == 0) {
 		mesgPane("can not create a file name for the article file");
+		errno = EIO;
 		return(0);
     }
 
     if ((articlefp = fopen(filename, "w+")) == NULL) {
 		mesgPane("can not open a temporary file for the article, `%s' may not be writable", "/tmp");
+		errno = EIO;
 		return(0);
     }
 	(void) unlink(filename);
@@ -695,13 +702,20 @@ long artnumber;  /* number of article in the current group to retrieve */
 			byteCount += 60;
 			continue;
 			}
-			(void) fputs(msg, articlefp);
+			if (fputs(msg, articlefp) <= 0) {
+			    mesgPane("write error %d on temporary file", ferror(articlefp));
+			    (void) fclose(articlefp);
+			    (void) unlink(filename);
+			    errno = EIO;
+			    return(0);
+			}
 		}
 		(void) putc('\n', articlefp);
 		byteCount += strlen(msg) + 1;
 	}
 
     (void) fseek(articlefp, 0L, 0);
+    errno = 0;
     return(articlefp);
 }
 
@@ -761,11 +775,11 @@ char *name;     /* group name                 */
 
 
 /*
- * get a list of all active newsgroups and create a structure for each one
+ * Open a copy of the active file.
  *
- *   returns: void
+ *   returns: FILE into which the active file was copied.
  */
-char *
+FILE *
 nntp_active()
 {
     char command[MESSAGE_SIZE], message[MESSAGE_SIZE], group[GROUP_NAME_SIZE];
