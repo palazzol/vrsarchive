@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/weapon.c,v 1.1 1987-07-26 10:20:46 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/weapon.c,v 1.2 1988-02-01 16:06:10 vrs Exp $ */
 
 /* $Log: not supported by cvs2svn $
+ * Version 1.1  87/07/26  10:20:46  vrs
+ * Initial version
+ * 
  * Revision 7.0.1.2  86/10/20  14:36:33  lwall
  * Picked some lint.
  * 
@@ -520,8 +523,8 @@ Reg6 int dx;
 		if (dy)
 		    return;
 	        if (dx==(img == '<' ? 1 : -1) ) {
-		    occupant[y][x]->image =
-			(occupant[y][x]->velx *= -1) < 0 ? '>' : '<';
+			occupant[y][x]->velx = -(occupant[y][x]->velx);
+		    occupant[y][x]->image = (occupant[y][x]->velx < 0)? '>' : '<';
 		    return;
 		}
 	    }
@@ -678,7 +681,8 @@ int to_or_fro;
 	    }
 	    else if (tractee->type == Crusher && !dy &&
 	      dx==(tractee->image == '<' ? 1 : -1) ) {
-		setimage(tractee, (tractee->velx *= -1) < 0 ? '>' : '<');
+		tractee->velx = -(tractee->velx);
+		setimage(tractee, (tractee->velx < 0)? '>' : '<');
 	    }
 	    if (tractee->mass * 5 > obj->mass)
 		return(1);

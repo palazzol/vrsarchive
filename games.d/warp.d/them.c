@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/them.c,v 1.1 1987-07-26 10:19:22 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/them.c,v 1.2 1988-02-01 16:06:08 vrs Exp $ */
 
 /* $Log: not supported by cvs2svn $
+ * Version 1.1  87/07/26  10:19:22  vrs
+ * Initial version
+ * 
  * Revision 7.0.1.5  86/12/12  17:05:41  lwall
  * Baseline for net release.
  * 
@@ -68,7 +71,8 @@ their_smarts()
 	}
 	obj->vely += (rand_mod(222) - 111) / 100;
 	if (!(rand_mod(100))) {
-	    setimage(obj, (obj->velx *= -1) < 0 ? '>' : '<');
+	    obj->velx = -(obj->velx);
+	    setimage(obj, obj->velx < 0 ? '>' : '<');
 	}
     }
     if (numamoebas) {
