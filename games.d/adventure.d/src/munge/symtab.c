@@ -196,7 +196,7 @@ int pstab ()
 	return ;
 }
 
-#endif PSTAB
+#endif
 
 int wstab ()
 {
