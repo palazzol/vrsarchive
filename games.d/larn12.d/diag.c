@@ -108,8 +108,9 @@ diag()
 	lcreat((char*)0);		lprcat("Done Diagnosing . . .");
 	return(0);
 	}
+#ifdef OLD
 /*
-	subroutine to count the number of occurrences of an object
+ *	subroutine to count the number of occurrences of an object
  */
 dcount(l)
 	int l;
@@ -123,6 +124,7 @@ dcount(l)
 				if (cell[p][i*MAXY+j].item == l) k++;
 	return(k);
 	}
+#endif
 
 /*
 	subroutine to draw the whole screen as the player knows it
@@ -166,9 +168,18 @@ savegame(fname)
 
 	set_score_output();
 	lwrite((char*)beenhere,MAXLEVEL+MAXVLEVEL);
+#if OLD
 	for (k=0; k<MAXLEVEL+MAXVLEVEL; k++)
 		if (beenhere[k])
 			lwrite((char*)cell[k],sizeof(cell[k][0])*MAXX*MAXY);
+#else
+	for (k=0; k<MAXLEVEL+MAXVLEVEL; k++)
+		if (beenhere[k]) {
+			lseek(dung, (long)k*sizeof(cell), 0);
+			read(dung, (char *)cell, sizeof(cell));
+			lwrite((char*)cell, sizeof(cell));
+		}
+#endif
 	times(&cputime);	/* get cpu time */
 	c[CPUTIME] += (cputime.tms_utime+cputime.tms_stime)/60;
 	lwrite((char*)&c[0],100*sizeof(long));
@@ -210,10 +221,18 @@ restoregame(fname)
 		}
 
 	lrfill((char*)beenhere,MAXLEVEL+MAXVLEVEL);
+#ifdef OLD
 	for (k=0; k<MAXLEVEL+MAXVLEVEL; k++)
 		if (beenhere[k])
 			lrfill((char*)cell[k],sizeof(cell[k][0])*MAXX*MAXY);
-
+#else
+	for (k=0; k<MAXLEVEL+MAXVLEVEL; k++)
+		if (beenhere[k]) {
+			lrfill((char*)cell, sizeof(cell));
+			lseek(dung, (long)k*sizeof(cell), 0);
+			write(dung, (char *)cell, sizeof(cell));
+		}
+#endif
 	lrfill((char*)&c[0],100*sizeof(long));	gtime = lrint();
 	level = c[CAVELEVEL] = lgetc();
 	playerx = lgetc();		playery = lgetc();

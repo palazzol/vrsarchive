@@ -73,7 +73,12 @@ long skill[] = {
 #undef MEG
 
 char *lpbuf,*lpnt,*inbuffer,*lpend;	/* input/output pointers to the buffers */
+#ifdef OLD
 struct cel *cell[MAXLEVEL+MAXLEVEL];	/* pointer to the dungeon storage */
+#else
+struct cel cell[MAXX*MAXY];	/* buffer for dungeon storage */
+int dung;
+#endif
 short hitp[MAXX][MAXY];		/*	monster hp on level		*/
 short iarg[MAXX][MAXY];	/*	arg for the item array	*/
 char item[MAXX][MAXY];	/*	objects in maze if any	*/

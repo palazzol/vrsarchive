@@ -10,8 +10,12 @@ savelevel()
 	register char *pitem,*pknow,*pmitem;
 	register short *phitp,*piarg;
 	register struct cel *pecel;
+#ifdef OLD
 	pcel = &cell[level][0];	/* pointer to this level's cells */
-	pecel = pcel + MAXX*MAXY;	/* pointer to past end of this level's cells */
+#else
+	pcel = cell;		/* pointer to this level's cells */
+#endif
+	pecel = pcel+MAXX*MAXY;	/* pointer to past end of this level's cells */
 	pitem=item[0]; piarg=iarg[0]; pknow=know[0]; pmitem=mitem[0]; phitp=hitp[0];
 	while (pcel < pecel)
 		{
@@ -21,6 +25,10 @@ savelevel()
 		pcel->know   = *pknow++;
 		pcel++->iarg = *piarg++;
 		}
+#ifndef OLD
+	lseek(dung, (long)level*sizeof(cell), 0);
+	write(dung, (char *)cell, sizeof(cell));
+#endif
 	}
 
 /*
@@ -32,8 +40,14 @@ getlevel()
 	register char *pitem,*pknow,*pmitem;
 	register short *phitp,*piarg;
 	register struct cel *pecel;
+#ifdef OLD
 	pcel = &cell[level][0];	/* pointer to this level's cells */
-	pecel = pcel + MAXX*MAXY;	/* pointer to past end of this level's cells */
+#else
+	lseek(dung, (long)level*sizeof(cell), 0);
+	read(dung, (char *)cell, sizeof(cell));
+	pcel = cell;	/* pointer to this level's cells */
+#endif
+	pecel = pcel+MAXX*MAXY;	/* pointer to past end of this level's cells */
 	pitem=item[0]; piarg=iarg[0]; pknow=know[0]; pmitem=mitem[0]; phitp=hitp[0];
 	while (pcel < pecel)
 		{
