@@ -86,7 +86,9 @@ install: $(GAME) data rumors spec_levs
 	-$(LEVMANCREATE) $(MANDIR)/lev_comp.$(MANEXT)
 
 clean:
+	( cd auxil ; make clean)
 	( cd src ; make clean)
 
 spotless:
+	( cd auxil ; make clean)
 	( cd src ; make spotless)
