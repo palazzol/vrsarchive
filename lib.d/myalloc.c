@@ -58,7 +58,7 @@ unsigned nbytes;
 	register Header *p;
 
 	nbytes += sizeof *p;		/* Allocate header + data	*/
-	if((int)nbytes <= 0)
+	if(nbytes < nbytes-sizeof(*p))
 		return((char *) NULL);
 	p = (Header *)brkctl(BR_NEWSEG,(long)nbytes,p);
 					/* Create segment big enough	*/
