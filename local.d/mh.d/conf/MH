@@ -1,39 +1,41 @@
 #
-#
 #	A V.4.0 system running SMTP without sendmail
+#
 # -UALTOS -UATHENA -UBANG -UBERK -UBSD41A -UBSD42 -UBSD43 -UCOMPAT -UDBM
-# -UDPOP -UPOPSERVICE -URPOP -UISI -ULINK -Ulocname -UMHE -UNFS
+# -UDPOP -UPOPSERVICE -URPOP -UISI -ULINK -Ulocname -UMHE
 # -UIOCTLH -UNOMHSEQ -UOVERHEAD -USBACKUP -USENDMAILBUG -USUN40 -UTTYD
-# -UUCI -UUK -UV7 -UWP -UWHATNOW
-#cc		cc
-#ldoptions	-s
-#ldoptlibs	-lndir
+# -URPATHS -UUCI -UUK -UV7 -UWP -UWHATNOW
 #lex	lex -nt
 #slibdir /usr/lib
 bbdelivery on
 bbhome	/usr/spool/news
 bboards	nntp
 bin		/usr/elf386/bin
-ccoptions -g
+cc		cc
+ccoptions
 chown	chown
 curses	-lcurses
 debug	off
-editor	vi
+#editor	vi
 etc		/usr/elf386/lib/mh
-mail	/usr/spool/mail
+ldoptions
+ldoptlibs	-lsocket -lnsl
+mail	/usr/mail
 mailgroup mail
 mandir	/usr/elf386/man
 manuals	standard
 mf		on
 mts		mmdf2/smtp
-mts	sendmail
-oldload	off
-options	ATZ DUMB FOLDPROT='"0700"' MHRC MSGPROT='"0600"' RPATHS TZNAME
-options BIND NTOHLSWAP SOCKETS
+oldload	on
+options	ATZ TZNAME
+options	DUMB
+options	MHRC
+options	FOLDPROT='"0700"' MSGPROT='"0600"'
+options BIND NTOHLSWAP SOCKETS NFS
 options MORE='"pg"' NDIR='"dirent.h"' SHADOW SYS5 SYS5DIR TYPESIG=void
 pop		off
 ranlib	off
-remove	mv -f
+remove	rm -f
 sharedlib off
 sprintf	int
 tma		off
