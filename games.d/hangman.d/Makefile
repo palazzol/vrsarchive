@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.2 1987-06-08 21:25:57 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.3 1987-06-14 02:04:58 vrs Exp $
 #
 ALL	= hangman
 MODEL	= -i -F 2000
-OPTIONS	= -O
+OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
 include ../../CONFIG
 OBJS	= endgame.o extern.o getguess.o getword.o main.o playgame.o \
 	  prdata.o prman.o prword.o setup.o
@@ -14,11 +14,13 @@ HDRS	= hangman.h
 tags: $(HDRS) $(CFILES)
 	ctags $(HDRS) $(CFILES)
 
-install: $(ALL) $(GAMDIR) $(MAN6)
+install: $(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
 	cp $(ALL) $(GAMDIR)
 	cd $(GAMDIR); chmod 711 $(ALL)
+	cp words $(GAMLIB)
+	cd $(GAMLIB); chmod 644 words
 	cp hangman.6 $(MAN6)
-	cd $(MAN6); chmod 711 hangman.6
+	cd $(MAN6); chmod 644 hangman.6
 	
 hangman: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) -lcurses -ltermlib
