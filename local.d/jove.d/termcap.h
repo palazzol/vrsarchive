@@ -1,11 +1,16 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
-/* Termcap definitions */
+#define MAXCOLS		256	/* maximum number of columns */
+
+#ifndef MAC
+#ifndef _TERM
+
+/* termcap definitions */
 
 extern char
 	*UP,	/* Scroll reverse, or up */
@@ -36,13 +41,11 @@ extern char
 	*SF,	/* Scroll forward */
 	*SR,	/* Scroll reverse */
 	*SP,	/* Send cursor position */
-#ifdef LSRHS
-	*RS,	/* reverse video start */
-	*RE,	/* reverse video end */
-#endif
 	*VB,	/* visible bell */
+	*BL,	/* audible bell */
 	*IP,	/* insert pad after character inserted */
-	*lPC;
+	*lPC,
+	*NL;	/* newline character (usually \n) */
 
 extern int
 	LI,		/* number of lines */
@@ -63,3 +66,14 @@ extern char
 	*BC;		/* back space */
 
 extern short	ospeed;
+
+#endif /* _TERM */
+
+#else /* MAC */	
+extern int	/* probably should clean this up */
+	LI,		/* number of lines */
+	ILI,		/* number of internal lines */
+	CO,		/* number of columns */
+	TABS,
+	SG;
+#endif /* MAC */

@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 /* Contains commands for C mode.  Paren matching routines are in here. */
 
@@ -11,7 +11,36 @@
 #include "re.h"
 #include "ctype.h"
 
-private
+#ifdef MAC
+#	undef private
+#	define private
+#endif
+
+#ifdef	LINT_ARGS
+private int
+	backslashed(char *, int);
+private void	
+	do_expr(int, int),
+	FindMatch(int),
+	parse_cmt_fmt(char *),
+	strip_c(char *, char *);
+#else
+private int
+	backslashed();
+private void	
+	do_expr(),
+	FindMatch(),
+	parse_cmt_fmt(),
+	strip_c();
+#endif	/* LINT_ARGS */
+
+#ifdef MAC
+#	undef private
+#	define private static
+#endif
+
+
+private int
 backslashed(lp, cpos)
 register char	*lp;
 register int	cpos;
@@ -19,7 +48,7 @@ register int	cpos;
 	register int	cnt = 0;
 
 	while (cpos > 0 && lp[--cpos] == '\\')
-		cnt++;
+		cnt += 1;
 	return (cnt % 2);
 }
 
@@ -29,6 +58,7 @@ private int	mp_kind;
 #define MP_MISMATCH	1
 #define MP_UNBALANCED	2
 
+void
 mp_error()
 {
 	switch (mp_kind) {
@@ -75,7 +105,7 @@ register int	dir;
 		*cp,
 		quote_c = 0;
 	register int	c_char;
-	int	in_comment = NO,
+	int	in_comment = -1,
 		stopped = NO;
 
 	sprintf(re_str, "[(){}[\\]%s]", (MajorMode(CMODE)) ? "/\"'" : "\"");
@@ -97,23 +127,39 @@ register int	dir;
 			break;
 		lp = lbptr(sp->p_line);
 
+		if (sp->p_line != curline)
+			/* let's assume that strings do NOT go over line
+			   bounderies (for now don't check for wrapping
+ 			   strings) */
+			quote_c = 0;
 		curline = sp->p_line;
 		curchar = sp->p_char;	/* here's where I cheat */
 		c_char = curchar;
 		if (dir == FORWARD)
-			c_char--;
-
+			c_char -= 1;
 		if (backslashed(lp, c_char))
 			continue;
 		c = lp[c_char];
 		/* check if this is a comment (if we're not inside quotes) */
 		if (quote_c == 0 && c == '/') {
-			if ((c_char != 0) && lp[c_char - 1] == '*')
-				in_comment = (dir == FORWARD) ? NO : YES;
-			else if (lp[c_char + 1] == '*')
-				in_comment = (dir == FORWARD) ? YES : NO;
+			int	new_ic;
+
+			if ((c_char != 0) && lp[c_char - 1] == '*') {
+				new_ic = (dir == FORWARD) ? NO : YES;
+				if (new_ic == NO && in_comment == -1) {
+					count = 0;
+					quote_c = 0;
+				}
+			} else if (lp[c_char + 1] == '*') {
+				new_ic = (dir == FORWARD) ? YES : NO;
+				if (new_ic == NO && in_comment == -1) {
+					count = 0;
+					quote_c = 0;
+				}
+			}
+			in_comment = new_ic;
 		}
-		if (in_comment)
+		if (in_comment == YES)
 			continue;
 		if (c == '"' || c == '\'') {
 			if (quote_c == c)
@@ -160,82 +206,87 @@ register int	dir;
 	return 0;
 }
 
-private
+private void
 do_expr(dir, skip_words)
 register int	dir;
 {
 	register char	c,
 			syntax = (dir == FORWARD) ? _Op : _Cl;
 
-	exp = 1;
 	if (dir == BACKWARD)
-		BackChar();
+		b_char(1);
 	c = linebuf[curchar];
 	for (;;) {
 		if (!skip_words && ismword(c)) {
 		    WITH_TABLE(curbuf->b_major)
-			(dir == FORWARD) ? ForWord() : BackWord();
+		    if(dir == FORWARD) f_word(1);
+		    	else b_word(1);	
 		    END_TABLE();
 		    break;
 		} else if (has_syntax(c, syntax)) {
 			FindMatch(dir);
 			break;
 		}
-		DoTimes(ForChar(), dir);
+		f_char(dir);
 		if (eobp() || bobp())
 			return;
 		c = linebuf[curchar];
 	}
 }
 
+void
 FSexpr()
 {
-	register int	num = exp;
+	register int	num = arg_value();
 
-	if (exp < 0) {
-		exp = -exp;
+	if (num < 0) {
+		set_arg_value(-num);
 		BSexpr();
 	}
 	while (--num >= 0)
 		do_expr(FORWARD, NO);
 }
 
+void
 FList()
 {
-	register int	num = exp;
+	register int	num = arg_value();
 
-	if (exp < 0) {
-		exp = -exp;
+	if (num < 0) {
+		set_arg_value(-num);
 		BList();
 	}
 	while (--num >= 0)
 		do_expr(FORWARD, YES);
 }
 
+void
 BSexpr()
 {
-	register int	num = exp;
+	register int	num = arg_value();
 
-	if (exp < 0) {
-		exp = -exp;
+	if (num < 0) {
+		negate_arg_value();
 		FSexpr();
 	}
 	while (--num >= 0)
 		do_expr(BACKWARD, NO);
 }
 
+void
 BList()
 {
-	register int	num = exp;
+	register int	num = arg_value();
 
-	if (exp < 0) {
-		exp = -exp;
+	if (num < 0) {
+		negate_arg_value();
 		FList();
 	}
 	while (--num >= 0)
 		do_expr(BACKWARD, YES);
 }
 
+void
 BUpList()
 {
 	Bufpos	*mp;
@@ -248,6 +299,7 @@ BUpList()
 		SetDot(mp);
 }
 
+void
 FDownList()
 {
 	Bufpos	*sp;
@@ -265,7 +317,7 @@ FDownList()
 /* Move to the matching brace or paren depending on the current position
    in the buffer. */
 
-private
+private void
 FindMatch(dir)
 {
 	register Bufpos	*bp;
@@ -275,10 +327,10 @@ FindMatch(dir)
 	    (backslashed(linebuf, curchar)))
 		complain((char *) 0);
 	if (dir == FORWARD)
-		ForChar();
+		f_char(1);
 	bp = m_paren(c, dir, YES, NO);
 	if (dir == FORWARD)
-		BackChar();
+		b_char(1);
 	if (bp != 0)
 		SetDot(bp);
 	mp_error();	/* if there is an error the user wants to
@@ -314,6 +366,7 @@ c_indent(incrmt)
 
 char	CmtFmt[80] = "/*%n%! * %c%!%n */";
 
+void
 Comment()
 {
 	FillComment(CmtFmt);
@@ -321,7 +374,7 @@ Comment()
 
 /* Strip leading and trailing white space.  Skip over any imbedded '\r's. */
 
-private
+private void
 strip_c(from, to)
 char	*from,
 	*to;
@@ -332,14 +385,14 @@ char	*from,
 
 	while (c = *fr_p) {
 		if (c == ' ' || c == '\t' || c == '\r')
-			fr_p++;
+			fr_p += 1;
 		else
 			break;
 	}
 	while (c = *fr_p) {
 		if (c != '\r')
 			*to_p++ = c;
-		fr_p++;
+		fr_p += 1;
 	}
 	while (--to_p >= to)
 		if (*to_p != ' ' && *to_p != '\t')
@@ -366,7 +419,7 @@ private int	nlflags;
 /* Fill in the data structures above from the format string.  Don't return
    if there's trouble. */
 
-private
+private void
 parse_cmt_fmt(str)
 char	*str;
 {
@@ -398,7 +451,7 @@ char	*str;
 			break;
 		case '!':
 		case 'c':
-			newlines++;
+			newlines += 1;
 			*body_p++ = '\0';
 			body_p = *++c_body;
 			break;
@@ -417,12 +470,13 @@ char	*str;
 #define NL_IN_OPEN_C  ((nlflags % 4) == 1)
 #define NL_IN_CLOSE_C (nlflags >= 4)
 
+void
 FillComment(format)
 char	*format;
 {
 	int	saveRMargin,
 		indent_pos,
-		close_at_dot = 0,
+		close_at_dot = NO,
 		slen,
 		header_len,
 		trailer_len;
@@ -468,13 +522,12 @@ char	*format;
 
 	if (match_o == (Bufpos *) 0) {
 		if (match_c == (Bufpos *) 0)
-			close_at_dot++;
+			close_at_dot = YES;
 	} else if (match_c == (Bufpos *) 0)
-		close_at_dot++;
+		close_at_dot = YES;
 	else if (inorder(match_o->p_line, match_o->p_char,
 		 match_c->p_line, match_c->p_char))
-		close_at_dot++;
-
+		close_at_dot = YES;
 	if (close_at_dot) {
 		close_c_pt.p_line = curline;
 		close_c_pt.p_char = curchar;
@@ -482,16 +535,16 @@ char	*format;
 		SetDot(match_c);
 	}
 	SetDot(&open_c_pt);
-	open_c_mark = MakeMark(curline, curchar, FLOATER);
+	open_c_mark = MakeMark(curline, curchar, M_FLOATER);
 	indent_pos = calc_pos(linebuf, curchar);
 	/* search for a close comment; delete it if it exits */
 	SetDot(&close_c_pt);
 	if (close_at_dot == 0) {
 		slen = strlen(close_pat);
 		while (slen--)
-			DelPChar();
+			del_char(BACKWARD, 1);
 	}
-	entry_mark = MakeMark(curline, curchar, FLOATER);
+	entry_mark = MakeMark(curline, curchar, M_FLOATER);
 	ToMark(open_c_mark);
 	/* always separate the comment body from anything preceeding it */
 	LineInsert(1);
@@ -502,17 +555,17 @@ char	*format;
 			if (!eolp())
 				LineInsert(1);
 			else
-				line_move(FORWARD, NO);
+				line_move(FORWARD, 1, NO);
 		} else if (*cp == ' ' || *cp == '\t') {
 			if (linebuf[curchar] != *cp)
-				Insert(*cp);
+				insert_c(*cp, 1);
 		} else
 			/* Since we matched the open comment string on this
 			   line, we don't need to worry about crossing line
 			   boundaries. */
-			curchar++;
+			curchar += 1;
 	}
-	savedot = MakeMark(curline, curchar, FLOATER);
+	savedot = MakeMark(curline, curchar, M_FLOATER);
 
 	/* We need to strip the line header pattern of leading white space
 	   since we need to match the line after all of its leading
@@ -529,28 +582,26 @@ char	*format;
 		Bol();
 		DelWtSpace();
 		if (header_len && !strncmp(linebuf, cp, header_len))
-			DoTimes(DelNChar(), header_len);
+			del_char(FORWARD, header_len);
 		if (trailer_len) {
 			Eol();
 			if ((curchar > trailer_len) &&
 			    (!strncmp(&linebuf[curchar - trailer_len],
 				      l_trailer, trailer_len)))
-				DoTimes(DelPChar(), trailer_len);
+				del_char(BACKWARD, trailer_len);
 		}
 		if (curline->l_next != 0)
-			line_move(FORWARD, NO);
+			line_move(FORWARD, 1, NO);
 		else
 			break;
 	} while (curline != entry_mark->m_line->l_next);
 
-	DoSetMark(savedot->m_line, savedot->m_char);
+	do_set_mark(savedot->m_line, savedot->m_char);
 	ToMark(entry_mark);
 	saveRMargin = RMargin;
 	RMargin = saveRMargin - strlen(l_header) -
 		  strlen(l_trailer) - indent_pos + 2;
-	/* do not use the left margin */
-	exp_p = NO;
-	do_rfill();
+	do_rfill(NO);
 	RMargin = saveRMargin;
 	/* get back to the start of the comment */
 	PopMark(); 
@@ -567,19 +618,20 @@ char	*format;
 		else
 			ins_str(l_trailer, NO);
 		if (curline->l_next != 0)
-			line_move(FORWARD, NO);
+			line_move(FORWARD, 1, NO);
 		else 
 			break;
 	} while (curline != entry_mark->m_line->l_next);
 	/* handle the close comment symbol */
 	if (curline == entry_mark->m_line->l_next) {
-		line_move(BACKWARD, NO);
+		line_move(BACKWARD, 1, NO);
 		Eol();
 	}
 	DelWtSpace();
 	/* if the addition of the close symbol would cause the line to be
 	   too long, put the close symbol on the next line. */
-	if (strlen(close_c) + calc_pos(linebuf, curchar) > RMargin) {
+	if (!(NL_IN_CLOSE_C) &&
+	  strlen(close_c) + calc_pos(linebuf, curchar) > RMargin) {
 		LineInsert(1);
 		n_indent(indent_pos);
 	}
@@ -588,12 +640,12 @@ char	*format;
 			LineInsert(1);
 			n_indent(indent_pos);
 		} else
-			Insert(*cp);
+			insert_c(*cp, 1);
 	}
 	ToMark(open_c_mark);
 	Eol();
-	exp_p = NO;
-	DelNChar();
+	del_char(FORWARD, 1);
 }
 
-#endif /*CMT_FMT*/
+#endif /* CMT_FMT */
+

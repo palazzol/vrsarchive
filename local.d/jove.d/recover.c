@@ -1,13 +1,13 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 /* Recovers JOVE files after a system/editor crash.
    Usage: recover [-d directory] [-syscrash]
-   The -syscrash option is specified in /etc/rc and what it does it
+   The -syscrash option is specified in /etc/rc and what it does is
    move all the jove tmp files from TMP_DIR to REC_DIR.
 
    The -d option lets you specify the directory to search for tmp files when
@@ -20,6 +20,9 @@
 #undef EOF
 #undef BUFSIZ
 #undef putchar
+#undef getchar
+
+#define STDIO
 
 #include "jove.h"
 #include "temp.h"
@@ -92,12 +95,20 @@ DIR	*dp;
 	do
 		if (read(dp->d_fd, &dir, sizeof dir) != sizeof dir)
 			return NULL;
+#if defined(elxsi) && defined(SYSV)
+	/*
+	 * Elxsi has a BSD4.2 implementation which may or may not use
+	 * `twisted inodes' ...  Anyone able to check?
+	 */
+	while (*(unsigned short *)&dir.d_ino == 0);
+#else
 	while (dir.d_ino == 0);
+#endif
 
 	return &dir;
 }
 
-#endif /*BSD4_2*/
+#endif /* BSD4_2 */
 
 /* Get a line at `tl' in the tmp file into `buf' which should be LBSIZE
    long. */
@@ -133,8 +144,8 @@ disk_line	atl;
 		off;
 	static int	curblock = -1;
 
-	bno = daddr_to_bno(atl);
-	off = daddr_to_off(atl);
+	bno = da_to_bno(atl);
+	off = da_to_off(atl);
 	nleft = BUFSIZ - off;
 
 	if (bno != curblock) {
@@ -185,7 +196,7 @@ struct direct	*(*sorter)();
 		}
 		ourarray[nentries] = (struct direct *) malloc(sizeof *entry);
 		*ourarray[nentries] = *entry;
-		nentries++;
+		nentries += 1;
 	}
 	closedir(dirp);
 	if (nentries != nalloc)
@@ -386,7 +397,7 @@ tryagain:
 			goto tryagain;
 		}
 		get(&buflist[i], tofile);
-		nrecovered++;
+		nrecovered += 1;
 	}
 	printf("Recovered %d buffers.\n", nrecovered);
 }
@@ -405,10 +416,9 @@ char	*dest;
 			printf("recover: cannot create %s.\n", dest);
 			return;
 		}
-		seekto(src - buflist);
 		if (dest != tty)
 			printf("\"%s\"", dest);
-		dump_file(outfile);
+		dump_file(src - buflist, outfile);
 	} else
 		printf("\nAborted!\n");
 	fclose(outfile);
@@ -425,7 +435,7 @@ register char	**args,
 	while (*args) {
 		if (strcmp(*args, str) == 0)
 			return args;
-		args++;
+		args += 1;
 	}
 	return 0;
 }
@@ -440,30 +450,29 @@ struct rec_entry	*recptr;
 seekto(which)
 {
 	struct rec_entry	rec;
+	long	offset;
+	int	i;
 
-	fseek(ptrs_fp, (long) (sizeof Header), L_SET);
-	
-	while (which-- > 1) {
-		read_rec(&rec);
-		if (fseek(ptrs_fp, (long) rec.r_nlines * sizeof (disk_line),
-			L_INCR) == -1)
-			printf("recover: improper fseek!\n");
-	}
+	offset = sizeof (Header) + (Header.Nbuffers * sizeof (rec));
+	for (i = 1; i < which; i++)
+		offset += buflist[i]->r_nlines * sizeof (disk_line);
+	fseek(ptrs_fp, offset, L_SET);
 }
 
 makblist()
 {
 	int	i;
 
+	fseek(ptrs_fp, (long) sizeof (Header), L_SET);
 	for (i = 1; i <= Header.Nbuffers; i++) {
-		seekto(i);
 		if (buflist[i] == 0)
 			buflist[i] = (struct rec_entry *) malloc (sizeof (struct rec_entry));
 		read_rec(buflist[i]);
 	}
-	if (buflist[i]) {
+	while (buflist[i]) {
 		free((char *) buflist[i]);
 		buflist[i] = 0;
+		i += 1;
 	}
 }
 
@@ -481,21 +490,20 @@ register FILE	*fp;
 	return addr;
 }
 
-dump_file(out)
+dump_file(which, out)
 FILE	*out;
 {
-	struct rec_entry	record;
 	register int	nlines;
 	register disk_line	daddr;
 	char	buf[BUFSIZ];
 
-	read_rec(&record);
-	nlines = record.r_nlines;
+	seekto(which);
+	nlines = buflist[which]->r_nlines;
 	Nchars = Nlines = 0L;
 	while (--nlines >= 0) {
 		daddr = getaddr(ptrs_fp);
 		getline(daddr, buf);
-		Nlines++;
+		Nlines += 1;
 		Nchars += 1 + strlen(buf);
 		fputs(buf, out);
 		if (nlines > 0)
@@ -539,12 +547,7 @@ struct file_pair	*fp;
 #ifdef KILL0
 	if (kill(Header.Pid, 0) == 0)
 		return 0;
-#else
-#ifdef LSRHS
-	if (pexist(Header.Pid))
-		return 0;
-#endif /*LSRHS*/
-#endif /*KILL0*/
+#endif /* KILL0 */
 
 	if (Header.Nbuffers == 0) {
 		printf("There are no modified buffers in %s; should I delete the tmp file?", pntrfile);
@@ -568,6 +571,7 @@ struct file_pair	*fp;
 		return 1;
 	}
 	makblist();
+	list();
 
 	for (;;) {
 		tellme("(Type '?' for options): ", answer);
@@ -699,15 +703,16 @@ char	*argv[];
 		printf("recover: usage: recover [-d directory]\n");
 		printf("Use \"recover\" after JOVE has died for some\n");
 		printf("unknown reason.\n\n");
-		printf("Use \"recover -syscrash\" when the system is in the process\n");
+/*		printf("Use \"recover -syscrash\" when the system is in the process\n");
 		printf("of rebooting.  This is done automatically at reboot time\n");
 		printf("and so most of you don't have to worry about that.\n\n");
+ */
 		printf("Use \"recover -d directory\" when the tmp files are store\n");
 		printf("in DIRECTORY instead of the default one (/tmp).\n");
 		exit(0);
 	}
 	if (scanvec(argv, "-v"))
-		Verbose++;
+		Verbose = YES;
 /*	if (scanvec(argv, "-syscrash")) {
 		printf("Recovering jove files ... ");
 		savetmps();

@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 /* Routines to perform all kinds of deletion.  */
 
@@ -12,6 +12,7 @@
 /* Assumes that either line1 or line2 is actual the current line, so it can
    put its result into linebuf. */
 
+void
 patchup(line1, char1, line2, char2)
 Line	*line1,
 	*line2;
@@ -79,6 +80,7 @@ Line	*line1,
 	return retline;
 }
 
+void
 lremove(line1, line2)
 register Line	*line1,
 		*line2;
@@ -97,38 +99,46 @@ register Line	*line1,
 
 /* Delete character forward */
 
+void
 DelNChar()
 {
-	del_char(1);
+	del_char(FORWARD, arg_value());
 }
 
 /* Delete character backward */
 
+void
 DelPChar()
 {
 	if (MinorMode(OverWrite)) {
-		int	count = min(exp, curchar);
+		int	count = min(arg_value(), curchar);
 
-		DoTimes(BackChar(), count);
-		LastKeyStruck = ' ';	/* can you say gross? */
-		DoTimes(SelfInsert(), count);
-		DoTimes(BackChar(), count);
+		b_char(count);
+
+		/* overwrite with spaces */
+		set_arg_value(count);
+		LastKeyStruck = ' ';
+		SelfInsert();
+
+		b_char(count);
 	} else		
-		del_char(0);
+		del_char(BACKWARD, arg_value());
 }
 
-/* Delete some characters.  If deleting `forward' then call for_char
+/* Delete some characters.  If deleting forward then call for_char
    to the final position otherwise call back_char.  Then delete the
    region between the two with patchup(). */
 
-del_char(forward)
+void
+del_char(dir, num)
 {
 	Bufpos	before,
 		after;
-	int	killp = (exp_p && abs(exp) > 1);
+	int	killp = (abs(num) > 1);
 
 	DOTsave(&before);
-	(forward) ? ForChar() : BackChar();
+	if (dir == FORWARD) f_char(num);
+		else b_char(num);
 	if (before.p_line == curline && before.p_char == curchar)
 		complain((char *) 0);
 	if (killp)
@@ -148,6 +158,7 @@ del_char(forward)
 int	killptr = 0;
 Line	*killbuf[NUMKILLS];
 
+void
 reg_kill(line2, char2, dot_moved)
 Line	*line2;
 {
@@ -188,6 +199,7 @@ Line	*line2;
 	this_cmd = KILLCMD;
 }
 
+void
 DelReg()
 {
 	register Mark	*mp = CurMark();
@@ -197,6 +209,7 @@ DelReg()
 
 /* Save a region.  A pretend kill. */
 
+void
 CopyRegion()
 {
 	register Line	*nl;
@@ -226,15 +239,16 @@ CopyRegion()
 				nl, 0, (Buffer *) 0);
 }
 
+void
 DelWtSpace()
 {
 	register char	*ep = &linebuf[curchar],
 			*sp = &linebuf[curchar];
 
 	while (*ep == ' ' || *ep == '\t')
-		ep++;
+		ep += 1;
 	while (sp > linebuf && *(sp - 1) == ' ' || *(sp - 1) == '\t')
-		sp--;
+		sp -= 1;
 	if (sp != ep) {
 		curchar = sp - linebuf;
 		DFixMarks(curline, curchar, curline, curchar + (ep - sp));
@@ -244,47 +258,51 @@ DelWtSpace()
 	}
 }
 
+void
 DelBlnkLines()
 {
 	register Mark	*dot;
 	int	all;
 
-	exp = 1;
 	if (!blnkp(&linebuf[curchar]))
 		return;
-	dot = MakeMark(curline, curchar, FLOATER);
+	dot = MakeMark(curline, curchar, M_FLOATER);
 	all = !blnkp(linebuf);
 	while (blnkp(linebuf) && curline->l_prev)
 		SetLine(curline->l_prev);
 	all |= (firstp(curline));
 	Eol();
 	DelWtSpace();
-	line_move(FORWARD, NO);
+	line_move(FORWARD, 1, NO);
 	while (blnkp(linebuf) && !eobp()) {
 		DelWtSpace();
-		DelNChar();
+		del_char(FORWARD, 1);
 	}
 	if (!all && !eobp())
-		OpenLine();
+		open_lines(1);
 	ToMark(dot);
 	DelMark(dot);
 }
 
+void
 DelNWord()
 {
 	dword(1);
 }
 
+void
 DelPWord()
 {
 	dword(0);
 }
 
+void
 dword(forward)
 {
 	Bufpos	savedot;
 
 	DOTsave(&savedot);
-	forward ? ForWord() : BackWord();
+	if(forward)  ForWord();
+		else BackWord();
 	reg_kill(savedot.p_line, savedot.p_char, 1);
 }

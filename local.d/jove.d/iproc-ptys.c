@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 #ifdef BSD4_2
 #   include <sys/wait.h>
@@ -12,17 +12,19 @@
 #endif
 #include <signal.h>
 #include <sgtty.h>
+#include <errno.h>
 
-#define DEAD	1	/* Dead but haven't informed user yet */
-#define STOPPED	2	/* Job stopped */
-#define RUNNING	3	/* Just running */
-#define NEW	4	/* This process is brand new */
+#define DEAD	1	/* dead but haven't informed user yet */
+#define STOPPED	2	/* job stopped */
+#define RUNNING	3	/* just running */
+#define NEW	4	/* brand new, never been ... received no input */
 
 /* If process is dead, flags says how. */
 #define EXITED	1
 #define KILLED	2
 
 #define isdead(p)	(p == 0 || proc_state(p) == DEAD || p->p_fd == -1)
+#define makedead(p)	(proc_state(p) = DEAD)
 
 #define proc_buf(p)	(p->p_buffer->b_name)
 #define proc_cmd(p)	(p->p_name)
@@ -30,8 +32,8 @@
 
 private Process	*procs = 0;
 
-int	global_fd = 1,
-	NumProcs = 0;
+long	global_fd = 1;
+int	NumProcs = 0;
 
 #ifdef BRLUNIX
 	extern struct sg_brl sg1;
@@ -45,7 +47,7 @@ extern struct tchars tc1;
 	extern struct ltchars ls1;
 #endif
 
-static char *
+char *
 pstate(p)
 Process	*p;
 {
@@ -60,12 +62,15 @@ Process	*p;
 		if (p->p_howdied == EXITED) {
 			if (p->p_reason == 0)
 				return "Done";
-			return sprint("exit(%d)", p->p_reason);
+			return sprint("Exit %d", p->p_reason);
 		}
-		return sprint("Killed(%d)", p->p_reason);
+		return sprint("Killed %d", p->p_reason);
+
+	case NEW:
+		return "New";
 
 	default:
-		return "Unknown state.";
+		return "Unknown state";
 	}
 }
 
@@ -98,14 +103,26 @@ register int	fd;
 	}
 
 	n = read(fd, ibuf, sizeof(ibuf) - 1);
-	if (n == 0) {
+	if (n == -1 && errno == EIO) {
+		if (proc_state(p) == NEW)
+			return;
 		proc_close(p);
-		NumProcs--;
+		makedead(p);
 		return;
+	} else {
+		if (proc_state(p) != RUNNING) {
+			proc_state(p) = RUNNING;
+			UpdModLine = YES;
+		}
 	}
-	ibuf[n] = '\0';
+	if (n <= 0) {
+		if (n == 0)
+			strcpy(ibuf, "[Process EOF]");
+		else
+			sprintf(ibuf, "\n[pty read error: %d]\n", errno);
+	} else
+		ibuf[n] = '\0';
 	proc_rec(p, ibuf);
-	redisplay();
 }
 
 ProcKill()
@@ -164,20 +181,31 @@ send_p(c)
 char	c;
 {
 	Process	*p;
+	char	buf[2];
 
 	if ((p = curbuf->b_process) == 0)
 		complain("[No process]");
 	ToLast();
+	buf[0] = c;
+	buf[1] = '\0';
+	proc_rec(p, buf);
 	(void) write(p->p_fd, &c, 1);
 }
 
-static
+private
 proc_close(p)
 Process *p;
 {
-	(void) close(p->p_fd);
-	global_fd &= ~(1 << p->p_fd);
-	p->p_eof++;
+	sighold(SIGCHLD);	/* be mutually exclusive */
+
+	if (p->p_fd >= 0) {
+		(void) close(p->p_fd);
+		global_fd &= ~(1L << p->p_fd);
+		NumProcs -= 1;
+		p->p_fd = -1;
+	}
+
+	sigrelse(SIGCHLD);
 }
 
 do_rtp(mp)
@@ -189,6 +217,7 @@ register Mark	*mp;
 	int	char1 = curchar,
 		char2 = mp->m_char;
 	char	*gp;
+	int	nbytes;
 
 	if (isdead(p) || p->p_buffer != curbuf)
 		return;
@@ -200,13 +229,14 @@ register Mark	*mp;
 			gp[char2] = '\0';
 		else
 			strcat(gp, "\n");
-		(void) write(p->p_fd, gp, strlen(gp));
+		if (nbytes = strlen(gp))
+			(void) write(p->p_fd, gp, nbytes);
 		line1 = line1->l_next;
 		char1 = 0;
 	}
 }
 
-/* VARARGS3 */
+/* VARARGS2 */
 
 private
 proc_strt(bufname, clobber, va_alist)
@@ -216,14 +246,14 @@ va_dcl
 	va_list	ap;
 	char	*argv[32],
 		*cp;
-	Window *owind	= curwind;
+	Window *owind = curwind;
 	int	pid;
 	Process	*newp;
 	Buffer 	*newbuf;
 	int	i,
-		f,
-		ttyfd;
-	long 	ldisc,
+		ptyfd,
+		ttyfd,
+	 	ldisc,
 		lmode;
 	register char	*s,
 			*t;
@@ -251,7 +281,7 @@ va_dcl
 	for (s = "pqrs"; *s; s++) {
 		for (t = "0123456789abcdef"; *t; t++) {
 			sprintf(ptybuf, "/dev/pty%c%c", *s, *t);
-			if ((ttyfd = open(ptybuf, 2)) >= 0) {
+			if ((ptyfd = open(ptybuf, 2)) >= 0) {
 				strcpy(ttybuf, ptybuf);
 				ttybuf[5] = 't';
 				/* make sure both ends are available */
@@ -277,15 +307,24 @@ out:	if (s == 0 && t == 0)
 #else
 #  ifdef BTL_BLIT
 	(void) ioctl(0, JWINSIZE, (struct sgttyb *) &jwin);
-#  endif BTL_BLIT
+#  endif /* BTL_BLIT */
 #endif
 
+	sighold(SIGCHLD);
+#ifdef SIGWINCH
+	sighold(SIGWINCH);
+#endif
 	switch (pid = fork()) {
 	case -1:
-		(void) close(ttyfd);
-		complain("[Fork failed!]");
+		(void) close(ptyfd);
+		message("[Fork failed!]");
+		goto fail;
 
 	case 0:
+		sigrelse(SIGCHLD);
+#ifdef SIGWINCH
+		sigrelse(SIGWINCH);
+#endif
 		for (i = 0; i < 32; i++)
 			(void) close(i);
 
@@ -295,9 +334,10 @@ out:	if (s == 0 && t == 0)
 			(void) close(i);
 		}
 #endif
-		i = open(ttybuf, 2);
-		for (f = 0; f <= 2; f++)
-			(void) dup2(i, f);
+		if ((ttyfd = open(ttybuf, 2)) < 0)
+			exit(-1);
+		(void) dup2(ttyfd, 1);
+		(void) dup2(ttyfd, 2);
 
 #ifdef TIOCSETD
 		(void) ioctl(0, TIOCSETD, (struct sgttyb *) &ldisc);
@@ -340,15 +380,10 @@ out:	if (s == 0 && t == 0)
 		_exit(errno + 1);
 	}
 
-	sighold(SIGCHLD);
-#ifdef SIGWINCH
-	sighold(SIGWINCH);
-#endif
 	newp = (Process *) emalloc(sizeof *newp);
 
-	newp->p_fd = ttyfd;
+	newp->p_fd = ptyfd;
 	newp->p_pid = pid;
-	newp->p_eof = 0;
 
 	newbuf = do_select((Window *) 0, bufname);
 	newbuf->b_type = B_PROCESS;
@@ -369,19 +404,24 @@ out:	if (s == 0 && t == 0)
 	va_end(ap);
 
 	newp->p_name = copystr(cmdbuf);
-	newp->p_state = RUNNING;
+	newp->p_state = NEW;
 	newp->p_reason = 0;
-	newp->p_mark = MakeMark(curline, curchar, FLOATER);
+	newp->p_mark = MakeMark(curline, curchar, M_FLOATER);
 
 	newp->p_next = procs;
 	procs = newp;
-	NumProcs++;
-	global_fd |= 1 << newp->p_fd;
-	sigrelse(SIGCHLD);
+	NumProcs += 1;
+	global_fd |= 1L << newp->p_fd;
 	SetWind(owind);
+
+fail:	sigrelse(SIGCHLD);
+#ifdef SIGWINCH
+	sigrelse(SIGWINCH);
+#endif
 }
 	
 pinit()
 {
 	(void) signal(SIGCHLD, proc_child);
 }
+

@@ -1,14 +1,49 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 /* search package */
 
 #include "jove.h"
 #include "ctype.h"
+#ifdef MAC
+#	undef private
+#	define private
+#endif
+
+#ifdef	LINT_ARGS
+private char * insert(char *, char *, int);
+
+private void
+	REreset(void),
+	search(int, int, int);
+private int
+	backref(int, char *),
+	do_comp(int),
+	member(char *, int, int),
+	REgetc(void),
+	REmatch(char *, char *);
+#else
+private char * insert();
+
+private void
+	REreset(),
+	search();
+private int
+	backref(),
+	do_comp(),
+	member(),
+	REgetc(),
+	REmatch();
+#endif	/* LINT_ARGS */
+
+#ifdef MAC
+#	undef private
+#	define private static
+#endif
 
 #define NALTS	16	/* number of alternate search strings */
 
@@ -26,31 +61,12 @@ int	CaseIgnore = 0,
 	WrapScan = 0,
 	UseRE = 0;
 
-private char	CaseEquiv[] = {
-	'\000',	'\001',	'\002',	'\003',	'\004',	'\005',	'\006',	'\007',
-	'\010',	'\011',	'\012',	'\013',	'\014',	'\015',	'\016',	'\017',
-	'\020',	'\021',	'\022',	'\023',	'\024',	'\025',	'\026',	'\027',
-	'\030',	'\031',	'\032',	'\033',	'\034',	'\035',	'\036',	'\037',
-	'\040',	'!',	'"',	'#',	'$',	'%',	'&',	'\'',
-	'(',	')',	'*',	'+',	',',	'-',	'.',	'/',
-	'0',	'1',	'2',	'3',	'4',	'5',	'6',	'7',
-	'8',	'9',	':',	';',	'<',	'=',	'>',	'?',
-	'@',	'A',	'B',	'C',	'D',	'E',	'F',	'G',
-	'H',	'I',	'J',	'K',	'L',	'M',	'N',	'O',
-	'P',	'Q',	'R',	'S',	'T',	'U',	'V',	'W',
-	'X',	'Y',	'Z',	'[',	'\\',	']',	'^',	'_',
-	'`',	'A',	'B',	'C',	'D',	'E',	'F',	'G',
-	'H',	'I',	'J',	'K',	'L',	'M',	'N',	'O',
-	'P',	'Q',	'R',	'S',	'T',	'U',	'V',	'W',
-	'X',	'Y',	'Z',	'{',	'|',	'}',	'~',	'\177'
-};
-
 #define cind_cmp(a, b)	(CaseEquiv[a] == CaseEquiv[b])
 
 private int	REpeekc;
 private char	*REptr;
 
-private
+private int
 REgetc()
 {
 	int	c;
@@ -84,12 +100,14 @@ REgetc()
 #define BACKREF	NONE_OF+2	/* \# */
 #define EOP	BACKREF+2	/* end of pattern */
 
-#define NPAR	9	/* [1-9] */
+#define NPAR	10	/* [0-9] - 0th is the entire matched string, i.e. & */
 private int	nparens;
 private char	*comp_p,
+		*start_p,
 		**alt_p,
 		**alt_endp;
 
+void
 REcompile(pattern, re, into_buf, alt_bufp)
 char	*pattern,
 	*into_buf,
@@ -97,7 +115,7 @@ char	*pattern,
 {
 	REptr = pattern;
 	REpeekc = -1;
-	comp_p = cur_compb = into_buf;
+	comp_p = cur_compb = start_p = into_buf;
 	alt_p = alt_bufp;
 	alt_endp = alt_p + NALTS;
 	*alt_p++ = comp_p;
@@ -108,7 +126,7 @@ char	*pattern,
 
 /* compile the pattern into an internal code */
 
-private
+private int
 do_comp(kind)
 {
 	char	*last_p,
@@ -122,8 +140,15 @@ do_comp(kind)
 	last_p = 0;
 	ret_code = 1;
 
+	if (kind == OKAY_RE) {
+		*comp_p++ = OPENP;
+		*comp_p++ = nparens;
+		*parenp++ = nparens++;
+		start_p = comp_p;
+	}
+
 	while (c = REgetc()) {
-		if (comp_p > &cur_compb[(sizeof compbuf) - 4])
+		if (comp_p > &cur_compb[(sizeof compbuf) - 6])
 toolong:		complain("Search string too long/complex.");
 		if (c != '*')
 			last_p = comp_p;
@@ -150,7 +175,7 @@ toolong:		complain("Search string too long/complex.");
 			    		comp_len = comp_p++;
 			    		comp_val = do_comp(IN_CB);
 			    		*comp_len = comp_p - comp_len;
-			    		(*wcntp)++;
+			    		(*wcntp) += 1;
 			    		if (comp_val == 0)
 			    			break;
 			    	}
@@ -181,9 +206,15 @@ toolong:		complain("Search string too long/complex.");
 			case '|':
 				if (alt_p >= alt_endp)
 					complain("Too many alternates; max %d.", NALTS);
+				*comp_p++ = CLOSEP;
+				*comp_p++ = *--parenp;
 				*comp_p++ = EOP;
 				*alt_p++ = comp_p;
 				nparens = 0;
+				*comp_p++ = OPENP;
+				*comp_p++ = nparens;
+				*parenp++ = nparens++;
+				start_p = comp_p;
 				break;
 
 			case '1':
@@ -196,7 +227,7 @@ toolong:		complain("Search string too long/complex.");
 			case '8':
 			case '9':
 				*comp_p++ = BACKREF;
-				*comp_p++ = c - '1';
+				*comp_p++ = c - '0';
 				break;
 
 			case '<':
@@ -222,7 +253,7 @@ toolong:		complain("Search string too long/complex.");
 			break;
 
 		case '^':
-			if (comp_p == cur_compb || comp_p[-1] == EOP) {
+			if (comp_p == start_p) {
 				*comp_p++ = AT_BOL;
 				break;
 			}
@@ -258,11 +289,11 @@ toolong:		complain("Search string too long/complex.");
 					c2 = REgetc();
 					while (c < c2) {
 						comp_p[c/8] |= (1 << (c%8));
-						c++;
+						c += 1;
 					}
 				}
 				comp_p[c/8] |= (1 << (c%8));
-		    		chrcnt++;
+		    		chrcnt += 1;
 		    	}
 		    	if (c == 0)
 		    		complain("Missing ].");
@@ -275,20 +306,46 @@ toolong:		complain("Search string too long/complex.");
 		case '*':
 			if (last_p == 0 || *last_p <= NOSTR)
 				goto defchar;
+
+			/* The * operator applies only to the previous
+			   character.  If we were building a chr_cnt at
+			   the time we got the *, we have to remove the
+			   last character from the chr_cnt (by decrementing
+			   *chr_cnt) and replacing it with a new STAR entry.
+
+			   If we are decrementing the count to 0, we just
+			   delete the chr_cnt entry altogether, replacing
+			   it with the STAR entry. */
+
 			if (chr_cnt) {
 				char	lastc = chr_cnt[*chr_cnt];
-
-				comp_p = chr_cnt + *chr_cnt;
-				(*chr_cnt)--;
-				*comp_p++ = chr_cnt[-1] | STAR;
-				*comp_p++ = lastc;
+ 
+ 			/* The * operator applies only to the previous
+ 			   character.  If we were building a chr_cnt at
+ 			   the time we got the *, we have to remove the
+ 			   last character from the chr_cnt (by decrementing
+ 			   *chr_cnt) and replacing it with a new STAR entry.
+ 
+ 			   If we are decrementing the count to 0, we just
+ 			   delete the chr_cnt entry altogether, replacing
+ 			   it with the STAR entry. */
+ 
+ 				if (*chr_cnt == 1) {
+ 					comp_p = chr_cnt;
+ 					comp_p[-1] |= STAR;
+ 					*comp_p++ = lastc;
+ 				} else {
+ 					comp_p = chr_cnt + *chr_cnt;
+ 					(*chr_cnt) -= 1;
+ 					*comp_p++ = chr_cnt[-1] | STAR;
+ 					*comp_p++ = lastc;
+ 				}
 			} else
 				*last_p |= STAR;
 			break;
-
 		default:
 defchar:		if (chr_cnt)
-				(*chr_cnt)++;	/* increment the count */
+				(*chr_cnt) += 1;
 			else {
 				*comp_p++ = (CaseIgnore) ? CINDC : NORMC;
 				chr_cnt = comp_p++;
@@ -301,6 +358,10 @@ defchar:		if (chr_cnt)
 	}
 outahere:
 	/* End of pattern, let's do some error checking. */
+	if (kind == OKAY_RE) {
+		*comp_p++ = CLOSEP;
+		*comp_p++ = *--parenp;
+	}
 	if (parenp != parens)
 		complain("Unmatched ()'s.");
 	if (kind == IN_CB && c == 0)	/* End of pattern with \}. */
@@ -321,7 +382,7 @@ int	REbom,
 	REeom,		/* beginning and end of match */
 	REalt_num;	/* if alternatives, which one matched? */
 
-private
+private int
 backref(n, linep)
 register char	*linep;
 {
@@ -336,7 +397,7 @@ register char	*linep;
 	return 0;
 }
 
-private
+private int
 member(comp_p, c, af)
 register char	*comp_p;
 register int	c,
@@ -349,7 +410,7 @@ register int	c,
 	return !af;
 }
 
-private
+private int
 REmatch(linep, comp_p)
 register char	*linep,
 		*comp_p;
@@ -459,14 +520,14 @@ register char	*linep,
 		first_p = linep;
 		while (*comp_p == *linep++)
 			;
-		comp_p++;
+		comp_p += 1;
 		goto star;
 
 	case CINDC | STAR:
 		first_p = linep;
 		while (cind_cmp(*comp_p, *linep++))
 			;
-		comp_p++;
+		comp_p += 1;
 		goto star;
 
 	case ONE_OF | STAR:
@@ -490,7 +551,7 @@ register char	*linep,
 		continue;
 
 star:		do {
-			linep--;
+			linep -= 1;
 			if (linep < locs)
 				break;
 			if (REmatch(linep, comp_p))
@@ -504,7 +565,7 @@ star:		do {
 	/* NOTREACHED. */
 }
 
-private
+private void
 REreset()
 {
 	register int	i;
@@ -524,6 +585,7 @@ REreset()
    This code is cumbersome, repetetive for reasons of efficiency.  Fast
    search is a must as far as I am concerned. */
 
+int
 re_lindex(line, offset, expr, alts, lbuf_okay)
 Line	*line;
 char	*expr,
@@ -579,7 +641,7 @@ char	*expr,
 				REbom = loc1 - REbolp;
 				return 1;
 			}
-			REalt_num++;
+			REalt_num += 1;
 		}
 	    } while (*locs++);
 	} else {
@@ -606,7 +668,7 @@ char	*expr,
 				REbom = loc1 - REbolp;
 				return 1;
 			}
-			REalt_num++;
+			REalt_num += 1;
 		}
 	    } while (--locs >= resp);
 	}
@@ -640,7 +702,7 @@ char	*expr,
 	static Bufpos	ret;
 	register Line	*lp;
 	register int	offset;
-	int	we_wrapped = 0;
+	int	we_wrapped = NO;
 
 	lsave();
 	/* Search now lsave()'s so it doesn't make any assumptions on
@@ -663,7 +725,7 @@ char	*expr,
 			lp = lp->l_prev;
 			offset = strlen(lbptr(lp));
 		} else
-			--offset;
+			offset -= 1;
 	} else if ((dir == FORWARD) &&
 		   (lbptr(lp)[offset] == '\0') &&
 		   !lastp(lp)) {
@@ -679,7 +741,7 @@ doit:		lp = (dir == FORWARD) ? lp->l_next : lp->l_prev;
 			if (okay_wrap && WrapScan) {
 				lp = (dir == FORWARD) ?
 				     curbuf->b_first : curbuf->b_last;
-				we_wrapped++;
+				we_wrapped = YES;
 			} else
 				 break;
 		}
@@ -719,6 +781,7 @@ char	*off,
 /* Perform the substitution.  If DELP is nonzero the matched string is
    deleted, i.e., the substitution string is not inserted. */
 
+void
 re_dosub(tobuf, delp)
 char	*tobuf;
 {
@@ -738,13 +801,17 @@ char	*tobuf;
 
 	if (!delp) while (c = *repp++) {
 		if (c == '\\') {
-			if ((c = *repp++) == '\0') {
+			c = *repp++;
+			if (c == '\0') {
 				*tp++ = '\\';
 	  			goto endchk;
-			} else if ((c = *repp++) >= '1' && c <= nparens + '1') {
-				tp = insert(tp, endp, c - '1');
+			} else if (c >= '1' && c <= nparens + '1') {
+				tp = insert(tp, endp, c - '0');
 				continue;
 			}
+		} else if (c == '&') {
+			tp = insert(tp, endp, 0);
+			continue;
 		}
 		*tp++ = c;
 endchk:		if (tp >= endp)
@@ -761,12 +828,14 @@ endchk:		if (tp >= endp)
 			len_error(ERROR);
 }
 
+void
 putmatch(which, buf, size)
 char	*buf;
 {
-	*(insert(buf, buf + size, which - 1)) = 0;
+	*(insert(buf, buf + size, which)) = 0;
 }
 
+void
 setsearch(str)
 char	*str;
 {
@@ -779,6 +848,7 @@ getsearch()
 	return searchstr;
 }
 
+void
 RErecur()
 {
 	char	sbuf[sizeof searchstr],
@@ -786,7 +856,7 @@ RErecur()
 		repbuf[sizeof rep_str],
 		*altbuf[NALTS];
 	int	npars;
-	Mark	*m = MakeMark(curline, REbom, FLOATER);
+	Mark	*m = MakeMark(curline, REbom, M_FLOATER);
 
 	message("Type C-X C-C to continue with query replace.");
 
@@ -801,32 +871,36 @@ RErecur()
 	byte_copy(sbuf, searchstr, sizeof searchstr);
 	byte_copy(repbuf, rep_str, sizeof rep_str);
 	byte_copy((char *) altbuf, (char *) alternates, sizeof alternates);
-	if (!exp_p)
+	if (!is_an_arg())
 		ToMark(m);
 	DelMark(m);
 }
 
+void
 ForSearch()
 {
 	search(FORWARD, UseRE, YES);
 }
 
+void
 RevSearch()
 {
 	search(BACKWARD, UseRE, YES);
 }
 
+void
 FSrchND()
 {
 	search(FORWARD, UseRE, NO);
 }
 
+void
 RSrchND()
 {
 	search(BACKWARD, UseRE, NO);
 }
 
-private
+private void
 search(dir, re, setdefault)
 {
 	Bufpos	*newdot;
@@ -851,6 +925,7 @@ search(dir, re, setdefault)
 
 /* Do we match PATTERN at OFFSET in BUF? */
 
+int
 LookingAt(pattern, buf, offset)
 char	*pattern,
 	*buf;
@@ -868,6 +943,7 @@ char	*pattern,
 	return 0;
 }
 
+int
 look_at(expr)
 char	*expr;
 {

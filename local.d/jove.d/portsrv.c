@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 /* This is a server for jove sub processes.  It runs the command and
    signals jove when there is some output ready to send to jove. By the
@@ -37,7 +37,7 @@ char	*str;
 	header.pid = getpid();
 	header.nbytes = strlen(str);
 	strcpy(header.buf, str);
-	proc_write(&header, header.nbytes + 8);
+	proc_write(&header, header.nbytes + HEADSIZE);
 	exit(-2);
 }
 
@@ -86,9 +86,19 @@ char	*argv[];
 {
 	int	p[2];
 	int	pid;
+	int	tty_fd,
+		i;
+
+/*	tty_fd = open("/dev/tty", 1); */
 
 	if (pipe(p) == -1)
 		error("Cannot pipe jove portsrv.\n");
+
+/*	for (i = 0; i < argc; i++) {
+		write(tty_fd, "*argv++ = ", 10);
+		write(tty_fd, argv[i], strlen(argv[i]));
+		write(tty_fd, "\n", 1);
+	} */
 
 	ppid = getppid();
 	switch (pid = fork()) {
@@ -108,35 +118,35 @@ char	*argv[];
 
 	default:
 		(void) close(0);
-				/* Don't want this guy to read anything
-				   jove sends to our soon to be created
-				   child */
+
+		 /* don't want this guy to read anything jove sends to
+		    our soon to be created child */
 
 		JovesInput = atoi(argv[1]);
 		(void) signal(SIGINT, SIG_IGN);
 		(void) signal(SIGQUIT, SIG_IGN);
 		(void) close(p[1]);
 
-		/* Tell jove the pid of the real child as opposed to us. */
+		/* tell jove the pid of the real child as opposed to us */
 		header.pid = getpid();
 		header.nbytes = sizeof (int);
 		*(int *) header.buf = pid;
 		(void) write(1, (char *) &header, sizeof pid + HEADSIZE);
 		p_inform();	/* Inform jove */
 
-		/* Read proc's output and send it to jove */
+		/* read proc's output and send it to jove */
 		InputFD = p[0];
 		read_pipe();
 		(void) close(p[0]);
 		header.pid = getpid();
-		header.nbytes = EOF;	/* Tell jove we are finished */
+		header.nbytes = EOF;	/* tell jove we are finished */
 		(void) write(1, (char *) &header, HEADSIZE);
 		p_inform();
-		/* Try to exit like our child did ... */
+		/* try to exit like our child did ... */
 		{
 			union wait	w;
 
-#ifndef VMUNIX
+#ifndef BSD4_2
 			while (wait2(&w.w_status, 0) != pid)
 #else
 			while (wait3(&w.w_status, 0, 0) != pid)
@@ -150,7 +160,7 @@ char	*argv[];
 	}
 }
 
-#else /*PIPEPROCS*/
+#else /* PIPEPROCS */
 main()
 {
 }

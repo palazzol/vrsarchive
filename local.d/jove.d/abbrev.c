@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 #include "jove.h"
 
@@ -12,6 +12,9 @@
 #include "io.h"
 #include "ctype.h"
 
+#ifdef MSDOS
+#include <io.h>
+#endif
 #define HASHSIZE	20
 
 struct abbrev {
@@ -22,12 +25,42 @@ struct abbrev {
 	data_obj	*a_cmdhook;
 };
 
+#ifdef MAC
+#	undef private
+#	define private
+#endif
+
+#ifdef	LINT_ARGS
+private	void
+	define(struct abbrev **, char *, char *),
+	def_abbrev(struct abbrev **),
+	rest_abbrevs(char *),
+	save_abbrevs(char *);
+
+private	unsigned int hash(char *);
+private	struct abbrev * lookup(struct abbrev **, char *);
+#else
+private	void
+	define(),
+	def_abbrev(),
+	rest_abbrevs(),
+	save_abbrevs();
+
+private	unsigned int hash();
+private	struct abbrev * lookup();
+#endif	/* LINT_ARGS */
+
+#ifdef MAC
+#	undef private
+#	define private static
+#endif
+
 #define GLOBAL	NMAJORS
-static struct abbrev	*A_tables[NMAJORS + 1][HASHSIZE] = {0};
+private struct abbrev	*A_tables[NMAJORS + 1][HASHSIZE] = {0};
 
 int AutoCaseAbbrev = 1;
 
-static unsigned int
+private unsigned int
 hash(a)
 register char	*a;
 {
@@ -40,7 +73,7 @@ register char	*a;
 	return hashval;
 }
 
-static
+private void
 def_abbrev(table)
 struct abbrev	*table[HASHSIZE];
 {
@@ -52,7 +85,7 @@ struct abbrev	*table[HASHSIZE];
 	define(table, abbrev, phrase);
 }
 
-static struct abbrev *
+private struct abbrev *
 lookup(table, abbrev)
 register struct abbrev	*table[HASHSIZE];
 register char	*abbrev;
@@ -67,7 +100,7 @@ register char	*abbrev;
 	return ap;
 }
 
-static
+private void
 define(table, abbrev, phrase)
 register struct abbrev	*table[HASHSIZE];
 char	*abbrev,
@@ -91,30 +124,37 @@ char	*abbrev,
 	ap->a_phrase = copystr(phrase);
 }
 
+void
 AbbrevExpand()
 {
 	Bufpos	point;
 	char	wordbuf[100];
 	register char	*wp = wordbuf,
 			*cp;
+#if !(defined(IBMPC) || defined(MAC))
 	register int	c;
+#else
+	int c;
+#endif	
 	int	UC_count = 0;
 	struct abbrev	*ap;
 
 	DOTsave(&point);
-	exp = 1;
     WITH_TABLE(curbuf->b_major)
-	BackWord();
+	b_word(1);
 	while (curchar < point.p_char && ismword(c = linebuf[curchar])) {
 		if (AutoCaseAbbrev) {
 			if (isupper(c)) {
-				UC_count++;
+				UC_count += 1;
+#if (defined(IBMPC) || defined(MAC))
+				lower(&c);
+#else
 				c = tolower(c);
+#endif				
 			}
 		}
-
 		*wp++ = c;
-		curchar++;
+		curchar += 1;
 	}
 	*wp = '\0';
     END_TABLE();
@@ -124,26 +164,23 @@ AbbrevExpand()
 		SetDot(&point);
 		return;
 	}
-	DoTimes(DelPChar(), (wp - wordbuf));
+	del_char(BACKWARD, (wp - wordbuf));
 
 	for (cp = ap->a_phrase; c = *cp; ) {
 		if (AutoCaseAbbrev) {
-			Insert(islower(c) && UC_count &&
-			       (cp == ap->a_phrase || (UC_count > 1 && (*(cp - 1) == ' '))) ?
-				toupper(c) : c);
-		}
-		else {
-			Insert(c);
-		}
-		cp++;
+			insert_c(islower(c) && UC_count &&
+			       (cp == ap->a_phrase || (UC_count > 1 && (cp[-1] == ' '))) ?
+				toupper(c) : c, 1);
+		} else
+			insert_c(c, 1);
+		cp += 1;
 	}
-
 	if (ap->a_cmdhook != 0)
 		ExecCmd(ap->a_cmdhook);
 }
 
-static char	*mode_names[NMAJORS + 1] = {
-	"Fundamental",
+private char	*mode_names[NMAJORS + 1] = {
+	"Fundamental Mode",
 	"Text Mode",
 	"C Mode",
 #ifdef LISP
@@ -152,7 +189,7 @@ static char	*mode_names[NMAJORS + 1] = {
 	"Global"
 };
 
-static
+private void
 save_abbrevs(file)
 char	*file;
 {
@@ -171,14 +208,14 @@ char	*file;
 				fprintf(fp, "%s:%s\n",
 					ap->a_abbrev,
 					ap->a_phrase);
-				count++;
+				count += 1;
 			}
 	}
 	f_close(fp);
 	add_mess(" %d written.", count);
 }
 
-static
+private void
 rest_abbrevs(file)
 char	*file;
 {
@@ -194,9 +231,9 @@ char	*file;
 		eof = f_gets(fp, genbuf, LBSIZE);
 		if (eof || genbuf[0] == '\0')
 			break;
-		lnum++;
+		lnum += 1;
 		if (strncmp(genbuf, "------", 6) == 0) {
-			mode++;
+			mode += 1;
 			continue;
 		}
 		if (mode == -1)
@@ -211,16 +248,19 @@ fmterr:			complain("Abbrev. format error, line %d.", file, lnum);
 	message(NullStr);
 }
 
+void
 DefGAbbrev()
 {
 	def_abbrev(A_tables[GLOBAL]);
 }
 
+void
 DefMAbbrev()
 {
 	def_abbrev(A_tables[curbuf->b_major]);
 }
 
+void
 SaveAbbrevs()
 {
 	char	filebuf[FILESIZE];
@@ -228,6 +268,7 @@ SaveAbbrevs()
 	save_abbrevs(ask_file((char *) 0, (char *) 0, filebuf));
 }
 
+void
 RestAbbrevs()
 {
 	char	filebuf[FILESIZE];
@@ -235,6 +276,7 @@ RestAbbrevs()
 	rest_abbrevs(ask_file((char *) 0, (char *) 0, filebuf));
 }
 
+void
 EditAbbrevs()
 {
 	char	*tname = "jove_wam.$$$",
@@ -267,6 +309,7 @@ EditAbbrevs()
 	SetBuf(do_select(curwind, obuf->b_name));
 }
 
+void
 BindMtoW()
 {
 	struct abbrev	*ap;
@@ -285,4 +328,4 @@ BindMtoW()
 	ap->a_cmdhook = hook;
 }
 
-#endif /*ABBREV*/
+#endif /* ABBREV */

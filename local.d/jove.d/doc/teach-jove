@@ -1,6 +1,7 @@
-You are looking at the JOVE tutorial.  This was written by Richard Stallman
-and modified by Doug Kingston and Jonathan Payne.  Comments on this document
-should be sent to payne@rochester. (12 February '86)
+ 		      J O V E   T U T O R I A L 
+
+Welcome to JOVE - an advanced, easy-to-use, user-friendly environment 
+for editing text, programs or anything else you may like to type.
 
 JOVE commands generally involve the CONTROL key (sometimes labelled
 CTRL or CTL) or the META key (generally labelled ESCAPE).  Rather than
@@ -168,6 +169,42 @@ useful.
 Did it scroll the screen up by 8 lines?  If you would like to scroll
 it down you can give an argument to M-V.
 
+
+
+THE UNIVERSAL ARGUMENT
+----------------------
+   Almost  every  command  in JOVE takes a so-called Universal Argument.
+This argument, although it is  interpreted  differently  in  some  cases,
+usually means REPEAT.  The way you give a command a universal argument is
+by typing ESC and then the number. For example, ESC 10 C-F would move you
+forward ten characters.
+
+>>> Try  giving a suitable argument to C-N or C-P to come as close as you
+    can to this  line  in  one  jump.  Then  try giving the same command, 
+    except make the number negative.
+
+  Another count-giving command is C-U.  This command, when you first type
+it, gives you an argument of 4 (four).  If you type C-U C-U, you will get
+an argument of 16.  Each time C-U is typed, the argument is multiplied by
+four.
+
+  One important exception to this is with the screen moving commands.  In
+this case, the number refers to the number of LINES to  scroll,  not  the
+number  of  screens.   As  a special case, C-U C-V or C-U M-V will scroll
+exactly one half screenful.
+
+>>> Try typing ESC 8 C-V now.
+
+THE GOTO COMMAND
+----------------
+   Now that we've learned about the universal argument, we can  introduce
+another  cursor  positioning  command,  the command to move to a specific
+line.  This command is given by giving a line number via  ESC,  and  then
+typing M-G.
+
+>>> Try  using  the M-< and M-> commands to move to the beginning and the
+    end of the file. Then come back here  using the M-G  command (this is 
+    line 164, so you'd type ESC 164 M-G.)
 
 QUITTING FROM COMMANDS
 ----------------------
@@ -385,6 +422,14 @@ it over and skipping forward.  So, when you feel ready, you should try
 editing a file named "FOO", putting some text in it, and saving it;
 then exit from JOVE and look at the file to be sure that it worked.
 
+CONCLUSION OF PART ONE
+----------------------
+   This is the end of the first part of  this  tutorial.   You  now  know
+enough to edit a file with JOVE, and save your work.  The second part of
+this tutorial, which starts with the next section,  discusses  searching,
+replacing,  word  processing,  and other modes of JOVE.  You may wish to
+stop here and practice for awhile before you continue.
+
 
 EXTENDING THE COMMAND SET
 -------------------------
@@ -424,23 +469,6 @@ about.
 
 >> Try typing M-X, followed by "apropos" or "apr" and then Return.
    Then try typing "file" followed by a Return.
-
-
-TEXT REPLACEMENT
----- -----------
-
->> Move the cursor to the blank line two lines below this one.
-   Then type M-r changed<Return>altered<Return>.
-
-   Notice how this line has changed: you've replaced the word
-   c-h-a-n-g-e-d with "altered" wherever it occurs after the cursor.
-
-The more customary command for replacing strings is the interactive
-command query-replace-search, which has several options.  In essence,
-it shows each occurance of the first string and asks you if you want to
-replace it or not.  You can also choose to edit around the string, or
-go on and replace all occurances without asking further.  It is
-described in detail in the JOVE manual.
 
 
 MODE LINE
@@ -525,6 +553,39 @@ C-R for reverse search.  Everything that applies to C-S applies to C-R
 except that the direction of the search is reversed.
 
 
+REPLACING TEXT
+--------------
+
+>> Move the cursor to the blank line two lines below this one.
+   Then type M-r changed<Return>altered<Return>.
+
+   Notice how this line has changed: you've replaced the word
+   c-h-a-n-g-e-d with "altered" wherever it occurs after the cursor.
+
+The more customary command for replacing strings is the interactive
+command query-replace-search, which has several options.  In essence,
+it shows each occurrence of the first string and asks you if you want to
+replace it or not.  You can also choose to edit around the string, or
+go on and replace all occurrences without asking further.
+
+   This is invoked with M-Q..  When you start up a Query Replace, it
+will prompt you with "From" and "To", for what you want to change, and
+what you want to change it to.  JOVE will then move to the first
+occurence of the "From", and wait for a character.  You can type:
+
+	<SPACE>		Do  the  replacement, and move to next occurrence
+			of the "From" string.
+	<DEL>		Skip  the  current  "From" string and move to the 
+			next one.
+	RETURN		Exit the Query Replace now.
+	r		Recursive Edit
+	p		Replace  all  further  occurences  of  the "From" 
+			string,	without asking. 
+
+Recursive edit makes it possible to temporarily supend the Q-R-S, let the
+user go off and do something, and then return to the search after the  he
+is done. The command exit-jove (C-X C-C) returns from the recursive-edit.
+
 GETTING MORE HELP
 -----------------
 
@@ -548,7 +609,7 @@ back on the screen.
 >> Type C-X ? Control-P.  The message at the bottom of the screen should
    be something like "C-P is bound to previous-line".
 
-Multi-character commands such as C-X C-Z and <ESC>V are also allowed
+Multi-character commands such as C-X C-C and <ESC>V are also allowed
 after C-X ?.
 
 Now lets get more information about the previous-line command.
@@ -570,6 +631,255 @@ commands that contain "file".  To run apropos you would type
 
 	M-X apr<Space>file<Return>
 
+Finally, the full set of JOVE manuals are in five parts, and reside in
+the directory /usr/src/local/jove/doc under the names jove.1 to jove.5.
+These are in TROFF form, and the documents in /usr/src/local/jove/doc/docs 
+are in a form readable on the terminal or line-printer. Besides, someone
+around you must have a printed version which you can borrow! There is also 
+a chart of JOVE commands, sorted by function, which is handy as a quick
+reference. 
+
+CONCLUSION OF PART TWO
+----------------------
+   This concludes section two of the JOVE tutorial.  The  rest  of  this
+tutorial  describes  some of the very advanced features of JOVE, such as
+editing more than one file at once, writing your own macros, windows, and
+initialization  files.   Unless  you're  already  somewhat  familiar with
+JOVE, you should probably wait a little while before starting the  third
+section.
+
+MARKS AND REGIONS
+-----------------
+
+   In  general, a command which processes an arbitrary part of the buffer
+must know where to start and where to  stop.   In  JOVE,  such  commands
+usually  operate  on the text between point (where the cursor is now) and
+"the mark".  This range of text is called "the  region".   To  specify  a
+region, you set point to one end of it and mark at the other.  It doesn't
+matter which one is set first chronologically, or which one comes earlier
+in the text.  Here are some commands for setting the mark:
+
+        C-@         Set the mark where point is.
+        C-<SPACE>   The same.
+        C-X C-X     Interchange mark and point.
+
+   The  most  common  way  to set the mark is with the C-@ command or the
+C-<SPACE> command.  They set the mark where point is.  Then you can  move
+point away, leaving the mark behind.
+
+   Since  terminals  have  only  one cursor, there is no way for JOVE to
+show you where the mark is located.  You have  to  remember.   The  usual
+solution  to this problem is to set the mark and then use it soon, before
+you forget where it is.  But you can see  where  the  mark  is  with  the
+command  C-X  C-X which puts the mark where point was and point where the
+mark was.  The extent of the region is  unchanged,  but  the  cursor  and
+point are now at the previous location of the mark.
+
+   If  you  insert  or delete before the mark, the mark may drift through
+the text.  If the buffer contains "FOO BAR" and the mark  is  before  the
+"B", then if you delete the "F" the mark will be before the "A".  This is
+an unfortunate result of the simple way the mark is implemented.   It  is
+best  not  to  delete  or  insert  at places above the mark until you are
+finished using it and don't care where it drifts to.
+
+   There  are many, many commands which use regions (the area between the
+point and the mark), which we have not  mentioned  here.   They  are  all
+similar to such things as "transpose paragraphs", etc., and can be found
+in the wall chart.
+
+BUFFERS
+-------
+   When editing a file, JOVE reads the file  into  a  buffer.   This  is
+where the modifcations are done, and when you save the file with C-X C-S,
+the buffer is actually written out to the file.   JOVE  permits  you  to
+have  up  to 100 buffers, so, in essence, you can edit up to 100 files at
+the same time.
+
+   If you want to list the buffers you have, use  the  C-X  C-B  command.
+This  will  display  a  list of the buffers, their numbers and names, and
+whether or not they've been modified.
+
+>>> Do this now, type C-X C-B.  When you're done looking, type a <SPACE>.
+
+   You probably noticed you only have one buffer, named "Main".   If  you
+were  editing  more  than one file, however, you would have more than one
+buffer.  There are two ways to edit more than one file.  The first is  to
+call JOVE with more than one file on the command line.  For example, the
+command
+
+			      jove a b c
+
+would create three buffers (named Main, b, and c),  each  one  containing
+one  file.   The  other  way  is  to use the C-X C-F command (called Find
+File).  This command prompts you for a filename, and then reads that file
+into a new buffer, and puts you into the new buffer.
+
+   To change buffers, use the C-X B command.  JOVE will prompt you for a
+buffer name, and print a name in parentheses.  If you just hit a carriage
+return  without  typing a buffer name, you will go to the buffer named in
+parentheses.  Another way to change buffers is to give C-X B an  argument
+with  C-U.   This goes to the buffer NUMBER, rather than using the buffer
+name.
+
+>>> Get a piece of paper, and write down the  following  commands.   Then
+    run  them, to  get a feel for playing with buffers.  BE SURE TO WRITE 
+    THEM DOWN! We don't want to get you lost!
+
+			C-X C-B
+			<SPACE>
+			C-X C-F		(type "/etc/motd" to the prompt)
+			C-X C-B
+			<SPACE>
+			C-X B
+			<RETURN>
+
+   Well, wasn't that fun?  Now you know how  to  get  another  file  into
+another  buffer,  and then "bounce" back and forth.  A nice feature about
+editing more than one file is that you can transfer text from one file to
+the  other.   Just  kill  it in one file, change buffers, and then put it
+back with C-Y.
+
+WINDOWS
+-------
+   What you see on your screen is a "window" into the buffer you are 
+editing. JOVE allows you to have more than one window on your screen, and
+you can therefore look into two, or more buffers at once. You can also look at
+different parts of the same file. The command C-X 2 splits your screen into
+two windows, both looking into the same buffer. The command C-X 4 f will
+display a specified file in the other window, C-X 4 b will display a specified
+buffer in the other window, C-X n moves to the next window on the screen,
+while C-X p moves to the previous window.
+
+>>> Try the command C-X 2, which splits the screen into two windows, and
+    displays the same buffer in both. You'll notice that you are in the new
+    window. Try some commmands in this window, like C-V, or M-V, to move
+    around in the file. Observe that the other window doesn't change its
+    position realtime to the buffer. This gives you a way of looking at two
+    parts of the same file. 
+
+>>> Now try to type some text, or change something. You will see the changes
+    affecting the text in the other window as well. That is because both
+    windows are displaying the same buffer, and therefor the same text. Changes
+    in the contents of the buffer have to affect both windows.
+
+>>> Let's now try to edit another file in this window. Give the command 
+    C-X C-F and type the name of file as "/etc/motd". You now have two files
+    on your screen at the same time. 
+
+>>> Type the command M- C-V (Meta followed by C-V) and watch the other window
+    page downward. This is very convenient when doing a variety of tasks, like
+    correcting errors in a file - edit the file, with the list of errors in
+    the other window!
+
+>>> Finally, let's get back to the main window (with this document) by typing
+    C-X p (or C-X n, since there are only two windows). Expand this window 
+    to fill the entire screen by typing C-X 1. 
+
+Enjoyable, wasn't it! There are other commands for shrinking and growing
+windows, but one of the most useful when editing text like this is the command
+which invokes JOVE's interactive spelling checker. It's called spell-buffer.
+It runs the UNIX spell(1) command on the buffer, and puts the errors in
+another buffer in another window, and allows you to edit the list to remove
+the words you know are not errors. Then, type C-X C-C, which usually gets you
+out of JOVE but in this case only gets you out of the spell-edit mode. You can
+now go through the remaining spelling errors word-by-word, and you can correct
+them. The commands for this are C-X C-N (for next error) and C-X C-P (for
+previous error.) 
+
+>>> Try the spell-buffer command now, by going M-X spel <space> and watch.
+Delete a few errors, then type C-X C-C, and do a few C-X C-N's to find some
+errors in this document. We've left a few ! (deliberately, of course!!!)
+    
+
+MACROS
+------
+   A "keyboard macro" is a command defined by the user  to  abbreviate  a
+sequence  of  other commands.  If you discover that you are about to type
+C-N C-D forty times, you can define a keyboard macro to do  C-N  C-D  and
+call  it  with  a  repeat  count  of forty.  The commands which deal with
+keyboard macros are:
+
+        C-X (       Start defining a keyboard macro.
+        C-X )       End the definition of a keyboard macro.
+        C-X E       Execute the most recent keyboard macro.
+
+   You define a keyboard macro while executing the commands which are the
+definition.   Put  differently, as you are defining a keyboard macro, the
+definition is being executed for the first time.  This way, you  can  see
+what  the  effects of your commands are, so that you don't have to figure
+them out in your head.  When you are  finished,  the  keyboard  macro  is
+defined and also has been, in effect, executed once.  You can then do the
+whole thing over again by invoking the macro.
+
+   To start defining a keyboard macro, type the C-X ( command.  From then
+on,  your  commands  continue to be executed, but also become part of the
+definition of the macro.  "Def" appears in the mode line to remind you of
+what  is  going  on.  When you are finished, the C-X ) command terminates
+the definition (without becoming part of it!).
+
+   The macro thus defined can be invoked again with  the  C-X  E  command
+which  may  be  given a repeat count as a numeric argument to execute the
+macro many times.  C-X ) can also be given a repeat count as an argument,
+in  which  case it repeats the macro that many times right after defining
+it, but defining the macro counts as the first repetition  (since  it  is
+executed  as  you define it).  So, giving C-X ) an argument of 2 executes
+the macro immediately one additional time.  An argument of zero to C-X  E
+or C-X ) means repeat the macro indefinitely (until it gets an error).
+
+   If  you  want  to  perform  an operation on each line, then either you
+should start by positioning point on the line above the first one  to  be
+processed  and  then begin the macro definition with a C-N, or you should
+start on the proper line and end with a C-N.  Either way,  repeating  the
+macro will operate on successive lines.
+
+>>> Place the cursor at the top of the screen and then enter the commands
+    below.  Note that after the first  command, "Def" appears in the mode 
+    line.
+
+			C-X (
+			C-A
+			*****
+			M-F
+			M-F
+			M-F
+			-----
+			C-N
+			C-X )
+
+>>> Notice that as you typed those  commands in, they were executed.  Now   
+    move  the cursor  down a couple of lines, but keep it near the top of 
+    the  screen.  Type the  command C-U C-X E.  This will  execute your 
+    macro 4 times.
+
+   Although not described here, it is possible  to both name  your macros,
+and to save and restore them from files.  See the documentation for this.
+
+INITIALIZATION FILES
+--------------------
+   You can initialize JOVE just the way you like it by putting a file
+named ".joverc" in your home directory.  To see what this file should
+look like, look at the one in the directory /usr/src/local/jove/doc. The
+file system.rc is one such file, the other example is example.rc. It
+should be noted that the commands in this file contain control
+characters, which may make it hard to read.  Use the "cat -v" command
+for this. 
+
+   To  insert control  characters into  a file with JOVE, you should use 
+the C-Q command.  Type C-Q <X> where <X> is the control character. Note that
+C-Q will not work on some terminals, because it, like C-S, is used for
+suspending and restoring the output to the terminal. In that case, use
+the command M-X quo <space> <X>. 
+
+INTERACTIVE SHELLS
+------------------
+
+   One of JOVE's very powerful features is the ability to start up shells
+within the editor, and then use shell commands within the screen editing 
+environment. To execute a command again, just cursor-up to it, change it if
+you want with all the normal editing keys, and hit RETURN once to bring it
+down to your present command line, and again to execute it. We'll bow out
+here suggesting you consult the manual for hard details, or type M-X shell
+<space> if you are the adventurous type! 
 
 CONCLUSION
 ----------
@@ -583,3 +893,16 @@ You'll probably find that if you use JOVE for a few days you won't
 be able to give it up.  Initially it may give you trouble.  But remember
 that this is the case with any editor, especially one that can do many,
 many things.  And JOVE can do practically everything.
+
+   Hopefully you have enjoyed this tutorial,  and,  more  importantly,  I
+hope you've learned something.  If you use JOVE for about a week, and be
+patient, you will find that it is more convenient  and  friendly  to  use
+than any other editor you've used.  I know.  I did.
+
+---------------------------------------------------------------------------
+This tutorial was originally written by Richard Stallman for EMACS and
+modified by Doug Kingston and Jonathan Payne for JOVE. The section on windows
+was added at UofT by Mark Moraes. Comments on this document should be sent to
+jpayne@cs.rochesteredu. (12 February '86), or locally (at UofT), to 
+moraes@cga.toronto.edu.
+

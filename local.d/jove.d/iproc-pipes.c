@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 #ifdef BSD4_2
 #   include <sys/wait.h>
@@ -12,8 +12,6 @@
 #endif
 #include <signal.h>
 #include <sgtty.h>
-
-typedef struct process	Process;
 
 #define DEAD	1	/* Dead but haven't informed user yet */
 #define STOPPED	2	/* Job stopped */
@@ -25,6 +23,7 @@ typedef struct process	Process;
 #define KILLED	2
 
 #define isdead(p)	(p == 0 || proc_state(p) == DEAD || p->p_toproc == -1)
+#define makedead(p)	(proc_state(p) = DEAD)
 
 #define proc_buf(p)	(p->p_buffer->b_name)
 #define proc_cmd(p)	(p->p_name)
@@ -36,7 +35,7 @@ int	ProcInput,
 	ProcOutput,
 	NumProcs = 0;
 
-static char *
+char *
 pstate(p)
 Process	*p;
 {
@@ -54,12 +53,12 @@ Process	*p;
 		if (p->p_howdied == EXITED) {
 			if (p->p_reason == 0)
 				return "Done";
-			return sprint("[Exit %d]", p->p_reason);
+			return sprint("Exit %d", p->p_reason);
 		}
-		return sprint("[Killed %d]", p->p_reason);
+		return sprint("Killed %d", p->p_reason);
 
 	default:
-		return "Unknown state.";
+		return "Unknown state";
 	}
 }
 
@@ -83,12 +82,12 @@ procs_read()
 	} header;
 	int	n;
 	long	nbytes;
-	static int	here = 0;
+	static int	here = NO;
 
 	if (here)	
 		return;
-	sighold(SIGCHLD);	/* Block any other children. */
-	here++;
+	sighold(SIGCHLD);	/* block any other children */
+	here = YES;
 	for (;;) {
 		(void) ioctl(ProcInput, FIONREAD, (struct sgttyb *) &nbytes);
 		if (nbytes < sizeof header)
@@ -98,8 +97,7 @@ procs_read()
 			finish(1);
 		read_proc(header.pid, header.nbytes);
 	}
-	redisplay();
-	here = 0;
+	here = NO;
 	sigrelse(SIGCHLD);
 }
 
@@ -117,7 +115,7 @@ register int	nbytes;
 	}
 	if (proc_state(p) == NEW) {
 		int	rpid;
-		/* Pid of real child, not of portsrv. */
+		/* pid of real child, not of portsrv */
 
 		doread(ProcInput, (char *) &rpid, nbytes);
 		nbytes -= sizeof rpid;
@@ -125,9 +123,9 @@ register int	nbytes;
 		p->p_state = RUNNING;
 	}
 
-	if (nbytes == EOF) {		/* Okay to clean up this process */
-		p->p_eof = 1;
-		NumProcs--;	/* As far as getch() in main is concerned */
+	if (nbytes == EOF) {		/* okay to clean up this process */
+		proc_close(p);
+		makedead(p);
 		return;
 	}
 
@@ -155,12 +153,19 @@ ProcQuit()
 	proc_kill(curbuf->b_process, SIGQUIT);
 }
 
-static
+private
 proc_close(p)
 Process	*p;
 {
-	(void) close(p->p_toproc);
-	p->p_toproc = -1;	/* Writes will fail. */
+	sighold(SIGCHLD);
+
+	if (p->p_toproc >= 0) {
+		(void) close(p->p_toproc);
+		p->p_toproc = -1;	/* writes will fail */
+		NumProcs -= 1;
+	}
+
+	sigrelse(SIGCHLD);
 }
 
 do_rtp(mp)
@@ -212,12 +217,20 @@ va_dcl
 				   or is of type B_PROCESS */
 	dopipe(toproc);
 
+	sighold(SIGCHLD);
+#ifdef SIGWINCH
+	sighold(SIGWINCH);
+#endif
 	switch (pid = fork()) {
 	case -1:
 		pclose(toproc);
 		complain("[Fork failed.]");
 
 	case 0:
+		sigrelse(SIGCHLD);
+#ifdef SIGWINCH
+		sigrelse(SIGWINCH);
+#endif
 	    	argv[0] = "portsrv";
 	    	argv[1] = foo;
 		sprintf(foo, "%d", ProcInput);
@@ -228,12 +241,11 @@ va_dcl
 		(void) dup2(ProcOutput, 1);
 		(void) dup2(ProcOutput, 2);
 		pclose(toproc);
-		execv(Portsrv, args);
-		printf("Execl failed.\n");
+		execv(Portsrv, argv);
+		printf("execl failed\n");
 		_exit(1);
 	}
 
-	sighold(SIGCHLD);
 	newp = (Process *) malloc(sizeof *newp);
 	newp->p_next = procs;
 	newp->p_state = NEW;
@@ -260,15 +272,17 @@ va_dcl
 	/* Pop_wind() after everything is set up; important!
 	   Bindings won't work right unless newbuf->b_process is already
 	   set up BEFORE NEWBUF is first SetBuf()'d. */
-	newp->p_mark = MakeMark(curline, curchar, FLOATER);
+	newp->p_mark = MakeMark(curline, curchar, M_FLOATER);
 
 	newp->p_toproc = toproc[1];
 	newp->p_reason = 0;
-	newp->p_eof = 0;
-	NumProcs++;
+	NumProcs += 1;
 	(void) close(toproc[0]);
-	sigrelse(SIGCHLD);
 	SetWind(owind);
+	sigrelse(SIGCHLD);
+#ifdef SIGWINCH
+	sigrelse(SIGWINCH);
+#endif
 }
 
 pinit()

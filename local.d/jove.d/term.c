@@ -1,26 +1,35 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 #include "jove.h"
+#include <ctype.h>
 #include <errno.h>
+
+#ifndef MAC	/* most of the file... */
+
+#ifndef MSDOS
 #ifdef SYSV
 #   include <termio.h>
 #else
 #   include <sgtty.h>
-#endif /*SYSV*/
+#endif /* SYSV */
+#endif /* MSDOS */
 
 #ifdef IPROCS
 #   include <signal.h>
 #endif
 
+#define _TERM
+#include "termcap.h"
+
 /* Termcap definitions */
 
-char	*UP,
-	*CS,
+#ifndef IBMPC
+char	*CS,
 	*SO,
 	*SE,
 	*CM,
@@ -40,7 +49,6 @@ char	*UP,
 	*IM,
 	*EI,
 	*LL,
-	*BC,
 	*M_IC,	/* Insert char with arg */
 	*M_DC,	/* Delete char with arg */
 	*M_AL,	/* Insert line with arg */
@@ -48,13 +56,12 @@ char	*UP,
 	*SF,	/* Scroll forward */
 	*SR,
 	*SP,	/* Send Cursor Position */
-#ifdef LSRHS
-	*RS,	/* Reverse video start */
-	*RE,	/* Reverse end */
-#endif
 	*VB,
+	*BL,
 	*IP,	/* insert pad after character inserted */
-	*lPC;
+	*lPC,
+	*NL;
+#endif
 
 int	LI,
 	ILI,	/* Internal lines, i.e., 23 of LI is 24. */
@@ -70,36 +77,37 @@ int	LI,
 	HOlen,
 	LLlen;
 
-#ifdef SYSV /* release 2, at least */
-char PC ;
+extern char	PC,
+		*BC,
+		*UP;
+
+#ifdef notdef
+	/*
+	 * Are you sure about this one Jon?  On the SYSV system I tried this
+	 * on I got a multiple definition of PC because it was already
+	 * defined in -ltermcap.  Similarly for BC and UP ...
+	 */
+#ifdef SYSVR2 /* release 2, at least */
+char	PC;
 #else
 extern char	PC;
-#endif /*SYSV*/
+#endif /* SYSVR2 */
+#endif
 
+#ifndef IBMPC
 static char	tspace[256];
 
 /* The ordering of ts and meas must agree !! */
-#ifdef LSRHS
-static char	*ts="vsvealdlspcssosecmclcehoupbcicimdceillsfsrvbksketiteALDLICDCrsrepcip";
+static char	*ts="vsvealdlspcssosecmclcehoupbcicimdceillsfsrvbksketiteALDLICDCpcipblnl";
 static char	**meas[] = {
 	&VS, &VE, &AL, &DL, &SP, &CS, &SO, &SE,
 	&CM, &CL, &CE, &HO, &UP, &BC, &IC, &IM,
 	&DC, &EI, &LL, &SF, &SR, &VB, &KS, &KE,
 	&TI, &TE, &M_AL, &M_DL, &M_IC, &M_DC,
-	&RS, &RE, &lPC, &IP, 0
+	&lPC, &IP, &BL, &NL, 0
 };
-#else
-static char	*ts="vsvealdlspcssosecmclcehoupbcicimdceillsfsrvbksketiteALDLICDCpcip";
-static char	**meas[] = {
-	&VS, &VE, &AL, &DL, &SP, &CS, &SO, &SE,
-	&CM, &CL, &CE, &HO, &UP, &BC, &IC, &IM,
-	&DC, &EI, &LL, &SF, &SR, &VB, &KS, &KE,
-	&TI, &TE, &M_AL, &M_DL, &M_IC, &M_DC,
-	&lPC, &IP, 0
-};
-#endif
 
-static
+static void
 gets(buf)
 char	*buf;
 {
@@ -108,26 +116,32 @@ char	*buf;
 
 /* VARARGS1 */
 
-static
+static void
 TermError(fmt, a)
 char	*fmt;
 {
 	printf(fmt, a);
+	flusho();
 	_exit(1);
 }
 
+void
 getTERM()
 {
 	char	*getenv(), *tgetstr() ;
 	char	termbuf[13],
-		*termname = 0,
+		*termname = NULL,
 		*termp = tspace,
 		tbuff[2048];	/* Good grief! */
 	int	i;
 
 	termname = getenv("TERM");
-	if (termname == 0) {
-		putstr("Enter terminal name: ");
+	if ((termname == NULL) || (*termname == '\0') ||
+	    (strcmp(termname, "dumb") == 0) ||
+	    (strcmp(termname, "unknown") == 0) ||
+	    (strcmp(termname, "network") == 0)) {
+		putstr("Enter terminal type (e.g, vt100): ");
+		flusho();
 		gets(termbuf);
 		if (termbuf[0] == 0)
 			TermError(NullStr);
@@ -139,10 +153,13 @@ getTERM()
 		TermError("[\"%s\" unknown terminal type?]", termname);
 
 	if ((CO = tgetnum("co")) == -1)
-		TermError("columns?");
+wimperr:	TermError("You can't run JOVE on a %s terminal.\n", termname);
+
+	else if (CO > MAXCOLS)
+		CO = MAXCOLS;
 
 	if ((LI = tgetnum("li")) == -1)
-		TermError("lines?");
+		goto wimperr;
 
 	if ((SG = tgetnum("sg")) == -1)
 		SG = 0;			/* Used for mode line only */
@@ -172,22 +189,77 @@ getTERM()
 
 	UL = tgetflag("ul");
 
-#ifdef LSRHS		/* We, at the high school, are the only ones who
-			   do SO right in termcap, but unfortunately the
-			   right SO doesn't look as good with modelines. */
-	if (RS)
-		SO = RS;
-	if (RE)
-		SE = RE;
-			/* I only ever use SO for the modeline anyway. */
+	if (NL == 0)
+		NL = "\n";
+	else {			/* strip stupid padding information */
+		while (isdigit(*NL))
+			NL += 1;
+		if (*NL == '*')
+			NL += 1;
+	}
 
-/* SO is really BOLDFACE!  Why is LS always right and the rest of the
-   world wrong? */
-#endif
+	if (BL == 0)
+		BL = "\007";
+
 #ifdef ID_CHAR
 	disp_opt_init();
 #endif
 	if (CanScroll = ((AL && DL) || CS))
 		IDline_setup(termname);
 }
+
+#else
+
+void
+InitCM()
+{
+}
+
+int EGA;
+
+void
+getTERM()
+{
+	char	*getenv(), *tgetstr() ;
+	char	*termname;
+    	void	init_43(), init_term();
+	unsigned char lpp(), chpl();
+
+	if (getenv("EGA") || (!stricmp(getenv("TERM"), "EGA"))) {
+	   termname = "ega";
+	   init_43();
+	   EGA = 1;
+	}
+	else {
+	   termname = "ibmpc";
+	   init_term();
+	   EGA = 0;
+	}
+
+	CO = chpl();
+	LI = lpp();
+
+	SG = 0;			/* Used for mode line only */
+	XS = 0;			/* Used for mode line only */
+
+	CanScroll = 1;
+}
+
+#endif /* IBMPC */
+
+#else /* MAC */
+int	LI,
+	ILI,	/* Internal lines, i.e., 23 of LI is 24. */
+	CO,
+	TABS,
+	SG;
+	
+void getTERM()
+{
+	SG = 0;
+	CanScroll = 1;
+}
+
+#endif /* MAC */
+
 

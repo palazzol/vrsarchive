@@ -5,7 +5,7 @@
 jove - an interactive display-oriented text editor
 .SH SYNOPSIS
 .nf
-jove [-d directory] [-w] [-t tag] [+n file] [-p file] [files]
+jove [-d directory] [-w] [-t tag] [+[n] file] [-p file] [files]
 jove -r
 .fi
 .SH DESCRIPTION
@@ -85,7 +85,8 @@ the
 .I n'th
 line instead of the (default) 1'st line.  This can be specified more than
 once but it doesn't make sense to use it twice on the same file; in that
-case the second one wins.
+case the second one wins. If no numeric argument is given after the +,
+the point is positioned at the end of the file.
 .TP
 .I -p
 Parses the error messages in the file designated by the following argument.
@@ -95,18 +96,77 @@ LINT, or GREP output.
 .I -t
 Runs the
 .I find-tag 
-command on the following argument (see ctags(1)).
+command on the string of characters immediately following 
+the -t if there is one (as in -tTagname), or on
+the following argument (as in -t Tagname) otherwise (see ctags(1)).
 .TP
 .I -w
 Divides the window in two.  When this happens, either the same file is
 displayed in both windows, or the second file in the list is read in and
 displayed in its window.
+.SH "RECOVERING BUFFERS AFTER A CRASH"
+The
+.I -r
+option of jove runs the JOVE recover program.  Use this when the system
+crashes, or JOVE crashes, or you accidently get logged out while in JOVE.
+If there are any buffers to be recovered, this will find them.
 .LP
-As a special case, invoking JOVE with the -r option runs the JOVE recover
-program.  Use this when the system crashes, or JOVE crashes, or you
-accidently get logged out while in JOVE.  If there are any buffers to be
-recovered, this will find them.  Read the documentation for RECOVER.
+Recover looks for JOVE buffers that are left around and are
+owned by you.  (You cannot recover other peoples' buffers, obviously.)
+If there were no buffers that were modified at the time of the
+crash or there were but recover can't get its hands on them, you will be
+informed with the message, "There is nothing to recover."  Otherwise,
+recover prints the date and time of the version of the buffers it has,
+and then waits for you type a command.
 .LP
+To get a list of the buffers recover knows about, use the
+.I list
+command.  This will list all the buffers and the files and the number of
+lines associated with them.  Next to each buffer is a number.  When you want
+to recover a buffer, use the
+.I get
+command.  The syntax is
+.I get buffer filename
+where
+.I buffer
+is either the buffer's name or the number at the beginning of the line.  If
+you don't type the buffer name or the filename, recover will prompt you
+for them.
+.LP
+If there are a lot of buffers and you want to recover all of them, use the
+.I recover
+command.  This will recover each buffer to the name of the buffer with ".#"
+prepended to the name (so that the original isn't over-written).  It asks
+for each file and if you want to restore that buffer to that name you type
+"yes".  If you want to recover the file but to a different name, just type
+the new name in.  If you type "no" recover will skip that file and go on
+to the next one.
+.LP
+If you want to look at a buffer before deciding to recover it, use the
+.I print
+command.  The syntax for this is
+.I print buffer
+where
+.I buffer
+again is either its name or the number.  You can type ^C if you want to
+abort printing the file to the terminal, and recover will respond with
+an appropriate message.
+.LP
+When you're done and have all the buffers you want, type the
+.I quit
+command to leave.  You will then be asked whether it's okay to delete the
+tmp files.  Most of the time that's okay and you should type "yes".  When
+you say that, JOVE removes all traces of those buffers and you won't be able
+to look at them again.  (If you recovered some buffers they will still be
+around, so don't worry.)  So, if you're not sure whether you've gotten all
+the buffers, you should answer "no" so that you'll be able to run
+recover again at a later time (presumably after you've figured out
+which ones you want to save).
+.LP
+If you type ^C at any time other than when you're printing a file to the
+terminal, recover will exit without a word.  If you do this but wish you
+hadn't, just type "jove -r" to the shell again, and you will be put back
+with no loss.
 .SH GETTING HELP
 Once in JOVE, there are several commands available to get help.  To execute
 any JOVE command, you type "<ESC> X command-name" followed by <Return>.  To

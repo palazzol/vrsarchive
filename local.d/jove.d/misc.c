@@ -1,9 +1,9 @@
-/************************************************************************
- * This program is Copyright (C) 1986 by Jonathan Payne.  JOVE is       *
- * provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is *
- * included in all the files.                                           *
- ************************************************************************/
+/***************************************************************************
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
+ * is provided to you without charge, and with no warranty.  You may give  *
+ * away copies of JOVE, including sources, provided that this notice is    *
+ * included in all the files.                                              *
+ ***************************************************************************/
 
 #include "jove.h"
 #include "ctype.h"
@@ -12,154 +12,25 @@
 #include "termcap.h"
 #endif
 
-Digit()
-{
-	GetExp(LastKeyStruck);
-}
-
-Digit0()
-{
-	GetExp('0');
-}
-
-Digit1()
-{
-	GetExp('1');
-}
-
-Digit2()
-{
-	GetExp('2');
-}
-
-Digit3()
-{
-	GetExp('3');
-}
-
-Digit4()
-{
-	GetExp('4');
-}
-
-Digit5()
-{
-	GetExp('5');
-}
-
-Digit6()
-{
-	GetExp('6');
-}
-
-Digit7()
-{
-	GetExp('7');
-}
-
-Digit8()
-{
-	GetExp('8');
-}
-
-Digit9()
-{
-	GetExp('9');
-}
-
+void
 prCTIME()
 {
 	s_mess(": %f %s", get_time((time_t *) 0, (char *) 0, 0, -1));
 }
 
-extern int	alarmed;
-
-FourTime()
-{
-	int	oldc = LastKeyStruck,
-		newc;
-	int	nexp;
-
-	alarmed = 0;
-	exp_p = YES;
-	this_cmd = ARG_CMD;
-	do {
-		if ((nexp = exp * 4) != 0)
-			exp = nexp;
-		if (!alarmed)
-			newc = waitchar();
-		else
-			newc = getch();
-		if (alarmed)
-			message(key_strokes);
-	} while (newc == oldc);
-	Ungetc(newc);
-}
-
-int	exp_p,
-	exp;
-
-GetExp(c)
-{
-	int	sign = 0;
-	static int	digited;
-
-	if (!isdigit(c) && c != '-')
-		complain((char *) 0);
-	if (exp_p == NO) {	/* if we just got here */
-		exp = 0;	/* start over */
-		digited = NO;
-	} else if (exp_p == YES_NODIGIT) {
-		sign = (exp < 0) ? -1 : 1;
-		exp = 0;
-	}
-
-	if (!sign)
-		sign = (exp < 0) ? -1 : 1;
-	if (sign == -1)
-		exp = -exp;
-	if (c == '-') {
-		sign = -sign;
-		goto goread;
-	}
-	for (;;) {
-		if (alarmed)
-			message(key_strokes);
-		if (isdigit(c)) {
-			exp = (exp * 10) + (c - '0');
-			digited++;
-		} else {
-			if (digited)
-				exp_p = YES;
-			else {
-				exp = 1;
-				if (exp_p == NO)
-					exp_p = YES_NODIGIT;
-			}
-			exp *= sign;
-			this_cmd = ARG_CMD;
-			Ungetc(c);
-			return;
-		}
-goread:		if (!alarmed)
-			c = waitchar();
-		else {
-			add_mess(NullStr);
-			c = getch();
-		}
-	}
-}
-
+void
 ChrToOct()
 {
-	int	c;
+	int	c,
+		slow;
 
-	c = waitchar();
-	if (alarmed)
+	c = waitchar(&slow);
+	if (slow)
 		message(key_strokes);
 	ins_str(sprint("\\%03o", c), NO);
 }
 
+void
 StrLength()
 {
 	static char	inquotes[] = "Where are the quotes?";
@@ -170,61 +41,62 @@ StrLength()
 
 	if (first == 0 || last == 0)
 		complain(inquotes);
-	first++;
+	first += 1;
 	while (first < last) {
 		c = *first++;
 		if (c == '\\') {
 			int	num;
 
 			if (!isdigit(*first))
-				++first;
+				first += 1;
 			else {
 				num = 3;
 				while (num-- && isdigit(*first++) && first < last)
 					;
 			}
 		}
-		numchars++;
+		numchars += 1;
 	}
 	s_mess("%d characters", numchars);
 }
 
 /* Transpos cur_char with cur_char - 1 */
 
+void
 TransChar()
 {
 	char	before;
 
 	if (curchar == 0 || (eolp() && curchar == 1))
 		complain((char *) 0);	/* BEEP */
-	exp = 1;
 	if (eolp())
-		BackChar();
+		b_char(1);
 	before = linebuf[curchar - 1];
-	DelPChar();
-	ForChar();
-	Insert(before);
+	del_char(BACKWARD, 1);
+	f_char(1);
+	insert_c(before, 1);
 }
 
 /* Switch current line with previous one */
 
+void
 TransLines()
 {
 	disk_line	old_prev;
 
 	if (firstp(curline))
 		return;
-	exp = 1;
 	lsave();
 	old_prev = curline->l_prev->l_dline;
 	curline->l_prev->l_dline = curline->l_dline;
 	curline->l_dline = old_prev;
 	getDOT();
 	if (!lastp(curline))
-		line_move(FORWARD, NO);
+		line_move(FORWARD, 1, NO);
 	modify();
 }
 
+void
 Leave()
 {
 	longjmp(mainjmp, QUIT);
@@ -235,18 +107,20 @@ Leave()
    right of the cursor is white space, we delete the line separator
    as if we were at the end of the line. */
 
+void
 KillEOL()
 {
 	Line	*line2;
 	int	char2;
+	int	num = arg_value();
 
-	if (exp_p) {
-		if (exp == 0) {	/* Kill to beginning of line */
+	if (is_an_arg()) {
+		if (num == 0) {	/* Kill to beginning of line */
 			line2 = curline;
 			char2 = 0;
 		} else {
-			line2 = next_line(curline, exp);
-			if ((LineDist(curline, line2) < exp) || (line2 == curline))
+			line2 = next_line(curline, num);
+			if ((LineDist(curline, line2) < num) || (line2 == curline))
 				char2 = length(line2);
 			else
 				char2 = 0;
@@ -264,16 +138,18 @@ KillEOL()
 	reg_kill(line2, char2, 0);
 }
 
-/* Kill to beginning of sentence */
+/* kill to beginning of sentence */
 
+void
 KillBos()
 {
-	exp = -exp;
+	negate_arg_value();
 	KillEos();
 }
 
 /* Kill to end of sentence */
 
+void
 KillEos()
 {
 	Line	*line1;
@@ -285,6 +161,7 @@ KillEos()
 	reg_kill(line1, char1, 1);
 }
 
+void
 KillExpr()
 {
 	Line	*line1;
@@ -296,35 +173,40 @@ KillExpr()
 	reg_kill(line1, char1, 1);
 }
 
+void
 EscPrefix()
 {
 	HandlePref(pref1map);
 }
 
+void
 CtlxPrefix()
 {
 	HandlePref(pref2map);
 }
 
+void
 MiscPrefix()
 {
 	HandlePref(miscmap);
 }
 
+void
 HandlePref(map)
 data_obj	**map;
 {
 	register data_obj	*cp;
 	register int	c;
+	int	slow;
 
-	c = waitchar();
-	if (c == CTL(G)) {
+	c = waitchar(&slow);
+	if (c == AbortChar) {
 		message("[Aborted]");
 		rbell();
 		return;
 	}
 
-	if (alarmed)
+	if (slow)
 		message(key_strokes);
 
 	cp = map[c];
@@ -335,6 +217,7 @@ data_obj	**map;
 		ExecCmd(cp);
 }
 
+void
 Yank()
 {
 	Line	*line,
@@ -348,18 +231,20 @@ Yank()
 	line = killbuf[killptr];
 	lp = lastline(line);
 	dot = DoYank(line, 0, lp, length(lp), curline, curchar, curbuf);
-	SetMark();
+	set_mark();
 	SetDot(dot);
 }
 
+void
 WtModBuf()
 {
 	if (!ModBufs(NO))
 		message("[No buffers need saving]");
 	else
-		put_bufs(exp_p);
+		put_bufs(is_an_arg());
 }
 
+void
 put_bufs(askp)
 {
 	register Buffer	*oldb = curbuf,	
@@ -380,13 +265,18 @@ put_bufs(askp)
 		if (askp && (yes_or_no_p("Write %s? ", curbuf->b_fname) == NO))
 			continue;
 		filemunge(curbuf->b_fname);
+#ifndef MAC
+#ifndef MSDOS
 		chk_mtime(curbuf, curbuf->b_fname, "save");
+#endif /* MSDOS */
+#endif /* MAC */
 		file_write(curbuf->b_fname, 0);
 		unmodify();
 	}
 	SetBuf(oldb);
 }
 
+void
 ToIndent()
 {
 	register char	*cp,
@@ -398,31 +288,37 @@ ToIndent()
 	curchar = cp - linebuf;
 }
 
+/* GoLine -- go to a line, usually wired to goto-line, ESC g or ESC G.
+   If no argument is specified it asks for a line number. */
+void
 GoLine()
 {
-	Line	*newline;
+  	Line	*newline;
 
 #ifndef ANSICODES
-	if (exp_p == NO)
-		return;
-#else
-	if (exp_p == NO || exp <= 0) {
-		if (SP)
-			putpad(SP, 1);	/* Ask for cursor position */
-		return;
-	}
-#endif
-	newline = next_line(curbuf->b_first, exp - 1);
-	PushPntp(newline);
-	SetLine(newline);
+ 	if (!is_an_arg())
+ 		set_arg_value(ask_int("Line: ",10));
+#else /* not ANSICODES */
+ 	if (!is_an_arg() || arg_value() <= 0) {
+  		if (SP) {
+  			putpad(SP, 1);	/* Ask for cursor position */
+			return;
+		}
+ 		set_arg_value(ask_int("Line: ", 10));
+  	}
+#endif /* ANSICODES */
+ 	newline = next_line(curbuf->b_first, arg_value() - 1);
+  	PushPntp(newline);
+  	SetLine(newline);
 }
 
 #ifdef ANSICODES
+void
 MoveToCursor(line, col)
 {
 	register struct scrimage *sp = &PhysScreen[line];
 
-	while (sp->s_id == NULL)
+	while (sp->s_id == 0)
 		sp = &PhysScreen[--line];
 	if (sp->s_flags & MODELINE)
 		complain((char *) 0);
@@ -432,6 +328,7 @@ MoveToCursor(line, col)
 	curchar = how_far(sp->s_lp, col);
 }
 
+void
 AnsiCodes()
 {
 	int	c;
@@ -440,29 +337,30 @@ AnsiCodes()
 	static char *unsupported = "[Unsupported ANSI code received]";
 
 	while (isdigit(c = getch()))
-		num1 = (num1*10) + (c - '0');
+		num1 = (num1 * 10) + (c - '0');
 
 	switch (c) {
 	case ';':
 		num2 = 0;
 		while (isdigit(c = getch()))
-			num2 = (num2*10) + (c - '0');
+			num2 = (num2 * 10) + (c - '0');
 		switch (c) {
 		case 'R':
 			MoveToCursor(--num1, --num2);
 			break;
 		case 'H':
-			Eow(); Bol();
+			Eow();
+			Bol();
 			break;
 		default:
 			complain(unsupported);
 		}
 		break;
 	case 'A':
-		line_move(BACKWARD, YES);
+		PrevLine();
 		break;
 	case 'B':
-		line_move(FORWARD, YES);
+		NextLine();
 		break;
 	case 'C':
 		ForChar();
@@ -478,23 +376,108 @@ AnsiCodes()
 			ClAndRedraw();
 			break;
 		}
-		/* FALL THROUGH */
+	case 'z':	/* Sun function keys send <esc>[Nz */
+		switch(num1) {
+			case 193:	/* L2 */
+				SetMark();
+				break;
+			case 194:	/* L3 */
+				PopMark();
+				break;
+			case 195:	/* L4 */
+				DelReg();
+				break;
+			case 208:	/* R1 */
+				QRepSearch();
+				break;
+			case 209:	/* R2 */
+				IncFSearch();
+				break;
+			case 210:	/* R3 */
+				WtModBuf();
+				break;
+			case 211:	/* R4 */
+				RepSearch();
+				break;
+			case 212:	/* R5 */
+				IncRSearch();
+				break;
+			case 213:	/* R6 */
+				Leave();
+				break;
+			case 214:	/* R7 */
+				BackWord();
+				break;
+			case 215:	/* R8 == UpArrow */
+				break;
+			case 216:	/* R9 */
+				ForWord();
+				break;
+			case 217:	/* R10 == LeftArrow */
+				break;
+			case 218:	/* R11 */
+				NextWindow();
+				break;
+			case 219:	/* R12 == RightArrow */
+				break;
+			case 220:	/* R13 */
+			case 221:	/* R14 == DownArrow */
+				break;
+			case 222:	/* R15 */
+			case 225:	/* F2 */
+			case 226:	/* F3 */
+			case 227:	/* F4 */
+				break;
+			case 228:	/* F5 */
+				break;
+			case 229:	/* F6 */
+				break;
+			case 230:	/* F7 */
+				break;
+			case 231:	/* F8 */
+				break;
+			case 232:	/* F9 */
+				break;
+			default:
+				num1 = -1;	/* Hack flags failure */
+				break;
+		}
+		if (num1 >= 0)
+			break;
+	case 'P':
+		PrevPage();
+		break;
+
+	case 'Q':
+		NextPage();
+		break;
+
+	case 'R':
+		UpScroll();
+		break;
+
+	case 'S':
+		DownScroll();
+		break;
 	default:
 		complain(unsupported);
 	}
 }
-#endif /*ANSICODES*/
+#endif /* ANSICODES */
 
+void
 NotModified()
 {
 	unmodify();
 }
 
+void
 SetLMargin()
 {
 	LMargin = calc_pos(linebuf, curchar);
 }
 
+void
 SetRMargin()
 {
 	RMargin = calc_pos(linebuf, curchar);
