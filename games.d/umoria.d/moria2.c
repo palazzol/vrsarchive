@@ -707,7 +707,7 @@ unsigned int flags;
 int mon_take_hit(monptr, dam)
 int monptr, dam;
 {
-  int i;
+  long int i;
   double acc_tmp;
   monster_type *m_ptr;
   struct misc *p_ptr;
@@ -723,7 +723,7 @@ int monptr, dam;
       c_ptr = &c_list[m_ptr->mptr];
       p_ptr = &py.misc;
       acc_tmp = c_ptr->mexp*((c_ptr->level+0.1)/p_ptr->lev);
-      i = (int)(acc_tmp);
+      i = acc_tmp;
       acc_exp += (acc_tmp - i);
       if (acc_exp > 1) 
 	{
