@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/diffc.d/makefile,v 1.1 1988-01-03 15:16:11 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/diffc.d/makefile,v 1.2 1990-03-30 17:02:43 vrs Exp $
 #
 MODEL	= -i
 OPTIONS	= -O
 ALL	= diffc
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(BINDIR) $(MAN1)
 	cp $(ALL) $(BINDIR)

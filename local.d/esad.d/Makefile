@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/esad.d/Makefile,v 1.1 1987-02-15 16:06:24 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/esad.d/Makefile,v 1.2 1990-03-30 17:02:48 vrs Exp $
 #
 ALL	= esad
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(ETC) $(MAN8)
 	cp $(ALL) $(ETC)

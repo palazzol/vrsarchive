@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/umodem.d/Makefile,v 1.1 1987-02-13 11:16:26 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/umodem.d/Makefile,v 1.2 1990-03-30 17:03:43 vrs Exp $
 #
 ALL	= umodem
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(MAN1) $(BINDIR)
 	cp $(ALL) $(BINDIR)

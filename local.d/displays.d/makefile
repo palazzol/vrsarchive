@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.3 1987-07-26 13:15:15 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.4 1990-03-30 17:02:44 vrs Exp $
 #
 ALL	= displays
 OPTIONS	= -O
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 SRCS	= keyboard.c main.c pdisplay.c pipe.c pty.c vdisplay.c
 OBJS	= $(SRCS:.c=.o)
 

@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/tpr.d/makefile,v 1.2 1987-02-15 16:00:02 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/tpr.d/makefile,v 1.3 1990-03-30 17:03:40 vrs Exp $
 #
 ALL	= tpr
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 OBJS	= tpr0.o tpr1.o itoeng.o
 
 tpr:	$(OBJS)

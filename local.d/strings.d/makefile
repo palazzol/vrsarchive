@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/strings.d/makefile,v 1.1 1987-02-15 16:06:35 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/strings.d/makefile,v 1.2 1990-03-30 17:03:33 vrs Exp $
 #
 ALL	= strings
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(MAN1) $(BINDIR)
 	cp $(ALL) $(BINDIR)

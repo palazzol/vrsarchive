@@ -1,7 +1,7 @@
 MODEL	= -i
 OPTIONS	= -O
 ALL	= cursive
-include ../../CONFIG
+include /etc/CONFIG
 OBJ	= cursive.o font.o
 
 cursive: $(OBJ)

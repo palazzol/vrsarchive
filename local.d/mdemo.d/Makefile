@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/mdemo.d/Makefile,v 1.5 1987-02-15 15:54:39 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/mdemo.d/Makefile,v 1.6 1990-03-30 17:03:04 vrs Exp $
 #
 ALL	= mdemo
 MODEL	= -M2e -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 install:	$(ALL) $(BINDIR)
 		cp $(ALL) $(BINDIR)

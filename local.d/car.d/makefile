@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/car.d/makefile,v 1.1 1987-02-15 16:05:53 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/car.d/makefile,v 1.2 1990-03-30 17:02:27 vrs Exp $
 #
 ALL	= car
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(MAN1) $(BINDIR)
 	cp $(ALL) $(BINDIR)

@@ -11,7 +11,7 @@ TERMDIR	= $(ROOT)/usr/lib/term
 LINTTAB	= $(TABLES)
 OPTIONS	= -O
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 
 .c:
 	@$(MAKE) dummy_file $@.o

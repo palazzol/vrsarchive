@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/roff.d/makefile,v 1.2 1987-02-15 15:58:56 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/roff.d/makefile,v 1.3 1990-03-30 17:03:23 vrs Exp $
 #
 ALL	= roff
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 lint:
 	lint roff.c | tee lint.out

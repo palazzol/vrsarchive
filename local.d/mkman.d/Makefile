@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/mkman.d/Makefile,v 1.1 1987-02-10 12:53:20 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/mkman.d/Makefile,v 1.2 1990-03-30 17:03:05 vrs Exp $
 #
 ALL	= mkman
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)

@@ -1,7 +1,10 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/pat/Makefile,v 1.3 1987-02-13 10:07:58 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/pat/Makefile,v 1.4 1990-03-30 17:03:30 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Version 1.3  87/02/13  10:07:58  vrs
+# Use CONFIG
+# 
 # Version 1.2  87/02/07  20:31:12  vrs
 # Need to include ../flags
 # 
@@ -17,7 +20,7 @@
 ALL	= libpat.a
 MODEL	= -M2l
 OPTIONS = -O `cat ../flags`
-include ../../../CONFIG
+include /etc/CONFIG
 
 PR=pr
 

@@ -1,6 +1,6 @@
 #	Makefile for some of cake's auxiliary programs
 ALL = base ccincl later need needed sub subcmd usrc gsrc
-include ../../../CONFIG
+include /etc/CONFIG
 
 all:		$(PROGS)
 

@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.2 1987-02-15 16:04:05 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.3 1990-03-30 17:03:52 vrs Exp $
 #
 ALL	= xmodrec xmodtran addcr delcr cr2lf lf2cr
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 FILES	= receive.c transmit.c addcr.c delcr.c add.c del.c\
           lf2cr.c cr.c lf.c cr2lf.c
 OBJS	= receive.o transmit.o addcr.o delcr.o add.o del.o\

@@ -1,7 +1,7 @@
 ALL	= dithds
 OPTIONS	= -O
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 SRCS	= dithds.c dithds.lib.c
 OBJS	= $(SRCS:.c=.o)
 

@@ -1,7 +1,7 @@
 ALL	= emacs
 OPTIONS	= -O
 MODEL	= -M2l -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 OFILES	= ansi.o basic.o bind.o buffer.o crypt.o dg10.o \
 	  display.o eval.o exec.o file.o fileio.o \

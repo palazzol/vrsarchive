@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/news.misc.d/ngstats.d/Makefile,v 1.3 1987-02-15 20:47:06 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/news.misc.d/ngstats.d/Makefile,v 1.4 1990-03-30 17:03:11 vrs Exp $
 #
 ALL	= ngstats
 MODEL	= -i
 OPTIONS	= -O -I. -DSPOOLDIR=\"$(SPOOLN)\" -DACTIVE=\"$(LIBNEWS)/active\"
-include ../../../CONFIG
+include /etc/CONFIG
 DIROBJ	= closedir.o opendir.o readdir.o seekdir.o telldir.o
 OBJS	= ngstats.o sysname.o
 

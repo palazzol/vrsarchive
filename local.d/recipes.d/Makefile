@@ -1,8 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/local.d/recipes.d/Makefile,v 1.4 1987-02-15 20:39:28 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/recipes.d/Makefile,v 1.5 1990-03-30 17:03:20 vrs Exp $
 #
 ALL	= configure
-include ../../CONFIG
+include /etc/CONFIG
 # mod.recipes software Makefile for USG systems.
 # To install, edit the following variables, then type "make install"
 #

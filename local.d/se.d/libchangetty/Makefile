@@ -1,7 +1,10 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.3 1987-02-13 10:07:49 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.4 1990-03-30 17:03:28 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Version 1.3  87/02/13  10:07:49  vrs
+# Use CONFIG
+# 
 # Version 1.2  87/02/07  20:27:48  vrs
 # Look for ranlib in both /bin and /usr/bin
 # 
@@ -17,7 +20,7 @@
 ALL	= libchangetty.a
 MODEL	= -M2l
 OPTIONS	= -O `cat ../flags`
-include ../../../CONFIG
+include /etc/CONFIG
 SRCS	= changetty.c
 OBJS	= changetty.o
 PRINTS	= $(SRCS) Makefile

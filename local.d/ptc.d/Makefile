@@ -4,7 +4,7 @@
 MODEL	= -M2l
 OPTIONS	= -O
 ALL	= test
-include ../../CONFIG
+include /etc/CONFIG
 FILES	= makefile ptc.p ptc.c ptc doc.ms doc.out ptc.man man.out
 #
 #	Build the bootstrap translator

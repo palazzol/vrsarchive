@@ -17,7 +17,7 @@
 #   buildhash <infile> <outfile>
 OPTIONS = -O -DUSG
 ALL	= ispell.hash fixdict ispell icombine munchlist isexpand $(DEFHASH)
-include ../../CONFIG
+include /etc/CONFIG
 # BINDIR, LIBDIR, DEFHASH, DEFDICT, MAN1DIR, MAN4DIR, MAN1EXT, MAN4EXT,
 # LIBS
 DEFHASH = ispell.hash

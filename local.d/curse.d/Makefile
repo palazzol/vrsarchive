@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/curse.d/Makefile,v 1.2 1987-02-15 15:52:19 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/curse.d/Makefile,v 1.3 1990-03-30 17:02:38 vrs Exp $
 #
 ALL	= curse
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(BINDIR) $(MAN1)
 	cp $(ALL) $(BINDIR)

@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.2 1987-02-15 15:54:19 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.3 1990-03-30 17:03:01 vrs Exp $
 #
 ALL	= less
 OPTIONS = "-Doff_t=$(off_t)" "-DVOID=$(VOID)" \
@@ -9,7 +9,7 @@ OPTIONS = "-Doff_t=$(off_t)" "-DVOID=$(VOID)" \
 	  "-DONLY_RETURN=$(ONLY_RETURN)" \
 	  "-DOLD_PAGER_NEW_LOCATION=\"$(OLD_PAGER_NEW_LOCATION)\"" -O
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 #
 # Makefile for "less"
 #

@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/copymode.d/makefile,v 1.1 1987-02-15 16:06:15 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/copymode.d/makefile,v 1.2 1990-03-30 17:02:32 vrs Exp $
 #
 ALL	= copymode
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(MAN1) $(BINDIR)
 	cp $(ALL) $(BINDIR)

@@ -1,6 +1,6 @@
 MACROS	= tmac.emo tmac.key tmac.onth tmac.slide tmac.status
 PAGES	= memo.7
-include ../../CONFIG
+include /etc/CONFIG
 
 clean:
 

@@ -1,5 +1,5 @@
 #
-# $Header: /home/Vince/cvs/local.d/cxref.d/makefile,v 1.2 1987-02-15 15:52:28 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/cxref.d/makefile,v 1.3 1990-03-30 17:02:41 vrs Exp $
 # makefile for cxref -- C cross referencing program
 #
 # Arnold Robbins, Information and Computer Science, Georgia Tech
@@ -12,7 +12,7 @@
 ALL	= cxref docxref fmtxref cxrfilt
 MODEL	= -i
 OPTIONS	= -O -DSRCDIR='"$(LIBDIR)"'
-include ../../CONFIG
+include /etc/CONFIG
 
 SCANOBJS = docxref.o cscan.o
 SCANSRCS = docxref.c cscan.l

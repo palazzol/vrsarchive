@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/which.d/makefile,v 1.1 1987-02-15 16:06:44 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/which.d/makefile,v 1.2 1990-03-30 17:03:51 vrs Exp $
 #
 ALL	= which
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(BINDIR) $(MAN1)
 	cp $(ALL) $(BINDIR)

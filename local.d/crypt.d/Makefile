@@ -3,7 +3,7 @@ OPTIONS	= -O
 MODEL	= -M2l
 CBWLIB	= $(LIBDIR)/cbw
 WRDLST	= /usr/dict/words
-include ../../CONFIG
+include /etc/CONFIG
 
 # Object files for for the workbench.
 CBOBJ	= pword.o lpair.o approx.o eclass.o cipher.o char-io.o tritab.o \
@@ -19,7 +19,7 @@ cbw: start.o $(CBOBJ)
 	$(CC) $(CFLAGS) $(CFLAGS) start.o $(CBOBJ) $(LIBS) -o $@
 
 # Friendly interface to cbw
-decrypt: decrypt.sh ../../CONFIG Makefile
+decrypt: decrypt.sh /etc/CONFIG Makefile
 	sed '/^CBWLIB=/c\
 CBWLIB=$(CBWLIB)' decrypt.sh > $@
 

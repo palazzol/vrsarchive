@@ -4,7 +4,7 @@
 ALL	= arc
 OPTIONS	= -O
 MODEL	= -M2l
-include ../../CONFIG
+include /etc/CONFIG
 OBJS = arc.o arcadd.o arccode.o arccvt.o arcdel.o arcdos.o \
        arcext.o arcio.o arclst.o arclzw.o arcmatch.o arcmisc.o \
        arcpack.o arcsq.o arcsvc.o arctst.o arcunp.o arcusq.o

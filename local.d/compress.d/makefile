@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/compress.d/makefile,v 1.2 1987-02-15 15:49:49 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/compress.d/makefile,v 1.3 1990-03-30 17:02:30 vrs Exp $
 #
 MODEL	= -i -F 3000
 OPTIONS	= -O -DSHORT_INT
 ALL	= compress
-include ../../CONFIG
+include /etc/CONFIG
 
 compress.o: compress.c USERMEM
 	cc -c $(CFLAGS) compress.c

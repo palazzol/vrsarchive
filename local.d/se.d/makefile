@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.6 1987-12-26 20:57:23 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.7 1990-03-30 17:03:26 vrs Exp $
 # 
 DOCS= Makefile README
 MANS= scriptse.1 se.1
@@ -7,9 +7,12 @@ BINS= se scriptse
 ALL	= $(BINS) $(MANS)
 MODEL	= -M2l
 OPTIONS	= -O `cat flags`
-include ../../CONFIG
+include /etc/CONFIG
 #
 # $Log: not supported by cvs2svn $
+# Version 1.6  87/12/26  20:57:23  vrs
+# Get $(NROFF) from CONFIG
+# 
 # Version 1.5  87/02/15  20:42:07  vrs
 # Need to make clean in se_h too
 # 

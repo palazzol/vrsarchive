@@ -1,7 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/patch.d/makefile,v 1.7 1987-02-15 15:58:02 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/patch.d/makefile,v 1.8 1990-03-30 17:03:14 vrs Exp $
 #
 # $Log: not supported by cvs2svn $
+# Version 1.7  87/02/15  15:58:02  vrs
+# Use CONFIG
+# 
 # Version 1.6  86/12/23  14:17:21  vrs
 # Check in patch version 2.0
 # 
@@ -19,7 +22,7 @@ OPTIONS	= -O
 public	= patch
 private	= 
 ALL	= $(public) $(private)
-include ../../CONFIG
+include /etc/CONFIG
 manext = 1
 manpages = patch.man
 

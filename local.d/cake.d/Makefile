@@ -1,11 +1,11 @@
 #	Makefile for Cake
 #
-#	$Header: /home/Vince/cvs/local.d/cake.d/Makefile,v 1.2 1987-11-18 08:57:41 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/cake.d/Makefile,v 1.3 1990-03-30 17:02:23 vrs Exp $
 ALL	= Aux.make cake
 OPTIONS = -DNOFILE=20 -DCAREFUL -DCAKELIB=\"$(CAKELIB)
 # -DCAKEDEBUG -DYYDEBUG
 MODEL	= -i -F 3000
-include ../../CONFIG
+include /etc/CONFIG
 CAKELIB	= $(LIBDIR)/lib
 HDR	= cake.h conf.h port.h
 SRC	= act.c chase.c entry.c error.c expand.c file.c \

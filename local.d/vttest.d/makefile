@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/vttest.d/makefile,v 1.2 1987-02-15 16:03:42 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/vttest.d/makefile,v 1.3 1990-03-30 17:03:48 vrs Exp $
 #
 ALL	= vttest
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL)
 	cp $(ALL) $(BINDIR)

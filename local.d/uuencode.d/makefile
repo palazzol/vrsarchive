@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/uuencode.d/makefile,v 1.1 1987-12-26 01:50:58 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/uuencode.d/makefile,v 1.2 1990-03-30 17:03:45 vrs Exp $
 #
 ALL	= uuencode uudecode
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)

@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ash.d/Makefile,v 1.3 1987-06-21 21:51:54 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/ash.d/Makefile,v 1.4 1990-03-30 17:02:19 vrs Exp $
 #
 ALL	= ash ash.has
 OPTIONS	= -O
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
 	cp ash $(BINDIR)

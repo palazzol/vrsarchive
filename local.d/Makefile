@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.10 1990-02-27 10:57:23 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.11 1990-03-30 17:02:13 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
@@ -17,7 +17,7 @@ M0755	= backup datefudge dirsort dtgt dtree getto islide makewhatis \
 	  phc ports slide vslide
 M4711	= cbuf cmap # smap
 ALL	= $(SUBDIR) $(M0700) $(M0711) $(M0755) $(M4711)
-include ../CONFIG
+include /etc/CONFIG
 
 makewhatis: makewhatis.sh
 	sed '/^MANDIR/,/^WHATIS/c\

@@ -1,7 +1,7 @@
 ALL	= wart kermit
 OPTIONS	= -O -DUXIII -DDEBUG -DTLOG
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 kermit:	wermit
 	ln $? $@
 install: $(ALL)
