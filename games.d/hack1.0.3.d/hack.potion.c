@@ -200,7 +200,7 @@ pluslvl()
 		extern long newuexp();
 
 		u.uexp = newuexp()+1;
-		pline("Welcome to experience level %u.", ++u.ulevel);
+		pline("Welcome to experience level %u.", u.ulevel=u.ulevel+1);
 	}
 	flags.botl = 1;
 }
@@ -300,14 +300,14 @@ register struct obj *obj;
 	switch(obj->otyp) {
 	case POT_RESTORE_STRENGTH:
 	case POT_GAIN_STRENGTH:
-		if(u.ustr < u.ustrmax) u.ustr++, flags.botl = 1;
+		if(u.ustr < u.ustrmax) u.ustr=u.ustr+1, flags.botl = 1;
 		break;
 	case POT_HEALING:
 	case POT_EXTRA_HEALING:
-		if(u.uhp < u.uhpmax) u.uhp++, flags.botl = 1;
+		if(u.uhp < u.uhpmax) u.uhp=u.uhp+1, flags.botl = 1;
 		break;
 	case POT_SICKNESS:
-		if(u.uhp <= 5) u.uhp = 1; else u.uhp -= 5;
+		if(u.uhp <= 5) u.uhp = 1; else u.uhp = u.uhp - 5;
 		flags.botl = 1;
 		break;
 	case POT_CONFUSION:
