@@ -15,7 +15,7 @@
 
 #ifndef VTREKINS
 #define VTREKINS	"vtrek.doc"	/* instructions */
-#endif  VTREKINS
+#endif
 #define ERROR		-1
 #define PI		3.1415926
 #define Toupper(x)	(islower(x) ? toupper(x) : x)
