@@ -1424,11 +1424,15 @@ readmessage()
 /	Print message about offending file, and exit.
 /
 /************************************************************************/
+#ifdef __STDC__
+#include <errno.h>
+#else
+extern int errno;
+#endif
 
 error(whichfile)
 char	*whichfile;
 {
-	extern int errno;
 
     if (Windows)
 	{
