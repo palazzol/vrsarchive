@@ -11,18 +11,22 @@
 #include "../h/mh.h"
 #include <stdio.h>
 
-#if defined (BSD42)  || defined (hpux) || defined(__STDC__)
-#include <errno.h>
-#include <sys/param.h>
-#include <sys/file.h>
-#endif BDS42
-#if defined(__STDC__)
-#include <unistd.h>
-#endif __STDC__
 #ifdef	SYS5DIR
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif	SYS5DIR
+#if defined (BSD42)  || defined (hpux) || defined(SYS5)
+#include <errno.h>
+#include <sys/param.h>
+#include <sys/file.h>
+#endif BDS42
+#if defined(SYS5)
+#include <limits.h>
+#include <unistd.h>
+#ifndef MAXPATHLEN
+#define MAXPATHLEN PATH_MAX
+#endif
+#endif SYS5
 
 extern int  errno;
 	
@@ -91,4 +95,3 @@ register char *dir;
     (void) chmod (dir, atooi (cp));
     return 1;
 }
-
