@@ -1,35 +1,27 @@
 #
-#	12/23/85	@(#)Makefile	1.2
+#	$Header: /home/Vince/cvs/games.d/mazewar.d/Makefile,v 1.4 1987-06-08 22:03:15 vrs Exp $
 #
-SHELL	= /bin/sh
-GAMDIR	= $(DESTDIR)/usr/games
-GAMLIB	= $(GAMDIR)/lib
-USRMAN	= $(DESTDIR)/usr/man
-MANDIR	= $(USRMAN)/man6
-FDEFS	= -DLIBDIR=\"$(GAMLIB)\" -DOBJECTFILE=\"$(GAMLIB)/objects.war\"
-CFLAGS	= $(FDEFS) -O -Ml -I ../berkeley.d/h -F 3000
-DPYLIB	= ../dpy.d/Llibdpy.a
-LIBS	= $(DPYLIB) ../berkeley.d/Llibberkeley.a -ltermlib -lx
-
+ALL	= war
+MODEL	= -M2l -F 3000
+OPTIONS	= -DLIBDIR=\"$(GAMLIB)\" -DOBJECTFILE=\"$(GAMLIB)/objects.war\" \
+	  -I$(INCDIR) -O
+include ../../CONFIG
+MYLIBS	= $(DPYLIB) $(BERKLIB) $(LIBS)
 CFILES	= main.c talk.c cmd.c view.c init.c scan.c
 OFILES	= main.o talk.o cmd.o view.o init.o scan.o
 
 war:		$(OFILES)
-		$(CC) $(CFLAGS) -o $@ $(OFILES) $(LIBS)
+		$(CC) $(CFLAGS) -o $@ $(OFILES) $(MYLIBS)
 
 $(OFILES):	war.h
 
-$(GAMDIR) $(GAMLIB) $(USRMAN) $(MANDIR):
-		mkdir $@
-		chmod 755 $@
-
-install:	war $(GAMDIR) $(GAMLIB) $(USRMAN) $(MANDIR)
-		cp war $(GAMDIR)
-		chmod 711 $(GAMDIR)/war
+install:	$(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
+		cp $(ALL) $(GAMDIR)
+		cd $(GAMDIR); chmod 711 $(ALL)
 		cp objects.war boards.war $(GAMLIB)
 		cd $(GAMLIB); chmod 644 objects.war boards.war
-		cp war.6 $(MANDIR)
-		chmod 644 $(MANDIR)/war.6
+		cp war.6 $(MAN6)
+		chmod 644 $(MAN6)/war.6
 
 clean:
-		rm -f $(OFILES) war
+		rm -f $(OFILES) $(ALL)

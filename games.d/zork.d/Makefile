@@ -1,21 +1,20 @@
 #
-#	zork %W %G%
+#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.2 1987-06-08 22:03:50 vrs Exp $
 #
-#
-GAMDIR	= $(DSTDIR)/usr/games
-GAMLIB	= $(GAMDIR)/lib
+ALL = zork
+include ../../CONFIG
 LIBZORK	= DUNGEON.DOC dindx.dat dtext.dat dng
-GAMZORK = zork
 
-install: $(GAMDIR) $(GAMLIB)
-	cp $(GAMZORK) $(GAMDIR)
-	cd $(GAMDIR); chmod 711 $(GAMZORK)
+install: $(ALL) $(GAMDIR) $(GAMLIB)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 755 $(ALL)
 	cp $(LIBZORK) $(GAMLIB)
 	cd $(GAMLIB); chmod 644 $(LIBZORK)
 	cd $(GAMLIB); chmod 711 $(GAMLIB)/dng
 
-$(GAMDIR) $(GAMLIB):
-	mkdir $@
-	chmod 755 $@
+zork:	zork.sh ../../CONFIG
+	sed '/^DNGLIB/c\
+DNGLIB=$(GAMLIB)' zork.sh > $@
 
 clean:
+	rm -f $(ALL)

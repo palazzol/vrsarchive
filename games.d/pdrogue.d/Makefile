@@ -1,37 +1,26 @@
 #
-CFLAGS	= $(CXENIX)
-LFLAGS	= $(LXENIX)
-GAME	= pdrogue
-GAMDIR	= $(DESTDIR)/usr/games
-GAMLIB	= $(GAMDIR)/lib
-SCOREF	= $(GAMLIB)/$(GAME)_roll
+#	$Header: /home/Vince/cvs/games.d/pdrogue.d/Makefile,v 1.4 1987-06-08 22:03:26 vrs Exp $
 #
-SHELL	= /bin/sh
+ALL	= pdrogue
+SCOREF	= $(GAMLIB)/pdrogue_roll
+MODEL	= -i
+OPTIONS	= -DSCOREFILE=\"$(SCOREF)\" -Dsrandom=srand -O
+include ../../CONFIG
 SRCS	= door_c.c hit.c init.c inventory.c level.c main.c message.c \
 	  monster.c move.c object.c pack.c play.c random.c room.c score.c \
 	  special_h.c throw.c use.c zap.c
 OBJS	= $(SRCS:.c=.o)
-CXENIX	= -O -i -DSCOREFILE=\"$(SCOREF)\" -Drindex=strrchr -Dsrandom=srand
-LXENIX	= -lcurses -ltermcap -lx
 
-a.out:	$(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LFLAGS)
+pdrogue: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
-$(GAME): a.out
-	cp $? $@
-	strip $@
-
-$(GAMDIR) $(GAMLIB):
-	mkdir $@
-	chmod 755 $@
-
-install: $(GAME) $(GAMDIR) $(GAMLIB)
-	cp $(GAME) $(GAMDIR)
-	chown cron $(GAMDIR)/$(GAME)
-	chmod 4711 $(GAMDIR)/$(GAME)
+install: $(ALL) $(GAMDIR) $(GAMLIB)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chown $(SAFEUID) $(ALL)
+	cd $(GAMDIR); chmod 4711 $(ALL)
 	touch $(SCOREF)
-	chown cron $(SCOREF)
-	chmod u+w $(SCOREF)
+	chown $(SAFEUID) $(SCOREF)
+	chmod 644 $(SCOREF)
 
 clean:
-	rm -f $(OBJS) a.out $(GAME) make.out core
+	rm -f $(OBJS) $(ALL) make.out core

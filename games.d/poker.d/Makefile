@@ -1,21 +1,14 @@
 #
-#	@(#)Makefile	1.4 10/3/86
+#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.5 1987-06-08 22:03:37 vrs Exp $
 #
-SHELL	= /bin/sh
-GAMEDIR	= $(DESTDIR)/usr/games
-GAMELIB	= $(GAMEDIR)/lib
-DAEMON	= cron
+ALL	= poker pokerd
 #
 #	Define the type of system programs are being made on.
-#	You may also want to edit port.h and possibly scores.c and poker.c
-#	(if you change ${GAMEDIR} or ${GAMELIB}).
 #
-#CFLAGS	= -DMASSCOMP -DMAXRAND=32767 -DINET
-#CFLAGS	= -DVAX -DMAXRAND=2147483648 -DINET
-CFLAGS	= -DVAX -DMAXRAND=32767 -UINET -I ../berkeley.d/h -Ml
-#LIBS	= -lsocket
-#LIBS	=
-LIBS	= ../berkeley.d/Llibberkeley.a -lx
+MODEL	= -M2l -F 2000
+OPTIONS	= -UINET -I$(INCDIR) -DGAMLIB=\"$(GAMLIB) -DPORT=\"/tmp/pokerd\"
+include ../../CONFIG
+MYLIBS	= $(BERKLIB) $(LIBS)
 
 SRCS	= main.c players.c cards.c util.c showcards.c whowon.c poker.c \
 	  tellall.c payoff.c betting.c computer.c draw.c scores.c 
@@ -23,37 +16,30 @@ OBJS	= main.o players.o cards.o util.o showcards.o whowon.o tellall.o \
 	  payoff.o betting.o computer.o draw.o scores.o
 OBJS2	= poker.o util.o
 
-all:		poker pokerd
-
 pokerd:		$(OBJS)
-		$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o pokerd
+		$(CC) $(CFLAGS) $(OBJS) $(MYLIBS) -o $@
 
 poker:		$(OBJS2)
-		$(CC) $(CFLAGS) $(OBJS2) $(LIBS) -lcurses -ltermlib -o poker 
+		$(CC) $(CFLAGS) $(OBJS2) $(MYLIBS) -o $@ 
 
 lintd:		$(OBJS:.o=.c)
-		lint $(CFLAGS) $(LIBS) $(OBJS:.o=.c) | tee lint.out
+		lint $(CFLAGS) $(MYLIBS) $(OBJS:.o=.c) | tee lint.out
 
 lint:		$(OBJS2:.o=.c)
-		lint $(CFLAGS) $(LIBS) -lcurses -ltermcap $(OBJS2:.o=.c) \
-			| tee lint.out
+		lint $(CFLAGS) $(MYLIBS) $(OBJS2:.o=.c) | tee lint.out
 
 clean:
-		rm -f $(OBJS) $(OBJS2) poker pokerd make.out lint.out core
+		rm -f $(OBJS) $(OBJS2) $(ALL) make.out lint.out core
 
-$(GAMEDIR) $(GAMELIB):
-		mkdir $@
-		chmod 755 $@
-
-install:	$(GAMEDIR) $(GAMELIB) poker pokerd
-		cp poker $(GAMEDIR)
-		chmod 711 $(GAMEDIR)/poker
-		cp pokerd $(GAMELIB)
-		chown $(DAEMON) $(GAMELIB)/pokerd
-		chmod 4711 $(GAMELIB)/pokerd
-		touch $(GAMELIB)/pokerscores
-		chown $(DAEMON) $(GAMELIB)/pokerscores
-		chmod 644 $(GAMELIB)/pokerscores
+install:	$(GAMDIR) $(GAMLIB) poker pokerd
+		cp poker $(GAMDIR)
+		chmod 711 $(GAMDIR)/poker
+		cp pokerd $(GAMLIB)
+		chown $(SAFEUID) $(GAMLIB)/pokerd
+		chmod 4711 $(GAMLIB)/pokerd
+		touch $(GAMLIB)/pokerscores
+		chown $(SAFEUID) $(GAMLIB)/pokerscores
+		chmod 644 $(GAMLIB)/pokerscores
 
 listings:
 		lpr $(SRCS)
