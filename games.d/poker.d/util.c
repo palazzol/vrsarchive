@@ -5,15 +5,15 @@
 # include	<stdio.h>
 # include	"util.h"
 
+extern char *strcpy();
+
 char	*strsave( temp )
-
 char	*temp;
-
 {
 char	*p;
 extern	char	*malloc();
 
-p = malloc( strlen(temp) + 1 );
+p = malloc((unsigned)(strlen(temp)+1));
 strcpy( p, temp );
 return( p );
 }
@@ -30,6 +30,7 @@ do {
    }
 while( *temp++ != '\n');
 *temp = NULL;
+return(1);
 }
 
 writeln( s, temp )
@@ -38,6 +39,6 @@ int	s;		/* channel to write on	*/
 char	*temp;		/* what to write	*/
 
 {
-write( s, temp, strlen( temp ) );
+write( s, temp, (unsigned)strlen(temp) );
 write( s, "\n", 1 );
 }
