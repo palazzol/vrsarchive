@@ -1,22 +1,36 @@
-
-#include "../h/pty.h"
+/*
+ *	%W%	%G%	*/
+ * Pseudo-teletype Driver
+ * Declarations for statically allocated structures
+ *
+*/
 #include "../h/param.h"
-#include "../h/dir.h"
-#include "../h/a.out.h"
-#include "../h/user.h"
 #include "../h/systm.h"
-#include "../h/tty.h"
-#include "../h/conf.h"
-#include "../h/buf.h"
-#include "../h/file.h"
 #include "../h/ioctl.h"
+#include "../h/tty.h"
+#include "../h/dir.h"
+#include "../h/user.h"
+#include "../h/conf.h"
+#include "../h/file.h"
+#include "../h/proc.h"
+#include "../h/uio.h"
+#include "../h/kernel.h"
 
-#define BUFSIZ 100
-#define ALLDELAYS (NLDLY|TABDLY|CRDLY|VTDLY)
+#define NPTY	32		/* Number of pseudo-terminals	*/
 
-struct tty pt_tty[NPTY];
-
-int    ve_pid[NPTY];
-int    ve_oflag[NPTY];
-struct ptydata ve_data[NPTY];
-int    ptyopen[NPTY] = {0};
+#if NPTY == 1
+#undef	NPTY
+#define	NPTY	32		/* crude XXX */
+#endif
+/*
+ * pts == /dev/tty[pP]?
+ * ptc == /dev/ptp[pP]?
+*/
+struct	tty pt_tty[NPTY];
+struct	pt_ioctl {
+	int	pt_flags;
+	int	pt_gensym;
+	struct	proc *pt_selr, *pt_selw;
+	int	pt_send;
+} pt_ioctl[NPTY];
+int npty = NPTY;
