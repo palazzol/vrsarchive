@@ -2,10 +2,10 @@
 #	%W% %G%
 #
 ALL	= Slibberkeley.a Mlibberkeley.a Llibberkeley.a
+OPTIONS	= -I./h -DPORT=\"/tmp/sockXXXXXX\"
 include ../../CONFIG
 BRKSYS	= $(INCDIR)/sys
 HFILES	= h/*.h h/sys/*.h
-CFLAGS	= -I./h
 #
 OBJS	= _close.o _common.o _read.o _write.o _sock_alloc.o \
 	  accept.o bcmp.o bcopy.o bfill.o bind.o bmove.o bzero.o close.o \
@@ -213,7 +213,10 @@ clean:
 #
 #	Build the works and install it.
 #
-install:	$(ALL) $(LIBDIR) $(INCDIR) $(BRKSYS)
+install:	$(ALL) $(CCLIB) $(INCDIR) $(BRKSYS)
+		cp $(ALL) $(CCLIB)
+		cd $(CCLIB); chmod 644 $(ALL)
+		for i in $(ALL); do $(RANLIB) $(CCLIB)/$$i; done
 		cp $(ALL) $(LIBDIR)
 		cd $(LIBDIR); chmod 644 $(ALL)
 		for i in $(ALL); do $(RANLIB) $(LIBDIR)/$$i; done
