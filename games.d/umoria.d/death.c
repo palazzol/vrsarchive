@@ -140,8 +140,8 @@ display_scores()
 
   while (0 < read(fd, (char *)&score, sizeof(high_scores)))
     {
-      (void) sprintf(list[i], "%-7d%-15.15s%-10.10s%-10.10s%-5d%-25.25s%5d", 
-		    (int)score.points, score.name,
+      (void) sprintf(list[i], "%-7ld%-15.15s%-10.10s%-10.10s%-5d%-25.25s%5d", 
+		    score.points, score.name,
 		    race[score.prace].trace, class[score.pclass].title, 
 		    (int)score.lev, score.died_from, score.dun_level);
       i++;
