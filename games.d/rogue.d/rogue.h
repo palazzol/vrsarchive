@@ -447,6 +447,14 @@ THING	*find_mons(), *find_obj(), *get_item(), *new_item(),
 struct room	*roomin();
 
 #include "extern.h"
+
+#ifdef SYSIII
+#define USG
+#endif
+#ifdef SYS5
+#define USG
+#endif
+
 static DISTANCE(y1, x1, y2, x2)
 { return((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
