@@ -1,0 +1,1503 @@
+.\"			@(#)doc.ms	1.6 Date 87/06/29
+.if t .rm CM
+.ds LH Holistic Technology AB
+.ds CH PTC
+.ds RH HD870410-1 Rev: 1.6
+.ds LF
+.ds CF
+.ds RF
+.nr LL 6.5i
+.nr PO 1i
+.nr HM 0.75i
+.nr FM 1.5i
+.ie t .pl 842p
+.el   .pl 72v
+.ch BT -\n(FMu/2u
+.\" 3 tabs/inch at 12 cpi corresponds to 4 chars/tab
+.nr t 1i/3u
+.am DS
+.ta \ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu +\ntu
+..
+.LP
+.rs
+.sp |8c
+.nf
+.ce 10
+.if t .ps +6
+.B "PTC implementation note"
+.if t .ps -6
+
+by
+
+Per Bergsten
+
+Holistic Technology AB
+Grona Gatan 59
+414 54 Gothenburg
+Sweden
+.ce 0
+.sp 12
+.LP
+This note describes the implementation of ptc, a Pascal to C translator.
+The program was developed by Per Bergsten of Holistic Technology AB,
+Gothenburg, Sweden.
+The paper is intended to provide a guide for those who need to transport
+ptc to a new environment,
+it describes how Pascal constructs are mapped onto C constructs.
+.bp
+.NH S 1
+Background
+.LP
+.ds CF - % -
+.nr % 1
+The aim was originally to provide a simple tool for transporting finished
+applications to systems lacking Pascal compilers.
+The first versions,
+constructed in about 1984,
+were capable of translating simple Pascal programs.
+It was never intended to become a released product,
+however,
+as time went by, programs and ambitions grew to the point where nearly
+the full Pascal language was supported.
+Thus the program as it stands today has a long ancestry
+but it has never been redesigned (which it should have been).
+.NH 1
+Pascal vs C
+.LP
+To anyone familiar with the two languages it is obvious that
+they are very similar in structure.
+The major features may be summarised as follows:
+.TS
+c c
+l l .
+Pascal	C
+.sp
+Block-structured	Block-structured
+- multiple declaration levels	- single declaration level
+Statically scoped	Statically scoped
+Strongly typed	Weakly typed
+	- allows unbounded pointers
+Call by value	Mostly call by value
+- and call by reference	
+Highly independent	Highly integrated
+- of host system	- with system
+Self contained	Allows external definitions.
+.TE
+.LP
+On the syntactic level the languages differ only in minor ways,
+mostly in the order in which keywords and other symbols occur,
+and of course in that the languages uses different symbols for the same
+purposes.
+The only complication is that C prohibits nested subroutine declarations.
+.LP
+On the semantic level the situation is worse.
+C has the peculiarity that array variables are treated differently from other
+variables,
+this forces us to adopt some general way to handle array variables.
+Furthermore, since Pascal offers nested subroutine declarations
+it becomes necessary to simulate part of the activation record mechanism
+in the translated code,
+in one case it is extremely difficult to completely do this.
+It is also clear that the C typedef mechanism has some shortcomings that
+preclude an easy translation of Pascal types.
+.bp
+.NH 1
+Mapping Pascal to C
+.LP
+In this part of the paper we briefly illustrate how to translate
+Pascal code into equivalent C code.
+.NH 2
+Programs
+.LP
+A minimal Pascal program:
+.DS
+program p;
+begin
+end.
+.DE
+translates to the C equivalent:
+.DS
+extern void exit(\^);
+main(\^)
+{
+        exit(0);
+}
+.DE
+.LP
+It should be noted here that
+the translator does not actually require a complete Pascal program,
+the implementation is such that any consistent set of declarations can
+be translated.
+.NH 2
+Lexical issues
+.LP
+The C language uses ASCII as a carrier,
+almost all of the availible characters are used.
+The Pascal definition uses a smaller set of characters.
+Since few features of the languages depend on the underlying character set
+this does not introduce much difficulties.
+.LP
+One serious problem does occur.
+Both language definitions states that comments have no meaning and no
+clear place in the language syntax.
+Furthermore, the Pascal definition states that a comment is equivalent
+to a blank character.
+This implies that if comments are handled accurately
+the translator should also be able to collect and classify each
+blank character in a Pascal program and to generate a C program with the
+same number of blank characters in the corresponding positions.
+This implication conflicts with the fact that the languages have different
+syntax rules, it is not obvious what the "corresponding positions" would be.
+.LP
+Since comments have no defined meaning a user is free to interpret them
+in any way and, in particular, to associate them with the surrounding code
+in any way s/he chooses.
+Although humans usually are able to deduce what bearing a comment has on the
+surrounding program code there are no formal rules for how to do this.
+Therefore there is no
+.I "a priori"
+correct way to translate comments
+and the translator described here ignores comments altogether.
+If/when a reasonable
+.I "ad hoc"
+solution is found that feature may be incorporated.
+.NH 2
+Declarations
+.LP
+The program may introduce local declarations which are handled as follows.
+.bp
+.NH 3
+Labels
+.LP
+.DS
+program p;
+
+label	9;
+
+begin
+9:
+        goto 9
+end.
+.DE
+which we simply translate into:
+.DS
+extern void exit(\^);
+main(\^)
+{
+L9:
+        goto L9;
+        exit(0);
+}
+.DE
+'ne 12
+.LP
+If the label is reached from an inner procedure:
+.DS
+program p;
+
+label	100;
+
+        procedure q;
+
+        begin
+                goto 100
+        end;
+
+begin
+100:
+end.
+.DE
+a more complicated translation must be used:
+.DS
+# define Line __LINE__
+void Caseerror(\^);
+# include <setjmp.h>
+static struct Jb { jmp_buf jb; } J[1];
+
+ void
+q(\^)
+{
+        longjmp(J[0].jb, 100);
+}
+
+main(\^)
+{
+        if (setjmp(J[0].jb))
+                goto L100;
+L100:
+        exit(0);
+}
+.DE
+.LP
+We assume the existence of the standard
+.I setjmp(\^)
+and
+.I longjmp(\^)
+library functions.
+Jumpbuffers are statically allocated as needed depending on the number
+of declarationlevels in the program.
+.NH 3
+Constants
+.LP
+Constant declarations are treated in two different ways.
+Numbers aliases etc are simply
+.I "# define" 'd
+but string constants are converted to static character arrays in order
+to avoid unnecessary duplication of string-constants in the object code,
+thus:
+.DS
+const
+	p	= 3.14;
+	pie	= '3.14';
+.DE
+translates to:
+.DS
+# define pi 3.14
+static char pie[\^] = "3.14";
+.DE
+.NH 3
+Types and variables
+.LP
+Types and variables are mostly easy to translate:
+.DS
+program p;
+
+const length	= 15;
+
+type
+	struct		= 0 .. length;
+	vect		= array [ struct ] of struct;
+	color		= (red, blue, ada, yellow);
+	pointer	= ^ recd;
+	recd		= record
+				r	: pointer;
+				case b : boolean of
+				  false:	(c : color);
+				  true:	(v : vect);
+			  end;
+
+var	SP		: pointer;
+
+begin
+	new(SP, true);
+end.
+.DE
+becomes
+.DS
+typedef char    boolean;
+# define false (boolean)0
+# define true (boolean)1
+extern char *Bools[\^];
+# define Unionoffs(p, m) (((long)(&(p)->m))-((long)(p)))
+extern char *malloc(\^);
+# define length 15
+typedef unsigned char C47_struct;
+typedef struct { C47_struct A[length + 1]; } vect;
+typedef enum { red, blue, ada, yellow } color;
+typedef struct S57 *pointer;
+typedef struct S57 {
+	pointer	r;
+	boolean	b;
+	union {
+		struct {
+			color    c;
+		} V1;
+		struct  {
+			vect	v;
+		} V2;
+	} U;
+}	recd;
+pointer	sp;
+
+main(\^)
+{
+	sp = (struct S57 *)malloc((unsigned)
+		(Unionoffs(sp, U.V2.v) + sizeof(sp->U.V2)));
+	exit(0);
+}
+.DE
+The rationale is as follows:
+.LP
+Identifiers in the Pascal program which conflicts with reserved words in C are
+renamed by adding a unique prefix Cnnn where nnn is a number.
+.LP
+We also note here that uppercase letters in identifiers and keywords
+are translated to lowercase.
+Pascal specifies that upper/lower case is insignificant whereas C
+(for the present) separates the two.
+This fact is used to advantage by the translator as all
+subroutines and macros defined by the translator have an initial uppercase
+letter which prevents confusion.
+.IP \-
+The type
+.I boolean
+is a predefined Pascal type,
+when it is used the translator emits code which defines boolean to
+be the smallest convenient type:
+.I char .
+The constants
+.I false
+and
+.I true
+are defined and the vector
+.I Bools
+will contain textstrings for output if needed.
+.IP \-
+The predefined types
+.I integer
+and
+.I real
+are likewise mapped directly onto the standard C types
+.I int
+and
+.I double
+through a typedef declaration.
+.sp
+Integer subranges are mapped onto standard C arithmetic types according to
+a short table in the translator.
+The table is scanned from top to bottom until an enclosing range is found
+and the corresponding type-name is emitted.
+.IP \-
+C-arrays have peculiar semantix.
+To unify the treatment of arrays and other datatypes we always encapsulate
+an array in a struct,
+thus an array always becomes a
+.I struct
+with a single member named A.
+.IP \-
+Records and their variants are translated into C
+.I struct
+and
+.I union
+definitions.
+Since C requires all union members to have a name we must supply artificial
+names for all record variants.
+A record with variants will therefore always contain one field with the name U
+which have sub-fields named Vnnn where nnn is a positive number.
+.sp
+'ne 12
+When allocating dynamic storage for a record with variants naming
+the desired variant
+.DS
+new(sp, true)
+.DE
+we face the problem of determining the amount of memory needed.
+.QP
+.B
+C does not provide a safe way
+to compute the size of a particular struct variant.
+.IP
+The strategy adopted to cope with this problem is to attempt to compute the
+offset of a fieldmember in the variant matching the constant and then
+to add the size of the variant.
+The offset computation is expressed as a macro,
+.I Unionoffs ,
+which uses rather foul typecasting to achive the result.
+The only availible alternative would be to use the same size of all variants.
+This method,
+while being safe,
+wastes memory when many small and few large
+records of the same type are created dynamically.
+.IP \-
+Pascal enumeration types are converted directly to C
+.I enum
+types.
+.IP \-
+Pascal pointer types are translated into C pointer types.
+Pascal allows the programmer to construct recursive types as pointer
+types need not be fully defined until the end of the declaration-section
+where the pointer type is used.
+In practice this is only used to introduce record types which
+contain pointers to themselves.
+This problem is partially solved by introducing a name for the record type.
+.ne 10
+Hence
+.DS
+type
+	ptr	= ^ node;
+	node	= record
+			next	: ptr;
+			info	: integer
+		  end;
+.DE
+becomes
+.DS
+typedef struct S56 * ptr;
+typedef struct S56 {
+	ptr		next;
+	integer		info;
+} node;
+.DE
+we note in passing that the problem cannot be completely solved since
+.DS
+type	pureptr	= ^ pureptr;
+.DE
+which is valid Pascal, cannot be expressed in C.
+.ne 10v
+.IP \-
+A pascal set-type does not have any direct counterpart in C.
+The C language does however have a adequate set of operators for
+bit manipulation.
+We use these to implement a Pascal set as an array of
+.I setword .
+So:
+.DS
+type
+	s	= set of 1 .. 100;
+
+var
+	ss	: s;
+.DE
+is translated into:
+.DS
+typedef unsigned short setword;
+typedef struct { setword S[8]; } s;
+
+s	ss;
+.DE
+The situation is slightly complicated by the fact that Pascal has
+a set constructor which permits the construction of arbitrary large sets,
+for example:
+.DS
+s := [ 50 .. maxint ] * [ 1 .. 80 ]
+.DE
+for that reason the first member in the array of words gives
+size of the set (in words).
+In the example above s.S[0] would have the value 7,
+and s.S[1] through s.S[7] would hold the bits.
+The number 7 is computed on the assumption that the type
+.I "unsigned short"
+on the target host is sufficiently large to holds 16 bits.
+The set operators of Pascal are implemented as C functions returning
+pointers to arrays of setwords,
+the intermediary results are held in a static area of fixed size.
+.IP \-
+Pascal files are implemented using the standard i/o package availible
+in most C implementations.
+Since Pascal has the requirement that the next element of a file is visible
+in the filebuffer before it is read,
+and the requirement that linemarkers in textfiles are given special treatement
+we are forced to extend the
+.I FILE
+type provided in
+.I <stdio.h> .
+.ne 20
+Hence:
+.DS
+var	f	: text;
+.DE
+becomes
+.DS
+typedef struct {
+	FILE	*fp;
+	unsigned short
+			eoln:1,
+			eof:1,
+			init:1,
+			out:1,
+			:12;
+	char	buf;
+}	text;
+text	f;
+.DE
+where
+.I buf
+is our filebuffer and
+.I eoln ,
+.I eof
+and
+.I init
+are flags giving the state of the file.
+All Pascal i/o operations are implemented using macros that maintain the flags
+and the buffer variable.
+The actual reading and writing of data is deferred to the standard i/o package.
+.NH 3
+Procedures and functions
+.LP
+Pascal procedures and functions are somewhat difficult to translate to C.
+The main problems lie in nested declarations and procedural parameters.
+Nested declarations are handled in the following manner:
+.RS
+.IP \-
+If procedure B is declared in procedure A,
+then procedure B is emitted before A and A is forward declared before B.
+.IP \-
+Any constants and types declared in A is moved to the global scope,
+this may force renaming of those objects.
+.IP \-
+Any variable declared in A
+.I
+and used in B
+.R
+is converted to a pointer and moved to the global scope.
+The pointer value is saved and re-initialized upon each entry of A
+and restored upon exit from A.
+.RE
+.br
+'ne 20
+.LP
+Hence:
+.DS
+procedure A;
+
+const	limit	= 20;
+
+type	loctyp	= 0 .. limit;
+
+var	i, j	: loctyp;
+
+	procedure B(k : loctyp);
+
+	begin
+		j := k + 2
+	end;
+
+begin
+	B(i)
+end;
+.DE
+becomes
+.DS
+typedef unsigned char	loctyp;
+loctyp	*G56_j;
+
+void a(\^);
+
+ void
+b(k)
+	loctyp  k;
+{
+	(*G56_j) = k + 2;
+}
+
+ void
+a(\^)
+{
+# define limit 20
+	loctyp  i, j;
+	loctyp  *F57;
+
+	F57 = G56_j;
+	G56_j = &j;
+	b(i);
+	G56_j = F57;
+}
+.DE
+we see that references to
+.I j
+inside procedure
+.I b
+are replaced by the pointer
+.I G56_j
+which points to the local variable
+.I j
+in procedure
+.I a.
+In order to preserve the proper semantix in the face of recursion
+the value of the pointer need also be saved in the local variable
+.I F57
+during the invocation of
+.I a .
+.IP \-
+Procedure parameters offer little problems.
+We translate Pascal value-parameters into ordinary C parameters
+and Pascal var-parameters are treated as pointers.
+.br
+'ne 20
+.IP \-
+Procedural parameters appear at first to be easy to handle.
+The ordinary program:
+.DS
+program p;
+
+procedure pp(procedure q(i : integer));
+
+begin
+	q(2)
+end;
+
+procedure qq(i : integer);
+begin
+end;
+
+begin
+	pp(qq)
+end.
+.DE
+becomes
+.DS
+extern void	exit(\^);
+typedef int	integer;
+
+ void
+pp(q)
+	void	(*q)(\^);
+{
+	(*q)(2);
+}
+
+ void
+qq(i)
+	integer i;
+{
+}
+
+main(\^)
+{
+	pp(qq);
+	exit(0);
+}
+.DE
+which looks simple enough.
+.br
+However,
+Pascal requires that the scope of a procedure
+.I "remains unchanged"
+throughout its lifetime.
+.ne 35
+Consider:
+.DS
+program demo(output);
+
+var	i	: integer;
+
+	procedure p(procedure q);
+
+	var	j	: integer;
+
+		procedure qq;
+
+		begin
+			writeln(j)
+		end;
+
+	begin
+		j := i;
+		q;
+		if i < 1 then
+		  begin
+			i := i + 1;
+			p(qq)
+		  end
+	end;
+
+	procedure dummy;
+	begin
+	end;
+
+begin
+	i := 0;
+	p(dummy)
+end.
+.DE
+When
+.I p
+is first invoked it assigns the local variable
+.I j
+the value 0.
+This variable is accessible from
+.I qq
+which is passed as a parameter in
+the recursive call of
+.I p .
+The second invocation of
+.I p
+then sets
+.I its 
+variable
+.I j
+to 1,
+and calls
+.I q
+which is bound to the first instance of
+.I qq ,
+and should therefore print the number
+.I 0 .
+.B
+Sadly,
+the code produced by the translator fails to do this.
+.R
+It is obvious that the program above calls for a complete simulation
+of the activation record mechanism of Pascal to work correctly.
+.RS
+.LP
+A workable but unpractical solution would be:
+.IP 1)
+When qq is used as parameter we call a function q1 which saves the environment
+for qq (i.e. the address of j) in a well known place
+and returns a pointer to q2.
+.IP 2)
+When qq is later called (under the name q) the actual target will be q2
+which sets up the proper environment calls qq.
+.RE
+.IP
+The problem is that this requires a save-area for
+.I each
+procedural parameter which can hold the intresting
+parts of its environment for
+.I each
+of its invocations.
+In the example above we need one are which holds the address of i
+for each instance of qq
+(say N instances, where N depends on the run-time behaviour of p).
+It also requires a set of different procedures to perform the work of q2
+(N different procedures which sets up the environment for the N instances).
+.B
+This requires much to much work to implement so the problem is left unsolved,
+.R
+this is hardly a problem in practice since humans rarely write such code
+but
+.B
+it could introduce problems
+.R
+in machine generated Pascal code.
+.IP
+It should be noted that
+the translator accepts the keyword
+.B external
+in place of the Pascal
+.B forward
+directive and assumes that the so declared procedure is defined elsewhere.
+.bp
+.NH 2
+Statements.
+.LP
+Pascal statements are comparatively easy to translate to C.
+The only parts that require special care are 
+non-local
+.I goto ,
+.I with
+and
+.I for
+statements.
+The code
+.DS
+program p(output);
+
+type
+	msgtyp	= packed array [ 1 .. 12 ] of char;
+
+var
+	a	: array [ 1 .. 10 ] of
+			record
+				r	: real
+			end;
+	i	: integer;
+	ok	: boolean;
+
+	procedure fatal(m : msgtyp);
+
+	begin
+		writeln('Fatal error: ', m)
+	end;
+
+begin
+	while true do
+	  repeat
+		ok := false;
+		i := 1;
+		for i := i + 1 to i + 10 do
+			if i > 10 then
+				fatal(' 10 exceeded')
+			else
+			  with a[i] do
+				if r > 9.99e+38 then
+					ok := true
+				else
+					writeln(r)
+	  until ok
+end.
+.DE
+'ne 20
+becomes
+.DS
+typedef char boolean;
+# define false (boolean)0
+# define true (boolean)1
+typedef int integer;
+typedef double real;
+
+typedef struct { char A[12 - 1 + 1]; } msgtyp;
+typedef struct { struct	S57 {
+	real	r;
+}	A[10 - 1 + 1]; }  T56;
+T56		a;
+integer	i;
+boolean	done;
+
+ void
+fatal(m)
+	msgtyp	m;
+{
+	(void)fprintf(output.fp, "Fatal error: %.12s", m.A),
+					Putchr('\en', output);
+}
+
+main(\^)
+{
+	while (true)
+	  do {
+		done = false;
+		i = 1;
+		{
+		  integer		B1 = i + 1, B2 = i + 10;
+
+		  if (B1 <= B2)
+			for (i = B1; ; i++) {
+				if (i > 10)
+					fatal(*((msgtyp *)" 10 exceeded"));
+				else {
+					register struct	S57 *W3 = &a.A[i - 1];
+
+					if (W3->r > 9.99e+38)
+						done = true;
+					else
+						(void)fprintf(output.fp, "% 20e", W3->r),
+							Putchr('\en', output);
+				}
+				if (i == B2) break;
+			}
+		}
+	  } while (!(done));
+	exit(0);
+}
+.DE
+for the following reasons:
+.NH 3
+Begin
+.LP
+The compound statements
+are very similar in the two languages and need no further explanation.
+.NH 3
+If
+.LP
+Pascal if-statements
+have the same structure and semantix as C if-statments.
+.NH 3
+Case
+.LP
+Pascal case-statements
+have the same structure and semantix as C switch-statements provided that a
+.I break
+is always added to each entry.
+.LP
+The translator supports a common Pascal extension
+in that it recognizes the keyword
+.B otherwise
+to signify a default entry in a case-statement.
+.NH 3
+Labels
+.LP
+Pascal labeled statements and labels have the same structure and semantix as
+C labeled statements except that Pascal labels are numbers where C labels
+are identifiers,
+this difference is solved by simply prefixing the labels with the letter
+.I L .
+.NH 3
+Goto
+.LP
+Pascal goto-statements
+have the same structure as C goto statements but the semantix differ in
+that Pascal allows a goto to lead out of the current procedure.
+This is implemented using the
+.I setjmp/longjmp
+library functions of C as described earlier.
+.NH 3
+With
+.LP
+The with-statement
+of Pascal has no counterpart in C.
+It is translated into nested compund statements where pointervariables,
+referencing the corresponding records,
+are declared and initialized.
+Within the scope of the with-statement,
+the accessible record fields are renamed to include the pointer.
+The effect of this is that the record address is evaluated once as the
+Pascal standard requires.
+.NH 3
+For
+.LP
+The for-statement
+of Pascal has a structure that is similar to the C for-statement
+but the semantix differ completely.
+Pascal requires that a loop be exited when the upper bound
+has been reached,
+Pascal also requires that the loop-boundaries be evaluated exactly once.
+The standard C for-loop is exited when the loop-condition becomes false.
+This implies that it is not always true that
+.DS
+for (i = 0; i <= e; i++) ;
+.DE
+behaves in the same manner as
+.DS
+for i := 0 to e do ;
+.DE
+since (in most implementations)
+the C version becomes an infinite loop if
+.I e
+equals
+.I maxint
+or if
+.I e
+is the expression
+.I i .
+For that reason Pascal for-statments are translated into compound statements
+where the upper/lower bounds of the for-loop are held in local variables.
+It is also necessary to add a conditional break-statement at
+the end of the loop.
+It is possible to obtain the more relaxed translation by configuring the
+translator appropriately (see "Tuning" below).
+.NH 3
+While
+.LP
+The while-statement behaves exactly the same in both languages.
+.NH 3
+Repeat
+.LP
+The repeat-statement of Pascal matches the do-while statement of C except
+for the trivial difference that Pascal permits a statement-list
+where C permits a single statment in the loop.
+.NH 3
+Empty
+.LP
+The empty statement has (of course) the same structure and semantix
+in both languages.
+.NH 2
+Expressions and assignments
+.LP
+In most cases Pascal expressions can be literally translated into equivalent
+C expressions.
+.IP identifiers 15
+Except where identifiers clash with reserved words or with other
+identifiers declared in the same scope,
+they may simply be printed.
+In some cases the translator is forced to rename identifiers or to
+invent new identifiers.
+.IP operators
+The operators +, -, *
+.I div
+and
+.I mod
+when applied to real or integer operands
+have exact counterparts in C and are therefore easy to handle.
+The operator for real division, /,
+corresponds to the same C operator except that the operands may be integers.
+In that case a cast is necessary.
+When the operands are sets the expression is converted into a function call.
+.sp
+The operators <, <=, >, >=, = and <> all have exact counterparts in C
+for integer and real operands.
+Most C implementations disallows
+.I enum
+operands,
+the translator therefore casts such operands to
+.I int .
+Comparisons on structures (i.e. strings or sets)
+are converted into function calls.
+.IP assignments
+Assignments are straightforward to handle since arrays are encapsulated
+in structures.
+Therefore:
+.DS
+a := b
+.DE
+becomes
+.DS
+a = b
+.DE
+.I unless
+b is a string or a set,
+in which case the assignment is converted into a function call.
+.IP indexing
+Given the translation for array declarations (described above) we are forced
+to translate
+.DS
+a[i]
+.DE
+into
+.DS
+a.A[i - c]
+.DE
+where
+.I c
+is the lower bound for the index type.
+.IP selection
+Given the translation for records with variants (described above) the
+translation of
+.DS
+a.b
+.DE
+becomes
+.DS
+a.b
+.DE
+.I or ,
+if b is declared in a variant,
+.DS
+a.Vxxx.b
+.DE
+where Vxxx is a name manufactured by the translator for the particular variant.
+.IP dereferencing
+Pointer references and
+.B var -parameters
+are handled by prefixing the expression with an asterisk,
+but the special case dereferencing followed by selection is also recognized,
+so:
+.DS
+p^ := q^.f
+.DE
+becomes
+.DS
+*p = q->f
+.DE
+.IP miscellanea
+The boolean operators
+.B and ,
+.B or
+and
+.B not
+are simply translated into their C counterparts.
+The set contructors
+.B "[\^]" ,
+and
+.B ".."
+and the operator
+.B in
+are converted to function calls.
+.bp
+.NH 1
+Implementation
+.LP
+The general strategy is to convert the Pascal source program
+into a parsetree.
+The tree is then traversed by a set of procedures that perform some
+necessary transformations.
+The tree is finally traversed by a set of procedures that print the
+corresponding C constructs.
+The translator consists of three major procedures that perform
+these actions.
+They are augmented by a set of procedures that maintain a symbol table
+that holds information about identifiers found in the source,
+and by a procedure that initializes all internal datastructures.
+.LP
+There are three major datastructures that interact in complicated ways:
+.IP 1)
+a store for identifiers and strings
+.IP 2)
+a multilevel symbol table
+.IP 3)
+a parse-tree.
+.LP
+The identifier and string store,
+.B strstor
+is in principle an array of characters that grow
+in increments of one string block.
+Exactly one copy of each identifier is stored in that array.
+Whenever an identifier is found in the input stream the array is
+scanned to see if that identifier has been seen before.
+In order to speed up the search all identifiers are represented by nodes
+which are chained together such that all nodes in a particular chain
+have the same hashvalue as determined by the function
+.B hash .
+Each
+.B idnode
+holds an index to strstor where the corresponding identifier text is stored.
+The start of the hashchains are found in the global variable
+.B idtab .
+.de Ds
+.nr x \\w'\\$2'u
+.ie t \{
+.nr x \\nx/2
+.ds \\$1 \\\\h'-\\nxu'\\$2\\\\h'-\\nxu'
+.\}
+.el .ds \\$1 \\$2\\\\h'-\\nxu'
+..
+.ds l \-
+.ie t .ds a \z\*l\a
+.el   .ds a \a\z\*l
+.nr x \ntu/2
+.ds g \z\*l\\l'\nxu\&\*l'
+.ds h \\h'\nxu'
+.Ds c +
+.Ds d \(da
+.Ds u \(ua
+.Ds r \(br
+.ds s \\*r\z\*l
+.ds > \*l\z\*l\(->
+.ds < \(<-\\h'-1n'\*l
+.ds k \\kx
+.ds b \\h'|\\nxu'
+.ds t \t
+.DS L
+.lc \*l
+.fc #
+idtab
+\*c\*a\*c
+\*r\*t\*r\*tchain of idnodes with same hashvalue
+\*c\*a\*c\*t\*c\*a\*a\*c\*t\*c\*a\*a\*c
+\*k\*r\*t\*r\*b\*h\*a#\*> #\*r\*t\*k\*t\*r\*b\*h\*a#\*> #\*r\*t\*t\*r idnode representing
+\*c\*a\*c\*t\*r\*t\*t\*r\*t\*k index=2\*b\*r\*t\*t\*r identifier "demo"
+\*r\*t\*r\*t\*c\*a\*a\*c\*t\*c\*a\*a\*c
+
+\*tstrstor
+\*c\*a\*a\*a\ \*l \*a\*a\*c
+\*r\*t\*r\*t\*r\*t\*t\*r\*t\*r
+\*k\*c\*a\*a\*a\ \*l \*a\*a\*c\*b\*h\*r
+\*h\*r
+\*h\*d
+\*c\*a\*a\*a\*a\*a\*a\*a\*a
+\*r\*t\*r\*t\*r# d #\*r# e #\*r# m #\*r# o #\*r# / #\*r
+\*c\*a\*a\*a\*a\*a\*a\*a\*a\*tfirst idblock
+\*t\*t# \*u #
+\*t\*tindex=2
+.DE
+.LP
+So:
+the global representation of the identifier "demo" is a particlular
+idnode;
+whenever the lexical analysis routine
+recognizes the identifier "demo" it returns a pointer to that idnode.
+.LP
+In order to represent different identifiers with the same name we need to
+be able to distinguish between identifiers declared in different scopes.
+This is accomplished by the
+.B symnode
+structures.
+When an identifier is first encountered in a given scope it is "declared",
+meaning that a new symnode is created that references the identifier.
+Occurrences of the same identifier in that scope are then represented in
+the parse-tree by treenodes referencing the same symnode.
+.bp
+The program:
+.DS
+program p;
+
+var	demo	: integer;
+
+begin
+	demo := 3
+end.
+.DE
+yilds the following structure:
+.DS L
+.lc \*l
+.fc #
+\*t# top #
+\*t# \*d #
+\*t\*c\*a\*a\*a\*a\*c treenode representing
+\*t\*k npgm\*b\*r\*t\*t\*t\*t\*r the program
+\*t\*c\*a\*s\*a\*s\*a\*s\*a\*c
+\*t\*t\*r\*t\*r\*h\*u\*t\*r\*h\*u
+\*t\*t\*r\*t\*r\*h\*r\*t\*r\*h\*c\*a\*a\*a\*a\*a\*a\*a\*g\*c
+\*t\*t\*r\*t\*r\*h\*r\*t\*c\*a\*a\*a\*a\*a\*a\*a\*c\*h\*r
+\*t\*t\*r\*t\*d\*h\*r\*t\*t\*t\*t\*t\*t\*t\*t\*r\*h\*r
+\*t\*t\*r\*h\*c\*a\*g\*s\*a\*a\*c\*k treenode representing\*b\*t\*t\*t\*t\*t\*t\*r\*h\*r
+\*t\*t\*r\*h\*k nvar\*b\*r\*t\*t\*t\*\*kr the var-declaration\*b\*t\*t\*t\*t\*t\*t\*d\*h\*r
+\*t\*t\*r\*h\*c\*g\*s\*a\*s\*a\*c\*t\*t\*t\*c\*a\*a\*a\*g\*s\*a\*c treenode repr.
+\*t\*t\*r\*t\*r\*h\*u\*t\*r\*t\*t\*t\*t\*k nassign\*b\*r\*t\*t\*t\*t\*r assignment
+\*t\*t\*r\*t\*r\*h\*r\*t\*c\*a\*k\*> to type\*b\*t\*t\*t\*c\*a\*s\*a\*a\*s\*a\*c
+\*ksymtab\*b\*t\*t\*r\*t\*d\*h\*r\*t\*t\*t\*t\*t\*t\*d\*h\*u\*t\*t\*d\*h\*u
+\*c\*a\*c\*t\*r\*h\*c\*a\*g\*s\*a\*c\*k treenode repr.\*b\*t\*t\*t\*t\*c\*a\*g\*s\*a\*c\*h\*c\*a\*g\*s\*a\*a\*c
+\*r\*t\*r \*<\*a\*c\*h\*k nid\*b\*r\*t\*t\*r\*k occurrence of\*b\*t\*t\*t\*t\*k nid\*b\*r\*t\*t\*r\*h\*k ninteger\*b\*r\*t\*t\*t\*r
+\*t\*t\*h\*c\*a\*s\*a\*c\*k id. "demo"\*b\*t\*t\*t\*t\*c\*a\*s\*a\*c\*h\*c\*a\*a\*s\*a\*c
+\*r\*t\*r\*t\*t\*r\*h\*u\*t\*t\*t\*t\*t\*t\*r\*t\*t\*t\*r\*h\*u
+\*c\*a\*c\*t\*t\*r\*h\*r\*t\*c\*a\*a\*a\*a\*a\*c\*t\*t\*t\*r\*h\*r
+\*r\*t\*r\*t\*t\*d\*h\*r\*t\*d\*t\*t\*t\*t\*t\*t\*t\*t\*d\*h\*r
+\*c\*a\*c\*t\*c\*a\*g\*s\*a\*a\*c\*k symnode representing\*b\*t\*t\*t\*t\*t\*t\*c\*a\*g\*s\*a\*g\*c
+\*r\*k\*t\*r\*b\*h\*a\*>\*t\*k lidentifier\*b\*r\*t\*t\*t\*r\*k identifier "demo"\*b\*t\*t\*t\*t\*t\*t\*k linteger\*b\*r\*t\*t\*h\*r
+\*c\*a\*c\*t\*c\*a\*s\*a\*a\*c\*k in the current scope\*b\*t\*t\*t\*t\*t\*t\*k linum=3\*b\*r\*t\*t\*h\*r
+\*t\*t\*t\*r\*t\*t\*t\*t\*t\*t\*t\*t\*c\*a\*a\*g\*c
+\*kidtab\*b\*t\*t\*t\*c\*a\*a\*a\*c
+\*c\*a\*c\*t\*t\*t\*t\*t\*r
+\*r\*t\*r\*t\*t\*t\*t\*t\*d
+\*c\*a\*c\*t\*c\*a\*a\*c\*t\*c\*a\*a\*c
+\*k\*r\*t\*r\*b\*h\*a#\*> #\*r\*t\*k\*t\*r\*b\*h\*a#\*> #\*r\*t\*t\*r idnode representing
+\*c\*a\*c\*t\*r\*t\*t\*r\*t\*k index=2\*b\*r\*t\*t\*r identifier "demo"
+\*r\*t\*r\*t\*c\*a\*a\*c\*t\*c\*a\*a\*c
+
+\*tstrstor
+\*c\*a\*a\*a\ \*l \*a\*a\*c
+\*r\*t\*r\*t\*r\*t\*t\*r\*t\*r
+\*c\*g\*s\*a\*a\*a\ \*l \*a\*a\*c
+\*h\*r
+\*h\*d
+\*c\*a\*a\*a\*a\*a\*a\*a\*a
+\*r\*t\*r\*t\*r# d #\*r# e #\*r# m #\*r# o #\*r# / #\*r
+\*c\*a\*a\*a\*a\*a\*a\*a\*a\*tfirst idblock
+\*t\*t# \*u #
+\*t\*tindex=2
+.fc
+.lc
+.DE
+We see that the two occurrences of the identifier "demo" are represented by
+two
+.B treenodes
+of variant
+.B nid
+that both have pointers to the same
+.B symnode
+representing the declaration of "demo".
+All symnodes at a given declarationlevel are chained together (in the
+same manner as the idnodes) and the chains are attached to the global
+variable
+.B symtab .
+In order to find out if an identifer is declared in the current scope we
+scan the chain of symnodes starting from symtab, and check if any of them
+references the idnode we are looking for.
+A symnode also have a pointer to the treenode which defines the symbol.
+The
+.B symtabs
+themselves are also chained,
+the chain implements a stack of declarationlevels.
+The symtab which is created when the scope of a procedure is entered
+is also attached to that procedure.
+When a procedure is entered we create a new symtab, push it onto the stack,
+parse the procedure and pop the stack.
+The symbols then visible are those that still can be reached from the stack.
+.LP
+The parse-tree consists of
+.B treenodes
+representing each declaration, statement, expression etc.
+Each node except the nprogram node
+has a pointer to its immediate father (giving the defining point),
+to its children (if it has any) and to its right brother (if it is
+a member of a list).
+The top of the tree is found in the global variable
+.B top .
+.LP
+In order to find the defining point for the identifier in the assignment,
+we follow pointers from the nassign-treenode
+to the nid-treenode, to the lidentifier-symnode,
+and then up to the nid-treenode in the declaration.
+If we want to know the type of the identifier
+we proceed up to the nvar-treenode
+and then down to the node giving the type in the declaration
+(in our example that node would also be a nid-treenode referencing a
+linteger-symnode that represents the identifier "integer").
+There is a function
+.B typeof
+that performs exactly this operation.
+It will return a pointer to a npredef-, nsubrange-, nscalar-, nptr-
+narray-, nrecord-, nfileof- or nsetof-treenode.
+In those cases where the translator pays attention to types
+it uses a pointer (obtained from typeof) as representation of a type.
+.LP
+Given the parse-tree and the layered symbol table
+it is not hard to see how the translations described earlier are performed.
+The one place where the code becomes more than usually complex is when a
+.B write
+statement with format specifications is to be translated into a call to
+.B fprintf .
+.bp
+.NH 1
+Tuning
+.LP
+The behaviour of the translator may be modified for some cases simply
+by changing constants.
+These constants are all located at the top of the program text.
+.IP output 12
+The translator will copy the source during input if the constant
+.B echo
+is true.
+The copy is preceeded by the line
+.DS
+# ifdef PASCAL
+.DE
+and ended by the line
+.DS
+# else
+.DE
+and then follows the translated code
+and finally
+.DS
+# endif
+.DE
+This may be used to hold both Pascal and C source in the same file.
+If the Pascal part is changed the C part may be updated through:
+.DS
+	cpp -P -DPASCAL < orig > tmp
+	ptc < tmp > new
+	move new orig
+.DE
+assuming that
+.B echo
+is true and that 
+.B cpp
+is the standard C preprocessor.
+.DS
+Default value:
+
+	echo		= false;
+.DE
+.IP comments
+The translator recognizes both (* and { as comment delimiters.
+They are treated as different,
+allowing 1 level nested comments,
+if the constant
+.B diffcom
+is true.
+.DS
+Default value:
+
+	diffcomm	= false;
+.DE
+.IP symbols
+The translator accepts default entries in case-statements provided
+that the keyword defined through
+.B othersym
+is used in place of the constant list.
+.DS
+Default value:
+
+	othersym	= 'otherwise ';
+.DE
+substitute for
+.DS
+	othersym	= 'otherwise%';
+.DE
+if that feature is undesired.
+.IP
+The translator accepts externally declared procedures and functions
+provided that the directive defined through
+.B externsym
+is used in place of the keyword
+.B forward .
+.DS
+Default value:
+
+	externsym	= 'external  ';
+.DE
+.IP sets
+Sets are implemented as arrays of
+.B wordtype .
+The type is assumed to hold
+.B "setbits + 1"
+bits numbered from 0.
+.DS
+Default value:
+
+	wordtype	= 'unsigned short';
+	setbits	= 15;
+.DE
+.ne 10
+.IP files
+The implementation of files uses a flag-word which has the type given as
+.B filebits
+which is assumed to hold
+.B "filefill + 4"
+bits.
+.DS
+Default value:
+
+	filebits	= 'unsigned short';
+	filefill	= 12;
+.DE
+.ne 20
+.IP stmts
+If the Pascal source is known to be "normal" in the sense that for-loops
+always have an upper bound that is less than the maximum value of the
+type of the loop-variable, and in the sense that the upper bound doesn't
+change by computations inside the loop, then the translator may generate
+a more natural code.
+I.e:
+.DS
+for i := 1 to 10 do ;
+.DE
+becomes
+.DS
+for (i = 1; i <= 10; i++) ;
+.DE
+Since the requirements cannot be determined by the translator itself
+this kind of code is generated when the constant
+.B lazyfor
+is true.
+.DS
+Default value:
+
+	lazyfor	= false;
+.DE
+.ne 10
+.IP new
+The second and following parameters to the procedure
+.B new
+will be ignored if the constant
+.B unionnew
+is false.
+.DS
+Default value:
+
+	unionnew	= true;
+.DE
+.ne 10
+.IP strings
+All identifiers and strings are stored in the translator with the special
+character having the ordinal value
+.B null
+as endmarker.
+Hence, that character can not occur in strings in the Pascal source.
+.DS
+Default value:
+
+	null		= 0;
+.DE
+.ne 20
+.IP types
+The names of predefined types are given by the constants:
+.B inttyp ,
+.B chartyp ,
+.B floattyp ,
+and
+.B doubletyp .
+.DS
+Default value:
+
+	inttyp		= 'int';
+	chartyp	= 'char';
+	floattyp	= 'float';
+	doubletyp	= 'double';
+.DE
+The typename for real variables and functions defined by the user
+is given by the constant
+.B realtyp .
+.DS
+Default value:
+
+	realtyp	= doubletyp;
+.DE
+The typename for procedures is given by the constant
+.B voidtyp .
+.DS
+Default value:
+
+	voidtyp	= 'void';
+.DE
+.ne 10
+.IP i/o
+The default fieldwidths for integer and real values written on textfiles
+are given by the constants
+.B intlen
+and
+.B fixlen .
+.DS
+Default value:
+
+	intlen	= 10;
+	fixlen	= 20;
+.DE
+.IP types
+A table in the translator gives the mapping from Pascal
+integer subrange types to C arithmetic types.
+The table is initialized by code located at the end of procedure
+.I initialize
+giving the following default configuration:
+.TS
+l l l
+r r l .
+Low bound	High bound	Selected type
+.sp
+0	255	unsigned char
+-128	127	char
+0	65535	unsigned short
+-32768	32767	short
+-2147483647	2147483647	long
+.TE

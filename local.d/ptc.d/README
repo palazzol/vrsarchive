@@ -1,0 +1,42 @@
+Setting up the Pascal to C translator.
+
+The translator is a single huge Pascal program. If you are working on a UNIX
+system that has a Pascal compiler what you need to do is to unpack and
+concatenate the four parts forming the translator sourcecode, "ptc.p",
+unpack the "makefile", say "make ptc" and take a break.
+
+If you are on a non-UNIX system proceed with discretion.
+
+If compilation fails due to the program size you may consider attacking the C
+version, "ptc.c", if this too is too large to compile you may as well give up.
+If it fails to compile or run for other reasons you may try to contact me.
+
+When/if the ptc program is created you may try saying "make tests", this should
+not produce any output at all. If it does it means that ptc obtained from ptc.p
+differed in behaviour from cptc obtained from ptc.c obtained from ptc.p. In that
+case your Pascal and/or C compilers depart seriously from the ones availible to
+the author, this may imply a bug in ptc.
+
+Read the section "Tuning" in the implementation notes and do what you believe
+is appropriate for your installation; recompile and install binary and man-page
+as necessary.
+
+Send vitriolic comments to /dev/null;
+checks, constructive critisism and bug-reports to the address below.
+
+
+Sincerely,
+
+	Per Bergsten
+
+Email:	perb%holtec.uucp@chalmers.csnet
+	... mcvax!enea!chalmers!holtec!perb
+aka:	bergsten@chalmers
+
+Smail:	Holistic Technology AB
+	Grona Gatan 59
+	414 54 Gothenburg
+	Sweden
+
+Fax:	+46 31 247456
+

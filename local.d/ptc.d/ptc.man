@@ -1,0 +1,91 @@
+From enea!holtec!perb Sat May  9 17:47:50 1987
+Received: by mirror.TMC.COM; Sat, 9 May 87 17:47:37 edt
+Received: from enea.UUCP by seismo.CSS.GOV (5.54/1.14) with UUCP 
+	id AA12891; Sat, 9 May 87 16:51:27 EDT
+Received: by enea.se (5.51/1.33)
+	id AA18863; Sat, 9 May 87 22:36:30 +0200 (MET)
+Received: by chalmers.UUCP id AA22220; Sat, 9 May 87 22:08:11 -0200
+Received: by holtec.uucp (2.0/SMI-2.0)
+	id AA12513; Sat, 9 May 87 21:24:27 -0200
+Date: Sat, 9 May 87 21:24:27 -0200
+From: enea!holtec!perb (Per Bergsten)
+Message-Id: <8705091924.AA12513@holtec.uucp>
+To: mirror!sources
+Status: R
+
+Subject: ptc.man
+.\"		@(#)ptc.man	1.3 Date 87/05/09
+.if \nP .pl \nP
+.TH PTC 1
+.SH NAME
+ptc \- Pascal to C translator
+.SH SYNOPSIS
+.B ptc
+< pascal\ source > c\ source
+.SH DESCRIPTION
+.I Ptc
+reads a correct Pascal program and prints a C program with
+the same behaviour.
+It is intended as a tool for transporting finished applications to
+environments that lack Pascal compilers,
+it is
+.I not
+intended for program development.
+.PP
+The input should comply with the ISO level 0 Pascal definition.
+Two common Pascal extensions are also recognized: the keyword
+.B otherwise
+may be used for default entries in case-statements,
+the keyword
+.B external
+may be used in place of the forward directive to signify that
+a procedure or function is defined in a library.
+Furthermore,
+the translator does not require a complete Pascal program,
+a consistent subset of declarations can be translated.
+Thus a primitive module concept is supported.
+.SH "SEE ALSO"
+Ptc implementation notes.
+.SH CAVEATS
+The quality of an object program is of course highly dependent on the
+C compiler that processes the translated code.
+Arithmetic operations are sometimes implemented in a way that is incompatible
+with the Pascal definition.
+For example, the translator assumes that:
+.sp
+.nf
+	a := b mod c
+.fi
+.sp
+can be accurately translated into
+.sp
+.nf
+	a = b % c
+.fi
+.sp
+but that may not be true if c is negative.
+A check on the characteristics of integer and float arithmetic is
+strongly recommended.
+.PP
+Some Pascal constructs are impossible to express in C.
+The translator will not object to:
+.sp
+.nf
+	type	ptr = ^ ptr;
+.fi
+.sp
+but a C-compiler may balk at the resulting:
+.sp
+.nf
+	typedef	ptr * ptr;
+.fi
+.sp
+.SH BUGS
+The program can't translate comments from Pascal to C.
+.sp
+The translator does not do complete typechecking so
+a Pascal program that isn't formally correct may cause malfunction.
+.sp
+Passing a procedure as parameter to an enclosing recursive procedure
+may produce erroneous code (see the implementation notes).
+
