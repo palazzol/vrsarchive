@@ -306,7 +306,7 @@ clean:
 	cd ../include; chmod a-w date.h onames.h pm.h trap.h
 
 spotless: clean
-	rm -f a.out core $(GAME) lev_comp makedefs
+	rm -f a.out core $(GAME) lev_comp$(EXE) makedefs
 	rm -f ../include/onames.h ../include/pm.h
 	touch ../include/onames.h ../include/pm.h
 	touch makedefs.c
