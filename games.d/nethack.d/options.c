@@ -329,20 +329,22 @@ bad:
 "The compound options are name, as in OPTIONS=name:Merlin-W,",
 #ifdef	DOGNAME
 " dogname, which gives the name of your (first) dog (e.g. dogname:Rover)",
+#else
+"",
 #endif	/* DOGNAME */
 #ifdef SORTING
 " packorder, which lists the order that items should appear in your pack",
-#ifdef SPELLS
-" (the default is:  packorder:\")[%?+/=!(*0  ), and endgame." );
+#  ifdef SPELLS
+   " (the default is:  packorder:\")[%?+/=!(*0  ), and endgame." );
+#  else
+   " (the default is:  packorder:\")[%?/=!(*0  ), and endgame." );
+#  endif /* SPELLS /**/
 #else
-" (the default is:  packorder:\")[%?/=!(*0  ), and endgame." );
-#endif /* SPELLS /**/
-#else
-#ifdef GRAPHICS
-"engame, and graphics.", "", "");
-#else
-"and engame.", "", "");
-#endif
+#  ifdef GRAPHICS
+"endgame, and graphics.", "");
+#  else
+"and endgame.", "");
+#  endif
 #endif /* SORTING /**/ 	
 			pline("%s%s%s",
 "Endgame is followed by a description of which parts of the scorelist ",
@@ -371,7 +373,7 @@ bad:
 " (the default is:  packorder:\")[%?/=!(*0  ), and endgame." );
 #endif /* SPELLS /**/
 #else
-"and engame.", "", "");
+"and endgame.", "", "");
 #endif /* SORTING /**/ 	
 			pline("%s%s%s",
 "Endgame is followed by a description of what parts of the scorelist",
@@ -382,7 +384,7 @@ bad:
 			return;
 		}
 		pline("Bad option: %s.", opts);
-		pline("Type `o help<cr>' for help.");
+		pline("Type `O help<cr>' for help.");
 		return;
 	}
 #ifdef DGK
