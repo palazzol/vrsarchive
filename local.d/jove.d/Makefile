@@ -9,7 +9,7 @@
 # your system does not remove subdirectories of /tmp on reboot (lots do
 # remove them these days) then it makes sense to make TMPDIR be /tmp/jove.
 # But if you want to recover buffers on system crashes, you should create a
-# directory that doesn't get clearned upon reboot, and use that instead.
+# directory that doesn't get cleaned upon reboot, and use that instead.
 # You would probably want to clean out that directory periodically with
 # /etc/cron.  LIBDIR is for online documentation, the PORTSRV process,
 # RECOVER, and the system-wide .joverc file.  BINDIR is where to put the
@@ -17,13 +17,13 @@
 # JOVE, RECOVER and TEACHJOVE.  MANEXT is the extension for the man pages,
 # e.g., jove.1 or jove.l or jove.m.
 
-DESTDIR =
 TMPDIR = /tmp
-LIBDIR = /u/jpayne/jovelib
-BINDIR = /u/jpayne/bin
-MANDIR = /u/jpayne/manl
-MANEXT = l
-SHELL = /bin/csh
+ALL	= xjove recover teachjove portsrv
+MODEL	= -M2m -F 2000
+OPTIONS	= # -DiAPX286
+include /usr/vrs/ws/CONFIG
+MANDIR	= $(MAN1)
+MANEXT = 1
 
 # These should all just be right if the above ones are.
 JOVE = $(DESTDIR)$(BINDIR)/jove
@@ -45,8 +45,6 @@ TEACHJOVEM = $(DESTDIR)$(MANDIR)/teachjove.$(MANEXT)
 #	4.3BSD:	LIBS = -ltermcap
 #	SysV Rel. 2: LIBS = -lcurses
 
-LIBS = -ltermcap
-
 # If you are not VMUNIX (vax running Berkeley Version 4), you must specify
 # the -i flags (split I/D space) and maybe the -x option (for adb to work).
 #	2.9BSD:	LDFLAGS = -x -i
@@ -56,9 +54,7 @@ LIBS = -ltermcap
 #	4.3BSD:	LDFLAGS =
 #	SysV Rel. 2: LDFLAGS = -Ml
 
-LDFLAGS =
-
-CFLAGS = -O
+LDFLAGS = $(CFLAGS)
 
 OBJECTS = keymaps.o funcdefs.o abbrev.o ask.o buf.o c.o case.o ctype.o \
 	delete.o disp.o extend.o fp.o fmt.o insert.o io.o iproc.o jove.o macros.o \
@@ -84,27 +80,27 @@ BACKUPS = $(HEADERS) $(JOVESRC) iproc-pipes.c iproc-ptys.c \
 	Makefile Ovmakefile keymaps.txt README $(DOCS)
 
 
-all:	xjove recover teachjove portsrv
+#all:	xjove recover teachjove portsrv
 
 xjove:	$(OBJECTS)
-	$(CC) $(LDFLAGS) -o xjove $(OBJECTS) version.o $(LIBS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
 	@-size xjove
 	@-date
 
 portsrv:	portsrv.o
-	cc -o portsrv -n portsrv.o $(LIBS)
+	$(CC) $(LDFLAGS) -o $@ portsrv.o $(LIBS)
 
 recover:	recover.o tune.o rec.h temp.h
-	cc -o recover -n recover.o tune.o $(LIBS)
+	$(CC) $(LDFLAGS) -o $@ recover.o tune.o $(LIBS)
 
 teachjove:	teachjove.o
-	cc -o teachjove -n teachjove.o $(LIBS)
+	$(CC) $(LDFLAGS) -o $@ teachjove.o $(LIBS)
 
 setmaps:	setmaps.o funcdefs.c
-	cc -o setmaps setmaps.o
+	$(CC) $(LDFLAGS) -o $@ setmaps.o
 
 teachjove.o:	teachjove.c /usr/include/sys/types.h /usr/include/sys/file.h
-	cc -c $(CFLAGS) -DTEACHJOVE=\"$(TEACH-JOVE)\" teachjove.c
+	$(CC) -c $(CFLAGS) -DTEACHJOVE=\"$(TEACH-JOVE)\" teachjove.c
 
 setmaps.o:	funcdefs.c keymaps.txt
 
@@ -208,7 +204,7 @@ clean:
 # This version only works under 4.3BSD
 #depend:
 #	for i in ${SOURCES} ; do \
-#		cc -M ${CFLAGS} $$i | awk ' { if ($$1 != prev) \
+#		$(CC) -M ${CFLAGS} $$i | awk ' { if ($$1 != prev) \
 #		    { if (rec != "") print rec; rec = $$0; prev = $$1; } \
 #		    else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
 #		    else rec = rec " " $$2 } } \
