@@ -61,12 +61,26 @@ unsigned nbytes;
 	else {
 		p = freelist;
 		freelist = p->s.ptr;	/* Pop from freelist		*/
-		p = (Header *)brkctl(BR_ARGSEG,(long)nbytes-sizeof(*p),p);
+		p = (Header *)brkctl(BR_ARGSEG,(long)nbytes-sizeof(*p),p)-1;
 					/* Grow to new size		*/
 	}
 	p->s.ptr = p;
 	p->s.size = nbytes;
 	return(p == ERROR? NULL : (char *)(p+1));
+}
+
+#define MAX_CALLOC ((1<<(8*sizeof(unsigned)))-1-sizeof(Header))
+					/* unsigned with room for header */
+char *
+calloc(count, nbytes)
+unsigned count;
+unsigned nbytes;
+{
+	if ((((long)count)*nbytes) > MAX_CALLOC) {
+		abort();
+	}
+	return(malloc(count*nbytes));
+	/* The brkctl() in malloc() will give us cleared memory */ 
 }
 
 /*
