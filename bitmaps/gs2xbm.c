@@ -21,6 +21,7 @@ unsigned char line[1000];
 /*
  *	Swap the bits in a byte left for right
 */
+#ifdef SLOWWAY
 unsigned char revbyte[] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
 	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
@@ -56,60 +57,13 @@ unsigned char revbyte[] = {
 	0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF,
 };
 #define putbyte(b)	printf("0x%02x,", revbyte[b])
-
-main (argc, argv)
-    char **argv;
-{
-    int height, width, wremainder;
-    register int x, y, x1, mx, my;
-    register int level;
-	register int ocol = 0;
-    FILE *fopen(), *fp;
-    register unsigned long b;
-    
-    /* put up a new window */
-    if ( (fp = fopen(argv[1], "r")) == NULL ) {
-            perror("on file open");
-            exit(1);
-    }
-    /* Get dimensions */
-    fscanf(fp, "%d %d\n", &width, &height);
-    wremainder = width & 31;
-    width  &= ~31;
-    height &= ~31;
-
-    printf("#define %s_width %d\n", argv[1], width<<MAGSHFT);
-    printf("#define %s_height %d\n", argv[1], height<<MAGSHFT);
-    printf("static char %s_bits[] = {\n", argv[1]);
-    b = 0;
-    for ( y = 0; y < height; y++ ) {
-        for ( x = 0; x < width; x++ )
-            line[x] = getc(fp);
-        for ( x = 0; x < wremainder; x++ ) getc(fp);
-        for ( my = 0; my < MAG; my++ ) {
-            for ( x = 0; x < width; x += (32>>MAGSHFT) ) {
-                b = 0;
-                for ( x1 = 0; x1 < (32>>MAGSHFT); x1++ ) {
-					level = line[x+x1];
-                    for ( mx = 0; mx < MAG; mx++ ) {
-                        b = (b << 1) | dither(((x+x1)<<MAGSHFT)+mx, (y<<MAGSHFT)+my, level);
-                    }
-                }
-                putbyte((b>>24)&0xFF);
-                putbyte((b>>16)&0xFF);
-                putbyte((b>>8 )&0xFF);
-                putbyte((b    )&0xFF);
-				ocol += 4;
-				if (ocol > 11) {
-					printf("\n");
-					ocol = 0;
-				}
-            }
-        }
-    }
-    printf("};\n");
-	return(0);
-}
+#else
+/* Hex equivalents of a nibble read backward */
+static char revhex[] = "084c2a6e195d3b7f";
+/* Put out the hex nibbles in reverse order */
+#define putbyte(b)	putchar('0'); putchar('x'); putchar(revhex[(b)&0x0F]); \
+					putchar(revhex[(b)>>4]); putchar(',');
+#endif
 
 #undef EXP
 #ifdef EXP
@@ -169,12 +123,66 @@ static unsigned char grid[64] = {
  * left out.  That way the whites and blacks can be solid.
  *
  */
-dither(x, y, level)
-int x, y, level;
-{	int dlev;   /* dither level */
+#ifdef SLOWWAY
+#define GRID(x, y)	grid[((y & 7) << 3) + (x & 7)] /* apply an 8x8 grid */
+#else
+#define GRID(x, y)	grid[(y<<3)+x] /* apply an 8x8 grid */
+#endif
+#define dither(x, y, level) (level < (int)luminance[GRID(x,y)])
 
-	/* apply an 8x8 grid: */
-	dlev = grid[((y & 7) << 3) + (x & 7)];
-	/* apply dithering function and compare */
-	return(level < (int)luminance[dlev]);
+main (argc, argv)
+    char **argv;
+{
+    int height, width, wremainder;
+    register unsigned long b;
+    register int x, y, xs, ys;
+	register int x1, mx, my;
+    register int level;
+	register int ocol = 0;
+    FILE *fopen(), *fp;
+    
+    /* put up a new window */
+    if ( (fp = fopen(argv[1], "r")) == NULL ) {
+            perror("on file open");
+            exit(1);
+    }
+    /* Get dimensions */
+    fscanf(fp, "%d %d\n", &width, &height);
+    wremainder = width & 31;
+    width  &= ~31;
+    height &= ~31;
+
+    printf("#define %s_width %d\n", argv[1], width<<MAGSHFT);
+    printf("#define %s_height %d\n", argv[1], height<<MAGSHFT);
+    printf("static char %s_bits[] = {\n", argv[1]);
+    b = 0;
+    for ( y = 0; y < height; y++ ) {
+		ys = (y << MAGSHFT) & 0x07; /* precompute for dither() */
+        for ( x = 0; x < width; x++ )
+            line[x] = getc(fp);
+        for ( x = 0; x < wremainder; x++ ) getc(fp);
+        for ( my = 0; my < MAG; my++ ) {
+            for ( x = 0; x < width; x += (32>>MAGSHFT) ) {
+                b = 0;
+                for ( x1 = 0; x1 < (32>>MAGSHFT); x1++ ) {
+					xs = ((x+x1) << MAGSHFT) & 0x07; /* for dither() */
+					level = line[x+x1];
+                    for ( mx = 0; mx < MAG; mx++ ) {
+                        b = (b << 1) | dither(xs+mx, ys+my, level);
+                    }
+                }
+                putbyte((b>>24)&0xFF);
+                putbyte((b>>16)&0xFF);
+                putbyte((b>>8 )&0xFF);
+                putbyte((b    )&0xFF);
+				ocol += 4;
+				if (ocol > 11) {
+					putchar('\n');
+					ocol = 0;
+				}
+            }
+        }
+    }
+    printf("};\n");
+	return(0);
 }
