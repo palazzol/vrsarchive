@@ -34,7 +34,11 @@
 
 #ifdef USG
 
+#include	<sys/types.h>
 #include	<termio.h>
+#ifndef TCGETA
+#include	<sys/ioctl.h>
+#endif
 #define termstruct	termio
 #define kill_sym	c_cc[VKILL]
 #define erase_sym	c_cc[VERASE]
