@@ -1,12 +1,11 @@
 #	Makefile for some of cake's auxiliary programs
-
-PROGS = base ccincl later need needed sub subcmd usrc gsrc
-DEST  = /mip/usr/bin
+ALL = base ccincl later need needed sub subcmd usrc gsrc
+include ../../../CONFIG
 
 all:		$(PROGS)
 
 install:	$(PROGS)
-		cp $(PROGS) $(DEST)
+		cp $(PROGS) $(BINDIR)
 
 base:		base.o pattern_s.o
 		cc -o base base.o pattern_s.o
