@@ -1,0 +1,244 @@
+Article 1803 of rec.games.hack:
+Path: littlei!reed!tektronix!cae780!leadsv!pyramid!decwrl!labrea!rutgers!husc6!bbn!rochester!PT.CS.CMU.EDU!andrew.cmu.edu!dr1v+
+From: dr1v+@andrew.cmu.edu (Douglas Rosengard)
+Newsgroups: rec.games.hack
+Subject: Hack Tutorial supplement
+Message-ID: <kVkkFWy00Xo1VWM0=m@andrew.cmu.edu>
+Date: 13 Dec 87 21:19:30 GMT
+Organization: Carnegie Mellon University
+Lines: 232
+In-Reply-To:
+
+@begin{typewriter}
+The following is a supplement to the Hack Tutorial I published on Nov. 18. It
+contains some information which was left out
+of the original manual, and has been updated for  
+version 2.2 of nethack. Just cut below the dotted line
+-------------------------------
+
+
+
+
+MONSTER DATA
+
+Mname is the name of the monster.
+Mlet is the symbol for the monster.
+Mlevel is the number of hitdice the monster has.
+Creatures which are level 0 have 1-4 hit points.
+AC is the Armor class of the creature.
+Attack is the type of attack the creature gets. 
+	adb signifies an attack of a dice of type b.
+	Example: 2d6 means 2-12 damage.
+	Multiple attacks are seperated by a '/'.
+Notes are special notes on the monster.
+
+Mlet	Mname		Mlevel	AC	Attack	Notes
+a	acid blob	2	8	none	
+			May damage by passive splash
+A	giant ant	3	3	1d6	
+			Attack may lower strength
+b	giant beetle	4	4	3d4	
+B	giant bat	1	8	1d4
+c	cockatrice	4	6	1d3	
+			Turns player to stone!!
+C	centaur		4	4	1d6/1d6
+d	large dog	6	4	2d4/2d4
+D	dragon		10	-1	3d8/3d10/1d8/1d8
+			Dragons have 80hp, and may breathe fire.
+e	ettin		10	3	2d8/3d6
+E	floating eye	2	9	none	
+			May paralyze if attacked
+f	fog cloud	3	0	1d6
+F	freezing sphere	2	4	6d6	
+			Explodes with cold blast
+g	gelatinous cube	4	8	2d4	May paralyze.
+G	gnome		1	5	1d6
+h	homunculus	2	6	1d3	May sleep player.
+H	hobgoblin	1	5	1d8
+i	imp		2	2	1d4	Regenerates 
+I	stalker		8	3	4d4	Invisible
+j	jaguar		4	6	1d8/1d3/1d3/1d4/1d4
+J	jackal		0	7	1d2
+k	killer bee	4	4	2d4/1d4	Poisons player.
+K	keystone Kop	1	7	1d4	Throw pies.
+K	kobold		1	7	1d4	
+l	leocrotta	6	4	3d6
+L	leprechaun	5	8	1d2	Steals gold
+m	minotaur	15	6	4d10
+M	mimic		7	7	3d4	Holds player
+n	nurse		11	0	2d6/2d6/2d6
+			May heal player
+N	nymph		6	9	1d2	Steals objects
+
+o	owlbear		5	5	2d6/1d6/1d6/2d8
+p	piercer		3	3	2d6
+P	purple worm	15	6	2d8/2d4	May swallow
+user
+q	quivering blob	3	8	1d8
+Q	quantum mech.	6	3	1d4	Teleports player
+Q	quasit		3	3	1d4/1d2/1d2
+r	rock mole	3	0	1d6
+r	giant rat	0	7	1d3
+R	rust monster	10	3	none	Rusts armor
+s	giant spider	5	3	1d4/1d8/1d8	
+			Poisons player
+s	giant scorpion	5	3	1d4/1d8/1d8	
+			Poisons player
+S	snake		4	3	1d6	Poisons player
+t	tengu		5	5	1d7
+T	troll		7	4	2d7/1d6/1d6	
+			Regenerates
+u	unicorn		8	5	1d10
+U	umber hulk	9	2	2d10/3d4/3d4	
+			Confuses player
+v	violet fungus	3	7	1d4	Holds player
+V	vampire		8	1	1d6	
+			Drains hp and experience.
+w	long worm	8	5	1d4
+W	wraith		5	5	1d6	
+			Drains experience.
+x	xan		7	-2	2d4	pricks legs
+X	xorn		8	-2	4d6/1d5/1d5/1d5
+y	yellow light	3	0	none	blinds player
+Y	yeti		5	6	1d6/1d6
+z	zruty		9	3	3d6
+Z	zombie		2	8	1d8
+:	chameleon	6	6	4d2	Changes form
+9	giant		9	5	2d12
+`	lurker above	10	3	none	May swallow
+,	trapper		12	3	none	May swallow
+&	demon		10	-4	1d4/2d5/2d5/1d2/1d2/1d4
+&	demon lord	12	-5	1d5/1d1	Weaken player
+&	demon prince	14	-6	1d6	Ruin inventory.
+NOTE: All demons may summon other demons!!
+8	medusa		15	2	1d8	Gaze stones!!!
+
+
+
+
+
+
+
+
+
+
+
+
+TRAP EFFECTS:
+Sleep gas trap - Sleep for 1-25 turns.
+Bear trap - User is held by trap. This is not fun if you are 
+		an owlbear.
+Piercer - May take 4d6 damage from a piercer.
+Arrow - The user is shot at by an arrow.
+Trap door - Player falls through to next level 
+		(except on bottom level.)
+Dart trap - User is poisoned by a dart.
+Teleport - User teleports (randomly).
+Rust trap - Armor or weapon corrodes.
+Pit - You fall in a pit.
+Spiked Pit - As above, but in addition more damage and poisoned 
+		spikes possible.
+Level teleport - User teleports to a (random) level.
+Anti-magic - Lose mana
+Polymorph trap - Player is polymorphed into a (random) creature.
+Magic trap - Random effect 
+	Blinds player.
+	Player is hit by flame.
+	Tames nearby monsters.
+	Uncurse items
+Squeaky board - Wakes monsters
+Web - Player is held by web.
+
+
+
+FOUNTAIN  EFFECTS: (DRINKING)
+"The water is foul!  You gag and vomit." - User is sick.
+
+"The water is contaminated" - User is poisoned.
+
+"Good Lord! An endless stream of snakes pours forth!" - 
+			1-6 snakes appear.
+
+"You have unleashed a water demon!" - Demon appears. 
+			May grant user a wish!
+
+"You have attracted a water nymph!" - Nymph appears.
+
+"Water gushes forth from the overflowing fountain!" - 
+			Room fills with water.
+
+"You spot a gem in the sparkling waters!" - Player gets gem.
+
+"The fountain dries up!" - Fountain disappears.
+
+"This water's no good!" - Curses inventory.
+
+"You see an image of someone stalking you." - 
+			Grants see invisbility.
+
+"You sense the presence of monsters." - Detect monsters.
+
+"This water gives you bad breath!" - Scare monsters.
+
+(Dipping weapon in fountain)
+"Your weapon rusts somewhat." - Damages weapon.
+
+May bless items
+
+"The water glows for a moment." - Uncurse an item.
+
+Demon appears.
+
+Nymph appears.
+
+Snakes appear.
+
+Gem appears.
+
+Most other results are useless occurences.
+
+
+
+
+
+
+
+SITTING ON THRONES:
+The following are possible effects from sitting on a throne.
+
+"You feel suddenly weaker" - Lose strength and hit points.
+"You feel suddenly stronger" - Gain Strength
+"A massive charge of electricity shoots through your body!" - 
+				Take 1-30 hp.
+"You feel much, much better" - You are completely healed, 
+				and gain hp!
+"You notice you have no gold!" - Lose all gold.
+Make a wish, or gain luck.
+"Your audience has been summoned,Sire!" - 1-10 monsters appear.
+Free genocide
+"A curse upon you for sitting upon this throne!" - 
+			Blinded and items cursed.
+"Your vision clarifies" - Grants see invisible
+"You feel threatened" - aggravate monsters
+"You are granted a gift of insight!" - Identifies objects.
+"Your mind turns into a pretzel!" - Confusion
+
+
+POLYMORPHING YOURSELF :
+
+Only the following creatures may wield a weapon 
+(letter is creatures letter):
+@ehimnotwzCDGHIKLMNOQTUVWXYZ89&
+
+
+Only the following creatures may wear armor:
+@nGHIKLNOTVWZ&
+
+Dragons may breathe fire. Nymphs may remove cursed items.
+
+
+
+
+
+@end{typewriter}
+

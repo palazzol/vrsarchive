@@ -1,0 +1,375 @@
+Article 712 of rec.games.hack:
+Path: littlei!reed!tektronix!decvax!dartvax!nadya
+From: nadya@dartvax.UUCP (JT and Nadya)
+Newsgroups: rec.games.hack
+Subject: Hackhints  *MAJOR SPOILERS*
+Message-ID: <6501@dartvax.UUCP>
+Date: 18 Jun 87 15:44:02 GMT
+Reply-To: nadya@dartvax.UUCP (JT and Nadya)
+Distribution: world
+Organization: Burlington Coat Factory Warehouse Corporation
+Lines: 362
+
+I've been attempting to put together a canonical listing of all of the hints
+and spoilers available to mankind in his quest for the amulet.
+
+Gurus:  If you don't see your special hint, or if any information is not
+totally true, please e-mail me.  I'll collect hints and spoilers and
+probably post every two months or so.
+
+Others:  If you are not sure that you want to learn all of the deep, dark
+secrets of the game, please hit your "n" key now.
+
+
+This is hackhints.  It is a collected list of spoilers and hints that I
+started about a month ago.  Some of these hints are direct pull-downs from
+the net, and the credit goes to the respectful authors.  Any listing that
+does not have an author is based on my own experiences in the dungeon.
+
+Read on, adventurer, and happy hacking.  -JT
+
+Hell hints:
+-----------------------------------------------------------------------------
+
+Hell is where the heart is.
+
+To get to hell (and the bunker, the amulet, the hell hound, and the dog),
+you need the following:
+
+1.  Scroll of teleportation
+2.  Method of getting confused (potions of confusion, booze, dead bat, 
+	dead stalker)
+3.  Ring of Teleport Control
+4.  Fire Resistance (dead dragon or ring)
+
+Get confused, read the scroll, and you will be asked what level to teleport
+to.  In 1.02 (and 1.03 I believe), the highest possible is level 39.  If you 
+type a higher number, you still wind up on level 39.  In the center of the
+level is a bunker surrounded by a moat with the wizard (1) and hell hound in
+it (d).  Cross the water (wand of fire, levitate, or enormous rock into the
+water), dig your way through the bunker (find the closest m if you don't
+have a wand or a pick-axe), and kill the wizard.  Next work your way up the
+maze levels.  Each one has a wand of wishing under an immobile rock (note
+that on 1.02 at least, level 39 does not have a wand of wishing).  If you
+want, collect turn enormous rocks into rocks & polymorph into gems on your
+way up also.  
+
+E(ngraving) Elbereth will protect you from monsters.  Doing it with a wand
+of fire will take a turn and allow you to attack monsters for several turns
+while they do not attack you.  1.02 allows you to through weapons from an
+elbereth, 1.03 does not.  Both allow wands and the a(pply) of a pick-axe
+through an elbereth as an attack.
+
+The following lists may be of some use:  they include official names (1.02
+and 1.03), gem values, and effects of confused scrolls, thrown potions and
+the like.  They're collected off the net, but unfortunatly I can't give
+credit to the compilers since I've deleted the headers.  
+
+Happy hacking!
+
+			-- Richard Hughey
+
+
+--------------------------------------------------------------
+--------------------------------------------------------------
+List of all items for wishing, checklisting, or anything else.
+
+
+food ration       tripe ration    pancake      dead lizard
+fortune cookie    carrot          tin          orange   
+pear              melon           banana       candy bar
+clove of garlic   lump of royal   jelly        apple
+dead giant ant    dead human      egg          dead giant bat
+dead centaur      dead dragon     dead gnome   dead floating eye
+dead hobgoblin    dead stalker    dead jackal  dead freezing sphere
+dead leprechaun   dead kobold     dead mimic   dead purple worm
+dead nymph        dead orc        dead quasit  dead rust monster
+dead snake        dead troll      dead vampire dead umber hulk
+dead wraith       dead xorn       dead yeti    dead giant beetle
+dead acid blob    dead zombie     dead dog     dead gelatinous cube 
+dead cockatrice   dead fog cloud  dead ettin   dead homunculus
+dead imp          dead killer bee dead jaguar  dead leocrotta
+dead minotaur     dead nurse      dead owlbear dead quivering blob
+dead piercer      dead giant rat  dead tengu   dead giant scorpion
+dead violet fungi dead unicorn    dead xan     dead long worm
+dead yellow light dead zruty
+
+arrow             sling bullet    dart         crossbow bolt
+rock              boomerang       mace         axe
+flail             long sword      dagger       two handed sword
+worm tooth        crysknife       spear        bow
+sling             crossbow
+
+whistle           magic whistle   ice box      expensive camera
+pick-axe          can opener      iron chain   heavy iron ball
+enormous rock
+
+helmet            plate mail      splint mail  banded mail
+chain mail        scale mail      ring mail    studded leather armor
+leather armor     elven cloak     shield       pair of gloves
+
+restore strength  invisibility    booze        fruit
+healing           paralysis       sickness     monster detection
+object detection  confusion       speed        gain strength
+blindness         gain level      levitation   extra healing
+
+enchant armor     destroy armor   mail         confuse monster
+scare monster     blank paper     remove curse enchant weapon
+damage weapon     create monster  taming       genocide
+teleportation     gold detection  light        food detection
+identify          magic mapping   amnesia      fire
+punishment
+
+light             create monster  wishing      secret door detection
+slow monster      speed monster   striking     undead turning
+polymorph         teleportation   cancellation make invisible
+digging           magic missile   fire         sleep
+cold              death
+
+adornment         teleportation   regeneration searching
+see invisible     stealth         levitation   poison resistance
+aggravate monster fire resistance hunger       cold resistance
+conflict          gain strength   protection   increase damage
+teleport control  warning         protection from shape changers
+
+Diamond			4000  		Ruby			3500
+Sapphire		3000		Emerald			2500
+Turquoise stone		2000		Aquamarine stone	1500
+Tourmaline stone	1000		Topaz stone		900
+Opal stone		800		Garnet stone		700
+Amethyst stone		650		Agate stone		600
+Onyx stone		550		Jasper stone		500
+Jade stone		450
+Worthless piece of blue glass		0
+Worthless piece of red glass		0
+Worthless piece of yellow glass		0
+Worthless piece of green glass		0
+
+amulet of Yendor
+
+The Amulet of Yendor will be fake. 
+Scroll of mail may not exist in your game.
+Hack strips out s's, es's, etc. so don't worry about them.
+Hack does not care if it is upper or lower case.
+You can wish for up to 3 of an item.
+You can wish for an up to +3 item.
+If you wish for >+3 you get +0.
+If you wish for >+3 and your luck is < 0 you will get -3.
+There is a 1 in 10 chance of a 1 in 10 chace that a wand of wishing will
+be good. (I haven't taken Prob. & Stats. :-)
+-- 
+
+--------------------------------------------------------------
+--------------------------------------------------------------
+
+1)Potions : effects on monster when a potion is thrown at it
+
+gain strength,
+restore strength,
+healing,
+extra healing -- heals monster
+sickness      -- takes half of monster's hit points
+confusion,
+booze         -- confuses monster
+invisibility  -- makes monster invisible
+paralysis     -- paralyses monster
+speed         -- speeds monter
+blindness     -- blinds monster (temporarily)
+
+2)Potions : effects on you when you breath them (throw them downwards)
+
+restore strength,
+gain strength -- adds 1 to your strength points (if below max)
+extra healing,
+healing       -- adds 1 to your hit points (if below max)
+sickness      -- subtracts 5 from your hit points if it's >5, else subtracts 1
+confusion     -- confuses you for a max of 5 turns
+invisibility  -- "For an instant you couldn't see your right hand."
+paralysis     -- paralyses you for a max of 5 turns
+speed         -- speeds you up for a max of 5 turns
+blindness     -- blinds you for a max of 5 turns
+
+3)Dipping: if you dip sharp weapons (darts, arrows etc.) into potions of
+	 sickness, they are enchanted by +1.
+
+4)Scrolls: reading while confused
+
+enchant armor  -- armor becomes rust-proof
+destory armor  -- undoes rust-proofing on armor
+enchant weapon -- weapon becomes rust-proof
+destory weapon -- undoes rust-proofing on weapon
+scare monster  -- aggravates monsters around you
+blank paper    -- you see strange patterns (no other effects)
+remove curse   -- curses everything you have on. [jtp]
+create monster -- creates up to 12 acid blobs
+taming         -- tames monster up to 5 squares away
+teleport       -- teleports you to another level
+food detection -- displays food on level as potions
+identify       -- identifies scrolls as scroll of identify.  [jtp]
+magic mapping  -- each square has a 6/7 chance of not showing up on map 
+fire           -- you lose 1 hit point, even if you have fire resistance
+punishment     -- you only feel guity but are not punished
+genocide       -- genocides humans including YOU
+light          -- darkens the room
+
+
+Some wand tricks:
+------------------------------------------------------------------------------
+If you are playing v1.02 and you have a wand of polymorph:
+lay wands out in front of you like this
+            ----------
+            |........|
+            |/////@..|
+            |........+
+            ----------
+and zap the wand of polymorph over them.  peruse the wands after each zap and
+pick up useful wands (wishing, polymorph, digging, whatever) continuing to zap
+until you have everything you need.
+------------------------------------------------------------------------------
+Use wands of wishing until they are (-1) charges.  Lay them out and zap with a
+wand of cancellation.  The wand returns to (0) charges, and another charge can
+be "wrested out of this worn-out wand".
+------------------------------------------------------------------------------
+In dealing with monsters such as unicorns, remember that ray wands "bounce" 
+off the wall.  A wand of sleep does nicely in cases like these.  It also works
+on shopkeepers.
+
+In article <3672@gitpyr.gatech.EDU> ccastgs@gitpyr.UUCP (Glenn Stone) writes:
+>In article <461@ritcv.UUCP> axm4378@ritcv.UUCP (Per Abad) writes:
+>>When I read a scroll, sometimes I get only the message "You hear maniacal 
+>>laughter in the distance."
+>>---aldo
+>
+>If memory serves me correctly, this is a scroll of scare monster read
+>when monsters are not present.  Likewise, a scroll of (foo) detection
+>                                Glenn Stone                   GGGG
+
+Scare monster is one of the best scrolls in the dungeon for morgues and
+zoos.  Its proper use is to drop it on the floor and fight from it:  the
+monsters will not attack you.  In effect, it is the same as an 'Elbereth'
+engraved with a wand of fire except that the effects don't end after 10
+turns (or whatever the correct amount is).  This can only be done once which
+is why the scrolls turn to dust on trying to pick them up again.  Whenever
+in a scroll shop, be sure to have enough room in the knapsack to pick up
+every scroll there, otherwise trying to pick it up will result in the scroll
+becoming dust after you make room for it.
+
+
+	Hi all,
+		I still like what happened to me once. After walking into a  
+shop with a ring of conflict on the shopkeeper killed all the monsters in the 
+room. After robbing him blind I telported out figuring that was that. But no
+he found me and kept asking if I forgot to pay. When ever we got near a monster
+he just bobed them on the head. I was able to take him down 4-5 levels before
+he got himself killed.
+		Nick
+
+-- 
+	Nick Zentena
+
+
+In article <4078@drutx.ATT.COM> deg@drutx.ATT.COM (GillespieD) writes:
+>
+>Most objects you can identify by using them, like potions
+>and wands.  Is there any easy way to identify a ring without
+>having an identify scroll?
+>
+Some of the rings can be identified by using them.
+
+	Ring of levitation
+	Ring of teleportation (if not eaten leprechaum)
+	Ring of fire resistance (Find a Dragon)
+	Ring of cold resistance (Find a Freezing spere)
+	Ring of poison resistance (Find a killer bee)
+	Ring of teleport control (If teleport ability)
+	Ring of see invisible (Find an Invisible stalker)
+	Ring of agravate monster (Find a Nymph)
+	Ring of conflict 
+
+Hope that they are not cursed.
+
+Erkki
+
+	Ring of poison resitnace (Find a killer bee)
+
+-- 
+Erkki A. Lehtim{ki        eal@tut.uucp
+
+Weapons and such:
+-------------------------------------------------------------------------------
+
+Thats right!  +11 weapons and more!  Read on to discover the secret!
+
+Of course, you don't have to read this and it might be considered a bug...
+Not everyone knows that you can identify the potion of sickness using the
+#dip command.  If you version has this command, type #dip, enter the
+weapon you want the dip and then the potion you want to dip into.  This
+covers the weapon with the potion, using up the potion, and puts the affect
+of the potion on the weapon.  The trick is that ONLY potions of sickness
+are affected. (Perhaps this potion is an oil and is the only type that
+will stick to the weapon.)  The other trick is that it only works on
+arrows and bolts but not on darts.  I haven't tried it on other weapons.
+The effect of #DIPping a bunch of arrows into a potion of sickness is the
+potion get used up and the arrows get an extra +1.  This works  even if the 
+arrows and potion are not identifyed.  This is a simple way of identifying 
+the sickness potion.
+
+Now for the +11 weapon.  I describe this method to a freind and she used it
+on a batch of 20 arrows.  In fact, she used it 12 times (she drank one, opps).
+She now had 20 +11 arrows.  This was her +11 weapon.  She did shoot some, but
+tended to wield them so as not to lose them.  When she told me about them
+I checked her inventory.  Yes, she had a wand of polymorph! 
+We dropped the arrows in a line in stacks of 1 arrow each and zapped the 
+line of arrows with the wand.  Well, she eventually died (happens to the best
+of us) but somewhere in our dungeon lies her ghost with a +11 two handed sword
+and two +11 daggers and a +11 spear ....
+
+
+Special names:
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Elbereth:
+	(E)ngraved on the floor, this becomes a safe place to regain hit 
+points.  In version 1.02 you can also (a)pply your pick axe to kill monsters
+and you can also (t)hrow weapons, such as the use of bow and arrow.
+
+Croesus:
+	When in a vault, sometimes a guard will enter and as your name.  Enter
+Croesus, and he'll leave.
+
+Orcrist:
+	Used on two-handed swords in some versions, all weapons in other 
+versions, it adds to the amount of damage done to Orcs.
+
+Special commands:
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+#dip:
+	(#d)ip arrows, shurikens, darts, etc in potions of poison.  If
+unidentified potion is suspected to be poison, upon dipping the weapon
+will be plussed and the potion will disappear.
+
+#pray:
+	I have yet to find a use for this.
+
+Special weapons:
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+Wearing gloves and wielding a dead cockatrice.
+A two handed sword called Orcrist.
+Dipped arrows, shurikens, darts, etc can be plussed beyond the legal limit
+	for scrolls of enchant (+3).
+
+Special tricks:
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+Along with polymorphing wands, you can polymorph just about anything.  Breaking
+up rocks and polymorphing the piles yields gems.  Identify the gems until you
+have piles of 255 of each, cursed and uncursed.
+
+Dipping weapons, like arrows, until you have +12 or so, then polymorphing until
+you have two handed sword or crysknife.
+
