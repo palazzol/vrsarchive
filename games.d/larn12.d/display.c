@@ -1,6 +1,6 @@
 /*	display.c		Larn is copyrighted 1986 by Noah Morgan. */
 #include "header.h"
-#define makecode(_a,_b,_c) (((_a)<<16) + ((_b)<<8) + (_c))
+#define makecode(_a,_b,_c) ((((long)(_a))<<16) + ((_b)<<8) + (_c))
 
 static int minx,maxx,miny,maxy,k,m;
 static char bot1f=0,bot2f=0,bot3f=0;
@@ -145,7 +145,7 @@ botside()
 	}
 
 static botsub(idx,str)
-	register int idx;
+	long idx;
 	char *str;
 	{
 	register int x,y;
