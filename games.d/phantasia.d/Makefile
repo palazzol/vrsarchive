@@ -1,11 +1,11 @@
 #
-# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.6 1990-04-12 13:18:40 vrs Exp $
+# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.7 1990-04-13 15:02:35 vrs Exp $
 #
 OPTIONS	= -DDEST=$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"$(SAFEUID)\" \
 	  -DUIDA=0 -DUIDB=244 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
 MODEL	= -M2m
 GAME	= phantasia
-ALL	= $(GAME) setup
+ALL	= $(GAME) setup phant.help
 include /etc/CONFIG
 # To create the game:
 #
@@ -63,8 +63,6 @@ LIBGAM	= $(GAMLIB)/phant3.3.2
 CFILES	= main.c fight.c io.c interplayer.c gamesupport.c misc.c phantglobs.c
 OFILES	= main.o fight.o io.o interplayer.o gamesupport.o misc.o phantglobs.o
 HFILES	= phantdefs.h phantstruct.h macros.h include.h
-
-all:		$(GAME) setup phant.help
 
 # Make the game.
 $(GAME):	$(OFILES)

@@ -1,8 +1,8 @@
 #	Hack Makefile.
 #	SCCS Id: @(#)Makefile.unix	3.0	88/10/17
 MODEL	= -Ml -Gt24
-OPTIONS	= -O -I../include
-GAME	= nethack
+OPTIONS	= -O -I../include -DHACKDIR=\"$(GAMLIB)/nethack3.0\"
+GAME	= nethack3.0
 ALL		= $(GAME)
 include /etc/CONFIG
 # This makefile replaces the previous Makefile.unix, Makefile.xenix,
@@ -301,7 +301,7 @@ tags: $(CSOURCES)
 	@( cd ../include ; ctags -tw $(HSOURCES) )
   
 clean:
-	rm -f *.o makedefs $(ALL)
+	rm -f *.o lev_comp makedefs $(ALL)
 
 spotless: clean
 	rm -f a.out core $(GAME) lev_comp makedefs

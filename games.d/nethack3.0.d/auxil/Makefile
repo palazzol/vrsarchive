@@ -9,7 +9,7 @@ Guidebook:	Guidebook.mn
 	nroff -mn Guidebook.mn > Guidebook
 
 clean:
-		rm -f Guidebook
+		rm -f Guidebook castle endgame tower[123]
 
 data:	data.base ../include/config.h
 	( cd ../src ; ./makedefs -d )
