@@ -54,7 +54,7 @@ fi
    *	This series of pipes produces a list of
    *	possibly misspelled words
    *"
-echo -n "running files through spell..."
+echo "running files through spell...\c"
 deroff -w $files |\
   sort -u |\
   /usr/lib/spell/spellprog $badtable $badlist |\
