@@ -1,17 +1,17 @@
 #
-#	%W%	%G%
+#	$Header: /home/Vince/cvs/local.d/calend.d/makefile,v 1.3 1987-02-08 23:13:09 vrs Exp $
 #
-SHELL	= /bin/sh
+OPTIONS	= -O -F 2000
+include ../../CONFIG
 SRCS	= calend.c process.c util.c parser scanner globals.h process.h pars.h 
-MISC	= calend.1l Makefile remind.c remind.1l README addcal addcal.1l
-LOCDIR	= /usr/local
-CFLAGS	= -O -F 2000
-ScFile	= calend.sc
+DOCS	= calend.1l remind.1l addcal.1l
+MISC	= $(DOCS) Makefile remind.c README addcal
+ALL	= calend remind addcal
 
-all: calend remind
+all: $(ALL)
 
 calend: calend.o process.o util.o y.tab.o
-	cc $(CFLAGS) -o calend calend.o process.o util.o y.tab.o
+	cc $(CFLAGS) -o $@ calend.o process.o util.o y.tab.o
 
 calend.c: globals.h process.h
 
@@ -28,10 +28,7 @@ lex.yy.c: scanner
 parser: globals.h pars.h
 
 remind: remind.c
-	cc $(CFLAGS) -o remind remind.c
-
-.DEFAULT:
-	co $<
+	cc $(CFLAGS) -o $@ remind.c
 
 clean:
 	rm -f y.* lex.* *.o calend remind core make.out
@@ -41,48 +38,9 @@ print:
 	cpr -r 'Function Calls' $(SRCS) Makefile | sprint
 	rm 'Function Calls'
 
-
-$(LOCDIR)/calend: calend
-	cp $? $@
-	chmod 711 $@
-
-inst-calend: $(LOCDIR)/calend
-
-$(LOCDIR)/addcal: addcal
-	cp $? $@
-	chmod 755 $@
-
-inst-addcal: $(LOCDIR)/addcal
-
-$(LOCDIR)/remind: remind
-	cp $? $@
-	chmod 711 $@
-
-inst-remind: $(LOCDIR)/remind
-
-inst-man: /usr/man /usr/man/man1 inst-manc inst-manr inst-mana
-
-/usr/man:
-	mkdir $@
-
-/usr/man/man1:
-	mkdir $@
-
-inst-manc: /usr/man/man1/calend.1l
-inst-manr: /usr/man/man1/remind.1l
-inst-mana: /usr/man/man1/addcal.1l
-
-/usr/man/man1/calend.1l: calend.1l
-	cp $? $@
-	chmod 644 $@
-
-/usr/man/man1/addcal.1l: addcal.1l
-	cp $? $@
-	chmod 644 $@
-
-/usr/man/man1/remind.1l: remind.1l
-	cp $? $@
-	chmod 644 $@
-
-install: inst-calend inst-addcal inst-remind inst-man
-	@echo Installed
+install: $(ALL) $(BINDIR) $(DOCS) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cd $(BINDIR); chmod 755 addcal
+	cp $(DOCS) $(MAN1)
+	cd $(MAN1); chmod 644 $(DOCS)
