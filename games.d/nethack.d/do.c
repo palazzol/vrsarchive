@@ -47,6 +47,16 @@ drop(obj) register struct obj *obj; {
 		free((char *) obj);
 		return(1);
 	}
+#ifdef WALKIES	
+	if (obj->otyp == LEASH) {
+	    register struct monst *mtmp = fmon;
+	    while (mtmp && !mtmp->mleashed) mtmp = mtmp->nmon;
+	    if (mtmp) {
+		pline ("Your leash is tied around your hand.");
+		return (0);
+	    }
+	}
+#endif
 	if(obj->owornmask & (W_ARMOR | W_RING)){
 		pline("You cannot drop something you are wearing.");
 		return(0);
