@@ -56,7 +56,6 @@ FILE *File, *Macread, *Macwrite;
 FILE *Save;
 long int teller[MAXDEPTH], ftell();
 char *strcat(), *strcpy();
-char *sprintf();
 char *request[] = {
 	"ad","ar","bl","bp","br","cc","ce","de",
 	"ds","ef","eh","fi","fo","hc","he","hx","hy","ig",
