@@ -1,0 +1,83 @@
+$	Cakefile to handle C programs.
+
+$	The value of the macro CC names the C compiler. The values
+$	of the macros CPPFLAGS, CFLAGS and LDFLAGS are passed on to
+$	cpp, cc and ld respectively. By default, the object file
+$	depends only on the source file. This can be changed. You
+$	should define DEPCCINCL if you want the .o file to depend
+$	on the files included in .c; the value of CCINCLFLAGS will
+$	be passed along to ccincl. You may define DEPHDR instead,
+$	in which case the .o file will depend on either the files
+$	named in the macro HDR (without the .h suffix), or on all
+$	the .h files in the current directory. In any case, you
+$	may define OBJDEP yourself.
+
+$	This cakefile was written to work in conjunction with the
+$	cakefile Grammar (or Lex and Yacc) and the cakefile Main
+$	or System. The order of inclusion of these should be e.g.
+$	Grammar, C, and Main.
+
+#ifndef	CC
+#define	CC		cc
+#endif
+#ifndef	CPPFLAGS
+#define	CPPFLAGS
+#endif
+#ifndef	CFLAGS
+#define	CFLAGS
+#endif
+#ifndef	LINTFLAGS
+#define	LINTFLAGS
+#endif
+#ifndef	LDFLAGS
+#define	LDFLAGS
+#endif
+#ifndef	OBJDEP
+# ifdef	DEPCCINCL
+#  ifndef	CCINCLFLAGS
+#   define	CCINCLFLAGS
+#  endif
+#  define	OBJDEP		[[ccincl CCINCLFLAGS %.c]]
+#  define	WHENFLAG	*
+# else
+#  ifdef	DEPHDR
+#   ifdef	HDR
+#    define	OBJDEP		[[sub X X.h HDR]]
+#   else
+#    define	OBJDEP		[[ls *.h]]
+#   endif
+#  else
+#   define OBJDEP
+#  endif
+# endif
+#endif
+#ifndef	WHENFLAG
+#define	WHENFLAG
+#endif
+
+%.o:	%.c WHENFLAG OBJDEP
+	CC CPPFLAGS CFLAGS -c %.c
+
+#define	LINK_CMD	CC LDFLAGS -o %
+#define	CHECK_CMD	lint CPPFLAGS LINTFLAGS
+#define	TAGS_CMD	ctags
+#define	DEFS_CMD	defn
+
+#define	SRCSUFF	.c
+#define	OBJSUFF .o
+
+#ifndef	SUFFIXLIST
+#ifdef	USE_YACC
+#ifdef	USE_LEX
+#define	SUFFIXLIST	.c .l .y
+#else
+#define	SUFFIXLIST	.c .y
+#endif
+#else
+#ifdef	USE_LEX
+#define	SUFFIXLIST	.c .l
+#else
+#define	SUFFIXLIST	.c
+#endif
+#endif
+#endif

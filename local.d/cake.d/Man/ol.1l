@@ -1,0 +1,19 @@
+.TH OL 1-ucb
+.SH NAME
+ol \- print an outline of papers written with -me
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B ol
+file ...
+.SH DESCRIPTION
+.sp 1
+\fIOl\fP prints out paper outlines.
+It recognizes the -me section macros .sh and .uh,
+as well as the local macros .tr, .le, .co and .dt
+for theorems, lemmas, corollaries and definition of terms.
+For each of these macros, ol prints out its source line number,
+what it introduces (e.g. sction 1.2.3 or theorem 4.5), and
+its title (e.g. "Introduction" or "Pumping lemma").
+The latter two are indented to show structure.
+.\"	@(#)ol.l	9/2/85

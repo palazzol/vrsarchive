@@ -1,0 +1,21 @@
+#! /bin/sh
+cat > /tmp/ccs$$ << END_PROG
+	{
+		if (NF == 10)
+		{
+			otried += \$7;
+			ofound += \$8;
+			stried += \$9;
+			sfound += \$10;
+		}
+	}
+END	{
+		printf "output cache accesses:  %8d\n", otried;
+		printf "output cache hits:      %8d\n", ofound;
+		printf "output cache hit ratio: %8.2f\n", (ofound*100)/otried;
+		printf "status cache accesses:  %8d\n", stried;
+		printf "status cache hits:      %8d\n", sfound;
+		printf "status cache hit ratio: %8.2f\n", (sfound*100)/stried;
+	}
+END_PROG
+awk -f /tmp/ccs$$ < /u/pgrad/zs/lib/cake_stats

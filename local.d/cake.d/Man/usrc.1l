@@ -1,0 +1,44 @@
+.ds u \fIusrc\fP
+.ds U \fIUsrc\fP
+.TH USRC 1-ucb
+.SH NAME
+usrc \- find ultimate source files
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B usrc
+suffix ...  file ...
+.SH DESCRIPTION
+.sp 1
+\*U is a tool for finding ultimate source files.
+It is intended to be used in conjunction with cake(1),
+and in particular with the cakefiles Main and System.
+It needs to kinds of arguments.
+One is a make(1)-style list of suffixes
+which describe dependencies between files;
+the other is a list of basic filenames
+(filenames without any suffixes).
+\*U outputs each base name argument
+together with the rightmost suffix on the list
+for which a file exists.
+Since this "explanation" is none too clear, here is an example:
+.SH "EXAMPLE"
+.sp 1
+A typical invocation of \*u would be "usrc .c .l .y file1 file2 file3"
+in a directory containing file1.c file2.c file2.y file3.c and file3.l;
+for this \*u will output file1.c file2.y file3.l, signifying that
+the ultimate source files are file1.c file2.y file3.l and that the
+others (file2.c and file3.c) were generated
+(by yacc(1) and lex(1) respectively).
+.SH "SEE ALSO"
+cake(1), gsrc(1)
+.SH BUGS
+.sp 1
+Suffix dependencies really form a tree, not a list.
+This causes \*u to get confused if two ultimate source files
+(i.e. non-generated files) have the same basename
+and if they both have their suffix on the list.
+Since the Main and System cakefiles run \*u
+to identify files which are to be printed,
+this is not too serious (unlike tha parallel problem with gsrc(1)).
+.\"	@(#)usrc.l	7/7/86

@@ -1,0 +1,1363 @@
+.\"		Nroff macros for papers
+.\"
+.\"		General setup
+.nr ii 5n
+.nr pi 5n
+.nr fi 0
+.nh
+.\" 		Simulated thesis mode
+.de si
+.po 1i
+.he ''- % -''
+..
+.\"		Title begin
+.de tb
+.(l C
+..
+.\"		Title end
+.de te
+.)l
+..
+.\"		Abstract begin
+.de ab
+.ll -16n
+.po +8n
+.(l C
+\fBAbstract\fP
+.)l
+..
+.\"		Abstract end
+.de ae
+
+.ll +16n
+.po -8n
+..
+.\"		Title spacing
+.de ts
+\&
+.sp 1.45i
+..
+.\"		Melbourne University address
+.de mu
+Department of Computer Science
+University of Melbourne
+Parkville, 3052 Victoria, Australia
+..
+.\"		Zoltan Somogyi's address
+.de zs
+.po +8m
+.(l M
+UUCP:		{uunet,mcvax,ukc}!munnari.oz!zs
+ARPA:		zs%munnari.oz@uunet.uu.net
+CSNET:	zs%munnari.oz@australia
+.)l
+.po -8m
+..
+.\"		Computing Reviews categories
+.de cr
+.lp
+\fBCR Categories and Subject Descriptors:\fP
+.br
+..
+.\"		Keywords
+.de kw
+.lp
+\fBAdditional Keywords and Phrases:\fP
+.br
+..
+.\"		Tech report offsets etc
+.de to
+.br
+.he ''- % -''
+.pn 1
+.po 1.2i
+.bp
+..
+.\"		Acknowledge the ACrb
+.de rb
+.(f
+This research was supported by the Australian Computer Research Board.
+.)f
+..
+.\"		Setup for theorem numbering
+.de $1
+.nr tn 0 1
+..
+.\"		Theorem
+.de tr
+.lp
+.b "Theorem \\n($1.\\n+(tn"
+..
+.\"		Lemma
+.de le
+.lp
+.b "Lemma \\n($1.\\n+(tn"
+..
+.\"		Corollary
+.de co
+.lp
+.b "Corollary \\n($1.\\n+(tn"
+..
+.\"		Proof
+.de pr
+.lp
+.b "Proof"
+.br
+..
+.\"		Proof end
+.de pe
+.b "[]"
+.br
+..
+.\"		Definition of terms
+.de dt
+.lp
+.b "Definition"
+..
+.\"		Example
+.de ea
+.lp
+.b "Example"
+..
+.\"		Program begin
+.de (p
+.sp .05i
+.ft as
+.nf
+..
+.\"		Program end
+.de )p
+.fi
+.ft R
+.sp .05i
+..
+.\"		Print contents page
+.de ct
+.he ''''
+.bp
+.ls 1
+.sp 4
+.ce 1
+\fIContents\fP
+.ce 0
+.sp
+.xp
+..
+.\"		Generate index
+.de $0				
+.(x
+.if "\\$3"1" .sp
+'in \\$3m*5u-5u
+\fI\\$2. \\$1\fR
+'in
+.)x
+..
+.\"		Begin quote
+.de (Q
+.br
+.nr po +\\n(iiu
+.xl -\\n(iiu
+.nr Gr \\n($r
+.vs \\n(.vu+12p/2u
+.nr $r \\n(.vu/\\n(.su
+.lp
+..
+.\"		End quote
+.de )Q				
+.nr po 0
+.xl
+.nr $r \\n(Gr
+..
+.ds l] /usr/bib/bmac
+.\"	Zoltan's bib macros
+.ds [[ [
+.ds ]] ]
+.ds ], ,\|
+.ds ]- -
+.ds [. " \&
+.ds .] .
+.ds [, " \&
+.ds ,] ,
+.ds [? " \&
+.ds ?] ?
+.ds [: " \&
+.ds :] :
+.ds [; " \&
+.ds ;] ;
+.ds [! " \&
+.ds !] !
+.ds [" " \&
+.ds "] \&"
+.ds [' " \&
+.ds '] '
+.ds [< " \&
+.ds >]
+.\" reference formmating strings
+.ds a] " \&
+.ds b] , \&
+.ds c] , \&
+.ds n] "\&, and \&
+.ds m] "\&, and \&
+.ds p] .
+.\" reference formmating macros
+.de s[	\" start reference
+.nh
+.IP [\\*([F] 5m
+..
+.de e[	\" end reference
+.[-
+..
+.de []	\" start to display collected references
+.LP
+..
+.de ][	\" choose format
+.ie "\\*([T""           .nr t[ 9	\" notitle
+.el \{\
+.  ie !"\\*([J"" \{\
+.    ie !"\\*([V""      .nr t[ 1	\" journal
+.    el                 .nr t[ 5	\" conference paper
+.  \}
+.  el \{\
+.    ie !"\\*([R""      .nr t[ 4	\" technical report
+.    el \{\
+.      ie "\\*([I""     .nr t[ 0	\" other (inverted test)
+.      el \{\
+.        ie !"\\*([B""  .nr t[ 3	\" article in book
+.        el             .nr t[ 2	\" book
+.      \}
+.    \}
+.  \}
+.\}
+.\\n(t[[
+..
+.de 0[	\" other
+.s[
+.tm bmac.zs: using other for \\*([T
+.if !"\\*([A"" \\*([A\c
+.if !"\\*([T"" , \\*([T\c
+.if !"\\*([I"" , \\*([I\c
+.if !"\\*([C"" , \\*([C\c
+.if !"\\*([V"" , vol. \\*([V\c
+.if !"\\*([D"" , \\*([D\c
+.if !"\\*([O"" , \\*([O\c
+\&.
+.e[
+..
+.de 1[	\" journal article
+.s[
+.ie !"\\*([A"" \\*([A,
+.el \{\
+.  ie !"\\*([E"" \{\
+.    ie \\n([E-1 \\*([E\\0(eds.),
+.    el \\*([E\\0(ed.),
+.  \}
+.  el .tm bmac.zs: no author/editor for journal article "\\*([T"
+.\}
+\\*([T\c
+, \\fI\\*([J\\fP, \\*([V\c
+.if !"\\*([N"" :\\*([N\c
+.ie !"\\*([D"" \\ \\|(\\*([D)\c
+.el .tm bmac.zs: no date for journal article "\\*([T"
+.ie !"\\*([P"" \{\
+.  ie \\n([P , pp. \\*([P\c
+.  el , p. \\*([P\c
+.\}
+.el .tm bmac.zs: no page numbers for journal article \\*([T
+.if !"\\*([O"" , \\*([O\c
+\\&.
+.e[
+..
+.de 2[	\" book
+.s[
+.ie !"\\*([A"" \\*([A,
+.el \{\
+.  ie !"\\*([E"" \{\
+.    ie \\n([E-1 \\*([E\\0(eds.),
+.    el \\*([E\\0(ed.),
+.  \}
+.  el .tm bmac.zs: no author/editor for book "\\*([T"
+.\}
+\\*([T\c
+.if !"\\*([S"" , \\*([S\c
+.if !"\\*([S"" \{\
+.  ie !"\\*([V"" volume \\& \\*([V\c
+.  el .if !"\\*([N"" \\& \\*([N\c
+.\}
+.ie !"\\*([I"" , \\*([I\c
+.el .tm bmac.zs: no publisher for book "\\*([T"
+.ie !"\\*([C"" , \\*([C\c
+.el .tm bmac.zs: no city for book "\\*([T"
+.ie !"\\*([D"" , \\*([D\c
+.el .tm bmac.zs: no date for book "\\*([T"
+.if !"\\*([O"" , \\*([O\c
+\\&.
+.e[
+..
+.de 3[	\" article in book
+.s[
+.ie !"\\*([A"" \\*([A,
+.el .tm bmac.zs: no author for article in book "\\*([T"
+\\*([T,\\0in:\\0\c
+.ie !"\\*([E"" \{\
+.  ie \\n([E-1 \\*([E\\0(eds.),
+.  el \\*([E\\0(ed.),
+.\}
+.el .tm bmac.zs: no editor for article in book "\\*([T"
+\\fI\\*([B\\fP\c
+.if !"\\*([S"" , \\*([S\c
+.if !"\\*([S"" \{\
+.  ie !"\\*([V"" \\& volume \\*([V\c
+.  el .if !"\\*([N"" \\& \\*([N\c
+.\}
+.ie !"\\*([I"" , \\*([I\c
+.el .tm bmac.zs: no publisher for article in book "\\*([T"
+.ie !"\\*([C"" , \\*([C\c
+.el .tm bmac.zs: no city for article in book "\\*([T"
+.ie !"\\*([D"" , \\*([D\c
+.el .tm bmac.zs: no date for article in book "\\*([T"
+.if !"\\*([P"" \{\
+.  ie \\n([P , pp. \\*([P\c
+.  el , p. \\*([P\c
+.\}
+.if !"\\*([O"" , \\*([O\c
+\\&.
+.e[
+..
+.de 4[	\" report
+.s[
+.ie !"\\*([A"" \\*([A,
+.el \{\
+.  ie !"\\*([E"" \{\
+.    ie \\n([E-1 \\*([E\\0(eds.),
+.    el \\*([E\\0(ed.),
+.  \}
+.  el .tm bmac.zs: no author/editor for report "\\*([T"
+.\}
+\\*([T, \\*([R\c
+.ie !"\\*([I"" , \\*([I\c
+.el .tm bmac.zs: no publisher for report "\\*([T"
+.ie !"\\*([C"" , \\*([C\c
+.el .tm bmac.zs: no city for report "\\*([T"
+.ie !"\\*([D"" , \\*([D\c
+.el .tm bmac.zs: no date for report "\\*([T"
+.if !"\\*([O"" , \\*([O\c
+\\&.
+.e[
+..
+.de 5[	\" conference paper
+.s[
+.ie !"\\*([A"" \\*([A,
+.el \{\
+.  ie !"\\*([E"" \{\
+.    ie \\n([E-1 \\*([E\\0(eds.),
+.    el \\*([E\\0(ed.),
+.  \}
+.  el .tm bmac.zs: no author/editor for conference paper "\\*([T"
+.\}
+\\*([T, \\fI\\*([J\\fP\c
+.ie !"\\*([C"" , \\*([C\c
+.el .tm bmac.zs: no city for conference paper "\\*([T"
+.if !"\\*([I"" , \\*([I\c
+.ie !"\\*([D"" , \\*([D\c
+.el .tm bmac.zs: no date for conference paper "\\*([T"
+.ie !"\\*([P"" \{\
+.  ie \\n([P , pp. \\*([P\c
+.  el , p. \\*([P\c
+.\}
+.el .tm bmac.zs: no page numbers for conference paper \\*([T
+.if !"\\*([O"" , \\*([O\c
+\\&.
+.e[
+..
+.de 9[	\" notitle
+.s[
+.tm bmac.zs: reference with no title
+.if !"\\*([A"" \\*([A\c
+.if !"\\*([E"" , ed. \\*([E\c
+.if !"\\*([I"" , \\*([I\c
+.if !"\\*([C"" , \\*([C\c
+.if !"\\*([V"" , vol. \\*([V\c
+.if !"\\*([D"" , \\*([D\c
+.if !"\\*([O"" , \\*([O\c
+\&.
+.e[
+..
+.de [-	\" clean up after yourself
+.rm [A [B [C [D
+.rm [E [F [G [H
+.rm [I [J [K
+.rm [N [O [P
+.rm [R [T
+.rm [V [W
+..
+.ds [[ (
+.ds ]] )
+.ds ], ; 
+.\"			Start references section
+.de []
+.ls 1
+.ne 4
+.sh 1 "References"
+.sp 1
+.nr ii 16
+..
+.\"			Start reference
+.de s[
+.nh
+.ip (\\*([F)
+..
+.\"			End reference
+.de e[
+.[-
+..
+.\"	NEED bib tbl eqn
+.tb
+\f(CBCake\fP:\fB a fifth generation version of \f(CBmake\fP\fR
+.sp
+Zoltan Somogyi
+Department of Computer Science
+University of Melbourne
+zs@mulga.OZ
+.sp 2
+.ab
+.lp
+\f(asMake\fP is a standard Unix\** utility
+for maintaining computer programs.
+\f(asCake\fP is a rewrite of \f(asmake\fP from the ground up.
+The main difference is one of attitude:
+\f(ascake\fP is considerably more general and flexible,
+and can be extended and customized to a much greater extent.
+It is applicable to a wide range of domains,
+not just program development.
+.(f
+\** Unix is a trademark of AT&T Bell Laboratories.
+.)f
+.ae
+.fo ''- % -''
+.ta 0.4i 0.8i 1.2i 1.6i 2.0i 2.4i 2.8i 3.2 3.6i 4.0i 4.4i 4.8i 5.2i 5.6i
+.EQ
+delim off
+.EN
+.sp 2
+.\"
+.sh 1 "Introduction"
+.\"
+.lp
+The Unix utility \f(asmake\fP\*([<\*([[Feldman,\ 79\*(]]\*(>]
+was written to automate the compilation and recompilation of C programs.
+People have found \f(asmake\fP so successful in this domain
+that they do not wish to be without its services
+even when they are working in other domains.
+Since \f(asmake\fP was not designed with these domains in mind
+(some of which, e.g. VLSI design,
+did not even exist when \f(asmake\fP was written),
+this causes problems and complaints.
+Nevertheless, implied in these complaints
+is an enormous compliment to the designers of \f(asmake\fP;
+one does not hear many grumbles
+about programs with only a few users.
+.pp
+The version of \f(asmake\fP described in\*([<\*([[Feldman,\ 79\*(]]\*(>]
+is the standard utility.
+AT&T modified it in several respects for distribution with System V
+under the name \f(asaugmented make\fP\*([<\*([[AT&T,\ 84\*(]]\*(>].
+We know of two complete rewrites:
+\f(asenhanced make\fP\*([<\*([[Hirgelt,\ 83\*(]]\*(>]
+and \f(asfourth generation make\fP\*([<\*([[Fowler,\ 85\*(]]\*(>].
+All these versions remain oriented towards program maintenance.
+.pp
+Here at Melbourne we wanted something we could use for text processing.
+We had access only to standard \f(asmake\fP
+and spent a lot of time wrestling with \f(asmakefiles\fP
+that kept on getting bigger and bigger.
+For a while we thought about modifying the \f(asmake\fP source,
+but then decided to write something completely new.
+The basic problem was
+the inflexibility of \f(asmake's\fP search algorithm,
+and this algorithm is too embedded in the \f(asmake\fP source
+to be changed easily.
+.pp
+The name \f(ascake\fP is a historical accident.
+\f(asCake\fP follows two other programs
+whose names were also puns on \f(asmake\fP.
+One was \f(asbake\fP, a variant of \f(asmake\fP
+with built-in rules for VLSI designs instead of C programs
+\*([[Gedye,\ 84\*(]].
+The other was David Morley's shell script \f(asfake\fP.
+Written at a time when disc space on our machine was extremely scarce,
+and full file systems frequently caused write failures,
+it copied the contents of a directory to \f(as/tmp\fP
+and invoked \f(asmake\fP there.
+.pp
+The structure of the paper is as follows.
+Section 2 shows how \f(ascake\fP solves
+the main problems with \f(asmake\fP,
+while section 3 describes
+the most important new features of \f(ascake\fP.
+The topics of section 4 are portability and efficiency.
+.lp
+The paper assumes that you have some knowledge of \f(asmake\fP.
+.\"
+.sh 1 "The problems with \f(CBmake\fP"
+.\"
+.lp
+\f(asMake\fP has three principal problems.
+These are:
+.np
+It supports only suffix-based rules.
+.np
+Its search algorithm is not flexible enough.
+.np
+It has no provisions for the sharing of new \f(asmake\fP rules.
+.pp
+These problems are built deep into \f(asmake\fP.
+To solve them we had to start again from scratch.
+We had to abandon backward compatibility because
+the \f(asmake\fP syntax is not rich enough to represent
+the complex relationships among the components of large systems.
+Nevertheless, the \f(ascake\fP user interface
+is deliberately based on \f(asmake's\fP;
+this helps users to transfer their skills
+from \f(asmake\fP to \f(ascake\fP.
+The \fIfunctionalities\fP of the two systems
+are sufficiently different that the risk of confusion is minimal\**.
+.(f
+\**
+This problem, called cognitive dissonance, is discussed in
+Weinberg's delightful book\*([<\*([[Weinberg,\ 71\*(]]\*(>].
+.)f
+.pp
+Probably the biggest single difference
+between \f(asmake\fP and \f(ascake\fP lies in their general attitudes.
+\f(asMake\fP is focused on one domain:
+the maintenance of compiled programs.
+It has a lot of code specific to this domain
+(especially the later versions).
+And it crams all its functionality into some tight syntax
+that treats all sorts of special things (e.g. \f(as.SUFFIXES\fP)
+as if they were files.
+.pp
+\f(asCake\fP, on the other hand,
+uses different syntax for different things,
+and keeps the number of its mechanisms to the minimum
+consistent with generality and flexibility.
+This attitude throws a lot of the functionality of \f(asmake\fP
+over the fence into the provinces of other programs.
+For example, where \f(asmake\fP has its own macro processor,
+\f(ascake\fP uses the C preprocessor;
+and where \f(asmake\fP has special code to handle archives,
+\f(ascake\fP has a general mechanism
+that \fIjust happens\fP to be able to do the same job.
+.\"
+.sh 2 "Only suffix-based rules"
+.\"
+.lp
+All entries in a \f(asmakefile\fP have the same syntax.
+They do not, however, have the same semantics.
+The main division is between
+entries which describe simple dependencies
+(how to make file \f(asa\fP from file \f(asb\fP),
+and those which describe rules
+(how to make files with suffix \f(as.x\fP
+from files with suffix \f(as.y\fP)\**.
+\f(asMake\fP distinguishes the two cases by treating as a rule
+any dependency whose target is a concatenation of two suffixes.
+.(f
+\**
+For the moment we ignore entries whose targets are special entities
+like .IGNORE .PRECIOUS etc.
+.)f
+.pp
+For this scheme to work, \f(asmake\fP must assume three things.
+The first is that all interesting files have suffixes;
+the second is that suffixes always begin with a period;
+the third is that prefixes are not important.
+All three assumptions are violated in fairly common situations.
+Standard \f(asmake\fP cannot express the relationship
+between \f(asfile\fP and \f(asfile.c\fP (executable and source)
+because of assumption 1,
+between \f(asfile\fP and \f(asfile,v\fP (working file and RCS file)
+because of assumption 2,
+and between \f(asfile.o\fP and \f(as../src/file.c\fP (object and source)
+because of assumption 3.
+\f(asEnhanced make\fP and \f(asfourth generation make\fP
+have special forms for some of these cases,
+but these cannot be considered solutions
+because special forms will always lag behind demand for them
+(they are embedded in the \f(asmake\fP source,
+and are therefore harder to change than even the built-in rules).
+.pp
+\f(asCake's\fP solution is
+to do away with \f(asmake\fP-style rules altogether
+and instead to allow ordinary dependencies to function as rules
+by permitting them to contain variables.
+For example, a possible rule for compiling C programs is
+.(b M
+.(p
+%.o:		%.c
+		cc -c %.c
+.)p
+.)b
+where the \f(as%\fP is the variable symbol.
+This rule is actually a \fItemplate\fP
+for an infinite number of dependencies,
+each of which is obtained
+by consistently substituting a string for the variable \f(as%\fP.
+.pp
+The way this works is as follows.
+First, as \f(ascake\fP seeks to update a file,
+it matches the name of that file
+against all the targets in the description file.
+This matching process gives values to the variables in the target.
+These values are then substituted in the rest of the rule\**.
+(The matching operation is a form of \fIunification\fP,
+the process at the heart of logic programming;
+this is the reason for the \fIfifth generation\fP bit in the title.)
+.(f
+\**
+After this the rule should have no unexpanded variables in it.
+If it does, \f(ascake\fP reports an error,
+as it has no way of finding out
+what the values of those variables should be.
+.)f
+.pp
+\f(asCake\fP actually supports 11 variables:
+\f(as%\fP and \f(as%0\fP to \f(as%9\fP.
+A majority of rules in practice have only one variable
+(canonically called \f(as%\fP), and most of the other rules have two
+(canonically called \f(as%1\fP and \f(as%2\fP).
+These variables are local to their rules.
+Named variables are therefore not needed,
+though it would be easy to modify the \f(ascake\fP source to allow them.
+.ea
+If \f(ascake\fP wanted to update \f(asprog.o\fP,
+it would match \f(asprog.o\fP against \f(as%.o\fP,
+substitute \f(asprog\fP for \f(as%\fP throughout the entry,
+and then proceed as if the \f(ascakefile\fP contained the entry
+.(b M
+.(p
+prog.o:	prog.c
+		cc -c prog.c
+.)p
+.)b
+.lp
+This arrangement has a number of advantages.
+One can write
+.(b M
+.(p
+%.o:		RCS/%.c,v
+		co -u %.c
+		cc -c %.c
+.)p
+.)b
+without worrying about the fact that one of the files in the rule
+was in a different directory and that
+its suffix started with a nonstandard character.
+Another advantage is that rules are not restricted to
+having one source and one target file.
+This is useful in VLSI,
+where one frequently needs rules like
+.(b M
+.(p
+%.out:	%.in %.circuit
+		simulator %.circuit < %.in > %.out
+.)p
+.)b
+and it can also be useful to describe
+the full consequences of running \f(asyacc\fP
+.(b M
+.(p
+%.c %.h:	%.y
+		yacc -d %.y
+		mv y.tab.c %.c
+		mv y.tab.h %.h
+.)p
+.)b
+.\"
+.sh 2 "Inflexible search algorithm"
+.\"
+.lp
+In trying to write a \f(asmakefile\fP
+for a domain other than program development,
+the biggest problem one faces
+is usually \f(asmake's\fP search algorithm.
+The basis of this algorithm is a special list of suffixes.
+When looking for ways to update a target \f(asfile.x\fP,
+\f(asmake\fP searches along this list from left to right.
+It uses the first suffix \f(as.y\fP
+for which it has a rule \f(as.y.x\fP
+and for which \f(asfile.y\fP exists.
+.pp
+The problem with this algorithm manifests itself
+when a problem divides naturally into a number of stages.
+Suppose that you have two rules \f(as.c.b\fP and \f(as.b.a\fP,
+that \f(asfile.c\fP exists
+and you want to issue the command \f(asmake file.a\fP.
+\f(asMake\fP will tell you
+that it doesn't know how to make \f(asfile.a\fP.
+The problem is that for the suffix \f(as.b\fP
+\f(asmake\fP has a rule but no file,
+while for \f(as.c\fP it has a file but no rule.
+\f(asMake\fP needs a \fItransitive rule\fP \f(as.c.a\fP
+to go direct from \f(asfile.c\fP to \f(asfile.a\fP.
+.pp
+The number of transitive rules increases
+as the square of the number of processing stages.
+It therefore becomes significant for program development
+only when one adds processing stages on either side of compilers.
+Under Unix, these stages are typically the link editor \f(asld\fP
+and program generators like \f(asyacc\fP and \f(aslex\fP.
+Half of standard \f(asmake's\fP builtin rules are transitive ones,
+there to take care of these three programs.
+Even so, the builtin rules do not form a closure:
+some rare combinations of suffixes are missing
+(e.g. there is no rule for going from \f(asyacc\fP source to assembler).
+.pp
+For builtin rules a slop factor of two may be acceptable.
+For rules supplied by the user it is not.
+A general-purpose \f(asmakefile\fP for text processing under Unix
+needs at least six processing stages to handle
+\f(asnroff/troff\fP and their preprocessors
+\f(aslbl\fP, \f(asbib\fP, \f(aspic\fP, \f(astbl\fP, and \f(aseqn\fP,
+to mention only the ones in common use at Melbourne University.
+.pp
+\f(asCake's\fP solution is simple:
+if \f(asfile1\fP can be made from \f(asfile2\fP
+but \f(asfile2\fP does not exist,
+\f(ascake\fP will try to \fIcreate\fP \f(asfile2\fP.
+Perhaps \f(asfile2\fP can be made from \f(asfile3\fP,
+which can be made from \f(asfile4\fP,
+and so on, until we come to a file which does exist.
+\f(asCake\fP will give up only when there is \fIabsolutely no way\fP
+for it to generate a feasible update path.
+.pp
+Both the standard and later versions of \f(asmake\fP
+consider missing files to be out of date.
+So if \f(asfile1\fP depends on \f(asfile2\fP
+which depends on \f(asfile3\fP,
+and \f(asfile2\fP is missing, then \f(asmake\fP will remake
+first \f(asfile2\fP and then \f(asfile1\fP,
+even if \f(asfile1\fP is more recent than \f(asfile3\fP.
+.pp
+When using \f(asyacc\fP, I frequently remove generated sources
+to prevent duplicate matches when I run \f(asegrep ... *.[chyl]\fP.
+If \f(ascake\fP adopted \f(asmake's\fP approach to missing files,
+it would do a lot of unnecessary work,
+running \f(asyacc\fP and \f(ascc\fP to generate
+the same parser object again and again\**.
+.(f
+\**
+In this case \f(asmake\fP is rescued from this unnecessary work
+by its built-in transitive rules,
+but as shown above this should not be considered
+a \fIgeneral\fP solution.
+.)f
+.pp
+\f(asCake\fP solves this problem
+by associating dates even with missing files.
+The \fItheoretical update time\fP of an existing file
+is its modify time (as given by stat(2));
+the theoretical update time of a missing file
+is the theoretical update time of its youngest ancestor.
+Suppose the \f(asyacc\fP source \f(asparser.y\fP
+is older than the parser object \f(asparser.o\fP,
+and \f(asparser.c\fP is missing.
+\f(asCake\fP will figure that if it recreated \f(asparser.c\fP
+it would get a \f(asparser.c\fP which \fItheoretically\fP
+was last modified at the same time as \f(asparser.y\fP was,
+and since \f(asparser.o\fP is younger than \f(asparser.y\fP,
+theoretically it is younger than \f(asparser.c\fP as well,
+and therefore up-to-date.
+.\"
+.sh 2 "No provisions for sharing rules"
+.\"
+.lp
+Imagine that you have just written a program
+that would normally be invoked from a \f(asmake\fP rule,
+such as a compiler for a new language.
+You want to make both the program and the \f(asmake\fP rule
+widely available.
+With standard \f(asmake\fP, you have two choices.
+You can hand out copies of the rules
+and get users to include it in their individual \f(asmakefiles\fP;
+or you can modify the \f(asmake\fP source,
+specifically, the file containing the built-in rules.
+The first way is error-prone and quite inconvenient
+(all those rules cluttering up your \f(asmakefile\fP
+when you should never need to even look at them).
+The second way can be impractical;
+in the development stage because the rules can change frequently
+and after that because you want to distribute your program
+to sites that may lack the \f(asmake\fP source.
+And of course two such modifications may conflict with one another.
+.pp
+Logically, your rules belong in a place
+that is less permanent than the \f(asmake\fP source
+but not as transitory as individual \f(asmakefiles\fP.
+A library file is such a place.
+The obvious way to access the contents of library files
+is with \f(as#include\fP, so \f(ascake\fP filters
+every \f(ascakefile\fP through the C preprocessor.
+.pp
+\f(asCake\fP relies on this mechanism
+to the extent of not having \fIany\fP built-in rules at all.
+The standard \f(ascake\fP rules live in files
+in a library directory (usually /usr/lib/cake).
+Each of these files contains rules about one tool or group of tools.
+Most user \f(ascakefiles\fP \f(as#define\fP some macros
+and then include some of these files.
+Given that the source for program \f(asprog\fP
+is distributed among \f(asprog.c\fP,
+\f(asaux1.c\fP, \f(asaux2.c\fP, and \f(asparser.y\fP,
+all of which depend on \f(asdef.h\fP,
+the following would be a suitable \f(ascakefile\fP:
+.(b M
+.(p
+#define	MAIN		prog
+#define	FILES	prog aux1 aux2 parser
+#define	HDR		def.h
+
+#include	<Yacc>
+#include	<C>
+#include	<Main>
+.)p
+.)b
+The standard \f(ascakefiles\fP
+\f(asYacc\fP and \f(asC\fP, as might be expected,
+contain rules that invoke \f(asyacc\fP and \f(ascc\fP respectively.
+They also provide some definitions
+for the standard \f(ascakefile\fP \f(asMain\fP.
+This file contains rules about programs in general,
+and is adaptable to all compiled languages
+(e.g. it can handle NU-Prolog programs).
+One entry in \f(asMain\fP links the object files together,
+another prints out all the sources,
+a third creates a \f(astags\fP file
+if the language has a command equivalent to \f(asctags\fP,
+and so on.
+.pp
+\f(asMake\fP needs a specialized macro processor;
+without one it cannot substitute the proper filenames in rule bodies.
+\f(asFourth generation make\fP has not solved this problem
+but it still wants the extra functionality of the C preprocessor,
+so it grinds its \f(asmakefiles\fP through both macro processors !
+\f(asCake\fP solves the problem in another way,
+and can thus rely on the C preprocessor exclusively.
+.pp
+The original \f(asmake\fP mechanisms are quite rudimentary,
+as admitted by\*([<\*([[Feldman,\ 79\*(]]\*(>].
+Unfortunately, the C preprocessor is not without flaws either.
+The most annoying is that
+the bodies of macro definitions may begin with blanks,
+and will if the body is separated from the macro name and any parameters
+by more than one blank (whether space or tab).
+\f(asCake\fP is distributed with a fix to this problem
+in the form of a one-line change to the preprocessor source,
+but this change probably will not work on all versions of Unix
+and definitely will not work for binary-only sites.
+.\"
+.sh 1 "The new features of \f(CBcake\fP"
+.\"
+.lp
+The above solutions to \f(asmake's\fP problems are useful,
+but they do not by themselves enable \f(ascake\fP to handle new domains.
+For this \f(ascake\fP employs two important new mechanisms:
+dynamic dependencies and conditional rules.
+.\"
+.sh 2 "Dynamic dependencies"
+.\"
+.lp
+In some situations it is not convenient to list in advance
+the names of the files a target depends on.
+For example, an object file depends
+not only on the corresponding source file
+but also on the header files referenced in the source.
+.pp
+Standard \f(asmake\fP requires all these dependencies
+to be declared explicitly in the \f(asmakefile\fP.
+Since there can be rather a lot of these, most people either
+declare that all objects depend on all headers, which is wasteful,
+or declare a subset of the true dependencies, which is error-prone.
+A third alternative is to use a program (probably an \f(asawk\fP script)
+to derive the dependencies and edit them into the \f(asmakefile\fP.
+\*([[Walden,\ 84\*(]] describes one program that does both these things;
+there are others.
+These systems are usually called \f(asmake\%depend\fP
+or some variation of this name.
+.pp
+The problems with this approach are that
+it is easy to alter the automatically-derived dependencies by mistake,
+and that if a new header dependency is added
+the programmer must remember to run \f(asmakedepend\fP again.
+The C preprocessor solves the first problem;
+the second, however, is the more important one.
+Its solution must involve scanning though the source file,
+checking if the programmer omitted to declare a header dependency.
+So why not use this scan
+to \fIfind\fP the header dependencies in the first place ?
+.pp
+\f(asCake\fP attacks this point directly
+by allowing parts of rules to be specified at run-time.
+A command enclosed in double square brackets\** may appear in a rule
+anywhere a filename or a list of filenames may appear.
+.(f
+\**
+Single square brackets (like most special characters)
+are meaningful to \f(ascsh\fP: they denote character classes.
+However, we are not aware of any legitimate contexts where
+two square brackets \fImust\fP appear together.
+The order of members in such classes is irrelevant,
+so if a bracket must be a member of such a class
+it can be positioned away from the offending boundary
+(unless the class is a singleton,
+in which case there is no need for the class in the first place).
+.)f
+For the example of the C header files, the rule would be
+.(b M
+.(p
+%.o:		%.c [[ccincl %.c]]
+		cc -c %.c
+.)p
+.)b
+.lp
+signifying that \f(asx.o\fP depends on the files
+whose names are listed in the output of the command
+\f(asccincl x.c\fP\**, as well as on \f(asx.c\fP.
+.(f
+\**
+\f(asCcincl\fP prints out the names of the files
+that are \f(as#included\fP in the file named by its argument.
+.)f
+The matching process would convert this rule to
+.(b M
+.(p
+x.o:		x.c [[ccincl x.c]]
+		cc -c x.c
+.)p
+.)b
+which in turn would be \fIcommand expanded\fP to
+.(b M
+.(p
+x.o:		x.c hdr.h
+		cc -c x.c
+.)p
+.)b
+if \f(ashdr.h\fP were the only header included in \f(asx.c\fP.
+.pp
+Command patterns provide replacements
+for \f(asfourth generation make's\fP
+directory searches and special macros.
+\f(as[[find\ <dirs>\ -name\ <filename>\ -print]]\fP
+does as good a job as the special-purpose \f(asmake\fP code
+in looking up source files scattered among a number of directories.
+\f(as[[basename\ <filename>\ <suffix>]]\fP can do an even better job:
+\f(asmake\fP cannot extract the base from the name of an RCS file.
+.pp
+A number of tools intended to be used in just such contexts
+are distributed together with \f(ascake\fP.
+\f(asCcincl\fP is one.
+\f(asSub\fP is another: its purpose is to perform substitutions.
+Its arguments are two patterns and some strings:
+it matches each string against the first pattern,
+giving values to its variables;
+then it applies those values to the second pattern
+and prints out the result of this substitution.
+For example, in the example of section 2.3
+the \f(ascakefile\fP \f(asMain\fP would invoke
+the command \f(as[[sub\ X\ X.o\ FILES]]\fP\**,
+the value of \f(asFILES\fP being \f(asprog aux1 aux2 parser\fP,
+to find that the object files it must link together
+to create the executable \f(asprog\fP are
+\f(asprog.o aux1.o aux2.o parser.o\fP.
+.(f
+\**
+\f(asSub\fP uses \f(asX\fP as the character denoting variables.
+It cannot use \f(as%\fP,
+as all \f(as%\fP's in the command will have been substituted for
+by \f(ascake\fP by the time \f(assub\fP is invoked.
+.)f
+.pp
+\f(asCake\fP allows commands to be nested inside one another.
+For example, the command \f(as[[sub\ X.h\ X\ [[ccincl\ file.c]]]]\fP
+would strip the suffix \f(as.h\fP
+from the names of the header files included in \f(asfile.c\fP\**.
+.(f
+\**
+As the outputs of commands are substituted
+for the commands themselves,
+\f(ascake\fP takes care not to scan the new text,
+lest it find new double square brackets
+and go into an infinite loop.
+.)f
+.\"
+.sh 2 "Conditional rules"
+.\"
+.lp
+Sometimes it is natural to say that
+\f(asfile1\fP depends on \f(asfile2\fP
+\fIif\fP some condition holds.
+None of the \f(asmake\fP variants provide for this,
+but it was not too hard
+to incorporate conditional rules into \f(ascake\fP.
+.pp
+A \f(ascake\fP entry may have a condition associated with it.
+This condition, which is introduced by the reserved word \f(asif\fP,
+is a boolean expression built up with the operators
+\f(asand\fP, \f(asor\fP and \f(asnot\fP from primitive conditions.
+.pp
+The most important primitive
+is a command enclosed in double curly braces.
+Whenever \f(ascake\fP considers applying this rule,
+it will execute this command
+after matching, substitution and command expansion.
+The condition will return true if the command's exit status is zero.
+This runs counter to the intuition of C programmers,
+but it conforms to the Unix convention
+of commands returning zero status when no abnormal conditions arise.
+For example, \f(as{{grep\ xyzzy\ file}}\fP returns
+zero (i.e. true) if xyzzy occurs in \f(asfile\fP
+and nonzero (false) otherwise.
+.pp
+Conceptually, this one primitive is all one needs.
+However, it has considerable overhead,
+so \f(ascake\fP includes other primitives to handle some special cases.
+These test whether a filename occurs in a list of filenames,
+whether a pattern matches another,
+and whether a file with a given name exists.
+Three others forms test the internal \f(ascake\fP status of targets.
+This status is \f(asok\fP
+if the file was up-to-date when \f(ascake\fP was invoked,
+\f(ascando\fP if it wasn't but \f(ascake\fP knows how to update it,
+and \f(asnoway\fP if \f(ascake\fP does not know how to update it.
+.pp
+As an example, consider the rule for RCS.
+.(b M
+.(p
+%:		RCS/%,v		if exist RCS/%,v
+		co -u %
+.)p
+.)b
+Without the condition
+the rule would apply to all files,
+even ones which were not controlled by RCS,
+and even the RCS files themselves:
+there would be no way to stop the infinite recursion
+(\f(as%\fP depends on \f(asRCS/%,v\fP
+which depends on \f(asRCS/RCS/%,v,v\fP ...).
+.pp
+Note that conditions are command expanded
+just like other parts of entries,
+so it is possible to write
+.(b M
+.(p
+%:		archive		if % in [[ar t archive]]
+		ar x archive %
+.)p
+.)b
+.\" .\"
+.\" .sh 1 "Details"
+.\" .\"
+.\" .\"
+.\" .sh 2 "Flags"
+.\" .\"
+.\" .lp
+.\" Flags after patterns and actions
+.\" \f(asCake\fP actions are very similar to \f(asmake\fP actions.
+.\" .\"
+.\" .sh 2 "Error handling"
+.\" .\"
+.\" .lp
+.\" After error discovered the nodes involved arenot touched again ...
+.\" Propagation of errors.
+.\" Detect circular dependencies.
+.\" .\"
+.\" .sh 2 "Options"
+.\" .\"
+.\" .lp
+.\" \f(asCake\fP has even more options than \f(asmake\fP\** does.
+.\" .(f
+.\" \**
+.\" I refer to standard \f(asmake\fP;
+.\" I do not have sufficient documentation on the other versions
+.\" to say whether this point holds for them or not
+.\" (but I expect that it would).
+.\" .)f
+.\" The ones that the two have in common generally do the same things.
+.\" .\" -D ...
+.\" .lp
+.\" \f(asCake\fP looks for options in environment (in the envariable CAKE),
+.\" on the command line (the usual place), and in the \f(ascakefile\fP,
+.\" consulted in that order, with later definitions overriding earlier ones.
+.\" The fact that options in the \f(ascakefile\fP
+.\" can override those on the command line is somewhat unusual.
+.\" Certainly some options (such as -n, print actions but do not execute)
+.\" should not be placed in the \f(ascakefile\fP.
+.\" On the other hand,
+.\" the \f(ascakefile\fP cannot be consulted before the command line,
+.\" as the command line may specify the name of the \f(ascakefile\fP !
+.\" So instead of adding code to check that such conflicts do not occur
+.\" we trust the programmer not to do such silly things in the first place.
+.\" .\"
+.\" .sh 1 "Standard \f(ascakefile\fPs"
+.\" .\"
+.\" .lp
+.\" Main and System do everything (really?) that 4g make do
+.\"
+.sh 1 "The implementation"
+.\"
+.sh 2 "Portability"
+.\"
+.lp
+\f(asCake\fP was developed on a Pyramid 90x under 4.2bsd.
+It now runs on a VAX under 4.3bsd,
+a Perkin-Elmer 3240 and an ELXSI 6400 under 4.2bsd,
+and on the same ELXSI under System V.
+It has not been tested on either System III or version 7.
+.pp
+\f(asCake\fP is written in standard C,
+with (hopefully) all machine dependencies
+isolated in the makefile and a header file.
+In a number of places it uses \f(as#ifdef\fP
+to choose between pieces of code
+appropriate to the AT&T and Berkeley variants of Unix
+(e.g. to choose between \f(astime()\fP and \f(asgettimeofday()\fP).
+In fact, the biggest hassle we have encountered in porting \f(ascake\fP
+was caused by the standard header files.
+Some files had different locations on different machines
+(\f(as/usr/include\fP vs. \f(as/usr/include/sys\fP),
+and the some versions included other header files
+(typically \f(astypes.h\fP) while others did not.
+.pp
+As distributed \f(ascake\fP is set up to work with \f(ascsh\fP,
+but it is a simple matter to specify another shell at installation time.
+(In any case, users may substitute their preferred shell
+by specifying a few options.)
+Some of the auxiliary commands are implemented as \f(ascsh\fP scripts,
+but these are small and it should be trivial
+to convert them to another shell if necessary.
+.\"
+.sh 2 "Efficiency"
+.\"
+.lp
+\f(asFourth generation make\fP
+has a very effective optimization system.
+First, it forks and execs only once.
+It creates one shell, and thereafter,
+it pipes commands to be executed to this shell
+and gets back status information via another pipe.
+Second, it compiles its \f(asmakefiles\fP into internal form,
+avoiding parsing except when the compiled version
+is out of date with respect to the master.
+.pp
+The first of these optimizations is an absolute winner.
+\f(asCake\fP does not have it
+for the simple reason that it requires a shell
+which can transmit status information back to its parent process,
+and we don't have access to one
+(this feature is provided by neither of the standard shells,
+\f(assh\fP and \f(ascsh\fP).
+.pp
+\f(asCake\fP could possibly make use of the second optimization.
+It would involve keeping track
+of the files the C preprocessor includes,
+so that the \f(asmakefile\fP can be recompiled if one of them changes;
+this must be done by fourth generation make as well
+though\*([<\*([[Fowler,\ 85\*(]]\*(>] does not mention it.
+However, the idea is not as big a win for \f(ascake\fP
+as it is for \f(asmake\fP.
+The reason is as follows.
+.pp
+The basic motivations for using \f(ascake\fP rather than \f(asmake\fP
+is that it allows one to express more complex dependencies.
+This implies a bigger system,
+with more and slower commands
+than the ones \f(asmake\fP usually deals with.
+The times taken by \f(ascake\fP and the preprocessor
+are insignificant when compared to the time taken
+by the programs it most often invokes at Melbourne.
+These programs, \f(asditroff\fP and \f(asnc\fP
+(the NU-Prolog compiler that is itself written in NU-Prolog),
+are notorious CPU hogs.
+.pp
+Here are some statistics to back up this argument.
+The \fIoverhead ratio\fP is given by the formula
+.EQ
+{ "cake process system time"
+~ + ~ "children user time"
+~ + ~ "children system time" }
+over "cake process user time"
+.EN
+This is justifiable given that the \f(ascake\fP implementor
+has direct control only over the denominator;
+the kernel and the user's commands
+impose a lower limit on the numerator.
+.\" .(b L
+.\" .TS
+.\" center allbox;
+.\" c s s
+.\" c c c
+.\" n n n
+.\" n n n
+.\" n n n
+.\" n n n
+.\" n n n
+.\" c n n.
+.\" overhead ratio
+.\" quantile	munmurra	mulga
+.\" 10	1.65	1.63
+.\" 25	22.92	2.69
+.\" 50	67.55	4.87
+.\" 75	105.07	22.93
+.\" 90	164.91	178.60
+.\" average	81.75	69.75
+.\" .TE
+.\" .(l C
+.\" Table 1.
+.\" .)l
+.\" .)b
+.\" .lp
+.\" Table 1. displays statistics
+.\" collected on every \f(ascake\fP run on two machines at Melbourne\**.
+.pp
+We have collected statistics
+on every \f(ascake\fP run on two machines at Melbourne\**.
+.(f
+\**
+On munmurra (an EXLSI 6400),
+the main application is Prolog compilation;
+on mulga (a Perkin-Elmer 3240),
+the main applications are text processing
+and the maintenance of a big bibliography (over 36000 references).
+.)f
+These statistics show
+that the processes and system calls invoked by \f(ascake\fP
+take on average about 70-80 times as much CPU time
+as the \f(ascake\fP process itself.
+This suggests that the best way to lower total CPU time
+is not to tune \f(ascake\fP itself
+but to reduce the number of child processes.
+To this end, \f(ascake\fP caches
+the status returned by all condition commands \f(as{{command}}\fP
+and the output of all command patterns \f(as[[command]]\fP.
+The first cache has a hit ratio of about 50 percent,
+corresponding to the typical practice
+in which a condition and its negation
+select one out of a pair of rules.
+The second cache has a hit ratio of about 75 percent;
+these hits are usually the second and later occurrences
+of macros whose values contain commands.
+.pp
+\f(asCake\fP also uses a second optimization.
+This one is borrowed from standard \f(asmake\fP:
+when an action contains no constructs requiring a shell,
+\f(ascake\fP itself will parse the action and invoke it through exec.
+We have no statistics to show
+what percentage of actions benefit from this,
+but a quick examination of the standard \f(ascakefiles\fP
+leads us to believe that it is over 50 percent.
+.\" .lp
+.\" The overhead ratio average is fairly misleading.
+.\" It is dominated by big jobs
+.\" slow startup caused by planning phase
+.pp
+Overall, \f(ascake\fP can do a lot more than \f(asmake\fP,
+but on things which \fIcan\fP be handled by \f(asmake\fP,
+\f(ascake\fP is slightly slower than standard \f(asmake\fP
+and a lot slower than fourth generation make.
+Since the main goal of \f(ascake\fP is generality, not efficiency,
+this is understandable.
+If efficiency is important,
+\f(asmake\fP is always available as a fallback.
+.\"
+.sh 2 "Availability"
+.\"
+.lp
+\f(asCake\fP has been fairly stable for about six months now.
+During this time it has been used without major problems
+by about twenty people here at Melbourne.
+It will be posted to the net in the near future,
+complete with auxiliary programs and manual entries.
+.\"
+.sh 1 "Acknowledgements"
+.\"
+.lp
+John Shepherd, Paul Maisano, David Morley and Jeff Schultz
+helped me to locate bugs
+by being brave enough to use early versions of \f(ascake\fP.
+I would like to thank John
+for his comments on drafts of this paper.
+.lp
+This research was supported by
+a Commonwealth Postgraduate Research Award,
+the Australian Computer Research Board,
+and Pyramid Australia.
+.\"
+.[]
+.[-
+.ds [F AT&T,\ 84
+.ds [Q AT&T
+.ds [T Augmented version of make
+.ds [B Unix System V - release 2.0 support tools guide
+.ds [I AT&T
+.ds [D April 1984
+.][
+.[-
+.ds [F Feldman,\ 79
+.ds [A Stuart I. Feldman
+.ds [T Make - a program for maintaining computer programs
+.ds [J Software - Practice and Experience
+.ds [V 9
+.ds [N 4
+.ds [D April 1979
+.nr [P 1
+.ds [P 255-265
+.][
+.[-
+.ds [F Fowler,\ 85
+.ds [A Glenn S. Fowler
+.ds [T A fourth generation make
+.ds [J Proceedings of the USENIX Summer Conference
+.ds [C Portland, Oregon
+.ds [D June 1985
+.nr [P 1
+.ds [P 159-174
+.][
+.[-
+.ds [F Gedye,\ 84
+.ds [A David Gedye
+.ds [T Cooking with CAD at UNSW
+.ds [I Joint Microelectronics Research Center, University of New South Wales
+.ds [C Sydney, Australia
+.ds [D 1984
+.][
+.[-
+.ds [F Hirgelt,\ 83
+.ds [A Edward Hirgelt
+.ds [T Enhancing make or re-inventing a rounder wheel
+.ds [J Proceedings of the USENIX Summer Conference
+.ds [C Toronto, Ontario, Canada
+.ds [D June 1983
+.nr [P 1
+.ds [P 45-58
+.][
+.[-
+.ds [F Walden,\ 84
+.ds [A Kim Walden
+.ds [T Automatic generation of make dependencies
+.ds [J Software - Practice and Experience
+.ds [V 14
+.ds [N 6
+.ds [D June 1984
+.nr [P 1
+.ds [P 575-585
+.][
+.[-
+.ds [F Weinberg,\ 71
+.ds [A Gerald M. Weinberg
+.ds [T The psychology of computer programming
+.ds [I Van Nostrand Reinhold
+.ds [C New York
+.ds [D 1971
+.nr [P 0
+.ds [P 288
+.][

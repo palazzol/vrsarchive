@@ -1,0 +1,23 @@
+#! /bin/csh -f
+foreach file ($*)
+cat > /tmp/double$$ << ENDPROG
+BEGIN	{
+		lastword = "";
+		lastfile = "";
+	}
+	{
+	}
+NF > 0	{
+		if (\$1 == lastword)
+			printf "file %s, line %d: double %s\n", "$file", NR, \$1;
+
+		for (i = 2; i <= NF; i++)
+			if (\$i == \$(i-1))
+				printf "file %s, line %d: double %s\n", "$file", NR, \$i;
+
+		lastword = \$NF;
+	}
+ENDPROG
+tr A-Z a-z < $file | awk -f /tmp/double$$
+end
+/bin/rm -f /tmp/double$$

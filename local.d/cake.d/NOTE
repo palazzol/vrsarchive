@@ -1,0 +1,70 @@
+Cake is a rewrite of make from the ground up. The main difference is one
+of attitude: cake is considerably more general and flexible, and can be
+extended and customized by the user to a much greater extent. It is applicable
+to a wide range of domains, not just program development: for example, standard
+cakefiles exist to handle documents and VLSI designs.
+
+The main differences between make and cake:
+
+-	Cake dependencies may be dynamic, and their applicability may be
+	conditional upon a test.
+
+-	Cake rules have the same syntax and semantics as ordinary dependencies,
+	and may more than one target.
+
+-	There are no restrictions on the forms of either the targets or the
+	sources. This enables cake to handle files in more than one directory
+	and to interface with SCCS, RCS and archivers, among others, without
+	any special arrangements.
+
+-	Cake has a more general search algorithm than make. When seeking a
+	target it considers all rules which could update it even if the
+	corresponding intermediate files do not exist; it recreates them
+	if (and only if) it is necessary to do so.
+
+-	Cakefiles are passed through the C preprocessor. They may therefore
+	#include other cakefiles (including standard ones) and use #if and
+	#ifdef to customize themselves.
+
+-	Cake allows the user to choose his own shell, and to include shell
+	scripts in actions.
+
+-	Cake can check to see if a newly 'updated' file has actually been
+	changed via a byte-by-byte comparison, which works even if the modify
+	date has been touched. If there is no change, cake avoids recomputing
+	the file's dependents.
+
+-	Cake has a lot more options (whether one considers these an improvement
+	of course depends on whether one needs them).
+
+Cake is not backwards-compatible with make.
+
+The copyright on cake is derived from GNU Emacs.
+
+The following files are shar files. To extract their contents, give them
+to /bin/sh as input. Some of them should be put in different directories,
+according to the map below:
+
+Part01		.
+Part02		.
+Part03		.
+Part04		./Aux
+Part05		./Lex
+Part06		./Lib
+Part07		./Man
+Part08		./Man
+Part09		./Script
+
+Some of the programs in Aux and some of the scripts in Script are also usable
+independently of cake. For example, the program Aux/subcmd solves the consistent
+renaming problem (e.g. how to move x to .x, y to .y z to .z etc in one command),
+and the script Script/ol is an outline generator for -me documents.
+
+Zoltan Somogyi
+Department of Computer Science
+University of Melbourne
+Parkville, 3052 Victoria, Australia
+
+UUCP:	{uunet,mcvax,ukc}!munnari.oz!zs
+ARPA:	zs%munnari.oz@uunet.uu.net
+CSNET:	zs%munnari.oz@australia

@@ -1,0 +1,14 @@
+#! /bin/sh
+case $# in
+	2) file=$1; suff=$2; conf=Conf;;
+	3) file=$1; suff=$2; conf=$3;;
+	*) echo "Usage: $0 mainfile suffix [Conf]"; exit 1;;
+esac
+cat > /tmp/extract$$ << END_PROG
+/^$file/{
+		for (i = 2; i <= NF; i++)
+			printf "%s%s\n", \$i, "$suff";
+	}
+END_PROG
+awk -f /tmp/extract$$ $conf
+/bin/rm /tmp/extract$$

@@ -1,0 +1,37 @@
+.TH SUBCMD 1-ucb
+.SH NAME
+subcmd \- execute commands with arguments based on substitutions
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B subcmd
+[-fginz] [-vchar] cmd oldpattern newpattern file ...
+.SH DESCRIPTION
+.sp 1
+\fISubcmd\fP is a version of sub(1) which,
+instead of printing out the result of its substitutions,
+uses them to invoke a command.
+If the \-g option is not present, the command is formed
+by concatenating cmd, oldpattern(file) and newpattern(file)
+(with spaces in between, of course).
+If it is, cmd is treated as a sprintf(3) control string
+and given oldpattern(file) and newpattern(file) as arguments.
+For example "subcmd mv X X.old x y z"
+invokes mv x x.old, mv y y.old, and mv z z.old,
+while "subcmd -g 'grep xyzzy < %s > %s' X X.out x y z"
+invokes grep xyzzy < x > x.out, grep xyzzy < y > y.out,
+and grep xyzzy < z > z.out.
+.SH OPTIONS
+The -f (fast) option causes subcmd to use only one shell,
+instead of one per executed command.
+The \-i and \-v options of \fIsubcmd\fP are the same as that of sub(1).
+The \-g option affects the format of the command as specified above.
+\-n causes commands to be printed but not executed.
+\-z turns off checking for zero status (see diagnostics).
+.SH DIAGNOSTICS
+One message per command executed;
+error message if command fails (returns nonzero status);
+same return code as sub(1).
+.SH "SEE ALSO"
+sub(1), cake(1)
+.\"	@(#)subcmd.l	6/10/85

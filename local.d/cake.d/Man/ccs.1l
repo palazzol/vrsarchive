@@ -1,0 +1,18 @@
+.TH CS 1-ucb
+.SH NAME
+cs \- print cake usage statistics
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B cs
+.SH DESCRIPTION
+.sp 1
+\fICs\fP prints out statistics on cake usage.
+For each cake user, it prints an invocation count,
+average time spent in the cake and child processes
+in user and system mode,
+average time spent in all processes and modes,
+total cpu time,
+and the ratio of cake user time to cake system time
+plus children's user and system times.
+.\"	@(#)cs.l	9/2/85

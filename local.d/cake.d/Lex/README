@@ -1,0 +1,14 @@
+This directory contains a diff for a modified version of the lex driver
+(ncform). It is not absolutely necessary to cake: the only difference
+is in error detection. If you cannot or do not want to install this diff
+to ncform, (e.g. cause you have an unsymphatetic root or you are worried
+about AT&T's copyright on the original ncform, of which this one is a
+small modification), you should keep the calls to and the definition of
+check_actlen in cake_s.l; otherwise you should comment them out.
+
+Catching lex buffer overflows is important. Some cake actions, like
+make actions, are very long, but this may not be apparent, as this
+length would almost certainly result from macro expansion (a link
+command for a large system can easily reach hundreds of bytes).
+An overflow like this, if it occurs, leads to core dump, and the bug
+can be VERY HARD to track down. I know, I spent a week on it once.

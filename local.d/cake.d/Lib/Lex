@@ -1,0 +1,18 @@
+$	Cakefile to handle lex files.
+
+$	It renames the output file of lex so that it has the same
+$	basename as the source file. The value of the macro LFLAGS
+$	is passed on to lex.
+
+$	This cakefile was written to work with the cakefile C and one
+$	of the cakefiles Main and System.
+
+#ifndef	LFLAGS
+#define	LFLAGS
+#endif
+
+%.c^:		%.l 			if exist %.l
+		lex LFLAGS %.l
+		@mv lex.yy.c %.c
+
+#define	USE_LEX

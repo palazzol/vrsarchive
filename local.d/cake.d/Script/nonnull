@@ -1,0 +1,5 @@
+#! /bin/sh
+case $# in
+	0) exit 1;;
+	*) exit 0;;
+esac

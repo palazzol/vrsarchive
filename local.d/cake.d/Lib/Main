@@ -1,0 +1,122 @@
+$	Cakefile to handle programs.
+
+$	Using Main is appropriate if a directory contains the sources
+$	for a single binary; if the number of binaries is greater than
+$	one, you should use the cakefile System. Main (and System) can
+$	handle programs written in any language, as long as the cakefile
+$	for that language defines the macros expected by Main. These
+$	macros are LINK_CMD, SRCSUFF, OBJSUFF and SUFFIXLIST. Currently
+$	there exist cakefiles for C and NU-Prolog. These cakefile should
+$	be included before Main.
+
+$	You should define the macro FILES to contain the list of source
+$	files WITHOUT their suffix, and optionally MAIN as the name of
+$	the binary (default: the name of the first file in FILES).
+$	With these defined, you can make the targets MAIN (link the
+$	object files), print (print all sources), uprint (print those
+$	sources which were modified after the last printing), count
+$	(run wc on all sources), ssize (sort the output of wc),
+$	clean (remove generated files) and clobber (remove generated
+$	files and the binary). Printing is done by PRINT_CMD if
+$	defined, lpr -p otherwise; removal is done by RM_CMD if
+$	defined, rmv otherwise (rmv copies its args to /tmp).
+
+$	You may define DEST as the name of an installation directory
+$	or HOME as where HOME/bin is the installation directory,
+$	and you can invoke the target install to do the installation
+$	(using INST_CMD if defined, cp otherwise). You may define
+$	LIB as a list of libraries to pass on to LINK and CHECK CMDs.
+
+$	The rules for the targets lint, tags and defs depend on
+$	values for the macros CHECK_CMD, TAGS_CMD and DEFS_CMD,
+$	which should be language-specific utilities; the macros
+$	should be defined in the language's cakefile.
+
+#ifndef	FILES
+	it's no use trying to use Main without defining FILES
+#endif
+#ifndef	LINK_CMD
+	it's no use trying to use Main without defining LINK_CMD
+#endif
+#ifndef	SRCSUFF
+	it's no use trying to use Main without defining SRCSUFF
+#endif
+#ifndef	OBJSUFF
+	it's no use trying to use Main without defining OBJSUFF
+#endif
+#ifndef	SUFFIXLIST
+	it's no use trying to use Main without defining SUFFIXLIST
+#endif
+
+#ifndef	PRINT_CMD
+#define	PRINT_CMD	lpr -p
+#endif
+#ifndef	INST_CMD
+#define	INST_CMD	cp
+#endif
+#ifndef	RM_CMD
+#define	RM_CMD		rmv
+#endif
+
+#ifndef	MAIN
+#define	MAIN		[[echo FILES | awk '{ print $1; }']]
+#endif
+#ifndef	LIB
+#define	LIB
+#endif
+
+#define	SRC	[[sub X X''SRCSUFF FILES]]
+#define	OBJ	[[sub X X''OBJSUFF FILES]]
+
+%::		OBJ			if % in MAIN
+		LINK_CMD OBJ LIB
+
+#ifdef	DEST
+install&:	MAIN
+		INST_CMD MAIN DEST
+#else
+#ifdef	HOME
+install&:	MAIN
+		INST_CMD MAIN HOME/bin
+#endif
+#endif
+
+#ifdef	CHECK_CMD
+#ifdef	IRREL
+lint&:		SRC
+		CHECK_CMD SRC LIB |& irrel IRREL
+#else
+lint&:		SRC
+		CHECK_CMD SRC LIB
+#endif
+#endif
+
+print&:
+		PRINT_CMD [[usrc SUFFIXLIST FILES]]
+		@-touch .print
+
+uprint&:
+		PRINT_CMD [[later .print [[usrc SUFFIXLIST FILES]]]]
+		@-touch .print
+
+#ifdef	TAGS_CMD
+tags:		SRC
+		TAGS_CMD SRC
+#endif
+
+#ifdef	DEFS_CMD
+defs:		SRC
+		DEFS_CMD SRC
+#endif
+
+count&:
+		wc -v [[usrc SUFFIXLIST FILES]]
+
+ssize&:
+		ssize [[usrc SUFFIXLIST FILES]]
+
+clean&:
+		RM_CMD OBJ [[gsrc SUFFIXLIST FILES]]
+
+clobber&:	clean
+		RM_CMD MAIN

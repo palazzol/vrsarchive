@@ -1,0 +1,21 @@
+This directory contains manuals for cake and its associated commands.
+
+The manuals are named *.1l. They are written for the -man macros
+(of course), and are patterned after Pyramid manual pages - I started
+writing them while using a Pyramid 90x. You may want to change the
+pathnames in cake.1l to match the ones you put in ../conf.h.
+
+The file paper.bib contains a partially preprocessed version of a paper
+I wrote on cake; the citation is
+
+%A Zoltan Somogyi
+%T Cake: a fifth generation version of make
+%J Australian Unix system User Group Newsletter
+%K auugn
+%V 7
+%N 6
+%D April 1987
+%P 22-31
+
+The file has been put through bib; you should put it through eqn, tbl
+and the -me macros.

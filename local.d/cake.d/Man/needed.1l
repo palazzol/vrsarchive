@@ -1,0 +1,23 @@
+.TH NEED 1-ucb
+.SH NAME
+needed \- find appropriate preprocessors
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B needed
+file
+.SH DESCRIPTION
+.sp 1
+\fINeeded\fP is a tool intended to work with \fIcake\fP
+and the cakefile Text.
+It returns the characters in \fIfile\fP
+between the first occurrence of the word NEED
+and the next end-of-line.
+By convention this contains the generic names
+of the list of nroff/troff preprocessors
+\fIfile\fP needs to be put through.
+("Generic" means that you should use "eqn" instead of "neqn" or "deqn";
+Text will choose the appropriate version based on the intended target.)
+.SH "SEE ALSO"
+cake(1)
+.\"	@(#)need.l	9/2/85

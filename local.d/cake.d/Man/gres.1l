@@ -1,0 +1,13 @@
+.TH GRES 1-ucb
+.SH NAME
+gres \- global regular expression substitution
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B gres
+oldpattern newpattern file ...
+.SH DESCRIPTION
+.sp 1
+\fIGres\fP substitutes in all its argument files
+the new ex(1) pattern for the old.
+.\"	@(#)gres.l	9/2/85

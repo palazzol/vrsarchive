@@ -1,0 +1,27 @@
+#! /bin/csh -f
+cat > /tmp/yyrepl1$$ << END_PROG
+BEGIN		{
+			found = 0;
+		}
+/^YYREPL/	{
+			if (NF < 3)
+				next;
+
+			found = 1;
+			printf "gres yy %s\n", \$2;
+			printf "gres YY %s\n", \$3;
+			exit;
+		}
+END		{
+			if (found == 0)
+				printf "gres yy yy\n";
+		}
+END_PROG
+awk -f /tmp/yyrepl1$$ $1 > /tmp/yyrepl2$$
+ex - /tmp/yyrepl2$$ << END
+%s/\$/ $argv[2-]/g
+w
+q
+END
+source /tmp/yyrepl2$$
+/bin/rm /tmp/yyrepl1$$ /tmp/yyrepl2$$

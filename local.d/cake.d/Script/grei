@@ -1,0 +1,20 @@
+#! /bin/sh
+# grei - insert at regular expressions
+# usage: grei where what file ...
+
+case $# in
+	0|1|2) echo 1>&2 Usage: grei where what file ...; exit 1;;
+esac
+TERMCAP=/etc/termcap; export TERMCAP
+where=$1
+what=$2
+shift; shift
+for file in $*
+do
+	ex - $file << END ; : use ex so that \< \> can be used
+	g/${where}/i\\
+${what}
+	w
+	q
+END
+done

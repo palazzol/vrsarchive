@@ -1,0 +1,13 @@
+.TH GRED 1-ucb
+.SH NAME
+gred \- global regular expression delete
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B gred
+pattern file ...
+.SH DESCRIPTION
+.sp 1
+\fIGred\fP deleted from all its argument files
+those lines matching the given ex(1) pattern.
+.\"	@(#)gred.l	9/2/85

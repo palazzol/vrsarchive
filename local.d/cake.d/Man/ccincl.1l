@@ -1,0 +1,53 @@
+.ds c \fIccincl\fP
+.ds C \fIccincl\fP
+.TH CCINCL 1-ucb
+.SH NAME
+ccincl \- find #include files
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B ccincl
+[ options ] ...  file ...
+.SH DESCRIPTION
+.sp 1
+\*C is a tool to find #included files,
+and is intended to be used in conjunction with cake(1).
+It goes through the given files and
+prints out the names of all #included files.
+.SH OPTIONS
+.sp 1
+.IP \-f
+Print the current filename and a colon before every include file found.
+.IP \-r
+Recursively search every include file found.
+.IP "\-ifile"
+Ignore file - don't report it and do not recurse on it.
+.IP "\-sfile"
+Stop recursion at file but do report it.
+.IP \-Cdir
+Consider the current directory to be dir instead of ".".
+.IP \-Idir
+Search for include files in the given directory.
+Like cpp, \*c searches first the current directory,
+then directories given in \-I arguments,
+and then /usr/include.
+Also like cpp, the current directory is not searched
+for inclusions using the <file> syntax.
+.PP
+\*C detects that two or more different filenames refer to the same file
+by checking their inode numbers.
+It always uses only one name for a file, the first it encounters.
+.PP
+\*C 
+.SH "SEE ALSO"
+cake(1)
+.SH BUGS
+.sp 1
+\*C doesn't handle multiple directory jumps very well;
+in particular when processing include files in a different directory
+it still interprets file names with respect to the current directory,
+not with respect to the new directory, as cpp does.
+.PP
+\*C is in trouble if it finds two files in different filesystems
+that have the same inode number.
+.\"	@(#)ccincl.l	9/2/85

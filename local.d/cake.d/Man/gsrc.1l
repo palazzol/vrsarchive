@@ -1,0 +1,47 @@
+.ds g \fIgsrc\fP
+.ds G \fIGsrc\fP
+.TH GSRC 1-ucb
+.SH NAME
+gsrc \- find generated files
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B gsrc
+suffix ...  file ...
+.SH DESCRIPTION
+.sp 1
+\*G is a tool for finding generated files.
+It is intended to be used in conjunction with cake(1),
+and in particular with the cakefiles Main and System.
+It needs to kinds of arguments.
+One is a make(1)-style list of suffixes
+which describe dependencies between files;
+the other is a list of basic filenames
+(filenames without any suffixes).
+For each base name argument,
+\*g outputs the names of the files
+which have that base name,
+whose suffix is on the suffixlist,
+and whose suffix is not the rightmost suffix for which a file exists.
+.lp
+Since this "explanation" is none too clear, here is an example:
+.SH "EXAMPLE"
+.sp 1
+A typical invocation of \*g would be "gsrc .c .l .y file1 file2 file3"
+in a directory containing file1.c file2.c file2.y file3.c and file3.l;
+for this \*g will output file2.c file3.c, signifying that
+file2.c and file3.c were generated (by yacc(1) and lex(1) respectively).
+.SH "SEE ALSO"
+cake(1), usrc(1)
+.SH BUGS
+.sp 1
+Suffix dependencies really form a tree, not a list.
+This causes \*g to get confused if two user-written files
+(i.e. non-generated files) have the same basename
+and if they both have their suffix on the list.
+Since the Main and System cakefiles run \*g
+to identify files which are to be cleaned up,
+this is definitely not healthy.
+For this reason, the default RM_CMD in those cakefiles
+just moves its arguments to /tmp.
+.\"	@(#)gsrc.l	7/7/86

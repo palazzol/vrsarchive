@@ -1,0 +1,19 @@
+#! /bin/sh
+# gres - substitute regular expressions
+# usage: gres from to file ...
+
+case $# in
+	0|1|2) echo 1>&2 Usage: gres from to file ...; exit 1;;
+esac
+TERMCAP=/etc/termcap; export TERMCAP
+from=$1
+to=$2
+shift; shift
+for file in $*
+do
+	ex - $file << END ; : use ex so that \< \> can be used
+	g/${from}/s/${from}/${to}/g
+	w
+	q
+END
+done

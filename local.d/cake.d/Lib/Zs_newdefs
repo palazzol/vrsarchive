@@ -1,0 +1,14 @@
+$	Site-dependent definitions for the cakefile Newtext.
+
+#define	LIBDIR		/u/pgrad/zs/lib
+
+#define	DITROFFINIT	LIBDIR/init.me
+#define	SYMBOLIMAGEN	LIBDIR/Symbols.imagen
+#define	SYMBOLAPPLE	LIBDIR/Symbols.apple
+#define	OTHERMACS	LIBDIR/tmac.e.zs
+#define	EQNOPTS		LIBDIR/emac.zs
+#define	SPELLDICT	LIBDIR/dict
+#define	SPELLOPTS	-b
+#define	BIBSTYLE	-t LIBDIR/style
+
+#define	INTFLAG		^

@@ -1,0 +1,45 @@
+#! /bin/sh
+cat > /tmp/cs.prog$$ << END_PROG
+BEGIN	{
+		printf "%8s%5s%8s", "", "", "";
+		printf "%8s%8s%8s%8s", "self", "self", "child", "child";
+		printf "%8s%10s%8s", "", "", "o/h";
+		printf "\n";
+		printf "%-8s%5s%8s", "user", "inv", "mem";
+		printf "%8s%8s%8s%8s", "usr", "sys", "usr", "sys";
+		printf "%8s%10s%8s", "all", "total", "ratio";
+		printf "\n\n";
+	}
+	{
+		inv[\$1] += 1;		inv["total"] += 1;
+		su[\$1]  += \$2;	su["total"]  += \$2;
+		ss[\$1]  += \$3;	ss["total"]  += \$3;
+		cu[\$1]  += \$4;	cu["total"]  += \$4;
+		cs[\$1]  += \$5;	cs["total"]  += \$5;
+		mem[\$1] += \$6;	mem["total"] += \$6;
+	}
+END	{
+		for (u in inv)
+		{
+			opt   = (su[u])/100;
+			unopt = (ss[u] + cu[u] + cs[u])/100;
+			all   = (su[u] + ss[u] + cu[u] + cs[u])/100;
+
+			printf "%-8s%5d", u, inv[u]		> "/tmp/cs.out$$";
+			printf "%7dk", mem[u]/(1000*inv[u])	> "/tmp/cs.out$$";
+			printf "%8.2f", su[u]/(100*inv[u])	> "/tmp/cs.out$$";
+			printf "%8.2f", ss[u]/(100*inv[u])	> "/tmp/cs.out$$";
+			printf "%8.2f", cu[u]/(100*inv[u])	> "/tmp/cs.out$$";
+			printf "%8.2f", cs[u]/(100*inv[u])	> "/tmp/cs.out$$";
+			printf "%8.2f%10.2f", all/inv[u], all	> "/tmp/cs.out$$";
+			if (opt > 0)
+				printf "%8.2f", unopt/opt	> "/tmp/cs.out$$";
+			else
+				printf "%s", "infinity"		> "/tmp/cs.out$$";
+			printf "\n"				> "/tmp/cs.out$$";
+		}
+	}
+END_PROG
+awk -f /tmp/cs.prog$$ < /u/pgrad/zs/lib/cake_stats
+sort +8n /tmp/cs.out$$
+/bin/rm -f /tmp/cs.prog$$ /tmp/cs.out$$

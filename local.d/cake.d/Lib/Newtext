@@ -1,0 +1,400 @@
+$	New cakefile for text processing.
+
+$	For documentation see Newtext.doc and Newtext.defs.
+
+#ifndef	MOREFLAG
+#define	MOREFLAG
+#endif
+#ifndef	PRINTFLAG
+#define	PRINTFLAG
+#endif
+
+#ifndef	MORECMD
+#define	MORECMD		more
+#endif
+#ifndef	BIBCMD
+#define	BIBCMD		bib
+#endif
+#ifndef	PICCMD
+#define	PICCMD		pic
+#endif
+#ifndef	TBLCMD
+#define	TBLCMD		dtbl
+#endif
+#ifndef	EQNCMD
+#define	EQNCMD		deqn
+#endif
+#ifndef	DITROFFCMD
+#ifdef	LOCALDITROFF
+#define	DITROFFCMD	ditroff.q
+#else
+#define	DITROFFCMD	ditroff
+#endif
+#endif
+#ifndef	CITCMD
+#define	CITCMD		lookindex -s
+#endif
+
+#ifndef	SYMBOLIMAGEN
+#define	SYMBOLIMAGEN
+#endif
+#ifndef	SYMBOLAPPLE
+#define	SYMBOLAPPLE
+#endif
+#ifndef	LASERDEV
+#ifdef	IP
+#define	LASERDEV	-Pip
+#define	LASERTYPE	-Tip
+#define	SYMBOLS		SYMBOLIMAGEN
+#else
+#ifdef	LW
+#define	LASERDEV	-Plw
+#define	LASERTYPE	-Tlw
+#define	CHUNK		6
+#define	SYMBOLS		SYMBOLAPPLE
+#else
+#ifdef	LWR
+#define	LASERDEV	-Plwr
+#define	LASERTYPE	-Tlw
+#define	CHUNK		6
+#define	SYMBOLS		SYMBOLAPPLE
+#else
+#ifdef	LW226
+#define	LASERDEV	-Plw.226
+#define	LASERTYPE	-Tlw
+#define	CHUNK		6
+#define	SYMBOLS		SYMBOLAPPLE
+#else
+#ifdef	OFF
+#define	LASERDEV	-Poff
+#define	LASERTYPE	-Tlw
+#define	CHUNK		6
+#define	SYMBOLS		SYMBOLAPPLE
+#else
+#ifdef	AN
+#define	LASERDEV	-Pan
+#define	LASERTYPE	-Tlw
+#define	CHUNK		6
+#define	SYMBOLS		SYMBOLAPPLE
+#else
+#define	LASERDEV	-Pan
+#define	LASERTYPE	-Tlw
+#define	CHUNK		6
+#define	SYMBOLS		SYMBOLAPPLE
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+
+#ifndef	PRINTLASER
+#define	PRINTLASER	LASERDEV -n
+#endif
+#ifndef	PRINTGEN
+#define	PRINTGEN	LASERDEV
+#endif
+#ifndef	LBLOPTS
+#define	LBLOPTS
+#endif
+#ifndef	ALLLBLOPTS
+#define	ALLLBLOPTS	LBLOPTS
+#endif
+#ifndef	BIBINDEX
+#define	BIBINDEX	-p INDEX
+#endif
+#ifndef	BIBSTYLE
+#define	BIBSTYLE	-t std
+#endif
+#ifndef	BIBOPTS
+#define	BIBOPTS
+#endif
+#ifndef	ALLBIBOPTS
+#define	ALLBIBOPTS	BIBINDEX BIBSTYLE BIBOPTS
+#endif
+#ifndef	LISTREFOPTS
+#define	LISTREFOPTS
+#endif
+#ifndef	ALLLISTREFOPTS
+#define	ALLLISTREFOPTS	BIBSTYLE LISTREFOPTS
+#endif
+#ifndef	PICOPTS
+#define	PICOPTS
+#endif
+#ifndef	ALLPICOPTS
+#define	ALLPICOPTS	LASERTYPE PICOPTS
+#endif
+#ifndef	TBLOPTS
+#define	TBLOPTS
+#endif
+#ifndef	ALLTBLOPTS
+#define	ALLTBLOPTS	LASERTYPE TBLOPTS
+#endif
+#ifndef	EQNOPTS
+#define	EQNOPTS
+#endif
+#ifndef	ALLEQNOPTS
+#define	ALLEQNOPTS	LASERTYPE EQNOPTS
+#endif
+#ifndef	MACROPACK
+#define	MACROPACK	-me
+#endif
+#ifndef	OTHERMACS
+#define	OTHERMACS
+#endif
+#ifndef	DITROFFINIT
+#define	DITROFFINIT
+#endif
+#ifndef	DITROFFOPTS
+#define	DITROFFOPTS
+#endif
+#ifndef	ALLDITROFFOPTS
+#define	ALLDITROFFOPTS	-t LASERDEV DITROFFOPTS MACROPACK OTHERMACS SYMBOLS DITROFFINIT
+#endif
+#ifndef	CITINDEX
+#define	CITINDEX	/usr/bib/gnu/bib/INDEX
+#endif
+#ifndef	CHNROPTS
+#define	CHNROPTS
+#endif
+#ifndef	CHEQOPTS
+#define	CHEQOPTS
+#endif
+#ifndef	SPELLDICT
+#define	SPELLDICT	/dev/null
+#endif
+#ifndef	ISPELLOPTS	
+#define	ISPELLOPTS	-Sx
+#endif
+#ifndef	SPELLOPTS
+#define	SPELLOPTS
+#endif
+#ifndef	DICTOPTS
+#define	DICTOPTS
+#endif
+#ifndef	MODSTYLE
+#define	MODSTYLE	16
+#endif
+#ifndef	HARDSTYLE
+#define	HARDSTYLE	19
+#endif
+#ifndef	LONGSTYLE
+#define	LONGSTYLE	25
+#endif
+#ifndef	STYLEOPTS
+#define	STYLEOPTS
+#endif
+#ifndef	ALLSTYLEOPTS
+#define	ALLSTYLEOPTS	MACROPACK STYLEOPTS
+#endif
+
+#ifndef	IDIR
+#define	IDIR	/tmp
+#endif
+#ifndef	FDIR
+#define	FDIR	/tmp
+#endif
+
+#define	FSUFF	laser
+#define	ISUFF	bib,lbl,dte,de,d
+#define	ASUFF	astyle,base,cheq,chnr,cit,count,dict,exp,hard,long,mod,ocount,ol,pass,refs,spell,srefs,style
+
+#define	need(prog)	prog in [[needed %.orig]]
+
+/* general services */
+%.m&:		% MOREFLAG
+		MORECMD %
+
+%1.%2.p&:	%1.%2 PRINTFLAG			if not %2 in laser
+		lpr PRINTGEN %1.%2
+
+#ifdef	CHUNK
+%1.%2.p&:	%1.%2 PRINTFLAG			if %2 in laser
+		@-/bin/rm -f chunk* >& /dev/null
+		troffchunk -n CHUNK %1.%2
+		lpr PRINTLASER chunk*
+#else
+%1.%2.p&:	%1.%2 PRINTFLAG			if %2 in laser
+		lpr PRINTLASER %1.%2
+#endif
+
+/* frames */
+%.orig:		%.frame [[soincl %.frame]]	if exist %.frame
+		soelim %.frame > %.orig
+
+%1.%2.each&:	[[sub X.orig X.%2 [[soincl %1.frame]]]]	if exist %1.frame
+
+/* lbl */
+#ifdef	IDIR
+%.lbl:		%.orig*				if need(lbl)
+		lbl ALLLBLOPTS %.orig > IDIR/%.lbl
+		ln -s IDIR/%.lbl .
+#else
+%.lbl:		%.orig*				if need(lbl)
+		lbl ALLLBLOPTS %.orig > %.lbl
+#endif
+
+%.lbl:		%.orig*				if not need(lbl)
+		@-/bin/rm -f %.lbl >& /dev/null
+		ln -s [[/bin/pwd]]/%.orig %.lbl
+
+/* bib */
+#ifdef	IDIR
+%.bib:		%.lbl %.orig*			if need(bib)
+		@-/bin/rm -f %.bib >& /dev/null
+		BIBCMD ALLBIBOPTS %.lbl > IDIR/%.bib
+		ln -s IDIR/%.bib .
+#else
+%.bib:		%.lbl %.orig*			if need(bib)
+		BIBCMD ALLBIBOPTS %.lbl > %.bib
+#endif
+
+#ifdef	IDIR
+%.bib:		%.lbl %.orig*			if need(listrefs)
+		@-/bin/rm -f %.bib >& /dev/null
+		listrefs LISTREFOPTS %.lbl > IDIR/%.bib
+		ln -s IDIR/%.bib .
+#else
+%.bib:		%.lbl %.orig*			if need(listrefs)
+		listrefs LISTREFOPTS %.lbl > %.bib
+#endif
+
+%.bib:		%.lbl %.orig*			if not need(bib) and not need(listrefs)
+		@-/bin/rm -f %.bib >& /dev/null
+		ln -s %.lbl %.bib
+
+/* laser pic */
+#ifdef	IDIR
+%.dte INTFLAG:	%.bib %.orig*			if need(pic)
+		@-/bin/rm -f %.dte >& /dev/null
+		PICCMD ALLPICOPTS %.bib > IDIR/%.dte
+		ln -s IDIR/%.dte .
+#else
+%.dte INTFLAG:	%.bib %.orig*			if need(pic)
+		PICCMD ALLPICOPTS %.bib > %.dte
+#endif
+
+%.dte INTFLAG:	%.bib %.orig*			if not need(pic)
+		@-/bin/rm -f %.dte >& /dev/null
+		ln -s %.bib %.dte
+	
+/* laser tbl */
+#ifdef	IDIR
+%.de INTFLAG:	%.dte %.orig*			if need(tbl)
+		@-/bin/rm -f %.de >& /dev/null
+		TBLCMD ALLTBLOPTS %.dte > IDIR/%.de
+		ln -s IDIR/%.de .
+#else
+%.de INTFLAG:	%.dte %.orig*			if need(tbl)
+		TBLCMD ALLTBLOPTS %.dte > %.de
+#endif
+
+%.de INTFLAG:	%.dte %.orig*			if not need(tbl)
+		@-/bin/rm -f %.de >& /dev/null
+		ln -s %.dte %.de
+	
+/* laser eqn */
+#ifdef	IDIR
+%.d INTFLAG:	%.de %.orig*			if need(eqn)
+		@-/bin/rm -f %.d >& /dev/null
+		EQNCMD ALLEQNOPTS %.de > IDIR/%.d
+		ln -s IDIR/%.d .
+#else
+%.d INTFLAG:	%.de %.orig*			if need(eqn)
+		EQNCMD ALLEQNOPTS %.de > %.d
+#endif
+
+%.d INTFLAG:	%.de %.orig*			if not need(eqn)
+		@-/bin/rm -f %.d >& /dev/null
+		ln -s %.de %.d
+	
+/* laser troff */
+#ifdef	FDIR
+%.laser:	%.d
+		@-/bin/rm -f %.laser >& /dev/null
+		DITROFFCMD ALLDITROFFOPTS %.d > FDIR/%.laser
+		ln -s FDIR/%.laser .
+#else
+%.laser:	%.d
+		DITROFFCMD ALLDITROFFOPTS %.d > %.laser
+#endif
+
+/* analysis services */
+%.all&:		%.spell %.style %.exp %.mod %.long %.pass %.dict %.chnr
+
+%.base:		%.orig
+		base < %.orig > %.base
+
+%.refs:		%.orig
+		refs < %.orig > %.refs
+
+%.srefs:	%.refs
+		sort -u %.refs > %.srefs
+
+%.cit:		%.srefs
+		CITCMD CITINDEX < %.srefs > %.icit
+		sortbib %.icit > %.cit
+		@-/bin/rm -f %.icit >& /dev/null
+
+%.chnr:		%.orig
+		checknr CHNROPTS %.orig > %.chnr
+
+%.cheq:		%.orig
+		-checkeq CHEQOPTS %.orig > %.cheq
+
+%.ol:		%.orig
+		ol %.orig > %.ol
+
+%.fix&:		%.orig
+		fix -d SPELLDICT %.orig
+
+%.ispell&:	%.orig
+		ispell ISPELLOPTS %.orig
+
+%.spell:	%.base
+		spell SPELLOPTS %.base | tr A-Z a-z | comm -23 - SPELLDICT > %.spell
+
+%.dict:		%.base
+		diction DICTOPTS %.base > %.dict
+
+%.style:	%.base
+		style ALLSTYLEOPTS %.base > %.style
+
+%.astyle:	%.base
+		style ALLSTYLEOPTS -a %.base > %.astyle
+
+%.exp:		%.base
+		style ALLSTYLEOPTS -e %.base > %.exp
+
+%.mod:		%.base
+		style ALLSTYLEOPTS -r MODSTYLE %.base > %.mod
+
+%.hard:		%.base
+		style ALLSTYLEOPTS -r HARDSTYLE %.base > %.hard
+
+%.long:		%.base
+		style ALLSTYLEOPTS -l LONGSTYLE %.base > %.long
+
+%.pass:		%.base
+		style ALLSTYLEOPTS -p %.base > %.pass
+
+%.count:	%.base
+		wc %.base > %.count
+
+%.ocount:	%.orig
+		wc %.orig > %.ocount
+
+%.clean&:
+		@echo cleaning up %
+		@-/bin/rm %.{ISUFF,FSUFF,ASUFF} >& /dev/null
+
+%.vclean&:
+		@echo cleaning up % very carefully
+		@-/bin/mv %.orig /tmp/%.orig.$$ >& /dev/null
+
+xyzzy&:
+		@echo no default action in Newtext
+
+clean&:		[[sub -i X.orig X.clean *]]
+clean&:		[[sub -i X.frame X.vclean *]]

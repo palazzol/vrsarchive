@@ -1,0 +1,23 @@
+$	Cakefile to handle yacc files.
+
+$	It renames the output file of yacc so that it has the same
+$	basename as the source file. The value of the macro YFLAGS
+$	is passed on to yacc.
+
+$	This cakefile was written to work with the cakefile C and one
+$	of the cakefiles Main and System.
+
+#ifndef	YFLAGS
+#define	YFLAGS	-d
+#endif
+
+%.c^ %.h@:	%.y			if exist %.y and "-d" in [[echo YFLAGS]]
+		yacc YFLAGS %.y
+		@mv y.tab.h %.h
+		@mv y.tab.c %.c
+
+%.c^:		%.y			if exist %.y and not "-d" in [[echo YFLAGS]]
+		yacc YFLAGS %.y
+		@mv y.tab.c %.c
+
+#define	USE_YACC

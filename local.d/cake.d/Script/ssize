@@ -1,0 +1,13 @@
+: ssize - sort files by size, with wc info
+: usage: sortsize file ...
+
+TERMCAP=/etc/termcap; export TERMCAP
+wc -v $* > /tmp/ssize1$$
+ex - /tmp/ssize1$$ << END > /dev/null;
+1,1w /tmp/ssize2$$
+1d
+w
+q
+END
+(cat /tmp/ssize2$$; sort -n +2 /tmp/ssize1$$) | more
+/bin/rm -f /tmp/ssize1$$ /tmp/ssize2$$

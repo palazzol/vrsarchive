@@ -1,0 +1,292 @@
+#! /bin/sh
+# fix	Ver. 2.0, 20/1/86
+# interactive spelling checker and fixer
+#   Rex Sanders, USGS Pacific Marine Geology
+#   Modifications by Bill Silvert, MEL
+#   Modifications by Ed Reeder, Intel
+#   Rewritten by Bill Ross and Zoltan Somogyi, University of Melbourne
+#
+# usage:
+#     fix [-d dict] [-l local] [-p pnouns] [-s] [-a] [-b] [-o out] [-i in] files
+#		-d use dict as your private dictionary
+#			this is the only dictionary that gets uppercase
+#			folded to lower (default $HOME/lib/dict/words)
+#			the directory $HOME/lib/dict MUST exist
+#		-p use pnouns as the dictionary of proper nouns
+#					(default=$HOME/lib/dict/proper-nouns)
+#		-l use local as the dictionary specific to this paper
+#					(default=./.words)
+#		-a use american spelling
+#		-b use british spelling (default)
+#		-s don't assume the dictionaries are sorted
+#		   by default we assume dict, local and pnouns
+#		   are all sorted, and dict is all lower case,
+#		   because sorting takes time.
+#		-o write the mistakes to a file, and exit
+#		-i read mistakes in from a file instead of running spell
+#
+# to come:
+#		preservation of case for beginning of sentence
+#		allow >1 word to be typed for a correction
+#			(at the moment it creates a file of the name of
+#			 the second word---weird!)
+# bugs:
+#		painfully slow on substitutions
+
+mis=/tmp/spf$$.mis
+sub=/tmp/spf$$.sub
+mrk=/tmp/spf$$.mrk
+tmp=/tmp/spf$$.tmp
+FILES=
+SORTED=
+SPELLOPT="-b"
+OUTFILE=
+INFILE=
+WORDS=$HOME/lib/dict/words
+PNOUNS=$HOME/lib/dict/proper-nouns
+LWORDS=./.words
+SPELLEDITOR=${SPELLEDITOR-'vi +/###/'}
+WJRBIN=/u/hons/wjr/bin
+
+trap "/bin/rm -f $mis $tmp $sub $mrk ; exit" 0 1 2 15
+
+while test -n "$1"
+do
+	case $1 in
+	-d)	shift
+		WORDS=$1
+		;;
+	-l)	shift
+		LWORDS=$1
+		;;
+	-p)	shift
+		PNOUNS=$1
+		;;
+	-a)	SPELLOPT=
+		;;
+	-b)	SPELLOPT="-b"
+		;;
+	-s)	SORTED="n"
+		;;
+	-i)	shift
+		INFILE=$1
+		;;
+	-o)	shift
+		OUTFILE=$1
+		;;
+	*)	FILES="$FILES $1"
+		;;
+	esac
+	shift
+done
+
+if test -n "$INFILE"
+then
+	echo "Reading mistakes from $INFILE for corrections to $FILES"
+	cp $INFILE $mis
+else
+	echo "Looking for spelling errors in $FILES ..."
+
+	touch $LWORDS		# we remove this at the end if it wasn't used
+
+	if test "$SORTED"
+	then
+		# -s option - force a sort of the dictionaries
+		if test ! -s $WORDS
+		then
+			touch $WORDS
+		else
+			tr A-Z a-z < $WORDS > $tmp
+			sort -u -f $tmp -o $WORDS
+		fi
+
+		if test ! -s $LWORDS
+		then
+			touch $LWORDS
+		else
+			sort -u  $LWORDS -o $LWORDS
+		fi
+
+		if test ! -s $PNOUNS
+		then
+			touch $PNOUNS
+		else
+			sort -u  $PNOUNS -o $PNOUNS
+		fi
+	fi
+
+	# ignore numbers, but keep alpha-numerics
+	/usr/bin/spell -b $FILES | egrep -v '^[0-9]+$' > $tmp
+	# remove the possessive apostrophe
+	if egrep \'s\$ $tmp > /dev/null
+	then
+		$WJRBIN/gres \'s\$ "" $tmp
+	fi
+	
+	sort -u $tmp -o $mis	# must be sorted for comm
+
+	# remove the words we know about
+	comm -23 $mis $PNOUNS | comm -23 - $LWORDS | comm -23 - $WORDS > $tmp
+	# now get rid of words in with (some) upper case that appear in words
+	egrep -v [A-Z] $tmp > $mis
+	for word in `egrep [A-Z] $tmp`
+	do
+		if grep -i -w $word $WORDS > /dev/null
+		then
+			echo -n	# a nop ! (continue does the wrong thing)
+		else
+			echo $word >> $mis
+		fi
+	done
+	sort -u $mis -o $mis
+fi
+
+if test ! -s $mis
+then
+	echo "No spelling errors found in $FILES"
+	/bin/rm -f $mis $sub $mrk $tmp
+	if test ! -s $LWORDS
+	then
+		/bin/rm -f $LWORDS
+	fi
+	exit 0
+fi
+
+if test -n "$OUTFILE"
+then
+	mv $mis $OUTFILE
+	/bin/rm -f $mis $sub $mrk $tmp
+	if test ! -s $LWORDS
+	then
+		/bin/rm -f $LWORDS
+	fi
+	exit 0
+fi
+
+echo "Found `/usr/ucb/wc -l < $mis` misspellings"
+echo "Responses:"
+echo "g=add to user (global) dictionary"
+echo "p=add to user (global) dictionary of proper-nouns"
+echo "l=add to user (local) dictionary"
+echo "f=use a regular expression to look for correct spelling"
+echo "m=mark for correction, b=bypass"
+echo "Anything else is the correction"
+
+for word in `cat $mis`
+do
+	egrep $word $FILES
+	while true
+	do
+		echo -n "${word}: [correction or bglpfm] "
+		read response
+		case $response in
+		G|g)
+			echo $word >> $WORDS
+			##echo adding $word to global dictionary
+			addedg=y
+			break 
+			;;
+		P|p)
+			echo $word >> $PNOUNS
+			##echo adding $word to proper-noun dictionary
+			addedp=y
+			break 
+			;;
+		L|l)
+			echo $word >> $LWORDS
+			##echo adding $word to local dictionary
+			addedl=y
+			break 
+			;;
+		""|B|b)
+			##echo bypass on $word
+			break
+			;;
+		F|f)
+			echo -n "Search pattern for word: "
+			read response
+			if test "$response"
+			then
+				cat $PNOUNS $LWORDS $WORDS | egrep "$response" > $tmp
+				egrep "$response" /usr/dict/words | sort -f - $tmp | more
+			fi
+			;;
+		M|m)
+			echo "$WJRBIN/grei \"\\<${word}\\>\" \"### spell: ${word} %%%\" $FILES" >> $mrk
+			##echo marking $word
+			break
+			;;
+		*)	
+			echo "$WJRBIN/gres \"\\<${word}\\>\" ${response} $FILES" >> $sub
+			##echo changing $word to $response
+			break
+			;;
+		esac
+	done
+done
+
+if test ${addedg-n} = y
+then
+	tr A-Z a-z < $WORDS > $tmp
+	sort -u -f $tmp -o $WORDS
+fi
+if test ${addedl-n} = y
+then
+	sort -u $LWORDS -o $LWORDS
+elif test ! -s $LWORDS
+then
+	/bin/rm -f $LWORDS
+fi
+if test ${addedp-n} = y
+then
+	sort -u $PNOUNS -o $PNOUNS
+fi
+
+if test ! -s $sub -a ! -s $mrk
+then
+	/bin/rm -f $mis $sub $mrk $tmp
+	exit 0
+fi
+
+while true
+do
+	echo -n "Do you want to overwrite $FILES [yn] "
+	read reply
+	case "$reply" in
+	y*|Y*)
+		break
+		;;
+	n*|N*)
+		/bin/rm -f $mis $sub $mrk $tmp
+		exit 0
+		;;
+	*)
+		continue
+		;;
+	esac
+done
+
+if test -s $sub
+then
+	echo -n "Substituting.... "
+	. $sub
+	echo "done."
+fi
+
+if test -s $mrk
+then
+	echo -n "Marking.... "
+	. $mrk
+	echo "done."
+	mod=""
+	for file in $FILES
+	do
+		if fgrep '###' $file > /dev/null
+		then
+			mod="$mod $file"
+		fi
+	done
+	$SPELLEDITOR $mod
+fi
+
+/bin/rm -f $mis $sub $mrk $tmp

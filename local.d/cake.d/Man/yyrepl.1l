@@ -1,0 +1,34 @@
+.TH YYREPL 1-ucb
+.SH NAME
+yyrepl \- manage two or more yacc/lex systems in the same directory
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B yyrepl
+patternfile targetfile ...
+.SH DESCRIPTION
+.sp 1
+The standard Unix tools yacc(1) and lex(1)
+are not set up to work with multiple parsers and/or scanners
+in the same directory.
+They put their output in fixed-name files
+and export and import fixed-name data structures and functions.
+.sp 1
+\fIYyrepl\fP is a tool intended to work with \fIcake\fP,
+although it can also be used with \fImake\fP and on its own.
+It searches \fIpatternfile\fP for a line which contains
+the keyword YYREPL followed by (at least) two words.
+Then it goes through the \fItargetfile\fPs,
+systematically substituting
+the first word for yy and the second word for YY.
+.sp 1
+In the intended usage,
+every yacc (or lex) file except possibly one has a YYREPL line,
+with these lines specifying different replacements
+(e.g. xx XX and zz ZZ).
+Then \fIyyrepl\fP is run once for each parser/scanner pair,
+with the \fIpatternfile\fP is being the yacc (or lex) source
+and the \fItargetfile\fPs are the parser and scanner in C.
+.SH "SEE ALSO"
+yacc(1), lex(1), make(1), cake(1)
+.\"	@(#)yyrepl.l	9/2/85

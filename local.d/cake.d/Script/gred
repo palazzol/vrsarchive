@@ -1,0 +1,18 @@
+#! /bin/sh
+# gred - delete regular expression
+# usage: gred pattern file ...
+
+case $# in
+	0|1) echo 1>&2 Usage: gred pattern file ...; exit 1;;
+esac
+TERMCAP=/etc/termcap; export TERMCAP
+pattern=$1
+shift
+for file in $*
+do
+	ex - $file << END ; : use ex so that \< \> can be used
+	g/${pattern}/d
+	w!
+	q
+END
+done

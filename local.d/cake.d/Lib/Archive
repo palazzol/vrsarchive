@@ -1,0 +1,15 @@
+$	Cakefile to handle archives.
+
+$	Define ARCH to be the name of the archive you want files
+$	to be automatically extracted from. The first rule performs
+$	this extraction; the second updates the archive.
+
+#ifndef	ARCH
+		it's no use trying to use Archive without defining ARCH
+#endif
+
+%1:		ARCH		if {{ar t ARCH | grep \\\^%1\\\$}}
+		ar x ARCH %1
+
+ARCH.up&:	[[ar t ARCH]]
+		ar ru ARCH [[ar t ARCH]]

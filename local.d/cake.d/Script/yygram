@@ -1,0 +1,28 @@
+#!/bin/awk -f
+
+# extract the grammar from a yacc file 
+# usage yygram file ...
+
+BEGIN	{
+		num = 0;
+		braces = 0;
+	}
+/^%%$/	{
+		braces++;
+		next;
+	}
+/JUNK/	{	exit;		}
+NF == 0	{	next;		}
+/\t;/	{	next;		}
+	{	
+		if (index($0, "{") > 0)
+			num++;
+		if (num == 0 && braces == 1)
+			print;
+		if (index($0, "}") > 0)
+			num--;
+	}	
+END	{
+		if (num != 0)
+			print "Unmatched braces";
+	}

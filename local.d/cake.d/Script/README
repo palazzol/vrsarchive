@@ -1,0 +1,14 @@
+This directory contains those commands used by the "standard" cakefiles
+which are implemented by scripts.
+
+The commands reporting on cake stats (cs and ccs) have embedded in them
+the name of the cake stats file; if you change the macro STATS_FILE
+in ../conf.h, you should change these also (unless you turn off stats
+altogether, of course). Apart from this, "fix" is the only program
+that will require adjustments, at least on Berkeley systems.
+
+However, on systems without #!, you will need to do some work
+to replace #! /bin/sh lines with : lines and convert /bin/awk
+interpreted scripts into Bourne shell scripts; on systems which don't
+even recognize # as signifying a C-shell script, you will also need
+to convert C-shell scripts into Bourne shell.

@@ -1,0 +1,286 @@
+$	Obsolete cakefile for text processing.
+
+$	Use Newtext instead.
+
+#ifndef	NOSPACE
+#define	SPACE
+#endif
+
+#ifndef	MPAC
+#define	MPAC	-me
+#endif
+#ifndef	LBLOPTS
+#define	LBLOPTS
+#endif
+#ifndef	ROFFOPTS
+#define	ROFFOPTS
+#endif
+#ifndef	BIBPROG
+#define	BIBPROG	bib
+#endif
+#ifndef	LASDEV
+#define	LASDEV	-Pip
+#endif
+#ifndef	PAGER
+#define	PAGER	more
+#endif
+#ifndef	PRINT
+#define	PRINT	lpr
+#endif
+#ifndef	PNDK
+#define	PNDK	-Pcl
+#endif
+#ifndef	PLASER
+#define	PLASER	LASDEV -n
+#endif
+#ifndef	PGEN
+#define	PGEN	-Pbds
+#endif
+
+#define	need(prog)	prog in [[needed %.orig]]
+
+#ifdef	SPACE
+#ifndef	IDIR
+#define	IDIR	/tmp/
+#endif
+#ifndef	FDIR
+#define	FDIR	/tmp/
+#endif
+#ifndef	ADIR
+#define	ADIR
+#endif
+#define	ISUFF	lbl bib dte de d ne n base
+#define	FSUFF	laser more nice fine
+#define	ASUFF	refs cit chnr cheq ol spell double dict style astyle exp hard mod long pass count Count
+#define	NOSUFF	frame orig all fix clean vclean
+#else
+#define	IDIR
+#define	FDIR
+#define	ADIR
+#endif
+
+/* general services */
+#ifndef	SPACE
+%1.%2.m&:	%1.%2
+		PAGER %1.%2
+
+#ifdef	CHUNK
+%1.%2.p&:	%1.%2				if %2 in laser
+		-@/bin/rm chunk*
+		troffchunk -n 6 %1.%2
+		PRINT PLASER chunk*
+#else
+%1.%2.p&:	%1.%2				if %2 in laser
+		PRINT PLASER %1.%2
+#endif
+
+%1.%2.p&:	%1.%2				if %2 in fine nice
+		PRINT PNDK %1.%2
+
+%1.%2.p&:	%1.%2				if not %2 in laser fine nice
+		PRINT PGEN %1.%2
+
+#else
+%1.%2.m&:	%1.%2				if %2 in NOSUFF
+		PAGER %1.%2
+
+%1.%2.m&:	IDIR/**/%1.%2			if %2 in ISUFF
+		PAGER IDIR/**/%1.%2
+
+%1.%2.m&:	FDIR/**/%1.%2			if %2 in FSUFF
+		PAGER FDIR/**/%1.%2
+
+%1.%2.m&:	ADIR/**/%1.%2			if %2 in ASUFF
+		PAGER ADIR/**/%1.%2
+
+%1.%2.p&:	%1.%2				if %2 in NOSUFF
+		PRINT PGEN %1.%2
+
+%1.%2.p&:	IDIR/**/%1.%2			if %2 in ISUFF
+		PRINT PGEN IDIR/**/%1.%2
+
+#ifdef	CHUNK
+%1.%2.p&:	FDIR/**/%1.%2			if %2 in laser
+		-@/bin/rm -f chunk*
+		troffchunk -n 6 FDIR/**/%1.%2
+		PRINT PLASER chunk*
+#else
+%1.%2.p&:	FDIR/**/%1.%2			if %2 in laser
+		PRINT PLASER FDIR/**/%1.%2
+#endif
+
+%1.%2.p&:	FDIR/**/%1.%2			if %2 in more
+		PRINT PGEN FDIR/**/%1.%2
+
+%1.%2.p&:	FDIR/**/%1.%2			if %2 in fine nice
+		PRINT PNDK FDIR/**/%1.%2
+
+%1.%2.p&:	ADIR/**/%1.%2			if %2 in ASUFF
+		PRINT PGEN ADIR/**/%1.%2
+#endif
+
+#ifdef	SPACE
+%1.%2&:		IDIR/**/%1.%2			if %2 in ISUFF and {{nonnull IDIR}} and not {{sub X1/X2 NULL %1 >& /dev/null}}
+%1.%2&:		FDIR/**/%1.%2			if %2 in FSUFF and {{nonnull FDIR}} and not {{sub X1/X2 NULL %1 >& /dev/null}}
+%1.%2&:		ADIR/**/%1.%2			if %2 in ASUFF and {{nonnull ADIR}} and not {{sub X1/X2 NULL %1 >& /dev/null}}
+#endif
+
+/* soelim */
+%.orig:		%.frame [[soincl %.frame]]	if exist %.frame
+		soelim %.frame > %.orig
+
+/* lbl */
+IDIR/**/%.lbl^:	%.orig*				if need(lbl)
+		lbl LBLOPTS %.orig > IDIR/**/%.lbl
+
+IDIR/**/%.lbl^:	%.orig*				if not need(lbl)
+		@/bin/rm -f IDIR/**/%.lbl
+		ln -s [[/bin/pwd]]/%.orig IDIR/**/%.lbl
+
+/* bib */
+IDIR/**/%.bib^:	IDIR/**/%.lbl %.orig* BIB	if need(bib)
+		BIBPROG -p/**/BIBS -t/**/STYLE IDIR/**/%.lbl > IDIR/**/%.bib
+
+IDIR/**/%.bib^:	IDIR/**/%.lbl %.orig*		if need(listrefs)
+		listrefs -t/**/STYLE IDIR/**/%.lbl > IDIR/**/%.bib
+
+IDIR/**/%.bib^:	IDIR/**/%.lbl %.orig*		if not need(bib) and not need(listrefs)
+		@/bin/rm -f IDIR/**/%.bib
+		ln -s IDIR/**/%.lbl IDIR/**/%.bib
+
+/* laser pic */
+IDIR/**/%.dte^:	IDIR/**/%.bib %.orig*		if need(pic)
+		pic LASDEV PMAC IDIR/**/%.bib > IDIR/**/%.dte
+
+IDIR/**/%.dte^:	IDIR/**/%.bib %.orig*		if not need(pic)
+		@/bin/rm -f IDIR/**/%.dte
+		ln -s IDIR/**/%.bib IDIR/**/%.dte
+	
+/* laser tbl */
+IDIR/**/%.de^:	IDIR/**/%.dte %.orig*		if need(tbl)
+		dtbl LASDEV IDIR/**/%.dte > IDIR/**/%.de
+
+IDIR/**/%.de^:	IDIR/**/%.dte %.orig*		if not need(tbl)
+		@/bin/rm -f IDIR/**/%.de
+		ln -s IDIR/**/%.dte IDIR/**/%.de
+	
+/* laser eqn */
+IDIR/**/%.d^:	IDIR/**/%.de %.orig*		if need(eqn)
+		deqn LASDEV EMAC IDIR/**/%.de > IDIR/**/%.d
+
+IDIR/**/%.d^:	IDIR/**/%.de %.orig*		if not need(eqn)
+		@/bin/rm -f IDIR/**/%.d
+		ln -s IDIR/**/%.de IDIR/**/%.d
+	
+/* laser troff */
+FDIR/**/%.laser:IDIR/**/%.d
+		ditroff -t LASDEV ROFFOPTS MPAC IMAGEN SIMLAS TMAC IDIR/**/%.d > FDIR/**/%.laser
+
+/* ndk tbl */
+IDIR/**/%.ne^:	IDIR/**/%.bib %.orig*		if need(tbl)
+		tbl IDIR/**/%.bib > IDIR/**/%.ne
+
+IDIR/**/%.ne^:	IDIR/**/%.bib %.orig*		if not need(tbl)
+		@/bin/rm -f IDIR/**/%.ne
+		ln -s IDIR/**/%.bib IDIR/**/%.ne
+	
+/* ndk eqn */
+IDIR/**/%.n^:	IDIR/**/%.ne %.orig*		if need(eqn)
+		neqn EMAC IDIR/**/%.ne > IDIR/**/%.n
+
+IDIR/**/%.n^:	IDIR/**/%.ne %.orig*		if not need(eqn)
+		@/bin/rm -f IDIR/**/%.n
+		ln -s IDIR/**/%.ne IDIR/**/%.n
+	
+/* ndk nroff */
+FDIR/**/%.more:	IDIR/**/%.n
+		nroff ROFFOPTS MPAC SIMNDK TMAC IDIR/**/%.n > FDIR/**/%.more
+
+FDIR/**/%.nice:	IDIR/**/%.n
+		nroff -F -e -TNDK12 ROFFOPTS MPAC SIMNDK TMAC IDIR/**/%.n > IDIR/**/%.tmp
+		@ndk -igrs IDIR/**/%.tmp | expand > FDIR/**/%.nice
+		@/bin/rm -f IDIR/**/%.tmp
+
+FDIR/**/%.fine:	IDIR/**/%.n
+		nroff -F -e -TNDK10 ROFFOPTS MPAC SIMNDK TMAC IDIR/**/%.n > IDIR/**/%.tmp
+		@ndk -irs IDIR/**/%.tmp | expand > FDIR/**/%.fine
+		@/bin/rm -f IDIR/**/%.tmp
+
+/* analysis services */
+%.all&:		%.spell %.double %.style %.exp %.mod %.long %.pass %.dict %.chnr
+
+IDIR/**/%.base^:%.orig*
+		base < %.orig | sed -e 's/XXX//g' > IDIR/**/%.base
+
+ADIR/**/%.refs:	%.orig*
+		refs < %.orig | tr ',' '\\\\012' | sed -e 's/^ *//' | sort -u > ADIR/**/%.refs
+
+ADIR/**/%.cit:	%.refs
+		lookup -p/**/BIBS < %.refs > ADIR/**/%.icit
+		@gred "No references found." ADIR/**/%.icit
+		sortbib ADIR/**/%.icit > ADIR/**/%.cit
+		@/bin/rm ADIR/**/%.icit
+
+ADIR/**/%.chnr:	%.orig*
+		checknr CHNROPTS TMAC %.orig > ADIR/**/%.chnr
+
+ADIR/**/%.cheq:	%.orig*
+		-checkeq CHEQOPTS EMAC %.orig > ADIR/**/%.cheq
+
+ADIR/**/%.ol:	%.orig*
+		ol %.orig > ADIR/**/%.ol
+
+%.fix&:		%.orig*
+		fix -d DICT %.orig
+
+ADIR/**/%.double:%.orig*
+		double %.orig > ADIR/**/%.double
+
+ADIR/**/%.spell:IDIR/**/%.base
+		spell SPELLOPTS IDIR/**/%.base | tr A-Z a-z | comm -23 - DICT > ADIR/**/%.spell
+
+ADIR/**/%.dict:	IDIR/**/%.base
+		diction IDIR/**/%.base > ADIR/**/%.dict
+
+ADIR/**/%.style:IDIR/**/%.base
+		style MPAC STYLEOPTS IDIR/**/%.base > ADIR/**/%.style
+
+ADIR/**/%.astyle:IDIR/**/%.base
+		style MPAC STYLEOPTS -a IDIR/**/%.base > ADIR/**/%.astyle
+
+ADIR/**/%.exp:	IDIR/**/%.base
+		style MPAC STYLEOPTS -e IDIR/**/%.base > ADIR/**/%.exp
+
+ADIR/**/%.hard:	IDIR/**/%.base
+		style MPAC STYLEOPTS -r HARD IDIR/**/%.base > ADIR/**/%.hard
+
+ADIR/**/%.mod:	IDIR/**/%.base
+		style MPAC STYLEOPTS -r MOD IDIR/**/%.base > ADIR/**/%.mod
+
+ADIR/**/%.long:	IDIR/**/%.base
+		style MPAC STYLEOPTS -l LONG IDIR/**/%.base > ADIR/**/%.long
+
+ADIR/**/%.pass:	IDIR/**/%.base
+		style MPAC STYLEOPTS -p IDIR/**/%.base > ADIR/**/%.pass
+
+ADIR/**/%.count:IDIR/**/%.base
+		deroff IDIR/**/%.base | wc > ADIR/**/%.count
+
+ADIR/**/%.ocount:%.orig*
+		wc %.orig > ADIR/**/%.ocount
+
+%.clean&:
+		@echo cleaning up %
+		-@/bin/rm %.spell %.style %.astyle >& /dev/null
+		-@/bin/rm %.exp %.hard %.mod %.long %.pass >& /dev/null
+		-@/bin/rm %.dict %.count %.ocount %.base >& /dev/null
+		-@/bin/rm %.refs %.double %.ol %.chnr %.cheq >& /dev/null
+		-@/bin/rm %.dte %.de %.d %.ne %.n >& /dev/null
+		-@/bin/rm %.laser %.nice %.fine %.more >& /dev/null
+
+%.vclean&:
+		@echo cleaning up % very carefully
+		-@/bin/mv %.orig /tmp/%.orig.$$ >& /dev/null
+
+clean&:		[[sub -i X.orig X.clean *]]
+clean&:		[[sub -i X.frame X.vclean *]]

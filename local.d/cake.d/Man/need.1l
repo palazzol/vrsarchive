@@ -1,0 +1,21 @@
+.TH NEED 1-ucb
+.SH NAME
+need \- find appropriate preprocessors
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B need
+program file
+.SH DESCRIPTION
+.sp 1
+\fINeed\fP is a tool intended to work with \fIcake\fP.
+It returns a zero exit status
+if \fIfile\fP needs to be processed with \fIprogram\fP
+and nonzero otherwise.
+\fINeed\fP searches \fIfile\fP for a line which contains
+both the keyword NEED and the name of the \fIprogram\fP.
+By convention files should begin with a comment line
+indicating all necessary preprocessors.
+.SH "SEE ALSO"
+cake(1)
+.\"	@(#)need.l	9/2/85

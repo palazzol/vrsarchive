@@ -1,0 +1,54 @@
+Documentation for the cakefile Newtext.
+
+This file explains what you can do with Newtext; the macros used by
+Newtext are described in Newtext.defs.
+
+Newtext assumes that your document is in a file with a .orig or .frame
+suffix; if the suffix is .frame it assumes that it is a skeleton
+with .so statements including the "meat" of the document. In either case
+the file should have a line containing the word NEED followed by a list
+of program names from the set lbl, bib, listrefs, pic, tbl and eqn.
+This line may be a ditroff comment (a line beginning with .\")
+and should preferably occur near the beginning of the file.
+
+The targets available through Newtext are:
+
+%.laser:	Ditroff output, after putting %.orig through the listed
+		preprocessors. (The names of the preprocessor commands
+		and their options may be altered (see Newtext.defs).)
+
+%.refs:		The list of bib references in the document.
+%.srefs:	%.refs sorted without duplicates.
+%.cit:		%.srefs looked up in a source bibliography.
+		This is useful for making a local copy of the
+		necessary references, allowing faster retrieval.
+%.chnr:		The output of checknr.
+%.cheq:		The output of checkeq.
+%.ol:		Outline for -me documents.
+%.fix:		A pseudo-target to invoke fix, an ispell-type spelling
+		corrector.
+%.ispell:	A pseudo-target to invoke ispell.
+%.spell:	A list of misspelled words in the document.
+%.dict:		Questionable phrases used in the document.
+%.style:	Readability indexes for the document.
+%.astyle:	Readability indexes for every sentence in the document.
+%.exp:		Expletives in the document (as defined by style(1)).
+%.mod:		Moderately hard-to-read sentences in the document.
+%.hard:		Hard-to-read sentences in the document.
+%.long:		Long sentences in the document.
+%.pass:		Sentences containing passives.
+
+%.all:		Run the most useful document analysis programs:
+		%.spell, %.style, %.exp, %.mod, %.long, %.pass, %.dict
+		and %.chnr.
+
+%.count:
+%.ocount:	The number of words in a document, measured in two ways.
+		%.count counts equations, references, programs etc
+		as one word; %.ocount counts them as they appear.
+
+%.clean:	Remove the files generated from %.orig.
+%.vclean:	Remove the files generated from %.frame.
+
+clean:		Run %.clean for all %.orig.
+vclean:		Run %.vclean for all %.frame.

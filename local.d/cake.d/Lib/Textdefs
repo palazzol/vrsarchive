@@ -1,0 +1,30 @@
+$	This is a guide to the definitions needed by the Cakefile Text.
+
+#define	BIBDIR	/* pathname of your bibliography (90x)		*/
+#define	LIBDIR	/* pathname of your library (both)		*/
+
+/* the following are on the 3240 */
+#define	TMAC	/* pathname of your nroff/troff macros		*/
+#define	EMAC	/* pathname of your equation macros		*/
+#define	PMAC	/* pathname of your troff macros for pic	*/
+
+#define	IMAGEN	/* pathname of your troff macros for imagen	*/
+#define	SIMLAS	/* pathname of your symbol macros for imagen	*/
+#define	SIMNDK	/* pathname of your symbol macros for ndk	*/
+
+/* the following are on the 90x */
+#define	DICT	/* pathname of your spell dictionary		*/
+#define	STYLE	/* pathname of your bib style file		*/
+
+#define	SPELLOPTS	/* any spell options you wish, e.g. -b	*/
+#define	STYLEOPTS	/* any extra style options you wish	*/
+#define	CHNROPTS	/* any checknr options you wish		*/
+#define	CHEQOPTS	/* any checkeq options you wish		*/
+#define	ROFFOPTS	/* any extra xroff options (eg -o12-)	*/
+
+#define	HARD		/* Readability Index you consider hard	*/
+#define	MOD		/* RI you consider moderately hard	*/
+#define	LONG		/* length of too long sentences		*/
+
+#define	BIB	/* pathname of your own personal bibliography	*/
+#define	BIBS	/* list of pathnames of bibliographies for bib	*/

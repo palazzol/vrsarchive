@@ -1,0 +1,23 @@
+Line 47 contains:
+
+			*yylastch++ = yych = input();
+
+Add the lines
+
+# ifdef EARLY_CATCH
+			if (yylastch >= yytext+YYLMAX){
+				EARLY_RECOVERY
+				}
+# endif
+
+Line 138 contains:
+
+				yytext[yyleng] = 0;
+
+Add the lines
+
+# ifdef LATE_CATCH
+				if (yyleng >= YYLMAX){
+					LATE_RECOVERY
+					}
+# endif

@@ -1,0 +1,29 @@
+This directory contains some "standard" cakefiles.
+
+Each cakefile has its own documentation, except Newtext, for which the
+documentation is in Newtext.defs and Newtext.doc. Many cakefiles need
+the programs and shell- and awk-scripts distributed with cake.
+
+It contains cakefiles for C programs, yacc and lex either separately
+(the files Yacc, Lex) or together (Grammar), and for NU-Prolog programs.
+These can be used together with the cakefiles Main or System, which
+look after linking, checking, printing etc, for directories with one
+and many executables respectively.
+
+The cakefile Newtext is a fairly general-purpose text-processing system
+for ditroff. You should go through this file and modify any default
+values which are not appropriate for your site; the names of the
+printers in particular are site-dependent.
+
+The cakefile Text is an older version of Newtext; you should probably
+throw it away and rename Newtext to Text. The cakefiles Zs_* are
+site-dependent definitions for Text and Newtext. You may want to
+look at them, and perhaps modify them, but it is unlikely that they
+will be very useful as they are.
+
+The Vlsi cakefile (for the UNSW VLSI system) does the job of the
+UNSW "bake" program.
+
+This directory also contains cakefiles for RCS, SCCS and "ar",
+as well as for my (zs's) microassembler; if you want a copy of uas,
+just ask.

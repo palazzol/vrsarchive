@@ -1,0 +1,14 @@
+.TH IRREL 1-ucb
+.SH NAME
+irrel \- filter out irrelevant junk
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B irrel
+pattern ...
+.SH DESCRIPTION
+.sp 1
+\fIIrrel\fP is a filter which removes from the stream
+all lines matching any one of its argument patterns.
+Other lines are passed through without modification.
+.\"	@(#)irrel.l	9/2/85

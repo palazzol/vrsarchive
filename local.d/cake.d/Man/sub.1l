@@ -1,0 +1,31 @@
+.TH SUB 1-ucb
+.SH NAME
+sub \- perform substitutions
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B sub
+[-i] [-vchar] oldpattern newpattern name ...
+.SH DESCRIPTION
+.sp 1
+\fISub\fP is a tool intended to work with \fIcake\fP,
+although it may be useful in its own right.
+The first two nonoption arguments are name patterns in the sense of
+cake(l), except that variables are introduced not by % but by X,
+or by the character following \-v if it is given.
+.sp 1
+Sub matches each name against the old pattern,
+setting up the values of its variables,
+then prints out the new pattern with those values substituted.
+If a name does not match the old pattern, \fIsub\fP prints nothing.
+E.g. the command "sub X.c X.o x.c y.h z.c" prints "x.o z.o".
+.sp 1
+The exit code of \fIsub\fP is the number of unmatched names;
+the example above would exit with status code 1.
+This can be useful for testing
+whether a name comforms to a pattern or not.
+However, the \-i option makes \fIsub\fP ignore failed matches;
+when given \fIsub\fP will always exit with a zero status.
+.SH "SEE ALSO"
+cake(1)
+.\"	@(#)sub.l	6/10/85

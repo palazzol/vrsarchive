@@ -1,0 +1,126 @@
+$	Cakefile for VLSI
+$	by Raymond Leung
+$	University of New South Wales
+
+#ifndef	plotter
+#	define	plotter		$TERM
+#endif	plotter
+
+#ifndef	lambda
+#	define	lambda		2.5
+#endif	lambda
+
+#ifndef	layers
+#	define	layers		d
+#endif	layers
+
+#ifndef	PLOTSITE
+#	define	PLOTCMD
+#else
+#	define	PLOTCMD		| lpr PLOTSITE
+#endif
+
+#define	CADLIB	/cad/lib
+
+$===================================================================
+
+help&:
+		@cat /cad/lib/bake.help
+
+%.tt:		%.fdl
+		fidel < %.fdl > %.tt
+
+%.sl:		%.tt				if exist %.fdl
+		spla -t nmos -o % %.tt;
+
+%.pla&:		%.tt
+		spla -t nmos -o % %.tt;
+		@echo "PLA is in file %.sl"
+
+%.cif:		%.sl
+		jigsaw %
+
+%.slplot&:	%.sl
+		slplot -t plotter % PLOTCMD
+
+%.cif:		%.kic
+		(echo lambda; echo %.kic; echo layers) | kictocif | grep -s succ
+
+%.root&:	%.cif
+		(echo n; echo lambda; echo %.cif) | ciftokic | grep -s succ
+
+%.plot&:	%.cif
+		@echo "Try 'bake %.cplot'"; exit 1
+
+%.cplot&:	%.cif
+		cifplot -t plotter -h %.cif %.cif PLOTCMD
+
+%.sim:		%.cif
+		galah %.cif
+		@-grep -v '^|' < %.sim | tr " " "\012" | grep '#' | sort -u > %.x2
+		@-if [ -s %.x2 ]; then \
+			echo many nodes, one name:; cat %.x2 \
+		  else \
+			echo \
+		  fi
+		@-if [ -s %.al ]; then \
+			echo many names, one node:; cat %.al \
+		  else \
+			echo \
+		  fi
+
+%.tout:		%.tin %.sim
+		trek %.sim < %.tin
+
+%.tplot&:	%.tout
+		simplot -t plotter -h % %.tout PLOTCMD
+
+%.tprint:	%.tout			if not exist %.f
+		simprint %.tout > %.tprint
+
+%.tprint:	%.tout %.f		if exist %.f
+		simprint -f %.f %.tout > %.tprint
+
+%.spice %.names:	%.sim
+		simtospice %.sim
+
+%.spint:	%.sim
+		runspice -n %
+
+%.spout:	%.spice %.spin %.names
+		runspice %
+		@echo
+		@echo "Spice finished" 
+
+%.splot&:	%.spout
+		schange % | simplot -t plotter -h % PLOTCMD
+
+%.ssplot&:	%.spout
+		spiceplot -t plotter %.spout PLOTCMD
+
+%.sprint:	%.spout			if not exist %.f
+		schange % | simprint > %.sprint
+
+%.sprint:	%.spout %.f		if exist %.f
+		schange % | simprint -f %.f > %.sprint
+
+%.box:		%.cif
+		ciftobox %.cif > %.box
+
+%.vplot&:	%.vout
+		vchange %.vout | simplot -t plotter -h % PLOTCMD
+
+%.vprint:	%.vout			if not exist %.f
+		vchange %.vout | simprint > %.vprint
+
+%.vprint:	%.vout %.f		if exist %.f
+		vchange %.vout | simprint -f %.f > %.vprint
+
+%.aout:		%.ain %.sim
+		asim %.sim < %.ain
+
+%.aplot&:	%.aout
+		simplot -t plotter -h % %.aout PLOTCMD
+
+clean&:
+		-/bin/rm *.log *.rec *.drc *.def *.list *.names *.temp *.nodes cifplot.kic *[0-9][0-9][0-9] >& /dev/null

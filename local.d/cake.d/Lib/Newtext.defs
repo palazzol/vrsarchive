@@ -1,0 +1,71 @@
+This file lists and defines the macros used by the cakefile Newtext.
+
+SYMBOLIMAGEN	Files containing symbol definitions for imagens
+SYMBOLAPPLE	and laserwriters; defaults are empty.
+
+LASERDEV	If you define LASERDEV (as -Pip etc), you should
+LASERTYPE	also define LASERTYPE and SYMBOLS. Otherwise,
+SYMBOLS		Text will define them, based on the presence
+
+IP		of one of these macros. IP directs output to
+LW		the imagen, LW to the computation lab, LW226
+LW226		to 226, LWR to to the computation lab (rotated),
+LWR		OFF to the office, and AN to the annexe. Only
+OFF		the first of these definitions has any effect.
+AN		AN is the default. (These are site-dependent.)
+
+PRINTGEN	Argument to lpr for printing general stuff.
+PRINTLASER	Argument to lpr for printing ditroff output.
+
+LBLOPTS		All these options are given to the program
+BIBOPTS		from whose name they are derived. The defaults
+LISTREFOPTS	are empty strings.
+PICOPTS
+TBLOPTS
+EQNOPTS
+DITROFFOPTS
+CHEQOPTS
+CHNROPTS
+SPELLOPTS
+ISPELLOPTS
+DICTOPTS
+STYLEOPTS
+
+BIBINDEX	These are the "required" options of bib.
+BIBSTYLE
+
+MACROPACK	These are the "required" options of ditroff.
+OTHERMACS
+DITROFFINIT
+
+CITINDEX	This is the "required" option of CITCMD.
+
+SPELLDICT	This is the "required" option of fix.
+
+MODSTYLE	These are the "required" options of style
+HARDSTYLE	when caking %.mod, %.hard and %.long.
+LONGSTYLE
+
+ALLLBLOPTS	These macros warp up the "optional" options
+ALLBIBOPTS	(e.g. BIBOPTS) and the "required" options
+ALLLISTREFOPTS	(e.g. BIBINDEX and BIBSTYLE) of the respective
+ALLPICOPTS	commands.
+ALLTBLOPTS
+ALLEQNOPTS
+ALLDITROFFOPTS
+ALLSTYLEOPTS
+
+MORECMD		You can define any of these macros to replace
+BIBCMD		the standard programs more, bib, pic, ditroff
+PICCMD		and lookup (e.g. with less, refer, ideal,
+DITROFFCMD	ditroff.q and lookindex). If you define the
+CITCMD		macro LOCALDITROFF, you will get ditroff.q
+		as default.
+
+MOREFLAG	If you define MORE or PRINTFLAG to be ^, files
+PRINTFLAG	you run %1.%2.m(p) on will be deleted after the
+INTFLAG		the command. If you define INTFLAG, intermediate
+		files will be similarly deleted.
+
+FDIR		Directories to put final and intermediate files
+IDIR		of ditroff in. The default is /tmp.

@@ -1,0 +1,140 @@
+#! /bin/awk -f
+BEGIN		{
+			for (i = 1; i <= 6; i++)
+			{
+				sect_no[i] = 0;
+				sect_line[i] = 0;
+				sect_start[i] = 0;
+			}
+
+			curr_ind = "";
+			sect_ind = "    "
+			theo_ind = "    "
+			offset = "			";
+			lineno = 0;
+		}
+/^\.sh/		{
+			for (i = $2; i <= 6; i++)
+			{
+				if (sect_line[i] != 0)
+				{
+					line[sect_line[i]] = sprintf(line[sect_line[i]], NR-sect_start[i]);
+				}
+			}
+
+			++sect_no[$2];
+			sect_line[$2] = lineno+1;
+			sect_start[$2] = NR;
+
+			for (i = $2+1; i <= 6; i++)
+			{
+				sect_no[i] = 0;
+				sect_line[i] = 0;
+				sect_start[i] = 0;
+			}
+
+			curr_ind = "";
+			for (i = 2; i <= $2; i++)
+				curr_ind = curr_ind sect_ind;
+
+			if ($2 == 1)
+				theo_num = 0;
+
+			line[++lineno] = sprintf("%4d: %s(%%3d) section ", NR, curr_ind);
+			pre = "";
+			for (i = 1; i <= $2; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%d", pre, sect_no[i]);
+				pre = ".";
+			}
+
+			line[lineno] = line[lineno] offset;
+			pre = "";
+			for (i = 3; i <= NF; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%s", pre, $i);
+				pre = " ";
+			}
+
+			line[lineno] = line[lineno] "\n";
+		}
+/^\.uh/		{
+			line[++lineno] = sprintf("%4d:      %s section ", NR, curr_ind);
+			line[lineno] = line[lineno] offset;
+			pre = "";
+			for (i = 2; i <= NF; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%s", pre, $i);
+				pre = " ";
+			}
+
+			line[lineno] = line[lineno] "\n";
+		}
+/^\.tr/		{
+			line[++lineno] = sprintf("%4d:      %s%s theorem ", NR, curr_ind, theo_ind);
+			line[lineno] = line[lineno] sprintf("%d.%d ", sect_no[1], ++theo_num);
+			line[lineno] = line[lineno] offset;
+			pre = "";
+			for (i = 2; i <= NF; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%s", pre, $i);
+				pre = " ";
+			}
+
+			line[lineno] = line[lineno] "\n";
+		}
+/^\.le/		{
+			line[++lineno] = sprintf("%4d:      %s%s lemma ", NR, curr_ind, theo_ind);
+			line[lineno] = line[lineno] sprintf("%d.%d ", sect_no[1], ++theo_num);
+			line[lineno] = line[lineno] offset;
+
+			pre = "";
+			for (i = 2; i <= NF; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%s", pre, $i);
+				pre = " ";
+			}
+
+			line[lineno] = line[lineno] "\n";
+		}
+/^\.co/		{
+			line[++lineno] = sprintf("%4d:      %s%s corollary ", NR, curr_ind, theo_ind);
+			line[lineno] = line[lineno] sprintf("%d.%d ", sect_no[1], ++theo_num);
+			line[lineno] = line[lineno] offset;
+
+			pre = "";
+			for (i = 2; i <= NF; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%s", pre, $i);
+				pre = " ";
+			}
+
+			line[lineno] = line[lineno] "\n";
+		}
+/^\.dt/		{
+			line[++lineno] = sprintf("%4d:      %s%s definition ", NR, curr_ind, theo_ind);
+			line[lineno] = line[lineno] offset;
+
+			pre = "";
+			for (i = 2; i <= NF; i++)
+			{
+				line[lineno] = line[lineno] sprintf("%s%s", pre, $i);
+				pre = " ";
+			}
+
+			line[lineno] = line[lineno] "\n";
+		}
+END		{
+			line[++lineno] = sprintf("%4d:       END\n", NR);
+
+			for (i = 1; i <= 6; i++)
+			{
+				if (sect_line[i] != 0)
+				{
+					line[sect_line[i]] = sprintf(line[sect_line[i]], NR-sect_start[i]);
+				}
+			}
+
+			for (i = 1; i <= lineno; i++)
+				printf "%s", line[i];
+		}

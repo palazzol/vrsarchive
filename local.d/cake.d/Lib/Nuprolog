@@ -1,0 +1,33 @@
+#ifndef	NC
+#define	NC		nc
+#endif
+#ifndef	NCFLAGS
+#define	NCFLAGS
+#endif
+#ifndef	NITFLAGS
+#define	NITFLAGS
+#endif
+#ifndef	LDFLAGS
+#define	LDFLAGS
+#endif
+
+%.no:	%.ns
+	NC NCFLAGS -c %.ns
+
+%.ns^:	%.nl
+	NC NCFLAGS -S %.nl
+
+#define	LINK_CMD	NC LDFLAGS -o %
+#define	CHECK_CMD	nit NITFLAGS
+#define	TAGS_CMD	ptags
+
+#define	SRCSUFF	.nl
+#define	OBJSUFF .no
+
+#ifndef	SUFFIXLIST
+#ifdef	USE_DCGS
+#define	SUFFIXLIST	.nl .??
+#else
+#define	SUFFIXLIST	.nl
+#endif
+#endif

@@ -1,0 +1,24 @@
+.TH LATER 1-ucb
+.SH NAME
+later \- print files later than a reference file
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B later
+[\-cs] reffile file ...
+.SH DESCRIPTION
+.sp 1
+\fILater\fP is a tool intended to work with \fIcake\fP.
+Of its second and later arguments,
+it prints out those which have a strictly later modify time
+than the reference file.
+If \-c (count) is given, it also returns
+the number of filenames printed as its exit status.
+This program is intended to do for \fIcake\fP
+what the $? macro does for \fImake\fP.
+If -s (silent) is given,
+it does not print anything;
+it only returns the exit status.
+.SH "SEE ALSO"
+make(1), cake(1)
+.\"	@(#)later.l	9/2/85

@@ -1,0 +1,37 @@
+$	Cakefile for RCS.
+
+$	If you include this cakefile, every file you to update will
+$	be checked if it can be retrieved from the RCS directory,
+$	using co with the macro GETFLAGS as argument (default is -u).
+$	You can check out files explicitly, in which case the argument
+$	is COFLAG (default -l), and check in files, using ci, CIFLAGS
+$	and CIMSG (both defaults empty). The targets get, co and ci
+$	perform the respective action for all RCS files.
+
+#ifndef	GETFLAGS
+#define	GETFLAGS 	-u
+#endif
+#ifndef	COFLAGS
+#define	COFLAGS 	-l
+#endif
+#ifndef	CIFLAGS
+#define	CIFLAGS
+#endif
+#ifndef	CIMSG
+#define	CIMSG
+#endif
+
+%:	RCS/%,v			if exist RCS/%,v
+	co GETFLAGS %
+
+%.co&:	RCS/%,v			if exist RCS/%,v
+	co COFLAGS %
+
+%.ci&:	%			if exist RCS/%,v
+	ci CIFLAGS CIMSG %
+
+get&:	[[sub RCS/X,v X RCS/*]]
+
+co&:	[[sub RCS/X,v X.co RCS/*]]
+
+ci&:	[[sub RCS/X,v X.ci RCS/*]]

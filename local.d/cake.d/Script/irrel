@@ -1,0 +1,11 @@
+#! /bin/sh
+# irrel - delete irrelevant error messages
+# usage: ... |& irrel pattern ...
+
+cat - > /tmp/irrel$$
+for pat in $*
+do
+	gred $pat /tmp/irrel$$
+done
+cat /tmp/irrel$$
+/bin/rm -f /tmp/irrel$$

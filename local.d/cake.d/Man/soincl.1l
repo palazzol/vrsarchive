@@ -1,0 +1,17 @@
+.TH SOINCL 1-ucb
+.SH NAME
+soincl \- find included nroff files
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B soincl
+file ...
+.SH DESCRIPTION
+.sp 1
+\fISoincl\fP is a tool to find files included by nroff's .so commands.
+It is intended to be used in conjunction with cake(1).
+It goes through the given files and prints out all .so'd files.
+.SH "SEE ALSO"
+cake(1)
+.SH BUGS
+.\"	@(#)soincl.l	9/2/85

@@ -1,0 +1,40 @@
+$	Site-dependent definitions for the obsolete cakefile Text.
+
+#ifdef	LW
+#define	LASDEV	-Plw
+#endif
+#ifdef	AN
+#define	LASDEV	-Pan
+#endif
+
+#define	LIBDIR	HOME/lib
+#define	BIBDIR	/usr/bib
+
+#define	TMAC	LIBDIR/tmac.e.zs
+#define	EMAC	LIBDIR/emac.zs
+#define	PMAC	LIBDIR/pmac.zs
+
+#define	IMAGEN	LIBDIR/imagen
+#define	SIMLAS	LIBDIR/Symbols.Imagen
+#define	SIMNDK	LIBDIR/Symbols.NDK
+
+#define	DICT	LIBDIR/dict
+#define	STYLE	LIBDIR/style
+
+#define	STYLEOPTS
+#define	SPELLOPTS	-b
+#define	CHEQOPTS
+#define	CHNROPTS
+
+#define	MOD	16
+#define	HARD	19
+#define	LONG	25
+
+#define	JAS	BIBDIR/jas/INDEX
+#define	LOGIC	BIBDIR/logic/INDEX
+#define	VLSI	BIBDIR/vlsi/INDEX
+#define	BIB	BIBDIR/zs/INDEX
+$define	BIBS	JAS,LOGIC,VLSI,BIB
+$define	BIBS	JAS,INDEX
+$define	BIBS	INDEX,JAS
+#define	BIBS	INDEX

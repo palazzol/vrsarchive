@@ -1,0 +1,8 @@
+$	Cakefile for the uas machine-independent microassembler.
+
+#ifndef	UASOPTS
+#define	UASOPTS
+#endif
+
+%.uo %.ul %.um:	[[uarch %.us]] %.us
+		uas UASOPTS [[uarch %.us]] %.us

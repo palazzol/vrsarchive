@@ -1,0 +1,13 @@
+$	Cakefile for SCCS.
+
+$	If you include this cakefile, every file you to update will
+$	be checked if it can be retrieved from the SCCS directory,
+$	using sccs get with the macro GETFLAGS as argument (default
+$	is empty).
+
+#ifndef	GETFLAGS
+#define	GETFLAGS
+#endif
+
+%:	SCCS/s.%		if exist SCCS/s.%
+	sccs get GETFLAGS %

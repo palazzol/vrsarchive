@@ -1,0 +1,15 @@
+.TH SSIZE 1-ucb
+.SH NAME
+ssize \- sort wc -v output by file size
+.SH ORIGIN
+University of Melbourne
+.SH SYNOPSIS
+.B size
+file ...
+.SH DESCRIPTION
+.sp 1
+\fISsize\fP runs wc -v on its arguments
+and sorts the resulting output by size.
+.SH "SEE ALSO"
+wc(1)
+.\"	@(#)ssize.l	9/2/85

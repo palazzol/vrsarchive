@@ -1,0 +1,138 @@
+$	Cakefile to handle programs.
+
+$	Using System is appropriate if a directory contains the sources
+$	for more than one binary; if the number of binaries is one,
+$	you should use the cakefile Main. System (and Main) can handle
+$	programs written in any language, as long as the cakefile
+$	for that language defines the macros expected by System. These
+$	macros are LINK_CMD, SRCSUFF, OBJSUFF and SUFFIXLIST. Currently
+$	there exist cakefiles for C and NU-Prolog. These cakefile should
+$	be included before System.
+
+$	System is intended to behave like Main; for basic documentation
+$	see Main. The difference is that whereas the configuration of
+$	a program can be given to Main as a single macro (FILES), a
+$	file is needed to convey it to System. This file is named by the
+$	macro CONF (default Conf). Each line of this file has on it
+$	first, the name of the binary, second, a list of the names
+$	of the sourcefiles that make up this binary (the source names
+$	should not have the language-specific suffix; i.e. you should
+$	strip the .c from the names of C source files).
+
+$	The target available with System are much the same as with Main.
+$	The difference is that they are available in two versions.
+$	When they are prefixed by the name of a binary, they apply
+$	only to that binary; when they are not prefixed, they apply
+$	to all binaries. For example, cake bin.lint runs CHECK_CMD on
+$	the sources for the binary bin, while cake lint runs it on
+$	the sources for all the binaries, using one run of CHECK_CMD
+$	per binary.
+
+#ifndef	PRINT_CMD
+#define	PRINT_CMD	lpr -p
+#endif
+#ifndef	INST_CMD
+#define	INST_CMD	cp
+#endif
+#ifndef	RM_CMD
+#define	RM_CMD		rmv
+#endif
+
+#ifndef	LIB
+#define	LIB
+#endif
+
+#ifndef	CONF
+#define	CONF		Conf
+#endif
+
+#define	MAINS		[[mainfile "" CONF]]
+#define	FILES(x)	[[extract x "" CONF]]
+#define	SRC(x)		[[extract x SRCSUFF CONF]]
+#define	OBJ(x)		[[extract x OBJSUFF CONF]]
+#define	ALLFILES	[[extract "" "" CONF | sort -u]]
+#define	ALLSRC		[[extract "" SRCSUFF CONF | sort -u]]
+#define	ALLOBJ		[[extract "" OBJSUFF CONF | sort -u]]
+
+xyzzy&::	MAINS
+
+%:		OBJ(%)			if % in MAINS
+		LINK_CMD OBJ(%) LIB
+
+#ifdef	DEST
+%.install&:	%			if % in MAINS
+		INST_CMD % DEST
+#else
+#ifdef	HOME
+%.install&:	%			if % in MAINS
+		INST_CMD % HOME/bin
+#else
+#define	NOINSTALL
+#endif
+#endif
+
+#ifndef	NOINSTALL
+install&:	[[mainfile .install CONF]]
+#endif
+
+#ifdef	CHECK_CMD
+#ifdef	IRREL
+%.lint&:	SRC(%)			if % in MAINS
+		CHECK_CMD SRC(%) LIB |& irrel IRREL
+#else
+%.lint&:	SRC(%)			if % in MAINS
+		CHECK_CMD SRC(%) LIB
+#endif
+
+lint&:		[[mainfile .lint CONF]]
+#endif
+
+%.print&:				if % in MAINS
+		PRINT_CMD [[usrc SUFFIXLIST FILES(%)]]
+		@-touch .print.%
+
+%.uprint&:				if % in MAINS
+		PRINT_CMD [[later .print.% [[usrc SUFFIXLIST FILES(%)]]]]
+		@-touch .print.%
+
+print&:
+		PRINT_CMD [[usrc SUFFIXLIST ALLFILES]]
+		@-touch .print
+
+uprint&:
+		PRINT_CMD [[later .print [[usrc SUFFIXLIST ALLFILES]]]]
+		@-touch .print
+
+#ifdef	TAGS_CMD
+tags:		ALLSRC
+		TAGS_CMD ALLSRC
+#endif
+
+#ifdef	DEFS_CMD
+defs:		ALLSRC
+		DEFS_CMD ALLSRC > defs
+#endif
+
+%.count&:				if % in MAINS
+		wc -v [[usrc SUFFIXLIST FILES(%)]]
+
+%.ssize&:				if % in MAINS
+		ssize [[usrc SUFFIXLIST FILES(%)]]
+
+count&:
+		wc -v [[usrc SUFFIXLIST ALLFILES]]
+
+ssize&:
+		ssize [[usrc SUFFIXLIST ALLFILES]]
+
+%.clean&:				if % in MAINS
+		RM_CMD OBJ(%) [[gsrc SUFFIXLIST FILES(%)]]
+
+%.clobber&:	%.clean			if % in MAINS
+		RM_CMD %
+
+clean&:
+		RM_CMD ALLOBJ [[gsrc SUFFIXLIST ALLFILES]]
+
+clobber&:	clean
+		RM_CMD MAINS
