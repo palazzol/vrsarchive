@@ -30,7 +30,7 @@ MAN4EXT	= .4
 ispell.hash: buildhash $(DEFDICT)
 	./buildhash $(DEFDICT) $(DEFHASH)
 
-install: $(ALL)
+install: $(ALL) $(MAN1DIR) $(MAN4DIR)
 	cp ispell isexpand munchlist $(BINDIR)
 	cd $(BINDIR); chmod 755 isexpand munchlist
 	cd $(BINDIR); chmod 711 ispell
