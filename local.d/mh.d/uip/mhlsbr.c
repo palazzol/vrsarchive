@@ -1,6 +1,6 @@
 /* mhlsbr.c - implement the "nifty" message lister */
 #ifndef	lint
-static char ident[] = "@(#)$Id: mhlsbr.c,v 1.1 1990-04-12 13:29:29 vrs Exp $";
+static char ident[] = "@(#)$Id: mhlsbr.c,v 1.2 1990-05-07 06:40:44 vrs Exp $";
 #endif	lint
 
 #include "../h/mh.h"
@@ -264,7 +264,7 @@ static  FP (*mhl_action) () = (FP (*) ()) 0;
 
 
 static void	mhladios (), mhldone ();
-static int	intrser (), pipeser (), quitser ();
+static TYPESIG	intrser (), pipeser (), quitser ();
 static char   *mcomp_add (), *oneline (), *parse ();
 static struct mcomp *add_queue ();
 
@@ -1423,7 +1423,7 @@ register char	ch;
 
 /* ARGSUSED */
 
-static	int intrser (i)
+static	TYPESIG intrser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -1439,7 +1439,7 @@ int     i;
 
 /* ARGSUSED */
 
-static	int pipeser (i)
+static	TYPESIG pipeser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -1452,7 +1452,7 @@ int     i;
 
 /* ARGSUSED */
 
-static	int quitser (i)
+static	TYPESIG quitser (i)
 int     i;
 {
 #ifndef	BSD42
@@ -1501,7 +1501,11 @@ register struct mcomp *c1;
  */
 
 #include <sys/socket.h>
+#define NULLVP_HACK	NULLVP
+#undef	NULLVP
 #include <netinet/in.h>
+#undef	NULLVP
+#define NULLVP	NULLVP_HACK
 #include <netdb.h>
 #include <arpa/inet.h>
 

@@ -2,15 +2,19 @@
 #undef	TTYD
 #endif
 
-#ifdef	TTYD
 /* ttyw.c - the writer */
 
 #include <errno.h>
 #include <stdio.h>
+#ifdef	TTYD
 #include <strings.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#define NULLVP_HACK	NULLVP
+#undef	NULLVP
 #include <netinet/in.h>
+#undef	NULLVP
+#define NULLVP	NULLVP_HACK
 #include <netdb.h>
 #include <arpa/inet.h>
 #include "ttyd.h"
