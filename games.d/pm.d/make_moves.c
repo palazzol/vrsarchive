@@ -4,6 +4,8 @@
 **	[pm by Peter Costantinidis, Jr. @ University of California at Davis]
 */
 #include "pm.h"
+#include <fcntl.h>
+#include <signal.h>
 
 /*
 ** make_moves -	`ch' is the global variable designating the move of the
@@ -70,7 +72,7 @@ Above:	/* sorry about this! */
 		mvaddch(pm_pos.y, pm_pos.x, ' ');
 	if (pending())
 	{
-		if (isupper(newch = getchar()))
+		if (isupper(newch = getch()))
 			newch = tolower(newch);
 		else if (isdigit(newch))
 			newch = toletter(newch);
@@ -152,12 +154,26 @@ int	pending ()
 		return(FALSE);
 	return(l > 0 ? TRUE : FALSE);
 #else
-#ifdef M_XENIX
-	return(rdchk(0));
-#else
-	return(1);
-#endif !M_XENIX
-#endif !FIONREAD
+	int flags, ch;
+	void (*intr)() = signal(SIGINT, SIG_IGN);
+	void (*hup)()  = signal(SIGHUP, SIG_IGN);
+	void (*quit)() = signal(SIGQUIT, SIG_IGN);
+	unsigned alrm  = alarm(0);
+
+	flags = fcntl(0, F_GETFL, 0);
+	fcntl(0, F_SETFL, flags|O_NDELAY);
+	if ((ch = getch()) != EOF) {
+		ungetch(ch);
+		ch = 1;
+	} else
+		ch = 0;
+	fcntl(0, F_SETFL, flags);
+	(void) signal(SIGINT, intr);
+	(void) signal(SIGHUP, hup);
+	(void) signal(SIGQUIT, quit);
+	(void) alarm(alrm);
+	return(ch);
+#endif
 }
 
 /*
@@ -318,12 +334,12 @@ reg	coord	*where;
 			** they are paused
 			*/
 			if (is_wiz) /* wizard is an exception! */
-				return(trash(getchar()), ERROR);
-			_puts(CL);
+				return(trash(getch()), ERROR);
+			clear();
 			move(LINES - 1, 0);
 			draw();
-			printf("[Hit return when ready] ");
-			trash(getchar());
+			printw("[Hit return when ready] ");
+			trash(getch());
 			redraw();
 			return(ERROR);
 		case MHUH:
@@ -364,7 +380,7 @@ reg	coord	*where;
 		when MSTATUS:
 			status();
 		when MMONS:
-			p_info(getchar());
+			p_info(getch());
 		when MUP_LVL:
 			chg_lvl(1);
 		when MDN_LVL:
@@ -406,11 +422,10 @@ void	commands ()
 	};
 	reg	char	**s = cmds;
 
-	_puts(CL);
+	clear();
 	while (*s)
-		printf("%s\n", *s++);
-	trash(getchar());
-	chcnt = 0l;
+		printw("%s\n", *s++);
+	trash(getch());
 	redraw();
 }
 
@@ -420,31 +435,29 @@ void	commands ()
 void	status ()
 {
 	alarm(0);
-	_puts(CL);
+	clear();
 	move(0, 0);
-	printf("        Diagnostics\n\n");
-	printf("Fruit:             %c\n", fr_ch);
-	printf("Fruit value:       %d\n", fr_val);
-	printf("Level:             %d\n", level);
-	printf("Moves:             %ld\n", move_cntr);
-	printf("Time:              %ld\n", demon);
-	printf("Timeit:            %s\n", (timeit ? "Yes" : "No"));
-	printf("Fast:              %s\n", (fast ? "Yes" : "No"));
-	printf("Beeping:           %s\n", (quiet ? "No" : "Yes"));
-	printf("Dots left:         %d\n", d_left);
-	printf("Energizers left:   %d\n", e_left);
-	printf("Pm's left:         %d\n", pms_left);
-	printf("Time left:         %d\n", timer);
-	printf("Score:             %ld\n", thescore);
-	printf("Pos.:              (%d, %d)\n", pm_pos.x, pm_pos.y);
-	printf("Tunn.:             %s\n",TF(pm_tunn));
-	printf("Baud:              %d\n", bauds[baud]);
-	printf("Screen dimension   %d x %d\n", LINES, COLS);
-	printf("High score:        %ld\n", hi_score);
-	printf("Max's:             %d,%d\n", stdscr->_maxy, stdscr->_maxx);
-	printf("\n");
-	printf("\nHit return to continue\n");
-	trash(getchar());
-	chcnt = 0L;
+	printw("        Diagnostics\n\n");
+	printw("Fruit:             %c\n", fr_ch);
+	printw("Fruit value:       %d\n", fr_val);
+	printw("Level:             %d\n", level);
+	printw("Moves:             %ld\n", move_cntr);
+	printw("Time:              %ld\n", demon);
+	printw("Timeit:            %s\n", (timeit ? "Yes" : "No"));
+	printw("Fast:              %s\n", (fast ? "Yes" : "No"));
+	printw("Beeping:           %s\n", (quiet ? "No" : "Yes"));
+	printw("Dots left:         %d\n", d_left);
+	printw("Energizers left:   %d\n", e_left);
+	printw("Pm's left:         %d\n", pms_left);
+	printw("Time left:         %d\n", timer);
+	printw("Score:             %ld\n", thescore);
+	printw("Pos.:              (%d, %d)\n", pm_pos.x, pm_pos.y);
+	printw("Tunn.:             %s\n",TF(pm_tunn));
+	printw("Screen dimension   %d x %d\n", LINES, COLS);
+	printw("High score:        %ld\n", hi_score);
+	printw("Max's:             %d,%d\n", stdscr->_maxy, stdscr->_maxx);
+	printw("\n");
+	printw("\nHit return to continue\n");
+	trash(getch());
 	redraw();
 }
