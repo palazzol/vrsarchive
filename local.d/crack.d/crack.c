@@ -7,7 +7,9 @@ extern FILE *popen();
 char *list[] = {
   0,				/* Filled in with user's login name	*/
   0,				/* Filled in with system name		*/
+#ifdef TRYEASY
 #include "primo.h"	/* These have worked before			*/
+#endif
 #ifdef TRYHARD
 #include "crack.h"	/* These haven't worked yet			*/
 #endif
@@ -38,7 +40,7 @@ char *argv[];
     exit(1);
   }
   while (fgets(name, sizeof(name), fd) != 0) {
-    for (cp = name; *++cp != ':';) ;
+    for (cp = name; *cp != ':'; cp++) ;
     *cp = '\0';
     passwd = cp+1;
     while (*++cp != ':') ;
