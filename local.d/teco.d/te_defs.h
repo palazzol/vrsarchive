@@ -1,17 +1,26 @@
-/* TECO for Ultrix   Copyright 1986 Matt Fichtenbaum						*/
-/* This program and its components belong to GenRad Inc, Concord MA 01742	*/
-/* They may be copied if this copyright notice is included					*/
+/* TECO for Ultrix   Copyright 1986 Matt Fichtenbaum
+ * This program and its components belong to GenRad Inc, Concord MA 01742
+ * They may be copied if this copyright notice is included
+*/
 
 /* te_defs.h definitions file		1/9/87	*/
 
 #include <stdio.h>
 #include <ctype.h>
-#include <sgtty.h>
+#ifdef TERMIO
+# include <sys/types.h>
+# include <sys/termio.h>
+# ifndef TCGETA
+#   include <sys/ioctl.h>
+# endif
+#else
+# include <sgtty.h>
+#endif
 #include <setjmp.h>
 
 #define CTL(x) (('x') & 0x1f)	/* for control chars					*/
 #define ERROR(e) longjmp(xxx, (e))
-#define BLOCKSIZE (0x10000 - 8)	/* size of memory block to allocate		*/
+#define BLOCKSIZE ((int)(0x1000 - 8))	/* size of memory block to allocate		*/
 #define CELLSIZE 256			/* number of characters per cell		*/
 #define CSTACKSIZE 64			/* size of command stack				*/
 #define MSTACKSIZE 64			/* size of macro stack					*/
@@ -265,40 +274,44 @@ extern struct outfiledata *outfile;		/* pointer to currently active output file 
 extern struct outfiledata po_file, so_file;		/* output file descriptors */
 /* define global variables, etc. */
 
-extern int char_count;					/* char count for tab typer			*/
-extern char lastc;						/* last char read					*/
-extern int ttyerr;						/* error return from ioctl			*/
-extern int errno;						/* system error code				*/
-extern struct sgttyb ttybuf;			/* local copy of tty control data	*/
-extern int inp_noterm;					/* nonzero if standard in is not a terminal	*/
-extern int out_noterm;					/* nonzero if standard out is not a term.	*/
-extern jmp_buf xxx;						/* preserved environment for error restart	*/
-extern int err;							/* local error code					*/
-extern struct qp t_qp;					/* temporary buffer pointer			*/
-extern struct qp aa, bb, cc;			/* more temporaries					*/
-extern struct buffcell t_bcell;			/* temporary bcell					*/
-extern int tabmask;						/* mask for selecting 4/8 char tabs	*/
-extern int exitflag;					/* flag for ending command str exec	*/
-extern char term_char;					/* terminator for insert, search, etc.	*/
-extern char cmdc;						/* current command character		*/
-extern char skipc;						/* char found by "skipto()"			*/
-extern int dot, z, tdot;				/* current, last, temp buffer position	*/
-extern int ll, mm, nn;					/* general temps					*/
-extern int ins_count;					/* count of chars inserted			*/
-extern int ctrl_e;						/* form feed flag					*/
-extern int ctrl_r;						/* current number radix (8, 10, 16)	*/
-extern int ctrl_s;						/* string length for S, I, G		*/
-extern int ctrl_x;						/* search case flag					*/
-extern int ed_val;						/* ED value							*/
-extern int es_val;						/* ES value							*/
-extern int et_val;						/* ET value							*/
-extern int eu_val;						/* EU value							*/
-extern int ev_val;						/* EV value							*/
-extern int ez_val;						/* EZ value							*/
-extern int srch_result;					/* result of last :S executed		*/
-extern int atflag;						/* flag for @ char typed			*/
-extern int colonflag;					/* flag for : char typed			*/
-extern int trace_sw;					/* nonzero if tracing command exec	*/
+extern int char_count;		/* char count for tab typer		*/
+extern char lastc;		/* last char read			*/
+extern int ttyerr;		/* error return from ioctl		*/
+extern int errno;		/* system error code			*/
+#ifdef TERMIO
+extern struct termio ttybuf;	/* local copy of tty control data	*/
+#else
+extern struct sgttyb ttybuf;	/* local copy of tty control data	*/
+#endif
+extern int inp_noterm;		/* nonzero if standard in is not a terminal*/
+extern int out_noterm;		/* nonzero if standard out is not a term.*/
+extern jmp_buf xxx;		/* preserved environment for error restart*/
+extern int err;			/* local error code			*/
+extern struct qp t_qp;		/* temporary buffer pointer		*/
+extern struct qp aa, bb, cc;	/* more temporaries			*/
+extern struct buffcell t_bcell;	/* temporary bcell			*/
+extern int tabmask;		/* mask for selecting 4/8 char tabs	*/
+extern int exitflag;		/* flag for ending command str exec	*/
+extern char term_char;		/* terminator for insert, search, etc.	*/
+extern char cmdc;		/* current command character		*/
+extern char skipc;		/* char found by "skipto()"		*/
+extern int dot, z, tdot;	/* current, last, temp buffer position	*/
+extern int ll, mm, nn;		/* general temps			*/
+extern int ins_count;		/* count of chars inserted		*/
+extern int ctrl_e;		/* form feed flag			*/
+extern int ctrl_r;		/* current number radix (8, 10, 16)	*/
+extern int ctrl_s;		/* string length for S, I, G		*/
+extern int ctrl_x;		/* search case flag			*/
+extern int ed_val;		/* ED value				*/
+extern int es_val;		/* ES value				*/
+extern int et_val;		/* ET value				*/
+extern int eu_val;		/* EU value				*/
+extern int ev_val;		/* EV value				*/
+extern int ez_val;		/* EZ value				*/
+extern int srch_result;		/* result of last :S executed		*/
+extern int atflag;		/* flag for @ char typed		*/
+extern int colonflag;		/* flag for : char typed		*/
+extern int trace_sw;		/* nonzero if tracing command exec	*/
 
 extern int win_data[];					/* window control parameters		*/
 extern struct buffcell *insert_p;		/* pointer to temp text buffer during insert */

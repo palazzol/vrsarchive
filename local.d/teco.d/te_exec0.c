@@ -6,13 +6,15 @@
 #include "te_defs.h"
 #include <time.h>
 
+extern struct tm *localtime();
+
 exec_cmdstr()
 	{
 	char c;
 	int digit_sw;
 	struct tm *timeptr;
 	char *timestring, *asctime();
-	struct timeval timevalue, tzvalue;
+	long timevalue, tzvalue;
 
 	exitflag = 0;					/* set flag to "executing" */
 	cmdstr.p = cbuf.f;				/* cmdstr to start of command string */
@@ -158,8 +160,8 @@ exec_cmdstr()
 
 				case CTL (B):
 				case CTL (H):
-					gettimeofday(&timevalue, &tzvalue);
-					timeptr = localtime(&timevalue.tv_sec);
+					(void) time(&timevalue);
+					timeptr = localtime(&timevalue);
 					esp->val1 = (cmdc == CTL (B)) ?
 							timeptr->tm_year * 512   + timeptr->tm_mon * 32  + timeptr->tm_mday :
 							timeptr->tm_hour * 1800  + timeptr->tm_min * 30  + timeptr->tm_sec/2;

@@ -4,7 +4,6 @@
 
 /* te_exec2.c   process "E" and "F" commands   2/26/87 */
 #include "te_defs.h"
-#include <sys/wait.h>
 
 struct qh oldcstring;						/* hold command string during ei */
 
@@ -123,14 +122,18 @@ do_e()
 					outfile->f_name[outfile->name_size+3] = 'k';
 					outfile->f_name[outfile->name_size+4] = '\0';
 					outfile->t_name[outfile->name_size] = '\0';
-					rename(outfile->t_name, outfile->f_name);	/* rename orig file */
+					unlink(outfile->f_name);	/* rename orig file */
+					if (link(outfile->t_name, outfile->f_name) == 0)	/* rename orig file */
+					    unlink(outfile->t_name);	/* rename orig file */
 					}
 
 				if (!(outfile->bak & 8))		/* if output file had ".tmp" extension */
 					{								/* remove it */
 					outfile->t_name[outfile->name_size] = '.';
 					outfile->f_name[outfile->name_size] = '\0';
-					rename(outfile->t_name, outfile->f_name);	/* rename output */
+					unlink(outfile->f_name);	/* rename output */
+					if (link(outfile->t_name, outfile->f_name) == 0)	/* rename output */
+					    unlink(outfile->t_name);	/* rename output */
 					}
 				}
 			outfile->fd = NULL;			/* mark "no output file open" */
@@ -244,7 +247,7 @@ do_e()
 int do_eq()
 	{
 	int t;
-	union wait status;
+	int status;
 	char *pname;				/* pointer to name of shell */
 	extern char *getenv();
 
@@ -259,7 +262,7 @@ int do_eq()
 		crlf();										/* force characters out */
 		setup_tty(TTY_SUSP);						/* restore terminal to normal mode */
 
-		t = vfork();							/* fork a new process */
+		t = fork();							/* fork a new process */
 		if (t == 0)								/* if this is the child */
 			{
 			execl(pname, pname, "-c", &sysbuf.f->ch[0], 0);		/* call the named Unix routine */
@@ -268,8 +271,8 @@ int do_eq()
 			}
 
 		while (wait(&status) != t);				/* if parent, wait for child to finish */
-		if (status.w_retcode) t = -1;			/* keep failure indication from child */
-		
+		if (status) t = -1;			/* keep failure indication from child */
+
 		setup_tty(TTY_RESUME);						/* restore terminal to teco mode */
 		if (win_data[7])					/* if window was enabled */
 			{
@@ -298,7 +301,7 @@ int do_eq1(shell)
 	int ff, pipe_in[2], pipe_out[2];	/* fork result and two pipes */
 	FILE *xx_in, *xx_out;				/* std in and out for called process */
 	FILE *fdopen();
-	union wait status;
+	int status;
 
 	ll = line_args(1, &aa);		/* set aa to start of text, ll to number of chars */
 	dot += ll;					/* set pointer at end of text */
@@ -338,7 +341,7 @@ int do_eq1(shell)
 		while (wait(&status) != ff);		/* wait for children to finish */
 		setup_tty(TTY_RESUME);
 		if (win_data[7]) window(WIN_RESUME), window(WIN_REDRAW);
-		return(status.w_retcode ? -1 : 0);
+		return(status ? -1 : 0);
 		}
 /* This is the child.  It in turn forks into two processes, of which the "parent"	*/
 /* (original child) writes the specified part of the buffer to the pipe, and the	*/
@@ -363,14 +366,16 @@ int do_eq1(shell)
 			fclose(xx_in);
 
 			while (wait(&status) != ff);	/* wait for child */
-			exit(status.w_retcode);			/* exit with child's status */
+			exit(status);			/* exit with child's status */
 			}
 
 		else							/* this process is the grandchild */
 			{
 			close(pipe_in[1]);			/* close "input" for writing */
-			dup2(pipe_in[0], fileno(stdin));		/* substitute pipe_in for stdin */
-			dup2(pipe_out[1], fileno(stdout));		/* and pipe_out for stdout	*/
+			close(fileno(stdin));		/* substitute pipe_in for stdin */
+			dup(pipe_in[0]);		/* substitute pipe_in for stdin */
+			close(fileno(stdout));		/* and pipe_out for stdout	*/
+			dup(pipe_out[1]);		/* and pipe_out for stdout	*/
 			close(pipe_in[0]);			/* close original descriptors */
 			close(pipe_out[1]);
 
@@ -425,7 +430,7 @@ int do_glob(buff)
 	struct qp glob_ptr;					/* pointer for loading result buffer */
 	FILE *xx_out;						/* stream for reading chars from pipe */
 	FILE *fdopen();
-	union wait status;
+	int status;
 
 	make_buffer(buff);					/* initialize expanded file buffer */
 	glob_ptr.p = buff->f;				/* initialize pointer to buffer */
@@ -464,12 +469,13 @@ int do_glob(buff)
 		buff->z = glob_ptr.dot;					/* save character count */
 		while (wait(&status) != t);				/* wait for child to finish */
 		setup_tty(TTY_RESUME);
-		return(status.w_retcode ? 0 : -1);		/* return success unless child exited nonzero */
+		return(status ? 0 : -1);		/* return success unless child exited nonzero */
 		}
 	else										/* this is the child */
 		{
 		close(glob_pipe[0]);					/* child won't read */
-		dup2(glob_pipe[1], fileno(stdout));		/* substitute pipe for standard out */
+		close(fileno(stdout));		/* substitute pipe for standard out */
+		dup(glob_pipe[1]);		/* substitute pipe for standard out */
 		close(glob_pipe[1]);					/* don't need that anymore */
 		execl("/bin/csh", "csh", "-fc", glob_cmd, 0);		/* execute the "glob" */
 		fputs("execl failed\n", stderr);

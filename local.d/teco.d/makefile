@@ -4,7 +4,7 @@
 
 # Debugging or optimizing?
 #CFLAGS	= -g
-CFLAGS	= -O
+CFLAGS	= -O -DTERMIO -i -F 2000
 TERMCAP	= -ltermcap
 
 OBJECTS	= te_data.o te_exec0.o te_exec1.o te_exec2.o te_main.o te_rdcmd.o \
@@ -21,3 +21,5 @@ te_chx.o:				te_chario.c
 	cp te_chario.c te_chx.c
 	$(CC) -DDEBUG $(CFLAGS) -c te_chx.c
 
+clean:
+	rm -f $(OBJECTS) te tex te_chario.o te_chx.o

@@ -85,7 +85,11 @@ int char_count = 0;					/* char count for tab typer			*/
 char lastc = ' ';					/* last char read					*/
 int ttyerr;							/* error return from ioctl			*/
 extern int errno;					/* system error code				*/
+#ifdef TERMIO
+struct termio ttybuf;				/* local copy of tty control data	*/
+#else
 struct sgttyb ttybuf;				/* local copy of tty control data	*/
+#endif
 jmp_buf xxx;						/* preserved environment for error restart */
 int err;							/* local error code					*/
 struct qp t_qp;						/* temporary buffer pointer			*/

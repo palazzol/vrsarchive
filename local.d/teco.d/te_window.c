@@ -202,7 +202,11 @@ window(arg)
 			if (out_noterm) win_speed = 0;		/* std out is not a terminal */
 			else
 				{
+#ifdef TERMIO
+				for (win_speed = 1; (win_speeds[win_speed] != (ttybuf.c_cflag&CBAUD)) && (win_speed < 13); win_speed++);
+#else
 				for (win_speed = 1; (win_speeds[win_speed] != ttybuf.sg_ospeed) && (win_speed < 13); win_speed++);
+#endif
 				if (win_speed == 13) win_speed = 1;
 				}
 			w_init();				/* set up screen image buffer */
