@@ -1576,7 +1576,7 @@ void vault()
   int x=Player.x,y=Player.y,jumper=0;
   
   if (Player.boots != NULL)
-    if (Player.boots->usef = I_BOOTS_JUMPING)
+    if (Player.boots->usef == I_BOOTS_JUMPING)
       jumper = 2;
   
   if (lastvault+5 > Time) 
