@@ -1,5 +1,5 @@
 ALL		= cbuf termlook
-include	/etc/CONFIG
+include	$(HOME)/CONFIG
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)
