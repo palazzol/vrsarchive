@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.7 2002-11-23 04:09:39 Vincent Exp $
+#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.8 2002-11-24 00:58:17 Vincent Exp $
 #
 ALL	= hack$(EXE) hack1.0.3
 MODEL	= -M2l -F 2000
@@ -104,7 +104,7 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVDIR) $(MAN6)
 	cd $(MAN6); chmod 644 hack.6
 
 clean:
-	rm -f $(ALL) makedefs $(HOBJ) hack.onames.h
+	rm -f $(ALL) makedefs$(EXE) $(HOBJ) hack.onames.h
 
 depend:
 # For the moment we are lazy and disregard /usr/include files because
