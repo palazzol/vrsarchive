@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/read20.d/makefile,v 1.5 2002-11-23 07:51:55 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/read20.d/makefile,v 1.6 2002-11-24 05:50:40 Vincent Exp $
 #
-ALL	= read20
+ALL	= read20$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG
@@ -16,7 +16,7 @@ install: $(ALL)
 read20.o: dump.h
 
 clean:
-	rm -f $(ALL)
+	rm -f $(ALL) $(CFILES:.c=.o)
 
 tags: $(HDRS) $(CFILES)
 	ctags $(HDRS) $(CFILES)
