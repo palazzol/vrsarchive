@@ -104,8 +104,9 @@ void	displayhelp(),		/* display on-screen help */
 int	wins(),			/* see if any wins are still possible */
 	check_win(),		/* check for a win */
 	human_move(),		/* "our" move */
-	computer_move(),	/* the computer player's move */
-	quit();			/* control-c signal exit */
+	computer_move();	/* the computer player's move */
+
+SIG_T	quit();			/* control-c signal exit */
 
 main(argc,argv)
 int argc;
@@ -600,7 +601,9 @@ int type;
 /*
 	the nice control-C handler
 */
-int quit()
+/* ARGSUSED */
+SIG_T quit(dummy)
+int dummy;
 {
 	move(21,0);
 	refresh();

@@ -1,40 +1,20 @@
-# makefile for tic-tac-toc-toe
 #
-# edit as necessary, then make
+#	tttt $Header: /home/Vince/cvs/games.d/tttt.d/Makefile,v 1.5 1990-05-21 14:28:42 vrs Exp $
+#
+ALL	= tttt
+MODEL	= -i -F 2000
+OPTIONS	= -O
+include /etc/CONFIG
+CFILES	= rain.c
 
-# CRMODE: if your version of curses uses "crmode()"
-#         instead of "cbreak()", define CRMODE here.
-# BSD: if your OS supports random() and srandom()
-#FLAGS = -DCRMODE
-FLAGS =
+lint: $(CFILES) 
+	lint -h $(CFILES) $(LIBS) 
 
-# where the executable will go
-BINDIR = /usr/games
-
-# where the formatted manpage will go
-MANDIR = /usr/games/Doc
-
-# options for the c compiler (-g, -O, etc.)
-CFLAGS = -O
-
-# compiler libraries (-ltermcap, etc.)
-LIBS = -lcurses -ltermcap
-
-tttt: tttt.c
-	cc $(CFLAGS) $(FLAGS) -o tttt tttt.c $(LIBS)
-
-install: tttt tttt.man
-	cp tttt $(BINDIR)/tttt
-	strip $(BINDIR)/tttt
-	chmod 711 $(BINDIR)/tttt
-	cp tttt.man $(MANDIR)/tttt.doc
-	chmod 644 $(MANDIR)/tttt.doc
-
-tttt.man: tttt.6
-	nroff -man tttt.6 > tttt.man
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp tttt.6 $(MAN6)
+	cd $(MAN6); chmod 644 tttt.6
 
 clean:
-	rm -f tttt *.o tttt.man tttt.shar
-
-shar:
-	shar README Makefile tttt.6 tttt.c > tttt.shar
+	rm -f $(ALL) make.out core
