@@ -18,15 +18,23 @@ static	char	rubline;		/* erase line character */
 static	char	litchar;		/* literal input */
 
 
+#ifndef CERASE
+#define CERASE '\b'
+#endif
+#ifndef CKILL
+#define CKILL '\025'
+#endif
 /*
  * Initialize for later calls to scanchar.
  */
 scaninit(routine, jumpbuf)
-	char	(*routine)();		/* routine to get characters */
+	int	(*routine)();		/* routine to get characters */
 	jmp_buf	*jumpbuf;		/* jump buffer to use later */
 {
 	struct	sgttyb	sgbuf;		/* basic tty structure */
+#ifdef TIOCGLTC
 	struct	ltchars	ltbuf;		/* local tty structure */
+#endif
 
 	scanroutine = routine;		/* init static variables */
 	scanjumpbuf = jumpbuf;
@@ -34,14 +42,20 @@ scaninit(routine, jumpbuf)
 	scanreadptr = scanbuffer;
 	sgbuf.sg_erase = CERASE;	/* set defaults in case ioctls fail */
 	sgbuf.sg_kill = CKILL;
+#ifdef TIOGLTC
 	ltbuf.t_werasc = CWERASE;
 	ltbuf.t_lnextc = CLNEXT;
+#endif
 	ioctl(STDIN, TIOCGETP, &sgbuf);	/* get and save editing characters */
+#ifdef TIOGLTC
 	ioctl(STDIN, TIOCGLTC, &ltbuf);
+#endif
 	rubchar = sgbuf.sg_erase;
 	rubline = sgbuf.sg_kill;
+#ifdef TIOGLTC
 	rubword = ltbuf.t_werasc;
 	litchar = ltbuf.t_lnextc;
+#endif
 }
 
 
@@ -59,9 +73,9 @@ scanchar()
 
 loop:	if (scanreadptr < scanwriteptr)		/* get saved char if have any */
 		return(*scanreadptr++);
-	ch = scanroutine() & 0x7f;		/* get new character */
+	ch = (*scanroutine)() & 0x7f;		/* get new character */
 	if (ch == litchar) {			/* literal input */
-		ch = scanroutine() & 0x7f;
+		ch = (*scanroutine)() & 0x7f;
 		goto store;
 	}
 	if (ch == rubchar) {			/* character erase */
