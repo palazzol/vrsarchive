@@ -309,7 +309,11 @@ register struct monst *mtmp;
 		break;
 	case 's':
 		if(ctmp && !rn2(8)) {
+#ifdef SPIDERS
+			poisoned("spider's bite",mdat->mname);
+#else
 			poisoned("scorpion's sting",mdat->mname);
+#endif
 		}
 		(void) hitu(mtmp,rnd(8));
 		(void) hitu(mtmp,rnd(8));
