@@ -1,17 +1,18 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.16 2002-11-24 06:01:19 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.17 2002-11-24 18:22:00 vrs Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
-TODO	= LaTeX.d dialers.d lbgm.d map.d news.d news.misc.d $(XENIX) $(M4711) \
-	  dial.onet$(EXE) se
+TODO	= LaTeX.d ctty.d dialers.d lbgm.d map.d news.d news.misc.d $(XENIX) \
+	  bootime logout$(EXE) mkbad$(EXE) $(M0700) smap$(EXE) dial.onet$(EXE) \
+	  ofiles se
 XENIX	= cbuf cmap curse dial.onet$(EXE) mdemo smap$(EXE) top
 SUBDIR	= arc ash arcmail calend calls car clear compress copymode crack ctc \
-	  ctty cursive cxref diffc displays dithds elbat espel getopt hoc6 \
-	  include index ispell jove kermit less lintlib mkman msdos ofiles \
+	  cursive cxref diffc displays dithds elbat espel getopt hoc6 \
+	  include index ispell jove kermit less lintlib mkman msdos \
 	  patch pathalias ptc read20 recipes roff se strings talk teco tmac \
 	  tpr uemacs umodem uuencode vc vttest whatcomm which xlisp xmodem
-M0700	= bootime esad logout mkbad
+M0700	= esad #bootime logout$(EXE) mkbad$(EXE)
 M0711	= bincmp$(EXE) clock$(EXE) from$(EXE) getfrom$(EXE) script$(EXE)
 M0755	= backup datefudge dirsort dtgt dtree getto islide makewhatis \
 	  phc ports slide vslide
