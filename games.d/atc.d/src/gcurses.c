@@ -83,6 +83,7 @@ init_gr()
 	initscr();
 	noraw();
 	crmode();
+	noecho();
 	erase_char = erasechar();
 	kill_char = killchar();
 	input = newwin(INPUT_LINES, COLS - PLANE_COLS, LINES - INPUT_LINES, 0);
