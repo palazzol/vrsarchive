@@ -75,6 +75,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef SYS5
+#define USG
+#endif
+
 /*  JHU UNIX tty parameter file  */
 #ifdef JHU
 #include <stty.h>
@@ -88,6 +92,7 @@
 /*  USG UNIX tty parameter file  */
 #ifdef USG
 #include <termio.h>
+#include <sys/ioctl.h>
 #endif
 
 #include <signal.h>
