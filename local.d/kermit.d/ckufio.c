@@ -19,7 +19,13 @@ char *ckzv = "Unix file support, 4E(035) 14 Sep 87";
 #include "ckcdeb.h"			/* Typedefs, debug formats, etc */
 #include <ctype.h>			/* Character types */
 #include <stdio.h>			/* Standard i/o */
+#ifdef __STDC__
+#include <errno.h>			/* Directory structure */
+#include <dirent.h>			/* Directory structure */
+#define direct dirent
+#else
 #include <sys/dir.h>			/* Directory structure */
+#endif
 #include <pwd.h>			/* Password file for shell name */
 
 #ifdef CIE
@@ -190,7 +196,9 @@ char *WHOCMD = "who ";			/* For seeing who's logged in */
 
 #ifdef UXIII
 #include <fcntl.h>
+#ifndef MAXNAMLEN
 #define MAXNAMLEN DIRSIZ
+#endif
 #endif
 
 #ifndef O_RDONLY
