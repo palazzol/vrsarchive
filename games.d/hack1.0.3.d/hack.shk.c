@@ -22,7 +22,7 @@ shk_move(){ return(0); }
 replshk(mtmp,mtmp2) struct monst *mtmp, *mtmp2; {}
 char *shkname(){ return(""); }
 
-#else QUEST
+#else
 #include	"hack.mfndpos.h"
 #include	"def.mkroom.h"
 #include	"def.eshk.h"
@@ -570,7 +570,8 @@ register struct bill_x *bp;
 			otmp = newobj(0);
 			*otmp = *obj;
 			bp->bo_id = otmp->o_id = flags.ident++;
-			otmp->quan = bp->bquan = (bp->bquan - obj->quan);
+			bp->bquan = (bp->bquan - obj->quan);
+			otmp->quan = bp->bquan;
 			otmp->owt = 0;	/* superfluous */
 			otmp->onamelth = 0;
 			bp->useup = 1;
@@ -593,7 +594,7 @@ register struct bill_x *bp;
 		return;
 	if(ESHK(shopkeeper)->billct == BILLSZ ||
 	  ((tmp = shtypes[rooms[ESHK(shopkeeper)->shoproom].rtype-8]) && tmp != obj->olet)
-	  || index("_0", obj->olet)) {
+	  || strchr("_0", obj->olet)) {
 		pline("%s seems not interested.", Monnam(shopkeeper));
 		return;
 	}
@@ -703,7 +704,7 @@ register int tmp, ac;
 #ifdef MAIL
 		if(obj->otyp == SCR_MAIL)
 			tmp = rnd(5);
-#endif MAIL
+#endif
 		break;
 	case POTION_SYM:
 		tmp = 10*rnd(50);
@@ -892,7 +893,7 @@ register struct monst *shkp;
 #ifdef STUPID
 		    /* cater for stupid compilers */
 		    register int zz;
-#endif STUPID
+#endif
 		    if(uondoor && (ib = sobj_at(ICE_BOX, nx, ny))) {
 			nix = nx; niy = ny; chi = i; break;
 		    }
@@ -903,7 +904,7 @@ register struct monst *shkp;
 			(appr && (zz = GDIST(nix,niy)) && zz > GDIST(nx,ny))
 #else
 			(appr && GDIST(nx,ny) < GDIST(nix,niy))
-#endif STUPID
+#endif
 			) {
 			    nix = nx;
 			    niy = ny;
@@ -932,7 +933,7 @@ register struct monst *shkp;
 	}
 	return(0);
 }
-#endif QUEST
+#endif
 
 online(x,y) {
 	return(x==u.ux || y==u.uy ||
@@ -943,7 +944,7 @@ online(x,y) {
 follower(mtmp)
 register struct monst *mtmp;
 {
-	return( mtmp->mtame || index("1TVWZi&, ", mtmp->data->mlet) ||
+	return( mtmp->mtame || strchr("1TVWZi&, ", mtmp->data->mlet) ||
 		(mtmp->isshk && ESHK(mtmp)->following) );
 }
 
