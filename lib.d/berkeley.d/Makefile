@@ -1,9 +1,9 @@
 #
 #	%W% %G%
 #
-ALL	= Slibberkeley.a Mlibberkeley.a Llibberkeley.a
+ALL	= libberkeley.a # Slibberkeley.a Mlibberkeley.a Llibberkeley.a
 OPTIONS	= -I./h -DPORT=\"/tmp/sockXXXXXX\"
-include /etc/CONFIG
+include $(HOME)/CONFIG
 BRKSYS	= $(INCDIR)/sys
 HFILES	= h/*.h h/sys/*.h
 #
@@ -14,56 +14,100 @@ OBJS	= _close.o _common.o _read.o _write.o _sock_alloc.o accept.o \
 	  recv.o recvfrom.o recvmsg.o read.o readdir.o seekdir.o select.o \
 	  send.o sendmsg.o sendto.o shutdown.o socket.o socketpair.o \
 	  sockopt.o telldir.o vfork.o write.o
-SOBJS	= $(OBJS:.o=.S)
-MOBJS	= $(OBJS:.o=.M)
-LOBJS	= $(OBJS:.o=.L)
+SOBJS	= $(OBJS:.o=.Sm)
+MOBJS	= $(OBJS:.o=.Md)
+LOBJS	= $(OBJS:.o=.Lg)
 #
 #	Sure wish I could figure out how to force 'make' to compute this:
 #
-SLIB	= Slibberkeley.a(_close.S) \
-	  Slibberkeley.a(_common.S) \
-	  Slibberkeley.a(_read.S) \
-	  Slibberkeley.a(_write.S) \
-	  Slibberkeley.a(_sock_alloc.S) \
-	  Slibberkeley.a(accept.S) \
-	  Slibberkeley.a(alloca.S) \
-	  Slibberkeley.a(bcmp.S) \
-	  Slibberkeley.a(bcopy.S) \
-	  Slibberkeley.a(bfill.S) \
-	  Slibberkeley.a(bind.S) \
-	  Slibberkeley.a(bmove.S) \
-	  Slibberkeley.a(bzero.S) \
-	  Slibberkeley.a(close.S) \
-	  Slibberkeley.a(closedir.S) \
-	  Slibberkeley.a(connect.S) \
-	  Slibberkeley.a(doprnt.S) \
-	  Slibberkeley.a(errno.S) \
-	  Slibberkeley.a(exit.S) \
-	  Slibberkeley.a(ffs.S) \
-	  Slibberkeley.a(ftruncate.S) \
-	  Slibberkeley.a(getdtab.S) \
-	  Slibberkeley.a(getsockname.S) \
-	  Slibberkeley.a(getsockopt.S) \
-	  Slibberkeley.a(listen.S) \
-	  Slibberkeley.a(opendir.S) \
-	  Slibberkeley.a(random.S) \
-	  Slibberkeley.a(recv.S) \
-	  Slibberkeley.a(recvfrom.S) \
-	  Slibberkeley.a(recvmsg.S) \
-	  Slibberkeley.a(read.S) \
-	  Slibberkeley.a(readdir.S) \
-	  Slibberkeley.a(seekdir.S) \
-	  Slibberkeley.a(select.S) \
-	  Slibberkeley.a(send.S) \
-	  Slibberkeley.a(sendmsg.S) \
-	  Slibberkeley.a(sendto.S) \
-	  Slibberkeley.a(shutdown.S) \
-	  Slibberkeley.a(socket.S) \
-	  Slibberkeley.a(socketpair.S) \
-	  Slibberkeley.a(sockopt.S) \
-	  Slibberkeley.a(telldir.S) \
-	  Slibberkeley.a(vfork.S) \
-	  Slibberkeley.a(write.S)
+LIB	= libberkeley.a(_close.o) \
+	  libberkeley.a(_common.o) \
+	  libberkeley.a(_read.o) \
+	  libberkeley.a(_write.o) \
+	  libberkeley.a(_sock_alloc.o) \
+	  libberkeley.a(accept.o) \
+	  libberkeley.a(alloca.o) \
+	  libberkeley.a(bcmp.o) \
+	  libberkeley.a(bcopy.o) \
+	  libberkeley.a(bfill.o) \
+	  libberkeley.a(bind.o) \
+	  libberkeley.a(bmove.o) \
+	  libberkeley.a(bzero.o) \
+	  libberkeley.a(close.o) \
+	  libberkeley.a(closedir.o) \
+	  libberkeley.a(connect.o) \
+	  libberkeley.a(doprnt.o) \
+	  libberkeley.a(errno.o) \
+	  libberkeley.a(exit.o) \
+	  libberkeley.a(ffs.o) \
+	  libberkeley.a(ftruncate.o) \
+	  libberkeley.a(getdtab.o) \
+	  libberkeley.a(getsockname.o) \
+	  libberkeley.a(getsockopt.o) \
+	  libberkeley.a(listen.o) \
+	  libberkeley.a(opendir.o) \
+	  libberkeley.a(random.o) \
+	  libberkeley.a(recv.o) \
+	  libberkeley.a(recvfrom.o) \
+	  libberkeley.a(recvmsg.o) \
+	  libberkeley.a(read.o) \
+	  libberkeley.a(readdir.o) \
+	  libberkeley.a(seekdir.o) \
+	  libberkeley.a(select.o) \
+	  libberkeley.a(send.o) \
+	  libberkeley.a(sendmsg.o) \
+	  libberkeley.a(sendto.o) \
+	  libberkeley.a(shutdown.o) \
+	  libberkeley.a(socket.o) \
+	  libberkeley.a(socketpair.o) \
+	  libberkeley.a(sockopt.o) \
+	  libberkeley.a(telldir.o) \
+	  libberkeley.a(vfork.o) \
+	  libberkeley.a(write.o)
+SLIB	= Slibberkeley.a(_close.Sm) \
+	  Slibberkeley.a(_common.Sm) \
+	  Slibberkeley.a(_read.Sm) \
+	  Slibberkeley.a(_write.Sm) \
+	  Slibberkeley.a(_sock_alloc.Sm) \
+	  Slibberkeley.a(accept.Sm) \
+	  Slibberkeley.a(alloca.Sm) \
+	  Slibberkeley.a(bcmp.Sm) \
+	  Slibberkeley.a(bcopy.Sm) \
+	  Slibberkeley.a(bfill.Sm) \
+	  Slibberkeley.a(bind.Sm) \
+	  Slibberkeley.a(bmove.Sm) \
+	  Slibberkeley.a(bzero.Sm) \
+	  Slibberkeley.a(close.Sm) \
+	  Slibberkeley.a(closedir.Sm) \
+	  Slibberkeley.a(connect.Sm) \
+	  Slibberkeley.a(doprnt.Sm) \
+	  Slibberkeley.a(errno.Sm) \
+	  Slibberkeley.a(exit.Sm) \
+	  Slibberkeley.a(ffs.Sm) \
+	  Slibberkeley.a(ftruncate.Sm) \
+	  Slibberkeley.a(getdtab.Sm) \
+	  Slibberkeley.a(getsockname.Sm) \
+	  Slibberkeley.a(getsockopt.Sm) \
+	  Slibberkeley.a(listen.Sm) \
+	  Slibberkeley.a(opendir.Sm) \
+	  Slibberkeley.a(random.Sm) \
+	  Slibberkeley.a(recv.Sm) \
+	  Slibberkeley.a(recvfrom.Sm) \
+	  Slibberkeley.a(recvmsg.Sm) \
+	  Slibberkeley.a(read.Sm) \
+	  Slibberkeley.a(readdir.Sm) \
+	  Slibberkeley.a(seekdir.Sm) \
+	  Slibberkeley.a(select.Sm) \
+	  Slibberkeley.a(send.Sm) \
+	  Slibberkeley.a(sendmsg.Sm) \
+	  Slibberkeley.a(sendto.Sm) \
+	  Slibberkeley.a(shutdown.Sm) \
+	  Slibberkeley.a(socket.Sm) \
+	  Slibberkeley.a(socketpair.Sm) \
+	  Slibberkeley.a(sockopt.Sm) \
+	  Slibberkeley.a(telldir.Sm) \
+	  Slibberkeley.a(vfork.Sm) \
+	  Slibberkeley.a(write.Sm)
 MLIB	= Mlibberkeley.a(_close.M) \
 	  Mlibberkeley.a(_common.M) \
 	  Mlibberkeley.a(_read.M) \
@@ -157,34 +201,34 @@ LLIB	= Llibberkeley.a(_close.L) \
 #	are small model, .M are Middle Model, and .L are large model.
 #
 .SUFFIXES:
-.SUFFIXES:	.a .S .M .L .o .s .c
+.SUFFIXES:	.a .o .s .c .Sm .Md .Lg
 .PRECIOUS:	$(ALL)
 
-.c.S:
+.c.Sm:
 	$(CC) -c $(CFLAGS) -Ms $<
 	mv $*.o $@
 
-.c.M:
+.c.Md:
 	$(CC) -c $(CFLAGS) -Mm $<
 	mv $*.o $@
 
-.c.L:
+.c.Lg:
 	$(CC) -c $(CFLAGS) -Ml $<
 	mv $*.o $@
 
-.s.S:
+.s.Sm:
 	$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s
-	masm -Ml -o$@ tmp.s
+	$(CC) -Ml -o$@ tmp.s
 	rm tmp.s
 
-.s.M:
+.s.Md:
 	$(CC) $(CFLAGS) -Mm -E $*.s | sed '/^#/d' >tmp.s
-	masm -Ml -o$@ tmp.s
+	$(CC) -Ml -o$@ tmp.s
 	rm tmp.s
 
-.s.L:
+.s.Lg:
 	$(CC) $(CFLAGS) -Ml -E $*.s | sed '/^#/d' >tmp.s
-	masm -Ml -o$@ tmp.s
+	$(CC) -Ml -o$@ tmp.s
 	rm tmp.s
 
 .c.a:
@@ -196,6 +240,9 @@ LLIB	= Llibberkeley.a(_close.L) \
 	make $%
 	ar rv $@ $%
 	rm -f $%
+
+libberkeley.a: $(LIB)
+	$(RANLIB) $@
 
 Slibberkeley.a: $(SLIB)
 	$(RANLIB) $@
