@@ -422,13 +422,14 @@ struct rogue_time {
 };
 
 #ifdef CURSES
+#ifndef __STDC__
 struct _win_st {
 	short _cury, _curx;
 	short _maxy, _maxx;
 };
 
 typedef struct _win_st WINDOW;
-
+#endif
 extern int LINES, COLS;
 extern WINDOW *curscr;
 extern char *CL;
