@@ -113,7 +113,8 @@ register char c;
 				wputc(vdisp, '\n');
 			    }
 			    screen[vdisp].xn_flag = (x == COLS-1);
-			    waddch(vd, c);
+			    if ((y != LINES-1) || (x != COLS-1))
+				waddch(vd, c);
 			    if (screen[vdisp].xn_flag)
 				wmove(vd, y, x);
 			}
@@ -139,10 +140,13 @@ register char c;
 			 *	to home and back to resynch hardware and
 			 *	software.
 			*/
-			scroll(curscr);
+			if (vdisp == curvdsp)
+				scroll(curscr);
 			scroll(vd);
-			wmove(vd, 0, 0);
-			wrefresh(vd);
+			if (vdisp == curvdsp) {
+				wmove(vd, 0, 0);
+				wrefresh(vd);
+			}
 			wmove(vd, y, x);
 			break;
 		case '\b':
