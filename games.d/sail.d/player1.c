@@ -57,9 +57,9 @@ int argc;
 char **argv;
 {
 	char nodrive = 0, randomize = 0, debug = 0;
-	extern unsigned char _sobuf[];
+	static char *buf[BUFSIZ];
 
-	setbuf(stdout, (char *)_sobuf);
+	setbuf(stdout, buf);
 	isplayer = 1;
 
 	while (*++argv && **argv == '-')
