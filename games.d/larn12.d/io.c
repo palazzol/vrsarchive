@@ -497,7 +497,7 @@ lappend(str)
 		{
 		lfd=1; return(-1);
 		}
-	lseek(lfd,0,2);	/* seek to end of file */
+	lseek(lfd,0L,2);	/* seek to end of file */
 	return(lfd);
 	}
 
