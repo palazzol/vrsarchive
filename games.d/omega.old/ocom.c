@@ -1091,7 +1091,7 @@ void bash_location()
       }
     }
     else if (Dungeon[Dlevel][ox][oy].locchar == STATUE){
-      mprint("you shouldn't of ought to have done that....");
+      mprint("you shouldn't ought to have done that....");
       l_statue_wake();
     }
     else {
