@@ -57,10 +57,15 @@ init_rumors()
 }
 
 
+#ifdef __STDC__
+void
+outrumor(int truth,boolean cookie)
+#else
 void
 outrumor(truth,cookie)
 int truth; /* 1=true, -1=false, 0=either */
 boolean cookie;
+#endif
 {
 	static const char fortune_msg[] =
 		"This cookie has a scrap of paper inside.";
