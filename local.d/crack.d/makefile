@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.5 1988-11-28 11:32:23 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.6 1988-11-30 11:03:03 vrs Exp $
 #
 ALL	= crack
 MODEL	= -i -K
@@ -16,4 +16,4 @@ install: $(ALL) $(BINDIR)
 	cp crack $(BINDIR)
 	chmod 711 $(BINDIR)/crack
 
-crack.o: crack.c crack.h
+crack.o: crack.c primo.h crack.h
