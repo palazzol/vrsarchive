@@ -23,7 +23,7 @@ LOBJS	= sail.log.o
 HDRS	= externs.h player.h driver.h machdep.h
 OTHERFILES= Makefile sail.6
 CTAGFILES= ${DFILES} ${PFILES} ${LFILES} ${COMFILES}
-JUNKFILES= make.out core sail driver sail.log tags
+JUNKFILES= make.out core sail$(EXE) driver$(EXE) sail.log tags
 
 sail$(EXE): ${POBJS} ${COMOBJS}
 	${CC} $(CFLAGS) ${COMOBJS} ${POBJS} ${LIBS} -o $@
