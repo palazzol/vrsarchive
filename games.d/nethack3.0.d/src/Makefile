@@ -301,7 +301,9 @@ tags: $(CSOURCES)
 	@( cd ../include ; ctags -tw $(HSOURCES) )
   
 clean:
-	rm -f *.o lev_comp makedefs $(ALL)
+	rm -f *.o lev_comp.c ../include/lev_comp.h lev_lex.c
+	rm -f lev_comp makedefs $(ALL)
+	cd ../include; chmod a-w date.h onames.h pm.h trap.h
 
 spotless: clean
 	rm -f a.out core $(GAME) lev_comp makedefs
