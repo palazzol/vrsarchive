@@ -1,5 +1,5 @@
 #
-#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.6 2002-11-23 04:09:49 Vincent Exp $
+#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.7 2002-11-24 06:45:52 Vincent Exp $
 #
 ALL = zork dindx.dat dtext.dat dng
 include $(HOME)/CONFIG
@@ -26,4 +26,4 @@ zork:	zork.sh $(HOME)/CONFIG
 DNGLIB=$(GAMLIB)' zork.sh > $@
 
 clean:
-	rm -f $(ALL)
+	rm -f $(ALL) dng dtext.dat dindx.dat
