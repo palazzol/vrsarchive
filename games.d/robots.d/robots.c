@@ -31,7 +31,7 @@
 #  define LOCK_UN		LK_UNLCK
 #else
 #  include <unistd.h>
-#  define flock(fd,flag)	lockf(fd,flag,0L)
+#  define flock(fd,flag)	0	/*lockf(fd,flag,0L)*/
 #  ifdef  F_LOCK
 #    define LOCK_EX		F_LOCK
 #    define LOCK_UN		F_ULOCK
