@@ -251,9 +251,9 @@ die:
 		if(worthlessct)
 #ifndef DGKMOD
 		  if(!done_stopprint)
-		    printf("\t%u worthless piece%s of coloured glass,\n",
+		    printf("\t%u worthless piece%s of colored glass,\n",
 #else
-		  printf("        %u worthless piece%s of coloured glass,\n",
+		  printf("        %u worthless piece%s of colored glass,\n",
 #endif
 			worthlessct, plur(worthlessct));
 		if(has_amulet) u.urexp *= 2;
@@ -268,7 +268,7 @@ die:
   printf("You were level %u with a maximum of %d hit points when you %s.\n",
 	    u.ulevel, u.uhpmax, st1);
 	if(*st1 == 'e' && !done_stopprint){
-		getret();	/* all those pieces of coloured glass ... */
+		getret();	/* all those pieces of colored glass ... */
 		cls();
 	}
 #ifdef WIZARD
