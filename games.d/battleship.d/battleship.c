@@ -12,7 +12,7 @@
 #define wattroff(win,notused)	wstandend(win)
 #define cbreak()		crmode()
 #define flash()
-#endif  A_REVERSE
+#endif
 
 long r;/* for random number generator*/
 int myscore = 0;
@@ -43,19 +43,20 @@ main()
 
 #ifdef EMAIL
 	err("Battleships System Test - comments to hounx!juda");
-#endif EMAIL
+#endif
 
 	mywin = newwin(MAX_Y, MAX_X, 5, 15);
 	recwin = newwin(MAX_Y, MAX_X, 5, 0);
+	overlay(mywin, stdscr);
+	overlay(recwin, stdscr);
 	werase(mywin);
 	werase(recwin);
 
 	wattron(mywin,A_REVERSE);
 	label_x(mywin);
-	wrefresh(mywin);
 	label_y(mywin);
-	wrefresh(mywin);
 	wattroff(mywin,A_REVERSE);
+	wrefresh(mywin);
 
 	wattron(recwin,A_REVERSE);
 	label_x(recwin);
@@ -75,18 +76,21 @@ main()
 	clrtop();
 
 	hidwin = newwin(MAX_Y, MAX_X, 5, 55);
+	overlay(hidwin, stdscr);
 	showwin = newwin(MAX_Y, MAX_X, 5, 55);
+	overlay(showwin, stdscr);
 	myscrwin = newwin(4, MAX_X+3, 17, 55);
+	overlay(myscrwin, stdscr);
 	hisscrwin = newwin(4, MAX_X+3, 17, 15);
+	overlay(hisscrwin, stdscr);
 	werase(hidwin);
 	werase(showwin);
 
 	wattron(hidwin,A_REVERSE);
 	label_x(hidwin);
-	wrefresh(hidwin);
 	label_y(hidwin);
-	wrefresh(hidwin);
 	wattroff(hidwin,A_REVERSE);
+	wrefresh(hidwin);
 
 	wattron(showwin,A_REVERSE);
 	label_x(showwin);
@@ -294,11 +298,12 @@ get_x()
 	int c;
 
 	xwin = newwin(1, COLS, 1, 0);/*line 1*/
+	overlay(xwin, stdscr);
 	werase(xwin);
 	wprintw(xwin,"Enter x (horizontal) coordinate [0-9] (q to exit):\t");
 	touchwin(stdscr);
 	wrefresh(xwin);
-	c=getch();
+	c=wgetch(xwin);
 	out(c);
 	waddch(xwin,c);
 	touchwin(stdscr);
@@ -314,11 +319,12 @@ get_y()
 	int c;
 
 	ywin = newwin(1, COLS, 2, 0);/*line 2*/
+	overlay(ywin, stdscr);
 	werase(ywin);
 	wprintw(ywin,"Enter y (vertical) coordinate [0-9] (q to exit):\t");
 	touchwin(stdscr);
 	wrefresh(ywin);
-	c=getch();
+	c=wgetch(ywin);
 	out(c);
 	waddch(ywin,c);
 	touchwin(stdscr);
@@ -333,11 +339,12 @@ get_dir()
 	WINDOW *dirwin;
 	int c;
 	dirwin = newwin(1, COLS, 3, 0);/*line 3*/
+	overlay(dirwin, stdscr);
 	werase(dirwin);
 	wprintw(dirwin,"Enter Direction, 0 is up, 1 is down, 2 is right, 3 is left: (q to exit)");
 	touchwin(stdscr);
 	wrefresh(dirwin);
-	c=getch();
+	c=wgetch(dirwin);
 	out(c);
 	waddch(dirwin,c);
 	touchwin(stdscr);
@@ -385,9 +392,11 @@ char *str;
 	WINDOW *msgwin;
 
 	msgwin=newwin(1,COLS,0,0);
+	overlay(msgwin, stdscr);
 	werase(msgwin);
 	wattron(msgwin,A_REVERSE);
 	wprintw(msgwin,"%s",str);
+	wattroff(msgwin,A_REVERSE);
 	touchwin(stdscr);
 	wrefresh(msgwin);
 	delwin(msgwin);
@@ -445,6 +454,7 @@ WINDOW *showwin;
 	}
 	wattron(showwin,A_REVERSE);
 	waddch(showwin,(c != ' ')? '*' : '.');
+	wattroff(showwin,A_REVERSE);
 	touchwin(showwin);
 	wrefresh(showwin);
 }
@@ -455,6 +465,7 @@ clrtop()
 	WINDOW *topwin;
 
 	topwin = newwin(5, COLS, 0, 0);/*top 5 lines*/
+	overlay(topwin, stdscr);
 	werase(topwin);
 	touchwin(topwin);
 	wrefresh(topwin);
@@ -506,6 +517,7 @@ WINDOW *recwin;
 			}
 			wattron(mywin,A_REVERSE);
 			waddch(mywin,(c != ' ')? '*' : '.');
+			wattroff(mywin,A_REVERSE);
 			touchwin(mywin);
 			wrefresh(mywin);
 
@@ -523,9 +535,11 @@ char *str;
 	WINDOW *errwin;
 
 	errwin=newwin(1,COLS,23,0);
+	overlay(errwin, stdscr);
 	werase(errwin);
 	wattron(errwin,A_REVERSE);
 	wprintw(errwin,"%s",str);
+	wattroff(errwin,A_REVERSE);
 	touchwin(stdscr);
 	wrefresh(errwin);
 	delwin(errwin);
