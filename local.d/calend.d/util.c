@@ -9,7 +9,7 @@ char	*getlogin();
 struct passwd	*getpwuid();
 int	onintr();
 
-#define MAIL "/usr/ucb/mail -s 'Reminder Service' %s"
+#define MAIL "mail -s 'Reminder Service' %s"
 
 char *mon_nm[]={
     "January","February","March","April","May","June","July","August",
