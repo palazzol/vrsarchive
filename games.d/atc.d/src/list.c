@@ -19,14 +19,37 @@ append(l, p)
 	LIST	*l;
 	PLANE	*p;
 {
+	PLANE 	*q = NULL, *r = NULL;
+
 	if (l->head == NULL) {
 		p->next = p->prev = NULL;
 		l->head = l->tail = p;
 	} else {
-		p->prev = l->tail;
-		p->next = NULL;
-		l->tail->next = p;
-		l->tail = p;
+		q = l -> head;
+
+		while (q != NULL && q->plane_no < p->plane_no) {
+			r = q;
+			q = q -> next;
+		}
+
+		if (q) {
+			if (r) {
+				p->prev = r;
+				r->next = p;
+				p->next = q;
+				q->prev = p;
+			} else {
+				p->next = q;
+				p->prev = NULL;
+				q->prev = p;
+				l->head = p;
+			}
+		} else {
+			l->tail->next = p;
+			p->next = NULL;
+			p->prev = l->tail;
+			l->tail = p;
+		}
 	}
 }
 
