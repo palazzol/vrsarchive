@@ -1,3 +1,12 @@
+ALL	= wart kermit
+OPTIONS	= -O -DUXIII -DDEBUG -DTLOG
+MODEL	= -i
+include ../../CONFIG
+kermit:	wermit
+	mv $? $@
+install: $(ALL)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
 # CKUKER.MAK, Version 2.09, 14 September 87
 #
 # -- Makefile to build C-Kermit for Unix and Unix-like systems --
@@ -163,9 +172,9 @@ make:
 
 wermit: ckcmai.o ckucmd.o ckuusr.o ckuus2.o ckuus3.o ckcpro.o ckcfns.o \
 		 ckcfn2.o ckucon.o ckutio.o ckufio.o ckudia.o ckuscr.o
-	$(CC2) $(LNKFLAGS) -o wermit ckcmai.o ckutio.o ckufio.o ckcfns.o \
+	$(CC2) $(CFLAGS) -o wermit ckcmai.o ckutio.o ckufio.o ckcfns.o \
 		 ckcfn2.o ckcpro.o ckucmd.o ckuus2.o ckuus3.o ckuusr.o \
-		 ckucon.o ckudia.o ckuscr.o
+		 ckucon.o ckudia.o ckuscr.o $(LIBS)
 
 ckcmai.o: ckcmai.c ckcker.h ckcdeb.h
 
@@ -193,7 +202,7 @@ ckutio.o: ckutio.c ckcker.h ckcdeb.h
 ckucon.o: ckucon.c ckcker.h ckcdeb.h
 
 wart: ckwart.o
-	$(CC) $(LNKFLAGS) -o wart ckwart.o
+	$(CC) $(CFLAGS) -o wart ckwart.o $(LIBS)
 
 ckwart.o: ckwart.c
 
@@ -338,9 +347,9 @@ vxve:
 
 #Clean up intermediate and object files
 clean:
-	-rm -f ckcmai.o ckucmd.o ckuusr.o ckuus2.o ckuus3.o ckcpro.o \
+	rm -f ckcmai.o ckucmd.o ckuusr.o ckuus2.o ckuus3.o ckcpro.o \
 	ckcfns.o ckcfn2.o ckucon.o ckutio.o ckufio.o ckudia.o ckuscr.o \
-	ckwart.o ckcpro.c
+	ckwart.o ckcpro.c wermit $(ALL)
 
 #Run Lint on this mess for the BSD version.
 lint:
