@@ -226,6 +226,7 @@ sockaddr.sin_port = htons( PORT );
 #else  INET
 sockaddr.sun_family = AF_UNIX;
 strcpy(sockaddr.sun_path, PORT);
+unlink(PORT);
 #endif INET
 if (bind( s, &sockaddr, sizeof(sockaddr)) < 0)
 	{

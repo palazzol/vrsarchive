@@ -92,7 +92,7 @@ if ( connect( s, &sockaddr, sizeof(sockaddr) ) < 0)
 # endif
 	{
 	system( "nohup /usr/games/lib/pokerd >/dev/null &" );
-	sleep(2);
+	sleep(3);
 # ifdef MASSCOMP
 	if ( connect( s, &sockaddr ) < 0 )
 # else
