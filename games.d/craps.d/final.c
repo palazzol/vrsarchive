@@ -1,9 +1,8 @@
 #include "types.h"
 #include "ext.h"
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#include <pwd.h>
-extern struct passwd *getpwuid();
 
 /*
  *
@@ -11,7 +10,6 @@ extern struct passwd *getpwuid();
  * It will need to be modified for your system.
  *
  */
-
 #ifdef	SCORES
 #ifdef	__STDC__
 #define STR(x)		#x
@@ -23,13 +21,15 @@ extern struct passwd *getpwuid();
 #endif
 char *fil = FILNAM(craps.list);
 char *reclock = FILNAM(craps.lock);
-
+---
+#ifdef	SCORES
+#define	NAMELEN		40
 typedef struct node {
 	struct node *next;
 	int uid;
 	long ngames;
 	double amt;
-	char name[15];
+	char name[NAMELEN+1];
 } scores;
 #endif
 
@@ -38,17 +38,17 @@ int d;
 {
 #ifdef	SCORES
 	FILE *list;
-	int f,sleepct=300,cuid,did=0,i,n=0,comp();
+	int f,sleepct=300,cuid,did=0,i,n=0,comp(),nchars;
 	long l;
 	double x;
-	char s[15];
+	char s[NAMELEN+1],c;
 	scores *score;
 
 	cuid=getuid();
 	clear(); refresh();
 	signal(SIGHUP,SIG_IGN);
 	signal(SIGINT,SIG_IGN);
-	while(link(fil, reclock) == -1) {
+	while(link(sfile, reclock) == -1) {
 		perror(reclock);
 		if(!sleepct--) {
 			puts("I give up. Sorry.");
@@ -60,23 +60,30 @@ int d;
 		fflush(stdout);
 		sleep(1);
 	}
-	if((list=fopen(fil,"r"))==NULL) {
-		fprintf(stderr,"can't open %s\n",fil);
+	if((list=fopen(sfile,"r"))==NULL) {
+		fprintf(stderr,"can't open %s\n",sfile);
 		myexit();
 		return(0);
 	}
-	while((fscanf(list,"%d %f %ld %s",&i,&x,&l,s))!=EOF) n++;
+	while((c=fgetc(list))!=EOF) if(c=='\n') n++;
 	rewind(list);
 	score=(scores *)malloc((n+1)*sizeof(scores));
 	cuid=getuid();
 	i=0;
 	while(1) {
-		if((fscanf(list,"%d %f %ld %s",
+		if((fscanf(list,"%d %lf %ld",
 			&score[i].uid,
 			&score[i].amt,
-			&score[i].ngames,
-			score[i].name))
+			&score[i].ngames))
 		== EOF) break;
+		while((c=fgetc(list))==' ') ;
+		nchars=0;
+		while(c!='\n' && nchars<NAMELEN) {
+			score[i].name[nchars++]=c;
+			c=fgetc(list);
+		}
+		while(c!='\n') c=fgetc(list);
+		score[i].name[nchars]=0;
 		if(score[i].uid==cuid) {
 			score[i].amt = score[i].amt + (wins-loss);
 			score[i].ngames = score[i].ngames + 1;
@@ -90,16 +97,20 @@ int d;
 		score[n].amt = (wins-loss);
 		score[n].ngames = 1;
 		if(getenv("CRAPSNAME")==NULL)
-			if(getenv("USER")==NULL)
-				strcpy(score[n].name,getpwuid(cuid)->pw_name);
-			else
-				strcpy(score[n].name,getenv("USER"));
-		else
-			strcpy(score[n].name,getenv("CRAPSNAME"));
+#ifdef	SYSV
+			strncpy(score[n].name,getenv("LOGNAME"),NAMELEN);
+#else
+#ifdef  XENIX
+			strncpy(score[n].name,getenv("LOGNAME"),NAMELEN);
+#else
+			strncpy(score[n].name,getenv("USER"),NAMELEN);
+#endif
+#endif
+		else strncpy(score[n].name,getenv("CRAPSNAME"),NAMELEN);
 		n++;
 	}
 	qsort(score,n,sizeof(scores),comp);
-	list=fopen(fil,"w");
+	list=fopen(sfile,"w");
 	for(i=0;i<n;i++)
 		fprintf(list,"%d %.2f %ld %s\n",
 		score[i].uid,
@@ -113,12 +124,13 @@ int d;
 	refresh();
 	putchar('\n');
 	for(i=0;i<n;i++)
-		printf("          %-15s %17.2f        %11ld\n",score[i].name,score[i].amt,score[i].ngames);
+		printf("          %-28s%10.2f%14ld\n",score[i].name,score[i].amt,score[i].ngames);
 	myexit();
 #endif
 	return(0);
 }
 
+#ifdef	SCORES
 comp(x,y)
 scores *x,*y;
 {
@@ -126,6 +138,7 @@ scores *x,*y;
 	if(x->amt == y->amt) return(0);
 	return(1);
 }
+#endif
 
 myexit()
 {
