@@ -343,7 +343,7 @@ got_suffix:
 	case 'e':
 	case 'E':
 		Elf[2].trquan = 15+rnd(20);
-		Elf[3].trotyp = (rn2(2) ? ELFIN_CHAIN_MAIL : ELVEN_CLOAK);
+		Elf[3].trotyp = (rn2(2) ? ELVEN_CHAIN_MAIL : ELVEN_CLOAK);
 		Fast = INTRINSIC;
 		HSee_invisible = INTRINSIC;
 		u.uhp = u.uhpmax = 16;

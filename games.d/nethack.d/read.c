@@ -91,7 +91,7 @@ seffects(sobj)
 			break;
 		}
 #ifdef KAA
-		if(otmp->spe > (otmp->otyp == ELFIN_CHAIN_MAIL ? 5 : 3)
+		if(otmp->spe > (otmp->otyp == ELVEN_CHAIN_MAIL ? 5 : 3)
 				&& rn2(otmp->spe)) {
 #else
 		if(otmp->spe > 3 && rn2(otmp->spe)) {
