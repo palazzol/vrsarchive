@@ -11,7 +11,7 @@
 extern char *eos();
 extern int CO;
 
-char toplines[BUFSZ];
+char toplines[BUFSIZ];
 xchar tlx, tly;			/* set by pline; used by addtopl */
 
 struct topl {
