@@ -32,7 +32,7 @@
  * defined, and can be either "5.2", "3.6", or "5.3"
  */
 
-# define DEFVER		"3.6"
+# define DEFVER		"5.2"
 
 /* 
  * This file is created whenever the Rog-O-Matic score file is accessed to
