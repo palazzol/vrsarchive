@@ -1,4 +1,4 @@
-/* $Header: /home/Vince/cvs/games.d/fortune.d/fortune.c,v 1.3 1990-04-04 21:18:03 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/fortune.d/fortune.c,v 1.4 2002-11-23 05:55:25 Vincent Exp $ */
 
 # include	<sys/types.h>
 # include	<stdio.h>
@@ -66,6 +66,16 @@ char	*conv_pat();
 #endif
 
 #ifndef NO_REGEX
+#ifdef __STDC__
+
+#include <regex.h>
+# define	RE_COMP(p)	(regcomp(&Re_pat, p, 0))
+# define	BAD_COMP(f)	((f) != 0)
+# define	RE_EXEC(p)	regexec(&Re_pat, (p), 0, NULL, 0)
+
+regex_t	Re_pat;
+
+#else
 #ifdef REGCMP
 # define	RE_COMP(p)	(Re_pat = regcmp(p, NULL))
 # define	BAD_COMP(f)	((f) == NULL)
@@ -80,6 +90,7 @@ char	*regcmp(), *regex();
 # define	RE_EXEC(p)	re_exec(p)
 
 char	*re_comp(), *re_exec();
+#endif
 #endif
 #endif
 
