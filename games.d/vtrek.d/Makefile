@@ -7,7 +7,7 @@ MODEL	= -i -F 2000
 ALL	= vtrek$(EXE)
 include $(HOME)/CONFIG
 
-vtrek:	$(OBJS)
+vtrek$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 $(OBJS): vtrek.h

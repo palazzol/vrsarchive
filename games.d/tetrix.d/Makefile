@@ -10,7 +10,7 @@ include $(HOME)/CONFIG
 OBJS	= MoveR.o MoveL.o NewP.o AdvanceP.o Rotate.o tet.o
 INCS	= tet.h
 
-tetrix: $(OBJS) $(INCS)
+tetrix$(EXE): $(OBJS) $(INCS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 install: tetrix

@@ -8,7 +8,7 @@ include $(HOME)/CONFIG
 OBJS	= solve.o
 CFILES	= solve.c
 
-solve: $(OBJS)
+solve$(EXE): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LIBS)
 
 tags:	$(CFILES)
