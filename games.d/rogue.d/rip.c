@@ -14,8 +14,6 @@
 #include "rogue.h"
 #include "score.h"
 
-extern int end_win;
-
 static char *rip[] = {
   "                       __________",
   "                      /          \\",
@@ -64,8 +62,6 @@ char monst;
 		outf = fdopen(fd, "w");
 	else {
 		refresh();
-		endwin();
-		end_win = 0;
 		return;
 	}
 
@@ -204,8 +200,6 @@ char monst;
 	}
 	fclose(outf);
 	refresh();
-	endwin();
-	end_win = 0;
 }
 
 /*

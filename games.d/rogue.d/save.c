@@ -14,7 +14,6 @@ typedef struct stat STAT;
 
 extern char version[], encstr[];
 extern char end[];
-extern int end_win;
 
 extern char *getenv();
 extern char *sbrk();
@@ -148,7 +147,6 @@ register FILE *savef;
 	fwrite("junk", 1, 5, savef);
 
 	fseek(savef, 0L, 0);
-	end_win = TRUE;
 	encwrite(version, (unsigned)(end-version), savef);
 	fclose(savef);
 }
