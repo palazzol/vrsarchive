@@ -125,7 +125,7 @@ weight(obj)
 register struct obj *obj;
 {
 register int wt = objects[obj->otyp].oc_weight;
-	return(wt ? wt*obj->quan : (obj->quan + 1)/2);
+	return(wt ? wt*obj->quan : (obj->quan + 1)/(unsigned)2);
 }
 
 mkgold(num,x,y)

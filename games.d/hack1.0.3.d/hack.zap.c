@@ -368,7 +368,7 @@ boomhit(dx,dy) {
 			break;
 		}
 		if(bhitpos.x == u.ux && bhitpos.y == u.uy) { /* ct == 9 */
-			if(rn2(20) >= 10+u.ulevel){	/* we hit ourselves */
+			if((unsigned)rn2(20) >= 10+u.ulevel){	/* we hit ourselves */
 				(void) thitu(10, rnd(10), "boomerang");
 				break;
 			} else {	/* we catch it */

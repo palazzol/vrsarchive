@@ -10,7 +10,8 @@ extern char *itoa(), *ordin(), *eos();
 
 xchar maxdlevel = 1;
 
-done1()
+SIG_T
+done1(dummy)
 {
 	(void) signal(SIGINT,SIG_IGN);
 	pline("Really quit?");
@@ -19,7 +20,7 @@ done1()
 		clrlin();
 		(void) fflush(stdout);
 		if(multi > 0) nomul(0);
-		return(0);
+		return;
 	}
 	done("quit");
 	/* NOTREACHED */
@@ -28,13 +29,15 @@ done1()
 int done_stopprint;
 int done_hup;
 
-done_intr(){
+SIG_T
+done_intr(dummy){
 	done_stopprint++;
 	(void) signal(SIGINT, SIG_IGN);
 	(void) signal(SIGQUIT, SIG_IGN);
 }
 
-done_hangup(){
+SIG_T
+done_hangup(dummy){
 	done_hup++;
 	(void) signal(SIGHUP, SIG_IGN);
 	done_intr();
@@ -221,7 +224,7 @@ topten(){
 	int sleepct = 300;
 	FILE *rfile;
 	register flg = 0;
-	extern char *getdate();
+	extern char *mygetdate();
 #define	HUP	if(!done_hup)
 	while(link(recfile, reclock) == -1) {
 		HUP perror(reclock);
@@ -255,7 +258,7 @@ topten(){
 	(t0->name)[NAMSZ] = 0;
 	(void) strncpy(t0->death, killer, DTHSZ);
 	(t0->death)[DTHSZ] = 0;
-	(void) strcpy(t0->date, getdate());
+	(void) strcpy(t0->date, mygetdate());
 
 	/* assure minimum number of points */
 	if(t0->points < POINTSMIN)

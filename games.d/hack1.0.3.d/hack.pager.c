@@ -12,7 +12,7 @@ extern int CO, LI;	/* usually COLNO and ROWNO+2 */
 extern char *CD;
 extern char quitchars[];
 extern char *getenv(), *getlogin();
-int done1();
+SIG_T done1();
 
 dowhatis()
 {
@@ -58,7 +58,8 @@ dowhatis()
 /* make the paging of a file interruptible */
 static int got_intrup;
 
-intruph(){
+SIG_T
+intruph(dummy){
 	got_intrup++;
 }
 

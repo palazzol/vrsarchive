@@ -3,7 +3,6 @@
 
 #include "hack.h"
 #include "hack.mfndpos.h"
-#define	NULL	(char *) 0
 extern struct monst *makemon();
 extern struct obj *mkobj_at();
 
@@ -123,7 +122,7 @@ char *name;
 	if(mtmp != u.ustuck) return;
 	kludge("%s digests you!",name);
 	u.uhp -= dam;
-	if ((u.uswldtim=u.uswldtim+1) > die){	/* a3 */
+	if ((u.uswldtim=u.uswldtim+1) > (unsigned)die){	/* a3 */
 		pline("It totally digests you!");
 		u.uhp = -1;
 	}

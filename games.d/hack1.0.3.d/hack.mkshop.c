@@ -11,6 +11,7 @@ extern struct obj *mkobj_at();
 extern int nroom;
 extern char shtypes[];	/* = "=/)%?!["; 8 types: 7 specialized, 1 mixed */
 schar shprobs[] = { 3,3,5,5,10,10,14,50 };	/* their probabilities */
+extern char *getenv();
 
 mkshop(){
 register struct mkroom *sroom;
@@ -21,7 +22,6 @@ register struct monst *shk;
 #ifdef WIZARD
 	/* first determine shoptype */
 	if(wizard){
-		extern char *getenv();
 		register char *ep = getenv("SHOPTYPE");
 		if(ep){
 			if(*ep == 'z' || *ep == 'Z'){
