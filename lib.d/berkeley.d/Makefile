@@ -7,8 +7,8 @@ include ../../CONFIG
 BRKSYS	= $(INCDIR)/sys
 HFILES	= h/*.h h/sys/*.h
 #
-OBJS	= _close.o _common.o _read.o _write.o _sock_alloc.o \
-	  accept.o bcmp.o bcopy.o bfill.o bind.o bmove.o bzero.o close.o \
+OBJS	= _close.o _common.o _read.o _write.o _sock_alloc.o accept.o \
+	  alloca.o bcmp.o bcopy.o bfill.o bind.o bmove.o bzero.o close.o \
 	  closedir.o connect.o doprnt.o errno.o exit.o ffs.o ftruncate.o \
 	  getdtab.o getsockname.o getsockopt.o listen.o opendir.o random.o \
 	  recv.o recvfrom.o recvmsg.o read.o readdir.o seekdir.o select.o \
@@ -26,6 +26,7 @@ SLIB	= Slibberkeley.a(_close.S) \
 	  Slibberkeley.a(_write.S) \
 	  Slibberkeley.a(_sock_alloc.S) \
 	  Slibberkeley.a(accept.S) \
+	  Slibberkeley.a(alloca.S) \
 	  Slibberkeley.a(bcmp.S) \
 	  Slibberkeley.a(bcopy.S) \
 	  Slibberkeley.a(bfill.S) \
@@ -69,6 +70,7 @@ MLIB	= Mlibberkeley.a(_close.M) \
 	  Mlibberkeley.a(_write.M) \
 	  Mlibberkeley.a(_sock_alloc.M) \
 	  Mlibberkeley.a(accept.M) \
+	  Mlibberkeley.a(alloca.M) \
 	  Mlibberkeley.a(bcmp.M) \
 	  Mlibberkeley.a(bcopy.M) \
 	  Mlibberkeley.a(bfill.M) \
@@ -112,6 +114,7 @@ LLIB	= Llibberkeley.a(_close.L) \
 	  Llibberkeley.a(_write.L) \
 	  Llibberkeley.a(_sock_alloc.L) \
 	  Llibberkeley.a(accept.L) \
+	  Llibberkeley.a(alloca.L) \
 	  Llibberkeley.a(bcmp.L) \
 	  Llibberkeley.a(bcopy.L) \
 	  Llibberkeley.a(bfill.L) \
