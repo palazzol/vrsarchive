@@ -9,7 +9,7 @@ OFILES=xlisp.o xlbfun.o xlcont.o xldbug.o xldmem.o xleval.o \
 #CFLAGS=-ml -f -O -G -w-pia -w-def -w-aus -Ic:\turboc\include
 
 xlisp$(EXE): $(OFILES)
-	$(CC) -o $@ $(OFILES)
+	$(CC) -o $@ $(OFILES) $(LIBS)
 
 clean:
 	rm -rf $(OFILES) $(ALL)
