@@ -870,7 +870,7 @@ void l_arena()
       case 8:
       case 9:
 	value = 3;
-	mprint(Champion); ("the arena champion");
+	mprint(Champion); mprint("the arena champion");
 	strcpy(m.monstring,Champion);
 	m = Monsters[ML7+3];
 	m.level = 20;
