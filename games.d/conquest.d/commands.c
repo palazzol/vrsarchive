@@ -62,7 +62,7 @@ redesignate()
 		getch();
 		return;
 	}
-	mvprintw(LINES-1,0,"hit space to not redesignate anyting");
+	mvprintw(LINES-1,0,"hit space to not redesignate anything");
 	clrtoeol();
 	mvprintw(LINES-2,7,"$%d: redesignate to %c, %c, %c, %c or %c?",DESCOST,DMINE,DGOLDMINE,DFARM,DCITY,DCAPITOL);
 	clrtoeol();
@@ -539,6 +539,7 @@ wmessage()
 	int done=0;
 	char ch;
 	char name[12];
+	char realname[12];
 	int temp=(-1);
 	int linedone;
 	char line[100];
@@ -557,7 +558,11 @@ wmessage()
 	for(nationid=0;nationid<MAXNTN;nationid++) if(ntn[nationid].active!=0)
 		if(strcmp(name,ntn[nationid].name)==0) temp=nationid;
 
-	if(strcmp(name,"god")==0) temp=0;
+	if(strcmp(name,"god")==0) {
+		temp=0;
+		strcpy(realname,"unowned");
+	}
+	else strcpy(realname,name);
 
 	if (temp==(-1)) {
 		mvprintw(2,0,"error--invalid name");
@@ -583,8 +588,8 @@ wmessage()
 	mvprintw(LINES-1,(COLS-35)/2,"btw... This is my first editor, any comments?");
 	standend();
 
-	fprintf(fp,"%s Message to %s from %s\n",name,name,ntn[country].name);
-	fprintf(fp,"%s \n",name);
+	fprintf(fp,"%s Message to %s from %s\n",realname,name,ntn[country].name);
+	fprintf(fp,"%s \n",realname);
 	y=6;
 	x=0;
 	refresh();
@@ -615,7 +620,7 @@ wmessage()
 		line[x]='\0';
 		if(x<=1) done=1;
 		/*write to file*/
-		fprintf(fp,"%s %s\n",name,line);
+		fprintf(fp,"%s %s\n",realname,line);
 		x=0;
 		y++;
 	}

@@ -695,8 +695,12 @@ populate()
 	while(done==0) {
 		/*read and parse a new line*/
 		if(line[0]!='#') {
-			sscanf(line,"%s %s %c %c %c %hd %hd %hd %d %d %d %hd %hd",ntn[cnum].name,ntn[cnum].leader,&ntn[cnum].race,&ntn[cnum].mark,&ntn[cnum].location,&ntn[cnum].aplus,&ntn[cnum].dplus,&ntn[cnum].maxmove,&ntn[cnum].tgold,&ntn[cnum].tmil,&ntn[cnum].tciv,&ntn[cnu
-m].repro,&ntn[cnum].active);
+			sscanf(line,"%s %s %c %c %c %hd %hd %hd %d %d %d %hd %hd",
+			    ntn[cnum].name,ntn[cnum].leader,&ntn[cnum].race,
+			    &ntn[cnum].mark,&ntn[cnum].location,&ntn[cnum].aplus,
+			    &ntn[cnum].dplus,&ntn[cnum].maxmove,&ntn[cnum].tgold,
+			    &ntn[cnum].tmil,&ntn[cnum].tciv,&ntn[cnum].repro,
+			    &ntn[cnum].active);
 			ntn[cnum].active++;
 			ntn[cnum].class=0;
 			strcpy(ntn[cnum].passwd,ntn[0].passwd);

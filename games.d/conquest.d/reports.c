@@ -107,7 +107,9 @@ armyrpt()
 				mvaddstr(21,0,"1=MARCH, 2=SCOUT, 3=ATTACK, 4=DEFEND, 5=GARRISON");
 				clrtoeol();
 				refresh();
+				echo();
 				scanw("%d",&chg);
+				noecho();
 				if(chg<1) return;
 				if(chg>5) return;
 				if((chg==2)&&(ASOLD>25)){

@@ -275,8 +275,12 @@ mymove()
 			for(Tnation=0;Tnation<NTOTAL;Tnation++) 
 			if(Tnation!=country) 
 			for(Tarmynum=0;Tarmynum<MAXNAVY;Tarmynum++) 
-			if((ntn[Tnation].nvy[Tarmynum].warships>0)&&(ntn[Tnation].nvy[Tarmynum].xloc<=XREAL+1)&&(ntn[Tnation].nvy[Tarmynum].xloc>=XREAL-1)&&(ntn[Tnation].nvy[Tarmynum].yloc<=YREAL+1)&&(ntn[Tnation].nvy[Tarmynum].yloc>=YREAL-1)&&(ntn[Tnation].dstatus[country]>=
-HOSTILE))
+			if((ntn[Tnation].nvy[Tarmynum].warships>0)
+			    && (ntn[Tnation].nvy[Tarmynum].xloc<=XREAL+1)
+			    && (ntn[Tnation].nvy[Tarmynum].xloc>=XREAL-1)
+			    && (ntn[Tnation].nvy[Tarmynum].yloc<=YREAL+1)
+			    && (ntn[Tnation].nvy[Tarmynum].yloc>=YREAL-1)
+			    && (ntn[Tnation].dstatus[country]>=HOSTILE))
 				total+=ntn[Tnation].nvy[Tarmynum].warships;
 		}
 
@@ -307,7 +311,7 @@ HOSTILE))
 					if(ASOLD < 2 * total){
 						AMOVE=0;
 						AADJMOV;
-						mvprintw(LINES-3,0,"Zone Of Control -- hit return");
+						mvprintw(LINES-3,0,"Zone Of Control ");
 						beep();
 						done=1;
 					}
@@ -597,7 +601,7 @@ flee(x,y,z)
 		if(i>=0&&i<MAPX&&j>=0&&j<MAPY&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) count++;
 
 	if(count>0) {
-	mvaddstr(LINES-2,20,"CIVILIANS ABANDON SECTOR");
+	if(z==0) mvaddstr(LINES-2,20,"CIVILIANS ABANDON SECTOR");
 	for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++)
 		if(i>=0&&i<MAPX&&j>=0&&j<MAPY&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) {
 			sct[i][j].people += sct[x][y].people / count;
@@ -609,14 +613,14 @@ flee(x,y,z)
 	for(i=x-4;i<=x+4;i++) for(j=y-4;j<=y+4;j++)
 		if(i>=0&&i<MAPX&&j>=0&&j<MAPY&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) count++;
 	if(count>0) {
-	mvaddstr(LINES-2,20,"PEOPLE FLEE SECTOR AND HALF DIE");
+	if(z==0) mvaddstr(LINES-2,20,"PEOPLE FLEE SECTOR AND HALF DIE");
 	for(i=x-4;i<=x+4;i++) for(j=y-4;j<=y+4;j++)
 		if(i>=0&&i<MAPX&&j>=0&&j<MAPY&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) {
 			sct[i][j].people += sct[x][y].people / count;
 			if(z==0) SADJCIV2;
 		}
 	}
-	else mvaddstr(LINES-2,20,"PEOPLE IN SECTOR DIE");
+	else if(z==0) mvaddstr(LINES-2,20,"PEOPLE IN SECTOR DIE");
 	}
 
 	sct[x][y].people = 0;

@@ -364,10 +364,10 @@ update()
 
 	fclose(fnews);
 	score();
-	strcpy(command,"> ");
+	strcpy(command,"cp /dev/null ");
 	strcat(command,EXEFILE);
 	system(command);
-	strcpy(command,"/bin/sort -n -o ");
+	strcpy(command,"sort -n -o ");
 	strcat(command,NEWSFILE);
 	strcat(command," ");
 	strcat(command,NEWSFILE);

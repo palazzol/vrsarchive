@@ -350,7 +350,7 @@ extern char *soldname[];
 /*my first macro: which will return 1 if the nation has that power*/
 #define magic(NATION,POWER)	!(ntn[NATION].powers%(POWER))  
 
-#define beep()		putchar('')
+#define beep()		putchar('\007')
 
 #define FOODTHRESH 3
 #define GOLDTHRESH 10

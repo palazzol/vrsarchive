@@ -514,8 +514,8 @@ monster()
 	}
 	else {
 		/*place a new Nomad army*/
-		x=(rand()%MAPX-8)+4;
-		y=(rand()%MAPY-8)+4;
+		x=(rand()%(MAPX-8))+4;
+		y=(rand()%(MAPY-8))+4;
 		if((rand()%4==0)&&(sct[x][y].altitude!=PEAK)&&(sct[x][y].altitude!=WATER)) {
 			AXLOC=x;
 			AYLOC=y;

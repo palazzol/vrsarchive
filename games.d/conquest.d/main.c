@@ -12,6 +12,7 @@
 
 /*include files*/
 #include <ctype.h>
+#include <signal.h>
 #include "header.h"
 
 /*initialization data*/
@@ -109,9 +110,10 @@ char **argv;
 		exit(1);
 	case 'h': /* execute help program*/
 		initscr();
-		savetty();
 		noecho();
-		raw();
+		crmode();			/* cbreak mode */
+		signal(SIGINT,SIG_IGN);		/* disable keyboard signals */
+		signal(SIGQUIT,SIG_IGN);
 		help();
 		endwin();
 		putchar('\n');
@@ -202,8 +204,9 @@ char **argv;
 	/* SET UP THE SCREEN */
 	printf("about to set up the screen");
 	initscr();
-	savetty();
-	raw();
+	crmode();			/* cbreak mode */
+	signal(SIGINT,SIG_IGN);		/* disable keyboard signals */
+	signal(SIGQUIT,SIG_IGN);
 
 	prep();
 	noecho();
@@ -240,8 +243,7 @@ char **argv;
 	clear();
 	printw("quitting\n");
 	refresh();
-	noraw();
-	resetty();
+	nocrmode();
 	endwin();
 	fclose(fexe);
 	exit(1);

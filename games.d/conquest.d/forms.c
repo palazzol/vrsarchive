@@ -19,6 +19,7 @@
 
 extern FILE *fexe;
 extern short country;
+extern FILE *fnews;
 
 showscore()
 {
@@ -195,7 +196,9 @@ diploscrn()
 			mvaddstr(8,0,"7) JIHAD (irrevocable):");
 			mvaddstr(12,0,"INPUT:");
 			refresh();
+			echo();
 			scanw("%hd",&temp);
+			noecho();
 			if((temp<1)||(temp>7)){
 				mvprintw(23,0,"SORRY, Invalid inputs -- hit return");
 				refresh();
@@ -283,7 +286,7 @@ change()
 	mvaddstr(19,(COLS/2)-9, "HIT ANY KEY TO CONTINUE");
 	mvaddstr(20,(COLS/2)-15,"HIT 1 or 2 TO CHANGE NAME or PASSWD");
 	mvaddstr(21,(COLS/2)-15,"HIT 3 TO CHANGE ADD TO COMBAT BONUS");
-	if(isgod==1) mvaddstr(21,(COLS/2)-9,"HIT 4 TO DESTROY NATION");
+	if(isgod==1) mvaddstr(22,(COLS/2)-9,"HIT 4 TO DESTROY NATION");
 
 	standend();
 	refresh();
@@ -384,7 +387,14 @@ change()
 			clear();
 			mvaddstr(0,0,"DO YOU WANT TO DESTROY THIS NATION (y or n)");
 			refresh();
-			if(getch()=='y') destroy();
+			if(getch()=='y') {
+				if ((fnews=fopen(NEWSFILE,"w"))==NULL) {
+					printf("error opening news file\n");
+					exit(1);
+				}
+				destroy();
+				fclose(fnews);
+			}
 		}
 		break;
 	default:
