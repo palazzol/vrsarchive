@@ -1,5 +1,5 @@
 /*
- *	@(#)init_disp.c	1.1 12/2/84
+ *	@(#)init_disp.c	1.2 12/2/84
  *
  * Init_disp contains the initialization code for the display package,
  * as well as the signal handling routines.
@@ -10,6 +10,8 @@
 
 sig_sent()
 {   static char eot = '\004';
+
+    (void) alarm(0);
     message("Connection closing. Exiting");
     (void) write(other, &eot, 1);
     quit();
@@ -88,5 +90,6 @@ quit()
         (void) wrefresh(other_win.x_win);
         endwin();
     }
+    (void) unlink(my_tty);	/* In case we never got connected	*/
     (void) exit(0);
 }

@@ -1,5 +1,5 @@
 /*
- *	@(#)msgs.c	1.1 12/2/84
+ *	@(#)msgs.c	1.2 12/2/84
  *
  *	A package to display what is happening every second if we are
  *	slow connecting.
@@ -29,5 +29,5 @@ start_msgs()
 end_msgs()
 {
     (void) signal(SIGALRM, SIG_IGN);
-    (void) alarm(15);
+    (void) alarm(0);
 }

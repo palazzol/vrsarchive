@@ -1,5 +1,5 @@
 /*
- *	@(#)io.c	1.1 12/2/84
+ *	@(#)io.c	1.2 12/2/84
  *
  *	This file contains the I/O handling and the exchange of edit
  *	characters. The connection itself is established in ctl.c.
@@ -7,6 +7,7 @@
 
 #include "talk.h"
 #include <errno.h>
+#include <signal.h>
 #include <time.h>
 
 extern int	errno;
@@ -14,37 +15,50 @@ extern int	sys_nerr;
 extern char	*sys_errlist[];
 extern unsigned alarm();
 
-/*
- *	The routine to do the actual talking.
-*/
-talk()
+check_pipe()
 {   unsigned nb;
     char buf[1];
 
-    (void) alarm(0);
+    (void) signal(SIGALRM, check_pipe);
+    while (rdchk(mine) > 0) { 
+        nb = read(mine, buf, 1);
+        if ((nb == 0) || (buf[0] == '\004')) {
+            message("Connection closed. Exiting");
+            quit();
+        } else {
+            display(&other_win, buf, nb);
+        }
+    }
+    (void) alarm(2);
+}
+
+/*
+ *	The routine to do the actual talking.  The pipe side is monitored
+ *	every 2 seconds by check_pipe(), which lurks in the background
+ *	whenever an alarm is pending.
+*/
+talk()
+{   unsigned secs;
+    int nb;
+    char buf[1];
+
     message(" Connection established\007\007\007 ");
     line = 0;
     /*
      * wait on both the other process and standard input
     */
+    check_pipe();
     forever {
-	if (rdchk(mine) > 0) { 
-	    nb = read(mine, buf, 1);
-	    if ((nb == 0) || (buf[0] == '\004')) {
-		message("Connection closed. Exiting");
-		quit();
-	    } else {
-		display(&other_win, buf, nb);
-	    }
-	}
-	if (rdchk(0) > 0) {
-	    nb = read(0, buf, 1);
+	nb = read(0, buf, 1);	/* Try to read the keyboard		*/
+	if (nb > 0) {		/* If we got a character		*/
+	    secs = alarm(0);	/* Don' take an AST while in curses	*/
 	    display(&my_win, buf, nb);
 	    (void) write(other, buf, nb);
-	    if ((nb == 0) || (buf[0] == '\004')) {
+	    if (buf[0] == '\004') {
 		message("Connection closed. Exiting");
 		quit();
 	    }
+	    (void) alarm(secs);
 	}
     }
 }

@@ -1,5 +1,5 @@
 /*
- *	@(#)invite.c	1.1 12/2/84
+ *	@(#)invite.c	1.2 12/2/84
 */
 
 #include "talk.h"
