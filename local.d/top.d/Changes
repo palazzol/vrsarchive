@@ -1,4 +1,10 @@
-	@(#)Changes	1.6	3/30/85
+	@(#)Changes	1.7	10/5/86
+
+Tue Nov 20 1984 - vrs (1.7)
+	Reconditionalized the code.  Code now depends on the presence of
+	specific symbols in the kernel namelist.  More conditionals added
+	to support XENIX Release 3 (System III) kernels, which are very
+	different from Berkeley kernels.
 
 Tue Nov 20 1984 - wnl (1.6)
 	Added an "exit" if sbrk's fail.  Added changes from Jonathon
