@@ -44,8 +44,8 @@
 #define MSGPOS		39
 #define RVPOS		51
 
-#define HOF_FILE	"/usr/games/lib/robots_hof"
-#define TMP_FILE	"/usr/games/lib/robots_tmp"
+#define HOF_FILE	GAMLIB/robots_hof"
+#define TMP_FILE	GAMLIB/robots_tmp"
 
 #define NUMSCORES	20
 #define NUMNAME		"Twenty"

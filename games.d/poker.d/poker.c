@@ -91,7 +91,10 @@ if ( connect( s, &sockaddr ) < 0 )
 if ( connect( s, &sockaddr, sizeof(sockaddr) ) < 0)
 # endif
 	{
-	system( "nohup /usr/games/lib/pokerd >/dev/null &" );
+	char buf[512];
+	strcpy(buf,"nohup ");
+	strcat(buf,GAMLIB/pokerd >/dev/null &");
+	system( buf );
 	sleep(3);
 # ifdef MASSCOMP
 	if ( connect( s, &sockaddr ) < 0 )

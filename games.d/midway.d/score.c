@@ -2,7 +2,7 @@
 #include <pwd.h>
 #include "globals.h"
 
-#define LOGFILE "/usr/public/.midwaylog"
+#define LOGFILE GAMLIB/.midwaylog"
 
 int maxpoints[2] = {637, 384};
 struct logs {

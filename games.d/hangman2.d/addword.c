@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #define WLEN            40
-#define word_file       "/usr/games/lib/.hang-words"
+#define word_file       GAMLIB/.hang-words"
 #define temp_file       "/tmp/hang"
 #define mode            300     /* -rw------ */
 

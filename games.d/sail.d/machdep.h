@@ -1,10 +1,10 @@
 /*
  * sccsid = "@(#)machdep.h	2.5 4/28/84";
  */
-#define LOGFILE "/usr/games/lib/saillog"
+#define LOGFILE GAMLIB/saillog"
 #define DRIVER1 "driver"
-#define DRIVER2 "/usr/games/lib/saildriver"
-#define DRIVER3 "/usr/public/.driver"
+#define DRIVER2 GAMLIB/saildriver"
+#define DRIVER3 GAMDIR/.driver"
 #define DRIVERNAME "driver"
 #define SETUID			/* player and driver run setuid */
 

@@ -16,7 +16,7 @@
 #define TORPEDOES       20
 #define MAXTIME         120
 
-static char *logfile = "/usr/games/lib/sd.logfile"; 
+static char *logfile = GAMLIB/sd.logfile"; 
 unsigned seed;
 int clock, fuel=TANKFULL, torps=TORPEDOES;
 int kills=0;
@@ -400,7 +400,7 @@ post_score()
 	chmod(logfile,0644);
 	chown(logfile,1,0);
         signal(SIGINT,s);
-        sprintf(buf,"/usr/local/clear; more %s", logfile);
+        sprintf(buf,"clear; more %s", logfile);
         system(buf);
 }
 space_death() {

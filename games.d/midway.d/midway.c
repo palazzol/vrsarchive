@@ -15,12 +15,11 @@ int argc;
 
 #ifndef VAX
 	uid = getuid();
-	wizard = uid == 25898 || uid == 25978;
+	wizard = uid == 0;
 	gldav(vec);
 	if ((vec[2] >> 8) > 7 && !wizard)
 	{
 		fprintf(stderr, "Load average is too high.\n");
-		execl("/usr/public/wotd","/usr/public/wotd","-a",  0);
 		exit(1);
 	}
 #endif

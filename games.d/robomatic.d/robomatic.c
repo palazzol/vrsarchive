@@ -16,8 +16,8 @@
 # include <curses.h>
 # include <signal.h>
 
-# define NEWROBOT	"/usr/local/games/robots"
-# define ROBOT		"/usr/games/robots"
+# define NEWROBOT	GAMLIB/robots"
+# define ROBOT		GAMLIB/robots"
 
 # define READ		0
 # define WRITE		1

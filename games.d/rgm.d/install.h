@@ -66,7 +66,7 @@
  * defined.
  */
 
-# define NEWROGUE	"/usr/mlm/bin/rogue" 
+/* # define NEWROGUE	GAMDIR/rogue" */
 
 /* 
  * This is the location of the player executable, which is the main
@@ -76,7 +76,7 @@
  * directory).
  */
 
-# define PLAYER		"/usr/mlm/bin/player"
+# define PLAYER		GAMLIB/player"
 
 /* 
  * This is the version of the "current" Rog-O-Matic, and is an uppercase
@@ -92,7 +92,7 @@
  * current directory.
  */
 
-# define ROGUE		"/usr/games/rogue"
+# define ROGUE		GAMDIR/rogue"
 
 /* 
  * This file is created in the current directory if the logging option is

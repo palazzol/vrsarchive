@@ -2,8 +2,8 @@
 # Copyright (C) 1985 by A. Appel, G. Jacobson, L. Hamey, and M. Mauldin
 #
 BINARIES=   rogomatic player rgmplot datesub histplot gene
-BINDIR=     /usr/mlm/bin/test
-PUBDIR=     /usr/mlm/rgm/src14
+BINDIR=     $(GAMLIB)/test
+PUBDIR=     $(GAMLIB)/rgm/src14
 CCFLAGS=    -g
 LDFLAGS=    
 OBJS=	    arms.o command.o database.o debug.o explore.o io.o learn.o\

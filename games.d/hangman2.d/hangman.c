@@ -8,7 +8,7 @@
 #include <signal.h>
 #include "curses.h"
 
-#define word_file       "/usr/games/lib/.hang-words"
+#define word_file       GAMLIB/.hang-words"
 #define MAX_CHARS       25
 #define MAX_GUESSES     10
 
