@@ -356,9 +356,14 @@ breamu(mtmp, mattk)			/* monster breathes at you (ranged) */
 	return(1);
 }
 
+#ifdef __STDC__
+boolean
+linedup(xchar ax,xchar ay,xchar bx,xchar by)
+#else
 boolean
 linedup(ax, ay, bx, by)
 register xchar ax, ay, bx, by;
+#endif
 {
 	register xchar x, y;
 
