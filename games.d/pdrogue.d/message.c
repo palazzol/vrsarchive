@@ -94,17 +94,25 @@ char *if_cancelled;
 
 slurp()
 {
+#ifdef FIONREAD
 	long ln;
 	short i, n;
 
 	do {
-#ifdef FIONREAD
 		ioctl(0, FIONREAD, &ln);
-#else !FIONREAD
-		ln = rdchk(0);
-#endif FIONREAD
 		n = stdin->_cnt + ln;
 
 		for (i = 0; i < ln; i++) getchar();
 	} while (ln > 0L);
+#else
+# ifdef TCGETA
+	struct termio buf;
+	ioctl(0, TCGETA, &buf);
+	ioctl(0, TCSETAF, &buf);
+# else
+	struct sgttyb buf;
+	ioctl(0, TIOCGETP, &buf);
+	ioctl(0, TIOCSETP, &buf);
+# endif
+#endif
 }
