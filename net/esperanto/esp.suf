@@ -1,0 +1,72 @@
+;	esperanto suffixes
+; for conflicts, grep for '^;<tab>'
+(
+; grammatical endings.  should only be allowed at very end (except o)
+	o	_noun
+	on	_nounObject
+	oj	_plNoun
+	ojn	_plNounObj
+	a	_adj
+	aj	_plAdj
+	an	_adjObj
+	ajn	_plAdjObj
+	e	_adv
+	as	_presVerb
+	is	_pastVerb
+	os	_futVerb
+	u	_verbImperitive
+	us	_politeVerb
+	i	_infinitive
+	j	_plural
+	n	_object
+
+; special correlative endings.  should only be allowed with correlative prefix
+	om	_quantity
+	el	_manner
+	es	_personPossesive
+	al	_reason
+	am	_time
+;	u	_person		;conflicts with verb imperitive
+
+; normal suffixes.  Should only be allowed before grammatical ending.
+	a^c	_disparagment
+	ad	_continued
+	a^j	_thing
+;	an	_person		;conflicts with adjective object.
+	ant	_presPartic
+	ar	_collection
+	at	_passivePresPartic
+	ator	_machinery
+	^cj	_diminutive
+	ebl	_ableToBe
+	ec	_abstractQuality
+	eg	_augment
+	ej	_place
+	em	_tendency
+	en	_motionTo
+	end	_passiveObligation
+	er	_fragment
+	et	_diminish
+;	ia	_inhabitant	;conflicts with, e.g., lia
+	id	_young
+	ig	_toCause
+	i^g	_become
+	il	_effector
+	in	_feminine
+	ind	_deserving
+	ing	_holder
+	int	_pastPartic
+	io	_country
+	ism	_theory
+	ist	_occupation
+	it	_passivePastPartic
+	nj	_diminutive
+	obl	_multiple
+;	on	_fraction	;conflicts with noun object
+	ont	_futPartic
+	op	_collectiveNumeral
+	ot	_passiveFutPartic
+	uj	_container
+	ul	_person
+	um	_MODIFY
+)

@@ -1,0 +1,21 @@
+;	esperanto prefixes
+(
+; correletatives
+	i	some_
+	ki	what_
+	^ci	every
+	ti	suchA_
+	neni	no_
+
+; normal prefixes (very similar to roots)
+	bo	inLaw_
+	de	from_
+	dis	dispersal_
+	ek	commencement_
+	eks	ex_
+	ge	bothSex_
+	mal	opposite_
+	mis	mis_
+	pra	primordiality_
+	re	again_
+)
