@@ -46,6 +46,9 @@ init_signals()
   core_dump = signal(SIGQUIT, signal_save_core);
   (void) signal(SIGILL, signal_save_core);
   (void) signal(SIGTRAP, signal_save_core);
+#ifndef SIGIOT
+#define SIGIOT SIGABRT
+#endif
   (void) signal(SIGIOT, signal_save_core);
   (void) signal(SIGEMT, signal_save_core);
   (void) signal(SIGFPE, signal_save_core);
