@@ -71,7 +71,11 @@
 
 #endif
 
+#ifdef TERMINFO
+short ospeed;	/* used in delay_output, terminfo doesn't declare ospeed */
+#else
 extern short ospeed;
+#endif
 static char erase_char, kill_char;
 static boolean settty_needed = FALSE;
 struct termstruct inittyb, curttyb;
