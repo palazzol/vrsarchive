@@ -6,14 +6,14 @@
 # Select which operating system you are using.
 # Acceptable flags are BSD and SYSV.
 #
-OS =	BSD
+OS =	SYSV
 
 #
 # Select method of installing the binaries into the system
 # NOTE: UNIX System V Release 2.0 does not have install
 # and should therefore use either mv or cp.
 #
-INSTALL = install
+INSTALL = : install
 
 #
 # Select destination directory in the system.
@@ -32,8 +32,8 @@ SDB =
 
 #
 # Select whether code optimization is to be done.
-OPT =	-O
-#OPT =
+OPT =	-i
+#OPT = -O -i
 
 #
 # Select whether profiling is to be done.
@@ -91,8 +91,8 @@ BINS = trek73 bpv shipyard
 
 all:	${BINS}
 
-trek73:	${T73OBJECTS} parsit.o
-	cc ${CFLAGS} ${T73OBJECTS} parsit.o ${LIBS}
+trek73:	${T73OBJECTS}
+	cc ${CFLAGS} ${T73OBJECTS} ${LIBS}
 	mv a.out trek73
 
 bpv:	${BPVOBJECTS}
