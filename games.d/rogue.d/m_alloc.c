@@ -6,6 +6,7 @@
  *	save routines can write the area from 0 to _end as a very unportable
  *	save routine.
 */
+#ifndef __STDC__
 #include <assert.h>
 #include <stdio.h>
 
@@ -156,3 +157,4 @@ unsigned nsiz;		/* Desired new size				*/
   for (i = 0; i < osiz; i++)
     *q++ = *p++;
 }
+#endif
