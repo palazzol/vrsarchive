@@ -1,24 +1,37 @@
+#
 # Something quick and dirty... you must put things where you want...
 #
-all:
-	cd src/kio ; make
-	cd src/munge ; make
-	cd src/adv ; make
+include ../../CONFIG
+
+all:	src/munge/munge src/adv/adv
+
+src/munge/munge: force
+	@cd src/kio; make
+	@cd src/munge ; make
+
+src/adv/adv: force
+	@cd src/kio ; make
+	@cd src/adv ; make
+
+adv.key adv.rec: src/munge/munge
 	src/munge/munge < comcave
 	@echo "All done."
 
-lint:
-	cd src/kio ; make lint
-	cd src/munge ; make lint
-	cd src/adv ; make lint
-
-print:
-	cd src/kio ; make print
-	cd src/munge ; make print
-	cd src/adv ; make print
+lint print:
+	@cd src/kio ; make $@
+	@cd src/munge ; make $@
+	@cd src/adv ; make $@
 
 clean:
-	cd src/kio ; rm -f klib.a *.o
-	cd src/munge ; rm -f munge mlib.a *.o
-	cd src/adv ; rm -f adv alib.a *.o
+	@cd src/kio ; make $@
+	@cd src/munge ; make $@
+	@cd src/adv ; make $@
 	rm -f adv.key adv.rec
+
+install: adv.key adv.rec src/adv/adv
+	cp adv.key adv.rec $(GAMLIB)
+	cd $(GAMLIB); chmod 644 adv.key adv.rec
+	cp src/adv/adv $(GAMDIR)/adventure
+	cd $(GAMDIR); chmod 711 adventure
+
+force: ;
