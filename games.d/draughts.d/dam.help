@@ -1,0 +1,75 @@
+Information about dam3.0
+
+call:
+% dam [options]
+
+options:
+-w      computer plays white
+-b      computer plays black
+-z      computer speelt zwart
+-d      use display features of HP
+-n      normal output, even to HP
+-p<nr>  print board once every <nr> moves
+-p      do not print the board unless explicitly asked for
+        (by default the board is printed after each move)
+-r<nr>  define recursion depth (default -r100)
+-s<nr>  sleep for <nr> seconds after printing the board
+
+In addition options of the form
+!cmd
+are allowed, and have the same effect as the same command
+during play. Note that if cmd contains spaces or special
+characters, the option should be given as
+"!cmd"
+
+During play the moves must be typed in the format
+<from>-<to>     for a non-capture
+<from>x<to>     for a capture
+                if several captures with the same 'from' and 'to'
+                fields are possible, all captured stones must be
+                listed in order:
+<from>x<to>(<p1>,...,<pn>)
+                on the other hand if either the <to> or the <from>
+                field defines the move uniquely, it suffices:
+<from>
+
+instead of typing a move, a command starting with '!' can be given.
+commands:
+!a      alter position (not allowed after an interrupt)
+        format:
+!a<col> <nr>    alter field <nr> into a piece of type <col>
+!a <nr>         make field <nr> empty
+!b      play black
+!c      crown pieces of opponent to kings
+!d<str> define display image or printed symbol for the white and
+        black pieces (default: " wzWZ");
+!e      end this game (= resign)
+!h      halt and read a series of commands ending
+        with a line containing . only
+!i      print information (i.e., this text)
+!I      I play black and white
+!Iw     I play white
+!Ib     I play black
+!Iz     ik speel zwart
+!m<nr>  retrieve the position after the <nr>th move
+!m-<nr> take back <nr> moves
+!mw     white to move
+!mb     black to move
+!mz     zwart aan zet
+!pb     print board
+!p      print board (and on HP also the list of moves)
+!p<nr>  print board every <nr> moves
+!r<nr>  define recursion depth
+!rm<nr> define minimal recursion depth (default 1; should be 3)
+!rf<file>  read position from file
+!rt     read position from terminal
+        format of position:
+<col>: <nr>-<nr>,<nr>
+        where <col> is w,z,b,wk,wd,zk,zd,bk or bd
+        the description ends with a dot.
+!s<nr>  sleep for <nr> seconds after each prbord
+!t      print time used
+!v      define strategy
+!x      exit
+!w      play white
+!z      speel zwart

@@ -1,0 +1,13 @@
+This is a dam/continental checkers/jeu de dames/draughts playing
+program. It adheres accurately to the international rules
+(so don't think the program is wrong in case your friends taught
+you the game differently).
+I wrote this in the times that int was the only data type
+and converted it today to something that passes the C compiler
+and leaves lint reasonably happy.
+People with more spare time could make the program more useful
+and more portable by
+1. Rewriting prbord.c to use TERMCAP ; right now it only works
+   on a hp2640a or on a hardcopy terminal.
+2. Rewriting pmesg() to use sprintf() to avoid varargs problems.
+Good luck!
