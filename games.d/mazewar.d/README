@@ -1,0 +1,24 @@
+This program was written for 4.2 BSD running on a VAX 750.   It makes
+use of sockets for communicating between two copies of the program.
+Therefore, porting this program to other flavors of UNIX will be painful.
+
+This program requires the "dpy" library module which I have previously
+posted to net.sources.  If you do not have this module, then you must
+get it from someone else on the net.  I can no longer supply copies of
+dpy since this is my last day at Daisy.
+
+The following files need to be handled specially:
+
+objects.war	This is the default object initialization file.  Copy it
+		to /usr/games/lib.
+
+boards.war	This is an example setup file.  Each player actually has
+		their own setup file ".warsetups" in their HOME directory.
+
+war.6		This is the manual page for war.  Copy it to /usr/man/man6.
+
+There are still several features that I would like to see in the game,
+but I am out of time (see the bug list in the man page).  However, the
+current version still contains enough features to be playable.  Enjoy!
+
+		David I. Bell
