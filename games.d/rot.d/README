@@ -1,0 +1,14 @@
+This program cascades letters from the top of the terminal screen
+to the bottom in a waterfall effect.  There was a note in the
+original posting about this program not working on terminals that
+require padding (PC is read but not used).  Also, this will be
+pretty slow at lower baudrates.
+
+--
+Original source from:
+
+    Peter da Silva (ihnp4!shell!neuro1!{hyd-ptd,datafact,baylor}!peter)
+
+Makefile and README from:
+
+    Bill Randle (billr@tekred.TEK.COM)
