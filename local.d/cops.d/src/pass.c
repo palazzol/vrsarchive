@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 #ifndef lint
-static char *rcsid = "$Header: /home/Vince/cvs/local.d/cops.d/src/pass.c,v 1.2 1990-04-20 17:05:30 vrs Exp $";
+static char *rcsid = "$Header: /home/Vince/cvs/local.d/cops.d/src/pass.c,v 1.3 1990-04-21 17:00:32 vrs Exp $";
 #endif
 
 /*
@@ -19,6 +19,9 @@ static char *rcsid = "$Header: /home/Vince/cvs/local.d/cops.d/src/pass.c,v 1.2 1
 
 /*
  *	$Log: not supported by cvs2svn $
+ *Version 1.2  90/04/20  17:05:30  vrs
+ *Apply patch from the net
+ *
  *	Revision 1.1  85/09/10  16:00:56  root
  *	Initial revision
  *	
@@ -232,8 +235,10 @@ chkpw()
     register struct passwd *pwd;
     struct passwd	*getpwent();
     char		guess[100];
-    char		*wordarray[ARB_CONST];
-    char		*malloc(), **wordptr, **endptr;
+    char		*malloc(), **wordptr;
+    char		**wordarray = (char **)malloc(ARB_CONST*sizeof(*wordarray));
+	int			count = ARB_CONST;
+    char		**endptr = wordarray + count;
     int			done = 0;
 
 
@@ -249,17 +254,18 @@ chkpw()
 	/*
 	 * note that endptr points to space OUTSIDE of wordarray
 	 */
-	endptr = wordarray + (sizeof(wordarray)/sizeof(char *));
 
 	while (fscanf(wlf,"%[^\n]\n",guess) != EOF)
 	{
   /* SunOs 4.03 on a Sun 3/80 didn't work properly, needed this one line fix */
-	    if (feof(wlf)) break;
+	    /*if (feof(wlf)) break;*/
 
 	    if (wordptr == endptr)
 	    {
-		fprintf(stderr,"Ran out of wordlist space. ARB_CONST %d must be too small.\n", ARB_CONST);
-		exit(1);
+		count += ARB_CONST;
+		wordarray = (char **)realloc(wordarray, count*sizeof(*wordarray));
+		endptr = wordarray + count;
+		wordptr = endptr - ARB_CONST;
 	    }
 	    if ((*wordptr = malloc(1+strlen(guess))) == NULL)
 	    {
@@ -273,7 +279,7 @@ chkpw()
     }
 
     while ((pwd = getpwent()) != 0 ) {
-
+	done = 0;
 	if (verbose || users) {
 	    if (Curpw == NULL)
 		printf("\t%s \"%s\"\n", pwd->pw_name, pwd->pw_gecos);
@@ -290,6 +296,18 @@ chkpw()
 		else
 		    printf("Warning!  %s -- Password Problem: null passwd:\t%s\tshell: %s\n",
 			Curpw, pwd->pw_name, pwd->pw_shell);
+		fflush(stdout);
+		}
+	    continue;
+	}
+	if (strlen(pwd->pw_passwd) < 13) {
+	    if (verbose) {
+		if (Curpw == NULL)
+		    printf("Invalid Password Skipped: name:\t%s\tpasswd: %s\n",
+			pwd->pw_name, pwd->pw_passwd);
+		else
+		    printf("%s -- Invalid Password Skipped: name:\t%s\tpasswd: %s\n",
+			Curpw, pwd->pw_name, pwd->pw_passwd);
 		fflush(stdout);
 		}
 	    continue;
@@ -338,7 +356,7 @@ chkpw()
 	    {
 		if (*wordptr == NULL)
 		    break;
-		if (uandltry(pwd,*wordptr++))
+		if (uandltry(pwd,*(wordptr++)))
 		{
 		    done++;
 		    break;
