@@ -15,7 +15,7 @@ all:	$(ALL) $(CMAP)
 	uudecode $<
 
 clean:
-	rm -f $(ALL)
+	rm -f $(ALL) $(CMAP)
 
 install: $(ALL) $(CMAP) $(MAN1) $(BINDIR) $(LIBDIR)
 	cp $(ALL) $(BINDIR)
