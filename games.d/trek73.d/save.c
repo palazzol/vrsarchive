@@ -150,7 +150,8 @@ restore(file, envp)
 register char *file;
 char **envp;
 {
-    register int inf, (*func)();
+    register int inf;
+    void (*func)();
     extern char **environ;
     char buf[MAXSTR];
     STAT sbuf2;
@@ -158,7 +159,7 @@ char **envp;
 #ifdef SIGTSTP
     func = signal(SIGTSTP, SIG_IGN);
 #endif
-#ifdef SYSV
+#ifdef SYS5
     func = signal(SIGQUIT, SIG_IGN);
 #endif
 
