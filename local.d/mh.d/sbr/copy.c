@@ -9,4 +9,4 @@ register char  *from,
 	continue;
 
     return (to - 1);
-};
+}
