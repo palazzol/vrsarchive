@@ -154,10 +154,14 @@ savegame(fname)
 	struct stat statbuf;
 	nosignal=1;  lflush();	savelevel();
 	ointerest();
+#ifdef SAVEINHOME
+	setuid(getuid());	/* Gain permission for $HOME	*/
+	umask(022);
+#endif
 	if (lcreat(fname) < 0)
 		{
 		lcreat((char*)0); lprintf("\nCan't open file <%s> to save game\n",fname);
-		nosignal=0;  return(-1);
+		nosignal=0;  return(-1);	/* NOTE: MUST EXIT SOON (uid) */
 		}
 
 	set_score_output();
@@ -257,7 +261,14 @@ restoregame(fname)
 		if (lappend(fname) < 0) fcheat();  else { lprc(' '); lwclose(); }
 		lcreat((char*)0);
 		}
-	else if (unlink(fname) < 0) fcheat(); /* can't unlink save file */
+	else
+	    if (fork() == 0) {
+#ifdef SAVEINHOME
+		setuid(getuid());	/* Gain permission for $HOME	*/
+#endif
+		exit(unlink(fname));
+	    } else
+		if (wait((int *)0) < 0) fcheat(); /* can't unlink save file */
 /*	for the greedy cheater checker	*/
 	for (k=0; k<6; k++) if (c[k]>99) greedy();
 	if (c[HPMAX]>999 || c[SPELLMAX]>125) greedy();
