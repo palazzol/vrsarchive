@@ -12,7 +12,7 @@
 
 #ifndef CURSES
 #include <curses.h>
-#endif CURSES
+#endif /*CURSES*/
 #include <stdio.h>
 #include "rogue.h"
 

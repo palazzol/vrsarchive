@@ -12,7 +12,7 @@
 
 #ifndef CURSES
 #include <curses.h>
-#endif CURSES
+#endif /*CURSES*/
 #include "rogue.h"
 
 short m_moves = 0;
