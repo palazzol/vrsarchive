@@ -1,0 +1,58 @@
+(Message news/tools:307)
+Path: littlei!intelhf!ichips!iWarp.intel.com!uunet!zaphod.mps.ohio-state.edu!mips!smsc.sony.com!tin
+From: tin@smsc.sony.com (Tin Le)
+Newsgroups: alt.sources
+Subject: tsys, similar to crashme, alpha release
+Keywords: crashme syscall
+Message-ID: <1991Sep20.232550.5013@smsc.sony.com>
+Date: Fri, 20 Sep 91 16:25:50 PDT
+Sender: tin@smsc.sony.com (Le Tin)
+Followup-To: alt.sources.d
+Organization: Sony Microsystems Corp, San Jose, CA
+Lines: 292
+
+
+  As a QA engineer (besides other hats I wear ;>) responsible for testing
+  our port of SVR4, I am always interested in tests that can "exercise" an
+  operating system.
+
+  Crashme gave me an idea to write a similar test program that exercises
+  the OS's protection against bad/invalid arguments to system calls.  So
+  I whipped one up in short order using some of the code from crashme.
+  The program is call tsys, short for "test syscall".  I tried it out on
+  a number of systems we have in our lab, and the results were quite inform-
+  ative.  I will have to check first to see if I can release the results.
+  Sorry, but I don't know much about legal mumbo-jumbo.
+
+  Anyway, here is an early alpha release of tsys.  You are welcome to try
+  it out and please email your results (post them too if you wish).  I will
+  collect and post the results on a regular basis for those interested.
+
+  I've exchanged email with George Carrette, the author of crashme, and he
+  has expressed an interest in integrating tsys into crashme.  I believe
+  that will be a useful tool for QA'ing OS.
+
+**** WARNING *****
+
+	Don't say that I have not WARNED you.  I know for a fact that
+	tsys (like crashme) can panic (crash) systems from several different
+	vendors.  Make sure you do NOT run this on a public machine, or a
+	server, or any machine with valuable data!
+
+	Use it at your own risks!
+
+******************
+
+  Once more for my own protection:
+
+ * THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
+ * IN NO EVENT SHALL HE OR SONY MICROSYSTEMS BE LIABLE FOR ANY SPECIAL,
+ * INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+ * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTOUS ACTION, ARISING OUT OF OR IN CONNECTION
+ * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+-- Tin Le
+
+Email: tin@smsc.Sony.COM
