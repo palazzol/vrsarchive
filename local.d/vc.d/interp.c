@@ -392,7 +392,7 @@ register int v1,v2;
     if (!s)
 	return(0);
 
-    if (v1 < 0 || v2 < v1 || strlen(s) <= v2 ) {
+    if (v1 < 0 || v2 < v1 || strlen(s) <= (unsigned)v2 ) {
 	xfree(s);
 	p = xmalloc((unsigned)1);
 	p[0] = 0;
@@ -450,11 +450,10 @@ EvalAll () {
     while (RealEvalAll() && (repct++ <= MAXPROP));
 }
 
+extern SIG_T quit();
 
-#ifdef SYSV3
-void
-#endif
-eval_fpe() /* Trap for FPE errors in eval */
+SIG_T
+eval_fpe(dummy) /* Trap for FPE errors in eval */
 {
 	longjmp(fpe_save, 1);
 }
@@ -464,11 +463,6 @@ RealEvalAll () {
     register i,j;
     int chgct = 0;
     register struct ent *p;
-#ifdef SYSV3
-    void quit();
-#else
-    int quit();
-#endif
 
     (void) signal(SIGFPE, eval_fpe);
     for (i=0; i<=maxrow; i++)

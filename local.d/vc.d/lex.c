@@ -49,8 +49,6 @@ struct key statres[] = {
 #include "statres.h"
     0, 0};
 
-#define ctl(x) ('x'&037)
-
 yylex () {
     register char *p = line+linelim;
     int ret;
@@ -205,9 +203,10 @@ struct ltchars old_chars, new_chars;
 #endif
 
 char dont_use[] = {
-    ctl(z), ctl(r), ctl(l), ctl(b), ctl(c), ctl(f), ctl(g), ctl([),
-    ctl(h), ctl(m), ctl(j), ctl(n), ctl(p), ctl(q), ctl(s), ctl(t),
-    ctl(u), ctl(v), ctl(e), ctl(a), ctl(i), ctl(w), 0,
+    ctl('z'), ctl('r'), ctl('l'), ctl('b'), ctl('c'), ctl('f'), ctl('g'),
+	ctl('['), ctl('h'), ctl('m'), ctl('j'), ctl('n'), ctl('p'), ctl('q'),
+	ctl('s'), ctl('t'), ctl('u'), ctl('v'), ctl('e'), ctl('a'), ctl('i'),
+	ctl('w'), 0,
 };
 
 charout(c)
@@ -227,10 +226,10 @@ initkbd()
     if (tgetent(buf, getenv("TERM")) <= 0)
 	return;
 
-    km[0].k_str = tgetstr("kl", &p); km[0].k_val = ctl(b);
-    km[1].k_str = tgetstr("kr", &p); km[1].k_val = ctl(f);
-    km[2].k_str = tgetstr("ku", &p); km[2].k_val = ctl(p);
-    km[3].k_str = tgetstr("kd", &p); km[3].k_val = ctl(n);
+    km[0].k_str = tgetstr("kl", &p); km[0].k_val = ctl('b');
+    km[1].k_str = tgetstr("kr", &p); km[1].k_val = ctl('f');
+    km[2].k_str = tgetstr("ku", &p); km[2].k_val = ctl('p');
+    km[3].k_str = tgetstr("kd", &p); km[3].k_val = ctl('n');
     ktmp = tgetstr("ks",&p);
     if (ktmp)  {
 	(void) strcpy(ks_buf, ktmp);
@@ -260,9 +259,9 @@ initkbd()
 #ifdef TIOCSLTC
     (void)ioctl(fileno(stdin), TIOCGLTC, (char *)&old_chars);
     new_chars = old_chars;
-    if (old_chars.t_lnextc == ctl(v))
+    if (old_chars.t_lnextc == ctl('v'))
 	new_chars.t_lnextc = -1;
-    if (old_chars.t_rprntc == ctl(r))
+    if (old_chars.t_rprntc == ctl('r'))
 	new_chars.t_rprntc = -1;
     (void)ioctl(fileno(stdin), TIOCSLTC, (char *)&new_chars);
 #endif
@@ -384,10 +383,10 @@ nmgetch()
 
     c = getch();
     switch (c) {
-    case KEY_LEFT:  c = ctl(b); break;
-    case KEY_RIGHT: c = ctl(f); break;
-    case KEY_UP:    c = ctl(p); break;
-    case KEY_DOWN:  c = ctl(n); break;
+    case KEY_LEFT:  c = ctl('b'); break;
+    case KEY_RIGHT: c = ctl('f'); break;
+    case KEY_UP:    c = ctl('p'); break;
+    case KEY_DOWN:  c = ctl('n'); break;
     default:   c = c & 0x7f; 
     }
     return (c);
@@ -416,10 +415,8 @@ char *str;
 	(void) clrtoeol();
 }
 
-#ifdef SYSV3
-void
-#endif
-fpe_trap()
+SIG_T
+fpe_trap(dummy)
 {
     longjmp(fpe_buf, 1);
 }
