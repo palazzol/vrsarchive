@@ -1,5 +1,5 @@
 #
-# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.9 2002-11-24 02:16:35 Vincent Exp $
+# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.10 2002-11-24 20:11:19 vrs Exp $
 #
 OPTIONS	= -DDEST=$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"$(SAFEUID)\" \
 	  -DUIDA=0 -DUIDB=500 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
@@ -104,9 +104,9 @@ map:		map.c
 # Convert old character file to new format.
 # 'convert' is meant to be run only once.
 # PLUS = PHANTPLUS for conversion from 3.3.1+.
-convert:	convert.c oldplayer.h phantstruct.h
-		$(CC) $(CFLAGS) $(PLUS) convert.c $(LIBS) -o convert
-		convert
+convert$(EXE):	convert.c oldplayer.h phantstruct.h
+		$(CC) $(CFLAGS) $(PLUS) convert.c $(LIBS) -o $@
+		./convert$(EXE)
 		@echo "New data is in newcharacs."
 
 # Clean up directory after installation.
