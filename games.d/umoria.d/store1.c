@@ -157,7 +157,7 @@ int store_check_num(store_num)
 int store_num;
 {
   int store_check;
-  int i;
+  unsigned i;
   store_type *s_ptr;
   treasure_type *i_ptr;
 
@@ -199,8 +199,9 @@ store_carry(store_num, ipos)
 int store_num;
 int *ipos;
 {
-  int item_num, item_val;
-  int typ, subt, icost, dummy;
+  int item_num;
+  unsigned typ, item_val;
+  int subt, icost, dummy;
   int flag;
   treasure_type *i_ptr;
   store_type *s_ptr;
@@ -254,7 +255,7 @@ store_destroy(store_num, item_val, one_of)
 int store_num, item_val;
 int one_of;
 {
-  int j;
+  unsigned j;
   store_type *s_ptr;
   treasure_type *i_ptr;
   
@@ -337,14 +338,15 @@ int store_num;
 /* Initialize and up-keep the store's inventory.		-RAK-	*/
 store_maint()
 {
-  int i, j;
+  int i;
+  unsigned j;
   store_type *s_ptr;
 
   for (i = 0; i < MAX_STORES; i++)
     {
       s_ptr = &store[i];
       s_ptr->insult_cur = 0;
-      if (s_ptr->store_ctr > STORE_MAX_INVEN) 
+      if (s_ptr->store_ctr > (unsigned)STORE_MAX_INVEN) 
 	for (j = 0; j < (s_ptr->store_ctr-STORE_MAX_INVEN+2); j++)
 	  store_destroy(i, randint((int)s_ptr->store_ctr)-1, FALSE);
       else if (s_ptr->store_ctr < STORE_MIN_INVEN) 

@@ -422,7 +422,7 @@ char *out_val;
     }
   else
     (void) sprintf(tmp_str, "%6d", stat);
-  if (strlen(tmp_str) < 6)
+  if (strlen(tmp_str) < (unsigned)6)
     (void) strcpy(tmp_str, pad(tmp_str, " ", 6));
   (void) strcpy(out_val, tmp_str);
 }
@@ -544,7 +544,7 @@ double chr_adj()
       case 3:  return(0.25);  break;
       default: return(0.00);  break;   /* Error trap    */
       }
-  return(0.00);
+	/* NOTREACHED */
 }
 
 
@@ -1253,7 +1253,8 @@ inven_carry(item_val)
 int *item_val;
 {
   int item_num, wgt;
-  int typ, subt;
+  unsigned typ;
+  int subt;
   int flag;
   treasure_type *i_ptr;
 
@@ -1309,7 +1310,7 @@ spl_rec *spell;
     spell->splchn -= 3*(int_adj()-1);
   else
     spell->splchn -= 3*(wis_adj()-1);
-  if (s_ptr->smana > py.misc.cmana)
+  if ((unsigned)s_ptr->smana > py.misc.cmana)
     spell->splchn += 5*(s_ptr->smana-(int)py.misc.cmana);
   if (spell->splchn > 95) 
     spell->splchn = 95;
@@ -1782,7 +1783,7 @@ int *wtohit;
   blows  = 1;
   *wtohit = 0;
   p_ptr = &py.stats;
-  if ((p_ptr->cstr*15) < weight)
+  if ((p_ptr->cstr*15) < (unsigned)weight)
     *wtohit = p_ptr->cstr*15 - weight;
   else
     {
@@ -1792,7 +1793,7 @@ int *wtohit;
       else if (p_ptr->cdex < 108)  blows = 4;
       else if (p_ptr->cdex < 118)  blows = 5;
       else                         blows = 6;
-      adj_weight = ((p_ptr->cstr*10)/weight);
+      adj_weight = ((p_ptr->cstr*10)/(unsigned)weight);
       if      (adj_weight < 2)  blows = 1;
       else if (adj_weight < 3)  blows = (blows/3.0) + 1;
       else if (adj_weight < 4)  blows = (blows/2.5) + 1;

@@ -29,7 +29,7 @@ speak(point)
      * rtext(point) points to the proper record in the file  
      */
     int             i, bi, t, kk;
-    long            z;
+    unsigned long   z;
 
     if (start == 0) {
 	start += 1;

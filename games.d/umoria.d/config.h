@@ -10,9 +10,17 @@
 #ifndef LIBDIR
 #define LIBDIR		"/usr/games/lib/moriadir
 #endif
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(LIBDIR) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(LIBDIR)/x"
+#endif
 /* related files */
-#define MORIA_HOU  LIBDIR/Moria_hours"
-#define MORIA_MOR  LIBDIR/Moria_news"
-#define MORIA_MAS  LIBDIR/Character"
-#define MORIA_TOP  LIBDIR/Highscores"
-#define MORIA_HLP  LIBDIR/Helpfile"
+#define MORIA_HOU  FILENM(Moria_hours)
+#define MORIA_MOR  FILENM(Moria_news)
+#define MORIA_MAS  FILENM(Character)
+#define MORIA_TOP  FILENM(Highscores)
+#define MORIA_HLP  FILENM(Helpfile)
