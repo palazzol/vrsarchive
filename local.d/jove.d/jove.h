@@ -27,7 +27,9 @@
 
 
 #if !(defined(MSDOS) || defined(MAC))
+#ifndef __STDC__
 #define void int
+#endif
 #endif
 
 #if !(defined(IBMPC) || defined(MAC))
@@ -161,10 +163,10 @@ extern int	BufSize;
 #define SetMajor(x)	((curbuf->b_major = x), UpdModLine = YES)
 
 #ifdef ASCII
-extern char	CharTable[NMAJORS][128];
+extern unsigned char	CharTable[NMAJORS][128];
 extern char	CaseEquiv[128];
 #else /* IBMPC or MAC */
-extern char	CharTable[NMAJORS][256];
+extern unsigned char	CharTable[NMAJORS][256];
 extern char	CaseEquiv[256];
 #endif /* ASCII */
 
@@ -246,7 +248,7 @@ struct process {
 		p_pid;		/* pid of real child i.e. not portsrv */
 #else
 	int	p_fd,		/* file descriptor of pty? opened r/w */
-		p_pid;		/* pid of child (the shell) */
+		p_opid;		/* pid of child (the shell) */
 #endif
 	Buffer	*p_buffer;	/* add output to end of this buffer */
 	char	*p_name;	/* ... */
@@ -358,11 +360,7 @@ struct variable {
 struct cmd {
 	int	Type;
 	char	*Name;
-#ifdef MAC
 	void (*c_proc)();
-#else
-	int (*c_proc)();
-#endif
 #ifdef MAC
 	char c_map;			/* prefix map for About Jove... */
 	char c_key;			/* key binding for About Jove... */
