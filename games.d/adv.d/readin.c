@@ -239,7 +239,7 @@ rdbyte()
 	return (*b2++ & 255);
 }
 
-#define bcopy(fr, to, ln) {char *f=fr, *t=to; int l=ln; while (l--) *t++=*f++; }
+#define bcopy(fr, to, ln) {char *f=fr, *t=to;int l=ln;while (l--) *t++ = *f++;}
 
 char *
 savb2()
