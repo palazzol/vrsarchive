@@ -15,7 +15,7 @@
 #include	<sys/ioctl.h>
 #endif
 #ifdef __STDC__
-#include <sys/ttold.h>
+#include <termios.h>
 #endif
 struct termio termio;
 #endif
