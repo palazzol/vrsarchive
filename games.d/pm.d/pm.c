@@ -22,9 +22,6 @@ reg	char	**argv;
 			case 's':
 				check_scrs();
 				exit(0);
-			case 'B':
-				baud = to_baud(++*argv);
-				break;
 			default:
 				usage();
 		}
@@ -88,6 +85,6 @@ reg	char	**argv;
 */
 void	usage ()
 {
-	fprintf(stderr, "Usage: %s [-s] [-p] [-Bn]\n", argv0);
+	fprintf(stderr, "Usage: %s [-s] [-p]\n", argv0);
 	exit(1);
 }
