@@ -1,18 +1,18 @@
 #
-#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.2 1987-07-17 15:48:58 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.3 1987-07-26 13:15:15 vrs Exp $
 #
-ALL	= window
+ALL	= displays
 OPTIONS	= -O
 MODEL	= -i -F 2000
 include ../../CONFIG
 SRCS	= keyboard.c main.c pdisplay.c pipe.c pty.c vdisplay.c
 OBJS	= $(SRCS:.c=.o)
 
-window: $(OBJS)
+$(ALL): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 clean:
-	rm -f lint window $(OBJS)
+	rm -f lint $(ALL) $(OBJS)
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)
