@@ -9,7 +9,7 @@
 #include <sys/brk.h>
 #include <sys/sd.h>
 
-extern char *tmpnam();
+extern char *mktemp();
 
 static long l = -1;		/* for (char *)-1 casts, kernel style	*/
 
@@ -47,10 +47,10 @@ int pf;				/* PF_UNIX, or PF_UNSPEC		*/
     abort();
   }
   /*
-   *	BUG -- can't bind() accross filesystems.  tmpnam() currently gives
-   *	names of the form /usr/tmp/XXXXXXX, so beware.
+   *	BUG -- can't bind() accross filesystems.  Configure PORT so the
+   *	unbound sockets are in the same file-system as the bound ones.
   */
-  nam = tmpnam((char *)NULL);
+  nam = mktemp(PORT);
   while ((addr = sdget(nam, SD_CREAT|SD_WRITE, SDSIZE, SDMODE)) == (char *)l)
     if ((errno != EAGAIN) && (errno != EINTR)) {
       perror("sdget in socket");
