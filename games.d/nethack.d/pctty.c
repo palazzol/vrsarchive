@@ -139,7 +139,7 @@ static int last_multi;
 char *
 parse()
 {
-	static char inline[COLNO];
+	static char in_line[COLNO];
 	register foo;
 
 	flags.move = 1;
@@ -176,22 +176,22 @@ parse()
 
 	if(multi) {
 		multi--;
-		save_cm = inline;
+		save_cm = in_line;
 	}
-	inline[0] = foo;
-	inline[1] = 0;
+	in_line[0] = foo;
+	in_line[1] = 0;
 	if(foo == 'g' || foo == 'G'){
-		inline[1] = getchar();
-		savech(inline[1]);
-		inline[2] = 0;
+		in_line[1] = getchar();
+		savech(in_line[1]);
+		in_line[2] = 0;
 	}
 	if(foo == 'm' || foo == 'M'){
-		inline[1] = getchar();
-		savech(inline[1]);
-		inline[2] = 0;
+		in_line[1] = getchar();
+		savech(in_line[1]);
+		in_line[2] = 0;
 	}
 	clrlin();
-	return(inline);
+	return(in_line);
 }
 
 char
