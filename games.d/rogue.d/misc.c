@@ -113,7 +113,7 @@ bool wakeup;
 
 			if ((tp = _monst[index]) == NULL)
 			{
-				if (after && on(player, ISTRIP))
+				if (after && on(player, ISTRIPY))
 						switch (ch)
 						{
 							case FLOOR:
@@ -149,7 +149,7 @@ bool wakeup;
 						ch = tp->t_disguise;
 				}
 
-			if (tp == NULL || !on(player, ISTRIP))
+			if (tp == NULL || !on(player, ISTRIPY))
 			{
 				move(y, x);
 				if (ch != inch())
@@ -231,7 +231,8 @@ register int y, x;
 				return op;
 	}
 #ifdef WIZARD
-	debug(sprintf(prbuf, "Non-object %d,%d", y, x));
+	sprintf(prbuf, "Non-object %d,%d", y, x);
+	debug(prbuf);
 	return NULL;
 #else
 	/* NOTREACHED */
@@ -273,11 +274,11 @@ eat()
 		{
 			pstats.s_exp++;
 			msg("%s, this food tastes awful",
-				on(player, ISTRIP) ? "Bummer" : "Yuk");
+				on(player, ISTRIPY) ? "Bummer" : "Yuk");
 			check_level();
 		}
 		else
-			msg("%s, that tasted good", on(player, ISTRIP) ? "Oh, wow" : "Yum");
+			msg("%s, that tasted good", on(player, ISTRIPY) ? "Oh, wow" : "Yum");
 }
 
 /*
