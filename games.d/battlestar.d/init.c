@@ -9,7 +9,7 @@ initialize(startup)
 	char startup;
 {
 	register struct objs *p;
-	int die();
+	SIG_T die();
 
 	puts("Version 4.2, fall 1984.");
 	puts("First Adventure game written by His Lordship, the honorable");
@@ -86,7 +86,7 @@ checkout(uname)
 				uname);
 			CUMBER = 3;
 			WEIGHT = 9;	/* that'll get him! */
-			clock = 10;
+			gclock = 10;
 			setbit(location[7].objects, WOODSMAN);	/* viper room */
 			setbit(location[20].objects, WOODSMAN);	/* laser " */
 			setbit(location[13].objects, DARK);	/* amulet " */
