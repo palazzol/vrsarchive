@@ -12,30 +12,61 @@
 
 #include <signal.h>
 #include <curses.h>
+
+#ifdef BSD42
+#include <strings.h>
+#else
+#ifndef SYSIII
+#include <string.h>
+#endif
+#endif
+
+#include <stdio.h>
 #include "sc.h"
+
+char *getenv();
+
+#ifdef SYSV3
+void exit();
+#endif
 
 /* default column width */
 
 #define DEFWIDTH 10
 #define DEFPREC   2
 
-#define RESCOL 4  /* columns reserved for row numbers */
-#define RESROW 3  /* rows reserved for prompt, error, and column numbers */
+#define MAXCMD 160	/* for ! command below */
+
+/* Globals defined in sc.h */
+
+struct ent *tbl[MAXROWS][MAXCOLS];
+int strow, stcol;
+int currow, curcol;
+int savedrow, savedcol;
+int FullUpdate;
+int maxrow, maxcol;
+int fwidth[MAXCOLS];
+int precision[MAXCOLS];
+char col_hidden[MAXCOLS];
+char row_hidden[MAXROWS];
+char line[1000];
+int changed;
+struct ent *to_fix;
+int modflg;
+int numeric;
+char *mdir;
+int showsc, showsr;	/* Starting cell for highlighted range */
 
 char curfile[1024];
+char    revmsg[80];
 
-int linelim = -1;
-int showme = 1;  /* 1 to display the current cell in the top line */
-int batch = 0;
-
-error (fmt,a,b,c,d,e) {
-    if (batch) fprintf(stderr,fmt,a,b,c,d,e);
-    else {
-	move (1,0);
-	clrtoeol ();
-	printw (fmt,a,b,c,d,e);
-    }
-}
+int  linelim = -1;
+int  showme = 1;	/* 1 to display the current cell in the top line */
+int  showrange;		/* Causes ranges to be highlighted */
+int  lastmx, lastmy;	/* Screen address of the cursor */
+int  lastcol;		/* Spreadsheet Column the cursor was in last */
+char *under_cursor = " "; /* Data under the < cursor */
+char *rev = "$Revision: 1.4 $";
 
 int seenerr;
 
@@ -43,9 +74,9 @@ yyerror (err)
 char *err; {
     if (seenerr) return;
     seenerr++;
-    move (1,0);
-    clrtoeol ();
-    printw ("%s: %.*s<=%s",err,linelim,line,line+linelim);
+    (void) move (1,0);
+    (void) clrtoeol ();
+    (void) printw ("%s: %.*s<=%s",err,linelim,line,line+linelim);
 }
 
 struct ent *
@@ -61,7 +92,7 @@ lookat(row,col){
 	col = MAXCOLS-1;
     p = &tbl[row][col];
     if (*p==0) {
-	*p = (struct ent *) malloc (sizeof (struct ent));
+	*p = (struct ent *) xmalloc ((unsigned)sizeof (struct ent));
 	if (row>maxrow) maxrow = row;
 	if (col>maxcol) maxcol = col;
 	(*p)->label = 0;
@@ -70,8 +101,7 @@ lookat(row,col){
 	(*p)->col = col;
 	(*p)->expr = 0;
 	(*p)->v = (double) 0.0;
-    } else if ((*p)->flags & is_deleted) 
-	debug("But %s%d has been deleted!", coltoa(col), row);
+    }
     return *p;
 }
 
@@ -98,9 +128,9 @@ flush_saved()
     if (!(p = to_fix))
 	return;
     while (p) {
-	clearent(p);
+	(void) clearent(p);
 	q = p->next;
-	free(p);
+	xfree((char *)p);
 	p = q;
     }
     to_fix = 0;
@@ -110,146 +140,305 @@ update () {
     register    row,
                 col;
     register struct ent **p;
-    static  lastmx,
-            lastmy;
-    static  char *under_cursor = " ";
-    int     maxcol;
-    int     maxrow;
+    int     mxcol;
+    int     mxrow;
     int     rows;
     int     cols;
+    int     minsr, minsc, maxsr, maxsc;
     register r;
+    register i;
 
-    while (hidden_row[currow])   /* You can't hide the last row or col */
+    while (row_hidden[currow])   /* You can't hide the last row or col */
 	currow++;
-    while (hidden_col[curcol])
+    while (col_hidden[curcol])
 	curcol++;
-    if (curcol < stcol)
-	stcol = curcol, FullUpdate++;
-    if (currow < strow)
-	strow = currow, FullUpdate++;
-    while (1) {
-	register    i;
+    /* First see if the last display still covers curcol */
+    if (stcol <= curcol) { 
 	for (i = stcol, cols = 0, col = RESCOL;
-	     (col + fwidth[i]) < COLS-1 && i < MAXCOLS; i++) {
+			(col + fwidth[i]) < COLS-1 && i < MAXCOLS; i++) {
 	    cols++;
-	    if (hidden_col[i])
+	    if (col_hidden[i])
 		continue;
 	    col += fwidth[i];
 	}
-	if (curcol >= stcol + cols)
-	    stcol++, FullUpdate++;
-	else
-	    break;
     }
-    while (1) {
-	register    i;
-	for (i = strow, rows = 0, row = RESROW;
-	     row < LINES && i < MAXROWS; i++) {
+    while (stcol + cols - 1 < curcol || curcol < stcol) {
+	FullUpdate++;
+	if (stcol - 1 == curcol) {    /* How about back one? */
+	    stcol--;
+	} else if (stcol + cols == curcol) {   /* Forward one? */
+	    stcol++;
+	} else {
+	    /* Try to put the cursor in the center of the screen */
+	    col = (COLS - RESCOL - fwidth[curcol]) / 2 + RESCOL; 
+	    stcol = curcol;
+	    for (i=curcol-1; i >= 0 && col-fwidth[i] > RESCOL; i--) {
+		stcol--;
+		if (col_hidden[i])
+		    continue;
+		col -= fwidth[i];
+	    }
+	}
+	/* Now pick up the counts again */
+	for (i = stcol, cols = 0, col = RESCOL;
+			(col + fwidth[i]) < COLS-1 && i < MAXCOLS; i++) {
+	    cols++;
+	    if (col_hidden[i])
+		continue;
+	    col += fwidth[i];
+	}
+    }
+    /* Now - same process on the rows */
+    if (strow <= currow) { 
+	for (i = strow, rows = 0, row=RESROW; row<LINES && i<MAXROWS; i++) {
 	    rows++;
-	    if (hidden_row[i])
+	    if (row_hidden[i])
 		continue;
 	    row++;
 	}
-	if (currow >= strow + rows)
-	    strow++, FullUpdate++;
-	else
-	    break;
     }
-    maxcol = stcol + cols - 1;
-    maxrow = strow + rows - 1;
-    if (FullUpdate) {
-	register int i;
-	move (2, 0);
-	clrtobot ();
-	standout();
-	for (row=RESROW, i=strow; i <= maxrow; i++) {
-	    if (hidden_row[i]) 
+    while (strow + rows - 1 < currow || currow < strow) {
+	FullUpdate++;
+	if (strow - 1 == currow) {    /* How about up one? */
+	    strow--;
+	} else if (strow + rows == currow) {   /* Down one? */
+	    strow++;
+	} else {
+	    /* Try to put the cursor in the center of the screen */
+	    row = (LINES - RESROW) / 2 + RESROW; 
+	    strow = currow;
+	    for (i=currow-1; i >= 0 && row-1 > RESROW; i--) {
+		strow--;
+		if (row_hidden[i])
+		    continue;
+		row--;
+	    }
+	}
+	/* Now pick up the counts again */
+	for (i = strow, rows = 0, row=RESROW; row<LINES && i<MAXROWS; i++) {
+	    rows++;
+	    if (row_hidden[i])
 		continue;
-	    move(row,0);
-	    printw("%-*d", RESCOL, i);
 	    row++;
 	}
-	move (2,0);
-	printw("%*s", RESCOL, " ");
-	for (col=RESCOL, i = stcol; i <= maxcol; i++) {
-	    if (hidden_col[i])
+    }
+    mxcol = stcol + cols - 1;
+    mxrow = strow + rows - 1;
+    if (FullUpdate) {
+	(void) move (2, 0);
+	(void) clrtobot ();
+	(void) standout();
+	for (row=RESROW, i=strow; i <= mxrow; i++) {
+	    if (row_hidden[i]) 
 		continue;
-	    move(2, col);
-	    printw("%*s", fwidth[i], coltoa(i));
+	    (void) move(row,0);
+#if MAXROW < 1000
+	    (void) printw("%-*d", RESCOL-1, i);
+#else
+	    (void) printw("%-*d", RESCOL, i);
+#endif
+	    row++;
+	}
+	(void) move (2,0);
+	(void) printw("%*s", RESCOL, " ");
+	for (col=RESCOL, i = stcol; i <= mxcol; i++) {
+	    register int k;
+	    if (col_hidden[i])
+		continue;
+	    (void) move(2, col);
+	    k = fwidth[i]/2;
+	    if (k == 0)
+		(void) printw("%1s", coltoa(i));
+	    else
+	        (void) printw("%*s%-*s", k, " ", fwidth[i]-k, coltoa(i));
 	    col += fwidth[i];
 	}
-	standend();
+	(void) standend();
     }
-    for (row = strow, r = RESROW; row <= maxrow; row++) {
-	register    c = RESCOL;
-	if (hidden_row[row])
+
+    /* Get rid of the cursor standout */
+    (void) move(lastmx, lastmy);
+    if (showme)
+        repaint(lastmx, lastmy, fwidth[lastcol]);
+
+    if (showrange && showme) {
+	minsr = showsr < currow ? showsr : currow;
+	minsc = showsc < curcol ? showsc : curcol;
+	maxsr = showsr > currow ? showsr : currow;
+	maxsc = showsc > curcol ? showsc : curcol;
+	(void) move(1,0);
+	(void) clrtoeol();
+        (void) printw("Default range - %s", r_name(minsr, minsc, maxsr, maxsc));
+    }
+
+    /* Repaint the visible screen */
+    for (row = strow, r = RESROW; row <= mxrow; row++) {
+	register c = RESCOL;
+	int do_stand = 0;
+	int fieldlen;
+	int nextcol;
+
+	if (row_hidden[row])
 	    continue;
-	for (p = &tbl[row][col = stcol]; col <= maxcol; col++, p++) {
-	    if (hidden_col[col])
+	for (p = &tbl[row][col = stcol]; col <= mxcol;
+	         p += nextcol - col,  col = nextcol, c += fieldlen) {
+
+	    nextcol = col+1;
+	    if (col_hidden[col]) {
+		fieldlen = 0;
 		continue;
-	    if (*p && ((*p) -> flags & is_changed || FullUpdate)) {
+	    }
+
+	    fieldlen = fwidth[col];
+	    if (showrange && showme && (row >= minsr) && (row <= maxsr) &&
+			       (col >= minsc) && (col <= maxsc)) {
+		do_stand = 1;
+	    }
+	    if (*p && ((*p) -> flags & is_changed || FullUpdate) || do_stand) {
 		char   *s;
-		move (r, c);
-		(*p) -> flags &= ~is_changed;
-		if ((*p) -> flags & is_valid)
-		    printw ("%*.*f", fwidth[col], precision[col], (*p) -> v);
+		(void) move (r, c);
+		if (!*p)
+		    *p = lookat(row, col);
+		if (do_stand) {
+		    (void) standout();
+		    (*p) -> flags |= is_changed; 
+		} else {
+		    (*p) -> flags &= ~is_changed;
+		}
+		if ((*p) -> flags & is_valid) {
+		    char field[1024];
+		    (void)sprintf(field,"%*.*f", fwidth[col],
+					         precision[col], (*p)->v);
+		    if(strlen(field) > fwidth[col]) {
+			for(i = 0; i<fwidth[col]; i++)
+			    (void)addch('*');
+		    } else {
+			(void)addstr(field);
+		    }
+		}
 		if (s = (*p) -> label) {
 		    char field[1024];
+		    int  slen;
+		    char *start, *last;
+		    register char *fp;
+		    struct ent *nc;
 
-		    strncpy(field,s,fwidth[col]);
-		    field[fwidth[col]] = 0;
-		    mvaddstr (r,
-			    (*p) -> flags & is_leftflush
-			    ? c : c - strlen (field) + fwidth[col],
-			    field);
+		    /* This figures out if the label is allowed to
+		       slop over into the next blank field */
+		    slen = strlen(s);
+		    while(slen>fieldlen && nextcol<=mxcol &&
+			   !((nc = lookat(row,nextcol))->flags & is_valid) &&
+			   !(nc->label)) {
+
+			if (!col_hidden[nextcol])
+			    fieldlen += fwidth[nextcol];
+
+		        nextcol++;
+		    }
+		    if (slen > fieldlen)
+			slen = fieldlen;
+
+		    /* Now justify and print */
+		    start = (*p)->flags & is_leftflush ? field 
+		    			: field + fieldlen - slen;
+		    last = field+fieldlen;
+		    fp = field;
+		    while (fp < start)
+			*fp++ = ' ';
+		    while (slen--)
+			*fp++ = *s++;
+		    if (!((*p)->flags & is_valid) || fieldlen != fwidth[col]) 
+		        while (fp < last)
+			    *fp++ = ' ';
+		    *fp = 0;
+		    (void) mvaddstr(r, c, field);
+		}
+		if (!((*p)->flags & is_valid) && !(*p)->label) {
+		    /* Need to repaint a blank cell */
+		    (void) printw ("%*s", fwidth[col], " ");
+		}
+		if (do_stand) {
+		    (void) standend();
+		    do_stand = 0;
 		}
 	    }
-	    c += fwidth[col];
 	}
 	r++;
     }
-    
-    move(lastmy, lastmx);
-    if (inch() == '<')
-        addstr (under_cursor);
+	    
+    (void) move(lastmy, lastmx+fwidth[lastcol]);
+    if((inch() & 0x7f) == '<')
+        (void) addstr(under_cursor);
     lastmy =  RESROW;
     for (row = strow; row < currow; row++)
-	if (!hidden_row[row])
+	if (!row_hidden[row])
 		lastmy += 1;
     lastmx = RESCOL;
-    for (col = stcol; col <= curcol; col++)
-	if (!hidden_col[col])
+    for (col = stcol; col < curcol; col++)
+	if (!col_hidden[col])
 		lastmx += fwidth[col];
-    move(lastmy, lastmx);
-    *under_cursor = inch();
-    addstr ("<");
-    move (0, 0);
-    clrtoeol ();
+    lastcol = curcol;
+    (void) move(lastmx, lastmy);
+    if (showme) {
+        (void) standout();
+        repaint(lastmx, lastmy, fwidth[lastcol]);
+        (void) standend();
+    }
+    (void) move(lastmy, lastmx+fwidth[lastcol]);
+    *under_cursor = (inch() & 0x7f);
+    (void) addstr("<");
+
+    (void) move (0, 0);
+    (void) clrtoeol ();
     if (linelim >= 0) {
-	addstr (">> ");
-	addstr (line);
+	(void) addstr (">> ");
+	(void) addstr (line);
     } else {
 	if (showme) {
-	    register struct ent *p;
-	    p = tbl[currow][curcol];
-	    if (p && ((p->flags & is_valid) || p->label)) {
-		if (p->expr || !p->label) {
+	    register struct ent *p1;
+
+            (void) printw("%s%d", coltoa(curcol), currow);
+	    p1 = tbl[currow][curcol];
+	    if (p1 && ((p1->flags & is_valid) || p1->label)) {
+		if (p1->expr) {
 		    linelim = 0;
 		    editexp(currow, curcol);
+		} else if (p1->label) {
+		    (void) sprintf(line, "%s", p1->label);
 		} else {
-		    sprintf(line, "%s", p->label);
+		    (void) sprintf(line, "%.15g", p1->v);
 		}
-		addstr("[");
-		addstr (line);
-		addstr("]");
+		(void) addstr("[");
+		(void) addstr (line);
+		(void) addstr("]");
 		linelim = -1;
 	    } else {
-		addstr("[]");
+		(void) addstr("[]");
 	    }
 	}
-	move (lastmy, lastmx);
+	(void) move (lastmy, lastmx + fwidth[lastcol]);
+    }
+    if (revmsg[0]) {
+	(void) move(0, 0);
+	(void) printw(revmsg);
+	revmsg[0] = 0;
+	(void) move (lastmy, lastmx + fwidth[lastcol]);
     }
     FullUpdate = 0;
+}
+
+repaint(x, y, len)
+{
+    char *buf;
+
+    buf = " ";
+
+    while(len-- > 0) {
+	(void) move(y,x);
+	*buf = inch() & 0x7f;
+	(void) addstr(buf);
+	x++;
+    }
 }
 
 main (argc, argv)
@@ -259,8 +448,29 @@ char  **argv; {
     int     edistate = -1;
     int     arg = 1;
     int     narg;
-    int     nedistate = -1;
-    int	    running = 1;
+    int     nedistate;
+    int	    running;
+    char    *revi;
+    char    *pname;
+
+    pname = argv[0];
+    while (argc > 1 && argv[1][0] == '-') {
+	argv++;
+	argc--;
+    	switch (argv[0][1]) {
+	    case 'x':
+		    Crypt = 1;
+		    break;
+	    case 'n':
+		    numeric = 1;
+		    break;
+	    default:
+		    (void) fprintf(stderr,"%s: unrecognized flag: %c\n",
+			pname,argv[0][1]);
+		    exit(1);
+	}
+    }
+
     {
 	register    i;
 	for (i = 0; i < MAXCOLS; i++) {
@@ -269,28 +479,28 @@ char  **argv; {
 	}
     }
     curfile[0]=0;
-    running = 1;
 
-    if (argc > 1 && (! strcmp(argv[1],"-b"))) {
-	argc--, argv++;
-	batch = 1;
-    }
-
-    if (! batch) {
-	signals();
-	initscr ();
-	clear ();
-	raw ();
-	noecho ();
-    }
+    signals();
+    (void) initscr();
+    (void) clear();
+    nonl();
+    noecho ();
+    cbreak();
     initkbd();
+    (void) strcpy(revmsg, pname);
+    for (revi=rev; *revi++ != ':';);
+    (void) strcat(revmsg, revi);
+    revi = revmsg+strlen(revmsg);
+    *--revi = 0;
+    (void) strcat(revmsg,"Type '?' for help.");
     if (argc > 1) {
-	strcpy(curfile,argv[1]);
-	readfile (argv[1],0);
+	(void) strcpy(curfile,argv[1]);
+	readfile (argv[1], 0);
     }
     modflg = 0;
-    if (batch) exit(0);
-    error ("VC 2.1  Type '?' for help.");
+#ifdef VENIX
+    setbuf (stdin, NULL);
+#endif
     FullUpdate++;
     while (inloop) { running = 1;
     while (running) {
@@ -298,29 +508,33 @@ char  **argv; {
 	narg = 1;
 	if (edistate < 0 && linelim < 0 && (changed || FullUpdate))
 	    EvalAll (), changed = 0;
-	update ();
-	refresh ();
-	move (1, 0);
-	clrtoeol ();
-	fflush (stdout);
+	update();
+#ifndef SYSV3
+	(void) refresh(); /* 5.3 does a refresh in getch */ 
+#endif
+	c = nmgetch();
+	(void) move (1, 0);
+	(void) clrtoeol ();
+	(void) fflush (stdout);
 	seenerr = 0;
-	if (((c = nmgetch ()) < ' ') || ( c == 0177 ))
+	if ((c < ' ') || ( c == 0177 ))
 	    switch (c) {
-#ifdef SIGTSTP
+#if defined(BSD42) || defined (BSD43)
 		case ctl (z):
-		    noraw ();
-		    echo ();
-		    kill(getpid(),SIGTSTP);
+		    deraw();
+#ifndef V7
+		    (void) kill(getpid(),SIGTSTP);
+#endif
 
 		    /* the pc stops here */
 
-		    raw ();
-		    noecho ();
+		    goraw();
 		    break;
 #endif
 		case ctl (r):
+		case ctl (l):
 		    FullUpdate++;
-		    clearok(stdscr,1);
+		    (void) clearok(stdscr,1);
 		    break;
 		default:
 		    error ("No such command  (^%c)", c + 0100);
@@ -331,12 +545,35 @@ char  **argv; {
 			    curcol--;
 			else
 			    error ("At column A");
-			while(hidden_col[curcol] && curcol)
+			while(col_hidden[curcol] && curcol)
 			    curcol--;
 		    }
 		    break;
 		case ctl (c):
 		    running = 0;
+		    break;
+		case ctl (e):
+		    switch (nmgetch()) {
+		    case 'j':
+		    case ctl(n):
+			doend(1,0);
+			break;
+		    case 'k':
+		    case ctl(p):
+			doend(-1,0);
+			break;
+		    case 'h':
+		    case ctl(b):
+			doend(0,-1);
+			break;
+		    case 'l':
+		    case ctl(f):
+			doend(0,1);
+			break;
+		    default:
+			error("Invalid end command");
+			break;
+		    }
 		    break;
 		case ctl (f):
 		    while (--arg>=0) {
@@ -344,30 +581,44 @@ char  **argv; {
 			    curcol++;
 			else
 			    error ("The table can't be any wider");
-			while(hidden_col[curcol]&&(curcol<MAXCOLS-1))
+			while(col_hidden[curcol]&&(curcol<MAXCOLS-1))
 			    curcol++;
 		    }
 		    break;
 		case ctl (g):
 		case ctl ([):
+		    showrange = 0;
 		    linelim = -1;
-		    move (1, 0);
-		    clrtoeol ();
+		    (void) move (1, 0);
+		    (void) clrtoeol ();
 		    break;
 		case 0177:
 		case ctl (h):
 		    while (--arg>=0) if (linelim > 0)
 			line[--linelim] = 0;
 		    break;
-		case ctl (l):
-		    FullUpdate++;
+		case ctl (i): 		/* tab */
+		    if (linelim > 0) {
+			if (!showrange) {
+			    startshow();
+			} else {
+			    showdr();
+			    linelim = strlen(line);
+			    line[linelim++] = ' ';
+			    line[linelim] = 0;
+			    showrange = 0;
+			}
+			linelim = strlen (line);
+		    }
 		    break;
 		case ctl (m):
+		case ctl (j):
+		    showrange = 0;
 		    if (linelim < 0)
 			line[linelim = 0] = 0;
 		    else {
 			linelim = 0;
-			yyparse ();
+			(void) yyparse ();
 			linelim = -1;
 		    }
 		    break;
@@ -377,7 +628,7 @@ char  **argv; {
 			    currow++;
 			else
 			    error ("The table can't be any longer");
-			while (hidden_row[currow] && (currow < MAXROWS - 1))
+			while (row_hidden[currow] && (currow < MAXROWS - 1))
 			    currow++;
 		    }
 		    break;
@@ -387,7 +638,7 @@ char  **argv; {
 			    currow--;
 			else
 			    error ("At row zero");
-			while (hidden_row[currow] && currow)
+			while (row_hidden[currow] && currow)
 			    currow--;
 		    }
 		    break;
@@ -396,7 +647,24 @@ char  **argv; {
 		case ctl (s):
 		    break;	/* ignore flow control */
 		case ctl (t):
-		    showme ^= 1;
+		    error("Toggle - n:numeric  t:top row  x:encryption");
+		    (void) refresh();
+		    switch (nmgetch()) {
+			case 't': case 'T':
+			    showme ^= 1;
+			    repaint(lastmx, lastmy, fwidth[lastcol]);
+			    break;
+			case 'n': case 'N':
+			    numeric ^= 1;
+			    error("Numeric input %sabled.",numeric? "en":"dis");
+			    break;
+			case 'x': case 'X':
+			    Crypt ^= 1;
+			    error("Encryption %sabled.",Crypt? "en":"dis");
+			    break;
+			default:
+			    error("Bad toggle switch");
+		    }
 		    break;
 		case ctl (u):
 		    narg = arg * 4;
@@ -404,11 +672,11 @@ char  **argv; {
 		    break;
 		case ctl (v):	/* insert variable name */
 		    if (linelim > 0) {
-			sprintf (line+linelim,"%s%d", coltoa(curcol), currow);
+		    (void) sprintf (line+linelim,"%s", v_name(currow, curcol));
 			linelim = strlen (line);
 		    }
 		    break;
-		case ctl (e):	/* insert variable expression */
+		case ctl (w):	/* insert variable expression */
 		    if (linelim > 0) editexp(currow,curcol);
 		    break;
 		case ctl (a):	/* insert variable value */
@@ -416,7 +684,7 @@ char  **argv; {
 			struct ent *p = tbl[currow][curcol];
 
 			if (p && p -> flags & is_valid) {
-			    sprintf (line + linelim, "%.*f",
+			    (void) sprintf (line + linelim, "%.*f",
 					precision[curcol],p -> v);
 			    linelim = strlen (line);
 			}
@@ -424,7 +692,9 @@ char  **argv; {
 		    break;
 		}
 	else
-	    if ('0' <= c && c <= '9' && (linelim < 0 || edistate >= 0)) {
+	    if ('0' <= c && c <= '9' && ( (numeric && edistate >= 0) ||
+			(!numeric && (linelim < 0 || edistate >= 0))))
+	    {
 		if (edistate != 0) {
 		    if (c == '0')      /* just a '0' goes to left col */
 			curcol = 0;
@@ -438,47 +708,217 @@ char  **argv; {
 		}
 	    }
 	    else
-		if (linelim >= 0) {
+		if (linelim >= 0) {     /* Editing line */
+		    switch(c) {
+			case ')':
+			    if (showrange) {
+				showdr();
+			        showrange = 0;
+			        linelim = strlen (line);
+			    }
+			    break;
+		       default:
+			    break;
+		    }
 		    line[linelim++] = c;
 		    line[linelim] = 0;
 		}
 		else
 		    switch (c) {
-			case '.':
-			    nedistate = 1;
-			    break;
 			case ':':
 			    break;	/* Be nice to vi users */
-			case '=':
-			    sprintf(line,"let %s%d = ",coltoa(curcol),currow);
+
+			case '0': case '1': case '2': case '3': case '4':
+			case '5': case '6': case '7': case '8': case '9':
+			case '-': case '.': case '+':
+			    (void) sprintf(line,"let %s = %c",
+					v_name(currow, curcol), c);
 			    linelim = strlen (line);
 			    break;
-			case '/':
-			    sprintf(line,"copy [to] %s%d [from] ", 
-				      coltoa(curcol), currow);
+
+			case '=':
+			    (void) sprintf(line,"let %s = ",
+						v_name(currow, curcol));
 			    linelim = strlen (line);
+			    break;
+
+			case '!':
+			    {
+			    /*
+			     *  "! command"  executes command
+			     *  "!"	forks a shell
+			     *  "!!" repeats last command
+			     */
+			    char *shl;
+			    int pid, temp;
+			    char cmd[MAXCMD];
+			    static char lastcmd[MAXCMD];
+
+			    if (!(shl = getenv("SHELL")))
+				shl = "/bin/sh";
+
+			    deraw();
+			    (void) fputs("! ", stdout);
+			    (void) fflush(stdout);
+			    (void) fgets(cmd, MAXCMD, stdin);
+			    cmd[strlen(cmd) - 1] = '\0';	/* clobber \n */
+			    if(strcmp(cmd,"!") == 0)		/* repeat? */
+				    (void) strcpy(cmd, lastcmd);
+			    else
+				    (void) strcpy(lastcmd, cmd);
+
+			    if (!(pid = fork()))
+			    {
+			        if(strlen(cmd))
+					(void)execl(shl,shl,"-c",cmd,(char *)0);
+				else
+					(void) execl(shl, shl, (char *)0);
+				exit(-127);
+			    }
+
+			    while (pid != wait(&temp));
+
+			    (void) printf("Press <return> to continue\n");
+			    (void)nmgetch();
+			    goraw();
+			    break;
+			    }
+
+			case '/':
+			    error("c:copy x:erase v:value f:fill d:define u:undefine s:show");
+			    (void) refresh();
+			    switch (nmgetch()) {
+			    case 'c':
+				(void) sprintf(line,"copy [dest_range src_range] ");
+				linelim = strlen(line);
+				startshow();
+				break;
+			    case 'x':
+				(void) sprintf(line,"erase [range] ");
+				linelim = strlen(line);
+				startshow();
+				break;
+			    case 'v':
+				(void) sprintf(line, "value [range] ");
+				linelim = strlen(line);
+				startshow();
+				break;
+			    case 'f':
+				(void) sprintf(line,"fill [range start inc] ");
+				linelim = strlen(line);
+				startshow();
+				break;
+			    case 'd':
+				(void) sprintf(line,"define [string range] \"");
+				linelim = strlen(line);
+				startshow();
+				modflg++;
+				break;
+			    case 'u':
+				(void) sprintf(line,"undefine [range] ");
+				linelim = strlen(line);
+				modflg++;
+				break;
+			    case 's':
+				{
+				FILE *f;
+				int pid;
+				f = openout("| sort | less", &pid);
+				if (!f) {
+				    error("Cant open pipe to sort");
+				    break;
+				}
+				list_range(f);
+				closeout(f, pid);
+				break;
+				}
+			   default:
+				error("Invalid region operation");
+			    }
 			    break;
 			case '$':
+			    {
+			    register struct ent *p;
+
 			    curcol = MAXCOLS - 1;
-			    while (!tbl[currow][curcol] && curcol > 0)
+			    while (!VALID_CELL(p, currow, curcol) && curcol > 0)
 				curcol--;
+			    break;
+			    }
+			case '#':
+			    {
+			    register struct ent *p;
+
+			    currow = MAXROWS - 1;
+			    while (!VALID_CELL(p, currow, curcol) && currow > 0)
+				currow--;
+			    break;
+			    }
+			case 'w':
+			    {
+			    register struct ent *p;
+
+			    while (--arg>=0) {
+				do {
+				    if (curcol < MAXCOLS - 1)
+					curcol++;
+				    else {
+					if (currow < MAXROWS - 1) {
+					    while(++currow < MAXROWS - 1 &&
+					            row_hidden[currow]) /* */;
+					    curcol = 0;
+					} else {
+					    error("End of the table");
+					    break;
+					}
+				    }
+				} while(col_hidden[curcol] ||
+					!VALID_CELL(p, currow, curcol));
+			    }
+			    break;
+			    }
+			case 'b':
+			    {
+			    register struct ent *p;
+
+			    while (--arg>=0) {
+				do {
+				    if (curcol) 
+					curcol--;
+				    else {
+					if (currow) {
+					    while(--currow &&
+						row_hidden[currow]) /* */;
+					    curcol = MAXCOLS - 1;
+					} else {
+					    error ("At start of table");
+					    break;
+					}
+				    }
+				} while(col_hidden[curcol] ||
+					!VALID_CELL(p, currow, curcol));
+			    }
+			    break;
+			    }
+			case '^':
+			    currow = 0;
 			    break;
 			case '?':
 			    help ();
 			    break;
 			case '"':
-			    sprintf (line, "label %s%d = \"",
-						coltoa(curcol), currow);
+			    (void) sprintf (line, "label %s = \"",
+						v_name(currow, curcol));
 			    linelim = strlen (line);
 			    break;
 			case '<':
-			    sprintf (line, "leftstring %s%d = \"",
-				    coltoa(curcol), currow);
+			    (void) sprintf (line, "leftstring %s = \"",
+				    v_name(currow, curcol));
 			    linelim = strlen (line);
 			    break;
 			case '>':
-			    sprintf (line, "rightstring %s%d = \"",
-				    coltoa(curcol), currow);
+			    (void) sprintf (line, "rightstring %s = \"",
+				   v_name(currow, curcol));
 			    linelim = strlen (line);
 			    break;
 			case 'e':
@@ -488,34 +928,53 @@ char  **argv; {
 			    edits (currow, curcol);
 			    break;
 			case 'f':
-			    sprintf (line, "format [for column] %s [is] ",
+			    if (arg == 1)
+			        (void) sprintf (line, "format [for column] %s ",
 					coltoa(curcol));
+			    else {
+				(void) sprintf(line, "format [for columns] %s:",
+					coltoa(curcol));
+				(void) sprintf(line+strlen(line), "%s ",
+					coltoa(curcol+arg-1));
+			    }
 			    error("Current format is %d %d",
 					fwidth[curcol],precision[curcol]);
 			    linelim = strlen (line);
 			    break;
+			case 'g':
+			    (void) sprintf (line, "goto [v] ");
+			    linelim = strlen (line);
+			    break;
 			case 'P':
-			    sprintf (line, "put [database into] \"");
+			    (void) sprintf (line, "put [\"dest\" range] \"");
 			    if (*curfile)
-			    error("default file is '%s'",curfile);
+			        error("Default path is '%s'",curfile);
 			    linelim = strlen (line);
 			    break;
 			case 'M':
-			    sprintf (line, "merge [database from] \"");
+			    (void) sprintf (line, "merge [\"source\"] \"");
+			    linelim = strlen (line);
+			    break;
+			case 'R':
+			    (void) sprintf (line,"merge [\"macro_file\"] \"%s/", mdir);
+			    linelim = strlen (line);
+			    break;
+			case 'D':
+			    (void) sprintf (line, "mdir [\"macro_directory\"] \"");
 			    linelim = strlen (line);
 			    break;
 			case 'G':
-			    sprintf (line, "get [database from] \"");
+			    (void) sprintf (line, "get [\"source\"] \"");
 			    if (*curfile)
-			    error("default file is '%s'",curfile);
+			        error("Default file is '%s'",curfile);
 			    linelim = strlen (line);
 			    break;
 			case 'W':
-			    sprintf (line, "write [listing to] \"");
+			    (void) sprintf (line, "write [\"dest\" range] \"");
 			    linelim = strlen (line);
 			    break;
 			case 'T':	/* tbl output */
-			    sprintf (line, "tbl [listing to] \"");
+			    (void) sprintf (line, "tbl [\"dest\" range] \"");
 			    linelim = strlen (line);
 			    break;
 			case 'i':
@@ -527,6 +986,7 @@ char  **argv; {
 				insertcol(arg);
 				break;
 			    default:
+				error("Invalid insert command");
 				break;
 			    }
 			    break;
@@ -539,18 +999,22 @@ char  **argv; {
 				deletecol(arg);
 				break;
 			    default:
+				error("Invalid delete command");
 				break;
 			    }
 			    break;
 			case 'v':
 			    switch (get_qual()) {
 			    case 'r':
-				valueizerow(arg);
+				rowvalueize(arg);
+				modflg++;
 				break;
 			    case 'c':
-				valueizecol(arg);
+				colvalueize(arg);
+				modflg++;
 				break;
 			    default:
+				error("Invalid value command");
 				break;
 			    }
 			    break;
@@ -565,10 +1029,11 @@ char  **argv; {
 			case 'x':
 			    {
 			    register struct ent **p;
-			    register int c;
+			    register int c1;
+
 			    flush_saved();
-			    for (c = curcol; arg-- && c < MAXCOLS; c++) {
-				p = &tbl[currow][c];
+			    for (c1 = curcol; arg-- && c1 < MAXCOLS; c1++) {
+				p = &tbl[currow][c1];
 				if (*p) {
 			            free_ent(*p);
 			            *p = 0;
@@ -588,7 +1053,7 @@ char  **argv; {
 				    curcol--;
 				else
 				    error ("At column A");
-				while(hidden_col[curcol] && curcol)
+				while(col_hidden[curcol] && curcol)
 				    curcol--;
 			    }
 			    break;
@@ -598,7 +1063,7 @@ char  **argv; {
 				    currow++;
 				else
 				    error ("The table can't be any longer");
-				while (hidden_row[currow]&&(currow<MAXROWS-1))
+				while (row_hidden[currow]&&(currow<MAXROWS-1))
 				    currow++;
 			    }
 			    break;
@@ -608,17 +1073,18 @@ char  **argv; {
 				    currow--;
 				else
 				    error ("At row zero");
-				while (hidden_row[currow] && currow)
+				while (row_hidden[currow] && currow)
 				    currow--;
 			    }
 			    break;
+			case ' ':
 			case 'l':
 			    while (--arg>=0) {
 				if (curcol < MAXCOLS - 1)
 				    curcol++;
 				else
 				    error ("The table can't be any wider");
-				while(hidden_col[curcol]&&(curcol<MAXCOLS-1))
+				while(col_hidden[curcol]&&(curcol<MAXCOLS-1))
 				    curcol++;
 			    }
 			    break;
@@ -628,25 +1094,25 @@ char  **argv; {
 			    break;
 			case 'c': {
 			    register struct ent *p = tbl[savedrow][savedcol];
-			    register c;
+			    register c1;
 			    register struct ent *n;
 			    if (!p)
 				break;
 			    FullUpdate++;
 			    modflg++;
-			    for (c = curcol; arg-- && c < MAXCOLS; c++) {
-				n = lookat (currow, c);
-				clearent(n);
+			    for (c1 = curcol; arg-- && c1 < MAXCOLS; c1++) {
+				n = lookat (currow, c1);
+				(void) clearent(n);
 				n -> flags = p -> flags;
 				n -> v = p -> v;
 				n -> expr = copye(p->expr,
 					    currow - savedrow,
-					    c - savedcol);
+					    c1 - savedcol);
 				n -> label = 0;
 				if (p -> label) {
 				    n -> label = (char *)
-						 malloc(strlen(p->label)+1);
-				strcpy (n -> label, p -> label);
+						 xmalloc((unsigned)strlen(p->label)+1);
+				(void) strcpy (n -> label, p -> label);
 				}
 			    }
 			    break;
@@ -660,18 +1126,20 @@ char  **argv; {
 				hidecol(arg);
 				break;
 			    default:
+				error("Invalid zap command");
 				break;
 			    }
 			    break;
 			case 's':
 			    switch (get_qual()) {
 			    case 'r':
-				showrow_op();
+				rowshow_op();
 				break;
 			    case 'c':
-				showcol_op();
+				colshow_op();
 				break;
 			    default:
+				error("Invalid show command");
 				break;
 			    }
 			    break;
@@ -686,6 +1154,7 @@ char  **argv; {
 				    dupcol();
 				break;
 			    default:
+				error("Invalid add row/col command");
 				break;
 			    }
 			    break;
@@ -693,7 +1162,8 @@ char  **argv; {
 			    if ((c & 0177) != c)
 				error("Weird character, decimal '%d'.\n",
 					(int) c);
-			    else error ("No such command  (%c)", c);
+			    else
+				    error ("No such command  (%c)", c);
 			    break;
 		    }
 	edistate = nedistate;
@@ -701,106 +1171,201 @@ char  **argv; {
     }				/* while (running) */
     inloop = modcheck(" before exiting");
     }				/*  while (inloop) */
-    move (LINES - 1, 0);
-    clrtoeol();
-    refresh ();
-    noraw ();
-    echo ();
-    endwin ();
+    deraw();
+    endwin();
+    exit(0);
+    /*NOTREACHED*/
+}
+
+startshow()
+{
+    showrange = 1;
+    showsr = currow;
+    showsc = curcol;
+}
+
+showdr()
+{
+    int     minsr, minsc, maxsr, maxsc;
+
+    minsr = showsr < currow ? showsr : currow;
+    minsc = showsc < curcol ? showsc : curcol;
+    maxsr = showsr > currow ? showsr : currow;
+    maxsc = showsc > curcol ? showsc : curcol;
+    (void) sprintf (line+linelim,"%s", r_name(minsr, minsc, maxsr, maxsc));
+}
+
+
+goraw()
+{
+#if SYSV2 || SYSV3
+    fixterm();
+#else
+    cbreak();
+    nonl();
+    noecho ();
+#endif
+    kbd_again();
+    (void) clear();
+    FullUpdate++;
+}
+
+deraw()
+{
+    (void) move (LINES - 1, 0);
+    (void) clrtoeol();
+    (void) refresh();
+#if SYSV2 || SYSV3
+    resetterm();
+#else
+    nocbreak();
+    nl();
+    echo();
+#endif
+    resetkbd();
 }
 
 signals()
 {
+#ifdef SYSV3
     void quit();
     void timeout();
+#else
+    int quit();
+    int timeout();
+#endif
 
-    signal(SIGINT, SIG_IGN);
-    signal(SIGQUIT, quit);
-    signal(SIGPIPE, quit);
-    signal(SIGTERM, quit);
-    signal(SIGALRM, timeout);
+    (void) signal(SIGINT, SIG_IGN);
+    (void) signal(SIGQUIT, quit);
+    (void) signal(SIGPIPE, quit);
+    (void) signal(SIGTERM, quit);
+    (void) signal(SIGALRM, timeout);
+    (void) signal(SIGFPE, quit);
+    (void) signal(SIGBUS, quit);
 }
 
+#ifdef SYSV3
 void
+#endif
 quit()
 {
-    move (LINES - 1, 0);
-    clrtoeol();
-    refresh ();
-    noraw ();
-    echo ();
-    endwin ();
-    exit();
+    deraw();
+    resetkbd();
+    endwin();
+    exit(1);
 }
-    
 
-modcheck(endstr) char *endstr; {
+modcheck(endstr)
+char *endstr;
+{
     if (modflg && curfile[0]) {
 	char ch, lin[100];
 
-	move (0, 0);
-	clrtoeol ();
-	sprintf (lin,"File '%s' is modified, save%s? ",curfile,endstr);
-	addstr (lin);
-	refresh();
+	(void) move (0, 0);
+	(void) clrtoeol ();
+	(void) sprintf (lin,"File '%s' is modified, save%s? ",curfile,endstr);
+	(void) addstr (lin);
+	(void) refresh();
 	ch = nmgetch();
-	if (ch == 'y' || ch == 'Y') writefile(curfile);
-	else if (ch == ctl (g)) return(1);
-    }
+ 	if (ch != 'n' && ch != 'N')
+ 	    if (writefile(curfile, 0, 0, maxrow, maxcol) < 0)
+ 		return (1);
+	else if (ch == ctl (g) || ch == ctl([)) return(1);
+    } else if (modflg) {
+	char ch, lin[100];
+
+	(void) move (0, 0);
+	(void) clrtoeol ();
+	(void) sprintf (lin,"Do you want a chance to save the data? ");
+	(void) addstr (lin);
+	(void) refresh();
+	ch = nmgetch();
+	if (ch == 'n' || ch == 'N') return(0);
+	else return(1);
+      }
     return(0);
 }
+
     
-writefile (fname)
-char *fname; {
+writefile (fname, r0, c0, rn, cn)
+char *fname;
+{
     register FILE *f;
     register struct ent **p;
     register r, c;
     char save[1024];
+    int pid;
+
+    if (Crypt) {
+	return (cwritefile(fname, r0, c0, rn, cn));
+    }
 
     if (*fname == 0) fname = &curfile[0];
 
-    strcpy(save,fname);
+    (void) strcpy(save,fname);
 
-    f = fopen (fname, "w");
-    if (f==0) {
+    f = openout(fname, &pid);
+    if (f == 0) {
 	error ("Can't create %s", fname);
-	return;
+	return (-1);
     }
 
-    fprintf (f, "# This data file was generated by the Spreadsheet ");
-    fprintf (f, "Calculator.\n");
-    fprintf (f, "# You almost certainly shouldn't edit it.\n\n");
+    (void) fprintf (f, "# This data file was generated by the Spreadsheet ");
+    (void) fprintf (f, "Calculator.\n");
+    (void) fprintf (f, "# You almost certainly shouldn't edit it.\n\n");
     for (c=0; c<MAXCOLS; c++)
 	if (fwidth[c] != DEFWIDTH || precision[c] != DEFPREC)
-	    fprintf (f, "format %s %d %d\n",coltoa(c),fwidth[c],precision[c]);
-    for (r=0; r<=maxrow; r++) {
+	    (void) fprintf (f, "format %s %d %d\n",coltoa(c),fwidth[c],precision[c]);
+    write_range(f);
+    if (mdir) 
+	    (void) fprintf(f, "mdir \"%s\"\n", mdir);
+    for (r=r0; r<=rn; r++) {
 	p = &tbl[r][0];
-	for (c=0; c<=maxcol; c++, p++)
+	for (c=c0; c<=cn; c++, p++)
 	    if (*p) {
-		if ((*p)->label)
-		    fprintf (f, "%sstring %s%d = \"%s\"\n",
-				(*p)->flags&is_leftflush ? "left" : "right",
-				coltoa(c),r,(*p)->label);
+		if ((*p)->label) {
+		    edits(r,c);
+		    (void) fprintf(f, "%s\n",line);
+		}
 		if ((*p)->flags&is_valid) {
 		    editv (r, c);
-		    fprintf (f, "%s\n",line);
+		    (void) fprintf (f, "%s\n",line);
 		}
 	    }
     }
-    fclose (f);
-    strcpy(curfile,save);
 
-    modflg = 0;
-    error("File '%s' written.",curfile);
+    closeout(f, pid);
+
+    if (!pid) {
+        (void) strcpy(curfile, save);
+        modflg = 0;
+        error("File '%s' written.",curfile);
+    }
+
+    return (0);
 }
 
 readfile (fname,eraseflg)
-char *fname; int eraseflg; {
+char *fname;
+int eraseflg;
+{
     register FILE *f;
     char save[1024];
 
-    if (*fname == 0) fname = &curfile[0];
-    strcpy(save,fname);
+    if (*fname == '*' && mdir) { 
+       (void) strcpy(save, mdir);
+       *fname = '/';
+       (void) strcat(save, fname);
+    } else {
+        if (*fname == 0)
+	    fname = &curfile[0];
+        (void) strcpy(save,fname);
+    }
+
+    if (Crypt)  {
+	creadfile(save, eraseflg);
+	return;
+    }
 
     if (eraseflg && strcmp(fname,curfile) && modcheck(" first")) return;
 
@@ -814,13 +1379,13 @@ char *fname; int eraseflg; {
 
     while (fgets(line,sizeof line,f)) {
 	linelim = 0;
-	if (line[0] != '#') yyparse ();
+	if (line[0] != '#') (void) yyparse ();
     }
-    fclose (f);
+    (void) fclose (f);
     linelim = -1;
     modflg++;
     if (eraseflg) {
-	strcpy(curfile,save);
+	(void) strcpy(curfile,save);
 	modflg = 0;
     }
     EvalAll();
@@ -838,50 +1403,27 @@ erasedb () {
 	for (c=0; c++<=maxcol; p++)
 	    if (*p) {
 		if ((*p)->expr) efree ((*p) -> expr);
-		if ((*p)->label) free ((*p) -> label);
-		free (*p);
+		if ((*p)->label) xfree ((char *)((*p) -> label));
+		xfree ((char *)(*p));
 		*p = 0;
 	    }
     }
     maxrow = 0;
     maxcol = 0;
+    clean_range();
     FullUpdate++;
 }
 
+#if DEBUG
 debugout(g,fmt,args) FILE *g; char *fmt; {
-    int i,op;
+    int op;
 
     if (g == 0) g = fopen("debug","a"),op = 1;
     if (g == 0) return;
 
     _doprnt(fmt, &args, g);
 
-    fflush(g);
-    if (op) fclose(g);
-}
-
-#ifdef M_XENIX
-/*
- *	_doprnt() is an undocumented routine internal to the implementation
- *	of the printf family in many versions of UNIX.  It was never intended
- *	that the user should call it, but many programs do.  This is a version
- *	which calls _print(), the comparable function internal to the XENIX
- *	library.
- *
- *	Wish users would learn to write varargs functions properly.  Of course,
- *	we don't take our own advice by parsing 'fmt' below.  That would have
- *	us re-implementing printf().  Usually all the user really wanted was
- *	a couple of simple variations easily implemented with varargs.
-*/
-#include <stdio.h>
-
-extern FILE *_pfile;		/* Internal to printf implementation	*/
-
-_doprnt(fmt, args, file)
-char *fmt;
-int **args;
-FILE *file;
-{ _pfile = file;		/* Set to print wherever user said	*/
-  _print(fmt, &args);		/* Don't ask				*/
+    (void) fflush(g);
+    if (op) (void) fclose(g);
 }
 #endif
