@@ -222,8 +222,8 @@ execute_thing()
 	int pid;
 
 	if ((pid = fork()) == 0) {
-		execl("/bin/csh", "csh", "-cf", message, 0);
-		perror("Fork of /bin/csh");
+		execl("/bin/sh", "sh", "-cf", message, 0);
+		perror("Fork of /bin/sh");
 		_exit(1);
 	}
 	else if (pid == -1)
