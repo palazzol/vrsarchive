@@ -51,7 +51,7 @@ co:
 
 $(CURSESLIBR):	$(OBJS) $(CURSES_OBJ)
 		ar r $@ $(OBJS) $(CURSES_OBJ)
-		ranlib $@
+		$(RANLIB) $@
 
 clean:;		rm -f $(OBJS) $(CURSES_OBJ) $(ALL) y.tab.h
 
