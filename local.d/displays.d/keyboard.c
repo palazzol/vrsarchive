@@ -1,36 +1,32 @@
 /*
  *	Routines to handle the keyboard.
 */
-#include <fcntl.h>
+#include <signal.h>
 #include <ctype.h>
 char uncbuf[] = "^c";
 #define unctrl(c)	(uncbuf[1] = (c)|0100, isprint(c) ? uncbuf+1 : uncbuf)
 #include "globals.h"
+#include "pipe.h"
 
 extern void done();
 
 char help_msg[80];
+int keybd_pid;
 
 /*
  *	Init for kchar()
 */
-keybd_init()
+keybd_init(pipe_fd)
+int pipe_fd;
 {
-	int flags;
+	struct pipe_msg buf;
 
-	(void) close(0);
-	if (open("/dev/tty", 2) == -1) {
-		perror("keyboard reopen");
-		exit(1);
-	}
-	flags = fcntl(0, F_GETFL, 0);
-	if (flags == -1) {
-		perror("keyboard F_GETFL");
-		exit(1);
-	}
-	if (fcntl(0, F_SETFL, flags|O_NDELAY) == -1) {
-		perror("keyboard F_SETFL");
-		exit(1);
+	if ((keybd_pid = fork()) == 0) {
+		buf.id = -1;
+		while (1) {
+			buf.count = read(0, &buf.ch, 1);
+			(void) write(pipe_fd, (char *)&buf, sizeof buf);
+		}
 	}
 }
 
@@ -38,15 +34,11 @@ keybd_init()
  * Input one or more characters from the keyboard and process them.
  * Right now all control commands are single characters.
  */
-kchar()
+kchar(c)
+char c;
 {
-	char c;
-	static int n, kcharstate = 0;
+	static int kcharstate = 0;
 
-	nap(20);
-	n = read(0, &c, 1);
-	if (n <= 0)
-		return;
 	c &= 0177;
 
 	/* Process special tty commands */
@@ -97,4 +89,13 @@ kchar()
 		}
 		kcharstate = 0;
 	}
+}
+
+/*
+ *	Kill off the keyboard process.
+*/
+keybd_wrapup()
+{
+	kill(keybd_pid, SIGTERM);
+	wait((int *)0);
 }
