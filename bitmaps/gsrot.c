@@ -18,14 +18,18 @@ char *argv[];
 	char *p;
     
     /* Get dimensions */
-    (void) scanf("%d %d\n", &width, &height);
+    (void) scanf("%d %d", &width, &height);
+	(void) getchar();	/* Kill the newline */
 	size = width * height;
 
 	/* Read in the image */
 	theimage = malloc(size);
-	if (fread(theimage, sizeof(*theimage), size, stdin) != size) {
-		perror("fread");
-		return(1);
+	for (x = y = 0; x < size; x += y) {
+		y = fread(theimage+x, 1, size, stdin);
+		if (y <= 0) {
+			perror("fread");
+			return(1);
+		}
 	}
 
 	/* Determine the correct orientation */
