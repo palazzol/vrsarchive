@@ -1,19 +1,3 @@
-From enea!holtec!perb Sat May  9 17:47:50 1987
-Received: by mirror.TMC.COM; Sat, 9 May 87 17:47:37 edt
-Received: from enea.UUCP by seismo.CSS.GOV (5.54/1.14) with UUCP 
-	id AA12891; Sat, 9 May 87 16:51:27 EDT
-Received: by enea.se (5.51/1.33)
-	id AA18863; Sat, 9 May 87 22:36:30 +0200 (MET)
-Received: by chalmers.UUCP id AA22220; Sat, 9 May 87 22:08:11 -0200
-Received: by holtec.uucp (2.0/SMI-2.0)
-	id AA12513; Sat, 9 May 87 21:24:27 -0200
-Date: Sat, 9 May 87 21:24:27 -0200
-From: enea!holtec!perb (Per Bergsten)
-Message-Id: <8705091924.AA12513@holtec.uucp>
-To: mirror!sources
-Status: R
-
-Subject: ptc.man
 .\"		@(#)ptc.man	1.3 Date 87/05/09
 .if \nP .pl \nP
 .TH PTC 1
@@ -88,4 +72,3 @@ a Pascal program that isn't formally correct may cause malfunction.
 .sp
 Passing a procedure as parameter to an enclosing recursive procedure
 may produce erroneous code (see the implementation notes).
-
