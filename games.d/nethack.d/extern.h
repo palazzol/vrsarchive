@@ -4,10 +4,6 @@
 
 #include "config.h"
 
-#ifndef MSDOS
-extern char *sprintf();
-#endif
-
 extern long *alloc();
 
 extern xchar xdnstair, ydnstair, xupstair, yupstair; /* stairs up and down. */
