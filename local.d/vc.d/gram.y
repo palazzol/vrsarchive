@@ -303,3 +303,4 @@ strarg:		STRING		{ $$ = $1; }
 				    (void) strcpy(s, s1);
 				    $$ = s;
 				}
+	;
