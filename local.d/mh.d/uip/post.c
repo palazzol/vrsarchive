@@ -1,6 +1,6 @@
 /* post.c - enter messages into the transport system */
 #ifndef	lint
-static char ident[] = "@(#)$Id: post.c,v 1.1 1990-04-12 13:29:35 vrs Exp $";
+static char ident[] = "@(#)$Id: post.c,v 1.2 1990-05-07 06:18:13 vrs Exp $";
 #endif	lint
 
 #include "../h/mh.h"
@@ -266,7 +266,7 @@ static char *deliver = NULL;
 
 extern char **environ;
 
-int	sigser ();
+TYPESIG	sigser ();
 #endif	MHMTS
 
 #ifdef	SENDMTS
@@ -2095,7 +2095,7 @@ int     talk,
 
 /* ARGSUSED */
 
-static	int sigser (i)
+static	TYPESIG sigser (i)
 int     i;
 {
 #ifndef	BSD42

@@ -1,6 +1,6 @@
 /* slocal.c - MH style mailer to write to a local user's mailbox */
 #ifndef	lint
-static char ident[] = "@(#)$Id: slocal.c,v 1.1 1990-04-12 13:29:38 vrs Exp $";
+static char ident[] = "@(#)$Id: slocal.c,v 1.2 1990-05-07 06:23:47 vrs Exp $";
 #endif	lint
 
 /* This program implements mail delivery in the MH/MMDF style.
@@ -153,7 +153,7 @@ static struct pair  vars[] = {
 extern char **environ;
 
 static void	adorn ();
-static int	alrmser ();
+static TYPESIG	alrmser ();
 
 
 long    lseek ();
@@ -1019,7 +1019,7 @@ char   *cmd,
 
 /* ARGSUSED */
 
-static	int alrmser (i)
+static	TYPESIG alrmser (i)
 int     i;
 {
     longjmp (myctx, DONE);

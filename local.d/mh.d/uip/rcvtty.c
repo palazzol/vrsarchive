@@ -1,6 +1,6 @@
 /* rcvtty.c - a rcvmail program (a lot like rcvalert) handling IPC ttys */
 #ifndef	lint
-static char ident[] = "@(#)$Id: rcvtty.c,v 1.1 1990-04-12 13:29:36 vrs Exp $";
+static char ident[] = "@(#)$Id: rcvtty.c,v 1.2 1990-05-07 06:18:57 vrs Exp $";
 #endif	lint
 
 #ifndef	BSD42
@@ -172,7 +172,7 @@ char   **argv;
 
 /* ARGSUSED */
 
-static	int alrmser (i)
+static	TYPESIG alrmser (i)
 int     i;
 {
     longjmp (myctx, DONE);
