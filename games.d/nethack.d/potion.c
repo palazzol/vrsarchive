@@ -198,6 +198,7 @@ peffects(otmp)
 		pline("Yech! This stuff tastes like poison.");
 		if(Poison_resistance)
     pline("(But in fact it was biologically contaminated orange juice.)");
+    		else	{
 #ifdef KAA
 		if (pl_character[0] == 'H')
 			pline("Fortunately you have been immunized!");
@@ -211,6 +212,7 @@ peffects(otmp)
 		if(Hallucination) {
 			pline("You are shocked back to your senses!");
 			Hallucination=1;
+		}
 		}
 		break;
 	case POT_CONFUSION:
@@ -286,7 +288,7 @@ peffects(otmp)
 			break;
 		}
 #else
-		pline("This potion tastes wierd!");
+		pline("This potion tastes weird!");
 		break;
 #endif
 	default:

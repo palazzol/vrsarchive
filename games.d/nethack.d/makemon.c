@@ -29,39 +29,49 @@ makemon(ptr,x,y)
 register struct permonst *ptr;
 {
 	register struct monst *mtmp;
-	register tmp, ct;
+	register deep, nleft;
 	boolean anything = (!ptr);
 
 	if(x != 0 || y != 0) if(m_at(x,y)) return((struct monst *) 0);
 	if(ptr){
+		/* If this monster is genocided, just return */
 		if(index(fut_geno, ptr->mlet)) return((struct monst *) 0);
 	} else {
-		ct = CMNUM - strlen(fut_geno);
-		if(index(fut_geno, 'm')) ct++;  /* make only 1 minotaur */
-		if(index(fut_geno, '@')) ct++;
-		if(ct <= 0) return(0); 		  /* no more monsters! */
-		tmp = 7;
-		tmp = rn2(ct*dlevel/24 + 7);
-		if(tmp < dlevel - 4) tmp = rn2(ct*dlevel/24 + 12);
-		if(tmp >= ct) tmp = rn1(ct - ct/2, ct/2);
-		for(ct = 0; ct < CMNUM; ct++){
-			ptr = &mons[ct];
+		/* Make a random (common) monster */
+		nleft = CMNUM - strlen(fut_geno);
+		if(index(fut_geno, 'm')) nleft++;  /* make only 1 minotaur */
+		if(index(fut_geno, '@')) nleft++;
+		if(nleft <= 0) return(0); 	  /* no more monsters! */
+		/* determine the strongest monster to make */
+#ifdef ROCKMOLE
+		deep = rn2(nleft*dlevel/24 + 6);
+#else
+		deep = rn2(nleft*dlevel/24 + 7);
+#endif
+		if(deep < dlevel - 4) deep = rn2(nleft*dlevel/24 + 12);
+		/* fudge deep into the upper half of the valid range
+		   (if needed) */
+		if(deep >= nleft) deep = rn1(nleft - nleft/2, nleft/2);
+		for(nleft = 0; nleft < CMNUM; nleft++){
+			ptr = &mons[nleft];
+			if(index(fut_geno, ptr->mlet)) continue;
 #ifdef KOPS
 			if(ptr->mlet == 'K') {
-				tmp--;
+				deep--;
 				continue;
 			}
 #endif
-			if(index(fut_geno, ptr->mlet)) continue;
-			if(--tmp <= 0) goto gotmon;
+			if(--deep <= 0) goto gotmon;
 		}
-		panic("makemon?");
+		/* This can happen if you are deep in the dungeon and
+		   "weak" monsters have been genocided. */
+		return((struct monst *)0);
 	}
 gotmon:
 	mtmp = newmonst(ptr->pxlth);
 	*mtmp = zeromonst;	/* clear all entries in structure */
-	for(ct = 0; ct < ptr->pxlth; ct++)
-		((char *) &(mtmp->mextra[0]))[ct] = 0;
+	for(nleft = 0; nleft < ptr->pxlth; nleft++)
+		((char *) &(mtmp->mextra[0]))[nleft] = 0;
 	mtmp->nmon = fmon;
 	fmon = mtmp;
 	mtmp->m_id = flags.ident++;
@@ -233,8 +243,9 @@ register xchar xx,yy;
 		range++;
 	} while(tfoo == foo);
 foofull:
-	cc->x = foo[rn2(tfoo-foo)].x;
-	cc->y = foo[rn2(tfoo-foo)].y;
+	range = rn2(tfoo-foo);
+	cc->x = foo[range].x;
+	cc->y = foo[range].y;
 	return(0);
 }
 
