@@ -7,7 +7,11 @@
 #include <setjmp.h>
 #include <signal.h>
 #include <errno.h>
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 #ifdef SYS5
 #include <string.h>
 #else

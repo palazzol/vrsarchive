@@ -31,7 +31,11 @@ scaninit(routine, jumpbuf)
 	char (*routine)();		/* routine to get characters */
 	jmp_buf	jumpbuf;		/* jump buffer to use later */
 {
+#ifdef __STDC__
+	struct	termios	sgbuf;		/* basic tty structure */
+#else
 	struct	sgttyb	sgbuf;		/* basic tty structure */
+#endif
 #ifdef TIOCGLTC
 	struct	ltchars	ltbuf;		/* local tty structure */
 #endif
@@ -40,18 +44,32 @@ scaninit(routine, jumpbuf)
 	memcpy((char *)scanjumpbuf, (char *)jumpbuf, sizeof(scanjumpbuf));
 	scanwriteptr = scanbuffer;
 	scanreadptr = scanbuffer;
+#ifdef __STDC__
+	sgbuf.c_cc[VERASE] = CERASE;	/* set defaults in case ioctls fail */
+	sgbuf.c_cc[VKILL] = CKILL;
+#else
 	sgbuf.sg_erase = CERASE;	/* set defaults in case ioctls fail */
 	sgbuf.sg_kill = CKILL;
+#endif
 #ifdef TIOGLTC
 	ltbuf.t_werasc = CWERASE;
 	ltbuf.t_lnextc = CLNEXT;
 #endif
+#ifdef __STDC__
+	tcgetattr(STDIN, &sgbuf);	/* get and save editing characters */
+#else
 	ioctl(STDIN, TIOCGETP, &sgbuf);	/* get and save editing characters */
+#endif
 #ifdef TIOGLTC
 	ioctl(STDIN, TIOCGLTC, &ltbuf);
 #endif
+#ifdef __STDC__
+	rubchar = sgbuf.c_cc[VERASE];
+	rubline = sgbuf.c_cc[VKILL];
+#else
 	rubchar = sgbuf.sg_erase;
 	rubline = sgbuf.sg_kill;
+#endif
 #ifdef TIOGLTC
 	rubword = ltbuf.t_werasc;
 	litchar = ltbuf.t_lnextc;
