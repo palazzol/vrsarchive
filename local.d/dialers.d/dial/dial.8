@@ -1,0 +1,51 @@
+.TH DIAL 8 LOCAL
+.SH NAME
+dial \- change the modem line to in or out
+.SH SYNOPSIS
+dial \fBin\fP|\fBout\fP \fBttyxx\fP
+.SH DESCRIPTION
+.I Dial
+changes the modemline on ttyxx to a
+.I dialin
+or
+.I dialout
+line. 
+Appropriate checking is done to avoid conflicts with 
+.I uucp ,
+.I kermit
+or
+.I tip
+and people who are logged on from home.
+.sp
+.I Dial
+checks 4 cases:
+.IP 1)
+Creating a dial out line, lock file doesn't exist.
+This is fine, disable the getty process.
+.IP 2)
+Creating a dial out line, lock file does exist.
+If there is a process up for this line,
+the lock file is there to stop tip/uucp/kermit from trying to use the line.
+We can remove the lock file and disable getty.
+On the other hand, if there is NOT a process up,
+somebody else is using the line, so complain.
+.IP 3)
+Creating a dial in line, lock file doesn't exist.
+This is fine.
+Start up a getty process and create a lock file
+(so that tip/uucp/kermit won't try to use the line).
+.IP 4)
+Creating a dial in line, lock file does exist.
+Nothing to do, just complain.
+.PP
+In all cases,
+if the lock file exists and is very old (over 8 hours) then
+.I dial
+goes ahead and removes it.
+.SH DIAGNOSTICS
+The error messages are self explanatory.
+.SH AUTHOR
+Gertjan Vinkesteyn
+.br
+Modified by David Herron (ukma!david) to handle the lock files better
+and de-localize it.

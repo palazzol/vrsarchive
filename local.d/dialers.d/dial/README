@@ -1,0 +1,44 @@
+	This program is in use by us for one phone line
+	for dial in and dial out. There might be much better
+	solutions to the problem, but the best one is having
+	separate phone lines.
+
+	all our uucp and uux calls go with the -r parameter
+	and in the /usr/lib/crontab the uucico call is at follows
+
+ 05 * * * * /etc/dial out; sleep 5; /etc/dial in
+
+	the program 'chmod' and 'owner' as follows:
+
+ ---s--x--x  1 root        16384 Nov 25 15:42 /etc/dial
+
+-------------------------------------------------------------------
+
+Modifications by David Herron, (ukma!david). [27-Dec-84]
+
+I had been doing something similar to this with shell files.
+However they left a few things to be desired.  My method here
+was to create a lock file when the port was enabled for dial-in.
+This served to keep uucp/tip/kermit from trying to use the port
+while it was in this mode.  So this creates 4 cases that need
+to be checked for.  (read my code and manual page about this).
+
+I also had written a cute little program that made and destroyed
+lock files for you.  Very convenient.
+
+Note that I don't follow his suggestion up there of making dial
+set-uid.  I don't see where it is terribly safe to let the users
+have the power to make lines dial in/out.
+
+As above, the intended use is:
+
+	1:  In the morning, enable 1 or more lines for outgoing.
+	    (this actually happens in the wee hours so our news
+	    feed gets polled).  Assumption is that most people
+	    are in their offices during the day and mostly need
+	    the modems to attach to outside computers.
+	2:  In the evening, disable some of the outgoing lines
+	    leaving 1 or 2 for outgoing.  Not all people are
+	    going to be gone, and uucp must still also work.
+
+I have just one line switching back and forth currently.
