@@ -1,68 +1,84 @@
-CFLAGS = -g
+ALL	= cbw decrypt enigma zeecode
+OPTIONS	= -O
+MODEL	= -M2l
+CBWLIB	= $(LIBDIR)/cbw
+WRDLST	= /usr/dict/words
+include ../../CONFIG
 
 # Object files for for the workbench.
-cbreq =	pword.o lpair.o approx.o \
-		eclass.o cipher.o char-io.o \
-		tritab.o autotri.o pqueue.o \
-		webster.o user.o gblock.o dblock.o dbsaux.o banner.o \
-		cblocks.o stats.o parser.o knit.o \
-		pgate.o perm.o terminal.o \
-		keylib.o windowlib.o dline.o screen.o 
+CBOBJ	= pword.o lpair.o approx.o eclass.o cipher.o char-io.o tritab.o \
+	  autotri.o pqueue.o webster.o user.o gblock.o dblock.o dbsaux.o \
+	  banner.o cblocks.o stats.o parser.o knit.o pgate.o perm.o \
+	  terminal.o keylib.o windowlib.o dline.o screen.o
+ECTOBJS	= edriver.o eclass.o cipher.o char-io.o triglist.o webster.o user.o \
+	  gblock.o dblock.o dbsaux.o banner.o cblocks.o trigram.o stats.o \
+	  parser.o knit.o pgate.o perm.o keylib.o windowlib.o dline.o screen.o
 
 # The main program.
-cbw: start.o $(cbreq) 
-	cc $(CFLAGS) start.o $(cbreq) \
-	-lcurses -ltermcap -lm -o cbw
+cbw: start.o $(CBOBJ)
+	$(CC) $(CFLAGS) $(CFLAGS) start.o $(CBOBJ) $(LIBS) -o $@
 
-# Program to decrypt files after they have been broken by CBW.
-zeecode: zeecode.o
-	cc $(CFLAGS) zeecode.o -o zeecode
+# Friendly interface to cbw
+decrypt: decrypt.sh ../../CONFIG Makefile
+	sed '/^CBWLIB=/c\
+CBWLIB=$(CBWLIB)' decrypt.sh > $@
 
 # Program to encrypt files, this is identical to the
 # Unix crypt function based on a two rotor enigma.
 enigma: enigma.o
-	cc $(CFLAGS) enigma.o -o enigma
+	$(CC) $(CFLAGS) $(CFLAGS) enigma.o -o $@
+
+# Program to decrypt files after they have been broken by CBW.
+zeecode: zeecode.o
+	$(CC) $(CFLAGS) $(CFLAGS) zeecode.o -o $@
 
 #
 # The remaining files are test drivers.
 #
 
-bd: bdriver.o $(cbreq)
-	cc -g bdriver.o $(cbreq) -lm \
-	-lcurses -ltermcap -lm -o bd
+bd: bdriver.o $(CBOBJ)
+	$(CC) $(CFLAGS) bdriver.o $(CBOBJ) $(LIBS) -o $@
 
-sd: sdriver.o $(cbreq)
-	cc -g sdriver.o $(cbreq) \
-	-lcurses -ltermcap -lm -o sd
+sd: sdriver.o $(CBOBJ)
+	$(CC) $(CFLAGS) sdriver.o $(CBOBJ) $(LIBS) -o $@
 
 approx: approx.o
-	cc -g approx.o -lm -o approx
+	$(CC) $(CFLAGS) approx.o $(LIBS) -o $@
 
 stats: stats.o char-io.o
-	cc -g stats.o char-io.o -lm -o stats
+	$(CC) $(CFLAGS) stats.o char-io.o $(LIBS) -o $@
 
-tri: tdriver.o $(cbreq)
-	cc -g tdriver.o $(cbreq) -lm \
-	-lcurses -ltermcap -lm -o tri
+tri: tdriver.o $(CBOBJ)
+	$(CC) $(CFLAGS) tdriver.o $(CBOBJ) $(LIBS) -o $@
 
-ectreq = edriver.o eclass.o cipher.o char-io.o \
-		triglist.o \
-		webster.o user.o gblock.o dblock.o dbsaux.o banner.o \
-		cblocks.o trigram.o stats.o parser.o knit.o \
-		pgate.o perm.o \
-		keylib.o windowlib.o dline.o screen.o 
-
-
-ect: $(ectreq)
-	cc -g $(ectreq) -lm \
-	-o ect
+ect: $(ECTOBJS)
+	$(CC) $(CFLAGS) $(ECTOBJS) $(LIBS) -o $@
 
 ptt: char-io.o probtab.o
-	cc -g char-io.o probtab.o -lm -o ptt
+	$(CC) $(CFLAGS) char-io.o probtab.o $(LIBS) -o $@
 
 dt: disptest.o keylib.o windowlib.o screen.o
-	cc disptest.o keylib.o windowlib.o screen.o -o dt
+	$(CC) $(CFLAGS) disptest.o keylib.o windowlib.o screen.o -o $@
 
 triplace: triplace.o
+	$(CC) $(CFLAGS) $(CFLAGS) triplace.o -o $@
 
+$(CBWLIB):
+	mkdir $@
+	chmod 755 $@
 
+clean:
+	rm -f $(CBOBJS) start.o enigma.o zeecode.o bdriver.o sdriver.o
+	rm -f $(ECTOBJ) approx.o stats.o char-io.o tdriver.o char-io.o
+	rm -f $(ALL) probtab.o disptest.o triplace.o
+
+install: $(ALL) $(BINDIR) $(LIBDIR) $(CBWLIB)
+	cp enigma $(BINDIR)/crypt
+	cp decrypt zeecode $(BINDIR)
+	cd $(BINDIR); chmod 711 crypt zeecode
+	cd $(BINDIR); chmod 755 decrypt
+	cp $(WRDLST) $(CBWLIB)/word-list
+	cp cbw mss.stats mss-bigram.stats trigrams.stats $(CBWLIB)
+	cd $(CBWLIB); chmod 711 cbw
+	cd $(CBWLIB); chmod 644 word-list mss.stats
+	cd $(CBWLIB); chmod 644 mss-bigram.stats trigrams.stats 
