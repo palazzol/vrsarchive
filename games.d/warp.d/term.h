@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/term.h,v 1.1 1987-07-26 10:19:12 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/term.h,v 1.2 1990-04-04 21:31:41 vrs Exp $ */
 
 /* $Log: not supported by cvs2svn $
+ * Version 1.1  87/07/26  10:19:12  vrs
+ * Initial version
+ * 
  * Revision 7.0.1.2  86/12/12  17:05:15  lwall
  * Baseline for net release.
  * 
@@ -14,6 +17,7 @@
 
 /* warp will still work without the following, but may get ahead at low speed */
 #ifdef TIOCOUTQ		/* chars left in output queue */
+EXT long iocount INIT(0);
 #define output_pending() (ioctl(1, TIOCOUTQ, &iocount),iocount)
 #endif
 

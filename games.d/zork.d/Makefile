@@ -1,5 +1,5 @@
 #
-#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.4 1990-03-27 17:28:38 vrs Exp $
+#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.5 1990-04-04 21:31:48 vrs Exp $
 #
 ALL = zork dindx.dat dtext.dat dng
 include /etc/CONFIG
@@ -21,7 +21,7 @@ dtext.dat: dtext.dat.uu
 dng:	dng.uu
 	uudecode $?
 
-zork:	zork.sh/etc/CONFIG
+zork:	zork.sh /etc/CONFIG
 	sed '/^DNGLIB/c\
 DNGLIB=$(GAMLIB)' zork.sh > $@
 

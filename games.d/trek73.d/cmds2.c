@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.4 1987-12-25 20:50:39 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.5 1990-04-04 21:31:31 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.4 1987-12-25 20:50:39 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.5 1990-04-04 21:31:31 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.4  87/12/25  20:50:39  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.2  87/10/13  16:00:46  16:00:46  okamoto (Jeff Okamoto)
  * Fixed calls to Gets
  * 
@@ -40,7 +43,7 @@ struct ship *sp;
 	float	course;
 	float	relbear;
 	float	revrelbear;
-	int	maxlen = 0;
+	unsigned	maxlen = 0;
 	int	incltorp = 0;
 	char	whitespace[5], who[80];
 #ifdef SHOWTORP

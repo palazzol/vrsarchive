@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.5 1987-12-25 21:43:59 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.6 1990-04-04 21:31:34 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/main.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.5 1987-12-25 21:43:59 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.6 1990-04-04 21:31:34 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.5  87/12/25  21:43:59  vrs
+ * Remove tokens after preprocessor directives
+ * 
  * Version 1.4  87/12/25  20:50:57  vrs
  * Check in 4.0 version from the net
  * 
@@ -52,15 +55,51 @@
 
 static jmp_buf	jumpbuf;
 
+SIG_T
+quitgame(dummy)
+{
+	char answer[20];
+	unsigned timeleft;
+
+	timeleft = alarm(0);
+	(void) signal(SIGINT, SIG_IGN);
+	puts("\n\nDo you really wish to stop now?  Answer yes or no:");
+	(void) Gets(answer, sizeof(answer));
+	if(answer[0] == NULL || answer[0] == 'y' || answer[0] == 'Y')
+		exit(0);
+	(void) signal(SIGINT, quitgame);
+	if(timeleft)
+		(void) alarm((unsigned)timeleft);
+	return;
+}
+
+SIG_T
+alarmtrap(sig)
+int sig;
+{
+	register int i;
+
+	if (sig) {
+		puts("\n** TIME **");
+		(void) signal(sig, alarmtrap);
+		stdin->_cnt = 0;
+	}
+	for (i = 1; i <= shipnum; i++)
+		shiplist[i]->strategy(shiplist[i]);
+	if (!(is_dead(shiplist[0], S_DEAD)))
+		printf("\n");
+	(void) move_ships();
+	(void) check_targets();
+	(void) misc_timers();
+	(void) disposition();
+	longjmp(jumpbuf, 1);
+}
 
 main(argc, argv, envp)
 int argc;
 char *argv[];
 char *envp[];
 {
-	int			alarmtrap();
-	int			quitgame();
-
 	if (buffering(stdout) < 0)
 		perror("cannot fstat stdout");
 	(void) signal(SIGALRM, alarmtrap);
@@ -90,8 +129,6 @@ char *envp[];
 playit()
 {
 	struct cmd		*scancmd();
-	int			alarmtrap();
-	int			quitgame();
 	register struct ship	*sp;
 #ifndef PARSER
 	char			buf1[30];
@@ -148,45 +185,6 @@ next:
 	/* This point is never reached since alarmtrap() always concludes
 	   with a longjmp() back to the setjmp() above the next: label */
 	/*NOTREACHED*/
-}
-
-alarmtrap(sig)
-int sig;
-{
-	register int i;
-
-	if (sig) {
-		puts("\n** TIME **");
-		(void) signal(sig, alarmtrap);
-		stdin->_cnt = 0;
-	}
-	for (i = 1; i <= shipnum; i++)
-		shiplist[i]->strategy(shiplist[i]);
-	if (!(is_dead(shiplist[0], S_DEAD)))
-		printf("\n");
-	(void) move_ships();
-	(void) check_targets();
-	(void) misc_timers();
-	(void) disposition();
-	longjmp(jumpbuf, 1);
-}
-
-
-quitgame()
-{
-	char answer[20];
-	unsigned timeleft;
-
-	timeleft = alarm(0);
-	(void) signal(SIGINT, SIG_IGN);
-	puts("\n\nDo you really wish to stop now?  Answer yes or no:");
-	(void) Gets(answer, sizeof(answer));
-	if(answer[0] == NULL || answer[0] == 'y' || answer[0] == 'Y')
-		exit(0);
-	(void) signal(SIGINT, quitgame);
-	if(timeleft)
-		(void) alarm((unsigned)timeleft);
-	return;
 }
 
 

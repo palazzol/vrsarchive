@@ -1,12 +1,12 @@
 #
-#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.6 1990-03-27 17:26:57 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.7 1990-04-04 21:29:08 vrs Exp $
 #
 ALL	= poker pokerd
 #
 #	Define the type of system programs are being made on.
 #
 MODEL	= -M2l -F 2000
-OPTIONS	= -UINET -I$(INCDIR) -DGAMLIB=\"$(GAMLIB) -DPORT=\"/tmp/pokerd\"
+OPTIONS	= -UINET -I$(INCDIR) -DGAMLIB=$(GAMLIB) -DPORT=\"/tmp/pokerd\"
 include /etc/CONFIG
 MYLIBS	= $(BERKLIB) $(LIBS)
 

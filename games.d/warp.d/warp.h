@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/warp.h,v 1.1 1987-07-26 10:20:36 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/warp.h,v 1.2 1990-04-04 21:31:44 vrs Exp $ */
 
 /* $Log: not supported by cvs2svn $
+ * Version 1.1  87/07/26  10:20:36  vrs
+ * Initial version
+ * 
  * Revision 7.0.1.2  86/12/12  17:08:42  lwall
  * Baseline for net release.
  * 
@@ -157,8 +160,10 @@ EXT char amb[YSIZE][XSIZE];
 
 /* Things we can figure out ourselves */
 
+#ifndef SYS5
 #ifdef SIGPROF
 #   define BSD42		/* do we have Berkeley 4.2? */
+#endif
 #endif
 
 #ifdef FIONREAD
@@ -325,11 +330,6 @@ char	*rindex();
 char	*getenv();
 char	*strcat();
 char	*strcpy();
-#ifdef CHARSPRINTF
-char	*sprintf();
-#else
-int	sprintf();
-#endif
 
 EXT char buf[LBUFLEN+1];	/* general purpose line buffer */
 

@@ -1,5 +1,5 @@
 #
-#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.4 1990-03-27 17:26:53 vrs Exp $
+#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.5 1990-04-04 21:28:55 vrs Exp $
 #
 #	Tunables:
 #		PM_ROLL -	pathname of score file
@@ -16,7 +16,8 @@ ALL	= pm
 PM_ROLL	= $(GAMLIB)/pm_roll
 PM_USER	= $(GAMLIB)/pm_user
 MODEL	= -i -F 2000
-OPTIONS	= -DPM_ROLL=\"$(PM_ROLL)\" -DPM_USER=\"$(PM_USER)\" -DWIZARD_UID=0 -O
+OPTIONS	= -DPM_ROLL=\"$(PM_ROLL)\" -DPM_USER=\"$(PM_USER)\" \
+		  -DWIZARD_UID=0 -O
 LINTARGS= -ahxc $(DEFS) -DLINT
 include /etc/CONFIG
 #

@@ -1,8 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/games.d/spaceduel.d/Makefile,v 1.3 1990-03-27 17:27:55 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/spaceduel.d/Makefile,v 1.4 1990-04-04 21:31:19 vrs Exp $
 #
 ALL	= spaceduel
-OPTIONS	= -O -DGAMLIB=\"$(GAMLIB) -DPAGER=\"$(PAGER)\" #-DWIZARD
+OPTIONS	= -O -DGAMLIB=$(GAMLIB) -DPAGER=\"$(PAGER)\" #-DWIZARD
 MODEL	= -i 
 include /etc/CONFIG
 

@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/sig.c,v 1.1 1987-07-26 10:18:38 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/sig.c,v 1.2 1990-04-04 21:31:40 vrs Exp $ */
 
 /* $Log: not supported by cvs2svn $
+ * Version 1.1  87/07/26  10:18:38  vrs
+ * Initial version
+ * 
  * Revision 7.0.1.1  86/12/12  17:02:44  lwall
  * Baseline for net release.
  * 
@@ -53,8 +56,8 @@ sig_init()
 }
 
 #ifdef SIGTSTP
-void
-cont_catcher()
+SIG_T
+cont_catcher(dummy)
 {
 #ifndef lint
     sigset(SIGCONT,cont_catcher);
@@ -199,8 +202,8 @@ sig_catcher(signo)
 #ifdef SIGTSTP
 /* come here on stop signal */
 
-void
-stop_catcher()
+SIG_T
+stop_catcher(dummy)
 {
     if (!waiting) {
 	resetty();			/* this is the point of all this */

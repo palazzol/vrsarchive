@@ -1,7 +1,10 @@
 #
-# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.3 1990-03-27 17:28:26 vrs Exp $
+# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.4 1990-04-04 21:31:38 vrs Exp $
 #
 # $Log: not supported by cvs2svn $
+# Version 1.3  90/03/27  17:28:26  vrs
+# Move CONFIG to /etc
+# 
 # Version 1.2  87/07/26  15:04:43  vrs
 # Use CONFIG
 # 
@@ -113,21 +116,21 @@ lint:
 	lint $(lintflags) $(defs) $(c) > warp.fuzz
 
 smap.0: smp.0 sm
-	sm <smp.0 >smap.0
+	./sm <smp.0 >smap.0
 smap.1: smp.1 sm
-	sm <smp.1 >smap.1
+	./sm <smp.1 >smap.1
 smap.2: smp.2 sm
-	sm <smp.2 >smap.2
+	./sm <smp.2 >smap.2
 smap.3: smp.3 sm
-	sm <smp.3 >smap.3
+	./sm <smp.3 >smap.3
 smap.4: smp.4 sm
-	sm <smp.4 >smap.4
+	./sm <smp.4 >smap.4
 smap.5: smp.5 sm
-	sm <smp.5 >smap.5
+	./sm <smp.5 >smap.5
 smap.6: smp.6 sm
-	sm <smp.6 >smap.6
+	./sm <smp.6 >smap.6
 smap.7: smp.7 sm
-	sm <smp.7 >smap.7
+	./sm <smp.7 >smap.7
 sm: sm.c
 	cc sm.c -o $@
 
