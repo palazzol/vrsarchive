@@ -3,7 +3,7 @@
 	Written by Tim Budd, Oregon State University, July 1987
 */
 
-# define streq(a,b) (strcmp(a,b) == 0)
+# define streq(a,b) (a && b && (strcmp(a,b) == 0))
 
 /*
 	The first major decision to be made in the memory manager is what
