@@ -45,7 +45,9 @@ char **envp;
 {
 	register char *env;
 	register struct passwd *pw;
+#ifndef __STDC__
 	struct passwd *getpwuid();
+#endif
 	char *getpass(), *crypt();
 	int lowtime;
 
@@ -53,6 +55,9 @@ char **envp;
 	signal(SIGQUIT, leave);
 	signal(SIGILL, leave);
 	signal(SIGTRAP, leave);
+#ifndef SIGIOT
+#define SIGIOT	SIGABRT
+#endif
 	signal(SIGIOT, leave);
 	signal(SIGEMT, leave);
 	signal(SIGFPE, leave);
