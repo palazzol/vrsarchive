@@ -10,7 +10,7 @@
 #define	PATTERNS		/* let there be patterns!!!		*/
 #define	FASTER			/* let the monsters move fast (monsters.c) */
 #define	MAX_UPDATE		/* more refreshes			*/
-#ifdef	BSD42|BSD43|BSD29
+#ifndef	SYS5
 #	define	BAD_OVERLAY	/* bug in curses (overlay.c)		*/
 #endif
 #define	MYTIMER			/* quite reliable			*/
@@ -18,11 +18,17 @@
 #define	BYTE_SIZE	8	/* # of bits in a byte			*/
 
 
+#include <stdio.h>
 #include <curses.h>
+#ifndef A_REVERSE		/* Not terminfo				*/
+#define ungetch(ch) ungetc(ch, stdin)
+#endif
 #include <ctype.h>
+#include <sys/param.h>
+#ifndef M_XENIX
 #include <sys/types.h>
-#include <sys/timeb.h>
-#ifdef	BSD42|BSD43
+#endif
+#ifndef	SYS5
 #	include <sys/time.h>
 #else
 #	include <time.h>
@@ -66,7 +72,7 @@
 #define	MHELP		'?'		/* give list of commands	*/
 #define	MFAST		'f'		/* toggle looping in make_move	*/
 #define	MQUIET		'b'		/* toggle beeping		*/
-#define	MPAUSE		'p'		/* hang on getchar()		*/
+#define	MPAUSE		'p'		/* hang on getch()		*/
 #define	MHUH		CTRL(R)		/* reprint last message		*/
 #define	MNULL		'\0'
 /*
@@ -151,9 +157,6 @@
 #define	V_ENERGY	50
 #define	ALARM_TIME	10		/* messages get erased every 10 sec */
 #define	BONUS		10000		/* get a free pm with 10000 score*/
-#define	CMASK		0177		/* used to strip garbage from what
-					** inch() returns (when in stand...)
-					*/
 /*
 ** useful defines to make core more terse
 */
@@ -231,7 +234,7 @@ typedef	struct
 ** the single character, and i think that it gets messed up when
 ** that character is in background
 */
-#define	INCH()		(inch() & CMASK)
+#define	INCH()		(toascii(inch()))
 #define	abs(x)		(x < 0 ? - x : x)
 #define	MVADDCH(p, c)	mvaddch(p.y, p.x, c)
 #define	TF(x)		(x ? "True" : "False")
@@ -246,12 +249,11 @@ typedef	struct
 #define	beep()		putchar(BELL)
 #define	RN		(((seed = (seed * 11109) + 13849) & 0xfff) >> 1)
 #define	randomize(i)	seed = i
-#define	flush()		raw(),noraw()
+#define	flush()		raw(),noraw(),crmode()
 #define	m_erase(mon)	mvaddch(mon.mo_pos.y, mon.mo_pos.x, mon.mo_inch)
-#define	draw()		ftime(&_tp), refresh(), delay()
+#define	draw()		refresh(), delay()
 
 extern	coord	pm_pos;
-extern	struct	timeb	_tp;
 extern	int	pm_tunn, pm_extunn, d_left, e_left, level, fr_val,
 		fruit_val[], pms_left, pm_bonus, pm_eaten, pm_run,
 		mons_eaten, mons_val[], eat_times[], timer, was_wiz, is_wiz,
@@ -262,10 +264,10 @@ extern	char	*argv0, fruit[], fruit_eaten[], fr_ch, ch, oldch,
 #ifdef	LINT
 extern	char	_trash_;
 #endif
-extern	long	thescore, hi_score, demon, move_cntr, chcnt;
+extern	long	thescore, hi_score, demon, move_cntr;
 extern	mons	ghosts[];
 extern	mons	*h, *g, *c, *z;
-extern	char	_putchar(), *crypt(), *strcpy();
+extern	char	*crypt(), *strcpy();
 extern	int	getuid();
 extern	off_t	lseek();
 
@@ -274,7 +276,7 @@ extern	off_t	lseek();
 */
 extern	void	add_fruit(), aggressive(), chg_lvl(), check_scrs(),
 		commands(), delay(), die(), directions(),
-		doadd(), draw_screen(), eat_pm(), init(),
+		draw_screen(), eat_pm(), init(),
 		m_eat_pm(),
 		mons_init(), m_move(), msg(), msg_erase(), msleep(),
 		mv_mon(), new_screen(), old_screen(), p_barriers(), p_dots(),
