@@ -1,4 +1,4 @@
-ALL	= xlisp
+ALL	= xlisp$(EXE)
 include $(HOME)/CONFIG
 
 OFILES=xlisp.o xlbfun.o xlcont.o xldbug.o xldmem.o xleval.o \
@@ -8,9 +8,11 @@ OFILES=xlisp.o xlbfun.o xlcont.o xldbug.o xldmem.o xleval.o \
 
 #CFLAGS=-ml -f -O -G -w-pia -w-def -w-aus -Ic:\turboc\include
 
-xlisp: $(OFILES)
+xlisp$(EXE): $(OFILES)
 	$(CC) -o $@ $(OFILES)
 
+clean:
+	rm -rf $(OFILES) $(ALL)
 #.c.o:
 #	tcc -c $(CFLAGS) $<
 
