@@ -26,12 +26,20 @@
 /*MODIFICATION IS REQUIRED OF THE FOLLOWING DEFINE STATEMENTS*/
 
 /*file name definitions */
-#define EXEFILE		DATA/.execute"
-#define DATAFILE 	DATA/.data"
-#define MSGFILE		DATA/.messages"
-#define NPCSFILE 	DATA/.nations"
-#define HELPFILE 	DATA/.help"
-#define NEWSFILE 	DATA/.news"
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(DATA) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(DATA)/x"
+#endif
+#define EXEFILE		FILENM(.execute)
+#define DATAFILE 	FILENM(.data)
+#define MSGFILE		FILENM(.messages)
+#define NPCSFILE 	FILENM(.nations)
+#define HELPFILE 	FILENM(.help)
+#define NEWSFILE 	FILENM(.news)
 
 #define OWNER	"Ed Barlow"	/*administrators name*/
 
