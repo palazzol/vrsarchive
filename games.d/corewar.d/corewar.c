@@ -39,7 +39,7 @@ int	nr_of_own_locs[MAXPROCNUM+1];	/* and how many each of us controls */
 char	*pr_inst();		/* returns formatted string representation of a
 				 * redcode instruction suitable for %s */
 char	letter();		/* returns " ABCD..."[arg] */
-int (*oldintrup)();
+void (*oldintrup)();
 
 int	dumpflag = 0;		/* TRUE --> print post-mortem dump */
 int	traceflag = 0;		/* TRUE --> print execution trace */
