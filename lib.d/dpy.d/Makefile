@@ -6,7 +6,7 @@
 CC	= cc
 OFLAG	= -O
 DFLAG	=
-SYSTEM	= -DUSG
+SYSTEM	= -DUSG -Ml
 CFLAGS	= $(OFLAG) $(DFLAG) $(SYSTEM)
 AS	= as
 LIBDIR	= /lib

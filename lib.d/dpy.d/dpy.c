@@ -1,7 +1,6 @@
 static char *sccsid = "@(#)dpy.c	1.46	2/27/85";
 static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
 
-
 /*
  * Different curses package (by David I. Bell).
  * Modified to run under System V by Alan P.W. Hewett.
@@ -36,10 +35,10 @@ struct	window	window;		/* the window */
 static	int	dpytputs();	/* called by tputs to type to terminal */
 static	int	dpysputs();	/* called by tputs to save characters */
 int	dpystop();		/* stop routine */
-char	*tgetstr();		/* return termcap string */
-char	*malloc();		/* allocate memory */
-char	*getenv();		/* return environment variable */
-
+extern char	*tgetstr();		/* return termcap string */
+extern char	*malloc();		/* allocate memory */
+extern char	*getenv();		/* return environment variable */
+extern char	*tgoto();
 
 /*
  * Initialize the window structure.  Returns nonzero on failure with a
@@ -659,7 +658,7 @@ dpyupdate()
 	register char	*endrow;	/* end of row */
 	register char	*begrow;	/* beginning of row */
 	register int	row;		/* current row number */
-	int	diff;
+	unsigned	diff;
 
 	wp = &window;
 	if (wp->output == 0) {		/* first output, clear screen */
@@ -668,7 +667,8 @@ dpyupdate()
 		fwrite(wp->tc_cd, 1, wp->tc_cdcc, stdout);
 	}
 	cp = wp->begchange;
-	scp = wp->screen + (cp - wp->begdata);
+	diff = cp - wp->begdata;
+	scp = wp->screen + diff;
 	endrow = 0;
 	while (cp < wp->endchange) {	/* look for a difference */
 		diff = strdif(cp, scp, wp->endchange - cp);
