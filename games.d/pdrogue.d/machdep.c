@@ -14,9 +14,6 @@
  * of #ifdef's will be used to compile the appropriate code on each system:
  *
  *    UNIX:        all UNIX systems.
- *    UNIX_BSD4_2: UNIX BSD 4.2 and later, UTEK, (4.1 BSD too?)
- *    UNIX_SYS5:   UNIX system 5
- *    UNIX_V7:     UNIX version 7
  *
  * All UNIX code should be included between the single "#ifdef UNIX" at the
  * top of this file, and the "#endif UNIX" at the bottom.
@@ -45,7 +42,7 @@
  * The use of "#elseif" is discouraged because of non-portability.
  * If the correct #define doesn't exist, "UNIX_SYS5" in this case, make it up
  * and insert it in the list at the top of the file.  Alter the CFLAGS
- * in you Makefile appropriately.
+ * in your Makefile appropriately.
  *
  */
 
@@ -53,12 +50,15 @@
 
 #include <stdio.h>
 #include <sgtty.h>
-#include <sys/file.h>
 #include <sys/types.h>
+#include <sys/file.h>
+#include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/time.h>
+#include <time.h>
 #include <signal.h>
 #include "rogue.h"
+
+extern struct tm *localtime();
 
 /* md_slurp:
  *
@@ -74,16 +74,13 @@
 
 md_slurp()
 {
-#ifdef UNIX_BSD4_2
-	long ln;
-	int i, n;
-	ioctl(0, FIONREAD, &ln);
-	n = (int) (stdin->_cnt + ln);
+	int flags;
 
-	for (i = 0; i < n; i++) {
-		(void) getchar();
-	}
-#endif UNIX_BSD4_2
+	flags = fcntl(fileno(stdin), F_GETFL, 0);
+	(void) fcntl(fileno(stdin), F_SETFL, flags|O_NDELAY);
+	while (getchar() > 0)
+		;
+	(void) fcntl(fileno(stdin), F_SETFL, flags);
 }
 
 /* md_control_keyboard():
@@ -108,29 +105,37 @@ md_control_keybord(mode)
 short mode;
 {
 	static boolean called_before = 0;
+#ifdef TIOCGLTC
 	static struct ltchars ltc_orig;
-	static struct tchars tc_orig;
 	struct ltchars ltc_temp;
+#endif
+	static struct tchars tc_orig;
 	struct tchars tc_temp;
 
 	if (!called_before) {
 		called_before = 1;
 		ioctl(0, TIOCGETC, &tc_orig);
+#ifdef TIOCGLTC
 		ioctl(0, TIOCGLTC, &ltc_orig);
+#endif
 	}
+#ifdef TIOCGLTC
 	ltc_temp = ltc_orig;
+#endif
 	tc_temp = tc_orig;
 
 	if (!mode) {
-#ifdef UNIX_BSD4_2
+#ifdef TIOCGLTC
 		ltc_temp.t_suspc = ltc_temp.t_dsuspc = -1;
-#endif UNIX_BSD4_2
 		ltc_temp.t_rprntc = ltc_temp.t_flushc = -1;
 		ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
+#endif
 		tc_temp.t_startc = tc_temp.t_stopc = -1;
 	}
 	ioctl(0, TIOCSETC, &tc_temp);
+#ifdef TIOCGLTC
 	ioctl(0, TIOCSLTC, &ltc_temp);
+#endif
 }
 
 /* md_heed_signals():
@@ -233,13 +238,10 @@ char *fname;
 md_gct(rt_buf)
 struct rogue_time *rt_buf;
 {
-	struct timeval tv;
-	struct timezone tzp;
 	struct tm *t;
 	long seconds;
 
-	gettimeofday(&tv, &tzp);
-	seconds = (long) tv.tv_sec;
+	(void) time(&seconds);
 	t = localtime(&seconds);
 
 	rt_buf->year = t->tm_year;
@@ -528,9 +530,9 @@ md_gdtcf()
 
 md_tstp()
 {
-#ifdef UNIX_BSD4_2
+#ifdef SIGTSTP
 	kill(0, SIGTSTP);
-#endif UNIX_BSD4_2
+#endif
 }
 
 #endif CURSES
