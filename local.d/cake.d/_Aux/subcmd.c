@@ -3,7 +3,7 @@
 */
 
 static	char
-rcs_id[] = "$Header: /home/Vince/cvs/local.d/cake.d/_Aux/subcmd.c,v 1.1 1987-11-16 19:35:14 vrs Exp $";
+rcs_id[] = "$Header: /home/Vince/cvs/local.d/cake.d/_Aux/subcmd.c,v 1.2 1987-11-18 08:56:24 vrs Exp $";
 
 #include	<stdio.h>
 #include	<ctype.h>
@@ -22,7 +22,7 @@ char	**argv;
 	reg	char	*cmd, *old, *new;
 	reg	int	unmatched, i;
 	reg	bool	fast, general, ignore, noexec, needzero;
-	reg	FILE	*csh;
+	FILE		*sh, *popen();
 	char		buf[MAXLEN];
 
 	fast     = FALSE;
@@ -75,10 +75,10 @@ nextword:
 
 	if (fast)
 	{
-		csh = popen("/bin/csh -fs", "w");
-		if (csh == (FILE *) NULL)
+		sh = popen("/bin/sh", "w");
+		if (sh == (FILE *) NULL)
 		{
-			printf("subcmd: cannot popen csh\n");
+			printf("subcmd: cannot popen sh\n");
 			exit(1);
 		}
 	}
@@ -101,7 +101,7 @@ nextword:
 			or (fast)
 			{
 				printf("executing %s\n", buf);
-				fprintf(csh, "%s\n", buf);
+				fprintf(sh, "%s\n", buf);
 			}
 			else
 			{
@@ -116,7 +116,7 @@ nextword:
 	}
 
 	if (fast)
-		pclose(csh);
+		pclose(sh);
 
 	exit(ignore? 0: unmatched);
 }
