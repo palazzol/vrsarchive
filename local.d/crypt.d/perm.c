@@ -10,6 +10,7 @@
 #include	"window.h"
 #include	"specs.h"
 
+extern char *malloc();
 
 #define	NPERLINE	10		/* How many values per line in save file. */
 #define	FROMSTART	0		/* For fseek call, how offset measured. */
