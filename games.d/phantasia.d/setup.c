@@ -37,6 +37,14 @@
 /	Also, the monster binary data base is created here.
 /
 /************************************************************************/
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(DEST) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(DEST)/x"
+#endif
 
 main()
 {
@@ -68,17 +76,17 @@ static char *files[] =		/* all files to create */
 	fprintf(stderr, "Warning: UID (%d or %d) is not equal to current uid.\n", UIDA, UIDB);
 
     /* check Phantasia destination directory */
-    if (stat(DEST", &fbuf) < 0)
+    if (stat(FILENM(.), &fbuf) < 0)
 	/* not found */
 	{
-	Error("Cannot stat %s.\n", DEST");
+	Error("Cannot stat %s.\n", FILENM(.));
 	exit(1);
 	/*NOTREACHED*/
 	}
 
     if ((fbuf.st_mode & S_IFDIR) == 0)
 	/* not a directory */
-	Error("%s is not a directory.\n", DEST");
+	Error("%s is not a directory.\n", FILENM(.));
 	/*NOTREACHED*/
 
     /* try to create data files */
@@ -172,7 +180,7 @@ static char *files[] =		/* all files to create */
 
     /* report compile-time options */
     printf("Compiled options:\n\n");
-    printf("Phantasia destination directory:  %s\n", DEST");
+    printf("Phantasia destination directory:  %s\n", FILENM(.));
     printf("Wizard A:  %s   UID:  %d\n", WIZARDA, UIDA);
     printf("Wizard B:  %s   UID:  %d\n", WIZARDB, UIDB);
 

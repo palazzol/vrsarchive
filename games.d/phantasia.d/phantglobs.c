@@ -108,18 +108,26 @@ FILE	*Energyvoidfp;	/* pointer to open energy void file		*/
 char	Databuf[SZ_DATABUF];	/* a place to read data into		*/
 
 /* edit these path definitions to let files reside elsewhere */
-char	Monstfile[] = DEST/monsters";	/* monster database		*/
-char	Peoplefile[] = DEST/characs";	/* player database		*/
-char	Gameprog[] = DEST/phantasia";	/* game binary			*/
-char	Messfile[] = DEST/mess";	/* player to player messages	*/
-char	Lastdead[] = DEST/lastdead";	/* data on last player killed	*/
-char	Helpfile[] = DEST/phant.help";	/* manual pages			*/
-char	Motdfile[] = DEST/motd";	/* message from 'wizard'	*/
-char	Goldfile[] = DEST/gold";	/* gold collected in taxes	*/
-char	Voidfile[] = DEST/void";	/* energy void database		*/
-char	Scorefile[] = DEST/scoreboard";	/* hi score database		*/
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(DEST) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(DEST)/x"
+#endif
+char	Monstfile[] = FILENM(monsters);	/* monster database		*/
+char	Peoplefile[] = FILENM(characs);	/* player database		*/
+char	Gameprog[] = FILENM(phantasia);	/* game binary			*/
+char	Messfile[] = FILENM(mess);	/* player to player messages	*/
+char	Lastdead[] = FILENM(lastdead);	/* data on last player killed	*/
+char	Helpfile[] = FILENM(phant.help);	/* manual pages			*/
+char	Motdfile[] = FILENM(motd);	/* message from 'wizard'	*/
+char	Goldfile[] = FILENM(gold);	/* gold collected in taxes	*/
+char	Voidfile[] = FILENM(void);	/* energy void database		*/
+char	Scorefile[] = FILENM(scoreboard);	/* hi score database		*/
 #ifdef ENEMY
-char	Enemyfile[] = DEST/enemy";	/* restricted account database	*/
+char	Enemyfile[] = FILENM(enemy);	/* restricted account database	*/
 #endif
 
 /* some canned strings for messages */
