@@ -10,7 +10,11 @@
 #include <stdio.h>
 
 #ifndef M_NEEDED
+#ifdef M_XENIX
 #  define M_NEEDED 18000	/* You only get this much by default	*/
+#else
+#  define M_NEEDED 100000	/* You only get this much by default	*/
+#endif
 #endif
 
 
@@ -120,4 +124,29 @@ char *ptr;
     q->size += p->size;
     q->next = p->next;
   }
+}
+
+/*
+ *	Re-allocate memory.
+*/
+char *realloc(op, nsiz)
+register char *op;	/* Pointer to old memory			*/
+unsigned nsiz;		/* Desired new size				*/
+{ register char *p, *q;	/* Temp pointers				*/
+  char *np;		/* Pointer to new memory			*/
+  int i, osiz;
+
+  osiz = ((struct m_chunk *)(op-OVERHEAD))->size;
+  free((p = op));	/* Free old memory (contents unchanged)		*/
+  q = np = malloc(nsiz);/* Get some new memory				*/
+  if (np == op)		/* Need to copy?				*/
+    return(np);		/* No, all done					*/
+  /*
+   *	Note the assumption that if an overlap exists between the old and new
+   *	memory, np <= op.  The proof is left as an exercise for the reader.
+  */
+  if (osiz > nsiz)
+    osiz = nsiz;	/* Copy min(osiz, nsiz) bytes from old memory	*/
+  for (i = 0; i < osiz; i++)
+    *q++ = *p++;
 }
