@@ -90,16 +90,19 @@ char **argv;
 	int height, width, wremainder;
 	int wpatches, hpatches, pwidth;
 	register int x, y, y1, x1;
+	char dummy[256];
 
 	/* Get dimensions */
 	scanf("#define %*s %d\n", &width);
 	scanf("#define %*s %d\n", &height);
+	while (scanf("#define %s %*d\n", dummy) != 0)
+		fprintf(stderr, "%s: Ignoring %s record\n", argv[0], dummy);
 	scanf("static char %*s = {\n");	/* } */
 	width = (width+7)/8;	/* convert to bytes */
 	width *= 8;				/* convert back to bits */
 	wremainder = width & 31;
 	pwidth = width & ~31;
-	wpatches = width >> 5;
+	wpatches = (width+31) >> 5;
 	hpatches = (height+31) >> 5;
 
 	/* Put out the prologue */
@@ -120,9 +123,8 @@ char **argv;
 	for (y = 0; y < hpatches; y++) {
 		/* Read in a swath */
 		for (y1 = 0; y1 < 32; y1++) {
-			for (x = 0; x < pwidth/8; x++)
+			for (x = 0; x < width/8; x++)
 				swath[y1][x] = getbyte();
-			for (x = 0; x < wremainder/8; x++) getbyte();
 		}
 		/* output the swath */
 		for (x1 = 0; x1 < wpatches; x1++) {
