@@ -58,7 +58,9 @@
  * If you define HACKDIR, then this will be the default playground;
  * otherwise it will be the current directory.
  */
+#ifndef HACKDIR
 #define HACKDIR	"/usr/sat/games/nethack.lib"
+#endif
 
 /*
  * Some system administrators are stupid enough to make Hack suid root

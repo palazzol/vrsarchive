@@ -102,7 +102,9 @@ E int system P((const char *));
 #endif
 
 #ifdef SYSV
+#ifndef __STDC__
 E char *memcpy();
+#endif
 #endif
 #ifdef MSDOS
 E int memcmp P((char *,char *,unsigned int));
