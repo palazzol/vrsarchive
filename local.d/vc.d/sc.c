@@ -66,7 +66,7 @@ int  showrange;		/* Causes ranges to be highlighted */
 int  lastmx, lastmy;	/* Screen address of the cursor */
 int  lastcol;		/* Spreadsheet Column the cursor was in last */
 char *under_cursor = " "; /* Data under the < cursor */
-char *rev = "$Revision: 1.4 $";
+char *rev = "$Revision: 1.5 $";
 
 int seenerr;
 
@@ -1229,17 +1229,17 @@ signals()
 {
 #ifdef SYSV3
     void quit();
-    void timeout();
+    void atimeout();
 #else
     int quit();
-    int timeout();
+    int atimeout();
 #endif
 
     (void) signal(SIGINT, SIG_IGN);
     (void) signal(SIGQUIT, quit);
     (void) signal(SIGPIPE, quit);
     (void) signal(SIGTERM, quit);
-    (void) signal(SIGALRM, timeout);
+    (void) signal(SIGALRM, atimeout);
     (void) signal(SIGFPE, quit);
     (void) signal(SIGBUS, quit);
 }
