@@ -1,0 +1,630 @@
+Greeting	"* Welcome to -PIRATE'S ADVENTURE- by Alexis Adams *$n";
+Hellroom	never;
+Lamp		torch;
+Startroom	apt;
+Treasury	apt;
+Inventorysize	5;
+Lamplife	200;
+Lampwarn	25;
+Goverb		go=climb=walk=enter=pace=follow;
+Getverb		get=take=catch=pick=remove=pull;
+Dropverb	drop=release=throw=leave=give;
+
+Noun
+	stairs=stamp=stamps	passage	hall	book	bottle=rum=bottles
+	window=wings	mongoose=monastery	pirate	bag=duffel
+	torch=light	off	matches	yoho
+	^30	lumber	rug	keys	inventory
+	dubloons	sail=sails	fish	anchor
+	plans	cave	door	chest	parrot	path
+	hammer	nails	boat=ship	shed
+	crack	water=salt	lagoon=tide
+	pit	shore=beach=shovel	map	pace
+	bones	hole	sand	box	sneakers
+	snakes	shack;
+
+Verb
+	say	sail	fly	eat=drink
+	inventory=i	look=show	wait
+	read	yoho	score	kill=attack=hit
+	light	open=smash	unlock=unlight	help
+	away=bunyon	quit	build=make
+	wake	set	cast	dig	burn
+	find	jump	empty	weigh;
+
+Var
+	gotkeys		bagchecked	gotmap	anchorfreed
+	tidechange	sailed	gotplans	paced30
+	paced;
+
+Room
+	apt	"*I'm in an apartment in London";
+	alcove 	(D:apt) "*I'm in an alcove";
+	pas 	(E:attic w:alcove) "secret passageway";
+	attic	(W:pas) "musty attic";
+	window	"*I'm outside an open window on a ledge on the side of a very tall building";
+	beach	(E:meadow) "sandy beach on a tropical isle";
+	maze1	Dark (s:maze2 e:maze3 w:hill d:pit) "maze of caves";
+	meadow	(e:hill w:beach) "meadow";
+	shack	(w:meadow) "grass shack";
+	ocean	(n:ocean s:lagoon e:ocean w:ocean) "*I'm in the ocean";
+	pit	Dark (u:maze1) "pit";
+	maze2	Dark (n:maze1 e:hill w:maze3) "maze of caves";
+	maze3	Dark (n:maze1 s:hill e:maze2 w:maze4) "maze of caves";
+	hill    (w:meadow) "*I'm at the foot of a cave ridden hill.  A path leads to the top";
+	shed	Dark (n:cavern) "tool shed";
+	hall	Dark (e:cavern) "long hallway";
+	cavern	Dark (w:hall) "large cavern";
+	hilltop	(d:hill) "*I'm on top of a hill.  Below is Pirate Island.  Across the sea off in the distance I see *TREASURE* ISLAND";
+	maze4	Dark (s:maze3 e:maze3 w:maze2) "maze of caves";
+	ship	"*I'm aboard a pirate ship anchored off shore";
+	tbeach	(s:graves) "*I'm on the beach at Treasure Island";
+	graves	(n:tbeach e:field) "spooky old graveyard filled with piles of empty and broken rum bottles";
+	field	(w:graves) "large barren field";
+	lagoon	(n:ocean s:beach e:beach w:beach) "shallow lagoon.  To the north is the ocean";
+	monast	(w:field) "sacked and deserted monastery";
+	never	"*Welcome to Never Never Land!";
+
+Item
+	win @ alcove "Open window";
+	case @ alcove "Bookcase";
+	book=book "Large leather-bound book";
+	ocase "Bookcase with secret passage behind it";
+	bag=bag @ attic "Pirate's duffel bag";
+	sign @ apt "Sign on wall -RETURN TREASURES HERE.  SAY SCORE-.$nSign by stairs -ANTONYM OF LIGHT IS UNLIGHT-";
+	ebottle=bottle "Empty bottle";
+	utorch=torch @ attic "Unlit torch";
+	torch=torch "Lit torch";
+	matches=matches "Matches";
+	keel @ beach "Small ship's keel and mast";
+	pirate @ shack "Wicked looking pirate";
+	chest=chest @ meadow "Treasure Chest";
+	mongoose=mongoose @meadow "Mongoose";
+	anchor=anchor @lagoon "Rusty anchor";
+	gshack@meadow "Grass shack";
+	crocs @pit "Mean and hungry looking CROCODILES";
+	ldoor @pit "Locked door";
+	odoor "Open door with hall beyond";
+	sails=sails @cavern "Pile of sails";
+	fish=fish @ocean "Fish";
+	dubloons=dubloons @monast "*DUBLOONS*";
+	snakes=snakes @monast "Deadly Mamba snakes";
+	parrot=parrot@shack "Parrot";
+	rbottle=bottle @ apt "Bottle of Rum";
+	rug=rug "Rug";
+	keys=keys "Ring of keys";
+	ochest=chest "Open treasure chest";
+	plans=plans "Set of plans";
+	fixrug @apt "Rug";
+	hammer=hammer @shed "Claw hammer";
+	nails=nails "Nails";
+	lumber=lumber @ cavern "Pile of precut lumber";
+	tshed @ cavern "Tool shed";
+	lhdoor @ hall "Locked door";
+	ohdoor "Open door with pit beyond";
+	pship "Pirate ship";
+	wall @ hilltop "Rock wall with narrow crack in it";
+	crack @ cavern "Narrow crack in the rock";
+	water @ ocean "Salt water";
+	spirate "Sleeping pirate";
+	wbottle=bottle "Bottle of salt water";
+	pieces @ attic "Pieces of broken rum bottles";
+	sneakers=sneakers @apt "Non-skid sneakers";
+	map=map "Map";
+	shovel=shovel @ hall "Shovel";
+	bones=bones "Mouldy old bones";
+	sand=sand @beach "Sand";
+	rbottles=bottles "Bottles of rum";
+	stamps=stamps "*RARE OLD PRICELESS STAMPS*";
+	ilagoon @ beach "Lagoon";
+	tideout @ lagoon "The tide is out";
+	tidein "The tide is coming in";
+	wings=wings @shed "Water wings";
+	flotsam "Flotsam and Jetsam";
+	mon @field "Monastery";
+	box=box "Plain wooden box";
+	squirrel "Dead squirrel";
+	stairs @apt "Flight of stairs";
+
+Message
+	parcry "The parrot cries:    ";
+	piece8 "-- PIECES OF EIGHT --$n";
+	chortle "Pirate grabs rum and scuttles off chortling$n";
+	underwater "I'm underwater.  I CAN'T SWIM!!!!  BLUB BLUB...$n";
+	spin "Everything spins around and suddenly you are elsewhere...$n";
+	somethingthere "There's something there all right.  Maybe I should ";
+	piratestops "Pirate won't let me$n";
+	locked "It's locked$n";
+	itsopen "It's open$n";
+	empty "It's empty$n";
+	carrying "Not while I'm carrying it!$n";
+	cant "Sorry, I can't$n";
+	crocsstop "Crocs stop me.$n";
+	strangesound "There's a strange sound.$n";
+	openit "open it.$n";
+	wronggame "Wrong game you silly goose!$n";
+	nothing "Nothing happens.$n";
+	wontfit "Something won't fit$n";
+	gothere "go there?$n";
+	tight "It was a tight squeeze!$n";
+	unsafe "That's not very safe$n";
+	soaks "It soaks into the ground$n";
+	pfollows "Pirate follows you ashore as if he is waiting for something.$n";
+	setanchor "After two days at sea we set anchor off of a sandy beach.ALL ASHORE WHO'S GOING ASHORE...$n";
+	weighanchor "Try -WEIGH ANCHOR-$n";
+	pacedok "OK.  I walked off 30 paces.$n";
+	foundit "I found something!$n";
+	fallsout "Something falls out$n";
+	multexit "There's multiple exits here!$n";
+	tidechanges "--TIDES A CHANGING MATEY--$n";
+	tidesout "The tide is out.$n";
+	tidesin "The tide is coming in.$n";
+	foundnothing "I didn't find anything.$n";
+
+Daemon
+
+ 80%	Sameroom(fish) & Sameroom(crocs) =>
+		Say "Crocs eat fish and leave.$n",
+		Zap(fish),
+		Zap(crocs);
+ 80%	Sameroom(snakes) & Sameroom(parrot) =>
+		Say parcry,
+		Say piece8,
+		"Parrot attacks snakes and drives them off.$n",
+		Zap(snakes);
+	Carrying(rug) & !Nearto(keys) & !gotkeys =>
+		Say strangesound,
+		Fetch(keys),
+		++gotkeys;
+ 2%	Nearto(parrot) =>
+		Say parcry,
+		Say piece8;
+ 24%	Inroom(never) =>
+		"Since nothing is happening,$n",
+		Quit;
+ 40%	Inroom(window) & !Carrying(sneakers) =>
+		"I slipped and fell...$n",
+		Die;
+ 80%	Sameroom(pirate) & Sameroom(rbottle) =>
+		Location(spirate) = attic,
+		Say chortle,
+		Location(ebottle) = attic,
+		Zap(pirate),
+		Zap(rbottle);
+ 34%	Carrying(fish) & !Carrying(wbottle) =>
+		"Too dry.  Fish vanish.$n",
+		Location(fish) = ocean;
+ 49%	Sameroom(pirate) & Sameroom(rbottles) =>
+		Say chortle,
+		Location(spirate) = graves,
+		Zap(pirate);
+ 34%	Nearto(parrot) & !bagchecked =>
+		Say parcry,
+		"-CHECK THE BAG MATEY$n";
+ 9%	Nearto(parrot) & !gotmap =>
+		Say parcry,
+		"-CHECK THE CHEST MATEY-$n";
+ 49%	Inroom(lagoon) & !Inlimbo(tidein) & !Carrying(wings) =>
+		Say tidesin,
+		Say underwater,
+		Die;
+ 49%	Inroom(ocean) & !Carrying(wings) =>
+		Say underwater,
+		Die;
+ 9%	!anchorfreed =>
+		tidein <-> tideout,
+		anchor <-> flotsam,
+		tidechange = True;
+ 9%	anchorfreed & !sailed =>
+		tidein <-> tideout,
+		tidechange = 1;
+ 84%	Nearto(parrot) & tidechange =>
+		Say parcry,
+		Say tidechanges,
+		tidechange = False;
+	tidechange =>
+		tidechange = False;
+ 80%	(Sameroom(snakes)) & (Sameroom(mongoose)) =>
+		"I was wrong.  I guess it's not a mongoose 'cause the snakes bit it.$n",
+		mongoose <-> squirrel;
+
+Action
+
+go passage:
+	(Sameroom(ocase)) =>
+		Moveto(pas);
+read book:
+	(Carrying(book)) =>
+		"The name of the book is -TREASURE ISLAND-.$n",
+		"There's a word engraved in the flyleaf -YOHO-$nand a message:",
+		" -LONG JOHN SILVER LEFT 2 TREASURES ON TREASURE ISLAND!-$n"
+|	!(Carrying(book)) =>
+		Say cant,
+			# This is an obvious typo in the original!
+		Say wontfit;
+go window:
+	(Sameroom(win)) =>
+		Moveto(window)
+|	(Inroom(window)) =>
+		Moveto(alcove);
+find *:
+	=>
+		"Open the book!$n";
+yoho *:
+	(Inroom(window)) & (Carrying(book)) =>
+		Say spin,
+		Moveto(beach)
+|	!(Inroom(window)) & (Carrying(book)) & !sailed =>
+		Say spin,
+		Moveto(window)
+|	=>
+		Say nothing;
+look window:
+	(Sameroom(win)) =>
+		Say somethingthere,
+		"go there?$n";
+light torch:
+	(Carrying(utorch)) & (Nearto(matches)) =>
+		utorch <-> torch,
+		"Torch is lit.$n",
+		Lighten;
+unlight torch:
+	(Carrying(torch)) =>
+		utorch <-> torch;
+help *:
+	Inroom(window) =>
+		"You may need magic here.$n"
+|	(Inroom(alcove)) =>
+		"READING EXPANDS THE MIND.$n"
+|	(Inroom(hill)) =>
+		Say multexit
+|
+	(Inroom(pit)) =>
+		Say tidesout,
+		Say tidesin,
+		Say tidechanges
+|	(Inroom(beach)) =>
+		Say multexit
+|	(Inroom(shack)) & (Sameroom(pirate)) =>
+		"-MAGIC WORD-  HO AND A ...           (Work on it.  You'll get it.)$n"
+|	=>
+		Say nothing;
+get dubloons:
+	!(Sameroom(snakes)) =>
+		Get(dubloons)
+|	(Sameroom(dubloons)) & (Sameroom(snakes)) =>
+		"That's not very safe.$n",
+		"I'm snake bit.$n",
+		Die;
+go shack:
+	(Sameroom(gshack)) =>
+		Moveto(shack);
+get chest:
+	(Sameroom(chest)) & (Sameroom(pirate)) =>
+		Say piratestops
+|	!(Sameroom(pirate)) =>
+			# BUG: should add Sameroom(chest)!
+		Get(chest);
+open chest:
+	(Sameroom(chest)) & (Sameroom(pirate)) =>
+		Say piratestops
+|	(Sameroom(chest)) & !(Sameroom(pirate)) =>
+		Say locked
+|	(Carrying(chest)) =>
+		Say carrying;
+unlock chest:
+	(Sameroom(chest)) & !(Sameroom(pirate)) & (Carrying(keys)) =>
+		Say itsopen,
+		chest <-> ochest;
+look chest:
+	(Carrying(ochest)) =>
+		Say carrying
+|	(Nearto(chest)) =>
+		Say cant,
+		Say locked
+|	(Sameroom(ochest)) & !gotplans & !gotmap =>
+		"There is a set of plans in it.$n",
+		Fetch(plans),
+		gotplans = True
+|	!gotmap & (Sameroom(ochest)) & gotplans =>
+		"There's a map in it!$n",
+		Fetch(map),
+		gotmap = True
+|	gotmap & (Sameroom(ochest)) =>
+		Say empty;
+look bag:
+	(Nearto(bag)) & !bagchecked =>
+		Say somethingthere,
+		"open it?$n"
+|	(Nearto(bag)) & bagchecked =>
+		Say empty;
+open bag:
+	(Nearto(bag)) & !bagchecked =>
+		Say fallsout,
+		Fetch(matches),
+		bagchecked = True
+|	bagchecked =>
+		Say nothing,
+		Say empty;
+open door:
+	(Sameroom(crocs)) =>
+		Say crocsstop
+|	(Sameroom(lhdoor)) =>
+		Say cant,
+		Say locked
+|	(Sameroom(odoor)) =>
+		Say itsopen
+|	(Sameroom(lhdoor)) =>
+		Say cant,
+		Say locked
+|	(Sameroom(ohdoor)) =>
+		Say itsopen;
+go hall:
+	(Sameroom(odoor)) =>
+		Moveto(hall);
+unlock door:
+	(Sameroom(crocs)) & (Sameroom(ldoor)) =>
+		Say crocsstop
+|	!(Sameroom(crocs)) & (Sameroom(ldoor)) & (Carrying(keys)) =>
+		Zap(ldoor),
+		Fetch(odoor),
+		lhdoor <-> ohdoor
+|	(Sameroom(lhdoor)) & (Carrying(keys)) =>
+		"Sorry, I can't -- it's locked from the other side!$n";
+drink bottle:
+	(Nearto(rbottle)) =>
+		Say strangesound,
+		" ... I think it's me.  HEE HEE.$n";
+inventory *:
+	=>
+		Inventory;
+look box:
+	(Nearto(box)) & !(Nearto(stamps)) =>
+		Say somethingthere,
+		Say openit;
+away *:
+	=>
+		Say wronggame,
+		Say nothing;
+score *:
+	=>
+		Score;
+go cave:
+	(Inroom(hill)) =>
+		Moveto(maze1);
+look lagoon:
+	Inlimbo(tideout) =>
+		Say somethingthere,
+		Say gothere,
+		Say tidesin
+|	!(Inlimbo(tideout)) =>
+		Say somethingthere,
+		Say gothere,
+		Say tidesout;
+look shack:
+	(Sameroom(gshack)) =>
+		Say somethingthere,
+		Say gothere;
+look crack:
+	(Sameroom(wall)) =>
+		Say somethingthere,
+		Say gothere;
+go crack:
+	(Sameroom(crack)) & (Carrying(shovel)) =>
+		Say cant,
+		Say wontfit
+|	(Sameroom(wall)) & (Carrying(chest)) =>
+		Say cant,
+		Say wontfit
+|	(Sameroom(crack)) & (Carrying(lumber)) =>
+		Say cant,
+		Say wontfit
+|	(Sameroom(wall)) & (Carrying(book)) =>
+		Say cant,
+		Say wontfit
+|	(Sameroom(wall)) =>
+		Moveto(cavern),
+		Say tight
+|	(Sameroom(crack)) =>
+		Moveto(hilltop);
+get rug:
+	(Sameroom(fixrug)) =>
+		Say cant,
+		"It's nailed to the floor!$n"
+|	(Nearto(rug)) =>
+		Get(rug);
+get nails:
+	(Carrying(hammer)) & (Sameroom(fixrug)) =>
+		Get(nails),
+		Fetch(rug),
+		Zap(fixrug)
+|	(Nearto(nails)) =>
+		Get(nails);
+build boat:
+	!(Nearto(plans)) =>
+		Say cant,
+		"I've no plans!$n"
+|	(Nearto(hammer)) & (Nearto(plans)) & (Nearto(anchor))
+	   & (Nearto(nails)) & (Nearto(lumber)) & (Nearto(sails)) =>
+		Zap(lumber),
+		pship <-> keel,
+		"CONGRATULATIONS !!!$nBut your adventure is not over yet...$n",
+		Zap(nails),
+		Zap(sails),
+		Zap(anchor)
+|	=>
+		"No.  Something is missing!$n";
+go pit:
+	(Sameroom(ohdoor)) =>
+		Moveto(pit);
+look *:
+	;
+set sail:
+	(Inroom(ship)) & (Sameroom(pirate)) & !(Inlimbo(tideout)) & !sailed =>
+		"Pirate says -AYE MATEY WE BE WAITING FOR THE TIDE TO COME IN-$n"
+|	(Inroom(ship)) & !(Sameroom(pirate)) =>
+		Say cant,
+		"I've no crew."
+|	(Inroom(ship)) & !(Sameroom(map)) =>
+		Say cant,
+		"Pirate says -AYE MATEY WE BE NEEDING A MAP FIRST-"
+|	(Inroom(ship)) & !sailed =>
+		Say setanchor,
+		sailed = True,
+		Location(pship) = tbeach
+|	(Inroom(ship)) & sailed =>
+		Say setanchor,
+		sailed = False,
+		Location(pship) = beach;
+get water:
+	!(Carrying(ebottle)) =>
+		"I've no container.$n"
+|	(Sameroom(water)) & (Carrying(ebottle)) =>
+		Zap(ebottle),
+		Get(wbottle);
+drop water:
+	(Carrying(wbottle)) =>
+		Zap(wbottle),
+		Get(ebottle),
+		Say soaks;
+drink water:
+	(Sameroom(water)) =>
+		Say unsafe,
+		Die
+|	(Carrying(wbottle)) =>
+		Say unsafe,
+		Zap(wbottle),
+		Get(ebottle),
+		Die;
+get pirate:
+	(Sameroom(spirate)) =>
+		"Pirate awakens.  Says -AYE MATEY WE BE CASTING OFF SOON-$nHe then vanishes.$n",
+		Zap(spirate),
+		Location(pirate) = ship;
+open bottle:
+	(Nearto(rbottle)) =>
+		Say itsopen;
+empty bottle:
+	(Carrying(rbottle)) =>
+		"What a waste...",
+		Zap(rbottle),
+		Get(ebottle),
+		Say soaks
+|	(Carrying(wbottle)) =>
+		ebottle <-> wbottle;
+go boat:
+	(Sameroom(pship)) =>
+		Moveto(ship);
+go shore:
+	(Inroom(ship)) & sailed & (Sameroom(pirate)) =>
+		Moveto(tbeach),
+		Fetch(pirate),
+		Say pfollows
+|	(Inroom(ship)) & !sailed =>
+		Moveto(beach)
+|	(Inroom(ship)) & sailed =>
+		Moveto(tbeach);
+cast off:
+	=>
+		Say weighanchor;
+read map:
+	(Nearto(map)) =>
+		"It's a map to Treasure Island.  At the bottom it says$n                 -30 PACES AND THEN DIG!-$n";
+sail *:
+	=>
+		Say weighanchor;
+get book:
+	(Sameroom(book)) =>
+		Get(book)
+|	(Inroom(alcove)) & !(Sameroom(ocase)) =>
+		Get(book),
+		Say strangesound,
+		case <-> ocase;
+open book:
+	(Nearto(book)) =>
+		"Note here -I BE LIKING PARROTS.  THEY BE SMART MATEY-$n";
+go path:
+	(Inroom(hill)) =>
+		Moveto(hilltop);
+get parrot:
+	(Sameroom(parrot)) & (Sameroom(pirate)) =>
+		Say piratestops
+|	(Sameroom(parrot)) =>
+		Get(parrot),
+		Say parcry,
+		Say piece8;
+go shed:
+	(Sameroom(tshed)) =>
+		Moveto(shed);
+go ^30:
+	!paced30 & (Inroom(field)) =>
+		paced30 = True,
+		Say pacedok
+|	=>
+		paced = True,
+		Say pacedok;
+dig *:
+	(Inroom(graves)) & (Carrying(shovel)) & !(Nearto(bones)) =>
+		Say foundit,
+		Fetch(bones)
+|	(Inroom(beach)) & (Carrying(shovel)) =>
+		Say foundnothing
+|	(Inroom(tbeach)) & !(Nearto(rbottles)) & (Carrying(shovel)) =>
+		Fetch(rbottles),
+		Say foundit
+|	(Inroom(field)) & paced30 & (Carrying(shovel)) & !(Nearto(box)) =>
+		Fetch(box),
+		Say foundit
+|	(Carrying(shovel)) & !anchorfreed & (Sameroom(anchor)) =>
+		anchorfreed = True
+|	(Carrying(shovel)) =>
+		Say foundnothing,
+		paced = False,
+		paced30 = False;
+jump *:
+	(Inroom(window)) =>
+		Say unsafe;
+read plans:
+	(Nearto(plans)) =>
+		"They're plans to build Jolly Roger (a PIRATE SHIP!)$nYou'll need HAMMER NAILS LUMBER ANCHOR SAILS and KEEL.$n";
+go lagoon:
+	(Sameroom(ilagoon)) =>
+		Moveto(lagoon);
+go stairs:
+	(Inroom(apt)) =>
+		Moveto(alcove);
+get anchor:
+	(Sameroom(anchor)) & anchorfreed =>
+		Get(anchor)
+|	(Sameroom(anchor)) & !anchorfreed =>
+		Say cant,
+		"It's stuck in the sand.$n"
+|	!(Sameroom(anchor)) =>
+		Say cant,
+		"I don't see it here.$n";
+go monastery:
+	(Sameroom(mon)) =>
+		Moveto(monast);
+sail boat:
+	=>
+		Say weighanchor;
+weigh anchor:
+	=>
+		"About 20 pounds.  Try -SET SAIL-$n";
+burn *:
+	=>
+		Say cant;
+open box:
+	(Carrying(hammer)) & (Nearto(box)) =>
+		Say fallsout,
+		Fetch(stamps);
+kill pirate:
+	=>
+		Say piratestops;
+say *:
+	=>
+		"Use 1 word.$n";
+wait *:
+	anchorfreed =>
+		tidein <-> tideout,
+		Say tidechanges;

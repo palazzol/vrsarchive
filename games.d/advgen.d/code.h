@@ -1,0 +1,49 @@
+#define C_ALWAYS	NOTFOUND
+
+#define	C_EMPTYHANDED	1
+#define	C_ISDARK	3
+#define	C_V0ZERO	5
+#define C_VnZERO	9
+#define	C_V0TEST	13
+#define	C_CARRYING	17
+#define	C_SAMEROOM	19
+#define C_NEARTO	21
+#define C_INROOM	23
+#define	C_INLIMBO	25
+#define C_LOCATION	27
+#define C_VnTEST	29
+
+#define	A_WIN		1
+#define A_DIE		2
+#define A_QUIT		3
+#define A_INVENT	4
+#define A_DARKEN	5
+#define A_LIGHTEN	6
+#define	A_REFILL	7
+#define A_SCORE		8
+#define A_V0ZERO	9
+#define A_V0ONE		10
+#define A_V0INCR	11
+#define	A_V0PRINT	13
+#define A_SAY		14
+#define A_VnPRINT	15
+#define A_VnZERO	16
+#define A_VnONE		17
+#define A_VnINCR	18
+#define A_V0SET		20
+#define	A_V0AUG		21
+#define A_MOVETO	22
+#define	A_GET		23
+#define	A_DROP		24
+#define	A_ZAP		25
+#define	A_FETCH		26
+#define	A_VnSET		27
+#define	A_VnAUG		28
+#define	A_LOCATION	29
+#define	A_SWAP		30
+
+#define	R_EQ		0
+#define R_GT		2
+
+#define I_INCR		0
+#define	I_DECR		1

@@ -1,0 +1,360 @@
+.TH ADVGEN 6 Heriot-Watt
+.SH NAME
+advgen \- compile an adventure definition
+.SH SYNOPSIS
+.B advgen
+[
+.B -w
+] [
+.B -o
+output ] [ definitionfile ]
+.SH DESCRIPTION
+.I Advgen
+reads an adventure
+definition file (default standard input) and generates an output file
+(default
+.IR adv.out )
+which can be used by
+.IR adv (6)
+to run the adventure.
+The
+.I -w
+flag causes warning message about variables undeclared before use to
+be suppressed (useful for recompiling "decompiled" output files).
+.LP
+On BSD-derived systems, the adventure file will be directly executable;
+the full pathname of the interpreter to be used can be specified by the
+environment variable
+.IR ADVINT ,
+but the correct default for your system should have been set up when
+.I advgen
+was installed.
+.LP
+The last section of this document describes the adventure definition
+language.
+.SH "SEE ALSO"
+adv(6)
+.SH FILES
+adv.out \- default output file
+.SH "DEFINITION LANGUAGE"
+.SH "Keywords, Identifiers, Strings, etc."
+All keywords are reserved, and are distinguished by being lower-case
+with an initial capital letter.
+Identifiers in general consist of
+strings of letters, digits and the characters '_' and '$', starting
+with a non-digit; the case of letters is significant, so that for
+example "START" is different from "start".
+An identifier starting with a digit can be prefixed by "^", e.g. "^30".
+.LP
+Strings consist of any sequence of characters surrounded by matching
+single-, double- or back-quotes.
+Newlines are not permitted in strings.
+The escape sequences $n and $t represent newline and tab respectively,
+and $XX, where XX is a pair of hex digits, stands for the character with
+the corresponding internal representation.
+.LP
+Numbers are unsigned integers.
+.LP
+White space may be used freely, except in strings.
+.LP
+Comments are introduced by '#' and terminated by the end of the line.
+.SH "Sections"
+The definition consists of 9 sections, any of which may be left empty.
+They are:
+.nf
+.in +4
+Miscellaneous special definitions
+Nouns
+Verbs
+Variables
+Rooms
+Items
+Messages
+Daemons
+Rules
+.fi
+.in -4
+These are described in the following sections.
+In the informal grammar specifications, square brackets enclose optional
+items, and angle-brackets enclose symbols which should be replaced by
+any appropriate item (e.g. <identifier> could be replaced by any valid
+identifier). Ellipses ("...") mean that the previous item can be repeated
+as often as required.
+.SH "Special Definitions"
+This consists of one or more of the following (terminated by semi-colon,
+which is used as a statement-terminator throughout the definition file).
+.IP "Hellroom <identifier>;"
+Names the room to which dead characters are transported.
+The default is the last room to be declared.
+.IP "Directions <identifier> .... <identifier>;"
+(Exactly 6 identifiers).
+Names the 6 directions in which movement is possible; these are
+declared as nouns in the vocabulary, and the initial letter of each
+direction is declared as a synonym for it.
+The default directions are North, South, East, West, Up, Down.
+.IP "Lamp <identifier>;"
+Names the item which is a source of light.
+Dark rooms are only visible if this item is present and lit.
+By default no item is a lamp.
+.IP "Lamplife <number>;"
+Gives the number of turns that the lamp will remain lit before dying
+(default 240).
+[This feature is ignored in the current version of
+.I adv
+- light is controlled by the Lighten and Darken actions, and a daemon
+can be set up to implement the lamp running out, etc.].
+.IP "Lampwarn <number>;"
+A warning is issued this number of turns before the lamp expires (default
+25).
+.IP "Wordsize <number>;"
+Specifies how many characters will be significant in words input by
+the user when the adventure is run (default 3).
+.IP "Startroom <identifier>;"
+Names the room where the adventure begins (default is the first room
+declared).
+.IP "Treasury <identifer>;"
+Names the room where treasure is to be dropped; the game is won when
+all treasure has been dropped there and a Score action is executed.
+.IP "Inventorysize <number>;"
+Gives the maximum number of items which a player can carry (default 5).
+.IP "Greeting <string>;"
+Provides a message displayed at the start of the adventure.
+The default is "Enjoy your adventure!".
+.IP "Goverb <synonyms>;"
+.IP "Getverb <synonyms>;"
+.IP "Dropverb <synonyms>;"
+Three classes of verb are treated specially by
+.IR adv ,
+those for moving, picking up items, and dropping them;
+these verbs can be declared here.
+<synonyms> is a list of identifiers separated by "=", e.g.
+"go = run = walk = move".
+The defaults are "go=run=walk=move=enter", "get=take=pick=remove" and
+"drop=release=leave" respectively.
+.SH Verbs
+.IP "Noun <synonyms> ...;"
+All input by the player is parsed as a verb-noun pair.
+This section declares the nouns which are available to the player.
+<synonyms> is a list of "="-separated words, as above.
+.SH Verb
+.IP "Verb <synonyms> ...;"
+Similar to the noun list.
+.SH Variables
+.IP "Var <identifier> ...;"
+Declares a collection of variables which can be tested and set in the
+action rules.
+Variables are unsigned, and take values in the range 0 to 255.
+The most frequently-referenced variable should appear first (it is
+handled slightly more efficiently than the others).
+.SH Rooms
+.IP "Room <room-definition> ..."
+Declares the locations where the player may move.
+Each definition has the form:
+.IP "<identifier> [ Dark ] [ (<dir>:<identifier> ...) ] <string>;"
+<identifier> is used as a name for the room elsewhere in the definition.
+If "Dark" is specified, the room will be dark.
+A list of neighbours can be given in parentheses; each neighbour is
+specified by a direction (one of N,S,E,W,U,D even if different direction
+names are declared using "Directions", above) and a room name.
+The <string> will be displayed whenever the player is in the room unless
+it is dark and unlit.
+If the first character of the string is NOT '*', the description will be
+prefixed by "I'm in a ".
+.IP
+Example: maze1 Dark (n:maze1 s:maze2 d:entrance) '*You are lost in a maze'.
+.IP
+The name "Limbo" refers to limbo, where all items with no declared
+initial location live; under normal circumstances there should be no
+need to use it.
+.SH Items
+.IP "Item <item-description> ..."
+Items are objects, movable and otherwise, which occur in the adventure.
+They may be nameable by a noun, in which case the player can pick them
+up and carry them.
+Unless otherwise specified, items are initially in limbo (a special room).
+Each item description has the form:
+.IP "<identifier> [ =<noun> ] [ @<room> ] <string>;"
+<identifier> is used to refer to the item elsewhere in
+the definition, <noun> is the name by which the player can
+refer to it, if any, <room> specifies where the item starts off, and
+<string> is the description displayed to the player.
+By convention, descriptions beginning with "*" are used for treasures;
+the object of most games is to bring all such items to the treasury.
+.SH Messages
+.IP "Message <message-definition> ..."
+It is often convenient if a message is to be used in more than one
+action to be able to refer to it by a symbolic name.
+A message definition names a message, as follows:
+.IP "<identifier> <string>;"
+The identifier can be used to refer to the message in "Say" actions.
+.SH Daemons
+.IP "Daemon <daemon> ..."
+Daemons are rules which are fired before each turn.
+They consist of a percentage chance of firing (optional, default 100%),
+a set of conditions, and a set of actions.
+The format is
+.IP "[ <number>% ] [ <conditions> ] [ => <actions> ];"
+where <conditions> has the form "<cond> & <cond> ...." and
+<actions> has the form "<act>, <act>, ...". Possible <cond>s and <act>s
+are described below.
+.SH Rules
+.IP "Rule <rule> ..."
+A rule consists of a verb-noun pair, a set of
+conditions, and a set of actions; if the player types such a pair
+and the other conditions are satisfied then the actions take place.
+Only the first rule whose conditions are satisfied is executed on any
+given turn.
+The format is:
+.IP "<word> [ <word> ] : [ <conditions> ] => [ <actions> ];"
+If <word> is "*" it will match anything; if only one <word> is present
+it is equivalent either to "<word> *" or "* <word>" depending upon
+whether <word> is a valid verb.
+The <conditions> and <actions> are as for daemons.
+As an abbreviation, the final semicolon and next verb-noun pair and colon
+can be replaced by a vertical bar, meaning "repeat the previous verb and
+noun", e.g.
+.nf
+.in +8
+light lamp: Carrying(lamp) => Lighten
+          | => "You don't have a lamp.$n";
+.in -8
+.fi
+.SH Conditions
+The possible conditions which may be tested are:
+.IP Emptyhanded
+The player is carring nothing.
+.IP Isdark
+The current room is unlighted.
+.IP "<variable> == <value>"
+.IP "<variable> > <value>"
+The obvious meaning; <value> is either a number or one of the
+words True or False (synonyms for 1 and 0 respectively).
+.IP <variable>
+A synonym for "<variable> == True".
+.IP "Carrying(<item>"
+True if the item is being carried.
+.IP "Sameroom(<item>)"
+True if the item is in the current room, but not carried.
+.IP "Nearto(<item>)"
+True if the item is carried or in the current room.
+.IP "Inroom(<room>)"
+True when <room> is the curren location.
+.IP "Inlimbo(<item>)"
+True if the item is in limbo.
+.IP "Location(<item>) == <room>"
+True when the item is in the specified room.
+.LP
+Any of the above may be parenthesised for ease of reading, and can be negated
+by a prefixed "!" (double negatives not allowed).
+.SH Actions
+The possible actions are:
+.IP Win
+End the game with jubilation.
+.IP Die
+Print a suitable message and transfer the player to the Hellroom.
+.IP Quit
+Terminate the adventure.
+.IP Inventory
+List the items currently carried out.
+.IP Darken
+Turn out the lamp.
+.IP Lighten
+Turn on the lamp.
+.IP Refill
+Restore the lamp to maximum life and add it to the player's pack.
+.IP Score
+Tell the player how many treasures he has found, and Win if they are
+all in the treasury.
+.IP "<variable> = <value>"
+Assigns the value (a number, True or False) to the variable.
+.IP "++<variable>"
+Increments the variable.
+.IP "--<variable>"
+Decrements the variable.
+.IP "<variable> += <value>"
+Adds <value> to the variable.
+.IP "Print(<variable>)"
+Prints the current value of the variable.
+.IP "Say <message>"
+Prints the message, which can either be a string or the name of a
+message.
+If the same string is "Said" in several actions, only one copy
+will appear in the output file.
+.IP <message>
+An abbreviation for "Say <message>".
+.IP Moveto(<room>)
+Makes <room> become the current location.
+.IP Get(<item>)
+Moves <item> into the player's pack.
+.IP Drop(<item>)
+Drop the <item> if it is being carried.
+.IP Fetch(<item>)
+Bring the item to the current location.
+.IP Zap(<item>)
+Send <item> to limbo.
+.IP "Location(<item>) = <room>"
+Moves the item to the specified room.
+.IP "<item> <-> <item>"
+[The <-> stands for itself, i.e. a double-headed arrow, in this rule!]
+Exchange the current locations of the two named items.
+.SH Example
+There follows a short illustrative example;
+it is mindlessly futile even by the standard of computer games, of
+course.
+.sp 1
+.in +4
+.nf
+# Any resemblance to other adventures is no accident!
+Hellroom	hell;
+Greeting	"This is a very futile adventure!$n";
+Startroom	start;
+Treasury	start;
+Lamp		litlamp;
+Noun
+    emerald platinum=pyramid lamp plover;
+Verb
+    say light=on score help inventory;
+Var
+    helltime helped;
+Room
+    hell	"*You are burning in hell!";
+    start	"*You are lost!";
+    plover	(w:darkroom) "*You are in a green room";
+    darkroom	Dark (e:plover) "*You are in a very murky small room";
+Item
+    litlamp =lamp "A brass lamp, burning brightly";
+    lamp =lamp @start "A brass lamp";
+    pyramid =pyramid @darkroom "*A platinum pyramid";
+    emerald =emerald @plover "*An emerald as big as a plover's egg";
+Message
+    voicesays "A hollow voice says ";
+Daemon
+    Inroom(hell) & helltime == 5 =>
+	"You are fried to a crisp!$n", Quit;
+    Inroom(hell) & !(helltime == 5) =>
+	++helltime;
+10% !Inroom(hell) =>
+	"The Gods punish you for playing silly games$n", Die;
+50% Inroom(start) =>
+	Say voicesays, '"PLOVER"$n';
+Action
+    light lamp: Carrying(lamp) =>
+	"Your lamp is lit$n", Lighten, lamp<->litlamp;
+    light lamp: Carrying(litlamp) =>
+	"It's aready lit!$n";
+    light lamp: =>
+	"You don't have one$n";
+    light: =>
+	"Don't be silly, it won't burn$n";
+    help *: Inroom(hell) & !helped =>
+	helped = True, "A miracle saves you$n", Moveto(start);
+    help *: Inroom(hell) & helped =>
+	"No more miracles.$n";
+    help *: =>
+	voicesays, '"The Gods help those who help themselves."$n';
+    score: => Score;
+    inventory: => Inventory;
+    say plover: Inroom(start) =>
+	Moveto(plover);
+    say plover: Inroom(plover) =>
+	Moveto(start);

@@ -1,0 +1,33 @@
+From chris@umcp-cs.UUCP (Chris Torek) Thu Aug  1 02:40:01 1985
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Posting-Version: version B 2.10.1 6/24/83; site umcp-cs.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!cornell!vax135!houxm!ihnp4!mhuxn!mhuxr!ulysses!allegra!mit-eddie!think!harvard!seismo!umcp-cs!chris
+From: chris@umcp-cs.UUCP (Chris Torek)
+Newsgroups: net.sources.games
+Subject: Adventures (the original Creative Computing Scott Adams ones)
+Message-ID: <1064@umcp-cs.UUCP>
+Date: 1 Aug 85 09:40:01 GMT
+Date-Received: 7 Aug 85 20:42:22 GMT
+Distribution: net
+Organization: U of Maryland, Computer Science Dept., College Park, MD
+Lines: 2528
+
+For some reason, this stuff resurfaced recently, and I decided to
+clean it up a little and post it.  What it is is the original Scott
+Adams adventure, "Adventure Land", and Alexis Adams' "Pirate's
+Adventure".  These were published long ago in Creative Computing,
+in (ugh) BASIC.  One of the first things I wrote in C was something
+to do a similar job.  I also transcribed the data files for the
+two adventures.  (By the way, I should mention that I use a sort
+of adventure compiler to turn a slightly more readable source
+format into the data files given here.)
+
+The code is quite old, and there are a lot of things I would do
+differently if I were to really rewrite it, but it does work.  You
+will need the Maryland Windows package (by yours truly) to run it.
+(I originally used curses, but the display update was just too
+painful.  I imagine it could be converted back without too much
+effort.)
+
+(Manual entry?  What manual entry?)
+-----------------------snip snip snip---------------------------

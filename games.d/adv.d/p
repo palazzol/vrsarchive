@@ -1,0 +1,332 @@
+!l9
+1
+1
+2
+5
+200
+25
+34
+:
+:*I'm in an apartment in London
+D1:*I'm in an alcove
+E4W2:secret passageway
+W3:musty attic
+:*I'm outside an open window on a ledge on the side of a very tall building
+E8:sandy beach on a tropical isle
+S12E13W14D11%:maze of caves
+E14W6:meadow
+W8:grass shack
+N10S24E10W10:*I'm in the ocean
+U7%:pit
+N7E14W13%:maze of caves
+N7S14E12W19%:maze of caves
+W8:*I'm at the foot of a cave ridden hill.  A path leads to the top
+N17%:tool shed
+E17%:long hallway
+W16%:large cavern
+D14:*I'm on top of a hill.  Below is Pirate Island.  Across the sea off in the distance I see *TREASURE* ISLAND
+S14E14W13%:maze of caves
+:*I'm aboard a pirate ship anchored off shore
+S22:*I'm on the beach at Treasure Island
+N21E23:spooky old graveyard filled with piles of empty and broken rum bottles
+W22:large barren field
+N10S6E6W6:shallow lagoon.  To the north is the ocean
+W23:sacked and deserted monastery
+:
+:
+:
+:
+:
+:
+:
+:*Welcome to Never Never Land!
+55
+--,GO,*CLI,*WAL,*RUN,*ENT,*PAC,*FOL,GET,*TAK,*CAT
+*PIC,*REM,*WAK,*PUL,DRO,*REL,*THR,*LEA,*GIV,SAY,SAI
+FLY,DRI,*EAT,INV,*I,SAI,LOO,*SHO,WAI,REA,YOH
+SCO,KIL,*ATT,LIG,OPE,*SMA,UNL,HEL,AWA,*BUN,QUI
+BUI,*MAK,WAK,SET,CAS,DIG,BUR,FIN,JUM,EMP,WEI
+65
+--,NOR,*N,SOU,*S,EAS,*E,WES,*W,UP,*U
+DOW,*D,STA,PAS,HAL,BOO,BOT,*RUM,WIN,MON,PIR
+ARO,BAG,*DUF,TOR,OFF,MAT,YOH,30,LUM,RUG,KEY
+INV,DUB,SAI,FIS,ANC,SHA,PLA,CAV,PAT,DOO,CHE
+PAR,HAM,NAI,BOA,*SHI,SHE,CRA,WAT,*SAL,LAG,*TID
+PIT,SHO,*BEA,MAP,PAC,BON,HOL,SAN,BOX,SNE
+60
+0:
+2:Open window
+2:Bookcase
+0=BOO:Large leather-bound book
+0:Bookcase with secret passage behind it
+4=BAG:Pirate's duffel bag
+1:Sign on wall -RETURN TREASURES HERE.  SAY SCORE-.$nSign by stairs -ANTONYM OF LIGHT IS UNLIGHT-
+0=BOT:Empty bottle
+4=TOR:Unlit torch
+0=TOR:Lit torch
+0=MAT:Matches
+6:Small ship's keel and mast
+9:Wicked looking pirate
+8=CHE:Treasure Chest
+8=MON:Mongoose
+24=ANC:Rusty anchor
+8:Grass shack
+11:Mean and hungry looking CROCODILES
+11:Locked door
+0:Open door with hall beyond
+17=SAI:Pile of sails
+10=FIS:Fish
+25=DUB:*DUBLOONS*
+25=SNA:Deadly Mamba snakes
+9=PAR:Parrot
+1=BOT:Bottle of Rum
+0=RUG:Rug
+0=KEY:Ring of keys
+0=CHE:Open treasure chest
+0=PLA:Set of plans
+1:Rug
+15=HAM:Claw hammer
+0=NAI:Nails
+17=LUM:Pile of precut lumber
+17:Tool shed
+16:Locked door
+0:Open door with pit beyond
+0:Pirate ship
+18:Rock wall with narrow crack in it
+17:Narrow crack in the rock
+10:Salt water
+0:Sleeping pirate
+0=BOT:Bottle of salt water
+4:Pieces of broken rum bottles
+1=SNE:Non-skid sneakers
+0=MAP:Map
+16=SHO:Shovel
+0=BON:Mouldy old bones
+6=SAN:Sand
+0=BOT:Bottles of rum
+0=STA:*RARE OLD PRICELESS STAMPS*
+6:Lagoon
+24:The tide is out
+0:The tide is coming in
+15=WIN:Water wings
+0:Flotsam and Jetsam
+23:Monastery
+0=BOX:Plain wooden box
+0:Dead squirrel
+1:Flight of stairs
+73
+* Welcome to -PIRATE'S ADVENTURE- by Alexis Adams *$n
+There's a strange sound --$n
+The name of the book is -TREASURE ISLAND-.$nThere's a word engraved in the flyleaf -YOHO-$nand a message: -LONG JOHN SILVER LEFT 2 TREASURES ON TREASURE ISLAND!-$n
+Nothing happens.$n
+There's something there all right.  Maybe I should$20
+That's not very safe.$n
+You may need magic here.$n
+Everything spins around and suddenly you are elsewhere...$n
+Torch is lit.$n
+I was wrong.  I guess it's not a mongoose 'cause the snakes bit it.$n
+I'm snake bit.$n
+Parrot attacks snakes and drives them off.$n
+Pirate won't let me.$n
+It's locked.$n
+It's open.$n
+There is a set of plans in it.$n
+Not while I'm carrying it!$n
+Crocs stop me.$n
+Sorry I can't.$n
+Wrong game you silly goose!$n
+I don't have it.$n
+Pirate grabs rum and scuttles off chortling.$n
+... I think it's me.  HEE HEE.$n
+It's nailed to the floor!$n
+-MAGIC WORD-  HO AND A ...           (Work on it.  You'll get it.)$n
+No.  Something is missing!$n
+It was a tight squeeze!$n
+Something won't fit.$n
+Since nothing is happening,$20
+I slipped and fell...$n
+Something falls out.$n
+They're plans to build Jolly Roger (a PIRATE SHIP!)$nYou'll need HAMMER NAILS LUMBER ANCHOR SAILS and KEEL.$n
+I've no container.$n
+It soaks into the ground.$n
+Too dry.  Fish vanish.$n
+Pirate awakens.  Says -AYE MATEY WE BE CASTING OFF SOON-$nHe then vanishes.$n
+What a waste...$n
+I've no crew.$n
+Pirate says -AYE MATEY WE BE NEEDING A MAP FIRST-$n
+After two days at sea we set anchor off of a sandy beach.$nALL ASHORE WHO'S GOING ASHORE...$n
+Try -WEIGH ANCHOR-$n
+There's a map in it!$n
+It's a map to Treasure Island.  At the bottom it says$n                 -30 PACES AND THEN DIG!-$n
+--------
+It's empty.$n
+I've no plans!$n
+open it?$n
+go there?$n
+I found something!$n
+I didn't find anything.$n
+I don't see it here.$n
+OK.  I walked off 30 paces.$n
+CONGRATULATIONS !!!$nBut your adventure is not over yet...$n
+READING EXPANDS THE MIND.$n
+The parrot cries:$20$20
+-CHECK THE BAG MATEY-$n
+-CHECK THE CHEST MATEY-$n
+from the other side!$n
+Open the book!$n
+There's multiple exits here!$n
+Crocs eat fish and leave.$n
+I'm underwater.  I CAN'T SWIM!!!!  BLUB BLUB...$n
+-PIECES OF EIGHT-$n
+It's stuck in the sand.$n
+Use 1 word.$n
+Pirate says -AYE MATEY WE BE WAITING FOR THE TIDE TO COME IN-$n
+The tide is out.$n
+The tide is coming in.$n
+About 20 pounds.  Try -SET SAIL-$n
+-TIDES A CHANGING MATEY-$n
+Note here -I BE LIKING PARROTS.  THEY BE SMART MATEY-$n
+Pirate follows you ashore as if he is waiting for something.$n
+Sorry I can't -- it's locked from the other side!$n
+18
+204,19,21,19,17,0,14,60,25,21,25,17,0
+204,19,23,19,24,0,14,54,14,62,14,11,25,23,0
+255,17,26,22,27,12,1,0,14,1,26,27,17,1,0
+7,21,24,0,14,54,14,62,0
+63,23,33,0,14,28,3,0
+102,23,5,18,44,0,14,29,2,0
+204,19,12,19,25,0,29,41,4,14,21,29,7,4,25,12,25,25,0
+89,17,21,18,42,0,14,34,29,21,10,0
+127,19,12,19,49,0,14,21,29,41,22,25,12,0
+89,21,24,12,2,0,14,54,14,55,0
+25,21,24,12,3,0,14,54,14,56,0
+127,23,24,26,53,18,54,0,14,67,14,61,2,0
+127,23,10,18,54,0,14,61,2,0
+25,12,4,0,30,52,53,30,15,55,17,5,0
+25,11,4,12,6,0,30,52,53,17,5,0
+216,21,24,11,5,0,14,54,14,69,16,5,0
+255,11,5,0,16,5,0
+204,19,23,19,14,0,14,9,30,14,58,0
+122
+1,8,19,4,0,22,3,0
+12,10,17,3,0,14,2,0
+1,12,19,1,0,22,5,0
+28,255,0,14,58,0
+13,255,23,5,17,3,0,14,7,22,6,0
+13,255,24,5,17,3,12,6,0,14,7,22,5,0
+10,12,19,1,0,14,4,14,47,0
+16,17,17,8,21,10,0,30,8,9,14,8,6,0
+18,17,17,9,0,30,8,9,0
+19,255,23,5,0,14,6,0
+2,26,20,23,0,23,22,0
+2,26,19,22,19,23,0,14,5,14,10,2,0
+1,30,19,16,0,22,9,0
+2,35,19,13,19,12,0,14,12,0
+2,35,20,12,0,23,13,0
+17,35,19,13,19,12,0,14,12,0
+17,35,19,13,20,12,0,14,13,0
+18,35,19,13,20,12,17,27,0,14,14,30,13,28,0
+17,35,17,13,0,14,16,0
+10,35,17,28,0,14,16,0
+10,35,21,13,0,14,18,14,13,0
+10,35,19,28,12,7,12,3,0,14,15,26,29,17,7,0
+10,35,12,3,19,28,11,7,0,14,41,26,45,17,3,0
+10,35,11,3,19,28,0,14,44,0
+10,16,21,5,12,2,0,14,4,14,46,0
+10,16,21,5,11,2,0,14,44,0
+17,34,19,17,0,14,17,0
+17,34,19,18,0,14,18,14,13,0
+17,34,19,19,0,14,14,0
+1,9,19,19,0,22,16,0
+18,34,19,17,19,18,0,14,17,0
+18,34,20,17,19,18,17,27,0,25,18,26,19,30,35,36,0
+7,11,21,25,0,14,1,14,22,0
+8,255,0,4,0
+10,51,21,57,22,50,0,14,4,14,46,0
+20,255,0,14,19,14,3,0
+12,10,18,3,0,14,18,14,27,0
+14,255,0,8,0
+22,39,22,29,0,14,18,14,45,0
+1,32,23,14,0,22,7,0
+10,43,25,52,0,14,4,14,47,14,67,0
+10,43,26,52,0,14,4,14,47,14,66,0
+10,30,19,16,0,14,4,14,47,0
+10,41,19,38,0,14,4,14,47,0
+1,41,19,39,17,46,0,14,18,14,27,0
+1,41,19,38,17,13,0,14,18,14,27,0
+2,23,19,30,0,14,18,14,23,0
+2,38,17,31,19,30,0,23,32,26,26,25,30,0
+1,41,19,39,17,33,0,14,18,14,27,0
+22,39,21,31,21,29,21,15,21,32,21,33,21,20,0,25,33,30,37,11,14,52,25,32,25,20,25,15,0
+22,39,0,14,25,0
+1,44,19,36,0,22,11,0
+1,41,19,38,17,3,0,14,18,14,27,0
+10,255,0,0
+2,23,21,26,0,23,26,0
+1,41,19,38,0,22,17,14,26,0
+1,41,19,39,0,22,18,0
+24,27,23,20,19,12,26,52,12,6,0,14,65,0
+13,255,0,14,3,0
+17,16,21,5,12,2,0,14,30,26,10,17,2,0
+17,16,11,2,0,14,3,14,44,0
+2,42,18,7,0,14,32,0
+2,42,19,40,17,7,0,25,7,23,42,0
+3,42,17,42,0,25,42,23,7,14,33,0
+7,42,19,40,0,14,5,2,0
+7,42,17,42,0,14,5,25,42,23,7,2,0
+2,14,19,41,0,14,35,25,41,29,12,20,0
+17,11,21,25,0,14,14,0
+30,11,17,25,0,14,36,25,25,23,7,14,33,0
+1,39,19,37,0,22,20,0
+1,45,23,20,11,6,19,12,0,22,21,26,12,14,71,0
+1,45,23,20,12,6,0,22,6,0
+24,27,23,20,20,12,0,14,18,14,37,0
+24,27,23,20,20,45,0,14,18,14,38,0
+24,27,23,20,12,6,0,14,39,17,6,29,37,21,0
+24,27,23,20,11,6,0,14,39,16,6,29,37,6,0
+25,18,0,14,40,0
+12,46,21,45,0,14,42,0
+5,255,0,14,40,0
+2,10,19,3,0,23,3,0
+17,10,21,3,0,14,70,0
+1,45,23,20,11,6,0,22,21,0
+1,33,23,14,0,22,18,0
+2,36,19,24,19,12,0,14,12,0
+2,36,19,24,0,23,24,14,54,14,62,0
+1,40,19,34,0,22,15,0
+1,21,12,8,23,23,0,17,8,14,51,0
+1,21,0,17,9,14,51,0
+26,255,23,22,17,46,22,47,0,14,48,26,47,0
+26,255,23,6,17,46,0,14,49,0
+26,255,23,21,22,49,17,46,0,26,49,14,48,0
+29,255,23,5,0,14,5,0
+26,255,23,23,11,8,17,46,22,57,0,26,57,14,48,0
+2,38,21,32,0,23,32,0
+1,12,23,5,0,22,2,0
+19,255,23,2,0,14,53,0
+12,31,21,29,0,14,31,0
+18,34,19,35,17,27,0,14,72,0
+17,34,19,35,0,14,18,14,13,0
+17,34,19,36,0,14,14,0
+1,43,19,51,0,22,24,0
+1,7,23,1,0,22,2,0
+2,10,23,2,20,4,0,23,3,14,1,30,2,4,0
+2,29,19,15,11,4,0,23,15,0
+2,29,19,15,12,4,0,14,18,14,63,0
+2,29,20,15,0,14,18,14,50,0
+30,11,17,42,0,30,7,42,0
+1,13,19,56,0,22,25,0
+5,39,0,14,40,0
+19,255,23,14,0,14,59,0
+31,29,0,14,68,0
+26,255,17,46,12,4,19,15,0,17,4,0
+27,255,0,14,18,0
+17,51,17,31,21,57,0,14,30,26,50,0
+15,14,0,14,12,0
+19,255,23,11,0,14,66,14,67,14,69,0
+4,255,0,14,64,0
+19,255,23,6,0,14,59,0
+11,255,11,4,0,30,52,53,14,69,0
+19,255,23,9,19,12,0,14,24,0
+26,255,17,46,0,14,49,16,9,16,8,0
+19,255,0,14,3,0

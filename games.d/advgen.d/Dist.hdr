@@ -1,0 +1,4 @@
+This is a distribution of "advgen", a compiler for adventures to be
+run by Chris Torek's "adv".  To unpack the distribution, give each
+part as input to the (Bourne) shell.
+Then look at READ_ME.

@@ -1,0 +1,43 @@
+This is an adventure-generator for the "adv" game by Chris Torek
+(chris@maryland.uucp).
+
+To build it, check the Makefile and run "make". The most likely things
+to be changed are:
+	INTERPRETER	The full pathname of "adv". A suitable #! header
+			will be prepended to adventure files, making them
+			directly executable (on BSD-derived systems). This
+			only works if you have a version of "adv" patched to
+			ignore any such initial header; if you don't, define
+			INTERPRETER to be empty.
+	MAXCODE		The maximum size of the generated code; on small
+			address-space systems cut this down to, say, 10000
+			to reduce the size of "advgen".
+	MAXVOCAB	The maximum number of entries in the verb and noun
+			tables; try MAXVOCAB=200 on small systems.
+
+This has only been built and run on 4.2bsd on a VAX 11/750.  I am
+unaware of any machine or version dependencies, but they are probably
+there.
+
+If your system doesn't have getopt(3) it should have!  Several versions
+have been posted to Usenet recently, any of which will work correctly
+for "advgen".
+
+If your system doesn't have adv(6) this program is useless to you.  The
+program was posted to the net by chris@maryland.uucp, and a version
+patched to use the curses library is available from chris@hwcs.uucp
+(no relation!).
+
+The file Pirate.adv is an extended example of an input file, produced
+by de-compiling and massaging the "p" adventure distributed with adv.
+I hope the author will forgive me for revealing his secrets; however,
+the cat was out of the bag in any case :-) as soon as the source of adv
+was distributed.
+
+Comments and complaints to chris@hwcs.uucp, known to the world at large as:
+		Chris Miller
+		Department of Computer Science
+		Heriot-Watt University
+		Edinburgh
+		Scotland
+			+44 31 225 8432 Ext. 242

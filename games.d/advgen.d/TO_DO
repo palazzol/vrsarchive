@@ -1,0 +1,21 @@
+  1.	Replace Message section by Constant section, allowing
+	symbolic names for numeric constants.
+
+  2.	Further extend by allowing constant expressions.
+
+  3.	Allow general boolean expressions in LHS of Daemon and
+	Action rules; parse as expression tree, transform tree to
+	conjunctive normal form, and produce appropriate number of
+	rules, one for each disjunct.  NB for daemons, the percentage
+	should be attached to setting a control variable, which is reset
+	to false on each turn, and is added as a conjunct to the LHS of
+	each disjunct.
+
+  4.	Allow <, <=, != and >= in relations.
+
+  5.	Allow "alphabeticiser" (e.g. ^) as prefix to characters to allow
+	anything to appear there.
+	[Done 16/9/85 - restricted to allowing ^ as initial character of
+	identifiers starting with a digit, to avoid nastiness with ",",
+	"*", newline or space in identifiers messing up the word declarations
+	in the output file.]
