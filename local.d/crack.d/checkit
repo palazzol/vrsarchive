@@ -2,9 +2,9 @@
 #
 #	Check crack.h for correct form.
 #
-grep -v '^"' crack.h
-grep -v '",$' crack.h
-grep '"..........*"' crack.h
+grep -v '^"' crack.h primo.h
+grep -v '",$' crack.h primo.h
+grep '"..........*"' crack.h primo.h
 sort -u -o crack.h crack.h
-set `wc -l crack.h`
-echo $1 lines
+sort -u -o primo.h primo.h
+wc -l crack.h primo.h
