@@ -696,9 +696,9 @@ register int dx,dy;
 		register int tmp;
 
 		if(type < 0) return;
-		tmp = zhit(u.ustuck, type);
 		pline("The %s rips into %s%s",
 			fltxt, monnam(u.ustuck), exclam(tmp));
+		tmp = zhit(u.ustuck, type);
 		return;
 	}
 	if(type < 0) pru();
