@@ -41,21 +41,10 @@ register struct permonst *ptr;
 		if(index(fut_geno, '@')) ct++;
 		if(ct <= 0) return(0); 		  /* no more monsters! */
 		tmp = 7;
-#ifdef KOPS
-		tmp--;
-#endif
-#ifdef ROCKMOLE
-		if(dlevel<4) tmp--;
-#endif
 		tmp = rn2(ct*dlevel/24 + 7);
 		if(tmp < dlevel - 4) tmp = rn2(ct*dlevel/24 + 12);
 		if(tmp >= ct) tmp = rn1(ct - ct/2, ct/2);
-		ct = 0;
-#ifdef KOPS
-		ct++;
-#endif
-		while(!(tmp + 1 <= CMNUM - ct))	tmp--;
-		for(; ct < CMNUM; ct++){
+		for(ct = 0; ct < CMNUM; ct++){
 			ptr = &mons[ct];
 #ifdef KOPS
 			if(ptr->mlet == 'K') {
@@ -64,7 +53,7 @@ register struct permonst *ptr;
 			}
 #endif
 			if(index(fut_geno, ptr->mlet)) continue;
-			if(tmp-- <= 0) goto gotmon;
+			if(--tmp <= 0) goto gotmon;
 		}
 		panic("makemon?");
 	}
