@@ -4,13 +4,13 @@
 	5225 Verona Rd
 	Madison, WI  53611-0288
 */
-#
+
 #include <fcntl.h>
 #ifndef L_SET
 #define L_SET	0
 #define L_INCR	1
 #define L_XTND	2
-#endif  L_SET
+#endif  /*L_SET*/
 
 #define CR	13
 #define NL	10
