@@ -209,7 +209,7 @@ run_remind() {
 	strcpy(message,restmsg);	/* get new message for other options */
 
 	if((tmp = fork()) == 0) {
-		execl(REMIND,"remind","-f",time,restmsg,(char *)0);
+		execlp(REMIND,"remind","-f",time,restmsg,(char *)0);
 		_exit(-999);
 	}
 	if (tmp == -1) {

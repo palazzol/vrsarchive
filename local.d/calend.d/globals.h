@@ -7,7 +7,7 @@
 #define NO	0
 #define YES	1
 #define RCFILE	".calrc"	/* user's rc file */
-#define REMIND "/usr/local/remind"
+#define REMIND "remind"
 
 #define SWAP(a,b) { int temp; temp = a; a = b; b = temp; }
 
