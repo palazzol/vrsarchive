@@ -75,9 +75,10 @@ yylex()
 			resetscroll();  clear(); /* scrolling region, home, clear, no attributes */
 			if ((ic=fork())==0) /* child */
 				{
-				execl("/bin/csh",0);	exit();
+				setuid(getuid());
+				execl("/bin/csh",(char *)0);	exit();
 				}
-			wait(0);
+			wait((int *)0);
 			if (ic<0) /* error */
 				{
 				write(2,"Can't fork off a shell!\n",25); sleep(2);
