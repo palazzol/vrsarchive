@@ -21,7 +21,7 @@
 struct optstruct {
     char	*o_name;	/* option name */
     int		*o_opt;		/* pointer to thing to set */
-    int		o_type		/* Boolean or string */
+    int		o_type;		/* Boolean or string */
 };
 
 typedef struct optstruct	OPTION;
