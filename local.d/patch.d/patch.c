@@ -1,6 +1,6 @@
 /* patch - a program to apply diffs to original files
  *
- * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.3 1986-10-05 12:04:20 root Exp $
+ * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.4 1986-10-05 12:05:37 root Exp $
  *
  * Copyright 1984, Larry Wall
  *
@@ -8,31 +8,6 @@
  * money off of it, or pretend that you wrote it.
  *
  * $Log: not supported by cvs2svn $
- * Revision 1.3  85/03/26  15:07:43  lwall
- * Frozen.
- * 
- * Revision 1.2.1.9  85/03/12  17:03:35  lwall
- * Changed pfp->_file to fileno(pfp).
- * 
- * Revision 1.2.1.8  85/03/12  16:30:43  lwall
- * Check i_ptr and i_womp to make sure they aren't null before freeing.
- * Also allow ed output to be suppressed.
- * 
- * Revision 1.2.1.7  85/03/12  15:56:13  lwall
- * Added -p option from jromine@uci-750a.
- * 
- * Revision 1.2.1.6  85/03/12  12:12:51  lwall
- * Now checks for normalness of file to patch.
- * 
- * Revision 1.2.1.5  85/03/12  11:52:12  lwall
- * Added -D (#ifdef) option from joe@fluke.
- * 
- * Revision 1.2.1.4  84/12/06  11:14:15  lwall
- * Made smarter about SCCS subdirectories.
- * 
- * Revision 1.2.1.3  84/12/05  11:18:43  lwall
- * Added -l switch to do loose string comparison.
- * 
  * Revision 1.2.1.2  84/12/04  09:47:13  lwall
  * Failed hunk count not reset on multiple patch file.
  * 
@@ -79,7 +54,6 @@
 
 #define TRUE (1)
 #define FALSE (0)
-
 #define MAXHUNKSIZE 500
 #define MAXLINELEN 1024
 #define BUFFERSIZE 1024
@@ -145,19 +119,11 @@ int debug = 0;
 #endif
 bool verbose = TRUE;
 bool reverse = FALSE;
-bool usepath = FALSE;
-bool canonicalize = FALSE;
 
 #define CONTEXT_DIFF 1
 #define NORMAL_DIFF 2
 #define ED_DIFF 3
 int diff_type = 0;
-
-int do_defines = 0;			/* patch using ifdef, ifndef, etc. */
-char if_defined[128];			/* #ifdef xyzzy */
-char not_defined[128];			/* #ifndef xyzzy */
-char else_defined[] = "#else\n";	/* #else */
-char end_defined[128];			/* #endif xyzzy */
 
 char *revision = Nullch;		/* prerequisite revision, if any */
 
@@ -165,7 +131,6 @@ char *revision = Nullch;		/* prerequisite revision, if any */
 
 LINENUM locate_hunk();
 bool patch_match();
-bool similar();
 char *malloc();
 char *savestr();
 char *strcpy();
@@ -186,8 +151,6 @@ char *pfetch();
 int pch_line_len();
 LINENUM pch_first();
 LINENUM pch_ptrn_lines();
-LINENUM pch_newfirst();
-LINENUM pch_repl_lines();
 LINENUM pch_end();
 LINENUM pch_context();
 LINENUM pch_hunk_beg();
@@ -269,7 +232,7 @@ char **argv;
 		    reverse = !reverse;
 		}
 		else {
-		    say("%seversed (or previously applied) patch detected!  %s -R.\n",
+		    say("%seversed patch detected!  %s -R.\n",
 			reverse ? "R" : "Unr",
 			reverse ? "Assuming" : "Ignoring");
 		}
@@ -382,18 +345,8 @@ get_some_switches()
 		    fatal("Can't cd to %s.\n",Argv[1]);
 		Argc--,Argv++;
 		break;
-	    case 'D':
-	    	do_defines++;
-		Sprintf(if_defined, "#ifdef %s\n", Argv[1]);
-		Sprintf(not_defined, "#ifndef %s\n", Argv[1]);
-		Sprintf(end_defined, "#endif %s\n", Argv[1]);
-		Argc--,Argv++;
-		break;
 	    case 'e':
 		diff_type = ED_DIFF;
-		break;
-	    case 'l':
-		canonicalize = TRUE;
 		break;
 	    case 'n':
 		diff_type = NORMAL_DIFF;
@@ -401,9 +354,6 @@ get_some_switches()
 	    case 'o':
 		outname = savestr(Argv[1]);
 		Argc--,Argv++;
-		break;
-	    case 'p':
-		usepath = TRUE;	/* do not strip path names */
 		break;
 	    case 'r':
 		Strcpy(rejname,Argv[1]);
@@ -475,22 +425,11 @@ abort_hunk()
 {
     register LINENUM i;
     register LINENUM pat_end = pch_end();
-    /* add in last_offset to guess the same as the previous successful hunk */
-    int oldfirst = pch_first() + last_offset;
-    int newfirst = pch_newfirst() + last_offset;
-    int oldlast = oldfirst + pch_ptrn_lines() - 1;
-    int newlast = newfirst + pch_repl_lines() - 1;
 
     fprintf(rejfp,"***************\n");
     for (i=0; i<=pat_end; i++) {
 	switch (pch_char(i)) {
-	case '*':
-	    fprintf(rejfp,"*** %d,%d\n", oldfirst, oldlast);
-	    break;
-	case '=':
-	    fprintf(rejfp,"--- %d,%d -----\n", newfirst, newlast);
-	    break;
-	case '\n':
+	case '*': case '=': case '\n':
 	    fprintf(rejfp,"%s", pfetch(i));
 	    break;
 	case ' ': case '-': case '+': case '!':
@@ -511,7 +450,6 @@ LINENUM where;
     register LINENUM old = 1;
     register LINENUM lastline = pch_ptrn_lines();
     register LINENUM new = lastline+1;
-    register int def_state = 0;	/* -1 = ifndef, 1 = ifdef */
 
     where--;
     while (pch_char(new) == '=' || pch_char(new) == '\n')
@@ -520,32 +458,11 @@ LINENUM where;
     while (old <= lastline) {
 	if (pch_char(old) == '-') {
 	    copy_till(where + old - 1);
-	    if (do_defines) {
-		if (def_state == 0) {
-		    fputs(not_defined, ofp);
-		    def_state = -1;
-		} else
-		if (def_state == 1) {
-		    fputs(else_defined, ofp);
-		    def_state = 2;
-		}
-		fputs(pfetch(old), ofp);
-	    }
 	    last_frozen_line++;
 	    old++;
 	}
 	else if (pch_char(new) == '+') {
 	    copy_till(where + old - 1);
-	    if (do_defines) {
-		if (def_state == -1) {
-		    fputs(else_defined, ofp);
-		    def_state = 2;
-		} else
-		if (def_state == 0) {
-		    fputs(if_defined, ofp);
-		    def_state = 1;
-		}
-	    }
 	    fputs(pfetch(new),ofp);
 	    new++;
 	}
@@ -562,28 +479,13 @@ LINENUM where;
 	    }
 	    if (pch_char(new) == '!') {
 		copy_till(where + old - 1);
-		if (do_defines) {
-		   fputs(not_defined,ofp);
-		   def_state = -1;
-		}
 		while (pch_char(old) == '!') {
-		    if (do_defines) {
-			fputs(pfetch(old),ofp);
-		    }
 		    last_frozen_line++;
 		    old++;
-		}
-		if (do_defines) {
-		    fputs(else_defined, ofp);
-		    def_state = 2;
 		}
 		while (pch_char(new) == '!') {
 		    fputs(pfetch(new),ofp);
 		    new++;
-		}
-		if (do_defines) {
-		    fputs(end_defined, ofp);
-		    def_state = 0;
 		}
 	    }
 	    else {
@@ -593,25 +495,10 @@ LINENUM where;
 	    }
 	}
     }
-    if (new <= pch_end() && pch_char(new) == '+') {
+    while (new <= pch_end() && pch_char(new) == '+') {
 	copy_till(where + old - 1);
-	if (do_defines) {
-	    if (def_state == 0) {
-	    	fputs(if_defined, ofp);
-		def_state = 1;
-	    } else
-	    if (def_state == -1) {
-		fputs(else_defined, ofp);
-		def_state = 2;
-	    }
-	}
-	while (new <= pch_end() && pch_char(new) == '+') {
-	    fputs(pfetch(new),ofp);
-	    new++;
-	}
-    }
-    if (do_defines && def_state) {
-	fputs(end_defined, ofp);
+	fputs(pfetch(new),ofp);
+	new++;
     }
 }
 
@@ -624,10 +511,7 @@ do_ed_script()
 
     Unlink(TMPOUTNAME);
     copy_file(filearg[0],TMPOUTNAME);
-    if (verbose)
-	Sprintf(buf,"/bin/ed %s",TMPOUTNAME);
-    else
-	Sprintf(buf,"/bin/ed - %s",TMPOUTNAME);
+    Sprintf(buf,"/bin/ed %s",TMPOUTNAME);
     pipefp = popen(buf,"w");
     for (;;) {
 	beginning_of_this_line = ftell(pfp);
@@ -817,45 +701,12 @@ LINENUM offset;
     register LINENUM pat_lines = pch_ptrn_lines();
 
     for (pline = 1, iline=base+offset; pline <= pat_lines; pline++,iline++) {
-	if (canonicalize) {
-	    if (!similar(ifetch(iline,(offset >= 0)),
-			 pfetch(pline),
-			 pch_line_len(pline) ))
-		return FALSE;
-	}
-	else if (strnNE(ifetch(iline,(offset >= 0)),
+	if (strnNE(ifetch(iline,(offset >= 0)),
 		   pfetch(pline),
 		   pch_line_len(pline) ))
 	    return FALSE;
     }
     return TRUE;
-}
-
-/* match two lines with canonicalized white space */
-
-bool
-similar(a,b,len)
-register char *a, *b;
-register int len;
-{
-    while (len) {
-	if (isspace(*b)) {		/* whitespace (or \n) to match? */
-	    if (!isspace(*a))		/* no corresponding whitespace? */
-		return FALSE;
-	    while (len && isspace(*b) && *b != '\n')
-		b++,len--;		/* skip pattern whitespace */
-	    while (isspace(*a) && *a != '\n')
-		a++;			/* skip target whitespace */
-	    if (*a == '\n' || *b == '\n')
-		return (*a == *b);	/* should end in sync */
-	}
-	else if (*a++ != *b++)		/* match non-whitespace chars */
-	    return FALSE;
-	else
-	    len--;			/* probably not necessary */
-    }
-    return TRUE;			/* actually, this is not reached */
-					/* since there is always a \n */
 }
 
 /* input file with indexable lines abstract type */
@@ -876,10 +727,8 @@ re_input()
     if (using_plan_a) {
 	i_size = 0;
 	/*NOSTRICT*/
-	if (i_ptr != Null(char**))
-	    free((char *)i_ptr);
-	if (i_womp != Nullch)
-	    free(i_womp);
+	free((char *)i_ptr);
+	free(i_womp);
 	i_womp = Nullch;
 	i_ptr = Null(char **);
     }
@@ -925,8 +774,8 @@ char *filename;
 		fatal("Can't check out %s.\n",filename);
 	}
 	else {
-	    Sprintf(buf,"SCCS/%s%s",SCCSPREFIX,filename);
-	    if (stat(buf,&filestat) >= 0 || stat(buf+5,&filestat) >= 0) {
+	    Sprintf(buf,"%s%s",SCCSPREFIX,filename);
+	    if (stat(buf,&filestat) >= 0) {
 		Sprintf(buf,GET,filename);
 		if (verbose)
 		    say("Can't find %s--attempting to get it from SCCS.\n",
@@ -938,8 +787,6 @@ char *filename;
 		fatal("Can't find %s.\n",filename);
 	}
     }
-    if ((filestat.st_mode & S_IFMT) & ~S_IFREG)
-	fatal("%s is not a normal file--can't patch.\n",filename);
     i_size = filestat.st_size;
     /*NOSTRICT*/
     i_womp = malloc((MEM)(i_size+2));
@@ -1129,7 +976,7 @@ char *filename;
     pfp = fopen(filename,"r");
     if (pfp == Nullfp)
 	fatal("patch file %s not found\n",filename);
-    Fstat(fileno(pfp), &filestat);
+    Fstat(pfp->_file,&filestat);
     p_filesize = filestat.st_size;
     next_intuit_at(0L);			/* start at the beginning */
 }
@@ -1287,9 +1134,8 @@ char *at;
     for (t=s; isspace(*t); t++) ;
     name = t;
     for (; *t && !isspace(*t); t++)
-	if (!usepath)
-	    if (*t == '/')
-		name = t+1;
+	if (*t == '/')
+	    name = t+1;
     *t = '\0';
     name = savestr(name);
     Sprintf(tmpbuf,"RCS/%s",name);
@@ -1297,8 +1143,8 @@ char *at;
     if (stat(name,&filestat) < 0) {
 	Strcat(tmpbuf,RCSSUFFIX);
 	if (stat(tmpbuf,&filestat) < 0 && stat(tmpbuf+4,&filestat) < 0) {
-	    Sprintf(tmpbuf,"SCCS/%s%s",SCCSPREFIX,name);
-	    if (stat(tmpbuf,&filestat) < 0 && stat(tmpbuf+5,&filestat) < 0) {
+	    Sprintf(tmpbuf,"%s%s",SCCSPREFIX,name);
+	    if (stat(tmpbuf,&filestat) < 0) {
 		free(name);
 		name = Nullch;
 	    }
@@ -1325,7 +1171,7 @@ long file_pos;
 	while (ftell(pfp) < file_pos) {
 	    ret = fgets(buf,sizeof buf,pfp);
 	    assert(ret != Nullch);
-	    say("|%s",buf);
+	    say(buf);
 	}
 	say("--------------------------\n");
     }
@@ -1624,18 +1470,6 @@ LINENUM
 pch_ptrn_lines()
 {
     return p_ptrn_lines;
-}
-
-LINENUM
-pch_newfirst()
-{
-    return p_newfirst;
-}
-
-LINENUM
-pch_repl_lines()
-{
-    return p_repl_lines;
 }
 
 LINENUM
