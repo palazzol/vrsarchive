@@ -1,4 +1,4 @@
-''' $Header: /home/Vince/cvs/local.d/patch.d/patch.man,v 1.5 1986-10-05 12:11:14 root Exp $
+''' $Header: /home/Vince/cvs/local.d/patch.d/patch.man,v 1.6 1986-10-05 12:11:44 root Exp $
 ''' 
 ''' $Log: not supported by cvs2svn $
 ''' Revision 1.2.1.2  84/12/05  11:06:55  lwall

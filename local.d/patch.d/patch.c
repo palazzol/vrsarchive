@@ -1,6 +1,6 @@
 /* patch - a program to apply diffs to original files
  *
- * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.5 1986-10-05 12:06:52 root Exp $
+ * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.6 1986-10-05 12:08:08 root Exp $
  *
  * Copyright 1984, Larry Wall
  *
@@ -8,6 +8,9 @@
  * money off of it, or pretend that you wrote it.
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.2.1.4  84/12/06  11:14:15  lwall
+ * Made smarter about SCCS subdirectories.
+ * 
  * Revision 1.2.1.3  84/12/05  11:18:43  lwall
  * Added -l switch to do loose string comparison.
  * 
@@ -815,8 +818,8 @@ char *filename;
 		fatal("Can't check out %s.\n",filename);
 	}
 	else {
-	    Sprintf(buf,"%s%s",SCCSPREFIX,filename);
-	    if (stat(buf,&filestat) >= 0) {
+	    Sprintf(buf,"SCCS/%s%s",SCCSPREFIX,filename);
+	    if (stat(buf,&filestat) >= 0 || stat(buf+5,&filestat) >= 0) {
 		Sprintf(buf,GET,filename);
 		if (verbose)
 		    say("Can't find %s--attempting to get it from SCCS.\n",
@@ -1184,8 +1187,8 @@ char *at;
     if (stat(name,&filestat) < 0) {
 	Strcat(tmpbuf,RCSSUFFIX);
 	if (stat(tmpbuf,&filestat) < 0 && stat(tmpbuf+4,&filestat) < 0) {
-	    Sprintf(tmpbuf,"%s%s",SCCSPREFIX,name);
-	    if (stat(tmpbuf,&filestat) < 0) {
+	    Sprintf(tmpbuf,"SCCS/%s%s",SCCSPREFIX,name);
+	    if (stat(tmpbuf,&filestat) < 0 && stat(tmpbuf+5,&filestat) < 0) {
 		free(name);
 		name = Nullch;
 	    }
