@@ -1,0 +1,104 @@
+.TH CURSE 1 "20 February 1985"
+.UC 4
+.SH NAME
+curse \- screen functions
+.SH SYNOPSIS
+.B curse
+[ option ] [ text ] ...
+.SH DESCRIPTION
+This command gives the user a method of updating the screen from the shell.
+The options are two letter variable names from
+.I curses.h
+as detailed in Appendix A of
+.I "Screen Updating and Cursor Movement Optimization: A Library Package".
+All the
+.I char*
+type variables are included.  In addition, two numeric options 
+(-li and -co) are recognized, so you can adapt your work to any 
+screen shape size.
+Some commonly used options are:
+.TP 6
+.B -cd
+Clear to end of Display.
+.TP 6
+.B -ce
+Clear to End of line.
+.TP 6
+.B -cl
+CLear screen.
+This is exactly like the
+.I clear
+command.
+.TP 6
+.B -cm
+Cursor Motion.
+This takes the next two numerical arguments on the command line to be the
+.I x
+and
+.I y
+coordinates of the desired position of the cursor from the
+.I home
+position
+.I (0,0)
+at the top lefthand corner of the screen.
+.TP 6
+.B -ho
+HOme cursor.
+This moves the cursor to the top lefthand corner of the screen.
+This is equivalent to
+.I -cm 0 0.
+.TP 6
+.B -ll
+Last Line.
+This moves the cursor to the bottom lefthand corner of the screen.
+This is equivalent to
+.I -cm 0 23
+on a standard 24 line screen.
+.TP 6
+.B -se
+Standout End (may leave space).
+.TP 6
+.B -so
+Stand Out begin (may leave space).
+This normally produces reverse video but depends on the terminal\'s
+capabilities.
+.TP 6
+.B -ue
+Underline Ending sequence.
+.TP 6
+.B -us
+Underline Starting sequence.
+.TP 6
+.B -xx
+Prints all allowable options.
+.PP
+The options may be given in upper or lower case.
+Letters after the first two characters are ignored
+(e.g.
+.B -clear
+may be used instead of
+.B -cl
+).
+Any arguments not starting with a `-' are treated as text and are
+printed at the current cursor position in the current style
+(e.g. standout mode).
+For example, to print a message in standout mode at the center of a
+standard 80 by 24 character screen and leave the cursor at the bottom
+of the screen, the following sequence could be used:
+.PP
+.ti+8n
+curse -cl -cm 34 11 -so \'BSD4.2 Unix\' -se -ll
+.SH SEE ALSO
+.I "Screen Updating and Cursor Movement Optimization: A Library Package,"
+Ken Arnold,
+.br
+clear(1),
+curses(3x),
+termcap(5)
+.SH AUTHOR
+Jonathan Bowen, PRG, Oxford, England
+.SH BUGS
+Some options will only work if the corresponding entry in
+.I termcap
+has been set for the terminal in use (e.g. standout mode).
+Cursor motion may not work on some terminals.
