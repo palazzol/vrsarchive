@@ -122,7 +122,7 @@ void l_thieves_guild()
 	else if (Player.rank[THIEVES]==TMASTER) {
 	  if (Player.level-Thieflevel <= Shadowlordlevel)
 	    mprint("You are not experienced enough to advance.");
-	  if (! (i=inpack(THINGID+16,-1))+1)
+	  else if (! (i=inpack(THINGID+16,-1))+1)
 	    mprint("You must bring back Morgon's Badge!");
 	  else  {
 	    mprint("The Badge is put in a place of honor in the Guild Hall.");
@@ -292,7 +292,7 @@ void l_college()
 	else if (Player.rank[COLLEGE]==MAGE) {
 	  if (Player.level-Collegelevel <= Archmagelevel)
 	    mprint("You are not experienced enough to advance.");
-	  else if (! (i=(inpack(CORPSEID,ML10+1)+1)))
+	  else if (! ((i=inpack(CORPSEID,ML10+1))+1))
 	    mprint("You must return with the heart of the Eater of Magic!");
 	  else  {
 	    mprint("The Heart is sent to the labs for analysis.");
@@ -443,7 +443,7 @@ void l_sorcerors()
       else if (Player.rank[CIRCLE]==HIGHSORCEROR) {
 	if (Player.level-Sorcerorlevel <= Primelevel)
 	  mprint("You are not experienced enough to advance.");
-	else if (! (i=(inpack(CORPSEID,ML10+2)+1)))
+	else if (! ((i=(inpack(CORPSEID,ML10+2))+1))
 	  mprint("You must return with the Crown of the LawBringer!");
 	else  {
 	  mprint("The Crown is ritually sacrificed to the Lords of Chaos.");
@@ -585,7 +585,7 @@ void l_merc_guild()
 	else if (Player.rank[LEGION]==COLONEL) {
 	  if (Player.level-Merclevel <= Commandantlevel)
 	    mprint("Your record does not yet permit promotion.");
-	  else if (! (i=inpack(WEAPONID+37,-1)+1))
+	  else if (! ((i=inpack(WEAPONID+37,-1))+1))
 	    mprint("You must return with the Sword of the Dark Emperor!");
 	  else  {
 	    mprint("The Sword of Empire is melted down....");
