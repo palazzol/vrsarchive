@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/talk.d/makefile,v 1.5 1990-03-30 17:03:34 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/talk.d/makefile,v 1.6 2002-11-23 07:51:57 Vincent Exp $
 #
 ALL	= talk
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJECT	= talk.o announce.o ctl.o display.o get_names.o init_disp.o invite.o \
 	  io.o msgs.o
 SOURCE	= talk.c announce.c ctl.c display.c get_names.c init_disp.c invite.c \

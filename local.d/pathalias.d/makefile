@@ -1,11 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.4 1990-03-30 17:03:16 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.5 2002-11-23 07:51:55 Vincent Exp $
 #
 XENIX	= makedb
 ALL	= pathalias
 MODEL	= -Ml
 OPTIONS	= -DALIASDB=\"$(LIBDIR)/palias\"
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # pathalias -- by steve bellovin, as told to peter honeyman
 # if you can't or don't intend to use dbm files, don't bother with makedb
 DBM	= -ldbm

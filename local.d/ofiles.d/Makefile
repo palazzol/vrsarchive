@@ -1,11 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ofiles.d/Makefile,v 1.4 1990-03-30 17:03:13 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/ofiles.d/Makefile,v 1.5 2002-11-23 07:51:55 Vincent Exp $
 #	Ofiles %W%, %G% cspencer
 #
 ALL	= ofiles
 MODEL	= -Me
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= ofiles.o fstab.o
 
 all: ofiles

@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/read20.d/makefile,v 1.4 1990-03-30 17:03:19 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/read20.d/makefile,v 1.5 2002-11-23 07:51:55 Vincent Exp $
 #
 ALL	= read20
 MODEL	= -i
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 CFILES	= read20.c
 
 install: $(ALL)

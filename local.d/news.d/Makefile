@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/news.d/Makefile,v 1.3 1990-03-30 17:03:08 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/news.d/Makefile,v 1.4 2002-11-23 07:51:54 Vincent Exp $
 #
 SUBDIR	= src man
 ALL	= ${SUBDIR}
-include /etc/CONFIG
+include $(HOME)/CONFIG
 ALIASES	= $(LIBMAIL)/aliases
 NEWALIAS= $(LIBMAIL)/aliashash
 #

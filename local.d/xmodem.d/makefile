@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.3 1990-03-30 17:03:52 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/xmodem.d/makefile,v 1.4 2002-11-23 07:51:59 Vincent Exp $
 #
 ALL	= xmodrec xmodtran addcr delcr cr2lf lf2cr
 MODEL	= -i
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 FILES	= receive.c transmit.c addcr.c delcr.c add.c del.c\
           lf2cr.c cr.c lf.c cr2lf.c
 OBJS	= receive.o transmit.o addcr.o delcr.o add.o del.o\
@@ -18,19 +18,19 @@ clean:
 		rm -f $(OBJS) $(ALL)
 
 xmodrec:	receive.o del.o lf.o
-		cc $(CFLAGS) -o $@ del.o lf.o receive.o $(LIBS)
+		$(CC) $(CFLAGS) -o $@ del.o lf.o receive.o $(LIBS)
 
 xmodtran:	transmit.o add.o cr.o
-		cc $(CFLAGS) -o $@ add.o cr.o transmit.o $(LIBS)
+		$(CC) $(CFLAGS) -o $@ add.o cr.o transmit.o $(LIBS)
 
 addcr:		addcr.o add.o
-		cc $(CFLAGS) -o $@ add.o addcr.o
+		$(CC) $(CFLAGS) -o $@ add.o addcr.o
 
 delcr:		delcr.o del.o
-		cc $(CFLAGS) -o $@ del.o delcr.o
+		$(CC) $(CFLAGS) -o $@ del.o delcr.o
 
 lf2cr:		lf2cr.o cr.o
-		cc $(CFLAGS) -o $@ lf2cr.o cr.o
+		$(CC) $(CFLAGS) -o $@ lf2cr.o cr.o
 
 cr2lf:		cr2lf.o lf.o
-		cc $(CFLAGS) -o $@ cr2lf.o lf.o
+		$(CC) $(CFLAGS) -o $@ cr2lf.o lf.o

@@ -1,8 +1,8 @@
-ALL	= wart kermit
+ALL	= wart$(EXE) kermit$(EXE)
 OPTIONS	= -O -DUXIII -DDEBUG -DTLOG
 MODEL	= -i
-include /etc/CONFIG
-kermit:	wermit
+include $(HOME)/CONFIG
+kermit$(EXE):	wermit$(EXE)
 	rm -f $@
 	ln $? $@
 install: $(ALL)
@@ -161,8 +161,8 @@ BOOTFILE=/edition7
 #  Compile and Link variables:
 #
 LNKFLAGS=
-CC= cc
-CC2= cc
+#CC= cc
+CC2= $(CC)
 #
 ###########################################################################
 #

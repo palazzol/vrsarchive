@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/top.d/Makefile,v 1.9 1990-03-30 17:03:39 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/top.d/Makefile,v 1.10 2002-11-23 07:51:57 Vincent Exp $
 #
 MODEL	= -M2e
 OPTIONS	= -O -DDefault_TOPN=10 -DDefault_DELAY=5
 ALL	= top
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # various other useful things
 MAN	= man
 

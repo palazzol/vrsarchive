@@ -1,14 +1,14 @@
 #
-#	$Header: /home/Vince/cvs/local.d/lintlib.d/Makefile,v 1.4 1990-04-13 14:33:35 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/lintlib.d/Makefile,v 1.5 2002-11-23 07:51:53 Vincent Exp $
 #
 OBJECTS	= llibcurses.ln
 SRCS	= $(OBJECTS:.ln=)
 ALL	= $(OBJECTS) $(SRCS)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 .SUFFIXES: .ln
 
 .c.ln:
-	lint -c -n $?
+	$(LINT) -c -n $?
 # If your lint doesn't have -c, maybe this will work:
 #	/lib/cpp -C -Dlint $? | /usr/lib/lint1 -H/tmp/$$ -v > $@+
 #	mv $@+ $@

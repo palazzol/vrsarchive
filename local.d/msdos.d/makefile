@@ -4,7 +4,7 @@
 MANS	= mdir.1 mread.1 mwrite.1 mdel.1 mtype.1 mmd.1 mrd.1 mren.1
 ALL	= $(MANS:.1=)
 OPTIONS = -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 LINT = lint
 SHAR = shar -a
 

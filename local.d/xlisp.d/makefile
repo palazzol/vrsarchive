@@ -1,16 +1,22 @@
-OFILES=xlisp.obj xlbfun.obj xlcont.obj xldbug.obj xldmem.obj xleval.obj \
-xlfio.obj xlglob.obj xlimage.obj xlinit.obj xlio.obj xljump.obj xllist.obj \
-xlmath.obj xlobj.obj xlpp.obj xlprin.obj xlread.obj xlstr.obj xlstruct.obj \
-xlsubr.obj xlsym.obj xlsys.obj msstuff.obj
+ALL	= xlisp
+include $(HOME)/CONFIG
 
-CFLAGS=-ml -f -O -G -w-pia -w-def -w-aus -Ic:\turboc\include
+OFILES=xlisp.o xlbfun.o xlcont.o xldbug.o xldmem.o xleval.o \
+ xlfio.o xlglob.o xlimage.o xlinit.o xlio.o xljump.o xllist.o \
+ xlmath.o xlobj.o xlpp.o xlprin.o xlread.o xlstr.o xlstruct.o \
+ xlsubr.o xlsym.o xlsys.o xlftab.o msstuff.o
 
-.c.obj:
-	tcc -c $(CFLAGS) $<
+#CFLAGS=-ml -f -O -G -w-pia -w-def -w-aus -Ic:\turboc\include
 
-xlisp.exe:	$(OFILES) xlftab.obj
-	tlink @xlisp.lnk
+xlisp: $(OFILES)
+	$(CC) -o $@ $(OFILES)
 
-xlftab.obj:	xlisp.h osdefs.h osptrs.h
-$(OFILES):	xlisp.h
+#.c.o:
+#	tcc -c $(CFLAGS) $<
+
+#xlisp.exe:	$(OFILES) xlftab.o
+#	tlink @xlisp.lnk
+
+#xlftab.o:	xlisp.h osdefs.h osptrs.h
+#$(OFILES):	xlisp.h
 

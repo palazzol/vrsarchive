@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/whatcomm.d/makefile,v 1.3 1990-03-30 17:03:49 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/whatcomm.d/makefile,v 1.4 2002-11-23 07:51:59 Vincent Exp $
 #
 ALL	= whatcomm
 MODEL	= -i
 OPTIONS	= -DFILENAME=\"$(LIBDIR)/whatlist\"
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL) $(BINDIR) 
 	cp $(ALL) $(BINDIR)

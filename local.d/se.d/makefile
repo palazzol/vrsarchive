@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.7 1990-03-30 17:03:26 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.8 2002-11-23 07:51:56 Vincent Exp $
 # 
 DOCS= Makefile README
 MANS= scriptse.1 se.1
@@ -7,9 +7,12 @@ BINS= se scriptse
 ALL	= $(BINS) $(MANS)
 MODEL	= -M2l
 OPTIONS	= -O `cat flags`
-include /etc/CONFIG
+include $(HOME)/CONFIG
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.7  1990/03/30 17:03:26  vrs
+# Move CONFIG to /etc
+#
 # Version 1.6  87/12/26  20:57:23  vrs
 # Get $(NROFF) from CONFIG
 # 
@@ -74,10 +77,11 @@ CHMOD	= chmod
 # Begin list of dependencies
 
 se: $(OBJS) $(LIBRARIES)
-	if grep DBSD flags > /dev/null || grep US5R2 flags > /dev/null; \
-	then	echo -ltermlib > libs; \
-	else	echo -lcurses > libs ; \
-	fi
+#	if grep DBSD flags > /dev/null || grep US5R2 flags > /dev/null; \
+#	then	echo -ltermlib > libs; \
+#	else	echo -lcurses > libs ; \
+#	fi
+	echo $(LIBS) >libs
 	-if [ -f /lib/shlib.ifile ] ; \
 	then	ld /lib/crt0s.o /lib/shlib.ifile $(OBJS) $(LIBRARIES) -o $@ ; \
 	else	$(CC) `cat flags` $(CFLAGS) $(OBJS) $(LIBRARIES) `cat libs` -o $@ ; \
