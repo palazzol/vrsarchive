@@ -1,5 +1,5 @@
 XBM		= ../xbm/*.xbm
-ALL		= `for i in $(GIF); do echo \`basename $$i .xbm\`.imp; done`
+ALL		= `for i in $(XBM); do echo \`basename $$i .xbm\`.imp; done`
 .SUFFIXES: .xbm .imp
 
 all:
@@ -20,5 +20,5 @@ install: all
 #
 .xbm.imp:
 	@cd ../src; make all
-	../src/xbm2imp $< >tmp
+	../src/xbm2imp <$< >tmp
 	mv tmp $@
