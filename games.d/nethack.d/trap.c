@@ -186,10 +186,12 @@ if(uarmh) pline("Fortunately, you are wearing a helmet!");
 						uarm->otyp >= STUDDED_LEATHER_ARMOR) 
 						pline("Your %s not affected!",
 						aobjnam(uarm,"are"));
-					else {
+					else if (uarm->spe > -6) {
 						pline("Your %s!",aobjnam(uarm,"corrode"));
 						uarm->spe--;
-					}
+					} else
+						pline("Your %s quite rusted now!",
+							aobjnam(uarm,"look"));
 			}
 			break;
 #endif
