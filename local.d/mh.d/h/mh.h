@@ -1,5 +1,5 @@
 /* mh.h - main header file for all of MH */
-/* @(#)$Id: mh.h,v 1.1 1990-04-12 13:27:29 vrs Exp $ */
+/* @(#)$Id: mh.h,v 1.2 1990-05-06 21:53:57 vrs Exp $ */
 
 
 /* Well-used constants */
@@ -340,7 +340,7 @@ FP   popen ();
 
 /* miscellaneous */
 
-#if !defined(BSD42) && !defined(hpux)
+#if !defined(BSD42) && !defined(hpux) !defined(__STDC__)
 #define	rename(f1,f2)	(link (f1, f2) != NOTOK ? unlink (f1) : NOTOK)
 #endif	not BSD42
 
