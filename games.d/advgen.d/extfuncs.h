@@ -46,7 +46,7 @@ void	printmsgs();		/* msgs.c */
 void	printrooms();		/* rooms.c */
 void	printspecials();	/* specials.c */
 void	printvocab();		/* vocab.c */
-char	*rindex();		/* C library */
+char	*strrchr();		/* C library */
 void	set_dirs();		/* specials.c */
 void	set_drop_list();	/* specials.c */
 void	set_get_list();		/* specials.c */

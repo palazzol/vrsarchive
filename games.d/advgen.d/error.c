@@ -7,6 +7,8 @@
 static char	*progname = "no name";	/* Set-up by setprogname(argc,argv) */
 static char	*infilename = "standard input";
 
+extern char *strrchr();
+
 void
 setprogname(count,args)
 	int	count;
@@ -15,7 +17,7 @@ setprogname(count,args)
 	char	*p;
 
 	progname = (count>0 ? args[0] : "anonymous program");
-	if ((p = rindex(progname, '/')) != NULL)
+	if ((p = strrchr(progname, '/')) != NULL)
 	{
 	    progname = p + 1;
 	}
