@@ -16,7 +16,9 @@
 /* #define BZERO /* */
 
 /* default place for dbm output of makedb; can use -o file at run-time  */
+#ifndef ALIASDB
 #define	ALIASDB	"/usr/local/lib/palias"
+#endif
 
 /*
  * after much profiling, i finally found a decent malloc/free
