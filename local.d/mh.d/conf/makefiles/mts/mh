@@ -2,7 +2,7 @@
 #    Instructions to Make, for compilation of standalone-MTS library
 #
 #	@(MHWARNING)
-# @(#)$Id: mh,v 1.1 1990-04-12 13:27:21 vrs Exp $
+# @(#)$Id: mh,v 1.2 1990-05-06 22:19:58 vrs Exp $
 ##############################################################################
 
 # The following entries were inserted during MH configuration
@@ -35,7 +35,7 @@ OFILES	=	hosts.o netmail.o uucp.o
 		mv a.out $@
 @END: NEWLOAD
 @BEGIN: OLDLOAD
-		${CC} -s -o $@
+#		${CC} -s -o $@
 @END: OLDLOAD
 
 

@@ -2,7 +2,7 @@
 #    Instructions to Make, for compilation of MMDF-MTS library 
 #
 #	@(MHWARNING)
-# @(#)$Id: mmdf,v 1.1 1990-04-12 13:27:21 vrs Exp $
+# @(#)$Id: mmdf,v 1.2 1990-05-06 22:20:20 vrs Exp $
 ##############################################################################
 
 # The following entries were inserted during MH configuration
@@ -36,7 +36,7 @@ OFILES	=	hosts.o
 		mv a.out $@
 @END: NEWLOAD
 @BEGIN: OLDLOAD
-		${CC} -s -o $@
+#		${CC} -s -o $@
 @END: OLDLOAD
 
 
