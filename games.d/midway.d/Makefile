@@ -1,46 +1,36 @@
 #
-#	Midway %W% %G%
+#	Midway $Header: /home/Vince/cvs/games.d/midway.d/Makefile,v 1.2 1987-06-08 21:26:39 vrs Exp $
 #
-GAMEDIR	= /usr/games
-LIBS	= -lcurses -ltermlib 
 # Leave in the -O blast you!
-CFLAGS	= -O -Mm
+ALL	= Midway
+MODEL	= -Mm
+OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
+include ../../CONFIG
 FILES	= airstrike.c etc.c midway.c movebombs.c moveships.c screen.c
 OBJS	= airstrike.o etc.o midway.o movebombs.o moveships.o screen.o
 OTHERF	= makefile externs.h globals.h Midway.doc
-JUNKF	= Midway fluff junk arch tags
+JUNKF	= fluff junk arch tags
 
-.c.o:; ${CC} ${CFLAGS} -c $<
-
-Midway: ${OBJS}
-	cc ${CFLAGS} ${OBJS} ${LIBS} -o Midway
-
-${OBJS}: externs.h
-
-midway.o: globals.h
+Midway: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 arch:
-	ar uv MID.a ${FILES} ${OTHERF} 
+	ar uv MID.a $(FILES) $(OTHERF) 
 	touch arch
 
-profile: ${OBJS}
-	cc -p -i ${OBJS} ${CFLAGS} ${LIBS} -o Midway.pro
+profile: $(OBJS)
+	cc -p -i $(OBJS) $(CFLAGS) $(LIBS) -o Midway.pro
 
-install: ${GAMEDIR} ${GAMEDIR}/Midway ${GAMEDIR}/Midway.doc
-
-${GAMEDIR}:
-	mkdir $@
-	chmod 755 $@
-
-${GAMEDIR}/Midway: Midway
-	cp Midway ${GAMEDIR}/Midway
-	chmod 755 ${GAMEDIR}/Midway
-	cp /dev/null ${GAMEDIR}/.midwaylog
-	chmod 666 ${GAMEDIR}/.midwaylog
-
-${GAMEDIR}/Midway.doc: Midway.doc
-	cp Midway.doc ${GAMEDIR}/Midway.doc
-	chmod 644 ${GAMEDIR}/Midway.doc
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	touch $(GAMDIR)/.midwaylog
+	chmod 666 $(GAMDIR)/.midwaylog
+	cp Midway.doc $(GAMDIR)
+	chmod 644 $(GAMDIR)/Midway.doc
 
 clean:
-	rm -f ${OBJS} ${JUNKF}
+	rm -f $(ALL) $(OBJS) $(JUNKF)
+
+$(OBJS): externs.h
+midway.o: globals.h

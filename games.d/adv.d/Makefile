@@ -1,18 +1,25 @@
-SHELL	= /bin/sh
-CFLAGS	= -i -O -DCURSED -F 2000 # Use -DCURSED to get the "curses" version
-LIB	= -lcurses -lx # LIB=-lcurses or LIB=-lwinlib" for the original
-GAMDIR	= $(DESTDIR)/usr/games
-GAMLIB	= $(GAMDIR)/lib
-
+#
+#	$Header: /home/Vince/cvs/games.d/adv.d/Makefile,v 1.2 1987-06-08 21:23:39 vrs Exp $
+#
+MODEL	= -i -F 2000
+OPTIONS	= -O -DCURSED # Use -DCURSED to get the "curses" version
+ALL	= adv aland pirate
+include ../../CONFIG
 OBJS	= main.o alc.o str.o readin.o nxtwrd.o rdr.o init.o\
 	  play.o misc.o prt.o file.o disply.o
 SRCS	= main.c alc.c str.c readin.c nxtwrd.c rdr.c init.c\
 	  play.c misc.c prt.c file.c disply.c
 
-adv:	$(OBJS)
-	$(CC) $(CFLAGS) -o adv $(OBJS) $(LIB) -ltermlib
-
 $(OBJS): adv.h
+
+adv:	$(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+
+aland:	../../CONFIG
+	echo exec $(GAMLIB)/adv $(GAMLIB)/al > $@
+
+pirate:	../../CONFIG
+	echo exec $(GAMLIB)/adv $(GAMLIB)/p > $@
 
 lint:
 	lint -h adv.h $(SRCS)
@@ -21,18 +28,11 @@ list:
 	llist -t adv DOC adv.h $(SRCS)
 
 clean:
-	rm -f core *.o adv
+	rm -f $(OBJS) $(ALL)
 
-$(GAMDIR) $(GAMLIB):
-	mkdir $@
-	chmod 755 $@
-
-install: adv $(GAMDIR) $(GAMLIB)
-	cp adv $(GAMLIB)
-	chmod 711 $(GAMLIB)/adv
-	cp al p $(GAMLIB)
-	chmod 644 $(GAMLIB)/al $(GAMLIB)/p
-	cp aland.sh $(GAMDIR)/aland
-	chmod 755 $(GAMDIR)/aland
-	cp pirate.sh $(GAMDIR)/pirate
-	chmod 755 $(GAMDIR)/pirate
+install: $(ALL) $(GAMDIR) $(GAMLIB)
+	cp adv al p $(GAMLIB)
+	cd $(GAMLIB); chmod 711 adv
+	cd $(GAMLIB); chmod 644 al p
+	cp aland pirate $(GAMDIR)
+	cd $(GAMDIR); chmod 755 aland pirate

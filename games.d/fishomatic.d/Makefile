@@ -1,24 +1,17 @@
 #
-# fishomatic %W%	%G%
+#	$Header: /home/Vince/cvs/games.d/fishomatic.d/Makefile,v 1.2 1987-06-08 21:25:35 vrs Exp $
 #
-#
-GAMEDIR	= /usr/games
-SHELL	= /bin/sh
-OBJS	= fishomatic.o
-
-fishomatic: $(OBJS)
-	cc -o fishomatic $(OBJS)
+ALL	= fishomatic
+MODEL	= -i
+OPTIONS	= -DFISH=\"$(GAMDIR)/fish\"
+include ../../CONFIG
 
 lint:
 	lint $(OBJS:.o=.c) | tee lint.out
 
 clean:
-	rm -f core *.o fishomatic a.out
+	rm -f $(ALL)
 
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: fishomatic $(GAMEDIR)
-	cp fishomatic $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/fishomatic
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)

@@ -1,25 +1,18 @@
 #
-#	Rain %W% %G%
+#	Rain $Header: /home/Vince/cvs/games.d/rain.d/Makefile,v 1.2 1987-06-08 21:28:05 vrs Exp $
 #
-SHELL	= /bin/sh
-GAMEDIR	= $(DESTDIR)/usr/games
-CFLAGS	= -O -i -F 2000
-OBJS	= rain.o
+ALL	= rain
+MODEL	= -i -F 2000
+OPTIONS	= -O
+include ../../CONFIG
 CFILES	= rain.c
-LIBS	= -lcurses -ltermlib
-LFLAGS	= -h
 
-rain: ${OBJS}
-	cc $(CFLAGS) ${OBJS} ${LIBS} -o $@
+lint: $(CFILES) 
+	lint -h $(CFILES) $(LIBS) 
 
-lint: ${CFILES} 
-	lint ${LFLAGS} ${CFILES} ${LIBS} 
-
-install: $(GAMEDIR)/rain
-
-$(GAMEDIR)/rain: rain
-	cp rain $(GAMEDIR)
-	chmod 711 $@
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
 
 clean:
-	rm -f ${OBJS} make.out core rain
+	rm -f $(ALL) make.out core

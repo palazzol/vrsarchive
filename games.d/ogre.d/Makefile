@@ -1,28 +1,24 @@
 #
-#	Ogre %W% %G%
+#	Ogre $Header: /home/Vince/cvs/games.d/ogre.d/Makefile,v 1.2 1987-06-08 21:27:18 vrs Exp $
 #
-GAMEDIR	= /usr/games
-USRMAN	= /usr/man
-MANDIR	= $(USRMAN)/man6
-SHELL	= /bin/sh
+ALL	= ogre
+MODEL	= -i -F 2000
+OPTIONS	= -O
+include ../../CONFIG
 OBJ	= init.o termcap.o map.o main.o move.o initround.o ogrecom.o \
 	  ogrestat.o attack.o resolve.o
 
 ogre: $(OBJ)
-	cc -F 2000 -o ogre $(OBJ) -ltermcap
+	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
-$(GAMEDIR) $(USRMAN) $(MANDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: ogre $(GAMEDIR) $(USRMAN) $(MANDIR)
-	cp ogre $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/ogre
-	cp ogre.6 $(MANDIR)
-	chmod 644 $(MANDIR)/ogre.6
+install: $(ALL) $(GAMDIR) $(MAN6)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp ogre.6 $(MAN6)
+	chmod 644 $(MAN6)/ogre.6
 
 clean:
-	rm -f $(OBJ) ogre lint.out tags
+	rm -f $(ALL) $(OBJ) lint.out tags
 
 lint:
 	lint init.c termcap.c map.c main.c move.c initround.c ogrecom.c  \

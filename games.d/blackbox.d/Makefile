@@ -1,21 +1,18 @@
 #
-#	%W% for the black box game %G%
+#	$Header: /home/Vince/cvs/games.d/blackbox.d/Makefile,v 1.2 1987-06-08 21:24:46 vrs Exp $ for the black box game
 #
-GAMEDIR	= /usr/games
-LFLAGS	= -F 2000	# XENIX only
-LIBS	= -lcurses -ltermcap
-SHELL	= /bin/sh
+ALL	= blackbox
+MODEL	= -i -F 2000	# XENIX only
+OPTIONS	= -O
+include ../../CONFIG
+OBJS	= blackbox.o drawbox.o
 
-blackbox: blackbox.o drawbox.o
-	cc $(LFLAGS) blackbox.o drawbox.o -o $@ $(LIBS)
+blackbox: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 clean:
-	rm -f *.o blackbox core make.out
+	rm -f $(OBJS) $(ALL)
 
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: blackbox $(GAMEDIR)
-	cp blackbox $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/blackbox
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)

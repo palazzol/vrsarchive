@@ -1,5 +1,5 @@
 #
-# Makefile:	makefile for pm
+#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.2 1987-06-08 21:27:53 vrs Exp $
 #
 #	Tunables:
 #		PM_ROLL -	pathname of score file
@@ -10,35 +10,23 @@
 #
 #	[pm by Peter Costantinidis, Jr. @ University of California at Davis]
 #
-SHELL	= /bin/sh
-#
 # Configuration section
 #
-DAEMON	= cron
-GAMDIR	= /usr/games
-GAMLIB	= $(GAMDIR)/lib
+ALL	= pm
 PM_ROLL	= $(GAMLIB)/pm_roll
 PM_USER	= $(GAMLIB)/pm_user
-USRMAN	= /usr/man
-MANDIR	= $(USRMAN)/man6
-OS_VERS = SYS3
-DEFS	= -DPM_ROLL=\"$(PM_ROLL)\" -DPM_USER=\"$(PM_USER)\" \
-	 -D$(OS_VERS) -DWIZARD_UID=0
-#
-# Flags section
-#
-CFLAGS	= -O $(DEFS)
-LDFLAGS	= -i -F 2000
+MODEL	= -i -F 2000
+OPTIONS	= -DPM_ROLL=\"$(PM_ROLL)\" -DPM_USER=\"$(PM_USER)\" -DWIZARD_UID=0 -O
 LINTARGS= -ahxc $(DEFS) -DLINT
-LIBS	= -lcurses -ltermlib -lx
+include ../../CONFIG
 #
 # Files
 #
 HDRS	= pm.h
-OBJS	= config.o flsbuf.o init.o make_moves.o\
-	 misc.o monsters.o msg.o pm.o random.o\
-	 rip.o score.o screen.o timing.o warning.o _doprnt.o
-SRCS1	= config.c flsbuf.c init.c make_moves.c\
+OBJS	= config.o flsbuf.o init.o make_moves.o \
+	  misc.o monsters.o msg.o pm.o random.o \
+	  rip.o score.o screen.o timing.o warning.o _doprnt.o
+SRCS1	= config.c flsbuf.c init.c make_moves.c \
 	 misc.c monsters.c msg.c
 SRCS2	= pm.c random.c rip.c score.c screen.c timing.c warning.c
 SRCS	= $(SRCS1) $(SRCS2) _doprnt.c
@@ -51,31 +39,25 @@ EX1	= $(REST) $(SRCS2)
 EX2	= $(SRCS1)
 
 pm:		$(OBJS)
-		cc $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+		$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
-$(GAMDIR) $(GAMLIB) $(USRMAN) $(MANDIR):
-		mkdir $@
-		chmod 755 $@
-
-install:	pm $(GAMDIR) $(GAMLIB) $(PM_ROLL) $(PM_USER) $(USRMAN) $(MANDIR)
-		cp pm $(GAMDIR)
-		chown $(DAEMON) $(GAMDIR)/pm
-		chmod 4711 $(GAMDIR)/pm
-		cp $(PMDOC) $(MANDIR)
-		cd $(MANDIR); chmod 644 $(PMDOC)
+install:	$(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
+		cp $(ALL) $(GAMDIR)
+		cd $(GAMDIR); chown $(SAFEUID) $(ALL)
+		cd $(GAMDIR); chmod 4711 $(ALL)
+		touch $(PM_ROLL) $(PM_USER)
+		chown $(SAFEUID) $(PM_ROLL) $(PM_USER)
+		cp $(PMDOC) $(MAN6)
+		cd $(MAN6); chmod 644 $(PMDOC)
 
 clean:
-		rm -f $(OBJS) pm make.out core
+		rm -f $(OBJS) $(ALL) make.out core
 
 $(OBJS):	$(HDRS)
 
 tags:		$(HDRS) $(SRCS)
 		ctags -u $?
 		sort tags -o tags
-
-$(PM_ROLL) $(PM_USER):
-		touch $@
-		chown $(DAEMON) $@
 
 Print:		$(HDRS) $(SRCS)
 		pr -l60 -w132 $? | lpr -d "-tpm"

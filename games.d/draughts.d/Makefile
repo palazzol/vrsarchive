@@ -1,15 +1,14 @@
 #
-#	Dam (draghts) @(#)Makefile	1.2 8/4/85
+#	Dam (draghts) $Header: /home/Vince/cvs/games.d/draughts.d/Makefile,v 1.3 1987-06-08 21:28:15 vrs Exp $
 #
-SHELL	= /bin/sh
-GAMEDIR	= $(DESTDIR)/usr/games
-GAMELIB	= $(GAMEDIR)/lib
-CFLAGS	= -DHELPFIL=\"$(GAMELIB)/dam.help\"
+ALL	= dam
+MODEL	= -i -F 2000
+OPTIONS	= -DHELPFIL=\"$(GAMLIB)/dam.help\"
+include ../../CONFIG
 OBJECT	= dam.o prbord.o prinfo.o readmove.o timeac.o
-LFLAGS	= -F 2000 -lcurses -ltermlib
 
 dam:	$(OBJECT)
-	cc -o dam $(OBJECT) $(LFLAGS)
+	$(CC) $(OBJECT) -o $@ $(LIBS)
 
 lint:
 	lint -lcurses -ltermcap $(OBJECT:.o=.c)
@@ -17,14 +16,10 @@ lint:
 $(OBJECT): damdefs.h
 
 clean:
-	rm -f $(OBJECT) lint.out make.out core dam
+	rm -f $(OBJECT) $(ALL)
 
-$(GAMEDIR) $(GAMELIB):
-	mkdir $@
-	chmod 755 $@
-
-install: $(GAMEDIR) $(GAMELIB) dam
-	cp dam $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/dam
-	cp dam.help $(GAMELIB)
-	chmod 644 $(GAMELIB)/dam.help
+install: $(ALL) $(GAMDIR) $(GAMLIB)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp dam.help $(GAMLIB)
+	chmod 644 $(GAMLIB)/dam.help

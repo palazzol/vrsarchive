@@ -1,27 +1,16 @@
 #
-#	Blackjack %W% %G%
+#	Blackjack $Header: /home/Vince/cvs/games.d/cbj.d/Makefile,v 1.2 1987-06-08 21:24:56 vrs Exp $
 #
-GAMEDIR	= /usr/games
-USRMAN	= /usr/man
-MANDIR	= $(USRMAN)/man6
-#
-SHELL	= /bin/sh
-CFILES	= cbj.c
-OBJS	= cbj.o
-CFLAGS	= -O
+ALL	= cbj
+MODEL	= -i
+OPTIONS	= -O
+include ../../CONFIG
 
-cbj:	${OBJS}
-	${CC} ${CFLAGS} ${OBJS} -o cbj
-
-$(GAMEDIR) $(USRMAN) $(MANDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: cbj $(GAMEDIR) $(USRMAN) $(MANDIR)
-	cp cbj $(GAMEDIR)/cbj
-	chmod 711 $(GAMEDIR)/cbj
-	cp cbj.6 $(MANDIR)
-	chmod 644 $(MANDIR)/cbj.6
+install: $(ALL) $(GAMDIR) $(MAN6)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp cbj.6 $(MAN6)
+	chmod 644 $(MAN6)/cbj.6
 
 clean:
-	rm -f ${OBJS} cbj
+	rm -f $(ALL)

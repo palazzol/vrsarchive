@@ -1,18 +1,16 @@
-SHELL	= /bin/sh
-INTERP	=# /usr/games/lib/adv
+#
+#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.2 1987-06-08 21:23:50 vrs Exp $
+#
+ALL	= advgen
+MODEL	= -i
+OPTIONS	= -DDEFINTERPRETER=\"$(INTERP)\" -DMAXCODE=$(MAXCODE) \
+	  -DMAXVOCAB=$(MAXVOCAB) -O
+include ../../CONFIG
+INTERP	= #$(GAMLIB)/adv
 MAXCODE	= 10000
 MAXVOCAB= 1000
-COPTS	= -O -i
-GAMDIR	= $(DESTDIR)/usr/games
-GAMLIB	= $(GAMDIR)/lib
-USRMAN	= $(DESTDIR)/usr/man
-MANDIR	= $(USRMAN)/man6
-
-CDEFS	= -DDEFINTERPRETER=\"$(INTERP)\" -DMAXCODE=$(MAXCODE)\
-	  -DMAXVOCAB=$(MAXVOCAB) -Drindex=strrchr
-CFLAGS	= $(COPTS) $(CDEFS)
 YFLAGS	= -d
-LINTFLGS= -achx $(CDEFS)
+LINTFLGS= -achx $(CFLAGS)
 LINT	= lint
 OBJS	= advgen.o advgram.o advlex.o lookup.o error.o specials.o\
 	  vocab.o str.o rooms.o items.o vars.o msgs.o code.o
@@ -24,7 +22,7 @@ DIST	= READ_ME TO_DO advgen.6 advgen.c advgram.y advlex.l lookup.c \
 	  Dist.hdr
 
 advgen: $(OBJS)
-	cc $(COPTS) -o advgen $(OBJS)
+	cc $(CFLAGS) -o $@ $(OBJS)
 
 lint:	$(SRCS) tokens.h
 	$(LINT) $(LINTFLGS) $(SRCS)
@@ -48,14 +46,10 @@ dist:
 	rm -f Advdist*
 	packmail -hDist.hdr -oAdvdist $(DIST)
 
-$(GAMDIR) $(USRMAN) $(MANDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: $(GAMDIR) $(GAMLIB) $(USRMAN) $(MANDIR) advgen
-	cp advgen $(GAMLIB)
-	chmod 711 $(GAMLIB)/advgen
+install: $(ALL) $(GAMLIB) $(MAN6)
+	cp $(ALL) $(GAMLIB)
+	cd $(GAMLIB); chmod 711 $(ALL)
 	cp Pirate.adv $(GAMLIB)
 	chmod 644 $(GAMLIB)/Pirate.adv
-	cp advgen.6 $(MANDIR)
-	chmod 644 $(MANDIR)/advgen.6
+	cp advgen.6 $(MAN6)
+	chmod 644 $(MAN6)/advgen.6

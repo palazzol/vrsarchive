@@ -1,25 +1,18 @@
 #
-# hanoi %W%	%G%
+#	hanoi $Header: /home/Vince/cvs/games.d/hanoi.d/Makefile,v 1.2 1987-06-08 21:26:18 vrs Exp $
 #
 #
-GAMEDIR	= /usr/games
-SHELL	= /bin/sh
-LFLAGS	= -F 2000	# XENIX only
-OBJS	= hanoi.o
-
-hanoi: $(OBJS)
-	cc $(LFLAGS) -o hanoi $(OBJS) -lcurses -ltermlib
+ALL	= hanoi
+MODEL	= -i -F 2000	# XENIX only
+OPTIONS	= -O
+include ../../CONFIG
 
 lint:
-	lint -lcurses -ltermlib $(OBJS:.o=.c) | tee lint.out
+	lint -lcurses -ltermlib hanoi.c
 
 clean:
-	rm -f core *.o hanoi a.out
+	rm -f $(ALL)
 
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: hanoi $(GAMEDIR)
-	cp hanoi $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/hanoi
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
