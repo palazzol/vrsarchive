@@ -1,0 +1,24 @@
+This is Patch Number 2 to the beta posting of ispell.  Ispell is an
+interactive spell-checking program that is faster, more friendly, and
+more flexible than standard UNIX spell.  The beta posting itself and
+patch 1 are available from the comp.sources.misc archives.
+
+This patch only addresses serious bugs.  Minor fixes and improvements
+will be held over until the next release.
+
+Bugs fixed in this patch:
+
+    (1)	Ispell accepted "conveies" as a spelling of "conveys", contrary
+	to the documentation in ispell.4.
+    (2) If ispell was run from emacs, or with multiple files, and
+	words were added to the dictionary, the personal dictionary
+	was clobbered.  (Michael Wester, Doug Lind)
+
+To install this patch:
+
+    From rn, type "|patch -d dir", where dir is the directory where you
+    have ispell installed.  From other newsreaders, save the article, then
+    type "patch -d dir <savefile" where savefile is the name of the file
+    you just created.
+
+	Geoff Kuenning   geoff@ITcorp.com   {uunet,trwrb}!desint!geoff
