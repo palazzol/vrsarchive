@@ -1,12 +1,15 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/se_h/Makefile,v 1.4 1990-03-30 17:03:31 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/se_h/Makefile,v 1.5 2002-11-23 19:01:57 Vincent Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Revision 1.4  1990/03/30 17:03:31  vrs
+# Move CONFIG to /etc
+#
 # Version 1.3  87/02/13  10:15:55  vrs
 # Use CONFIG
 # 
 # Version 1.2  87/02/07  20:34:40  vrs
-# Fix $Header: /home/Vince/cvs/local.d/se.d/se_h/Makefile,v 1.4 1990-03-30 17:03:31 vrs Exp $
+# Fix $Header: /home/Vince/cvs/local.d/se.d/se_h/Makefile,v 1.5 2002-11-23 19:01:57 Vincent Exp $
 # 
 # Revision 1.2  86/10/07  15:15:04  arnold
 # Updated to reflect current set of help files.
@@ -17,7 +20,7 @@
 # makefile for se help scripts
 #
 ALL	= detab
-include /etc/CONFIG
+include $(HOME)/CONFIG
 DOCS	= README
 FILES = a abt ah arg2 args b bang bug c cc ccmisc chardel charins colon \
 	com comdir comsyn d dir e eh elp equal f g h i j k l list ln m \

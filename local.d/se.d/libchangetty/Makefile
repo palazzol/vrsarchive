@@ -1,7 +1,10 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.4 1990-03-30 17:03:28 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.5 2002-11-23 19:01:16 Vincent Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Revision 1.4  1990/03/30 17:03:28  vrs
+# Move CONFIG to /etc
+#
 # Version 1.3  87/02/13  10:07:49  vrs
 # Use CONFIG
 # 
@@ -20,7 +23,7 @@
 ALL	= libchangetty.a
 MODEL	= -M2l
 OPTIONS	= -O `cat ../flags`
-include /etc/CONFIG
+include $(HOME)/CONFIG
 SRCS	= changetty.c
 OBJS	= changetty.o
 PRINTS	= $(SRCS) Makefile
