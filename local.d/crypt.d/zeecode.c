@@ -86,7 +86,7 @@ int	p[];
 {
 	int		pos;
 	int		sc;
-	char	c;
+	int	c;
 
 	for (pos = 0 ; pos < BLOCKSIZE ; pos++) {
 		if ((c=getchar()) == EOF)  return(FALSE);
