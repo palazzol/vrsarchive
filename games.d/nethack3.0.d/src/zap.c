@@ -150,10 +150,15 @@ register struct obj *otmp;
 	return 0;
 }
 
+#ifdef __STDC__
+struct monst *
+revive(struct obj *obj,boolean ininv)
+#else
 struct monst *
 revive(obj,ininv)
 register struct obj *obj;
 boolean ininv;
+#endif
 {
 	register struct monst *mtmp;
 
@@ -898,7 +903,7 @@ register int force;
 
 void
 hit(str,mtmp,force)
-register char *str;
+register const char *str;
 register struct monst *mtmp;
 register char *force;		/* usually either "." or "!" */
 {
@@ -908,7 +913,7 @@ register char *force;		/* usually either "." or "!" */
 
 void
 miss(str,mtmp)
-register char *str;
+register const char *str;
 register struct monst *mtmp;
 {
 	pline("The %s misses %s.", str,
@@ -922,13 +927,17 @@ register struct monst *mtmp;
    may affect several objects and monsters on its path - for each of
    these an argument function is called. */
 /* check !u.uswallow before calling bhit() */
-
+#ifdef __STDC__
+struct monst *
+bhit(int ddx,int ddy,int range,char sym,int (*fhitm)(),int (*fhito)(),struct obj *obj)
+#else
 struct monst *
 bhit(ddx,ddy,range,sym,fhitm,fhito,obj)
 register int ddx,ddy,range;		/* direction and range */
 char sym;				/* symbol displayed on path */
 int (*fhitm)(), (*fhito)();		/* fns called when mon/obj hit */
 struct obj *obj;			/* 2nd arg to fhitm/fhito */
+#endif
 {
 	register struct monst *mtmp;
 	register struct obj *otmp;
@@ -1194,14 +1203,19 @@ int x, y;
 /* type == -10 to -19   : monster casting spell */
 /* type == -20 to -29 : monster breathing at you */
 /* called with dx = dy = 0 with vertical bolts */
+#ifdef __STDC__
+void
+buzz(int type,int nd,xchar sx,xchar sy,int dx,int dy)
+#else
 void
 buzz(type,nd,sx,sy,dx,dy)
 register int type, nd;
 register xchar sx,sy;
 register int dx,dy;
+#endif
 {
 	int abstype = abs(type) % 10;
-	register char *fltxt = fl[abs(type)];
+	register const char *fltxt = fl[abs(type)];
 	struct rm *lev;
 	xchar range, olx, oly;
 	struct monst *mon;
@@ -1835,11 +1849,16 @@ register int osym, dmgtyp;
 }
 
 /*ARGSUSED*/
+#ifdef __STDC__
+int
+resist(struct monst *mtmp,char olet,int damage,int tell)
+#else
 int
 resist(mtmp, olet, damage, tell)
 register struct monst	*mtmp;
 register char	olet;
 register int	damage, tell;
+#endif
 {
 	register int	resisted = 0;
 #ifdef HARD
@@ -1863,7 +1882,7 @@ register int	damage, tell;
 			break;
 	}
 
-	resisted = (rn2(100) - mtmp->m_lev + level) < mtmp->data->mr;
+	resisted = (unsigned)(rn2(100) - mtmp->m_lev + level) < mtmp->data->mr;
 	if(resisted) {
 
 		if(tell) {

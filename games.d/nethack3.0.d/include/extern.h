@@ -5,6 +5,26 @@
 #ifndef EXTERN_H
 #define EXTERN_H
 
+#ifndef GLOBAL_H
+#include "global.h"
+#endif
+
+#ifndef GOLD_H
+#include "gold.h"
+#endif
+
+#ifndef MONST_H
+#include "monst.h"
+#endif
+
+#ifndef MKROOM_H
+#include "mkroom.h"
+#endif
+
+#ifndef PERMONST_H
+#include "permonst.h"
+#endif
+
 #if defined(MSDOS) && !defined(__TURBOC__)
 /* MSC include files do not contain "extern" keyword */
 #define E
@@ -254,7 +274,7 @@ E int sengr_at P((char *,xchar,xchar));
 E void u_wipe_engr P((int));
 E void wipe_engr_at P((xchar,xchar,xchar));
 E void read_engr_at P((int,int));
-E void make_engr_at P((int,int,char *));
+E void make_engr_at P((int,int,const char *));
 E int freehand();
 E int doengrave();
 E void save_engravings P((int));
@@ -318,7 +338,7 @@ E void getcorners
 	P((xchar *,xchar *,xchar *,xchar *,xchar *,xchar *,xchar *,xchar *));
 E void setsee();
 E void nomul P((int));
-E void losehp P((int,char *));
+E void losehp P((int,const char *));
 E int weight_cap();
 E int inv_weight();
 E int inv_cnt();
@@ -348,7 +368,7 @@ E int carried P((struct obj *));
 E struct obj *carrying P((int));
 E struct obj *o_on P((unsigned int,struct obj *));
 E struct gold *g_at P((int,int));
-E struct obj *getobj P((char *,char *));
+E struct obj *getobj P((const char *,char *));
 E int ggetobj P((char *,int(*)(),int));
 E int askchain P((struct obj *,int,char *,int,int(*)(),int(*)(),int,char *));
 E void prinv P((struct obj *));
@@ -504,7 +524,7 @@ E void mpickgems P((struct monst *));
 E int curr_mon_load P((struct monst *));
 E int max_mon_load P((struct monst *));
 E boolean can_carry P((struct monst *,struct obj *));
-E void mpickstuff P((struct monst *,char *));
+E void mpickstuff P((struct monst *,const char *));
 E int mfndpos P((struct monst *,coord *,long *,long));
 E int dist P((int,int));
 E void poisontell P((int));
@@ -688,7 +708,7 @@ E void error P((char *,...));
 #ifndef TOS
 E void setrandom();
 E int getyear();
-E char *getdate();
+E char *mygetdate();
 E int phase_of_the_moon();
 E int night();
 E int midnight();
@@ -938,7 +958,7 @@ E void check_unpaid P((struct obj *));
 
 /* ### shknam.c ### */
 
-E void stock_room P((struct shclass *,struct mkroom *));
+E void stock_room P((const struct shclass *,struct mkroom *));
 E int saleable P((int,struct obj *));
 E int get_shop_item P((int));
 
@@ -1033,7 +1053,7 @@ E void You P((const char *,...));
 E void Your P((const char *,...));
 E void putsym P((char));
 E void putstr P((char *));
-E char yn_function P((char *,char));
+E char yn_function P((const char *,char));
 
 /* ### topten.c ### */
 
@@ -1107,7 +1127,7 @@ E void settty P((char *));
 E void setftty();
 E void intron();
 E void introff();
-E void error P((char *, char *, char *));
+E void error P((char *,...));
 #endif /* UNIX */
 
 /* ### unixunix.c ### */
@@ -1115,7 +1135,7 @@ E void error P((char *, char *, char *));
 #ifdef UNIX
 E void setrandom();
 E int getyear();
-E char *getdate();
+E char *mygetdate();
 E int phase_of_the_moon();
 E int night();
 E int midnight();
@@ -1218,8 +1238,8 @@ E int dozap();
 E int zapyourself P((struct obj *));
 E void weffects P((struct obj *));
 E char *exclam P((int));
-E void hit P((char *,struct monst *,char *));
-E void miss P((char *,struct monst *));
+E void hit P((const char *,struct monst *,char *));
+E void miss P((const char *,struct monst *));
 E struct monst *bhit P((int,int,int,char,int(*)(),int(*)(),struct obj *));
 E struct monst *boomhit P((int,int));
 E void buzz P((int,int,xchar,xchar,int,int));
