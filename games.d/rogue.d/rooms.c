@@ -400,7 +400,7 @@ register coord *cp;
 						addch(' ');
 					break;
 				case STAIRS:
-					if (!on(player, ISTRIP) ||
+					if (!on(player, ISTRIPY) ||
 					   (seenstairs && stairs.y == y && stairs.x == x))
 							break;
 					/* FALLTHROUGH */

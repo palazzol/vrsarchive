@@ -84,7 +84,7 @@ new_level()
 	addch(PLAYER);
 	if (on(player, SEEMONST))
 		turn_see(FALSE);
-	if (on(player, ISTRIP))
+	if (on(player, ISTRIPY))
 		visuals();
 }
 

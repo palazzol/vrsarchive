@@ -46,7 +46,7 @@ quaff()
 				else
 					fuse(unconfuse, 0, rnd(8)+HUHDURATION, AFTER);
 				player.t_flags |= ISHUH;
-				if (on(player, ISTRIP))
+				if (on(player, ISTRIPY))
 					msg("What a tripy feeling!");
 				else
 					msg("Wait, what's going on here. Huh? What? Who?");
@@ -76,7 +76,7 @@ quaff()
 			fuse(turn_see, TRUE, HUHDURATION, AFTER);
 			if (!turn_see(FALSE))
 				msg("You have a %s feeling for a moment, then it passes",
-					on(player, ISTRIP) ? "normal" : "strange");
+					on(player, ISTRIPY) ? "normal" : "strange");
 		when P_TFIND:
 			/*
 			 * Potion of magic detection.  Show the potions and scrolls
@@ -117,12 +117,12 @@ quaff()
 				}
 			}
 			msg("You have a %s feeling for a moment, then it passes",
-				on(player, ISTRIP) ? "normal" : "strange");
+				on(player, ISTRIPY) ? "normal" : "strange");
 		when P_LSD:
 			p_know[P_LSD] = TRUE;
-			if (!on(player, ISTRIP))
+			if (!on(player, ISTRIPY))
 			{
-				player.t_flags |= ISTRIP;
+				player.t_flags |= ISTRIPY;
 				fuse(come_down, 0, SEEDURATION, AFTER);
 				daemon(visuals, 0, AFTER);
 				if (on(player, SEEMONST))
@@ -184,12 +184,12 @@ quaff()
 			}
 			else
 				lengthen(sight, SEEDURATION);
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg("Oh, bummer!  Everything is dark!  Help!");
 			else
 				msg("A cloak of darkness falls around you");
 		when P_NOP:
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg("This potion tastes pretty");
 			else
 				msg("This potion tastes extremely dull");
@@ -227,7 +227,7 @@ invis_on()
 
 	player.t_flags |= CANSEE;
 	for (th = mlist; th != NULL; th = next(th))
-		if (on(*th, ISINVIS) && see_monst(th) && !on(player, ISTRIP))
+		if (on(*th, ISINVIS) && see_monst(th) && !on(player, ISTRIPY))
 		{
 			move(th->t_pos.y, th->t_pos.x);
 			addch(th->t_disguise);
@@ -256,7 +256,7 @@ register bool turn_off;
 		}
 		else
 		{
-			if (!on(player, ISTRIP))
+			if (!on(player, ISTRIPY))
 				addch(mp->t_type);
 			else
 				addch(rnd(26) + 'A');

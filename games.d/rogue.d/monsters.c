@@ -188,7 +188,7 @@ int y, x;
 				else
 					fuse(unconfuse, 0, rnd(20) + HUHDURATION, AFTER);
 				player.t_flags |= ISHUH;
-				if (on(player, ISTRIP))
+				if (on(player, ISTRIPY))
 					mname = monsters[toascii(mvinch(tp->t_pos.y, tp->t_pos.x))-'A'].m_name;
 				else
 					mname = monsters[ch-'A'].m_name;
