@@ -5,6 +5,7 @@
 #include "less.h"
 #include "position.h"
 #ifdef __STDC__
+#include <sys/types.h>
 #include <regex.h>
 #else
 char *regcmp();
@@ -511,6 +512,7 @@ search(direction, pattern, n)
 #if REGCMP
 #ifdef __STDC__
 	static regex_t cpattern;
+	static have_pattern = 0;
 #else
 	static char *cpattern = NULL;
 #endif
@@ -522,7 +524,7 @@ search(direction, pattern, n)
 		 * The compiled previous pattern is in cpattern, so just use it.
 		 */
 #ifdef __STDC__
-		if (cpattern.re_endp == NULL)
+		if (have_pattern == 0)
 #else
 		if (cpattern == NULL)
 #endif
@@ -546,7 +548,9 @@ search(direction, pattern, n)
 			error("Invalid pattern");
 			return;
 		}
-#ifndef __STDC__
+#ifdef __STDC__
+		have_pattern = 1;
+#else
 		if (cpattern != NULL)
 			free(cpattern);
 #endif
