@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/sig.c,v 1.2 1990-04-04 21:31:40 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/sig.c,v 1.3 2002-11-22 22:10:27 Vincent Exp $ */
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.2  1990/04/04 21:31:40  vrs
+/* Changes for V.4 and ANSI C
+/*
  * Version 1.1  87/07/26  10:18:38  vrs
  * Initial version
  * 
@@ -164,6 +167,9 @@ sig_catcher(signo)
 	if (panic >= 3)
 	    abort();
 	chdir(SAVEDIR);
+#ifndef SIGIOT
+#define SIGIOT SIGABRT
+#endif
 	kill(0,SIGIOT);
     }
     (void) sigset(SIGILL,SIG_DFL);

@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/ndir.c,v 1.1 1987-07-26 10:17:28 vrs Exp $
+/* $Header: /home/Vince/cvs/games.d/warp.d/ndir.c,v 1.2 2002-11-22 22:10:27 Vincent Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  1987/07/26 10:17:28  vrs
+ * Initial version
+ *
  * Revision 7.0.1.1  86/12/12  17:01:02  lwall
  * Baseline for net release.
  * 
@@ -20,13 +23,13 @@
  * Baseline for release with 4.3bsd.
  * 
  */
+#ifdef USENDIR
 
 #include "EXTERN.h"
 #include "warp.h"
 #include "INTERN.h"
 #include "ndir.h"
 
-#ifdef USENDIR
 /*
  * support for Berkeley directory reading routine on a V7 file system
  */

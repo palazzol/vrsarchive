@@ -16,11 +16,11 @@
 
 #define	FTIMER		/* do we have the ftime() routine? */
 
-#define	GETHOSTNAME	/* do we have a gethostname function? */
-#/*undef	DOUNAME		/* do we have a uname function? */
+#undef	GETHOSTNAME	/* do we have a gethostname function? */
+#define	DOUNAME		/* do we have a uname function? */
 #/*undef	PHOSTNAME "hostname"	/* how to get host name with popen */
 
-#/*undef	GETPWENT	/* need we include slow getpwent? */
+#define	GETPWENT	/* need we include slow getpwent? */
 
 #define	HAVETERMLIB	/* do we have termlib-style routines? */
 
@@ -44,7 +44,7 @@
 
 #/*undef	void int	/* is void to be avoided? */
 
-#define	WHOAMI		/* should we include whoami.h? */
+#undef	WHOAMI		/* should we include whoami.h? */
 
 #define	PASSNAMES /* do names come from the passwd file? */
 				/*  (undef to take name from ~/.fullname) */
@@ -60,7 +60,9 @@
 #define PREFSHELL "/bin/csh"		/**/
 
 /* warp private library, may use ~ expansion, %x and %l */
+#ifndef PRIVLIB
 #define PRIVLIB "/a/lwall/src/warp"		/**/
+#endif
 
 /* bits produced by the rand() function */
 #define RANDBITS 31		/**/

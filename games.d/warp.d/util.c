@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/util.c,v 1.1 1987-07-26 10:19:56 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/util.c,v 1.2 2002-11-22 22:10:27 Vincent Exp $ */
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.1  1987/07/26 10:19:56  vrs
+/* Initial version
+/*
  * Revision 7.0.1.2  86/10/20  12:07:46  lwall
  * Made all exits reset tty.
  * 
@@ -14,7 +17,9 @@
 
 #include "EXTERN.h"
 #include "warp.h"
+#ifdef GETWD
 #include "ndir.h"
+#endif
 #include "object.h"
 #include "sig.h"
 #include "term.h"

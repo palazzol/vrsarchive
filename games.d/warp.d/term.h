@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/term.h,v 1.2 1990-04-04 21:31:41 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/term.h,v 1.3 2002-11-22 22:10:27 Vincent Exp $ */
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.2  1990/04/04 21:31:41  vrs
+/* Changes for V.4 and ANSI C
+/*
  * Version 1.1  87/07/26  10:19:12  vrs
  * Initial version
  * 
@@ -114,7 +117,7 @@ EXT char INTRCH INIT('\03');
 #		endif /* lint */
 #	    else /* RDCHK */
 #		ifndef O_NDELAY	/* assert O_NDELAY */
-		    ??? PENDING isn't defined correctly in warp.h
+		    ??? "PENDING isn't defined correctly in warp.h"
 #		endif
 		EXT int devtty INIT(0);
 #		ifndef lint
@@ -125,7 +128,7 @@ EXT char INTRCH INIT('\03');
 #	    endif /* RDCHK */
 #	endif /* FIONREAD */
 #   else /* PENDING */
-	??? warp won't work without PENDING
+	??? "warp won't work without PENDING"
 #	ifndef lint
 #	    define input_pending() (nextin!=nextout)
 #	else
@@ -153,7 +156,7 @@ EXT char INTRCH INIT('\03');
 #		endif /* lint */
 #	    else /* RDCHK */
 #		ifndef O_NDELAY	/* assert O_NDELAY */
-		    ??? PENDING isn't defined correctly in warp.h
+		    ??? "PENDING isn't defined correctly in warp.h"
 #		endif
 		EXT int devtty INIT(0);
 		EXT bool is_input INIT(FALSE);
@@ -167,7 +170,7 @@ EXT char INTRCH INIT('\03');
 #	    endif /* RDCHK */
 #	endif /* FIONREAD */
 #   else /* PENDING */
-	??? warp won't work without PENDING
+	??? "warp won't work without PENDING"
 #	define read_tty(addr,size) read(0,addr,size)
 #	define input_pending() (FALSE)
 #   endif /* PENDING */
@@ -178,8 +181,12 @@ EXT char INTRCH INIT('\03');
 #ifdef TERMIO
 EXT struct termio _tty, _oldtty;
 #else
+#ifdef __STDC__
+EXT struct termios _tty, _oldtty;
+#else
 EXT struct sgttyb _tty;
 EXT int _res_flg INIT(0);
+#endif
 #endif
 
 EXT int _tty_ch INIT(2);
@@ -203,6 +210,22 @@ EXT bool bizarre INIT(FALSE);			/* do we need to restore terminal? */
 
 #else
 
+#ifdef __STDC__
+
+#define raw() ((bizarre=1),_tty.c_lflag &=~ISIG,_tty.c_cc[VMIN] = 1,tcsetattr(_tty_ch,TCSAFLUSH,&_tty))
+#define noraw() ((bizarre=1),_tty.c_lflag |= ISIG,_tty.c_cc[VEOF] = CEOF,tcsetattr(_tty_ch,TCSAFLUSH,&_tty))
+#define crmode() ((bizarre=1),_tty.c_lflag &=~ICANON,_tty.c_cc[VMIN] = 1,tcsetattr(_tty_ch,TCSAFLUSH,&_tty))
+#define nocrmode() ((bizarre=1),_tty.c_lflag |= ICANON,_tty.c_cc[VEOF] = CEOF,tcsetattr(_tty_ch,TCSAFLUSH,&_tty))
+#define echo()	 ((bizarre=1),_tty.c_lflag |= ECHO, tcsetattr(_tty_ch, TCSADRAIN, &_tty))
+#define noecho() ((bizarre=1),_tty.c_lflag &=~ECHO, tcsetattr(_tty_ch, TCSADRAIN, &_tty))
+#define nl()	 ((bizarre=1),_tty.c_iflag |= ICRNL,_tty.c_oflag |= ONLCR,tcsetattr(_tty_ch, TCSADRAIN, &_tty))
+#define nonl()	 ((bizarre=1),_tty.c_iflag &=~ICRNL,_tty.c_oflag &=~ONLCR,tcsetattr(_tty_ch, TCSADRAIN, &_tty))
+#define	savetty() (tcgetattr(_tty_ch, &_oldtty),tcgetattr(_tty_ch, &_tty))
+#define	resetty() ((bizarre=0),tcsetattr(_tty_ch, TCSAFLUSH, &_oldtty))
+#define unflush_output()
+
+#else
+
 #define raw()	 ((bizarre=1),_tty.sg_flags|=RAW, stty(_tty_ch,&_tty))
 #define noraw()	 ((bizarre=1),_tty.sg_flags&=~RAW,stty(_tty_ch,&_tty))
 #define crmode() ((bizarre=1),_tty.sg_flags |= CBREAK, stty(_tty_ch,&_tty))
@@ -213,6 +236,9 @@ EXT bool bizarre INIT(FALSE);			/* do we need to restore terminal? */
 #define nonl()	 ((bizarre=1),_tty.sg_flags &= ~CRMOD, stty(_tty_ch, &_tty))
 #define	savetty() (gtty(_tty_ch, &_tty), _res_flg = _tty.sg_flags)
 #define	resetty() ((bizarre=0),_tty.sg_flags = _res_flg, stty(_tty_ch, &_tty))
+
+#endif /* __STDC__ */
+
 #endif /* TERMIO */
 
 #ifdef TIOCSTI

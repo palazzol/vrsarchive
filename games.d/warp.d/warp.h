@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/warp.h,v 1.2 1990-04-04 21:31:44 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/warp.h,v 1.3 2002-11-22 22:10:28 Vincent Exp $ */
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.2  1990/04/04 21:31:44  vrs
+/* Changes for V.4 and ANSI C
+/*
  * Version 1.1  87/07/26  10:20:36  vrs
  * Initial version
  * 
@@ -112,7 +115,11 @@ EXT char amb[YSIZE][XSIZE];
 #ifdef TERMIO
 #   include <termio.h>
 #else
+#ifdef __STDC__
+#   include <termios.h>
+#else
 #   include <sgtty.h>
+#endif
 #endif
 
 #ifdef FTIMER
@@ -240,7 +247,7 @@ EXT char amb[YSIZE][XSIZE];
 #define GETLOGIN	/* use getlogin() routine as backup to environment */
 			/* variables USER or LOGNAME */
 #define TILDENAME	/* allow ~logname expansion */
-#define GETWD		/* use our getwd() instead of piped in pwd */
+#undef GETWD		/* use our getwd() instead of piped in pwd */
 #define SETUIDGID	/* substitute eaccess() for access() so that rn */
 			/* can run setuid or setgid */
 			/* if not setuid or setgid, you don't need it */

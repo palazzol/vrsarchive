@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/term.c,v 1.1 1987-07-26 10:19:00 vrs Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/term.c,v 1.2 2002-11-22 22:10:27 Vincent Exp $ */
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.1  1987/07/26 10:19:00  vrs
+/* Initial version
+/*
  * Revision 7.0.1.2  86/12/12  17:04:09  lwall
  * Baseline for net release.
  * 
@@ -74,9 +77,15 @@ term_init()
     ERASECH = _tty.c_cc[VERASE];	/* for finish_command() */
     KILLCH = _tty.c_cc[VKILL];		/* for finish_command() */
 #else
+#ifdef __STDC__
+    ospeed = _tty.c_ospeed;		/* for tputs() */
+    ERASECH = _tty.c_cc[VERASE];	/* for finish_command() */
+    KILLCH = _tty.c_cc[VKILL];		/* for finish_command() */
+#else
     ospeed = _tty.sg_ospeed;		/* for tputs() */
     ERASECH = _tty.sg_erase;		/* for finish_command() */
     KILLCH = _tty.sg_kill;		/* for finish_command() */
+#endif
 #endif
 
     /* The following could be a table but I can't be sure that there isn't */
