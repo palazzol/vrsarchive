@@ -1,7 +1,7 @@
 #define _POSIX_SOURCE
 #define _ALL_SOURCE
 #ifndef lint
-static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.5 1992-09-09 18:21:57 vrs Exp $";
+static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.6 2002-11-26 21:02:02 vrs Exp $";
 #endif
 /*
  *	This code was shamelessly stolen from XRN by vrs.
@@ -57,7 +57,6 @@ void start_server();
  * CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <X11/Xos.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
