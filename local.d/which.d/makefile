@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/which.d/makefile,v 1.3 2002-11-23 07:51:59 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/which.d/makefile,v 1.4 2002-11-24 06:13:59 Vincent Exp $
 #
-ALL	= which
+ALL	= which$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG

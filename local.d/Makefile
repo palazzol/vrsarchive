@@ -1,21 +1,21 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.15 2002-11-23 21:00:18 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.16 2002-11-24 06:01:19 Vincent Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
 TODO	= LaTeX.d dialers.d lbgm.d map.d news.d news.misc.d $(XENIX) $(M4711) \
-	  dial.onet se
-XENIX	= cbuf cmap curse dial.onet mdemo smap top
+	  dial.onet$(EXE) se
+XENIX	= cbuf cmap curse dial.onet$(EXE) mdemo smap$(EXE) top
 SUBDIR	= arc ash arcmail calend calls car clear compress copymode crack ctc \
 	  ctty cursive cxref diffc displays dithds elbat espel getopt hoc6 \
-	  include index ispell jove kermit less lintlib mkman msdos ofiles patch \
-	  pathalias ptc read20 recipes roff strings talk teco tmac tpr \
-	  umodem uuencode vc vttest whatcomm which xmodem
+	  include index ispell jove kermit less lintlib mkman msdos ofiles \
+	  patch pathalias ptc read20 recipes roff se strings talk teco tmac \
+	  tpr uemacs umodem uuencode vc vttest whatcomm which xlisp xmodem
 M0700	= bootime esad logout mkbad
-M0711	= bincmp clock from getfrom script
+M0711	= bincmp$(EXE) clock$(EXE) from$(EXE) getfrom$(EXE) script$(EXE)
 M0755	= backup datefudge dirsort dtgt dtree getto islide makewhatis \
 	  phc ports slide vslide
-M4711	= cbuf cmap # smap
+M4711	= cbuf$(EXE) cmap$(EXE) # smap$(EXE)
 ALL	= $(SUBDIR) $(M0700) $(M0711) $(M0755) $(M4711)
 include $(HOME)/CONFIG
 

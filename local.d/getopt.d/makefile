@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/getopt.d/makefile,v 1.3 2002-11-23 07:49:07 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/getopt.d/makefile,v 1.4 2002-11-24 05:57:58 Vincent Exp $
 #
-ALL	= getopt
+ALL	= getopt$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG

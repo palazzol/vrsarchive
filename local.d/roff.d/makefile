@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/roff.d/makefile,v 1.4 2002-11-23 07:51:56 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/roff.d/makefile,v 1.5 2002-11-24 06:08:37 Vincent Exp $
 #
-ALL	= roff
+ALL	= roff$(EXE)
 OPTIONS	= -O
 include $(HOME)/CONFIG
 

@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/include.d/makefile,v 1.4 2002-11-23 07:49:07 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/include.d/makefile,v 1.5 2002-11-24 05:59:25 Vincent Exp $
 #
-ALL	= include
+ALL	= include$(EXE)
 MODEL	= -i
 include $(HOME)/CONFIG
 

@@ -16,7 +16,7 @@
 #
 #   buildhash <infile> <outfile>
 OPTIONS = -O -DUSG
-ALL	= ispell.hash fixdict ispell icombine munchlist isexpand $(DEFHASH)
+ALL	= ispell.hash fixdict ispell$(EXE) icombine$(EXE) munchlist isexpand $(DEFHASH)
 include $(HOME)/CONFIG
 # BINDIR, LIBDIR, DEFHASH, DEFDICT, MAN1DIR, MAN4DIR, MAN1EXT, MAN4EXT,
 # LIBS
@@ -28,12 +28,12 @@ MAN1EXT	= .1
 MAN4EXT	= .4
 
 ispell.hash: buildhash $(DEFDICT)
-	./buildhash $(DEFDICT) $(DEFHASH)
+	./buildhash$(EXE) $(DEFDICT) $(DEFHASH)
 
 install: $(ALL) $(MAN1DIR) $(MAN4DIR)
-	cp ispell isexpand munchlist $(BINDIR)
+	cp ispell$(EXE) isexpand munchlist $(BINDIR)
 	cd $(BINDIR); chmod 755 isexpand munchlist
-	cd $(BINDIR); chmod 711 ispell
+	cd $(BINDIR); chmod 711 ispell$(EXE)
 	cp ispell.hash $(LIBDIR)/$(DEFHASH)
 	cp isexp[1-4].sed icombine $(LIBDIR)
 	cd $(LIBDIR); chmod 711 icombine
@@ -43,16 +43,16 @@ install: $(ALL) $(MAN1DIR) $(MAN4DIR)
 	cp ispell.4 $(MAN4DIR)/ispell$(MAN4EXT)
 	chmod 644 $(MAN4DIR)/ispell$(MAN4EXT)
 
-buildhash: buildhash.o hash.o
-	$(CC) $(CFLAGS) -o buildhash buildhash.o hash.o
+buildhash$(EXE): buildhash.o hash.o
+	$(CC) $(CFLAGS) -o $@ buildhash.o hash.o
 
 fixdict:	fixdict.X Makefile
 	sed -e 's@!!LIBDIR!!@$(LIBDIR)@' -e 's@!!DEFDICT!!@$(DEFDICT)@' \
 		<fixdict.X >fixdict
 	chmod +x fixdict
 
-icombine:	icombine.c config.h ispell.h
-	$(CC) $(CFLAGS) -o icombine icombine.c
+icombine$(EXE):	icombine.c config.h ispell.h
+	$(CC) $(CFLAGS) -o $@ icombine.c
 
 munchlist:	munchlist.X Makefile
 	sed -e 's@!!LIBDIR!!@$(LIBDIR)@' -e 's@!!DEFDICT!!@$(DEFDICT)@' \
@@ -65,8 +65,8 @@ isexpand:	isexpand.X Makefile
 
 OBJS=ispell.o term.o good.o lookup.o hash.o tree.o xgets.o
 
-ispell: $(OBJS)
-	$(CC) $(CFLAGS) -o ispell $(OBJS) $(LIBS)
+ispell$(EXE): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(OBJS) buildhash.o: config.h ispell.h
 ispell.o: version.h
@@ -76,5 +76,6 @@ config.h:	config.X Makefile
 	    -e 's@!!DEFHASH!!@$(DEFHASH)@' <config.X >config.h
 
 clean:
-	rm -f *.o buildhash ispell core a.out mon.out hash.out isexpand *.hash
-	rm -f *.stat *.cnt fixdict fixdict.sh icombine munchlist config.h
+	rm -f *.o buildhash$(EXE) ispell$(EXE) core a.out mon.out hash.out \
+	  isexpand *.hash
+	rm -f *.stat *.cnt fixdict fixdict.sh icombine$(EXE) munchlist config.h

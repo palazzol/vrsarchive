@@ -1,7 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/local.d/patch.d/makefile,v 1.9 2002-11-23 07:51:55 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/patch.d/makefile,v 1.10 2002-11-24 06:05:20 Vincent Exp $
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2002/11/23 07:51:55  Vincent
+# Move CONFIG to $(HOME).
+# Fix hardcoded values where $(CC), etc. should be.
+#
 # Revision 1.8  1990/03/30 17:03:14  vrs
 # Move CONFIG to /etc
 #
@@ -22,7 +26,7 @@
 # 
 MODEL	= -i
 OPTIONS	= -O
-public	= patch
+public	= patch$(EXE)
 private	= 
 ALL	= $(public) $(private)
 include $(HOME)/CONFIG
@@ -40,8 +44,8 @@ addedbyconf = Makefile.old bsd config.h config.sh eunice loc pdp11 usg v7
 .c.o:
 	$(CC) -c $(CFLAGS) $*.c
 
-patch: $(obj)
-	$(CC) $(CFLAGS) $(obj) $(libs) -o patch
+patch$(EXE): $(obj)
+	$(CC) $(CFLAGS) $(obj) $(libs) -o $@
 
 # won't work with csh
 install: $(ALL)
@@ -55,7 +59,7 @@ clean:
 	rm -f *.o *.orig core $(ALL)
 
 realclean:
-	rm -f patch *.o *.orig core $(addedbyconf)
+	rm -f patch$(EXE) *.o *.orig core $(addedbyconf)
 
 # The following lint has practically everything turned on.  Unfortunately,
 # you have to wade through a lot of mumbo jumbo that can't be suppressed.

@@ -1,13 +1,13 @@
 #
-#	$Header: /home/Vince/cvs/local.d/tpr.d/makefile,v 1.4 2002-11-23 07:51:58 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/tpr.d/makefile,v 1.5 2002-11-24 06:11:25 Vincent Exp $
 #
-ALL	= tpr
+ALL	= tpr$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG
 OBJS	= tpr0.o tpr1.o itoeng.o
 
-tpr:	$(OBJS)
+tpr$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
 install: $(ALL) $(BINDIR) $(MAN1)

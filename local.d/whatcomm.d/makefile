@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/whatcomm.d/makefile,v 1.4 2002-11-23 07:51:59 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/whatcomm.d/makefile,v 1.5 2002-11-24 06:13:33 Vincent Exp $
 #
-ALL	= whatcomm
+ALL	= whatcomm$(EXE)
 MODEL	= -i
 OPTIONS	= -DFILENAME=\"$(LIBDIR)/whatlist\"
 include $(HOME)/CONFIG

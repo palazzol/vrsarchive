@@ -1,13 +1,13 @@
 #
-#	$Header: /home/Vince/cvs/local.d/hoc6.d/makefile,v 1.4 2002-11-23 07:49:07 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/hoc6.d/makefile,v 1.5 2002-11-24 05:58:46 Vincent Exp $
 #
-ALL	= hoc6
+ALL	= hoc6$(EXE)
 MODEL	= -i
 include $(HOME)/CONFIG
 YFLAGS	= -d
 OBJS	= hoc.o code.o init.o math.o symbol.o
 
-hoc6:  $(OBJS)
+hoc6$(EXE):  $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 install: $(ALL) $(BINDIR)

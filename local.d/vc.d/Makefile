@@ -1,4 +1,4 @@
-ALL	= vc vc.1
+ALL	= vc$(EXE) vc.1
 MODEL	= -i
 OPTIONS	= -g
 include $(HOME)/CONFIG
@@ -24,7 +24,7 @@ lint: sc.h sc.c lex.c gram.c interp.c cmds.c crypt.c
 	lint ${CFLAGS} ${SIMPLE} sc.c lex.c gram.c interp.c cmds.c crypt.c \
 	range.c xmalloc.c -lcurses -lm
 
-vc:	$(OBJS)
+vc$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 sc.o:	sc.h
@@ -45,7 +45,7 @@ clean:
 	rm -f $(ALL) *.o gram.c *res.h y.tab.h debug core
 
 install: $(ALL) $(BINDIR) $(MAN1)
-	cp vc $(BINDIR)
-	cd $(BINDIR); chmod 711 vc
+	cp vc$(EXE) $(BINDIR)
+	cd $(BINDIR); chmod 711 vc$(EXE)
 	cp vc.1 $(MAN1)
 	cd $(MAN1); chmod 644 vc.1

@@ -5,17 +5,17 @@ MODEL	= -M2l
 OPTIONS	= -O
 ALL	= test
 include $(HOME)/CONFIG
-FILES	= makefile ptc.p ptc.c ptc doc.ms doc.out ptc.man man.out
+FILES	= makefile ptc.p ptc.c ptc$(EXE) doc.ms doc.out ptc.man man.out
 #
 #	Build the bootstrap translator
 #
-boot:	boot.o
+boot$(EXE):	boot.o
 	$(CC) $(CFLAGS) -o $@ boot.o
 #
 #	Make the Pascal version
 #
 cptc.c:	ptc.p boot
-	./boot < ptc.p > tmp.c
+	./boot$(EXE) < ptc.p > tmp.c
 	mv tmp.c cptc.c
 
 ptc:	cptc.o
@@ -24,20 +24,20 @@ ptc:	cptc.o
 #	Compare reults from Pascal and C versions
 #
 test.c:	cptc.c ptc
-	./ptc < ptc.p > tmp.c
+	./ptc$(EXE) < ptc.p > tmp.c
 	mv tmp.c test.c
 
 test:	cptc.c test.c
 	@diff cptc.c test.c
 
 install: ptc ptc.man $(BINDIR)
-	cp ptc $(BINDIR)
-	cd $(BINDIR); chmod 711 ptc
+	cp ptc$(EXE) $(BINDIR)
+	cd $(BINDIR); chmod 711 ptc$(EXE)
 	cp ptc.man $(MAN1)/ptc.1
 	chmod 644 $(MAN1)/ptc.1
 
 clean:
-	rm -f tmp.c boot.o boot cptc.c cptc.o ptc test.c
+	rm -f tmp.c boot.o boot$(EXE) cptc.c cptc.o ptc$(EXE) test.c
 #
 #	Documentation.
 #

@@ -24,19 +24,19 @@
 #MANDIR = /usr/man/manl
 #MANEXT = l
 #SHELL = /bin/csh
-#all:	sdate xjove recover teachjove portsrv macvert edate
+#all:	sdate xjove$(EXE) recover$(EXE) teachjove$(EXE) portsrv$(EXE) macvert$(EXE) edate
 # for SCO Xenix, set
 #	MEMFLAGS = -Mle
 #	CFLAGS = -LARGE -O -F 3000 -K -Mle  (say -Mle2 for an 80286)
 #CFLAGS = -O $(CFLAGS)
-ALL		= sdate xjove recover teachjove portsrv macvert edate
+ALL		= sdate xjove$(EXE) recover$(EXE) teachjove$(EXE) portsrv$(EXE) macvert$(EXE) edate
 include $(HOME)/CONFIG
 
 # These should all just be right if the above ones are.
 JOVE = $(DESTDIR)$(BINDIR)/jove
 TEACHJOVE = $(DESTDIR)$(BINDIR)/teachjove
 RECOVER = $(DESTDIR)$(LIBDIR)/recover
-PORTSRV = $(DESTDIR)$(LIBDIR)/portsrv
+PORTSRV = $(DESTDIR)$(LIBDIR)/portsrv$(EXE)
 JOVERC = $(DESTDIR)$(LIBDIR)/.joverc
 CMDS.DOC = $(DESTDIR)$(LIBDIR)/cmds.doc
 TEACH-JOVE = $(DESTDIR)$(LIBDIR)/teach-jove
@@ -113,12 +113,12 @@ sdate:
 edate:
 	@echo "**** make completed at `date` ****"
 
-xjove:	$(OBJECTS)
-	$(CC) $(LDFLAGS) -o xjove $(OBJECTS) $(LIBS)
-	@-size xjove
+xjove$(EXE):	$(OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+	@-size $@
 
 gjove:	$(OBJECTS)
-	ld -X /lib/gcrt0.o -o gjove $(OBJECTS) -lc $(LIBS)
+	ld -X /lib/gcrt0.o -o $@ $(OBJECTS) -lc $(LIBS)
 	@-size gjove
 
 ovjove:	$(OBJECTS)
@@ -129,20 +129,20 @@ ovjove:	$(OBJECTS)
 		-Z $(OVLAY4) \
 		-Z $(OVLAY5) \
 		-Y $(BASESEG) \
-		-o xjove $(LIBS) -lc; \
-	@-size xjove
+		-o $@ $(LIBS) -lc; \
+	@-size $@
 
-portsrv:	portsrv.o
-	$(CC) $(LDFLAGS) -o portsrv $(SEPFLAG) portsrv.o $(LIBS)
+portsrv$(EXE):	portsrv.o
+	$(CC) $(LDFLAGS) -o $@ $(SEPFLAG) portsrv.o $(LIBS)
 
-recover:	recover.o tune.o rec.h temp.h
-	$(CC) $(LDFLAGS) -o recover $(SEPFLAG) recover.o tune.o $(LIBS)
+recover$(EXE):	recover.o tune.o rec.h temp.h
+	$(CC) $(LDFLAGS) -o $@ $(SEPFLAG) recover.o tune.o $(LIBS)
 
-teachjove:	teachjove.o
-	$(CC) $(LDFLAGS) -o teachjove $(SEPFLAG) teachjove.o $(LIBS)
+teachjove$(EXE):	teachjove.o
+	$(CC) $(LDFLAGS) -o $@ $(SEPFLAG) teachjove.o $(LIBS)
 
-setmaps:	setmaps.o funcdefs.c
-	$(CC) $(LDFLAGS) -o setmaps setmaps.o
+setmaps$(EXE):	setmaps.o funcdefs.c
+	$(CC) $(LDFLAGS) -o $@ setmaps.o
 
 teachjove.o:	teachjove.c /usr/include/sys/types.h /usr/include/sys/file.h
 	$(CC) -c $(CFLAGS) -DTEACHJOVE=\"$(TEACH-JOVE)\" teachjove.c
@@ -155,8 +155,8 @@ setmaps.o:	funcdefs.c keymaps.txt
 # ignore error messages from setmaps
 # it doesn't understand ifdefs
 
-keymaps.c:	setmaps keymaps.txt
-	-./setmaps < keymaps.txt > keymaps.c
+keymaps.c:	setmaps$(EXE) keymaps.txt
+	-./setmaps$(EXE) < keymaps.txt > keymaps.c
 
 keymaps.o:	keymaps.c jove.h
 
@@ -171,8 +171,8 @@ tune.c: Makefile tune.template
 iproc.o: iproc-ptys.c iproc-pipes.c iproc.c
 	$(CC) $(CFLAGS) -c iproc.c
 
-macvert:	macvert.c
-	$(CC) $(CFLAGS) -o macvert macvert.c
+macvert$(EXE):	macvert.c
+	$(CC) $(CFLAGS) -o $@ macvert.c
 
 # install doesn't work for Xenix (no install program)
 
@@ -195,17 +195,17 @@ $(CMDS.DOC): doc/cmds.doc
 $(JOVERC): doc/system.rc
 	install -c -m 644 doc/system.rc $(JOVERC)
 
-$(PORTSRV): portsrv
-	install -c -s -m 755 portsrv $(PORTSRV)
+$(PORTSRV): portsrv$(EXE)
+	install -c -s -m 755 portsrv$(EXE) $(PORTSRV)
 
-$(RECOVER): recover
-	install -c -s -m 755 recover $(RECOVER)
+$(RECOVER): recover$(EXE)
+	install -c -s -m 755 recover$(EXE) $(RECOVER)
 
-$(JOVE): xjove
-	install -c -m 755 xjove $(JOVE)
+$(JOVE): xjove$(EXE)
+	install -c -m 755 xjove$(EXE) $(JOVE)
 
-$(TEACHJOVE): teachjove
-	install -c -s -m 755 teachjove $(TEACHJOVE)
+$(TEACHJOVE): teachjove$(EXE)
+	install -c -s -m 755 teachjove$(EXE) $(TEACHJOVE)
 
 $(JOVEM): doc/jove.nr
 	@sed -e 's;TMPDIR;$(TMPDIR);' \
@@ -254,8 +254,8 @@ touch:
 	touch $(OBJECTS)
 
 clean:
-	rm -f a.out core *.o keymaps.c tune.c xjove portsrv recover setmaps \
-	teachjove macvert
+	rm -f a.out core *.o keymaps.c tune.c xjove$(EXE) portsrv$(EXE) \
+	  recover$(EXE) setmaps$(EXE) teachjove$(EXE) macvert$(EXE)
 
 # This version only works under 4.3BSD
 #depend:

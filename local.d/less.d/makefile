@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.5 2002-11-23 07:51:52 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.6 2002-11-24 06:04:18 Vincent Exp $
 #
-ALL	= less
+ALL	= less$(EXE)
 OPTIONS = "-DVOID=$(VOID)" \
 	  "-DREGCMP=$(REGCMP)" "-DRECOMP=$(RECOMP)" \
 	  "-DSHELL_ESCAPE=$(SHELL_ESCAPE)" \
@@ -81,7 +81,7 @@ ONLY_RETURN = 0
 
 # INSTALL_LESS is a list of the public versions of less.
 # INSTALL_MAN is a list of the public versions of the manual page.
-INSTALL_LESS =	$(BINDIR)/less
+INSTALL_LESS =	$(BINDIR)/less$(EXE)
 INSTALL_MAN =	$(MAN1)/less.1
 
 ##########################################################################
@@ -100,12 +100,12 @@ OBJ =	main.o option.o prim.o ch.o position.o input.o output.o screen.o \
 # Rules
 ##########################################################################
 
-less:	$(OBJ)
+less$(EXE):	$(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
 install: $(ALL) $(BINDIR) $(MAN1)
 	for f in $(INSTALL_MAN); do rm -f $$f;cp less.l $$f;chmod 644 $$f; done
-	for f in $(INSTALL_LESS); do rm -f $$f;cp less $$f;chmod 711 $$f; done
+	for f in $(INSTALL_LESS); do rm -f $$f;cp less$(EXE) $$f;chmod 711 $$f; done
 
 pager_patch: pager_patch.c
 	$(CC) $(CFLAGS) -s -o $@ pager_patch.c
@@ -127,10 +127,10 @@ newfuncs:
 	awk -f mkfuncs.awk $(SRC) >funcs.h
 
 clean:
-	rm -f $(OBJ) less pager_patch
+	rm -f $(OBJ) less$(EXE) pager_patch
 
 clobber:
-	rm -f *.o less pager_patch install_less install_man install_pager_patch
+	rm -f *.o less$(EXE) pager_patch install_less install_man install_pager_patch
 
 shar:
 	shar -v INSTALLATION less.l makefile.* *.h *.awk $(SRC1) > less.shar.a

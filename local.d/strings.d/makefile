@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/strings.d/makefile,v 1.3 2002-11-23 07:51:56 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/strings.d/makefile,v 1.4 2002-11-24 06:09:40 Vincent Exp $
 #
-ALL	= strings
+ALL	= strings$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG

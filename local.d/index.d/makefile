@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/index.d/makefile,v 1.4 2002-11-23 07:49:08 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/index.d/makefile,v 1.5 2002-11-24 06:02:33 Vincent Exp $
 #
-ALL	= index
+ALL	= index$(EXE)
 include $(HOME)/CONFIG
 
 install: $(ALL) $(BINDIR)

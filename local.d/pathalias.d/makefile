@@ -1,8 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.5 2002-11-23 07:51:55 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.6 2002-11-24 06:08:07 Vincent Exp $
 #
-XENIX	= makedb
-ALL	= pathalias
+XENIX	= makedb$(EXE)
+ALL	= pathalias$(EXE)
 MODEL	= -Ml
 OPTIONS	= -DALIASDB=\"$(LIBDIR)/palias\"
 include $(HOME)/CONFIG
@@ -42,7 +42,7 @@ parse.c: parse.y def.h
 
 yylex.o:	parse.c yylex.c
 
-makedb: makedb.o
+makedb$(EXE): makedb.o
 	$(CC) $(CFLAGS) makedb.o $(DBM) -o $@
 
 makedb.o: config.h
@@ -98,7 +98,7 @@ paths:	${SITES}
 
 # don't touch "down" until completely done.
 down:	paths/princeton
-	pathalias -v ${ARGS} $(PATHFILES) > down.new 2>ERRORS
+	./pathalias$(EXE) -v ${ARGS} $(PATHFILES) > down.new 2>ERRORS
 	sort down.new > down
 #	rm down.new
 
@@ -128,17 +128,17 @@ sendit: ${NEIGHBORS}
 
 # reorder the output for princeton/sendmail/uubang and generate phoney costs.
 princeton: down
-	pathalias ${ARGS} -l $@ $(PATHFILES)> $@.new 2>ERRORS
+	./pathalias$(EXE) ${ARGS} -l $@ $(PATHFILES)> $@.new 2>ERRORS
 	sed -e 's/\(.*\)	\(.*\)/\1	0	\2/' $@.new > $@
 	rm $@.new
 
 # make output for friends.  (make friends for output?)
 sfyog rcalabs neoucom:
-	pathalias ${ARGS} -l $@ $(PATHFILES) > $@ 2>ERRORS
+	./pathalias$(EXE) ${ARGS} -l $@ $(PATHFILES) > $@ 2>ERRORS
 
 # desperation debugging -- examine the costs.
 costs:
-	pathalias -vci ${DEAD} -l down $(PATHFILES) > down.costs 2>ERRORS
+	./pathalias$(EXE) -vci ${DEAD} -l down $(PATHFILES) > down.costs 2>ERRORS
 
 # make one BIG file.  a bad idea.
 cat:
@@ -146,5 +146,5 @@ cat:
 
 # generate test data using undocumented features.  (go away.)
 edges: down
-	pathalias -i -g edges $(PATHFILES)
+	./pathalias$(EXE) -i -g edges $(PATHFILES)
 
