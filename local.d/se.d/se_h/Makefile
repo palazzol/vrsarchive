@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/se_h/Makefile,v 1.1 1987-02-07 19:06:34 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/se_h/Makefile,v 1.2 1987-02-07 20:34:40 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
 # Revision 1.2  86/10/07  15:15:04  arnold
