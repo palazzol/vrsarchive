@@ -1,0 +1,21 @@
+   File Name		Archive #	Description
+-----------------------------------------------------------
+ MANIFEST                  1	This shipping list
+ Makefile                  4	
+ README                    1	
+ arrays.h                  2	
+ data.dat                  4	
+ demons.c                  5	
+ helper.c                  7	
+ motion.c                  4	
+ parser.c                  3	
+ variab.h                  4	
+ vcnvrt.c                  6	
+ verbs1.c                  6	
+ verbs2.c                  3	
+ vocab.dat                 6	
+ vtext.dat.aa              1	
+ vtext.dat.ab              2	
+ vtext.dat.ac              5	
+ vtxtcn.c                  2	
+ world.c                   5	
