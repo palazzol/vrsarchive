@@ -1,9 +1,12 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/term.c,v 1.3 1987-12-26 20:57:33 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/term.c,v 1.4 2002-11-23 19:00:48 Vincent Exp $";
 #endif
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  1987/12/26 20:57:33  vrs
+ * Remove pad character junk (use curses)
+ *
  * Version 1.2  87/02/07  20:44:24  vrs
  * Fix for systems without WINIOCTL
  * 
@@ -257,6 +260,9 @@ t_exit ()
 
 #else
 
+#ifdef __STDC__
+#include <termios.h>
+#endif
 #include <sys/ioctl.h>
 #define WINIOCTL	TIOCGWINSZ
 #define WINSTRUCT	winsize

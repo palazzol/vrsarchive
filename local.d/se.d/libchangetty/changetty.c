@@ -1,9 +1,12 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/libchangetty/changetty.c,v 1.2 1987-02-07 20:25:14 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/libchangetty/changetty.c,v 1.3 2002-11-23 19:02:46 Vincent Exp $";
 #endif
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  1987/02/07 20:25:14  vrs
+ * Include types.h and ioctl.h for XENIX
+ *
  * Revision 1.2  86/07/11  15:23:06  osadr
  * Removed Georgia Tech specific code.
  * 
@@ -50,7 +53,13 @@ static int set_ospeed = NO;
 #ifdef USG
 /* all the info needed for the System V terminal driver */
 
+#ifdef __STDC__
+#include <termios.h>
+typedef struct termios TTYINFO;	/* S5 control flags */
+#else
 typedef struct termio TTYINFO;	/* S5 control flags */
+#endif
+
 #else
 /* all the info needed for the Berkeley terminal driver */
 
@@ -199,7 +208,13 @@ TTYINFO *buf;		/* buffer containing TTYINFO to be modified */
 
 	buf->c_iflag &= ~(INLCR|IGNCR|ICRNL);	/* allow CR to come thru */
 	buf->c_lflag |= ISIG|NOFLSH;	/* keep these bits */
-	buf->c_lflag &= ~(ICANON|XCASE|ECHO|ECHOE|ECHOK|ECHONL);
+	buf->c_lflag &= ~(ICANON|ECHO|ECHOE|ECHOK|ECHONL);
+#ifdef XCASE
+	buf->c_lflag &= ~XCASE;	/* Not an uppercase only terminal */
+#else
+	buf->c_iflag &= ~IUCLC;	/* Not an uppercase only terminal */
+	buf->c_oflag &= ~OLCUC;
+#endif
 #else
 	static struct tchars newtchars = {DLE, -1, DC1, DC3, EOT, -1};
 	static struct ltchars newltchars = {-1, -1, -1, -1, -1, -1};

@@ -4,7 +4,11 @@
 */
 
 #include <ctype.h>
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 #include <signal.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -65,7 +69,11 @@ char *request[] = {
 	"tr","ul",0};
 char *mktemp(), *mfilnam = "/tmp/rtmXXXXXX";
 int c;		/* LAST CHAR READ */
+#ifdef __STDC__
+struct termios tty;
+#else
 struct sgttyb tty;
+#endif
 
 main(argc,argv)
 int argc;
@@ -94,7 +102,11 @@ char **argv;
 		goto endargs;
 	}
 endargs:
+#ifdef __STDC__
+	if (sflag) tcgetattr(0,&tty);
+#else
 	if (sflag) gtty(0,&tty);
+#endif
 	mesg(0);	/* BLOCK OUT MESSAGES */
 	assylen=0;
 	assyline[0]='\0';
@@ -854,15 +866,26 @@ waitawhile()
 {
 	int oldflags;
 	if (isatty(0)) {
+#ifdef __STDC__
+		oldflags=tty.c_iflag;
+		tty.c_iflag &= ~ECHO;	/* DON'T ECHO THE RUBOUT */
+		tcsetattr(0,TCSADRAIN,&tty);
+#else
 		oldflags=tty.sg_flags;
 		tty.sg_flags &= ~ECHO;	/* DON'T ECHO THE RUBOUT */
 		stty(0,&tty);
+#endif
 	}
 	signal(SIGINT,nix);
 	pause();
 	if (isatty(0)) {
+#ifdef __STDC__
+		tty.c_iflag = oldflags;
+		tcsetattr(0,TCSADRAIN,&tty);
+#else
 		tty.sg_flags = oldflags;
 		stty(0,&tty);
+#endif
 	}
 }
 
