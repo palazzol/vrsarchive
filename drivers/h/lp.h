@@ -70,12 +70,6 @@
 /*
  *	Device Structures
  */
-struct clist {
-	int	c_cc;			/* character count */
-	char	*c_cf;			/* pointer to the first character */
-	char	*c_cl;			/* pointer to the last character */
-};
-
 struct lpcfg {
 		int p_level;		/* intr level */
 		int p_porta;		/* data out */
