@@ -18,7 +18,7 @@ static int  broken_pipe;
 
 static	int	move();
 static		process(), chgrp();
-int	pipeser ();
+TYPESIG	pipeser ();
 
 
 struct passwd *getpwnam ();
@@ -220,7 +220,7 @@ short   gid;
 
 /* ARGSUSED */
 
-static  int pipeser (i)
+static  TYPESIG pipeser (i)
 int     i;
 {
 #ifndef	BSD42
