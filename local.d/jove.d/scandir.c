@@ -17,13 +17,19 @@
 #ifdef M_XENIX
 #include <sys/ndir.h>
 #else
-#include <sys/dir.h>
+#  ifdef __STDC__
+#    include <dirent.h>
+#  else
+#    include <sys/dir.h>
+#  endif /* __STDC__ */
 #endif /* M_XENIX */
-#endif
+#endif /* UNIX*/
 
 #ifdef F_COMPLETION
 
 #ifdef UNIX
+
+#ifndef _DIRENT_H_
 
 #if defined(BSD4_2) || defined(M_XENIX)
 
@@ -77,7 +83,7 @@ DIR	*dp;
 	while (*(unsigned short *)&dir.d_ino == 0);
 #else
 	while (dir.d_ino == 0);
-#endif
+#endif /* !elxsi */
 
 	return &dir;
 }
@@ -128,6 +134,7 @@ memfail:	complain("[Malloc failed: cannot scandir]");
 	return nentries;
 }
 
+#endif /* !_DIRENT_H_ */
 #endif /* UNIX */
 
 #ifdef MSDOS
