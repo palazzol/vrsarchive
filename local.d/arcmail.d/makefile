@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/arcmail.d/makefile,v 1.4 2002-11-23 07:48:55 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/arcmail.d/makefile,v 1.5 2002-11-24 03:18:13 Vincent Exp $
 #
-ALL	= arcmail
+ALL	= arcmail$(EXE)
 MODEL	= -i -F 2000
 include $(HOME)/CONFIG
 

@@ -1,7 +1,7 @@
 #
 #    Makefile for ARC
 #
-ALL	= arc
+ALL	= arc$(EXE)
 OPTIONS	= -O
 MODEL	= -M2l
 include $(HOME)/CONFIG
@@ -10,7 +10,7 @@ OBJS = arc.o arcadd.o arccode.o arccvt.o arcdel.o arcdos.o \
        arcpack.o arcsq.o arcsvc.o arctst.o arcunp.o arcusq.o
 SRCS = $(OBJS:.o=.c)
 
-arc:	$(OBJS)
+arc$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(OBJS):arc.h
