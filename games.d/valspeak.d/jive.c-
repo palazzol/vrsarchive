@@ -1,0 +1,2656 @@
+# include "stdio.h"
+# define U(x) x
+# define NLSTATE yyprevious=YYNEWLINE
+# define BEGIN yybgin = yysvec + 1 +
+# define INITIAL 0
+# define YYLERR yysvec
+# define YYSTATE (yyestate-yysvec-1)
+# define YYOPTIM 1
+# define YYLMAX 200
+# define output(c) putc(c,yyout)
+# define input() (((yytchar=yysptr>yysbuf?U(*--yysptr):getc(yyin))==10?(yylineno++,yytchar):yytchar)==EOF?0:yytchar)
+# define unput(c) {yytchar= (c);if(yytchar=='\n')yylineno--;*yysptr++=yytchar;}
+# define yymore() (yymorfg=1)
+# define ECHO fprintf(yyout, "%s",yytext)
+# define REJECT { nstr = yyreject(); goto yyfussy;}
+int yyleng; extern char yytext[];
+int yymorfg;
+extern char *yysptr, yysbuf[];
+int yytchar;
+FILE *yyin = {stdin}, *yyout = {stdout};
+extern int yylineno;
+struct yysvf { 
+	struct yywork *yystoff;
+	struct yysvf *yyother;
+	int *yystops;};
+struct yysvf *yyestate;
+extern struct yysvf yysvec[], *yybgin;
+	char buf[128];
+
+# define YYNEWLINE 10
+yylex(){
+int nstr; extern int yyprevious;
+while((nstr = yylook()) >= 0)
+yyfussy: switch(nstr){
+case 0:
+if(yywrap()) return(0); break;
+case 1:
+			printf(" stash");
+break;
+case 2:
+			printf(" t'row");
+break;
+case 3:
+			printf(" honky code");
+break;
+case 4:
+			printf(" Isaac");
+break;
+case 5:
+			printf(" slow mo-fo");
+break;
+case 6:
+			printf(" that slow mo-fo");
+break;
+case 7:
+			printf(" snatch'd");
+break;
+case 8:
+			printf(" wet-back");
+break;
+case 9:
+			printf(" wet-back");
+break;
+case 10:
+			printf(" greaser");
+break;
+case 11:
+			printf(" greaser");
+break;
+case 12:
+			printf(" snatch");
+break;
+case 13:
+			printf(" duzn't");
+break;
+case 14:
+			printf(" JIBE");
+break;
+case 15:
+			printf(" honkyfool");
+break;
+case 16:
+			printf(" doodad");
+break;
+case 17:
+		printf("e da damn ");
+break;
+case 18:
+		printf("a da damn ");
+break;
+case 19:
+		printf("t da damn ");
+break;
+case 20:
+		printf("d da damn ");
+break;
+case 21:
+                    printf(" dude ");
+break;
+case 22:
+			printf("mama");
+break;
+case 23:
+			printf("goat");
+break;
+case 24:
+		printf("sump'n");
+break;
+case 25:
+		printf(" honky jibe ");
+break;
+case 26:
+                    printf(" -on rebound- ");
+break;
+case 27:
+		printf(" -check y'out latah-");
+break;
+case 28:
+	{ sprintf(buf, "%s  Sheeeiit.",yytext); printf(buf); }
+break;
+case 29:
+	{ sprintf(buf, "%s  What it is, Mama!",yytext); printf(buf); }
+break;
+case 30:
+	{ sprintf(buf, "%s  Ya' know?",yytext); printf(buf); }
+break;
+case 31:
+	{ sprintf(buf, "%s  'S coo', bro.",yytext); printf(buf); }
+break;
+case 32:
+	{ sprintf(buf, "%s  Ah be baaad...",yytext); printf(buf); }
+break;
+case 33:
+	{ sprintf(buf, "%s  Man!",yytext); printf(buf); }
+break;
+case 34:
+	{ sprintf(buf, "%s  Slap mah fro!",yytext); printf(buf); }
+break;
+case 35:
+		printf("Sho' nuff");
+break;
+case 36:
+		printf("sho' nuff");
+break;
+case 37:
+			printf(" git");
+break;
+case 38:
+		printf("gots'ta");
+break;
+case 39:
+			printf("gots'ta ");
+break;
+case 40:
+		printf("gots'ta");
+break;
+case 41:
+			printf("I's gots'ta be");
+break;
+case 42:
+			printf("aint");
+break;
+case 43:
+			printf("aint");
+break;
+case 44:
+			printf("aint");
+break;
+case 45:
+			printf(" is yo'");
+break;
+case 46:
+			printf(" you is");
+break;
+case 47:
+                    printf(" fedora ");
+break;
+case 48:
+                   printf(" kicker");
+break;
+case 49:
+			printf("aint");
+break;
+case 50:
+		printf("gots'ta");
+break;
+case 51:
+			printf("gots'");
+break;
+case 52:
+			printf(" gots'ta");
+break;
+case 53:
+		printf("mosey on down");
+break;
+case 54:
+                   printf(" mosey on down ");
+break;
+case 55:
+                      printf(".  Right On!  ");
+break;
+case 56:
+			printf("steal");
+break;
+case 57:
+                    printf(" wheels ");
+break;
+case 58:
+			printf("roll");
+break;
+case 59:
+                    printf(" feed da bud ");
+break;
+case 60:
+                  printf(" brother ");
+break;
+case 61:
+                  printf(" brother");
+break;
+case 62:
+				printf("honky");
+break;
+case 63:
+                 printf(" gentleman ");
+break;
+case 64:
+			printf("supa' fine");
+break;
+case 65:
+		printf("sucka'");
+break;
+case 66:
+                  printf(" wahtahmellun");
+break;
+case 67:
+				printf("plantation");
+break;
+case 68:
+			printf("dojigger");
+break;
+case 69:
+                   printf(" alley");
+break;
+case 70:
+		printf("clunker");
+break;
+case 71:
+			printf("o'");
+break;
+case 72:
+			printf("wasted");
+break;
+case 73:
+		printf("super-dude");
+break;
+case 74:
+	printf("super honcho");
+break;
+case 75:
+			printf("hosed");
+break;
+case 76:
+		printf("guv'ment");
+break;
+case 77:
+			printf("knowed");
+break;
+case 78:
+			printf("a'cuz");
+break;
+case 79:
+			printf("A'cuz");
+break;
+case 80:
+			printf("yo'");
+break;
+case 81:
+			printf("Yo'");
+break;
+case 82:
+			printf("foe");
+break;
+case 83:
+			printf("gots");
+break;
+case 84:
+			printf("ain't");
+break;
+case 85:
+			printf("yung");
+break;
+case 86:
+			printf("ya'");
+break;
+case 87:
+			printf("You's");
+break;
+case 88:
+			printf("fust");
+break;
+case 89:
+			printf("honky pigs");
+break;
+case 90:
+                 printf(" chittlin'");
+break;
+case 91:
+	printf(" eyeball");
+break;
+case 92:
+			printf("scribble");
+break;
+case 93:
+			printf("d");
+break;
+case 94:
+			printf("D");
+break;
+case 95:
+			printf("in'");
+break;
+case 96:
+		printf(" some ");
+break;
+case 97:
+		printf(" t'");
+break;
+case 98:
+			printf("shun");
+break;
+case 99:
+		printf(" mos' ");
+break;
+case 100:
+		printf(" fum");
+break;
+case 101:
+	printf(" cuz' ");
+break;
+case 102:
+	printf("youse");
+break;
+case 103:
+	printf("Youse");
+break;
+case 104:
+		printf("coo'");
+break;
+case 105:
+		printf("coo'");
+break;
+case 106:
+		printf("a' ");
+break;
+case 107:
+		printf("knode");
+break;
+case 108:
+		printf("wants'");
+break;
+case 109:
+		printf("whup'");
+break;
+case 110:
+		printf("'sp");
+break;
+case 111:
+		printf("'s");
+break;
+case 112:
+		printf(" 's");
+break;
+case 113:
+		printf(" 'es");
+break;
+case 114:
+		printf("likes");
+break;
+case 115:
+			printf("dun did");
+break;
+case 116:
+		printf("kind'a");
+break;
+case 117:
+			printf("honky chicks");
+break;
+case 118:
+			printf(" dudes ");
+break;
+case 119:
+		printf(" dudes ");
+break;
+case 120:
+			printf(" dude ");
+break;
+case 121:
+			printf("honky chick");
+break;
+case 122:
+		printf("wasted");
+break;
+case 123:
+		printf("baaaad");
+break;
+case 124:
+			printf("jimmey ");
+break;
+case 125:
+		printf("jimmey'd ");
+break;
+case 126:
+			printf(" real");
+break;
+case 127:
+			printf("puh'");
+break;
+case 128:
+			printf("puh'");
+break;
+case 129:
+			printf("o'");
+break;
+case 130:
+			printf(" kin");
+break;
+case 131:
+			printf("plum ");
+break;
+case 132:
+		printf("Mo-town");
+break;
+case 133:
+	printf("da' cave");
+break;
+case 134:
+		printf(" recon'");
+break;
+case 135:
+	printf("Nap-town");
+break;
+case 136:
+		printf(" Buckwheat");
+break;
+case 137:
+	printf(" Liva' Lips ");
+break;
+case 138:
+	printf(" dat fine soul ");
+break;
+case 139:
+	printf(" Amos ");
+break;
+case 140:
+	printf("Leroy");
+break;
+case 141:
+	printf("dat fine femahnaine ladee");
+break;
+case 142:
+	printf("Raz'tus ");
+break;
+case 143:
+	printf(" Fuh'rina");
+break;
+case 144:
+	printf("Kingfish");
+break;
+case 145:
+	printf("Issac");
+break;
+case 146:
+	printf("Rolo");
+break;
+case 147:
+	printf(" Bo-Jangles ");
+break;
+case 148:
+	printf(" Snow Flake");
+break;
+case 149:
+	printf("Remus");
+break;
+case 150:
+	printf("Massa' ");
+break;
+case 151:
+	printf("Massa' ");
+break;
+case 152:
+		printf("liva' lips");
+break;
+case 153:
+			printf("wiz'");
+break;
+case 154:
+			printf("wiz'");
+break;
+case 155:
+			printf("dat commie rag");
+break;
+case 156:
+			printf("bugger'd");
+break;
+case 157:
+		printf("funky ");
+break;
+case 158:
+		printf("boogy ");
+break;
+case 159:
+		printf(" crib");
+break;
+case 160:
+			printf("ax'");
+break;
+case 161:
+			printf(" so's ");
+break;
+case 162:
+			printf("'haid");
+break;
+case 163:
+			printf("main man");
+break;
+case 164:
+			printf("mama");
+break;
+case 165:
+			printf("sucka's");
+break;
+case 166:
+			printf("bre'd");
+break;
+case 167:
+	{	*(yytext+1) = ',';
+				sprintf(buf, "%s dig dis:",yytext);
+				printf(buf);
+			}
+break;
+case 168:
+			printf("begina'");
+break;
+case 169:
+				printf("transista'");
+break;
+case 170:
+			printf(" uh ");
+break;
+case 171:
+			printf("whut");
+break;
+case 172:
+			printf("duz");
+break;
+case 173:
+			printf("wuz");
+break;
+case 174:
+			printf(" wuz");
+break;
+case 175:
+		printf("dig it");
+break;
+case 176:
+		printf("dig it");
+break;
+case 177:
+			printf(" mah'");
+break;
+case 178:
+		printf(" ah' ");
+break;
+case 179:
+			printf("meta-fuckin'");
+break;
+case 180:
+		printf("fro");
+break;
+case 181:
+		printf("rap");
+break;
+case 182:
+		printf("beat");
+break;
+case 183:
+	printf("hoop");
+break;
+case 184:
+	printf("ball");
+break;
+case 185:
+	printf("homey");
+break;
+case 186:
+	printf("farm");
+break;
+case 187:
+		printf("Man");
+break;
+case 188:
+	printf("wanna");
+break;
+case 189:
+	printf("be hankerin' aftah");
+break;
+case 190:
+		printf("sheeit");
+break;
+case 191:
+		printf("Sheeit");
+break;
+case 192:
+		printf("big-ass");
+break;
+case 193:
+		printf("bad-ass");
+break;
+case 194:
+		printf("little-ass");
+break;
+case 195:
+	printf("radical");
+break;
+case 196:
+		printf(" be ");
+break;
+case 197:
+		printf("booze");
+break;
+case 198:
+		printf("scribblin'");
+break;
+case 199:
+	printf("issue of GQ");
+break;
+case 200:
+		printf("sheet");
+break;
+case 201:
+		printf("down");
+break;
+case 202:
+		printf("waaay down");
+break;
+case 203:
+		printf("boogie");
+break;
+case 204:
+		printf("'Sup, dude");
+break;
+case 205:
+		printf("pink Cadillac");
+break;
+case 206:
+		printf(yytext);
+break;
+case 207:
+		printf("\n");
+break;
+case -1:
+break;
+default:
+fprintf(yyout,"bad switch yylook %d",nstr);
+} return(0); }
+/* end of yylex */
+
+main()
+{
+	yylex();
+}
+int yyvstop[] = {
+0,
+
+206,
+0,
+
+207,
+0,
+
+206,
+0,
+
+55,
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+206,
+0,
+
+204,
+0,
+
+94,
+0,
+
+28,
+0,
+
+167,
+0,
+
+29,
+0,
+
+30,
+0,
+
+31,
+0,
+
+71,
+0,
+
+32,
+0,
+
+93,
+0,
+
+33,
+0,
+
+201,
+0,
+
+34,
+0,
+
+178,
+0,
+
+96,
+0,
+
+113,
+0,
+
+177,
+0,
+
+26,
+0,
+
+150,
+0,
+
+205,
+0,
+
+87,
+0,
+
+160,
+0,
+
+193,
+0,
+
+192,
+0,
+
+56,
+0,
+
+115,
+0,
+
+106,
+0,
+
+110,
+0,
+
+111,
+0,
+
+83,
+0,
+
+95,
+0,
+
+129,
+0,
+
+127,
+0,
+
+173,
+0,
+
+86,
+0,
+
+130,
+0,
+
+112,
+0,
+
+37,
+0,
+
+52,
+0,
+
+196,
+0,
+
+170,
+0,
+
+161,
+0,
+
+97,
+0,
+
+27,
+0,
+
+41,
+0,
+
+35,
+0,
+
+6,
+0,
+
+191,
+0,
+
+81,
+0,
+
+109,
+0,
+
+198,
+0,
+
+163,
+187,
+0,
+
+122,
+0,
+
+172,
+0,
+
+202,
+0,
+
+1,
+0,
+
+15,
+0,
+
+82,
+0,
+
+23,
+0,
+
+123,
+0,
+
+180,
+0,
+
+51,
+0,
+
+162,
+0,
+
+67,
+0,
+
+14,
+0,
+
+77,
+0,
+
+114,
+0,
+
+179,
+0,
+
+68,
+0,
+
+64,
+0,
+
+105,
+0,
+
+128,
+0,
+
+154,
+0,
+
+2,
+0,
+
+36,
+0,
+
+12,
+0,
+
+181,
+0,
+
+98,
+0,
+
+5,
+0,
+
+108,
+0,
+
+190,
+0,
+
+171,
+0,
+
+164,
+0,
+
+80,
+0,
+
+137,
+0,
+
+136,
+0,
+
+147,
+0,
+
+148,
+0,
+
+143,
+0,
+
+57,
+0,
+
+59,
+0,
+
+100,
+0,
+
+47,
+0,
+
+25,
+0,
+
+21,
+120,
+0,
+
+118,
+0,
+
+69,
+0,
+
+91,
+0,
+
+48,
+0,
+
+126,
+0,
+
+174,
+0,
+
+145,
+0,
+
+142,
+0,
+
+149,
+0,
+
+141,
+0,
+
+4,
+0,
+
+203,
+0,
+
+13,
+0,
+
+58,
+0,
+
+88,
+0,
+
+131,
+0,
+
+107,
+0,
+
+16,
+0,
+
+166,
+0,
+
+182,
+0,
+
+124,
+0,
+
+200,
+0,
+
+169,
+0,
+
+194,
+0,
+
+7,
+0,
+
+197,
+0,
+
+62,
+0,
+
+39,
+0,
+
+22,
+121,
+0,
+
+117,
+0,
+
+92,
+0,
+
+85,
+0,
+
+139,
+0,
+
+138,
+0,
+
+60,
+0,
+
+54,
+0,
+
+159,
+0,
+
+119,
+0,
+
+61,
+0,
+
+66,
+0,
+
+151,
+0,
+
+144,
+0,
+
+140,
+0,
+
+146,
+0,
+
+103,
+0,
+
+18,
+0,
+
+42,
+0,
+
+84,
+0,
+
+183,
+0,
+
+156,
+0,
+
+20,
+0,
+
+158,
+0,
+
+17,
+0,
+
+185,
+0,
+
+40,
+0,
+
+43,
+0,
+
+72,
+0,
+
+165,
+0,
+
+65,
+0,
+
+89,
+0,
+
+155,
+0,
+
+186,
+0,
+
+19,
+0,
+
+102,
+0,
+
+63,
+0,
+
+90,
+0,
+
+79,
+0,
+
+10,
+0,
+
+8,
+0,
+
+104,
+0,
+
+168,
+0,
+
+44,
+0,
+
+78,
+0,
+
+132,
+0,
+
+50,
+0,
+
+49,
+0,
+
+75,
+0,
+
+11,
+0,
+
+116,
+0,
+
+9,
+0,
+
+125,
+0,
+
+153,
+0,
+
+3,
+0,
+
+195,
+0,
+
+188,
+0,
+
+99,
+0,
+
+46,
+0,
+
+134,
+0,
+
+70,
+0,
+
+184,
+0,
+
+199,
+0,
+
+152,
+0,
+
+157,
+0,
+
+189,
+0,
+
+45,
+0,
+
+101,
+0,
+
+53,
+0,
+
+73,
+0,
+
+24,
+0,
+
+38,
+0,
+
+76,
+0,
+
+176,
+0,
+
+135,
+0,
+
+175,
+0,
+
+74,
+0,
+
+133,
+0,
+0};
+# define YYTYPE int
+struct yywork { YYTYPE verify, advance; } yycrank[] = {
+0,0,	0,0,	1,3,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	0,0,	1,4,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	1,5,	1,6,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	1,7,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+11,76,	0,0,	0,0,	0,0,	
+0,0,	0,0,	50,179,	0,0,	
+0,0,	0,0,	0,0,	0,0,	
+0,0,	0,0,	22,91,	1,8,	
+0,0,	1,9,	38,148,	43,160,	
+47,169,	1,10,	1,11,	1,12,	
+0,0,	1,13,	1,14,	19,88,	
+22,92,	1,3,	38,93,	1,15,	
+1,16,	1,17,	1,18,	1,19,	
+1,20,	45,93,	1,21,	18,87,	
+22,93,	24,93,	28,93,	0,0,	
+0,0,	0,0,	1,22,	1,23,	
+1,24,	1,25,	1,26,	1,27,	
+1,28,	1,29,	1,30,	1,31,	
+1,32,	1,33,	1,34,	1,35,	
+1,36,	1,37,	1,38,	1,39,	
+1,40,	1,41,	1,42,	1,43,	
+1,44,	1,45,	1,46,	1,47,	
+2,5,	2,6,	7,72,	8,73,	
+9,74,	10,75,	11,77,	12,79,	
+13,80,	14,81,	15,82,	16,84,	
+11,78,	2,7,	17,86,	20,89,	
+21,90,	28,119,	22,94,	22,95,	
+15,83,	33,93,	24,105,	28,120,	
+22,96,	22,97,	22,98,	46,169,	
+49,178,	51,180,	52,182,	16,85,	
+5,48,	56,190,	53,183,	26,112,	
+55,188,	51,181,	58,194,	46,93,	
+2,10,	53,184,	32,93,	55,189,	
+57,192,	59,195,	55,178,	56,191,	
+60,196,	26,113,	62,199,	65,205,	
+2,17,	2,18,	2,19,	2,20,	
+25,106,	2,21,	66,206,	64,203,	
+33,80,	26,93,	60,197,	64,204,	
+61,179,	67,207,	5,49,	57,193,	
+33,132,	23,92,	2,27,	2,28,	
+2,29,	5,50,	5,51,	2,32,	
+70,213,	5,52,	69,211,	2,36,	
+5,53,	23,93,	25,93,	27,113,	
+2,41,	69,212,	2,43,	2,44,	
+2,45,	32,130,	2,47,	71,214,	
+46,170,	29,93,	32,131,	27,93,	
+73,217,	5,54,	5,55,	5,56,	
+72,215,	5,57,	5,58,	5,59,	
+5,60,	5,61,	5,51,	54,185,	
+5,62,	5,63,	5,64,	5,65,	
+5,66,	36,93,	5,67,	5,68,	
+5,69,	26,114,	5,70,	5,71,	
+23,99,	25,107,	37,93,	26,115,	
+23,100,	25,108,	63,200,	30,124,	
+23,101,	25,109,	63,201,	35,133,	
+29,121,	31,124,	23,102,	25,110,	
+29,122,	23,103,	25,111,	30,93,	
+23,104,	42,160,	27,116,	35,93,	
+34,133,	31,93,	29,123,	61,198,	
+27,117,	74,218,	63,202,	27,118,	
+36,140,	42,93,	41,156,	76,219,	
+34,93,	77,220,	78,221,	39,148,	
+79,222,	37,144,	36,141,	79,223,	
+80,225,	37,145,	72,216,	36,142,	
+81,226,	36,143,	82,227,	39,93,	
+83,228,	84,230,	79,224,	37,146,	
+85,231,	40,93,	37,147,	48,48,	
+41,93,	68,208,	35,138,	54,186,	
+83,229,	87,232,	44,93,	88,233,	
+68,209,	54,187,	35,139,	30,125,	
+31,128,	68,210,	89,234,	34,134,	
+30,126,	30,127,	31,79,	34,135,	
+90,235,	91,236,	94,237,	95,238,	
+31,129,	42,161,	96,240,	42,162,	
+97,241,	34,136,	39,149,	98,242,	
+101,247,	102,248,	39,82,	34,137,	
+40,84,	102,249,	40,150,	41,157,	
+40,151,	100,245,	99,243,	100,246,	
+39,83,	44,163,	41,158,	41,159,	
+40,152,	44,164,	40,153,	103,250,	
+44,165,	44,166,	104,252,	40,154,	
+40,155,	99,244,	105,253,	44,167,	
+106,254,	103,251,	44,168,	109,258,	
+48,171,	48,172,	48,173,	107,255,	
+48,174,	110,259,	48,59,	48,175,	
+108,256,	111,262,	112,263,	107,218,	
+114,264,	48,64,	110,260,	48,176,	
+118,271,	48,67,	48,177,	48,69,	
+116,267,	119,272,	115,265,	110,261,	
+95,239,	115,266,	116,268,	108,257,	
+117,269,	121,276,	120,273,	122,278,	
+123,279,	125,220,	117,270,	120,274,	
+125,280,	120,275,	126,282,	125,281,	
+127,283,	128,284,	121,277,	129,285,	
+130,286,	131,288,	130,287,	132,290,	
+134,291,	135,292,	136,294,	137,297,	
+138,298,	135,293,	136,295,	131,289,	
+139,299,	140,300,	141,301,	142,302,	
+136,296,	144,303,	145,304,	147,309,	
+146,306,	145,305,	146,307,	147,310,	
+146,308,	149,313,	150,314,	147,311,	
+151,315,	152,316,	153,317,	154,319,	
+155,320,	147,312,	156,321,	153,318,	
+157,322,	157,323,	159,324,	161,325,	
+163,327,	164,330,	165,332,	166,334,	
+161,326,	163,328,	163,329,	167,336,	
+164,331,	166,335,	165,333,	168,337,	
+170,338,	171,185,	172,339,	173,340,	
+174,192,	175,341,	176,342,	177,208,	
+178,343,	172,189,	180,344,	181,345,	
+182,346,	183,347,	184,348,	185,185,	
+186,349,	187,350,	188,351,	177,210,	
+189,353,	190,354,	191,356,	192,357,	
+193,358,	190,355,	194,359,	188,352,	
+195,360,	196,361,	196,362,	197,363,	
+198,364,	199,365,	200,366,	201,367,	
+203,368,	204,369,	200,346,	205,370,	
+206,371,	206,347,	207,372,	208,373,	
+209,374,	210,375,	211,376,	212,377,	
+213,378,	214,379,	216,380,	217,381,	
+218,382,	219,383,	220,384,	221,385,	
+223,386,	224,387,	225,388,	226,389,	
+227,390,	228,391,	229,392,	230,393,	
+231,394,	232,395,	234,396,	235,397,	
+236,399,	237,400,	238,401,	239,402,	
+240,403,	242,405,	244,406,	245,407,	
+246,408,	171,186,	248,409,	249,410,	
+250,411,	251,412,	253,413,	254,415,	
+255,416,	256,417,	257,418,	259,419,	
+260,420,	261,421,	262,422,	263,423,	
+267,424,	253,414,	268,425,	269,426,	
+270,428,	271,429,	272,430,	273,431,	
+274,432,	275,433,	276,434,	269,427,	
+277,435,	278,436,	279,437,	281,438,	
+282,439,	283,440,	284,441,	285,442,	
+286,443,	287,444,	288,445,	289,446,	
+290,447,	291,448,	292,449,	293,450,	
+294,451,	295,452,	296,453,	297,454,	
+298,455,	299,456,	301,457,	302,458,	
+303,459,	304,460,	305,461,	306,463,	
+307,464,	308,465,	309,466,	310,467,	
+311,468,	312,469,	313,470,	314,471,	
+315,472,	316,473,	235,398,	317,474,	
+318,475,	319,476,	320,477,	321,478,	
+305,462,	322,479,	240,404,	323,480,	
+324,481,	325,482,	326,483,	327,484,	
+329,485,	330,486,	331,487,	332,488,	
+333,489,	334,490,	335,491,	336,492,	
+337,494,	338,495,	339,351,	336,493,	
+340,355,	341,362,	342,371,	343,498,	
+344,499,	345,500,	346,501,	347,503,	
+348,504,	349,505,	350,506,	351,507,	
+352,508,	353,509,	355,510,	356,511,	
+357,512,	359,513,	362,514,	363,515,	
+346,502,	365,516,	366,517,	367,518,	
+368,520,	369,521,	371,522,	372,523,	
+373,524,	375,525,	376,526,	378,527,	
+379,528,	381,529,	382,530,	384,531,	
+385,532,	386,533,	387,534,	388,535,	
+389,536,	390,537,	391,538,	392,539,	
+393,540,	397,541,	399,542,	400,543,	
+401,544,	402,545,	403,546,	404,547,	
+405,548,	406,549,	408,550,	411,551,	
+412,552,	413,553,	414,554,	415,555,	
+416,556,	418,557,	420,558,	422,559,	
+423,560,	425,561,	427,562,	429,563,	
+338,496,	432,564,	433,565,	435,566,	
+338,497,	438,568,	439,569,	440,570,	
+442,571,	443,572,	444,573,	446,574,	
+448,575,	450,576,	451,577,	452,578,	
+453,579,	454,580,	458,581,	459,583,	
+460,584,	462,585,	463,586,	464,587,	
+466,588,	467,589,	468,590,	469,591,	
+470,592,	471,593,	473,594,	474,595,	
+475,596,	476,597,	478,598,	479,599,	
+482,600,	484,601,	367,519,	485,603,	
+487,604,	489,605,	491,606,	492,607,	
+493,608,	494,609,	495,610,	496,611,	
+501,612,	504,613,	505,614,	506,615,	
+507,616,	508,617,	509,618,	511,619,	
+515,620,	519,621,	520,622,	521,623,	
+525,624,	526,625,	529,626,	531,627,	
+532,628,	534,629,	536,630,	537,631,	
+538,632,	539,633,	541,634,	542,635,	
+543,636,	544,637,	545,638,	546,639,	
+547,640,	549,641,	550,642,	552,643,	
+553,644,	435,567,	554,645,	555,646,	
+556,647,	557,648,	560,649,	458,582,	
+562,650,	563,651,	564,652,	565,653,	
+566,654,	567,655,	568,656,	569,657,	
+570,658,	572,659,	573,660,	575,661,	
+576,662,	578,663,	582,664,	584,665,	
+585,666,	586,667,	587,668,	588,669,	
+589,670,	590,671,	591,672,	593,673,	
+595,674,	596,675,	597,676,	598,677,	
+600,678,	601,679,	602,680,	604,681,	
+484,602,	606,682,	610,683,	614,684,	
+615,685,	616,686,	617,687,	623,688,	
+624,689,	626,690,	627,691,	628,692,	
+630,693,	636,694,	638,695,	639,696,	
+642,697,	644,698,	645,699,	648,700,	
+650,701,	653,702,	654,703,	655,704,	
+656,705,	658,706,	660,707,	661,708,	
+662,709,	663,710,	664,711,	668,712,	
+670,713,	671,714,	672,715,	674,716,	
+675,717,	676,718,	678,719,	679,720,	
+680,721,	681,722,	682,723,	684,724,	
+685,725,	686,726,	687,727,	691,728,	
+698,729,	699,730,	701,731,	702,732,	
+708,733,	710,734,	713,735,	714,736,	
+716,737,	718,738,	719,739,	721,740,	
+722,741,	723,742,	725,743,	726,744,	
+728,745,	729,746,	732,747,	735,748,	
+736,749,	737,750,	739,751,	741,752,	
+742,753,	745,754,	747,755,	749,756,	
+751,757,	752,758,	754,759,	756,760,	
+757,761,	758,762,	759,763,	760,764,	
+761,765,	762,766,	764,767,	765,768,	
+766,769,	767,770,	769,771,	771,772,	
+772,773,	0,0,	0,0,	0,0,	
+0,0};
+struct yysvf yysvec[] = {
+0,	0,	0,
+yycrank+-1,	0,		0,	
+yycrank+-92,	yysvec+1,	0,	
+yycrank+0,	0,		yyvstop+1,
+yycrank+0,	0,		yyvstop+3,
+yycrank+124,	0,		yyvstop+5,
+yycrank+0,	0,		yyvstop+7,
+yycrank+15,	0,		yyvstop+10,
+yycrank+26,	0,		yyvstop+12,
+yycrank+31,	0,		yyvstop+14,
+yycrank+24,	0,		yyvstop+16,
+yycrank+20,	0,		yyvstop+18,
+yycrank+20,	0,		yyvstop+20,
+yycrank+35,	0,		yyvstop+22,
+yycrank+32,	0,		yyvstop+24,
+yycrank+33,	0,		yyvstop+26,
+yycrank+38,	0,		yyvstop+28,
+yycrank+34,	0,		yyvstop+30,
+yycrank+13,	0,		yyvstop+32,
+yycrank+14,	0,		yyvstop+34,
+yycrank+38,	0,		yyvstop+36,
+yycrank+29,	0,		yyvstop+38,
+yycrank+34,	0,		yyvstop+40,
+yycrank+147,	0,		yyvstop+42,
+yycrank+35,	0,		yyvstop+44,
+yycrank+148,	0,		yyvstop+46,
+yycrank+127,	0,		yyvstop+48,
+yycrank+161,	0,		yyvstop+50,
+yycrank+36,	0,		yyvstop+52,
+yycrank+159,	0,		yyvstop+54,
+yycrank+205,	0,		yyvstop+56,
+yycrank+211,	0,		yyvstop+58,
+yycrank+108,	0,		yyvstop+60,
+yycrank+87,	0,		yyvstop+62,
+yycrank+222,	0,		yyvstop+64,
+yycrank+209,	0,		yyvstop+66,
+yycrank+179,	0,		yyvstop+68,
+yycrank+188,	0,		yyvstop+70,
+yycrank+24,	0,		yyvstop+72,
+yycrank+237,	0,		yyvstop+74,
+yycrank+243,	0,		yyvstop+76,
+yycrank+246,	0,		yyvstop+78,
+yycrank+219,	0,		yyvstop+80,
+yycrank+25,	yysvec+38,	yyvstop+82,
+yycrank+252,	0,		yyvstop+84,
+yycrank+31,	0,		yyvstop+86,
+yycrank+105,	0,		yyvstop+88,
+yycrank+26,	yysvec+38,	yyvstop+90,
+yycrank+271,	0,		0,	
+yycrank+41,	0,		0,	
+yycrank+26,	0,		0,	
+yycrank+56,	0,		0,	
+yycrank+57,	0,		0,	
+yycrank+61,	0,		0,	
+yycrank+199,	0,		0,	
+yycrank+59,	0,		0,	
+yycrank+60,	0,		0,	
+yycrank+71,	0,		0,	
+yycrank+48,	0,		0,	
+yycrank+68,	0,		0,	
+yycrank+75,	0,		0,	
+yycrank+156,	0,		0,	
+yycrank+69,	0,		0,	
+yycrank+153,	0,		0,	
+yycrank+82,	0,		0,	
+yycrank+73,	0,		0,	
+yycrank+85,	yysvec+53,	0,	
+yycrank+88,	0,		0,	
+yycrank+201,	0,		0,	
+yycrank+98,	0,		0,	
+yycrank+99,	0,		0,	
+yycrank+114,	0,		0,	
+yycrank+179,	0,		0,	
+yycrank+121,	0,		0,	
+yycrank+155,	0,		0,	
+yycrank+0,	0,		yyvstop+92,
+yycrank+182,	0,		0,	
+yycrank+181,	0,		0,	
+yycrank+185,	0,		0,	
+yycrank+183,	0,		0,	
+yycrank+174,	0,		0,	
+yycrank+172,	0,		0,	
+yycrank+197,	0,		0,	
+yycrank+198,	0,		0,	
+yycrank+187,	0,		0,	
+yycrank+186,	0,		0,	
+yycrank+0,	0,		yyvstop+94,
+yycrank+236,	0,		0,	
+yycrank+223,	0,		0,	
+yycrank+210,	0,		0,	
+yycrank+207,	0,		0,	
+yycrank+209,	0,		0,	
+yycrank+0,	0,		yyvstop+96,
+yycrank+0,	0,		yyvstop+98,
+yycrank+212,	0,		0,	
+yycrank+295,	0,		0,	
+yycrank+229,	0,		0,	
+yycrank+225,	0,		0,	
+yycrank+227,	0,		0,	
+yycrank+246,	0,		0,	
+yycrank+248,	0,		0,	
+yycrank+233,	0,		0,	
+yycrank+226,	0,		0,	
+yycrank+254,	0,		0,	
+yycrank+237,	0,		0,	
+yycrank+253,	0,		0,	
+yycrank+248,	0,		0,	
+yycrank+261,	0,		0,	
+yycrank+279,	0,		0,	
+yycrank+267,	0,		0,	
+yycrank+272,	0,		0,	
+yycrank+272,	0,		0,	
+yycrank+262,	0,		0,	
+yycrank+0,	0,		yyvstop+100,
+yycrank+348,	0,		0,	
+yycrank+278,	0,		0,	
+yycrank+280,	0,		0,	
+yycrank+285,	0,		0,	
+yycrank+279,	0,		0,	
+yycrank+275,	0,		0,	
+yycrank+287,	0,		0,	
+yycrank+292,	0,		0,	
+yycrank+302,	0,		0,	
+yycrank+291,	0,		0,	
+yycrank+0,	0,		yyvstop+102,
+yycrank+301,	0,		0,	
+yycrank+374,	0,		0,	
+yycrank+311,	0,		0,	
+yycrank+291,	0,		0,	
+yycrank+296,	0,		0,	
+yycrank+304,	0,		0,	
+yycrank+312,	0,		0,	
+yycrank+308,	0,		0,	
+yycrank+0,	0,		yyvstop+104,
+yycrank+313,	0,		0,	
+yycrank+301,	0,		0,	
+yycrank+318,	0,		0,	
+yycrank+304,	0,		0,	
+yycrank+311,	0,		0,	
+yycrank+325,	0,		0,	
+yycrank+311,	0,		0,	
+yycrank+329,	0,		0,	
+yycrank+326,	0,		0,	
+yycrank+0,	0,		yyvstop+106,
+yycrank+317,	0,		0,	
+yycrank+319,	0,		0,	
+yycrank+324,	0,		0,	
+yycrank+334,	0,		0,	
+yycrank+0,	0,		yyvstop+108,
+yycrank+337,	0,		0,	
+yycrank+334,	0,		0,	
+yycrank+330,	0,		0,	
+yycrank+344,	0,		0,	
+yycrank+333,	0,		0,	
+yycrank+329,	0,		0,	
+yycrank+330,	0,		0,	
+yycrank+330,	0,		0,	
+yycrank+341,	0,		0,	
+yycrank+0,	0,		yyvstop+110,
+yycrank+339,	0,		0,	
+yycrank+0,	0,		yyvstop+112,
+yycrank+351,	0,		0,	
+yycrank+0,	0,		yyvstop+114,
+yycrank+342,	0,		0,	
+yycrank+345,	0,		0,	
+yycrank+357,	0,		0,	
+yycrank+353,	0,		0,	
+yycrank+350,	0,		0,	
+yycrank+358,	0,		0,	
+yycrank+0,	0,		yyvstop+116,
+yycrank+347,	0,		0,	
+yycrank+433,	0,		0,	
+yycrank+365,	0,		0,	
+yycrank+370,	yysvec+56,	0,	
+yycrank+371,	0,		0,	
+yycrank+372,	0,		0,	
+yycrank+373,	0,		0,	
+yycrank+367,	0,		0,	
+yycrank+374,	0,		0,	
+yycrank+0,	0,		yyvstop+118,
+yycrank+375,	0,		0,	
+yycrank+366,	0,		0,	
+yycrank+362,	0,		0,	
+yycrank+360,	0,		0,	
+yycrank+373,	0,		0,	
+yycrank+447,	0,		yyvstop+120,
+yycrank+371,	0,		0,	
+yycrank+380,	0,		0,	
+yycrank+383,	0,		0,	
+yycrank+387,	0,		0,	
+yycrank+375,	0,		0,	
+yycrank+377,	0,		0,	
+yycrank+371,	0,		0,	
+yycrank+389,	0,		yyvstop+122,
+yycrank+379,	0,		0,	
+yycrank+376,	0,		0,	
+yycrank+378,	0,		0,	
+yycrank+378,	0,		0,	
+yycrank+464,	0,		0,	
+yycrank+396,	0,		0,	
+yycrank+388,	0,		0,	
+yycrank+389,	0,		0,	
+yycrank+0,	0,		yyvstop+124,
+yycrank+397,	0,		0,	
+yycrank+398,	0,		0,	
+yycrank+471,	0,		0,	
+yycrank+388,	0,		0,	
+yycrank+409,	0,		0,	
+yycrank+396,	0,		0,	
+yycrank+476,	0,		0,	
+yycrank+395,	0,		0,	
+yycrank+405,	0,		0,	
+yycrank+479,	0,		0,	
+yycrank+398,	0,		0,	
+yycrank+399,	0,		0,	
+yycrank+0,	0,		yyvstop+126,
+yycrank+469,	0,		0,	
+yycrank+418,	0,		0,	
+yycrank+411,	0,		0,	
+yycrank+408,	0,		0,	
+yycrank+413,	0,		0,	
+yycrank+411,	0,		0,	
+yycrank+0,	0,		yyvstop+128,
+yycrank+410,	0,		0,	
+yycrank+420,	0,		0,	
+yycrank+408,	0,		0,	
+yycrank+418,	0,		0,	
+yycrank+421,	0,		0,	
+yycrank+424,	0,		0,	
+yycrank+429,	0,		0,	
+yycrank+427,	0,		0,	
+yycrank+427,	0,		0,	
+yycrank+441,	0,		0,	
+yycrank+0,	0,		yyvstop+130,
+yycrank+422,	0,		0,	
+yycrank+492,	0,		yyvstop+132,
+yycrank+428,	0,		0,	
+yycrank+428,	0,		0,	
+yycrank+424,	0,		0,	
+yycrank+419,	0,		0,	
+yycrank+504,	0,		0,	
+yycrank+0,	0,		yyvstop+134,
+yycrank+440,	0,		0,	
+yycrank+0,	0,		yyvstop+136,
+yycrank+431,	0,		0,	
+yycrank+423,	0,		0,	
+yycrank+443,	0,		0,	
+yycrank+0,	0,		yyvstop+138,
+yycrank+435,	0,		0,	
+yycrank+428,	0,		0,	
+yycrank+447,	0,		0,	
+yycrank+438,	0,		0,	
+yycrank+0,	0,		yyvstop+140,
+yycrank+445,	0,		0,	
+yycrank+443,	0,		0,	
+yycrank+449,	0,		0,	
+yycrank+449,	0,		0,	
+yycrank+436,	0,		0,	
+yycrank+0,	0,		yyvstop+142,
+yycrank+436,	0,		0,	
+yycrank+513,	0,		0,	
+yycrank+443,	0,		0,	
+yycrank+436,	0,		0,	
+yycrank+451,	0,		0,	
+yycrank+0,	0,		yyvstop+144,
+yycrank+0,	0,		yyvstop+146,
+yycrank+0,	0,		yyvstop+148,
+yycrank+455,	0,		0,	
+yycrank+443,	0,		0,	
+yycrank+451,	0,		0,	
+yycrank+446,	0,		0,	
+yycrank+460,	0,		0,	
+yycrank+454,	0,		0,	
+yycrank+463,	0,		0,	
+yycrank+532,	0,		yyvstop+150,
+yycrank+464,	0,		0,	
+yycrank+452,	0,		0,	
+yycrank+467,	0,		0,	
+yycrank+469,	0,		0,	
+yycrank+469,	0,		0,	
+yycrank+0,	0,		yyvstop+152,
+yycrank+454,	0,		0,	
+yycrank+462,	0,		0,	
+yycrank+465,	0,		0,	
+yycrank+473,	0,		0,	
+yycrank+459,	0,		0,	
+yycrank+468,	0,		0,	
+yycrank+477,	0,		0,	
+yycrank+459,	0,		0,	
+yycrank+460,	0,		0,	
+yycrank+479,	0,		0,	
+yycrank+484,	0,		0,	
+yycrank+485,	0,		0,	
+yycrank+478,	0,		0,	
+yycrank+483,	0,		0,	
+yycrank+488,	0,		0,	
+yycrank+485,	0,		0,	
+yycrank+482,	0,		0,	
+yycrank+487,	0,		0,	
+yycrank+488,	0,		0,	
+yycrank+0,	0,		yyvstop+154,
+yycrank+469,	0,		0,	
+yycrank+481,	0,		0,	
+yycrank+491,	0,		0,	
+yycrank+481,	0,		0,	
+yycrank+497,	0,		yyvstop+156,
+yycrank+490,	0,		0,	
+yycrank+480,	0,		0,	
+yycrank+496,	0,		0,	
+yycrank+480,	0,		0,	
+yycrank+484,	0,		0,	
+yycrank+491,	0,		0,	
+yycrank+498,	0,		0,	
+yycrank+497,	0,		0,	
+yycrank+492,	0,		0,	
+yycrank+504,	0,		0,	
+yycrank+497,	0,		0,	
+yycrank+506,	0,		0,	
+yycrank+492,	0,		0,	
+yycrank+512,	0,		0,	
+yycrank+509,	0,		0,	
+yycrank+507,	0,		0,	
+yycrank+512,	0,		0,	
+yycrank+508,	0,		0,	
+yycrank+506,	0,		0,	
+yycrank+516,	0,		0,	
+yycrank+498,	0,		0,	
+yycrank+503,	0,		0,	
+yycrank+0,	0,		yyvstop+158,
+yycrank+519,	0,		0,	
+yycrank+513,	0,		0,	
+yycrank+506,	0,		0,	
+yycrank+507,	0,		0,	
+yycrank+508,	0,		0,	
+yycrank+524,	0,		0,	
+yycrank+518,	0,		0,	
+yycrank+530,	0,		0,	
+yycrank+512,	0,		0,	
+yycrank+590,	0,		yyvstop+160,
+yycrank+531,	0,		0,	
+yycrank+518,	0,		0,	
+yycrank+517,	0,		0,	
+yycrank+518,	0,		0,	
+yycrank+603,	0,		0,	
+yycrank+529,	0,		0,	
+yycrank+605,	0,		0,	
+yycrank+531,	0,		0,	
+yycrank+531,	0,		0,	
+yycrank+532,	0,		0,	
+yycrank+530,	0,		0,	
+yycrank+610,	0,		0,	
+yycrank+546,	0,		0,	
+yycrank+539,	0,		0,	
+yycrank+546,	0,		0,	
+yycrank+0,	0,		yyvstop+162,
+yycrank+614,	0,		0,	
+yycrank+546,	0,		0,	
+yycrank+616,	0,		0,	
+yycrank+0,	0,		yyvstop+164,
+yycrank+540,	0,		0,	
+yycrank+0,	0,		yyvstop+166,
+yycrank+0,	0,		yyvstop+168,
+yycrank+618,	0,		0,	
+yycrank+536,	0,		0,	
+yycrank+0,	0,		yyvstop+170,
+yycrank+621,	0,		0,	
+yycrank+622,	0,		0,	
+yycrank+623,	0,		0,	
+yycrank+542,	0,		0,	
+yycrank+554,	0,		0,	
+yycrank+0,	0,		yyvstop+172,
+yycrank+554,	0,		0,	
+yycrank+559,	0,		0,	
+yycrank+559,	0,		0,	
+yycrank+0,	0,		yyvstop+174,
+yycrank+556,	0,		0,	
+yycrank+552,	0,		0,	
+yycrank+0,	yysvec+212,	yyvstop+176,
+yycrank+542,	0,		0,	
+yycrank+563,	0,		0,	
+yycrank+0,	0,		yyvstop+178,
+yycrank+548,	0,		0,	
+yycrank+566,	0,		0,	
+yycrank+0,	0,		yyvstop+180,
+yycrank+570,	0,		0,	
+yycrank+563,	0,		0,	
+yycrank+637,	0,		0,	
+yycrank+558,	0,		0,	
+yycrank+550,	0,		0,	
+yycrank+573,	0,		0,	
+yycrank+576,	0,		0,	
+yycrank+560,	0,		0,	
+yycrank+567,	0,		0,	
+yycrank+555,	0,		0,	
+yycrank+0,	0,		yyvstop+182,
+yycrank+0,	0,		yyvstop+184,
+yycrank+0,	0,		yyvstop+186,
+yycrank+563,	0,		0,	
+yycrank+0,	0,		yyvstop+188,
+yycrank+577,	0,		0,	
+yycrank+576,	0,		0,	
+yycrank+569,	0,		0,	
+yycrank+580,	0,		0,	
+yycrank+572,	0,		0,	
+yycrank+644,	0,		0,	
+yycrank+569,	0,		0,	
+yycrank+584,	0,		0,	
+yycrank+0,	0,		yyvstop+190,
+yycrank+569,	0,		0,	
+yycrank+0,	0,		yyvstop+192,
+yycrank+0,	0,		yyvstop+194,
+yycrank+580,	0,		0,	
+yycrank+587,	0,		0,	
+yycrank+657,	0,		0,	
+yycrank+573,	0,		0,	
+yycrank+590,	0,		0,	
+yycrank+591,	0,		0,	
+yycrank+0,	0,		yyvstop+197,
+yycrank+582,	0,		0,	
+yycrank+0,	0,		yyvstop+199,
+yycrank+578,	0,		0,	
+yycrank+0,	0,		yyvstop+201,
+yycrank+594,	0,		0,	
+yycrank+595,	0,		0,	
+yycrank+0,	0,		yyvstop+203,
+yycrank+581,	0,		0,	
+yycrank+0,	0,		yyvstop+205,
+yycrank+600,	0,		0,	
+yycrank+0,	0,		yyvstop+207,
+yycrank+589,	0,		0,	
+yycrank+0,	0,		yyvstop+209,
+yycrank+0,	0,		yyvstop+211,
+yycrank+585,	0,		0,	
+yycrank+588,	0,		0,	
+yycrank+0,	0,		yyvstop+213,
+yycrank+671,	0,		yyvstop+215,
+yycrank+0,	0,		yyvstop+217,
+yycrank+0,	0,		yyvstop+219,
+yycrank+591,	0,		0,	
+yycrank+595,	0,		0,	
+yycrank+602,	0,		0,	
+yycrank+0,	0,		yyvstop+221,
+yycrank+676,	0,		0,	
+yycrank+608,	0,		0,	
+yycrank+678,	0,		0,	
+yycrank+0,	0,		yyvstop+223,
+yycrank+601,	0,		0,	
+yycrank+0,	0,		yyvstop+225,
+yycrank+590,	0,		0,	
+yycrank+0,	0,		yyvstop+227,
+yycrank+614,	0,		0,	
+yycrank+605,	0,		0,	
+yycrank+606,	0,		0,	
+yycrank+595,	0,		0,	
+yycrank+618,	0,		0,	
+yycrank+0,	0,		yyvstop+229,
+yycrank+0,	0,		yyvstop+231,
+yycrank+0,	0,		yyvstop+233,
+yycrank+686,	0,		0,	
+yycrank+605,	0,		0,	
+yycrank+612,	0,		0,	
+yycrank+0,	0,		yyvstop+235,
+yycrank+610,	0,		0,	
+yycrank+623,	0,		0,	
+yycrank+618,	0,		0,	
+yycrank+0,	0,		yyvstop+237,
+yycrank+624,	0,		0,	
+yycrank+620,	0,		0,	
+yycrank+625,	0,		0,	
+yycrank+613,	0,		0,	
+yycrank+617,	0,		0,	
+yycrank+618,	0,		0,	
+yycrank+0,	0,		yyvstop+239,
+yycrank+622,	0,		0,	
+yycrank+615,	0,		0,	
+yycrank+700,	0,		0,	
+yycrank+623,	0,		0,	
+yycrank+0,	0,		yyvstop+241,
+yycrank+633,	0,		0,	
+yycrank+620,	0,		yyvstop+243,
+yycrank+0,	0,		yyvstop+245,
+yycrank+0,	0,		yyvstop+247,
+yycrank+622,	0,		0,	
+yycrank+0,	0,		yyvstop+249,
+yycrank+705,	0,		yyvstop+251,
+yycrank+625,	0,		0,	
+yycrank+0,	0,		yyvstop+253,
+yycrank+639,	0,		0,	
+yycrank+0,	0,		yyvstop+255,
+yycrank+640,	0,		0,	
+yycrank+0,	0,		yyvstop+257,
+yycrank+710,	0,		0,	
+yycrank+633,	0,		0,	
+yycrank+634,	0,		0,	
+yycrank+644,	0,		0,	
+yycrank+632,	0,		0,	
+yycrank+644,	0,		0,	
+yycrank+0,	0,		yyvstop+259,
+yycrank+0,	0,		yyvstop+261,
+yycrank+0,	0,		yyvstop+263,
+yycrank+0,	0,		yyvstop+265,
+yycrank+716,	0,		0,	
+yycrank+0,	0,		yyvstop+267,
+yycrank+0,	0,		yyvstop+269,
+yycrank+717,	0,		0,	
+yycrank+635,	0,		0,	
+yycrank+630,	0,		0,	
+yycrank+635,	0,		0,	
+yycrank+652,	0,		0,	
+yycrank+647,	0,		0,	
+yycrank+0,	yysvec+355,	yyvstop+271,
+yycrank+723,	0,		0,	
+yycrank+0,	yysvec+357,	yyvstop+273,
+yycrank+0,	0,		yyvstop+275,
+yycrank+0,	yysvec+362,	yyvstop+277,
+yycrank+655,	0,		0,	
+yycrank+0,	0,		yyvstop+279,
+yycrank+0,	0,		yyvstop+281,
+yycrank+0,	0,		yyvstop+284,
+yycrank+725,	0,		0,	
+yycrank+647,	0,		0,	
+yycrank+658,	0,		0,	
+yycrank+0,	0,		yyvstop+286,
+yycrank+0,	0,		yyvstop+288,
+yycrank+0,	0,		yyvstop+290,
+yycrank+650,	0,		0,	
+yycrank+658,	0,		0,	
+yycrank+0,	0,		yyvstop+292,
+yycrank+0,	0,		yyvstop+294,
+yycrank+647,	0,		0,	
+yycrank+0,	0,		yyvstop+296,
+yycrank+653,	0,		0,	
+yycrank+667,	0,		0,	
+yycrank+0,	0,		yyvstop+298,
+yycrank+661,	0,		0,	
+yycrank+0,	0,		yyvstop+300,
+yycrank+669,	0,		0,	
+yycrank+657,	0,		0,	
+yycrank+652,	0,		0,	
+yycrank+669,	0,		0,	
+yycrank+0,	0,		yyvstop+302,
+yycrank+669,	0,		0,	
+yycrank+739,	0,		0,	
+yycrank+668,	0,		0,	
+yycrank+657,	0,		0,	
+yycrank+657,	0,		0,	
+yycrank+664,	0,		0,	
+yycrank+660,	0,		0,	
+yycrank+0,	0,		yyvstop+304,
+yycrank+661,	0,		0,	
+yycrank+663,	0,		0,	
+yycrank+0,	0,		yyvstop+306,
+yycrank+669,	0,		0,	
+yycrank+669,	0,		0,	
+yycrank+666,	0,		0,	
+yycrank+751,	0,		0,	
+yycrank+752,	0,		0,	
+yycrank+680,	0,		0,	
+yycrank+0,	0,		yyvstop+308,
+yycrank+0,	0,		yyvstop+310,
+yycrank+754,	0,		0,	
+yycrank+0,	0,		yyvstop+312,
+yycrank+691,	0,		0,	
+yycrank+689,	0,		0,	
+yycrank+679,	0,		0,	
+yycrank+681,	0,		0,	
+yycrank+676,	0,		0,	
+yycrank+754,	0,		0,	
+yycrank+693,	0,		0,	
+yycrank+679,	0,		0,	
+yycrank+699,	0,		0,	
+yycrank+0,	0,		yyvstop+314,
+yycrank+697,	0,		0,	
+yycrank+687,	0,		0,	
+yycrank+0,	0,		yyvstop+316,
+yycrank+694,	0,		0,	
+yycrank+703,	0,		0,	
+yycrank+0,	0,		yyvstop+318,
+yycrank+692,	0,		0,	
+yycrank+0,	0,		yyvstop+320,
+yycrank+0,	0,		yyvstop+322,
+yycrank+0,	0,		yyvstop+324,
+yycrank+702,	0,		0,	
+yycrank+0,	0,		yyvstop+326,
+yycrank+702,	0,		0,	
+yycrank+694,	0,		0,	
+yycrank+704,	0,		0,	
+yycrank+704,	0,		0,	
+yycrank+710,	0,		0,	
+yycrank+708,	0,		0,	
+yycrank+777,	0,		0,	
+yycrank+713,	0,		0,	
+yycrank+0,	0,		yyvstop+328,
+yycrank+703,	0,		0,	
+yycrank+0,	0,		yyvstop+330,
+yycrank+708,	0,		0,	
+yycrank+702,	0,		0,	
+yycrank+711,	0,		0,	
+yycrank+783,	0,		0,	
+yycrank+0,	0,		yyvstop+332,
+yycrank+701,	0,		0,	
+yycrank+701,	0,		0,	
+yycrank+786,	0,		0,	
+yycrank+0,	0,		yyvstop+334,
+yycrank+705,	0,		0,	
+yycrank+0,	0,		yyvstop+336,
+yycrank+717,	0,		yyvstop+338,
+yycrank+0,	0,		yyvstop+340,
+yycrank+0,	0,		yyvstop+343,
+yycrank+0,	0,		yyvstop+345,
+yycrank+721,	0,		0,	
+yycrank+0,	0,		yyvstop+347,
+yycrank+0,	0,		yyvstop+349,
+yycrank+0,	0,		yyvstop+351,
+yycrank+707,	0,		0,	
+yycrank+713,	0,		0,	
+yycrank+710,	0,		0,	
+yycrank+708,	0,		0,	
+yycrank+0,	0,		yyvstop+353,
+yycrank+0,	yysvec+511,	yyvstop+355,
+yycrank+0,	0,		yyvstop+357,
+yycrank+0,	0,		yyvstop+359,
+yycrank+0,	0,		yyvstop+361,
+yycrank+713,	0,		0,	
+yycrank+725,	0,		0,	
+yycrank+0,	0,		yyvstop+363,
+yycrank+728,	0,		0,	
+yycrank+733,	0,		0,	
+yycrank+721,	0,		0,	
+yycrank+0,	0,		yyvstop+365,
+yycrank+722,	0,		0,	
+yycrank+0,	0,		yyvstop+367,
+yycrank+0,	0,		yyvstop+369,
+yycrank+0,	0,		yyvstop+371,
+yycrank+0,	0,		yyvstop+373,
+yycrank+0,	0,		yyvstop+375,
+yycrank+717,	0,		0,	
+yycrank+0,	0,		yyvstop+377,
+yycrank+720,	0,		0,	
+yycrank+719,	0,		0,	
+yycrank+0,	0,		yyvstop+379,
+yycrank+0,	0,		yyvstop+381,
+yycrank+735,	0,		0,	
+yycrank+0,	0,		yyvstop+383,
+yycrank+719,	0,		0,	
+yycrank+737,	0,		0,	
+yycrank+0,	0,		yyvstop+385,
+yycrank+0,	0,		yyvstop+387,
+yycrank+723,	0,		0,	
+yycrank+0,	0,		yyvstop+389,
+yycrank+732,	0,		0,	
+yycrank+0,	0,		yyvstop+391,
+yycrank+0,	0,		yyvstop+393,
+yycrank+732,	0,		0,	
+yycrank+731,	0,		0,	
+yycrank+727,	0,		0,	
+yycrank+744,	0,		0,	
+yycrank+0,	0,		yyvstop+395,
+yycrank+735,	0,		0,	
+yycrank+0,	0,		yyvstop+397,
+yycrank+744,	0,		0,	
+yycrank+737,	0,		0,	
+yycrank+738,	0,		0,	
+yycrank+748,	0,		0,	
+yycrank+818,	0,		0,	
+yycrank+0,	0,		yyvstop+399,
+yycrank+0,	0,		yyvstop+401,
+yycrank+0,	0,		yyvstop+403,
+yycrank+749,	0,		0,	
+yycrank+0,	0,		yyvstop+405,
+yycrank+751,	0,		0,	
+yycrank+744,	0,		0,	
+yycrank+745,	0,		0,	
+yycrank+0,	0,		yyvstop+407,
+yycrank+750,	0,		0,	
+yycrank+754,	0,		0,	
+yycrank+756,	0,		0,	
+yycrank+0,	0,		yyvstop+409,
+yycrank+742,	0,		0,	
+yycrank+748,	0,		0,	
+yycrank+744,	0,		0,	
+yycrank+751,	0,		0,	
+yycrank+765,	0,		0,	
+yycrank+0,	0,		yyvstop+411,
+yycrank+831,	0,		0,	
+yycrank+747,	0,		0,	
+yycrank+764,	0,		0,	
+yycrank+765,	0,		0,	
+yycrank+0,	0,		yyvstop+413,
+yycrank+0,	0,		yyvstop+415,
+yycrank+0,	0,		yyvstop+417,
+yycrank+755,	0,		0,	
+yycrank+0,	0,		yyvstop+419,
+yycrank+0,	0,		yyvstop+421,
+yycrank+0,	0,		yyvstop+423,
+yycrank+0,	0,		yyvstop+425,
+yycrank+0,	0,		yyvstop+427,
+yycrank+0,	0,		yyvstop+429,
+yycrank+767,	0,		0,	
+yycrank+755,	0,		0,	
+yycrank+0,	0,		yyvstop+431,
+yycrank+762,	0,		0,	
+yycrank+770,	0,		0,	
+yycrank+0,	0,		yyvstop+433,
+yycrank+0,	0,		yyvstop+435,
+yycrank+0,	0,		yyvstop+437,
+yycrank+0,	0,		yyvstop+439,
+yycrank+0,	0,		yyvstop+441,
+yycrank+771,	0,		0,	
+yycrank+0,	0,		yyvstop+443,
+yycrank+773,	0,		0,	
+yycrank+0,	0,		yyvstop+445,
+yycrank+0,	0,		yyvstop+447,
+yycrank+764,	0,		0,	
+yycrank+770,	0,		0,	
+yycrank+0,	0,		yyvstop+449,
+yycrank+766,	0,		0,	
+yycrank+0,	0,		yyvstop+451,
+yycrank+845,	0,		0,	
+yycrank+781,	0,		0,	
+yycrank+0,	0,		yyvstop+453,
+yycrank+768,	0,		0,	
+yycrank+848,	0,		0,	
+yycrank+763,	0,		0,	
+yycrank+0,	yysvec+684,	yyvstop+455,
+yycrank+768,	0,		yyvstop+457,
+yycrank+851,	0,		0,	
+yycrank+0,	0,		yyvstop+459,
+yycrank+773,	0,		0,	
+yycrank+771,	0,		0,	
+yycrank+0,	0,		yyvstop+461,
+yycrank+0,	0,		yyvstop+463,
+yycrank+776,	0,		0,	
+yycrank+0,	0,		yyvstop+465,
+yycrank+0,	0,		yyvstop+467,
+yycrank+771,	0,		0,	
+yycrank+778,	0,		0,	
+yycrank+786,	0,		0,	
+yycrank+0,	0,		yyvstop+469,
+yycrank+780,	0,		0,	
+yycrank+0,	0,		yyvstop+471,
+yycrank+790,	0,		0,	
+yycrank+791,	0,		0,	
+yycrank+0,	0,		yyvstop+473,
+yycrank+0,	yysvec+726,	yyvstop+475,
+yycrank+785,	0,		0,	
+yycrank+0,	0,		yyvstop+477,
+yycrank+778,	0,		0,	
+yycrank+0,	0,		yyvstop+479,
+yycrank+790,	0,		0,	
+yycrank+0,	0,		yyvstop+481,
+yycrank+796,	0,		0,	
+yycrank+789,	0,		0,	
+yycrank+0,	0,		yyvstop+483,
+yycrank+793,	0,		0,	
+yycrank+0,	0,		yyvstop+485,
+yycrank+784,	0,		0,	
+yycrank+868,	0,		yyvstop+487,
+yycrank+800,	0,		0,	
+yycrank+787,	0,		0,	
+yycrank+787,	0,		0,	
+yycrank+799,	0,		0,	
+yycrank+806,	0,		0,	
+yycrank+0,	0,		yyvstop+489,
+yycrank+805,	0,		0,	
+yycrank+791,	0,		0,	
+yycrank+792,	0,		0,	
+yycrank+795,	0,		0,	
+yycrank+0,	0,		yyvstop+491,
+yycrank+796,	0,		0,	
+yycrank+0,	0,		yyvstop+493,
+yycrank+806,	0,		0,	
+yycrank+813,	0,		0,	
+yycrank+0,	0,		yyvstop+495,
+0,	0,	0};
+struct yywork *yytop = yycrank+912;
+struct yysvf *yybgin = yysvec+1;
+char yymatch[] = {
+00  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,012 ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,01  ,'B' ,01  ,'D' ,01  ,01  ,01  ,
+01  ,'I' ,'J' ,01  ,'L' ,'M' ,01  ,01  ,
+'P' ,01  ,'R' ,'S' ,01  ,01  ,01  ,01  ,
+01  ,01  ,01  ,01  ,01  ,01  ,01  ,01  ,
+01  ,'a' ,'b' ,'c' ,'d' ,'e' ,'e' ,'c' ,
+'c' ,'i' ,'j' ,'c' ,'l' ,'m' ,'n' ,'c' ,
+'p' ,'q' ,'r' ,'s' ,'c' ,'u' ,'u' ,'c' ,
+'c' ,'y' ,'y' ,01  ,01  ,01  ,01  ,01  ,
+0};
+char yyextra[] = {
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0};
+int yylineno =1;
+# define YYU(x) x
+# define NLSTATE yyprevious=YYNEWLINE
+char yytext[YYLMAX];
+struct yysvf *yylstate [YYLMAX], **yylsp, **yyolsp;
+char yysbuf[YYLMAX];
+char *yysptr = yysbuf;
+int *yyfnd;
+extern struct yysvf *yyestate;
+int yyprevious = YYNEWLINE;
+yylook(){
+	register struct yysvf *yystate, **lsp;
+	register struct yywork *yyt;
+	struct yysvf *yyz;
+	int yych, yyfirst;
+	struct yywork *yyr;
+# ifdef LEXDEBUG
+	int debug;
+# endif
+	char *yylastch;
+	/* start off machines */
+# ifdef LEXDEBUG
+	debug = 0;
+# endif
+	yyfirst=1;
+	if (!yymorfg)
+		yylastch = yytext;
+	else {
+		yymorfg=0;
+		yylastch = yytext+yyleng;
+		}
+	for(;;){
+		lsp = yylstate;
+		yyestate = yystate = yybgin;
+		if (yyprevious==YYNEWLINE) yystate++;
+		for (;;){
+# ifdef LEXDEBUG
+			if(debug)fprintf(yyout,"state %d\n",yystate-yysvec-1);
+# endif
+			yyt = yystate->yystoff;
+			if(yyt == yycrank && !yyfirst){  /* may not be any transitions */
+				yyz = yystate->yyother;
+				if(yyz == 0)break;
+				if(yyz->yystoff == yycrank)break;
+				}
+			*yylastch++ = yych = input();
+			yyfirst=0;
+		tryagain:
+# ifdef LEXDEBUG
+			if(debug){
+				fprintf(yyout,"char ");
+				allprint(yych);
+				putchar('\n');
+				}
+# endif
+			yyr = yyt;
+			if ( (int)yyt > (int)yycrank){
+				yyt = yyr + yych;
+				if (yyt <= yytop && yyt->verify+yysvec == yystate){
+					if(yyt->advance+yysvec == YYLERR)	/* error transitions */
+						{unput(*--yylastch);break;}
+					*lsp++ = yystate = yyt->advance+yysvec;
+					goto contin;
+					}
+				}
+# ifdef YYOPTIM
+			else if((int)yyt < (int)yycrank) {		/* r < yycrank */
+				yyt = yyr = yycrank+(yycrank-yyt);
+# ifdef LEXDEBUG
+				if(debug)fprintf(yyout,"compressed state\n");
+# endif
+				yyt = yyt + yych;
+				if(yyt <= yytop && yyt->verify+yysvec == yystate){
+					if(yyt->advance+yysvec == YYLERR)	/* error transitions */
+						{unput(*--yylastch);break;}
+					*lsp++ = yystate = yyt->advance+yysvec;
+					goto contin;
+					}
+				yyt = yyr + YYU(yymatch[yych]);
+# ifdef LEXDEBUG
+				if(debug){
+					fprintf(yyout,"try fall back character ");
+					allprint(YYU(yymatch[yych]));
+					putchar('\n');
+					}
+# endif
+				if(yyt <= yytop && yyt->verify+yysvec == yystate){
+					if(yyt->advance+yysvec == YYLERR)	/* error transition */
+						{unput(*--yylastch);break;}
+					*lsp++ = yystate = yyt->advance+yysvec;
+					goto contin;
+					}
+				}
+			if ((yystate = yystate->yyother) && (yyt= yystate->yystoff) != yycrank){
+# ifdef LEXDEBUG
+				if(debug)fprintf(yyout,"fall back to state %d\n",yystate-yysvec-1);
+# endif
+				goto tryagain;
+				}
+# endif
+			else
+				{unput(*--yylastch);break;}
+		contin:
+# ifdef LEXDEBUG
+			if(debug){
+				fprintf(yyout,"state %d char ",yystate-yysvec-1);
+				allprint(yych);
+				putchar('\n');
+				}
+# endif
+			;
+			}
+# ifdef LEXDEBUG
+		if(debug){
+			fprintf(yyout,"stopped at %d with ",*(lsp-1)-yysvec-1);
+			allprint(yych);
+			putchar('\n');
+			}
+# endif
+		while (lsp-- > yylstate){
+			*yylastch-- = 0;
+			if (*lsp != 0 && (yyfnd= (*lsp)->yystops) && *yyfnd > 0){
+				yyolsp = lsp;
+				if(yyextra[*yyfnd]){		/* must backup */
+					while(yyback((*lsp)->yystops,-*yyfnd) != 1 && lsp > yylstate){
+						lsp--;
+						unput(*yylastch--);
+						}
+					}
+				yyprevious = YYU(*yylastch);
+				yylsp = lsp;
+				yyleng = yylastch-yytext+1;
+				yytext[yyleng] = 0;
+# ifdef LEXDEBUG
+				if(debug){
+					fprintf(yyout,"\nmatch ");
+					sprint(yytext);
+					fprintf(yyout," action %d\n",*yyfnd);
+					}
+# endif
+				return(*yyfnd++);
+				}
+			unput(*yylastch);
+			}
+		if (yytext[0] == 0  /* && feof(yyin) */)
+			{
+			yysptr=yysbuf;
+			return(0);
+			}
+		yyprevious = yytext[0] = input();
+		if (yyprevious>0)
+			output(yyprevious);
+		yylastch=yytext;
+# ifdef LEXDEBUG
+		if(debug)putchar('\n');
+# endif
+		}
+	}
+yyback(p, m)
+	int *p;
+{
+if (p==0) return(0);
+while (*p)
+	{
+	if (*p++ == m)
+		return(1);
+	}
+return(0);
+}
+	/* the following are only used in the lex library */
+yyinput(){
+	return(input());
+	}
+yyoutput(c)
+  int c; {
+	output(c);
+	}
+yyunput(c)
+   int c; {
+	unput(c);
+	}
+yywrap(){
+	return(1);
+	}
