@@ -184,7 +184,7 @@ toolong:		complain("Search string too long/complex.");
 
 			case '}':
 				if (kind != IN_CB)
-					complain("Unexpected \}.");
+					complain("Unexpected }.");
 				ret_code = 0;
 				goto outahere;
 
@@ -364,8 +364,8 @@ outahere:
 	}
 	if (parenp != parens)
 		complain("Unmatched ()'s.");
-	if (kind == IN_CB && c == 0)	/* End of pattern with \}. */
-		complain("Missing \}.");
+	if (kind == IN_CB && c == 0)	/* End of pattern with }. */
+		complain("Missing }.");
 	*comp_p++ = EOP;
 
 	return ret_code;
