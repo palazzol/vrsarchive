@@ -1,4 +1,4 @@
-.ds I4 \kH\h'|4.5i-\nH'
+.ds I4 \kH\h'|4.0i-\nH'
 .ds I1 \kH\h'|0.75i-\nH'
 .de IN
 .sp 1i
@@ -41,3 +41,4 @@
 .)b
 .fi
 ..
+.so /usr/lib/tmac/tmac.s
