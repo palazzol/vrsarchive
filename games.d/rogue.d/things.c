@@ -543,11 +543,8 @@ char *fmt, *arg;
 					touchwin(tw);
 					wrefresh(tw);
 					wait_for(' ');
-					if (CE)
-					{
-						werase(tw);
-						wrefresh(tw);
-					}
+					werase(tw);
+					wrefresh(tw);
 					delwin(tw);
 					touchwin(stdscr);
 				}
