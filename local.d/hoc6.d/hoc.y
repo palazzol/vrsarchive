@@ -234,14 +234,15 @@ execerror(s,t) /* recover from run-time error */
        fseek(fin, 0L, 2);
        longjmp(begin, 0);
 }
-fpecatch()    /* catch floating point exceptions */
+SIG_T
+fpecatch(dummy)    /* catch floating point exceptions */
 {
        execerror("floating point exception", (char *) 0);
 }
 main(argc, argv)  /* hoc4 */
         char *argv[];
 {
-        int i, fpecatch();
+        int i;
  
         progname = argv[0];
 	if (argc == 1) {

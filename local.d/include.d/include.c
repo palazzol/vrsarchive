@@ -6,6 +6,7 @@ main (argc, argv) char **argv;
 }
 
 include (file, depth)
+char *file;
 {
 	int 	indent;
 	FILE	*ioptr;

@@ -26,7 +26,7 @@ char str [];
     return gets (str);
 #else
     static char * Include_File = DEFINCSTR;
-    static int    Include_Len = 0, strlen ();
+    static int    Include_Len = 0;
     static FILE * F [MAXINCLUDEFILES+1], ** current_F = F;
     char * s = str;
     int c;

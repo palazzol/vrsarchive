@@ -66,17 +66,17 @@ struct sgttyb sbuf, osbuf;
 struct ltchars ltc, oltc;
 #endif
 static termchanged = 0;
-static int (*oldint) ();
-static int (*oldterm) ();
+static SIG_T (*oldint) ();
+static SIG_T (*oldterm) ();
 #ifdef SIGTTIN
-static int (*oldttin) ();
-static int (*oldttou) ();
-static int (*oldtstp) ();
+static SIG_T (*oldttin) ();
+static SIG_T (*oldttou) ();
+static SIG_T (*oldtstp) ();
 #endif
 
 terminit ()
 {
-	int done();
+	SIG_T done();
 
 #ifdef USG
 	if (!isatty(0)) {
@@ -183,7 +183,8 @@ retry:
 
 }
 
-done ()
+SIG_T
+done (dummy)
 {
 	unlink (tempfile);
 	if (termchanged)

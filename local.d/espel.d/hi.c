@@ -47,7 +47,7 @@ interact()
 
 getitem()
 {
-	if ( (fgets( item, WORDLN, misspellings ) > 0 ) ) {
+	if ( (fgets( item, WORDLN, misspellings ) != 0 ) ) {
 		item[ strlen( item ) - 1 ] = '\0';
 		count++;
 		notlast = 1;
@@ -140,7 +140,7 @@ inquire( option, arg )
 		offset = ftell( misspellings );
 		dist = atoi( OPTION(arg, BIGNUMBER) );
 		for ( i=1; i<=dist; i++ ) {
-			if ( fgets( temp, WORDLN, misspellings ) <= 0 )
+			if ( fgets( temp, WORDLN, misspellings ) == 0 )
 				break;
 			printf("%s", temp);
 		}
@@ -187,7 +187,7 @@ do_command( option, arg )
 		DEBUG(5, "offset = %d\n", offset );
 		rewind(misspellings);
 		for (count=0; count<offset;count++)
-			if ( fgets( item, WORDLN, misspellings ) <= 0 )
+			if ( fgets( item, WORDLN, misspellings ) == 0 )
 				break;
 		break;
 	default :
