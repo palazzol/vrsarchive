@@ -14,6 +14,7 @@
  *****************************************************************/
 
 # include <curses.h>
+#ifndef __STDC__
 #ifndef A_REVERSE
 #define chtype	char
 #include <fcntl.h>
@@ -31,15 +32,16 @@ nodelay(scr, tf)
 		fcntl(0, F_SETFL, fcntlflgs&~O_NDELAY);
 }
 #endif
+#endif
 # include <signal.h>
 
 #ifdef __STDC__
 #define STR(x)		#x
 #define STRING(x)	STR(x)
-#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#define FILENM(x)	STRING(GAMDIR) "/" STRING(x)
 #else
 #define STRING(x)	"x
-#define FILENM(x)	STRING(GAMLIB)/x"
+#define FILENM(x)	STRING(GAMDIR)/x"
 #endif
 # define NEWROBOT	FILENM(robots)
 # define ROBOT		FILENM(robots)
@@ -51,7 +53,7 @@ nodelay(scr, tf)
 # define min(A,B)	((A)<(B)?(A):(B))
 # define sgn(A)		((A)==0?0:((A)>0?1:-1))
 
-# define ROWS	24
+# define ROWS	25
 # define COLS	80
 
 /* Define the Rob-O-Matic pseudo-terminal */
@@ -86,7 +88,7 @@ nodelay(scr, tf)
 int   child;
 int   frobot, trobot;
 int   debug=0;
-FILE *trace=NULL;
+FILE *tracefp=NULL;
 /****************************************************************
  * Main routine
  ****************************************************************/
@@ -98,6 +100,7 @@ char *argv[];
 { int   ptc[2], ctp[2];
   char *rfile=NULL;
 
+  setbuf(stdout, 0);
   /* Get the options from the command line */
   while (--argc > 0 && (*++argv)[0] == '-')
   { while (*++(*argv))
@@ -110,7 +113,7 @@ char *argv[];
 
   /* Open tracing file (if needed) */
   if (debug)
-  { if ((trace = fopen ("trace.log", "w")) == NULL)
+  { if ((tracefp = fopen ("trace.log", "w")) == NULL)
     { perror ("trace.log");
       exit (1);
     }
@@ -266,9 +269,9 @@ getrobot ()
   {
     /* Read a character from the Robots process */
     if (read (frobot, buf, 1) < 1)
-    { ch = EOF; if (trace) fclose (trace); }
+    { ch = EOF; if (tracefp) fclose (tracefp); }
     else
-    { ch = buf[0]; if (trace) { fputc (ch, trace); fflush (trace); } }
+    { ch = buf[0]; if (tracefp) { fputc (ch, tracefp); fflush (tracefp); } }
 
     /* Check for the words "robot food" to see if we died */
     if (ch == *d) { if (0 == *++d) { done++; playing=0; } }
@@ -309,8 +312,8 @@ getrobot ()
 	else
 	{ row = buf[0] - ' ';
 	  col = buf[1] - ' ';
-          if (trace) { fprintf (trace, "%c%c", buf[0], buf[1]);
-		       fflush (trace); }
+          if (tracefp) { fprintf (tracefp, "%c%c", buf[0], buf[1]);
+		       fflush (tracefp); }
 	}
         break;
 
@@ -358,6 +361,10 @@ getrobot ()
 	{  atrow = row; atcol = col; }
         mvaddch (row, col, (chtype)ch);
         screen[row][col++] = ch;
+        if (col > COLS)
+	{ row++;
+	  col = 0;
+	}
         break;
     }
   }
