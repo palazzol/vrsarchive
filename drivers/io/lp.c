@@ -1,4 +1,5 @@
 /*
+ * $Header: /home/Vince/cvs/drivers/io/lp.c,v 1.2 1986-10-05 14:15:57 root Exp $
  * Copyright (C) 1983 Intel Corp.
  * All rights reserved. No part of this program or publication
  * may be reproduced, transmitted, transcribed, stored in a
@@ -10,6 +11,9 @@
  * Attn: Software License Administration.
  */
 char lp286copyright[] = "(C) 1983 Intel Corp.";
+static char lpvers[] = "@(#) lp driver $Revision: 1.2 $";
+extern int lp_slo;	/* timeout for slow printers */
+int lp_tmout;
 /*
  * This is a set of procedures that implement a centronics line printer
  * driver for xenix. 
@@ -128,6 +132,7 @@ lpinit()
  * and lower case are supported.
  */
 int lp_canon();
+int lptout();
 
 lpopen(dev,flag)
 	dev_t dev;
@@ -160,6 +165,12 @@ lpopen(dev,flag)
 	}
 	sc->lp_state |= OPEN;
 	sc->lp_flags = minor(dev) & 0x07;
+	if (minor(dev) > 1)
+		lp_tmout = 0;
+	else {
+		lp_tmout = lp_slo;
+		timeout(lptout, (caddr_t)dev, lp_tmout);
+	}
 	lp_canon(dev,'\f');			/* start buffering rolling */
 }
 
@@ -390,7 +401,7 @@ lp_outchar(sc,c)
 	int	c;
 
 {
-	int	s;
+	int	s, stat;
 	register struct lpcfg *lpdev;
 #ifdef DEBUG
 	printf("+%x",c);
@@ -399,7 +410,8 @@ lp_outchar(sc,c)
 	lpdev=sc->lp_addr;
 	while(sc->lp_outq.c_cc >= LPHWAT) {	/* check water marks */
 		if ((sc->lp_state & RESET) == 0) {
-			while ((inb(lpdev->p_portb) & PR_ACK_BAR) == 0)
+			while ((((stat=inb(lpdev->p_portb))&PR_ACK_BAR) == 0) ||
+				(stat & PR_BUSY))
 				sleep((caddr_t)&lbolt,LPPRI);
 			lpintr(lpdev->p_level);
 		} else {
@@ -450,17 +462,26 @@ lpintr(level)
 {
 	register struct lp_softc *sc;
 	register struct lpcfg *lpdev;
-	int phstat,stat;
+	int phstat,stat,i;
 
 	sc = lplbs;
 	lpdev = lplbd;
+
 loop:
 	phstat = stat = inb(lpdev->p_portb);	/* check printer status */
 	sc->lp_state &= ~RESET;
-	if (phstat & PR_ACK_BAR) {
-		outb(lpdev->control,CL_PR_ACK); /* re-enable printer interrupts */
-		outb(lpdev->control,SET_PRINTER_ACK);
-		sc->lp_state |= RESET;
+	if (lp_tmout == lp_slo) {
+		if ((phstat & (PR_ACK_BAR|PR_BUSY)) == PR_ACK_BAR) {
+			outb(lpdev->control,CL_PR_ACK); /* re-enable printer interrupts */
+			outb(lpdev->control,SET_PRINTER_ACK);
+			sc->lp_state |= RESET;
+		}
+	} else {
+		if (phstat & PR_ACK_BAR) {
+			outb(lpdev->control,CL_PR_ACK); /* re-enable printer interrupts */
+			outb(lpdev->control,SET_PRINTER_ACK);
+			sc->lp_state |= RESET;
+		}
 	}
 #ifdef DEBUG
 	printf("LP intr! level %d state %x, read status = %x\n",
@@ -470,6 +491,7 @@ loop:
 		sc->lp_state |= TOUT;
 	else
 		sc->lp_state &= ~TOUT;
+	sc->lp_state |= MOD;
 	while (((sc->lp_state & TOUT) == 0) && (sc->lp_outq.c_cc > 0))
 		/* output char's from clist */
 		lpoutput(lpdev,sc,getc(&sc->lp_outq));
@@ -477,14 +499,16 @@ loop:
 		sc->lp_state &= ~ASLP;
 		wakeup((caddr_t)sc);
 	}
-	if (((phstat=inb(lpdev->p_portb)) != stat) ||
-		((sc->lp_state & TOUT) && !(phstat & (PR_BUSY | PR_ERROR))
-			&& (phstat & PR_ACK_BAR)))
+	if (lp_tmout != lp_slo) {
+		if (((phstat=inb(lpdev->p_portb)) != stat) ||
+		   ((sc->lp_state&TOUT) && !(phstat&(PR_BUSY|PR_ERROR)) &&
+		   (phstat&PR_ACK_BAR)))
 			goto loop;
-	if (phstat & PR_ACK_BAR) {
-		outb(lpdev->control,CL_PR_ACK); /* re-enable printer interrupts */
-		outb(lpdev->control,SET_PRINTER_ACK);
-		sc->lp_state |= RESET;
+		if (phstat & PR_ACK_BAR) {
+			outb(lpdev->control,CL_PR_ACK); /* re-enable printer interrupts */
+			outb(lpdev->control,SET_PRINTER_ACK);
+			sc->lp_state |= RESET;
+		}
 	}
 }
 
@@ -530,4 +554,30 @@ lpoutput(lpdev,sc,c)
 #endif
 		sc->lp_state |= TOUT;
 	}
+}
+
+lptout(dev)
+dev_t dev;
+{
+	register struct lp_softc *sc;
+	register struct lpcfg *lpdev;
+	int s, stat;
+
+	sc = lplbs;
+	lpdev = lplbd;
+
+	if ((sc->lp_state & MOD) != 0) {
+		sc->lp_state &= ~MOD;
+		timeout(lptout, (caddr_t)dev, lp_tmout>>2);
+		return;
+	}
+	s = SPL();
+	if (sc->lp_outq.c_cc && (sc->lp_state & TOUT) &&
+	    !((stat = inb(lpdev->p_portb)) & (PR_BUSY|PR_ERROR)))
+		lpintr(sc->lp_addr->p_level);
+	splx(s);
+
+	if (!sc->lp_outq.c_cc && ((sc->lp_state & OPEN) == 0))
+		return;
+	timeout(lptout, (caddr_t)dev, lp_tmout);
 }
