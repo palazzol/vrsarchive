@@ -3,6 +3,7 @@
 # 	(c) Ken Wellsch 1985
 #
 OPTIONS	= -O
+MODEL	= -i
 include ../../../../CONFIG
 KLIB	= ../kio/klib.a
 MAIN	= munge.c

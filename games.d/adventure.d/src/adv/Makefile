@@ -3,6 +3,7 @@
 # 	(c) Ken Wellsch 1985
 #
 OPTIONS	= -O -DADV=\"$(GAMLIB)/adv\"
+MODEL	= -i
 include ../../../../CONFIG
 KLIB	= ../kio/klib.a
 ALIB	= alib.a(advglob.o) \
