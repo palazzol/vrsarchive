@@ -24,6 +24,9 @@ char *connv = "Connect Command for Unix, V4E(017) 14 Sep 87";
 #include "ckcdeb.h"
 #include "ckcker.h"
 #include <signal.h>
+#ifdef __STDC__
+#include <errno.h>
+#endif
 
 #ifndef ZILOG
 #include <setjmp.h>			/* Longjumps */
