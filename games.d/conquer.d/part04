@@ -1,0 +1,1985 @@
+Path: uunet!tektronix!tekgen!tekred!games-request
+From: games-request@tekred.TEK.COM
+Newsgroups: comp.sources.games
+Subject: v03i073:  conquer - version 2 of the renamed conquest adventure game, Part04/06
+Message-ID: <2107@tekred.TEK.COM>
+Date: 22 Jan 88 21:34:20 GMT
+Sender: billr@tekred.TEK.COM
+Lines: 1975
+Approved: billr@tekred.TEK.COM
+
+Submitted by: ihnp4!mhuxd!smile (Ed Barlow)
+Comp.sources.games: Volume 3, Issue 73
+Archive-name: conquer/Part04
+
+#! /bin/sh
+
+# This is a shell archive.  Remove anything before this line, then unpack
+# it by saving it into a file and typing "sh file".  To overwrite existing
+# files, type "sh file -c".  You can also feed this as standard input via
+# unshar, or by typing "sh <file", e.g..  If this archive is complete, you
+# will see the following message at the end:
+#		"End of archive 4 (of 6)."
+# Contents:  combat.c forms.c move.c
+# Wrapped by billr@tekred on Fri Jan 22 13:27:09 1988
+PATH=/bin:/usr/bin:/usr/ucb ; export PATH
+if test -f combat.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"combat.c\"
+else
+echo shar: Extracting \"combat.c\" \(18772 characters\)
+sed "s/^X//" >combat.c <<'END_OF_combat.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X#include "header.h"
+X#include "data.h"
+X
+X#define ATKR 2
+X#define DFND 1
+X
+Xextern FILE *fnews;
+Xextern short country;
+X
+Xint unit[32];		/*armynum*/
+Xint owner[32];		/*owner*/
+Xint side[32];		/*see definitions->1=units 2=unit*/
+Xint anation;		/*nation attacking in this fight*/
+Xint dnation;		/*one nation defending in this fight*/
+X
+X/*RESOLVE COMBAT RESULTS */
+X/*attacker wants a high roll and defender wants low roll on both dice*/
+X/*       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9*/
+X
+Xint Cbt6_1[]={
+X	20,20,20,20,20,15,10,10,10,10,5,5,5,5,5,0,0,0,0,0,0
+X};
+Xint Cbt5_1[]={
+X	40,30,20,20,20,20,20,20,10,10,10,10,5,5,5,0,0,0,0,0,0
+X};
+Xint Cbt4_1[]={
+X	50,40,30,30,30,20,20,20,20,10,10,10,10,5,5,5,0,0,0,0,0
+X};
+Xint Cbt3_1[]={
+X	60,50,40,30,30,30,20,20,20,20,10,10,10,10,5,5,5,0,0,0,0
+X};
+Xint Cbt2_1[]={
+X	70,50,40,40,40,40,30,30,20,20,20,20,10,10,10,10,10,5,5,5,0
+X};
+Xint Cbt3_2[]={
+X	80,60,40,40,40,40,30,30,30,30,20,20,20,20,20,20,20,10,10,10,0
+X};
+Xint Cbt5_4[]={
+X	90,60,50,50,50,50,40,40,30,30,30,30,30,30,30,30,30,20,10,10,10
+X};
+Xint Cbt1_1[]={
+X	100,90,60,60,60,60,50,50,40,40,40,40,30,30,30,30,20,20,20,10,10
+X};
+Xint Cbt4_5[]={
+X	100,90,80,70,70,70,60,60,50,50,50,50,40,40,40,40,40,30,20,20,10
+X};
+Xint Cbt2_3[]={
+X	110,90,80,80,70,70,60,60,50,50,50,50,40,40,40,40,40,40,30,20,10
+X};
+Xint Cbt1_2[]={
+X	110,100,100,90,80,80,80,80,70,60,60,60,50,50,50,50,50,40,30,30,10
+X};
+Xint Cbt1_3[]={
+X	120,110,110,100,90,90,90,90,80,80,70,70,70,70,60,50,50,40,30,30,20
+X};
+Xint Cbt1_4[]={
+X	120,110,100,100,90,90,90,90,80,80,70,70,70,70,60,50,50,40,30,30,20
+X};
+Xint Cbt1_5[]={
+X	130,110,110,100,100,90,90,90,80,80,70,70,70,70,60,50,50,40,40,30,20
+X};
+Xint Cbt1_6[]={
+X	130,120,110,110,110,100,100,90,90,90,80,80,80,70,70,50,50,40,40,40,40
+X};
+X
+X/*run all combat on map
+X *  procedure is to find each sector with armies in attack mode and
+X *  then search around them
+X */
+Xcombat()
+X{
+X	register int i,j;
+X	/*if fought is 1 then do not fight a second battle in sector*/
+X	short fought[MAPX][MAPY];
+X	int temp;
+X	short armynum,nvynum;
+X	int valid;
+X	int count=0;
+X
+X	printf("RUN COMBAT SUBROUTINES");
+X	fprintf(fnews,"4\tBATTLE SUMMARY STATISTICS\n");
+X	/*for each nation, if in attack mode run a check*/
+X
+X	for(i=0;i<MAPX;i++) for(j=0;j<MAPY;j++) fought[i][j]=0;
+X
+X	for(anation=0;anation<NTOTAL;anation++) if(ntn[anation].active>0) {
+X
+X		/*army combat*/
+X		for(j=0;j<MAXARM;j++) if((ntn[anation].arm[j].stat==ATTACK)
+X			&&(ntn[anation].arm[j].sold>0)
+X			&&(fought[ntn[anation].arm[j].xloc][ntn[anation].arm[j].yloc]==0)){
+X
+X			fought[ntn[anation].arm[j].xloc][ntn[anation].arm[j].yloc]=1;
+X			/*initialize matrix*/
+X			for(temp=0;temp<32;temp++){
+X				unit[temp]=(-1);
+X				owner[temp]=(-1);
+X				side[temp]=(-1);
+X			}
+X
+X			/*check all armies in area and add to matrix*/
+X			count=0;
+X			valid=0;
+X			/*is valid,set matrix*/
+X			for(country=0;country<NTOTAL;country++) 
+X			if(ntn[country].active!=0) 
+X			for(armynum=0;armynum<MAXARM;armynum++) 
+X			if((ASOLD>0)
+X			&&(ASTAT!=SCOUT)
+X			&&(AXLOC==ntn[anation].arm[j].xloc)
+X			&&(AYLOC==ntn[anation].arm[j].yloc)
+X			&&(count<32)) {
+X
+X				if((country!=anation)
+X				&&(ntn[anation].dstatus[country]>HOSTILE)) {
+X					valid=1;
+X					dnation=country;
+X				}
+X				unit[count]=armynum;
+X				owner[count]=country;
+X				count++;
+X			}
+X
+X			if(valid==1) fight();
+X		}
+X
+X		/*navy combat*/
+X		for(j=0;j<MAXNAVY;j++) 
+X		if((ntn[anation].nvy[j].warships>0)
+X&&(fought[ntn[anation].nvy[j].xloc][ntn[anation].nvy[j].yloc]==0)
+X&&(sct[ntn[anation].arm[j].xloc][ntn[anation].arm[j].yloc].altitude==WATER)){
+X
+X		 fought[ntn[anation].nvy[j].xloc][ntn[anation].nvy[j].yloc]=1;
+X
+X			/*initialize matrix*/
+X			for(temp=0;temp<32;temp++){
+X				unit[temp]=(-1);
+X				owner[temp]=(-1);
+X				side[temp]=(-1);
+X			}
+X
+X			/*check all fleets in 1 sector range and add to matrix*/
+X			count=0;
+X			valid=0;
+X			/*is valid,set matrix*/
+X			for(country=0;country<NTOTAL;country++) 
+X			if(ntn[country].active!=0) 
+X			for(nvynum=0;nvynum<MAXNAVY;nvynum++) 
+X			if((NWAR+NMER>0)
+X			&&(abs(NXLOC-ntn[anation].nvy[j].xloc)<=1)
+X			&&(abs(NYLOC-ntn[anation].nvy[j].yloc)<=1)
+X			&&(count<32)) {
+X		 		fought[ntn[country].nvy[nvynum].xloc][ntn[country].nvy[nvynum].yloc]=1;
+X				if((country!=anation)
+X				&&(ntn[anation].dstatus[country]>HOSTILE)){
+X					valid=1;
+X					dnation=country;
+X				}
+X				unit[count]=nvynum;
+X				owner[count]=country;
+X				count++;
+X			}
+X			if(valid==1) navalcbt();
+X		}
+X	}
+X	printf("\nall army and navy attacks completed");
+X}
+X
+X/*taking the three matrices, run a combat*/
+Xfight()
+X{
+X	FILE *fpmsg, *fopen();
+X	char tempstr[15];
+X	int droll,aroll;
+X	int odds; 		/*odds total times 100*/
+X	int done;
+X	int i,j,k;
+X	int asold=0,dsold=0;    /*a's and d's total soldiers*/
+X	int Aloss=0,Dloss=0;    /*a's and d's total losses*/
+X	int PAloss,PDloss;	/*percent a and d loss*/
+X	int loss,divisor;
+X	int abonus=0,dbonus=0; 		/*bonus aggregate*/
+X	short vampire=0;		/*# non vamps deaded */
+X	short nvamps=0;			/*number of vampire armies*/
+X
+X	/* determine who is attacker & who is on defenders side?*/
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		if(owner[j]==anation) side[j]=ATKR;
+X		else if(owner[j]==dnation) side[j]=DFND;
+X		else if(ntn[anation].dstatus[owner[j]]==JIHAD) side[j]=DFND;
+X		else if(ntn[owner[j]].dstatus[anation]==JIHAD) side[j]=DFND;
+X		else if(ntn[anation].dstatus[owner[j]]==WAR)   side[j]=DFND;
+X		else if(ntn[owner[j]].dstatus[anation]==WAR)   side[j]=DFND;
+X		else if((ntn[owner[j]].dstatus[anation]==CONFEDERACY)&&(ntn[owner[j]].dstatus[dnation]>HOSTILE)) side[j]=ATKR;
+X		else if((ntn[owner[j]].dstatus[anation]==ALLIED)&&(ntn[owner[j]].dstatus[dnation]>HOSTILE)) side[j]=ATKR;
+X	}
+X
+X	/*calculate number of troops */
+X	asold=0;
+X	dsold=0;
+X	for(i=0;i<32;i++) if(owner[i]!=(-1)) {
+X		if(side[i]==ATKR)
+X			asold += ntn[owner[i]].arm[unit[i]].sold;
+X		else if(side[i]==DFND)
+X			dsold += ntn[owner[i]].arm[unit[i]].sold;
+X		if(magic(owner[i],VAMPIRE)==1) nvamps++;
+X	}
+X
+X	if((dsold<=0)||(asold<=0)) {
+X		printf("\nERROR CONDITION -- ABORTING THIS COMBAT!!!!!!\n");
+X		return;
+X	}
+X	odds = (asold*100)/dsold;
+X
+X	/* CALCULATE WEIGHTED AVERAGE BONUS*/
+X	abonus=0;
+X	dbonus=0;
+X	for(i=0;i<32;i++) if(owner[i]!=(-1)) {
+X		if(side[i]==ATKR)
+X			abonus += cbonus(i)*ntn[owner[i]].arm[unit[i]].sold;
+X		else if(side[i]==DFND)
+X			dbonus += cbonus(i)*ntn[owner[i]].arm[unit[i]].sold;
+X	}
+X
+X	abonus/=asold;
+X	dbonus/=dsold;
+X
+X	/*RUN COMBAT */
+X	/*DICE RESULTS MAY BE FROM 0 TO 200*/
+X	/*attacker wants a high roll and defender wants low roll on both dice*/
+X	aroll =   abs(rand()%100);
+X	aroll +=  50 + abonus - dbonus;
+X	if(aroll<0) aroll=0;
+X	if(aroll>199) aroll=199;
+X
+X	droll =   abs(rand()%100);
+X	droll +=  50 + abonus - dbonus;
+X	if(droll<0) droll=0;
+X	if(droll>199) droll=199;
+X
+X	/*odds bonus*/
+X	if(odds>1500) {
+X		PAloss = (Cbt6_1[aroll/10])/4;
+X		PDloss = Cbt1_6[20-droll/10]+30;
+X	}
+X	if(odds>600) {
+X		PAloss = Cbt6_1[aroll/10];
+X		PDloss = Cbt1_6[20-droll/10];
+X	}
+X	else if(odds>500){
+X		PAloss = Cbt5_1[aroll/10];
+X		PDloss = Cbt1_5[20-droll/10];
+X	}
+X	else if(odds>400){
+X		PAloss = Cbt4_1[aroll/10];
+X		PDloss = Cbt1_4[20-droll/10];
+X	}
+X	else if(odds>300) {
+X		PAloss = Cbt3_1[aroll/10];
+X		PDloss = Cbt1_3[20-droll/10];
+X	}
+X	else if(odds>200) {
+X		PAloss = Cbt2_1[aroll/10];
+X		PDloss = Cbt1_2[20-droll/10];
+X	}
+X	else if(odds>150) {
+X		PAloss = Cbt3_2[aroll/10];
+X		PDloss = Cbt2_3[20-droll/10];
+X	}
+X	else if(odds>125) {
+X		PAloss = Cbt5_4[aroll/10];
+X		PDloss = Cbt4_5[20-droll/10];
+X	}
+X	else if(odds>100){
+X		PAloss = Cbt1_1[aroll/10];
+X		PDloss = Cbt1_1[20-droll/10];
+X	}
+X	else if(odds>75) {
+X		PAloss = Cbt4_5[aroll/10];
+X		PDloss = Cbt5_4[20-droll/10];
+X	}
+X	else if(odds>50) {
+X		PAloss = Cbt1_2[aroll/10];
+X		PDloss = Cbt2_1[20-droll/10];
+X	}
+X	else if(odds>33) {
+X		PAloss = Cbt1_3[aroll/10];
+X		PDloss = Cbt3_1[20-droll/10];
+X	}
+X	else if(odds>15) {
+X		PAloss = Cbt1_6[aroll/10];
+X		PDloss = Cbt6_1[20-droll/10];
+X	}
+X	else {
+X		PAloss = 120;
+X		PDloss = 0;
+X	}
+X	sprintf(tempstr,"%s%d",msgfile,country);
+X	if ((fpmsg=fopen(tempstr,"a+"))==NULL) {
+X		printf("\n\tERROR OPENING %s",tempstr);
+X		exit(1);
+X	}
+X
+X	/*divisor is the smallest combat bonus*/
+X	divisor = 100;
+X	for(i=0;i<32;i++) if(owner[i]!=(-1)){
+X		if(side[i]==ATKR)
+X		divisor= min (divisor,ntn[owner[i]].aplus);
+X		else
+X		divisor= min (divisor,ntn[owner[i]].dplus);
+X	}
+X	divisor+=100;
+X
+X	/*NOTE LOSSES ARE ADJUSTED BY CBONUS*/
+X	for(i=0;i<32;i++) if(owner[i]!=(-1)){
+X		if(side[i]==ATKR){
+X			loss=(ntn[owner[i]].arm[unit[i]].sold*PAloss*divisor) /(100*(100+ntn[owner[i]].aplus));
+X			if(loss>ntn[owner[i]].arm[unit[i]].sold )
+X				loss=ntn[owner[i]].arm[unit[i]].sold;
+X			/*army can't have less than 25 men in it*/
+X			if(ntn[owner[i]].arm[unit[i]].sold-loss<25)
+X				loss=ntn[owner[i]].arm[unit[i]].sold;
+X			Aloss+=loss;
+X			ntn[owner[i]].arm[unit[i]].sold-=loss;
+X		}
+X		else if(side[i]==DFND){
+X			loss=(ntn[owner[i]].arm[unit[i]].sold*PDloss*divisor)/(100*(100+ntn[owner[i]].dplus));
+X			if(loss>ntn[owner[i]].arm[unit[i]].sold )
+X				loss=ntn[owner[i]].arm[unit[i]].sold;
+X			/*destroy army if < 25 men*/
+X			if(ntn[owner[i]].arm[unit[i]].sold-loss<25)
+X				loss=ntn[owner[i]].arm[unit[i]].sold;
+X			Dloss+=loss;
+X			ntn[owner[i]].arm[unit[i]].sold-=loss;
+X		}
+X		if((nvamps>0)&&(magic(owner[i],VAMPIRE)==1)) 
+X			vampire+=.35 * loss;
+X	}
+X
+X	fprintf(fnews,"4.\tBattle in %d,%d",ntn[owner[0]].arm[unit[0]].xloc, ntn[owner[0]].arm[unit[0]].yloc);
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		done=0;
+X		for(i=0;i<j;i++) if(owner[j]==owner[i]) done=1;
+X		if(done==0) {
+X		if(side[i]==DFND) 
+X		fprintf(fnews,",attacker %s",ntn[owner[j]].name);
+X		else if(side[i]==ATKR) 
+X		fprintf(fnews,",defender %s",ntn[owner[j]].name);
+X		}
+X	}
+X	fprintf(fnews,"\n");
+X	if(nvamps>0){
+X		for(i=0;i<32;i++) if(owner[i]!=(-1)){
+X			if(magic(owner[i],VAMPIRE)==1)
+X			ntn[owner[i]].arm[unit[i]].sold+=vampire/nvamps;
+X		}
+X	}
+X
+X	/*who is in the battle*/
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		done=0;
+X
+X		/*first time your nation appears done=0*/
+X		for(i=0;i<j;i++) if(owner[j]==owner[i]) done=1;
+X
+X		if((done==0)&&(ntn[owner[j]].active==1)) {
+X
+X			fprintf(fpmsg,"%s BATTLE SUMMARY for sector %d, %d\n",ntn[owner[j]].name,ntn[owner[0]].arm[unit[0]].xloc, ntn[owner[0]].arm[unit[0]].yloc);
+X
+X			if(side[j]==ATKR) fprintf(fpmsg,"%s You are on the Attacking Side\n",ntn[owner[j]].name);
+X			else fprintf(fpmsg,"%s You are on the Defending Side\n",ntn[owner[j]].name);
+X
+X			/*detail all participants in battle*/
+X			for(k=0;k<32;k++) if(owner[k]!=(-1)){
+X				if(side[k]==DFND) fprintf(fpmsg,"%s\t %s is defending with army %d \n",ntn[owner[j]].name, ntn[owner[k]].name,unit[k]);
+X				else fprintf(fpmsg,"%s\t %s is attacking with army %d \n",ntn[owner[j]].name,ntn[owner[k]].name, unit[k]);
+X			}
+X
+X			fprintf(fpmsg,"%s attacking soldiers=%d\tmodified roll=%d->%d%%\n",ntn[owner[j]].name,asold,aroll,PAloss);
+X			fprintf(fpmsg,"%s defending soldiers=%d\tmodified roll=%d->%d%%\n",ntn[owner[j]].name,dsold,droll,PDloss);
+X			fprintf(fpmsg,"%s ODDS are %d to 100\n",ntn[owner[j]].name,odds);
+X			fprintf(fpmsg,"%s RESULT: Attackers lose %d men, Defenders lose %d men\n",ntn[owner[j]].name,Aloss, Dloss);
+X			fprintf(fpmsg,"%s\n","END");
+X		}
+X	}
+X	fclose(fpmsg);
+X}
+X
+X/*Subroutine to determine combat bonuses for unit i in matrix*/
+Xcbonus(num)
+X{
+X	short armynum;
+X	int armbonus;
+X
+X	armbonus=0;
+X	armynum=unit[num];
+X	country=owner[num];
+X
+X	/*Racial combat bonus due to terrain (the faster you move the better)*/
+X	armbonus+=5*(9-movecost[AXLOC][AYLOC]);
+X
+X	if((magic(country,MI_MONST)==1)&&(unit[num]==0)) armbonus+=20;
+X	if((magic(country,AV_MONST)==1)&&(unit[num]==0)) armbonus+=20;
+X	if((magic(country,MA_MONST)==1)&&(unit[num]==0)) armbonus+=20;
+X
+X	if(((magic(country,DESTROYER)==1)
+X	||(magic(country,DERVISH)==1))
+X	&&((sct[AXLOC][AYLOC].vegetation==ICE)
+X	||(sct[AXLOC][AYLOC].vegetation==DESERT)))
+X		armbonus+=30;
+X
+X	if(side[num]==DFND){
+X
+X		if(sct[AXLOC][AYLOC].altitude==MOUNTAIN) armbonus+=20;
+X		else if(sct[AXLOC][AYLOC].altitude==HILL) armbonus+=10;
+X
+X		if(sct[AXLOC][AYLOC].vegetation==JUNGLE) armbonus+=20;
+X		else if(sct[AXLOC][AYLOC].vegetation==FORREST) armbonus+=15;
+X		else if(sct[AXLOC][AYLOC].vegetation==WOOD) armbonus+=10;
+X
+X		armbonus += ntn[owner[num]].dplus;
+X
+X		if(sct[AXLOC][AYLOC].designation==DCASTLE)
+X			armbonus+=5*sct[AXLOC][AYLOC].fortress;
+X		else if((ASTAT==GARRISON)
+X		&&(sct[AXLOC][AYLOC].designation==DCITY)){
+X			if(magic(country,ARCHER)==1) armbonus+=30;
+X			if(magic(country,ARCHITECT)==1){
+X				armbonus+=10+16*sct[AXLOC][AYLOC].fortress;
+X			}
+X			else armbonus+=10+8*sct[AXLOC][AYLOC].fortress;
+X		}
+X		else if((ASTAT==GARRISON)
+X		&&(sct[AXLOC][AYLOC].designation==DCAPITOL)){
+X			if(magic(country,ARCHER)==1) armbonus+=30;
+X			if(magic(country,ARCHITECT)==1){
+X				armbonus+=20+20*sct[AXLOC][AYLOC].fortress;
+X			}
+X			else armbonus+=20+10*sct[AXLOC][AYLOC].fortress;
+X		}
+X
+X	}
+X	else if(side[num]==ATKR) armbonus += ntn[owner[num]].aplus;
+X
+X	/*army status is important*/
+X	if(ASTAT==MARCH) armbonus-=40;
+X
+X	return(armbonus);
+X}
+X
+Xprep()
+X{
+X	short armynum,nvynum;
+X	int save,i,j;
+X	/*set occ to 0*/
+X	for(i=0;i<MAPX;i++) for(j=0;j<MAPX;j++) occ[i][j]=0;
+X	save=country;
+X	/*set occ to country of occupant army*/
+X	for(country=0;country<NTOTAL;country++)
+X		if(ntn[country].active!=0) {
+X			for(armynum=0;armynum<MAXARM;armynum++){
+X				if((ASOLD>0)&&(ASTAT!=SCOUT)){
+X					if((occ[AXLOC][AYLOC]==0)
+X					||(occ[AXLOC][AYLOC]==country))
+X						occ[AXLOC][AYLOC]=country;
+X					else occ[AXLOC][AYLOC]=MAXNTN+5;
+X				}
+X			}
+X			for(nvynum=0;nvynum<MAXNAVY;nvynum++){
+X				if(NWAR+NMER>0){
+X					if((occ[NXLOC][NYLOC]==0)
+X					||(occ[NXLOC][NYLOC]==country))
+X						occ[NXLOC][NYLOC]=country;
+X					else occ[NXLOC][NYLOC]=MAXNTN+5;
+X				}
+X			}
+X		}
+X	country=save;
+X}
+X
+X/*SUBROUTINE TO RUN NAVAL COMBAT ON ALL SHIPS */
+X/*just like fight, this takes array of owner,side,unit and calculate*/
+Xnavalcbt()
+X{
+X	FILE *fpmsg, *fopen();
+X	char tempmsg[15];
+X	int aship=0,dship=0;    /*a's and d's total war ships*/
+X	int asunk=0,dsunk=0;    /*a's and d's losses for the round*/
+X	int amsunk=0,dmsunk=0;  /*a's and d's msunks for the round*/
+X	register int done,i,j,k;
+X
+X	/* determine who is attacker & who is on defenders side?*/
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		if(owner[j]==anation) side[j]=ATKR;
+X		else if(ntn[anation].dstatus[owner[j]]==JIHAD) side[j]=DFND;
+X		else if(ntn[owner[j]].dstatus[anation]==JIHAD) side[j]=DFND;
+X		else if(ntn[anation].dstatus[owner[j]]==WAR)   side[j]=DFND;
+X		else if(ntn[owner[j]].dstatus[anation]==WAR)   side[j]=DFND;
+X		else if((ntn[owner[j]].dstatus[anation]==CONFEDERACY)
+X		&&(ntn[owner[j]].dstatus[dnation]>HOSTILE)) side[j]=ATKR;
+X		else if((ntn[owner[j]].dstatus[anation]==ALLIED)
+X		&&(ntn[owner[j]].dstatus[dnation]>HOSTILE)) side[j]=ATKR;
+X	}
+X
+X	/*RUN COMBAT; loop until done*/
+X	/*determine relative strengths--does anybody try to flee*/
+X	/*calculate number of ships on a side*/
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		if(side[j]==DFND) {
+X			dship+=ntn[owner[j]].nvy[unit[j]].warships;
+X		}
+X		else if(side[j]==ATKR) {
+X			aship+=ntn[owner[j]].nvy[unit[j]].warships;
+X		}
+X	}
+X
+X	/*no bonus currently included in this combat*/
+X
+X	/*each warship can do damage 40%; once all warships sunk then all*/
+X	/*sunk are captured merchant*/
+X	for(i=0;i<aship;i++) if(rand()%10<=3) dsunk++;
+X	for(i=0;i<dship;i++) if(rand()%10<=3) asunk++;
+X
+X	fprintf(fnews,"4.\tNaval Battle in %d,%d",ntn[owner[0]].arm[unit[0]].xloc, ntn[owner[0]].arm[unit[0]].yloc);
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		k=0;
+X		for(i=0;i<j;i++) if(owner[j]==owner[i]) k=1;
+X		if(k==0) {
+X		if(side[i]==DFND) 
+X			fprintf(fnews,",attacker %s",ntn[owner[j]].name);
+X		else if(side[i]==ATKR) 
+X			fprintf(fnews,",defender %s",ntn[owner[j]].name);
+X		}
+X	}
+X	fprintf(fnews,"\n");
+X
+X	fprintf(fnews,"4.\tattackers lose %d of %d warships (remainder are merchants)\n",asunk,aship);
+X	fprintf(fnews,"4.\tdefenders lose %d of %d warships (remainder are merchants)\n",dsunk,dship);
+X
+X	for(i=0;i<32;i++) if(owner[i]!=(-1)){
+X		if((asunk>0)&&(side[i]==ATKR)){
+X			if(asunk > aship ) {
+X				ntn[owner[i]].nvy[unit[i]].warships=0;
+X				amsunk = asunk - aship;
+X			} else  {
+X				ntn[owner[i]].nvy[unit[i]].warships -= asunk / aship * ntn[owner[i]].nvy[unit[i]].warships;
+X			}
+X		}
+X		else if((dsunk>0)&&(side[i]==DFND)){
+X			if(dsunk > dship ) {
+X				ntn[owner[i]].nvy[unit[i]].warships=0;
+X				dmsunk = dsunk -dship;
+X			} else  {
+X				ntn[owner[i]].nvy[unit[i]].warships -= dsunk / dship * ntn[owner[i]].nvy[unit[i]].warships;
+X			}
+X		}
+X	}
+X	/* take care of merchants*/
+X	for(i=0;i<32;i++) if(owner[i]!=(-1)){
+X		if((amsunk>0)&&(side[i]==ATKR)){
+X			if(amsunk >= ntn[owner[i]].nvy[unit[i]].merchant ) {
+X				amsunk -= ntn[owner[i]].nvy[unit[i]].merchant;
+X				ntn[owner[i]].nvy[unit[i]].merchant=0;
+X			} else  {
+X				ntn[owner[i]].nvy[unit[i]].merchant-=amsunk;
+X				amsunk=0;
+X			}
+X		}
+X		else if((dmsunk>0)&&(side[i]==DFND)){
+X			if(dmsunk >= ntn[owner[i]].nvy[unit[i]].merchant ) {
+X				dmsunk -= ntn[owner[i]].nvy[unit[i]].merchant;
+X				ntn[owner[i]].nvy[unit[i]].merchant=0;
+X			} else  {
+X				ntn[owner[i]].nvy[unit[i]].merchant-=dmsunk;
+X				dmsunk=0;
+X			}
+X		}
+X	}
+X
+X	/*will round continue; does one side wish to withdraw*/
+X
+X	/*mail results; who is in the battle*/
+X	for(j=0;j<32;j++) if(owner[j]!=(-1)){
+X		done=0;
+X
+X		/*first time your nation appears done=0*/
+X		for(i=0;i<j;i++) if(owner[j]==owner[i]) done=1;
+X
+X		if((done==0)&&(ntn[owner[j]].active==1)) {
+X			sprintf(tempmsg,"%s%d",msgfile,owner[j]);
+X			if ((fpmsg=fopen(tempmsg,"a+"))==NULL) {
+X				fprintf(fnews,"4.\tERROR OPENING %s\n",tempmsg);
+X				exit(1);
+X			}
+X
+X			fprintf(fpmsg,"%s NAVAL BATTLE in sector %d %d\n"
+X			,ntn[owner[j]].name,ntn[owner[0]].nvy[unit[0]].xloc
+X			,ntn[owner[0]].nvy[unit[0]].yloc);
+X
+X			if(side[j]==ATKR) 
+X			fprintf(fpmsg,"%s You are on the Attacking Side\n"
+X				,ntn[owner[j]].name);
+X			else fprintf(fpmsg,"%s You are on the Defending Side\n"
+X				,ntn[owner[j]].name);
+X
+X			/*detail all participants in battle*/
+X			for(k=0;k<32;k++) if(owner[k]!=(-1)){
+X				if(side[k]==DFND) 
+X				fprintf(fpmsg,"%s\t%s is defender with navy %d\n" ,ntn[owner[j]].name , ntn[owner[k]].name,unit[k]);
+X				else fprintf(fpmsg,"%s\t%s is attacker with navy %d\n",ntn[owner[j]].name,ntn[owner[k]].name, unit[k]);
+X			}
+X
+X			fprintf(fpmsg,"%s RESULT: Attackers lose %d ships, Defenders lose %d ships\n",ntn[owner[j]].name, asunk,dsunk);
+X			fprintf(fpmsg,"%s         Attackers capture %d merchants, Defenders capture %d merchants\n",ntn[owner[j]].name, dmsunk,amsunk);
+X			fprintf(fpmsg,"END\n");
+X			fclose(fpmsg);
+X		}
+X	}
+X}
+END_OF_combat.c
+if test 18772 -ne `wc -c <combat.c`; then
+    echo shar: \"combat.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f forms.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"forms.c\"
+else
+echo shar: Extracting \"forms.c\" \(14354 characters\)
+sed "s/^X//" >forms.c <<'END_OF_forms.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X
+X/*	screen subroutines	*/
+X
+X/*include files*/
+X#include <ctype.h>
+X#include "header.h"
+X#include "data.h"
+X
+Xextern FILE *fexe;
+Xextern short country;
+Xextern FILE *fnews;
+X
+Xshowscore()
+X{
+X	int i;
+X	int done=0;
+X	int position;
+X	int count;    	/*number of time through the loop on this screen*/
+X	int nationid;    	/*current nation id */
+X
+X	nationid=1;
+X	while((done==0)&&(nationid<MAXNTN)) {
+X		clear();
+X		standout();
+X		mvaddstr(0,(COLS/2)-10,"NATION SCORE SCREEN");
+X		standend();
+X		mvaddstr(3,0,"nationid is:");
+X		mvaddstr(4,0,"name is:");
+X		mvaddstr(5,0,"leader:");
+X		mvaddstr(6,0,"race:");
+X		mvaddstr(7,0,"class:");
+X		mvaddstr(8,0,"score:");
+X		mvaddstr(9,0,"gold:");
+X		mvaddstr(10,0,"military:");
+X		mvaddstr(11,0,"civilians:");
+X		mvaddstr(12,0,"sectors:");
+X
+X		count=0;
+X		position=2;
+X		while((nationid<MAXNTN)&&(count<5)){
+X			if((nationid<MAXNTN)&&(ntn[nationid].active!=0)) {
+X				position+=13;
+X				mvprintw(3,position,"%d",nationid);
+X				standout();
+X				mvprintw(4,position,"%s",ntn[nationid].name);
+X				standend();
+X				mvprintw(5,position,"%s",ntn[nationid].leader);
+X				for(i=1;i<8;i++)
+X					if(ntn[nationid].race==*(races+i)[0])
+X						mvprintw(6,position,"%s",*(races+i));
+X				if(ntn[nationid].active>=2) mvprintw(7,position,"NPC");
+X				else mvprintw(7,position,"%s",*(Class+ntn[nationid].class));
+X				mvprintw(8,position,"%d",ntn[nationid].score);
+X				mvprintw(9,position,"%ld",ntn[nationid].tgold);
+X				mvprintw(10,position,"%ld",ntn[nationid].tmil);
+X				mvprintw(11,position,"%ld",ntn[nationid].tciv);
+X				mvprintw(12,position,"%d",ntn[nationid].tsctrs);
+X				count++;
+X			}
+X			nationid++;
+X		}
+X		standout();
+X		mvaddstr(18,(COLS/2)-12,"HIT ANY KEY TO CONTINUE");
+X		mvaddstr(19,(COLS/2)-9,"HIT SPACE IF DONE");
+X		standend();
+X		refresh();
+X		if (getch()==' ') done=1;
+X	}
+X}
+X
+Xdiploscrn()
+X{
+X	int i;
+X	char k;
+X	char tempifile[30];
+X	short nation, offset, count, olddip, oldnat, temp;
+X	FILE *fp, *fopen();
+X	short isgod=0;
+X	if(country==0) {
+X		isgod=1;
+X		clear();
+X		mvaddstr(0,0,"WHAT NATION NUMBER:");
+X		refresh();
+X		country = get_number();
+X	}
+X	while(1){
+X		count=1;
+X		offset=0;
+X		clear();
+X		standout();
+X		mvaddstr(0,(COLS/2)-10,"NATION DIPLOMACY SUMMARY");
+X		standend();
+X		mvaddstr(2,0,"                BY YOU,        TO YOU");
+X		for(i=1;i<NTOTAL;i++) if((ntn[i].active>0)&&(i!=country)) {
+X			if(count%14==0) {
+X				offset+=40;
+X				mvaddstr(2,40,"                BY YOU,        TO YOU");
+X				count++;
+X			}
+X			mvprintw(count%14+2,offset, "%d. %s",i,ntn[i].name);
+X			if((ntn[country].dstatus[i]==WAR)
+X			||(ntn[country].dstatus[i]==JIHAD)) standout();
+X			mvprintw(count%14+2,offset+14, "=> %s",*(diploname+ntn[country].dstatus[i]));
+X			standend();
+X			if((ntn[i].dstatus[country]==WAR)
+X			||(ntn[i].dstatus[country]==JIHAD)) standout();
+X			mvprintw(count%14+2,offset+28, "=> %s",*(diploname+ntn[i].dstatus[country]));
+X			standend();
+X			count++;
+X		}
+X		standout();
+X		mvaddstr(17,0,"HIT RETURN KEY TO CHANGE STATUS");
+X		mvprintw(18,0,"HIT 'B' KEY TO BRIBE WARRING NPC NATION (%d GOLD/level)",BRIBE);
+X		mvaddstr(19,0,"ANY OTHER KEY TO CONTINUE:");
+X		standend();
+X		refresh();
+X		k=getch();
+X		if((k!='\n')&&(k!='B')) {
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X		if(k=='B'){
+X			if(ntn[country].tgold<=BRIBE){
+X				mvaddstr(21,0,"NOT ENOUGH GOLD");
+X				refresh();
+X				getch();
+X				return;
+X			}
+X			mvaddstr(20,0,"BRIBES WORK 50% (only the update will show)");
+X			mvaddstr(21,0,"WHAT NATION NUMBER:");
+X			refresh();
+X			nation = get_number();
+X			if(ntn[country].active>=2){
+X				mvaddstr(22,0,"NOT NON PLAYER COUNTRY");
+X				refresh();
+X				getch();
+X				return;
+X			}
+X			/*use maxntn here as cant change with nomads...*/
+X			if((nation<=0)||(nation>MAXNTN)){
+X				if(isgod==1) country=0;
+X				return;
+X			}
+X			if((isgod!=1)
+X			    &&((ntn[nation].dstatus[country]==ALLIED)
+X			    ||(ntn[nation].dstatus[country]==JIHAD)
+X			    ||(ntn[nation].dstatus[country]==CONFEDERACY))){
+X				mvaddstr(22,0,"CANT CHANGE THEIR STATUS");
+X				refresh();
+X				getch();
+X				return;
+X			}
+X			ntn[nation].dstatus[country]--;
+X			ntn[country].tgold-=BRIBE;
+X			ntn[nation].tgold+=BRIBE;
+X			EADJDIP;
+X			oldnat=country;
+X			country=nation;
+X			nation=oldnat;
+X			fprintf(fexe,"L_NGOLD\t%hd \t%d \t%ld \t0 \t0 \t%s\n",XNAGOLD ,country,ntn[country].tgold,"null");
+X			EADJDIP;
+X			country=oldnat;
+X			return;
+X		}
+X		mvaddstr(21,0,"WHAT NATION NUMBER:");
+X		refresh();
+X		nation = get_number();
+X		/*use maxntn here as cant change with nomads...*/
+X		if((nation<=0)||(nation>MAXNTN)){
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X		if((isgod==0)
+X		    &&(((ntn[country].dstatus[nation]==CONFEDERACY)
+X		    &&(ntn[nation].dstatus[country]<WAR))
+X		    ||(ntn[country].dstatus[nation]==JIHAD))) {
+X			mvprintw(23,0,"SORRY, Can't change status on ntn %s -- hit return",ntn[nation].name);
+X			refresh();
+X			getch();
+X			return;
+X		}
+X		else{
+X			clear();
+X			mvaddstr(0,0,"WHAT NEW STATUS");
+X			mvaddstr(2,0,"1) CONFEDERACY (irrevocable)");
+X			mvaddstr(3,0,"2) ALLIED");
+X			mvaddstr(4,0,"3) FRIENDLY");
+X			mvaddstr(5,0,"4) NEUTRAL");
+X			mvaddstr(6,0,"5) HOSTILE");
+X			mvaddstr(7,0,"6) WAR");
+X			mvaddstr(8,0,"7) JIHAD (irrevocable):");
+X			mvaddstr(12,0,"INPUT:");
+X			refresh();
+X			temp = get_number();
+X			if((temp<1)||(temp>7)){
+X				mvprintw(23,0,"SORRY, Invalid inputs -- hit return");
+X				refresh();
+X				getch();
+X				return;
+X			}
+X			ntn[country].dstatus[nation]=temp;
+X			EADJDIP;
+X
+X			/*prevent ron from being sneaky*/
+X			if((temp>HOSTILE)&&(ntn[nation].active>2)
+X			    &&(ntn[nation].dstatus[country]<WAR)) {
+X				olddip=ntn[nation].dstatus[country];
+X				oldnat=country;
+X				country=nation;
+X				nation=oldnat;
+X				ntn[country].dstatus[nation]=WAR;
+X				EADJDIP;
+X				ntn[country].dstatus[nation]=olddip;
+X				oldnat=country;
+X				country=nation;
+X				nation=oldnat;
+X			}
+X			else if((temp>HOSTILE)&&(ntn[nation].active==1)
+X			    &&(ntn[nation].dstatus[country]<WAR)) {
+X	    			sprintf(tempifile,"%s%d",msgfile,country);
+X				if ((fp=fopen(tempifile,"a+"))==NULL) {
+X					mvprintw(4,0,"error opening %s",tempifile);
+X					refresh();
+X					getch();
+X					return;
+X				}
+X				fprintf(fp,"%s %s Declared war on you\n",ntn[nation].name,ntn[country].name);
+X				fputs("END\n",fp);
+X				fclose(fp);
+X			}
+X		}
+X	}
+X}
+X
+Xchange()
+X{
+X	char string[10];
+X	int i, cbonus;
+X	short armynum;
+X	char passwd[8];
+X	short isgod=0;
+X
+X	if(country==0) {
+X		isgod=1;
+X		clear();
+X		mvaddstr(0,0,"SUPER USER; FOR WHAT NATION NUMBER:");
+X		refresh();
+X		country = get_number();
+X	}
+X	clear();
+X	mvaddstr(0,(COLS/2)-10,"NATION STATS SUMMARY");
+X	mvprintw(5,0,"1. nation name is %s   ",ntn[country].name);
+X	mvprintw(6,0,"2. password is XXXXXXXX");
+X	mvprintw(12,0,"capital loc: x is %d",ntn[country].capx);
+X	mvprintw(13,0,"             y is %d",ntn[country].capy);
+X	mvprintw(14,0,"leader is %s",ntn[country].leader);
+X	mvprintw(15,0,"class is %s",*(Class+ntn[country].class));
+X	mvprintw(16,0,"nations mark is...%c ",ntn[country].mark);
+X	for(i=1;i<8;i++) if(ntn[country].race==*(races+i)[0])
+X		mvprintw(17,0, "nation race is....%s  ",*(races+i));
+X	mvprintw(18,0,"score currently...%d",ntn[country].score);
+X
+X	mvprintw(4,(COLS/2), "attack bonus...........+%2d",ntn[country].aplus);
+X	mvprintw(5,(COLS/2), "defense bonus..........+%2d",ntn[country].dplus);
+X	mvprintw(6,(COLS/2), "maximum move rate.......%2d",ntn[country].maxmove);
+X	mvprintw(7,(COLS/2), "reproduction rate......%2d%%",ntn[country].repro);
+X	mvprintw(9,(COLS/2), "gold talons........$%5ld",ntn[country].tgold);
+X	mvprintw(10,(COLS/2),"jewels ............$%5ld",ntn[country].jewels);
+X	mvprintw(11,(COLS/2),"iron & minerals......%5ld",ntn[country].tiron);
+X	if(ntn[country].tfood<2*ntn[country].tciv) standout();
+X	mvprintw(12,(COLS/2),"food in granary......%5ld",ntn[country].tfood);
+X	standend();
+X
+X	mvprintw(13,(COLS/2),"total soldiers.......%5ld",ntn[country].tmil);
+X	mvprintw(14,(COLS/2),"total civilians......%5ld",ntn[country].tciv);
+X	mvprintw(15,(COLS/2),"total ships..........%5d",ntn[country].tships);
+X	mvprintw(16,(COLS/2),"total sectors........%5d",ntn[country].tsctrs);
+X
+X	standout();
+X	mvaddstr(19,(COLS/2)-9, "HIT ANY KEY TO CONTINUE");
+X	mvaddstr(20,(COLS/2)-15,"HIT 1 or 2 TO CHANGE NAME or PASSWD");
+X	if(magic(country,VAMPIRE)!=1)
+X		mvaddstr(21,(COLS/2)-14,"HIT 3 TO ADD TO YOUR COMBAT BONUS");
+X	if(isgod==1) mvaddstr(22,(COLS/2)-9,"HIT 4 TO DESTROY NATION");
+X
+X	standend();
+X	refresh();
+X	switch(getch()){
+X	case '1': /*get name*/
+X		clear();
+X		echo();
+X		mvaddstr(0,0,"what name would you like:");
+X		clrtoeol();
+X		refresh();
+X		getstr(string);
+X		if((strlen(string)<=1)||(strlen(string)>NAMELTH)){
+X			beep();
+X			mvaddstr(2,0,"invalid name--hit return");
+X			noecho();
+X			refresh();
+X			getch();
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X		/*check if already used*/
+X		else for(i=1;i<(country-1);i++){
+X			if((strcmp(ntn[i].name,string)==0)&&(i!=country)) {
+X				mvaddstr(2,0,"name already used--hit return");
+X				beep();
+X				noecho();
+X				refresh();
+X				getch();
+X				if(isgod==1) country=0;
+X				return;
+X			}
+X		}
+X		mvaddstr(2,0,"new name can be used following next update--hit return");
+X		refresh();
+X		getch();
+X		strcpy(ntn[country].name,string);
+X		noecho();
+X		ECHGNAME;
+X		break;
+X	case '2': /*change password */
+X		clear();
+X		if(isgod!=1){
+X			mvaddstr(0,0,"what is your current password:");
+X			refresh();
+X			getstr(string);
+X			strcpy(passwd,crypt(string,SALT));
+X			if((strncmp(passwd,ntn[0].passwd,PASSLTH)!=0)
+X			    &&(strncmp(passwd,ntn[country].passwd,PASSLTH)!=0)){
+X				beep();
+X				mvaddstr(2,0,"invalid password--hit return");
+X				refresh();
+X				getch();
+X				if(isgod==1) country=0;
+X				return;
+X			}
+X		}
+X		mvaddstr(2,0,"what is your new password:");
+X		refresh();
+X		getstr(string);
+X		if((strlen(string)>=8)||(strlen(string)<2)) {
+X			beep();
+X			mvaddstr(2,0,"invalid new password--hit return");
+X			refresh();
+X			getch();
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X		mvaddstr(4,0,"reenter your new password:");
+X		refresh();
+X		getstr(passwd);
+X		if(strcmp(passwd,string)!=0) {
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X		mvaddstr(6,0,"new password can be used following next update--hit return");
+X		refresh();
+X		getch();
+X		ECHGPAS;
+X		strncpy(ntn[country].passwd,crypt(string,SALT),PASSLTH);
+X		break;
+X	case '3':
+X		if(magic(country,VAMPIRE)==1) {
+X			mvaddstr(0,0,"VAMPIRES CAN'T ADD TO COMBAT BONUS (hit return)");
+X			refresh();
+X			getch();
+X		}
+X		if(magic(country,WARLORD)==1)      cbonus=30;
+X		else if(magic(country,CAPTAIN)==1) cbonus=20;
+X		else if(magic(country,WARRIOR)==1) cbonus=10;
+X		else cbonus=0;
+X		i=0;
+X		for(armynum=0;armynum<MAXARM;armynum++) if(ASOLD>0) i+=ASOLD;
+X		i = max ( i, 1500);
+X		armynum = max ( ntn[country].aplus-cbonus, 10 ) / 10;
+X		mvprintw(0,0,"DO YOU WISH SPEND %d IRON ON ATTACK (enter y or n):",IRONORE*i*armynum*armynum);
+X		refresh();
+X		if(getch()=='y'){
+X			if(ntn[country].tiron> (long)IRONORE*i*armynum*armynum){
+X				ntn[country].aplus+=1;
+X				I_APLUS;
+X				ntn[country].tiron-= (long) IRONORE*i*armynum*armynum;
+X			}
+X			else {
+X				mvaddstr(0,0,"SORRY - hit any key");
+X				clrtoeol();
+X				refresh();
+X				getch();
+X			}
+X		}
+X		i=0;
+X		for(armynum=0;armynum<MAXARM;armynum++) if(ASOLD>0) i+=ASOLD;
+X		i = max ( i, 1500);
+X		armynum = max ( ntn[country].dplus-cbonus, 10 ) / 10;
+X		mvprintw(0,0,"DO YOU WISH SPEND %d IRON ON DEFENSE (enter y or n):",IRONORE*i*armynum*armynum);
+X		refresh();
+X		if(getch()=='y'){
+X			if(ntn[country].tiron>IRONORE*i*armynum*armynum){
+X				ntn[country].dplus+=1;
+X				I_DPLUS;
+X				ntn[country].tiron-= (long) IRONORE*i*armynum*armynum;
+X			}
+X			else {
+X				mvaddstr(0,0,"SORRY - hit any key");
+X				clrtoeol();
+X				refresh();
+X				getch();
+X			}
+X		}
+X		break;
+X	case '4':
+X		if(isgod==1){
+X			clear();
+X			mvaddstr(0,0,"DO YOU WANT TO DESTROY THIS NATION (y or n)");
+X			refresh();
+X
+X			if(getch()=='y') {
+X				if ((fnews=fopen(newsfile,"w"))==NULL) {
+X					printf("error opening news file\n");
+X					exit(1);
+X				}
+X				destroy();
+X				fclose(fnews);
+X			}
+X		}
+X		break;
+X	default:
+X		if(isgod==1) country=0;
+X		return;
+X	}
+X	if(isgod==1) country=0;
+X	change();
+X}
+X
+Xhelp()
+X{
+X	int lineno;
+X	FILE *fp, *fopen();
+X	int done=0;
+X	char line[80];
+X
+X	/*open .help file*/
+X	if ((fp=fopen(helpfile,"r"))==NULL) {
+X		mvprintw(0,0,"\nerror on read of %s\n",helpfile);
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	while(done==0){
+X		/*read in screen (until DONE statement)*/
+X		fgets(line,80,fp);
+X		if(strncmp(line,"DONE",4)==0) done=1;
+X		else {
+X			clear();
+X			lineno=0;
+X			while(strncmp(line,"END",3)!=0) {
+X				mvaddstr(lineno,0,line);
+X				lineno++;
+X				if(lineno>LINES-3) strcpy(line,"END");
+X				else fgets(line,80,fp);
+X			}
+X			standout();
+X			mvaddstr(LINES-2,(COLS/2)-14,"HIT ANY KEY TO CONTINUE HELP SCREENS");
+X			mvaddstr(LINES-1,(COLS/2)-12,"TO END HELP HIT SPACE KEY");
+X			standend();
+X			refresh();
+X			if(getch()==' ') done=1;
+X		}
+X	}
+X	fclose(fp);
+X}
+X
+Xnewspaper()
+X{
+X	int lineno;
+X	FILE *fp, *fopen();
+X	int newpage,done;
+X	short pagenum=1;
+X	char line[80];
+X	char title[80];
+X
+X	clear();
+X	if ((fp=fopen(newsfile,"r"))==NULL) {
+X		mvprintw(0,0,"error on read of %s",newsfile);
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	/*open and read one page */
+X	done=0;
+X	newpage=0;
+X	if(fgets(title,80,fp)==NULL) done=1;
+X	while(done==0){
+X		if(newpage==0){
+X			clear();
+X			lineno=5;
+X			newpage=1;
+X			standout();
+X			mvprintw(0,20,"CONQUER NEWS REPORT   page %d",pagenum);
+X			mvaddstr(1,23,"ALL THE NEWS THAT FITS");
+X			mvprintw(3,20,"%s",title+2);
+X			standend();
+X		}
+X
+X		if(fgets(line,80,fp)==NULL) done=1;
+X		else {
+X			if(line[1]!='.') {
+X				strcpy(title,line);
+X				newpage=0;
+X				pagenum++;
+X			}
+X			else {
+X				mvaddstr(lineno++,0,line+2);
+X				if(todigit(line[0])!=pagenum) {
+X					newpage=0;
+X					pagenum=todigit(line[0]);
+X				}
+X				else if(lineno>LINES-3) newpage=0;
+X			}
+X		}
+X
+X		if(newpage==0||done==1){
+X			standout();
+X			mvaddstr(LINES-2,(COLS/2)-13,"HIT ANY KEY TO CONTINUE");
+X			mvaddstr(LINES-1,(COLS/2)-12,"TO END NEWS HIT SPACE");
+X			standend();
+X			refresh();
+X			if(getch()==' ') done=1;
+X		}
+X	}
+X	fclose(fp);
+X}
+END_OF_forms.c
+if test 14354 -ne `wc -c <forms.c`; then
+    echo shar: \"forms.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f move.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"move.c\"
+else
+echo shar: Extracting \"move.c\" \(17674 characters\)
+sed "s/^X//" >move.c <<'END_OF_move.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X
+X/*include files*/
+X#include "header.h"
+X#include "data.h"
+X#include <ctype.h>
+X
+Xextern FILE *fexe;
+X/*redraw map in this turn if redraw is a 1*/
+Xextern short redraw;
+Xextern short selector;
+Xextern short pager;
+Xextern short xcurs,ycurs,xoffset,yoffset;
+Xextern short hilmode;   /*highlight modes: 0=owned sectors, 1= armies, 2=none*/
+X
+X/* nation id of owner*/
+Xextern short country;
+Xint armornvy=AORN;	/*is one if navy*/
+X
+Xmymove()
+X{
+X	int mveleft;
+X	int i,j,x,y;
+X	char carried;
+X	int total,Tarmynum,Tnation;
+X	int startx=0,starty=0;
+X	int ctransport=0;	 /*number of civilians to transport*/
+X	int valid=0;     /*1 if move was a valid move (you must pay cost)*/
+X	short armynum;
+X	int oldxcurs,oldycurs;
+X	short nvynum;
+X	int done=0;	/*done is 1 if done with this move*/
+X	int capacity;
+X
+X	armornvy=AORN;
+X	/*get selected army or navy*/
+X	if((armynum=getselunit())<0) {
+X		standout();
+X		beep();
+X		mvprintw(LINES-3,0,"ERROR: FAKE UNIT (%d) SELECTED: ",armynum);
+X		clrtoeol();
+X		mvaddstr(LINES-1,0,"hit return to continue");
+X		clrtoeol();
+X		standend();
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	/*navy*/
+X	if((armynum>=MAXARM)&&(armynum<MAXARM+MAXNAVY)) {
+X		nvynum=armynum-MAXARM;
+X		armynum=(-1);
+X		standout();
+X		mvprintw(LINES-3,0,"NAVY %d SELECTED: ",nvynum);
+X		standend();
+X		clrtoeol();
+X		capacity=NMER*SHIPHOLD;
+X		if((NMOVE<=0)) {
+X			mvprintw(LINES-2,0,"NO MOVE POINTS LEFT on fleet %d",nvynum);
+X			beep();
+X			redraw=FALSE;
+X			clrtoeol();
+X			mvaddstr(LINES-1,0,"hit return to continue");
+X			clrtoeol();
+X			refresh();
+X			getch();
+X			armornvy=AORN;
+X			return;
+X		}
+X		if( capacity > 0 ) {
+X			int	has_army;
+X			int	has_civilians;
+X			char	prompt[ 200 ];
+X
+X			has_army = solds_in_sector( XREAL, YREAL, country ) > 0;
+X			has_civilians = (sct[XREAL][YREAL].owner == country) &&
+X				(sct[XREAL][YREAL].people > 0);
+X
+X			if( !has_civilians && !has_army ) {
+X				carried = 'n';
+X			} else {
+X				strcpy( prompt, "Transport " );
+X				if( has_army )
+X					strcat( prompt, "(a)rmy, " );
+X				if( has_civilians )
+X					strcat( prompt, "(c)iv, " );
+X				if( has_army && has_civilians )
+X					strcat( prompt, "(b)oth, " );
+X				strcat( prompt, "(n)othing: " );
+X
+X				mvaddstr( LINES-2, 0, prompt );
+X				clrtoeol();
+X				refresh();
+X				carried = getch();
+X			}
+X		}
+X		else carried='n';
+X
+X		/*transport army*/
+X		if(carried=='a'||carried=='b'){
+X			mvprintw(LINES-2,0,"CAPACITY=%d ;WHAT ARMY TO XPORT?:",capacity);
+X			clrtoeol();
+X			refresh();
+X			armynum = get_number();
+X			if((armynum<MAXARM)&&(armynum>=0)
+X			&&(AXLOC==XREAL)&&(AYLOC==YREAL)){
+X				if(ASOLD>capacity){
+X					mvaddstr(LINES-1,0,"ERROR: TOO MANY TROOPS");
+X					clrtoeol();
+X					refresh();
+X					getch();
+X					armornvy=AORN;
+X					return;
+X				}
+X				else if(AMOVE==0){
+X					mvaddstr(LINES-1,0,"SORRY: ARMY HAS NO MOVEMENT POINTS");
+X					clrtoeol();
+X					refresh();
+X					getch();
+X					armornvy=AORN;
+X					return;
+X				}
+X				else capacity-=ASOLD;
+X			}
+X			else {
+X				mvaddstr(LINES-1,0,"ERROR: INVALID ARMY!");
+X				refresh();
+X				getch();
+X				armornvy=AORN;
+X				return;
+X			}
+X		}
+X		/*transport civilians*/
+X		if(carried=='c'||carried=='b'){
+X			mvprintw(LINES-2,0,"CAPACITY=%d ;HOW MANY CIVILIANS XPORT?:",capacity);
+X			clrtoeol();
+X			refresh();
+X			ctransport = get_number();
+X			if(ctransport>0&&ctransport<=sct[XREAL][YREAL].people&&(ctransport<=capacity)){
+X				startx=XREAL;
+X				starty=YREAL;
+X			}
+X			else {
+X				mvaddstr(LINES-2,0,"NUMBER OF MEN ERROR");
+X				refresh();
+X				getch();
+X				armornvy=AORN;
+X				return;
+X			}
+X		}
+X		refresh();
+X		standend();
+X	}
+X	/*army*/
+X	else {
+X		mvprintw(LINES-3,0,"ARMY %d SELECTED: ",armynum);
+X		clrtoeol();
+X		if(AMOVE<=0){
+X			mvaddstr(LINES-2,0,"NO MOVEMENT POINTS LEFT");
+X			clrtoeol();
+X			mvaddstr(LINES-1,0,"hit return to continue");
+X			clrtoeol();
+X			beep();
+X			standend();
+X			refresh();
+X			redraw=FALSE;
+X			getch();
+X			armornvy=AORN;
+X			return;
+X		}
+X	}
+X
+X	standout();
+X	mvaddstr(LINES-2,0,"MOVEMENT SCREEN");
+X	clrtoeol();
+X	mvaddstr(LINES-1,0,"HIT SPACE IF DONE         ");
+X	clrtoeol();
+X	standend();
+X	move(ycurs,xcurs*2);
+X	refresh();
+X
+X	while(done==0){
+X		valid=1;
+X		if(armornvy==NAVY) mveleft=NMOVE;
+X		else mveleft=AMOVE;
+X		oldxcurs=xcurs;
+X		oldycurs=ycurs;
+X		switch(getch()) {
+X		case 'b':
+X			xcurs--;
+X			ycurs++;
+X			break;
+X		case 'h':
+X			xcurs--;
+X			break;
+X		case 'j':		/*move down*/
+X			ycurs++;
+X			break;
+X		case 'k':		/*move up*/
+X			ycurs--;
+X			break;
+X		case 'l':		/*move east*/
+X			xcurs++;
+X			break;
+X		case 'n':		/*move south-east*/
+X			ycurs++;
+X			xcurs++;
+X			break;
+X		case 'u':		/*move north-east*/
+X			ycurs--;
+X			xcurs++;
+X			break;
+X		case 'y':		/*move north-west*/
+X			ycurs--;
+X			xcurs--;
+X			break;
+X		case ' ':
+X			valid=0;
+X			done=1;
+X			break;
+X		default:
+X			beep();
+X			valid=0;
+X		}
+X
+X		/*if valid move check if have enough movement points*/
+X		if(valid==1){
+X			/*if valid move decrement move rate*/
+X			if(armornvy==ARMY) {
+X				if((movecost[XREAL][YREAL]<0)
+X				||(movecost[XREAL][YREAL]>mveleft)) {
+X					beep();
+X					valid=0;
+X					xcurs=oldxcurs;
+X					ycurs=oldycurs;
+X				}
+X				else {
+X					AMOVE-=movecost[XREAL][YREAL];
+X					if(AMOVE<=0) done=1;
+X				}
+X			}
+X			/*then navy*/
+X			else if(armornvy==NAVY) {
+X				if(movecost[XREAL][YREAL]>mveleft) {
+X					beep();
+X					valid=0;
+X					xcurs=oldxcurs;
+X					ycurs=oldycurs;
+X				}
+X				else if(movecost[XREAL][YREAL]>0){
+X					standout();
+X					mvprintw(LINES-3,0,"DO YOU WISH TO LAND SHIPS?");
+X					standend();
+X					clrtoeol();
+X					refresh();
+X					if(getch()=='y') {
+X						move(3,0);
+X						clrtoeol();
+X						done=1;
+X			if(((sct[XREAL][YREAL].designation==DCITY)
+X			||(sct[XREAL][YREAL].designation==DCAPITOL))
+X			&&(sct[XREAL][YREAL].owner==country)) NMOVE--;
+X						else NMOVE=0;
+X					}
+X					else {
+X						move(3,0);
+X						clrtoeol();
+X						valid=0;
+X						xcurs=oldxcurs;
+X						ycurs=oldycurs;
+X						move(ycurs,xcurs*2);
+X						refresh();
+X					}
+X				}
+X				else NMOVE+=movecost[XREAL][YREAL];
+X				if(NMOVE<=0) done=1;
+X			}
+X			else if(armornvy==AORN){
+X				mvprintw(LINES-3,0,"AORN ERROR -- aborting hit return");
+X				refresh();
+X				getch();
+X				return;
+X			}
+X		}
+X
+X		/*calc enemy soldiers */
+X		total=0;
+X		if(armornvy==ARMY) {
+X			for(Tnation=0;Tnation<NTOTAL;Tnation++) 
+X			if(Tnation!=country) 
+X			for(Tarmynum=0;Tarmynum<MAXARM;Tarmynum++) 
+X			if((ntn[Tnation].arm[Tarmynum].sold>0)
+X			&&(ntn[Tnation].arm[Tarmynum].xloc==XREAL)
+X			&&(ntn[Tnation].arm[Tarmynum].yloc==YREAL)
+X			&&((ntn[country].dstatus[Tnation]>=HOSTILE)
+X			||(ntn[Tnation].dstatus[country]>=HOSTILE))
+X			&&(ntn[Tnation].arm[Tarmynum].stat!=SCOUT))
+X				total+=ntn[Tnation].arm[Tarmynum].sold;
+X		}
+X		/*naval total is number of at war WARSHIPS within one sector*/
+X		else {
+X			for(Tnation=0;Tnation<NTOTAL;Tnation++) 
+X			if(Tnation!=country) 
+X			for(Tarmynum=0;Tarmynum<MAXNAVY;Tarmynum++) 
+X			if((ntn[Tnation].nvy[Tarmynum].warships>0)
+X			&&(ntn[Tnation].nvy[Tarmynum].xloc<=XREAL+1)
+X			&&(ntn[Tnation].nvy[Tarmynum].xloc>=XREAL-1)
+X			&&(ntn[Tnation].nvy[Tarmynum].yloc<=YREAL+1)
+X			&&(ntn[Tnation].nvy[Tarmynum].yloc>=YREAL-1)
+X			&&(ntn[Tnation].dstatus[country]>=HOSTILE))
+X				total+=ntn[Tnation].nvy[Tarmynum].warships;
+X		}
+X
+X		/*if moved and not done*/
+X		if((valid==1)&&(done==0)){
+X			/*check if offmap and correct*/
+X			coffmap();
+X
+X			mvaddstr(LINES-3,0,"                  ");
+X
+X			if((armornvy==ARMY)&&(ASTAT!=SCOUT)){
+X				if((sct[XREAL][YREAL].owner!=0)
+X				&&(sct[XREAL][YREAL].owner!=country)
+X				&&(sct[XREAL][YREAL].people>100)
+X		&&(ntn[sct[XREAL][YREAL].owner].dstatus[country]>FRIENDLY)
+X		&&(ntn[country].dstatus[sct[XREAL][YREAL].owner]<WAR)){
+X		/*if other owner (with civilians) and not hostile then stop*/
+X					beep();
+X					mvaddstr(LINES-3,0,"HALT! YOU MAY NOT PASS HERE!");
+X					clrtoeol();
+X					refresh();
+X					AMOVE=0;
+X					AADJMOV;
+X					done=1;
+X				}
+X				else if(total>0){
+X					/*stop if you have < 2* total*/
+X					if(ASOLD < 2 * total){
+X						AMOVE=0;
+X						AADJMOV;
+X						mvprintw(LINES-3,0,"Zone Of Control ");
+X						beep();
+X						done=1;
+X					}
+X					else mvaddstr(LINES-3,0,"SAFE -- hit return");
+X				}
+X			}
+X			else if((armornvy==NAVY)&&(total>0)){
+X				/*25% stop if they have > total*/
+X				if((ntn[country].nvy[nvynum].warships < total)
+X				&&(rand()%4==0)){
+X					NMOVE=0;
+X					NADJMOV;
+X					mvprintw(LINES-3,0,"%d Enemy WarShips Sighted ",total);
+X					beep();
+X					done=1;
+X				}
+X				else mvaddstr(LINES-3,0,"SAFE -- hit return");
+X			}
+X
+X			standout();
+X			if(armornvy==ARMY){
+X				mvprintw(LINES-2,0,"MOVESCREEN: move left: %d  ",AMOVE);
+X			}
+X			else mvprintw(LINES-2,0,"MOVESCREEN: move left: %d  ",NMOVE);
+X
+X			mvprintw(LINES-1,20,"move cost is %d  ",abs(movecost[XREAL][YREAL]));
+X			standend();
+X			move(ycurs,xcurs*2);
+X
+X			/*if you just moved off map then see it*/
+X			if(inch()==' ') {
+X				if(armornvy==ARMY) {
+X					AXLOC=XREAL;
+X					AYLOC=YREAL;
+X				}
+X				else if(armornvy==NAVY) {
+X					NXLOC=XREAL;
+X					NYLOC=YREAL;
+X				}
+X				makemap();
+X			}
+X			else {
+X				makeside();
+X				/*see within one sector of unit*/
+X				if(hilmode==3) {
+X					for(i=XREAL-xoffset-1;i<=XREAL-xoffset+1;i++){
+X						for(j=YREAL-yoffset-1;j<=YREAL-yoffset+1;j++){
+X							highlight(i,j);
+X							see(i,j);
+X						}
+X					}
+X					for(i=0;i<MAXARM;i++) if(ntn[country].arm[i].sold>0){
+X						standout();
+X						see(ntn[country].arm[i].xloc-xoffset,ntn[country].arm[i].yloc-yoffset);
+X					}
+X					for(i=0;i<MAXNAVY;i++) if(ntn[country].nvy[i].merchant+ntn[country].nvy[i].warships>0){
+X						standout();
+X						see(ntn[country].nvy[i].xloc-xoffset,ntn[country].nvy[i].yloc-yoffset);
+X
+X					}
+X				}
+X				else for(i=XREAL-xoffset-1;i<=XREAL-xoffset+1;i++){
+X					for(j=YREAL-yoffset-1;j<=YREAL-yoffset+1;j++){
+X						highlight(i,j);
+X						see(i,j);
+X					}
+X				}
+X			}
+X			move(ycurs,xcurs*2);
+X			refresh();
+X		}
+X	}
+X
+X	/*at this point you are done with move*/
+X	/*move unit now to XREAL,YREAL*/
+X	selector=0;
+X	pager=0;
+X	mvaddstr(LINES-1,0,"DONE MOVEMENT");
+X	clrtoeol();
+X	if(armornvy==ARMY){
+X		AXLOC=XREAL;
+X		AYLOC=YREAL;
+X		AADJLOC;
+X		AADJMOV;
+X		/*if sector unowned take it*/
+X		/*first check if occupied*/
+X		/* if (other owner and unoccupied) or (no owner) you take*/
+X		if(ASOLD>=75){
+X			if(SOWN==0){
+X				mvprintw(LINES-2,0,"TAKING UNOWNED SECTOR");
+X				SOWN=country;
+X				SADJOWN;
+X				AMOVE=0;
+X				AADJMOV;
+X			}
+X			else if((sct[AXLOC][AYLOC].owner!=country)
+X				&&((sct[AXLOC][AYLOC].designation==DCITY)
+X				||(sct[AXLOC][AYLOC].designation==DCAPITOL))){
+X				mvprintw(LINES-2,0,"ENTERING CITY SECTOR");
+X			}
+X			else if((ASOLD > 7*total)&&(total!=0)){
+X				/*over run if > 7x as many*/
+X				mvaddstr(LINES-3,0,"OVERRAN HOSTILE ARMY ");
+X				AMOVE=0;
+X				AADJMOV;
+X				x=country;
+X				y=armynum;
+X				for(Tnation=0;Tnation<MAXNTN;Tnation++) 
+X				if(Tnation!=x)
+X				for(Tarmynum=0;Tarmynum<MAXARM;Tarmynum++) 
+X				if((ntn[Tnation].arm[Tarmynum].xloc==XREAL)
+X				&&(ntn[Tnation].arm[Tarmynum].yloc==YREAL)
+X				&&((ntn[x].dstatus[Tnation]>=HOSTILE)
+X				||(ntn[Tnation].dstatus[x]>=HOSTILE))) {
+X					country=Tnation;
+X					armynum=Tarmynum;
+X					ASOLD=0;
+X					AADJMEN;
+X				}
+X				country=x;
+X				armynum=y;
+X				if(sct[XREAL][YREAL].owner!=country){
+X				if((sct[XREAL][YREAL].people>0)
+X				&&(ntn[sct[XREAL][YREAL].owner].race!=ntn[country].race)) flee(XREAL,YREAL,0);
+X				SOWN=country;
+X				SADJOWN;
+X				if (is_habitable(AXLOC,AYLOC)) {
+X				sct[AXLOC][AYLOC].designation=DDEVASTATED;
+X				SADJDES;
+X				}
+X				}
+X				beep();
+X			}
+X			else if((SOWN!=country)
+X				&&((occ[XREAL][YREAL]==0)
+X				||(occ[XREAL][YREAL]==country))
+X				&&(ntn[country].dstatus[SOWN]>HOSTILE)
+X				&&((ASTAT==ATTACK)||(ASTAT==DEFEND))) {
+X				/*people flee if not of same race*/
+X				if((sct[XREAL][YREAL].people>0)
+X				&&(ntn[sct[XREAL][YREAL].owner].race!=ntn[country].race)) flee(XREAL,YREAL,0);
+X				mvprintw(LINES-2,0,"TAKING SECTOR");
+X				SOWN=country;
+X				SADJOWN;
+X				AMOVE=0;
+X				AADJMOV;
+X			}
+X			clrtoeol();
+X			refresh();
+X		}
+X	}
+X	else if(armornvy==AORN){
+X		mvprintw(LINES-3,0,"ERROR");
+X		return;
+X	}
+X	else {
+X		/*else navy*/
+X		mvprintw(LINES-1,0,"NAVY DONE: ");
+X		clrtoeol();
+X		NXLOC=XREAL;
+X		NYLOC=YREAL;
+X		NADJLOC;
+X		NADJMOV;
+X		if((carried=='a'||carried=='b')
+X		&&(sct[XREAL][YREAL].altitude!=WATER)&&(armynum>=0)
+X		&&(armynum<MAXARM)) {
+X			AXLOC=XREAL;
+X			AYLOC=YREAL;
+X			AADJLOC;
+X			AMOVE=0;
+X			AADJMOV;
+X			/*take unowned land*/
+X			if(SOWN==0) {
+X				SOWN=country;
+X				SADJOWN;
+X			}
+X		}
+X		/*land civilians*/
+X		if((carried=='b'||carried=='c')
+X		&&(sct[XREAL][YREAL].altitude!=WATER)
+X		&&(ctransport>0)) {
+X			if(SOWN==country) {
+X				sct[XREAL][YREAL].people+=ctransport;
+X				SADJCIV;
+X				sct[startx][starty].people-=ctransport;
+X				i=startx;
+X				j=starty;
+X				SADJCIV2;
+X			}
+X			else mvprintw(LINES-3,0,"cant move people to %d,%d as unowned",XREAL,YREAL);
+X		}
+X		if((carried=='a'||carried=='b'||carried=='c')
+X		&&(sct[XREAL][YREAL].altitude==WATER)) {
+X			mvaddstr(LINES-3,0,"You stopped in WATER, returning any transported people");
+X		}
+X	}
+X	redraw=FALSE;
+X	makemap();
+X	armornvy=AORN;
+X}
+X
+X
+X#define ALPHA_SIZE	128
+X
+X/*movecost contains movement cost unless water  -1 or unenterable land (-2)*/
+X/*NEW: if water and not ajacent to land will cost -4*/
+Xupdmove(race)
+X{
+X	register struct s_sector	*sptr;
+X	register int	i,j;
+X	int x,y;
+X	int onecost;
+X	int twocost;
+X	char *HVegcost=  "83210000232E";
+X	char *OVegcost=  "52100012517E";
+X	char *EVegcost=  "86221000017E";
+X	char *DVegcost=  "57100013577E";
+X	char *XVegcost=  "83210001232E";	/*others*/
+X	char *HElecost=  "E321E";
+X	char *OElecost=  "E211E";
+X	char *EElecost=  "E631E";
+X	char *DElecost=  "E211E";
+X	char *XElecost=  "E321E";  		/*others*/
+X
+X	short	veg_cost[ ALPHA_SIZE ];
+X	short	ele_cost[ ALPHA_SIZE ];
+X
+X	for( j = 0; j < ALPHA_SIZE; j++ )
+X		veg_cost[j] = ele_cost[j] = -1;
+X
+X	for( j = 0; j <= 10; j++ ) {
+X		switch( race ) {
+X		case ELF:
+X			veg_cost[ veg[j] ] = todigit( EVegcost[j] );
+X			break;
+X		case DWARF:
+X			veg_cost[ veg[j] ] = todigit( DVegcost[j] );
+X			break;
+X		case ORC:
+X			veg_cost[ veg[j] ] = todigit( OVegcost[j] );
+X			break;
+X		case HUMAN:
+X			veg_cost[ veg[j] ] = todigit( HVegcost[j] );
+X			break;
+X		default:
+X			veg_cost[ veg[j] ] = todigit( XVegcost[j] );
+X			break;
+X		} /* switch */
+X	} /* for */
+X
+X	for( j = 0; j <= 4; j++ ) {
+X		switch( race ) {
+X		case ELF:
+X			ele_cost[ ele[j] ] = todigit( EElecost[j] );
+X			break;
+X		case DWARF:
+X			ele_cost[ ele[j] ] = todigit( DElecost[j] );
+X			break;
+X		case ORC:
+X			ele_cost[ ele[j] ] = todigit( OElecost[j] );
+X			break;
+X		case HUMAN:
+X			ele_cost[ ele[j] ] = todigit( HElecost[j] );
+X			break;
+X		default:
+X			ele_cost[ ele[j] ] = todigit( XElecost[j] );
+X			break;
+X		} /* switch */
+X	} /* for */
+X
+X	for(x=0;x<MAPX;x++) for(y=0;y<MAPX;y++){
+X		sptr = &sct[x][y];
+X
+X		if(race==GOD) movecost[x][y] = 0;
+X		else if(sptr->altitude==WATER) {
+X			movecost[x][y] = -4;
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X			if( i>=0 && j>=0 && i<MAPX && j<MAPY)
+X				if( sct[i][j].altitude != WATER)
+X					movecost[x][y] = -1;
+X		}
+X		else if(((magic(country,DERVISH)==1)
+X		||(magic(country,DESTROYER)==1))
+X		&&((sptr->vegetation==ICE)
+X		||(sptr->vegetation==DESERT))) 
+X			movecost[x][y] = 1;
+X		else {
+X			onecost = veg_cost[ sptr->vegetation ];
+X			twocost = ele_cost[ sptr->altitude ];
+X
+X			if( onecost == -1 || twocost == -1 )
+X				movecost[x][y] = -2;
+X			else
+X				movecost[x][y] = onecost + twocost;
+X		} /* if */
+X	} /* for */
+X} /* updmove() */
+X
+X/*get selected army or navy: if navy, number is MAXARM+nvynum*/
+Xgetselunit()
+X{
+X	int number=(-1);
+X	short armynum=0;
+X	short nvynum=0;
+X	int count=0;
+X	/*current selected unit is selector/2+5*pager*/
+X	/*count is order of that army in sector*/
+X	/*armynum is number of that army*/
+X	for(armynum=0;armynum<MAXARM;armynum++){
+X		if((ASOLD>0)&&(AXLOC==XREAL)&&(AYLOC==YREAL)) {
+X			if((5*pager)+(selector/2)==count) number=armynum;
+X			count++;
+X		}
+X	}
+X
+X	if(number==(-1)){
+X	for(nvynum=0;nvynum<MAXNAVY;nvynum++)
+X		if((NMER+NWAR>0)&&(NXLOC==XREAL)&&(NYLOC==YREAL)) {
+X			if((5*pager)+(selector/2)==count) number=MAXARM+nvynum;
+X			count++;
+X		}
+X	}
+X	if(number>=0){
+X		if(number>=MAXARM) armornvy=NAVY;
+X		else armornvy=ARMY;
+X	}
+X	return(number);
+X}
+X
+Xflee(x,y,z)
+X{
+X	/*count is number of acceptable sectors*/
+X	int count=0;
+X	int i,j;
+X	/*flee*/
+X	/*check if next to anybody of the sectors owners race*/
+X	for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++)
+X		if(i>=0&&i<MAPX&&j>=0&&j<MAPY
+X		&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) 
+X			count++;
+X
+X	if(count>0) {
+X	if(z==0) mvaddstr(LINES-2,20,"CIVILIANS ABANDON SECTOR");
+X	for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++)
+X		if(i>=0&&i<MAPX&&j>=0&&j<MAPY
+X		&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) {
+X			sct[i][j].people += sct[x][y].people / count;
+X			if(z==0) SADJCIV2;
+X		}
+X	}
+X	else {
+X	sct[x][y].people /= 2;
+X	for(i=x-4;i<=x+4;i++) for(j=y-4;j<=y+4;j++)
+X		if(i>=0&&i<MAPX&&j>=0&&j<MAPY
+X		&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) 
+X			count++;
+X	if(count>0) {
+X	if(z==0) mvaddstr(LINES-2,20,"PEOPLE FLEE SECTOR AND HALF DIE");
+X	for(i=x-4;i<=x+4;i++) for(j=y-4;j<=y+4;j++)
+X		if(i>=0&&i<MAPX&&j>=0&&j<MAPY
+X		&&(ntn[sct[i][j].owner].race==ntn[sct[x][y].owner].race)) {
+X			sct[i][j].people += sct[x][y].people / count;
+X			if(z==0) SADJCIV2;
+X		}
+X	}
+X	else if(z==0) mvaddstr(LINES-2,20,"PEOPLE IN SECTOR DIE");
+X	}
+X
+X	sct[x][y].people = 0;
+X	if(z==0) SADJCIV;
+X	sct[x][y].fortress=0;
+X	/*SINFORT;*/
+X	if(isdigit(sct[XREAL][YREAL].vegetation)!=0) {
+X		sct[x][y].designation=DDEVASTATED;
+X		if(z==0) SADJDES2;
+X	}
+X}
+X
+END_OF_move.c
+if test 17674 -ne `wc -c <move.c`; then
+    echo shar: \"move.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+echo shar: End of archive 4 \(of 6\).
+cp /dev/null ark4isdone
+MISSING=""
+for I in 1 2 3 4 5 6 ; do
+    if test ! -f ark${I}isdone ; then
+	MISSING="${MISSING} ${I}"
+    fi
+done
+if test "${MISSING}" = "" ; then
+    echo You have unpacked all 6 archives.
+    rm -f ark[1-9]isdone
+else
+    echo You still need to unpack the following archives:
+    echo "        " ${MISSING}
+fi
+##  End of shell archive.
+exit 0

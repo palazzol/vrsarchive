@@ -1,0 +1,871 @@
+Path: uunet!tektronix!tekgen!tekred!games-request
+From: games-request@tekred.TEK.COM
+Newsgroups: comp.sources.games
+Subject: v03i075:  conquer - version 2 of the renamed conquest adventure game, Part06/06
+Message-ID: <2109@tekred.TEK.COM>
+Date: 22 Jan 88 21:35:15 GMT
+Sender: billr@tekred.TEK.COM
+Lines: 861
+Approved: billr@tekred.TEK.COM
+
+Submitted by: ihnp4!mhuxd!smile (Ed Barlow)
+Comp.sources.games: Volume 3, Issue 75
+Archive-name: conquer/Part06
+
+#! /bin/sh
+
+# This is a shell archive.  Remove anything before this line, then unpack
+# it by saving it into a file and typing "sh file".  To overwrite existing
+# files, type "sh file -c".  You can also feed this as standard input via
+# unshar, or by typing "sh <file", e.g..  If this archive is complete, you
+# will see the following message at the end:
+#		"End of archive 6 (of 6)."
+# Contents:  data.h io.c
+# Wrapped by billr@tekred on Fri Jan 22 13:27:14 1988
+PATH=/bin:/usr/bin:/usr/ucb ; export PATH
+if test -f data.h -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"data.h\"
+else
+echo shar: Extracting \"data.h\" \(9490 characters\)
+sed "s/^X//" >data.h <<'END_OF_data.h'
+X
+X/*--------I DO BELIEVE IT IS NECESSARY TO ALTER THIS FILE-------------------*/
+X
+X#include <curses.h>
+X#define FLAT 1		/*1 if world is flat 0 if round - not implemented*/
+X/*#define NPCWATER	Can NPC's move on water*/
+X
+X/*simple contour map definitions*/
+X#define WATER 	'~'
+X#define PEAK 	'#'	
+X#define MOUNTAIN '^'
+X#define HILL 	'%'	
+X#define CLEAR 	'-'
+X
+X/*racial types*/
+X#define GOD 	'-'
+X#define ORC 	'O'
+X#define ELF 	'E'
+X#define DWARF 	'D'
+X#define LIZARD 	'L'
+X#define HUMAN 	'H'
+X#define PIRATE  'P'
+X#define BARBARIAN 'B'
+X#define NOMAD  	'N'
+X#define UNKNOWN '?'
+X
+X/*designations*/
+X#define DCITY		'c'
+X#define DCAPITOL	'C'
+X#define DMINE		'm'
+X#define DFARM		'f'
+X#define DDEVASTATED	'x'
+X#define DGOLDMINE	'$'
+X#define DCASTLE		'!'
+X#define DNODESIG	'-'
+X
+X#define GREAT	'G'
+X#define FAIR	'F'
+X#define RANDOM	'R'
+X#define OOPS	'X'
+X
+X/*vegetation types --  these are legal in designations too*/
+X#define VOLCANO 'V'
+X#define DESERT 	'D'
+X#define WASTE  	'W'
+X#define BARREN 	'4'
+X#define LT_VEG 	'6'    
+X#define GOOD 	'9'
+X#define WOOD 	'7'
+X#define FORREST '3'
+X#define JUNGLE 	'J'	
+X#define SWAMP 	'S'
+X#define ICE 	'I'	
+X#define NONE 	'~'
+X
+X/*Diplomacy Variables*/
+X#define JIHAD 		7
+X#define WAR 		6
+X#define HOSTILE		5
+X#define NEUTRAL		4
+X#define FRIENDLY	3
+X#define ALLIED 		2
+X#define CONFEDERACY 	1
+X#define UNMET		0
+X
+X/*army status*/
+X# define MARCH 		1	/*March */
+X# define SCOUT		2	/*Scouting--will not engage enemy if possible*/
+X# define ATTACK 	3	/*Attack anybody (Hostile+) within 2 sectors*/
+X# define DEFEND		4	/*Defend */
+X# define GARRISON 	5	/*Garrison--for a city or Capital*/
+X
+Xstruct s_sector
+X{
+X	char  designation;/*designation of sector*/
+X	char  altitude;  /*sector altitude */
+X	char  vegetation; /*sector vegetation  */
+X	short owner;      /*nation id of owner, MAXNTN+? is SPECIAL*/
+X	int   people;     /*civilians in sector*/
+X	short gold;	  /*gold production ability*/
+X	short fortress;   /*fortification level (0 to 9)*/
+X	short iron;	  /*amount of iron produced by sector*/
+X};
+X#define SOWN 	sct[xcurs+xoffset][ycurs+yoffset].owner
+X#define XREAL 	(xcurs+xoffset)
+X#define YREAL 	(ycurs+yoffset)
+X
+X#define SCREEN_X_SIZE	( (COLS - 21) / 2 )
+X#define SCREEN_Y_SIZE	( LINES - 5 )
+X
+X#define PASSLTH 7     /*one less than the characters in the password*/
+X#define NAMELTH 9     /*one less than the characters in the name*/
+X#define LEADERLTH 9   /*one less than the characters in the leader*/
+X
+X/*IN THE FUTURE ARMIES AND NAVIES SHOULD BE IN THE SAME STRUCTURE (UNITS)
+X*units could include cavalry, militia, navies, armies, garrisons, and leaders
+X*struct unit
+X*{
+X*	short unittype
+X*	short type1
+X*	short type2
+X*	short type3
+X*	short xloc
+X*	short yloc
+X*	short smove
+X*	short status
+X*}
+X*/
+X
+Xstruct navy
+X{
+X	short warships;
+X	short merchant;
+X	short xloc;
+X	short yloc;
+X	short smove;
+X};
+X
+Xstruct army
+X{
+X	short xloc;
+X	short yloc;
+X	short smove;
+X	int sold; 
+X	short stat;
+X};
+X
+Xstruct	 nation    /* player nation stats */
+X    	{
+X    	char   name[NAMELTH+1];/* name */
+X    	char   passwd[PASSLTH+1];/* password */
+X    	char   leader[LEADERLTH+1];/* leader title */
+X    	char   race;	/* national race (integer--see header.h)*/
+X    	short  class;	/* national class*/
+X    	char   location;/* location variable gfr */
+X	char   mark;	/* unique mark for nation*/
+X    	short  capx;	/* capital x coord */
+X    	short  capy;	/* capital y coord */
+X    	short  active;	/* activity level of nation, but I am not sure if
+X				i have used this variable consistently:
+X			 	1 if PC NATION, 
+X				2+Aggressiveness if NPC, 
+X				0 if inactive,
+X				999 to represents MONSTER (pirate...)*/
+X    	short  aplus;	/* attack plus of all soldiers*/
+X    	short  dplus;	/* attack plus of all soldiers*/
+X    	short  maxmove;	/* maximum movement of soldiers*/
+X    	short  repro;	/* reproduction rate of nation*/
+X    	short  score;	/* score */
+X    	long   tgold;	/* gold in treasury */
+X    	long   jewels;	/* raw amount of gold in treasury */
+X    	long   tmil;	/* total military */
+X    	long   tciv;	/* total civilians */
+X    	long   tiron;	/* total real iron in nation*/
+X    	long   tfood;	/* total food in nation*/
+X	long   powers;
+X    	short  tsctrs;	/* total number sectors */
+X    	short  tships;	/* number warships */
+X	struct army arm[MAXARM];
+X	struct navy nvy[MAXNAVY];
+X	short  dstatus[MAXNTN+4];	/*diplomatic status*/
+X};
+X
+X#define AXLOC ntn[country].arm[armynum].xloc 
+X#define AYLOC ntn[country].arm[armynum].yloc 
+X#define AMOVE ntn[country].arm[armynum].smove 
+X#define ASOLD ntn[country].arm[armynum].sold 
+X#define ASTAT ntn[country].arm[armynum].stat 
+X#define NWAR  ntn[country].nvy[nvynum].warships
+X#define NMER  ntn[country].nvy[nvynum].merchant
+X#define NXLOC ntn[country].nvy[nvynum].xloc 
+X#define NYLOC ntn[country].nvy[nvynum].yloc 
+X#define NMOVE ntn[country].nvy[nvynum].smove
+X
+Xextern  struct s_sector sct[MAPX][MAPY];
+Xextern  struct nation ntn[MAXNTN+4];
+Xextern  short movecost[MAPX][MAPY];
+X/*is sector occupied, if MAXNTN+1 2+ armies occupy*/
+Xextern	char	occ[ MAPX ][ MAPY ];
+X
+X/*Movement costs*/
+Xextern char *ele;
+Xextern char *veg;
+Xextern char *numbers;
+Xextern char *races[];
+Xextern char *Class[];
+Xextern char *vegname[];
+Xextern char *diploname[];
+Xextern char *soldname[];
+X
+X#define AORN 0
+X#define ARMY 1
+X#define NAVY 2
+X
+X#define XASTAT 	1
+X#define XAMEN 	2
+X#define XALOC 	4
+X#define XNLOC 	5 
+X#define XNASHP 	6 
+X#define XECNAME	8 
+X#define XECPAS 	9 
+X#define XECMARK	10 
+X#define XSADES 	11 
+X#define XSACIV 	12 
+X#define XSIFORT	13 
+X#define XNAGOLD	14 
+X#define XAMOV 	15
+X#define XNMOV 	16 
+X#define XSAOWN 	17 
+X#define EDADJ	18
+X#define XNARGOLD 19
+X#define XNAIRON 20
+X#define INCAPLUS 22
+X#define INCDPLUS 23
+X#define CHG_MGK 24
+X#define DESTRY 25
+X
+X#define DESTROY fprintf(fexe,"DESTROY \t%d \t%d \t%hd \t0 \t0 \t%s\n",DESTRY,save,country,"null")
+X#define CHGMGK fprintf(fexe,"L_MAGIC \t%d \t%hd \t%ld \t%d \t0 \t%s\n",CHG_MGK,country,ntn[country].powers,x,"null")
+X#define I_APLUS fprintf(fexe,"INC_APLUS \t%d \t%hd \t0 \t0 \t0 \t%s\n",INCAPLUS,country,"null")
+X#define I_DPLUS fprintf(fexe,"INC_DPLUS \t%d \t%hd \t0 \t0 \t0 \t%s\n",INCDPLUS,country,"null")
+X#define AADJSTAT fprintf(fexe,"A_STAT \t%d \t%hd \t%d \t%d \t0 \t%s\n",XASTAT,country,armynum,ntn[country].arm[armynum].stat,"null")
+X#define AADJMEN  fprintf(fexe,"L_ADJMEN \t%d \t%hd \t%d \t%d \t0 \t%s\n",XAMEN ,country,armynum,ntn[country].arm[armynum].sold,"null")
+X#define NADJSHP  fprintf(fexe,"N_ASHP \t%d \t%hd \t%d \t%d \t%d \t%s\n",XNASHP ,country,nvynum,ntn[country].nvy[nvynum].merchant,ntn[country].nvy[nvynum].warships,"null" )
+X#define AADJLOC  fprintf(fexe,"A_LOC \t%d \t%hd \t%d \t%d \t%d \t%s\n",XALOC ,country,armynum,ntn[country].arm[armynum].xloc,ntn[country].arm[armynum].yloc,"null")
+X#define NADJLOC  fprintf(fexe,"N_LOC \t%d \t%hd \t%d \t%d \t%d \t%s\n",XNLOC ,country,nvynum,ntn[country].nvy[nvynum].xloc,ntn[country].nvy[nvynum].yloc ,"null")
+X#define AADJMOV  fprintf(fexe,"A_MOV \t%d \t%hd \t%d \t%d \t0 \t%s\n",XAMOV ,country,armynum,ntn[country].arm[armynum].smove,"null")
+X#define NADJMOV  fprintf(fexe,"N_MOV \t%d \t%hd \t%d \t%d \t0 \t%s\n",XNMOV ,country,nvynum,ntn[country].nvy[nvynum].smove,"null")
+X#define ECHGNAME fprintf(fexe,"E_CNAME \t%d \t%hd \t0 \t0 \t0 \t%s\n",XECNAME ,country,ntn[country].name)
+X#define ECHGPAS  fprintf(fexe,"E_CPAS \t%d \t%hd \t0 \t0 \t0 \t%s\n",XECPAS ,country,crypt(string,SALT))
+X#define SADJDES  fprintf(fexe,"S_ADES \t%d \t%hd \t0 \t%d \t%d \t%c\n",XSADES ,country,xcurs+xoffset,ycurs+yoffset,sct[xcurs+xoffset][ycurs+yoffset].designation)
+X#define SADJDES2  fprintf(fexe,"S_ADES \t%d \t%hd \t0 \t%d \t%d \t%c\n",XSADES ,country,x,y,sct[x][y].designation)
+X#define SADJCIV2  fprintf(fexe,"S_ACIV \t%d \t%hd \t%d \t%d \t%d \t%s\n",XSACIV ,country,sct[i][j].people,i,j,"null")
+X#define SADJCIV  fprintf(fexe,"S_ACIV \t%d \t%hd \t%d \t%d \t%d \t%s\n",XSACIV ,country,sct[xcurs+xoffset][ycurs+yoffset].people,xcurs+xoffset,ycurs+yoffset,"null")
+X#define INCFORT fprintf(fexe,"SIFORT \t%d \t%hd \t0 \t%d \t%d \t%s\n",XSIFORT ,country,xcurs+xoffset,ycurs+yoffset,"null")
+X#define SADJOWN  fprintf(fexe,"S_AOWN \t%d \t%hd \t0 \t%d \t%d \t%s\n",XSAOWN ,country,xcurs+xoffset,ycurs+yoffset,"null")
+X#define EADJDIP  fprintf(fexe,"E_ADJ \t%d \t%hd \t%d \t%d \t0 \t%s\n",EDADJ,country,nation,ntn[country].dstatus[nation],"null")
+X
+X#define	WARRIOR		0x000001
+X#define	CAPTAIN		0x000002
+X#define	WARLORD		0x000004
+X#define	MI_MONST	0x000008
+X#define	AV_MONST	0x000010
+X#define	MA_MONST	0x000020
+X#define	SPY		0x000040
+X#define	KNOWALL		0x000080
+X#define	DERVISH		0x000100
+X#define	DESTROYER	0x000200
+X#define	HIDDEN		0x000400
+X#define	THE_VOID	0x000800
+X#define	ARCHITECT	0x001000
+X#define	VAMPIRE		0x002000
+X#define	HEALER		0x004000
+X#define MINER		0x008000
+X#define URBAN		0x010000
+X#define STEEL		0x020000
+X#define ARCHER		0x040000
+X#define CAVALRY		0x080000
+X#define BREEDER		0x100000
+X
+X#define MAXPOWER	21 /* number of powers */
+X
+X/*my first macro: which will return 1 if the nation has that power*/
+X#define magic(NATION,POWER)	((ntn[NATION].powers&(POWER))!=0)  
+X
+X#define ONMAP	(x>=0 && y>=0 && x<MAPX && y<MAPY)
+X
+X#ifndef HILIGHT
+X#define standout()		
+X#endif
+X  
+X#ifdef BEEP
+X#define beep()		putchar('\007')
+X#else
+X#define beep()		
+X#endif
+X  
+X#ifdef SRANDOM
+X#define rand()  	random()
+X#define srand(x)	srandom(x)
+X#endif 
+X
+X#define FOODTHRESH 3
+X#define GOLDTHRESH 10
+X#define JEWELTHRESH 10
+X	
+X#define SALT "aa"
+X
+X/*intialize subroutine types*/
+Xchar *crypt();
+Xvoid exit();
+Xint rand();
+X
+Xextern char *strcpy(), *strncpy(), *strcat(), *strncat();
+X
+X/*file name definitions */
+Xextern	char	*exefile;
+Xextern	char	*datafile;
+Xextern	char	*msgfile;
+Xextern	char	*npcsfile;
+Xextern	char	*helpfile;
+Xextern	char	*newsfile;
+END_OF_data.h
+if test 9490 -ne `wc -c <data.h`; then
+    echo shar: \"data.h\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f io.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"io.c\"
+else
+echo shar: Extracting \"io.c\" \(12673 characters\)
+sed "s/^X//" >io.c <<'END_OF_io.c'
+X/*io.c*/
+X/*Print and io subroutines for game*/
+X
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*include files*/
+X#include <ctype.h>
+X#include "header.h"
+X#include "data.h"
+X
+X/*Declarations*/
+Xextern struct s_sector sct[MAPX][MAPY];
+Xextern struct nation ntn[NTOTAL];   /* player nation stats */
+X
+X/*offset of upper left hand corner*/
+Xextern short xoffset;
+Xextern short yoffset;
+X/*current cursor postion (relative to 00 in upper corner)*/
+X/*	position is 2*x,y*/
+Xextern short xcurs;
+Xextern short ycurs;
+X/*redraw map in this turn if redraw is a 1*/
+Xextern short redraw;
+X/*display state*/
+Xextern short hilmode;   /*highlight modes: 0=owned sectors, 1= armies, 2=none*/
+Xextern short dismode;   /*display mode: 1=vegetation, 2=desig, 3=contour*/
+X/*		 4=armies/navies, 5=commodities, 6=fertility, 7=movement*/
+X/* nation id of owner*/
+Xextern short country;
+X
+X/*print a sector.altitude map subroutine*/
+Xprintele()
+X{
+X	register int X, Y;
+X	printf("doing print of altitude\n");
+X	for(Y=0;Y<MAPY;Y++) {
+X		for(X=0;X<MAPX;X++) putc(sct[X][Y].altitude,stdout);
+X		putc('\n',stdout);
+X	}
+X}
+X
+Xpr_ntns()
+X{
+X	register int X, Y;
+X	printf("doing print of nations\n");
+X	for(Y=0;Y<MAPY;Y++) {
+X		for(X=0;X<MAPX;X++) {
+X			if(sct[X][Y].owner==0)
+X				putc(sct[X][Y].altitude,stdout);
+X			else putc(ntn[sct[X][Y].owner].mark,stdout);
+X		}
+X		putc('\n',stdout);
+X	}
+X}
+X
+X/*print all data--trashes/creates datafile in the process*/
+Xwritedata()
+X{
+X	int fd;
+X	printf("\ndoing write of data\n");
+X	if((fd = creat(datafile,0666))==-1) {
+X		printf("cant open data.  check permissions\n");
+X		return;
+X	}
+X	write(fd,sct,sizeof(sct));
+X	write(fd,ntn,sizeof(ntn));
+X	close(fd);
+X}
+X
+Xreaddata()
+X{
+X	int fd;
+X	int n_read;
+X
+X	/*read in existing nation army and navy data*/
+X	/*check if file openable*/
+X	printf("reading data file\n");
+X	if( (fd = open(datafile,0)) < 0 ) {
+X		fprintf( stderr, "can not open %s \n", datafile );
+X		exit( 1 );
+X	}
+X	if((n_read=read(fd,sct,sizeof(sct)))==0) printf("EOF\n");
+X	else if(n_read==-1) printf("error reading sector data (sct)\n");
+X	if(n_read!=sizeof(sct)) {
+X		printf( "wrong data format (%d vs. %d)\n",n_read, sizeof(sct) );
+X		exit(1);
+X	}
+X	if((n_read=read(fd,ntn,sizeof(ntn)))==0) printf("EOF\n");
+X	else if(n_read==-1) printf("error reading nation data (ntn)\n");
+X	if(n_read!=sizeof(ntn)) {
+X		printf( "wrong data format (%d vs. %d)\n",n_read, sizeof(ntn) );
+X		exit(1);
+X	}
+X	close(fd);
+X	verifydata( __FILE__, __LINE__ );
+X
+X} /* readdata() */
+X
+X/*print a map subroutine*/
+Xprintveg()
+X{
+X	register int X, Y;
+X	printf("doing print of vegetation\n");
+X	for(Y=0;Y<MAPY;Y++) {
+X		for(X=0;X<MAPX;X++) putc(sct[X][Y].vegetation,stdout);
+X		putc('\n',stdout);
+X	}
+X}
+X
+X/*make a map*/
+Xmakemap()
+X{
+X	register int x,y;
+X	register int i,j;
+X	short armynum,nvynum;
+X
+X	/*can you see all?*/
+X	if((magic(country,KNOWALL)==1)||(country==0)) {
+X		for(x=0;x<SCREEN_X_SIZE;x++) {
+X			for(y=0;y<(LINES-4);y++) {
+X				highlight(x,y);
+X				see(x,y);
+X			}
+X		}
+X		if((hilmode==1)||(hilmode==4)||(hilmode==3)) {
+X			for(armynum=0;armynum<MAXARM;armynum++) 
+X			if((ASOLD>0)&&((AMOVE>0)||(hilmode!=4))){
+X				standout();
+X				see(AXLOC-xoffset,AYLOC-yoffset);
+X			}
+X		}
+X	}
+X	/*see as appropriate?*/
+X	else {
+X		for(x=0;x<SCREEN_X_SIZE;x++) for(y=0;y<(LINES-4);y++) {
+X			if(sct[x+xoffset][y+yoffset].owner==country){
+X				for(i=x-LANDSEE;i<=x+LANDSEE;i++){
+X					for(j=y-LANDSEE;j<=y+LANDSEE;j++) {
+X						highlight(i,j);
+X						see(i,j);
+X					}
+X				}
+X			}
+X		}
+X		for(nvynum=0;nvynum<MAXNAVY;nvynum++) if(NMER+NWAR>0){
+X			for(i=NXLOC-xoffset-NAVYSEE;i<=NXLOC-xoffset+NAVYSEE;i++) for(j=NYLOC-yoffset-NAVYSEE;j<=NYLOC-yoffset+NAVYSEE;j++){
+X				highlight(i,j);
+X				see(i,j);
+X			}
+X		}
+X		for(armynum=0;armynum<MAXARM;armynum++) if(ASOLD>0){
+X			for(i=AXLOC-xoffset-ARMYSEE;i<=AXLOC-xoffset+ARMYSEE;i++) for(j=AYLOC-yoffset-ARMYSEE;j<=AYLOC-yoffset+ARMYSEE;j++) {
+X				highlight(i,j);
+X				see(i,j);
+X			}
+X		}
+X		/*optimal method of highlighting your armies*/
+X		if((hilmode==3)||(hilmode==4)) {
+X			for(armynum=0;armynum<MAXARM;armynum++) 
+X			if((ASOLD>0)&&((AMOVE>0)||(hilmode==3))){
+X				standout();
+X				see(AXLOC-xoffset,AYLOC-yoffset);
+X			}
+X			for(nvynum=0;nvynum<MAXNAVY;nvynum++) 
+X			if((NWAR+NMER>0)&&((NMOVE>0)||(hilmode==3))){
+X				standout();
+X				see(NXLOC-xoffset,NYLOC-yoffset);
+X			}
+X		}
+X	}
+X	move(ycurs,2*xcurs);
+X}
+X
+Xnewdisplay()
+X{
+X	mvaddstr(LINES-4,0,"viewing options:  (d)esignation, (r)ace, (m)ove cost, (p)eople, (D)efense");
+X	clrtoeol();
+X        mvaddstr(LINES-3,0,"                  (c)ontour, (v)egitation, (i)ron, (n)ation mark, (g)old");
+X	clrtoeol();
+X	mvaddstr(LINES-2,0,"highlight option: (o)wners, (a)rmy, (y)our Army, (M)ove left, (x)=none");
+X	clrtoeol();
+X	standout();
+X	mvaddstr(LINES-1,0,"what display?:");
+X	clrtoeol();
+X	move(LINES-1,16);
+X	standend();
+X	refresh();
+X	redraw=TRUE;
+X	switch(getch()) {
+X	case 'v':	/* vegetation map*/
+X		dismode=1;
+X		break;
+X	case 'd':	/* designations map*/
+X		dismode=2;
+X		break;
+X	case 'c':	/* contour map of world */
+X		dismode=3;
+X		break;
+X	case 'n':	/* nations map*/
+X		dismode=4;
+X		break;
+X	case 'r':	/* race map*/
+X		dismode=5;
+X		break;
+X	case 'm':	/* move cost map*/
+X		dismode=7;
+X		break;
+X	case 'D':
+X		dismode=8;
+X		break;
+X	case 'p':
+X		dismode=9;
+X		break;
+X	case 'g':
+X		dismode=10;
+X		break;
+X	case 'i':
+X		dismode=11;
+X		break;
+X	case 'a':	/* armies hilighted map*/
+X		prep();
+X		hilmode=1;
+X		break;
+X	case 'o':	/* owners hilighted map*/
+X		hilmode=0;
+X		break;
+X	case 'x':	/*no highlighting*/
+X		hilmode=2;
+X		break;
+X	case 'y':	/* your armies hilighted map*/
+X		prep();
+X		hilmode=3;
+X		break;
+X	case 'M':	/* your armies with moves left hilighted map*/
+X		prep();
+X		hilmode=4;
+X		break;
+X	default:
+X		beep();
+X		redraw=FALSE;
+X	}
+X	makebottom();
+X}
+X
+X/*see what is in xy as per display mode*/
+Xsee(x,y)
+X{
+X	int armbonus;
+X	if((x<0)||(y<0)||(x>COLS-21)||(y>=LINES-4)) return;
+X	if(((y+yoffset)<MAPY)&&((x+xoffset)<MAPX)) {
+X
+X		if((dismode>7)&&(country!=sct[x+xoffset][y+yoffset].owner)
+X		&&(magic(sct[x+xoffset][y+yoffset].owner,THE_VOID)==1)
+X		&&(country!=0)) {
+X			standout();
+X			mvaddch(y,2*x,' ');
+X			standend();
+X		}
+X		else {
+X			switch(dismode){
+X			case 1: /*vegetation*/
+X				mvaddch(y,2*x,sct[x+xoffset][y+yoffset].vegetation);
+X				break;
+X			case 2: /*designation*/
+X				if(sct[x+xoffset][y+yoffset].owner==0){
+X					if(isdigit(sct[x+xoffset][y+yoffset].vegetation)!=0) mvaddch(y,2*x,sct[x+xoffset][y+yoffset].altitude);
+X					else mvaddch(y,2*x,sct[x+xoffset][y+yoffset].vegetation);
+X				}
+X				else if((country==0)
+X				||(sct[x+xoffset][y+yoffset].owner==country)) 
+X				mvaddch(y,2*x,sct[x+xoffset][y+yoffset].designation);
+X				else mvaddch(y,2*x,ntn[sct[x+xoffset][y+yoffset].owner].mark);
+X				break;
+X			case 3: /*contour*/
+X				mvaddch(y,2*x,sct[x+xoffset][y+yoffset].altitude);
+X				break;
+X			case 4: /*ownership*/
+X				if(sct[x+xoffset][y+yoffset].owner==0)
+X					mvaddch(y,2*x,sct[x+xoffset][y+yoffset].altitude);
+X				else mvaddch(y,2*x,ntn[sct[x+xoffset][y+yoffset].owner].mark);
+X				break;
+X			case 5: /*race*/
+X				if(sct[x+xoffset][y+yoffset].owner==0)
+X					mvaddch(y,2*x,sct[x+xoffset][y+yoffset].altitude);
+X				else mvaddch(y,2*x,ntn[sct[x+xoffset][y+yoffset].owner].race);
+X				break;
+X			case 7:	/*movement cost map*/
+X				if(movecost[x+xoffset][y+yoffset]>=0) mvprintw(y,2*x,"%d",movecost[x+xoffset][y+yoffset]);
+X				else if(sct[x+xoffset][y+yoffset].altitude==WATER)
+X					mvaddch(y,2*x,WATER);
+X				else
+X					mvaddch(y,2*x,'X');
+X				break;
+X			case 8:   /*Defence*/
+X				if (sct[x+xoffset][y+yoffset].altitude==WATER)
+X					mvaddch(y,2*x,WATER);
+X				else if (movecost[x+xoffset][y+yoffset]<0)
+X					mvaddch(y,2*x,'*');
+X				else {
+X
+X					/*Racial combat bonus due to terrain (the faster you move the better)*/
+X					armbonus=0;
+X					armbonus+=5*(9-movecost[x+xoffset][y+yoffset]);
+X
+X					if(sct[x+xoffset][y+yoffset].altitude==MOUNTAIN) armbonus+=40;
+X					else if(sct[x+xoffset][y+yoffset].altitude==HILL) armbonus+=20;
+X
+X					if(sct[x+xoffset][y+yoffset].vegetation==JUNGLE)
+X						armbonus+=30;
+X					else if(sct[x+xoffset][y+yoffset].vegetation==FORREST)
+X						armbonus+=20;
+X					else if(sct[x+xoffset][y+yoffset].vegetation==WOOD)
+X						armbonus+=10;
+X
+X			if((sct[x+xoffset][y+yoffset].designation==DCASTLE)
+X			||(sct[x+xoffset][y+yoffset].designation==DCITY)
+X			||(sct[x+xoffset][y+yoffset].designation==DCAPITOL))
+X						armbonus+=8*sct[x+xoffset][y+yoffset].fortress;
+X
+X					mvprintw(y,2*x,"%d",armbonus/20);
+X				}
+X				break;
+X			case 9:   /*People*/
+X				if (sct[x+xoffset][y+yoffset].altitude==WATER)
+X					mvaddch(y,2*x,WATER);
+X				else if (sct[x+xoffset][y+yoffset].people>=1000)
+X					mvaddch(y,2*x,'+');
+X				else if (sct[x+xoffset][y+yoffset].people>=450)
+X					mvaddch(y,2*x,'>');
+X				else if (sct[x+xoffset][y+yoffset].people==0)
+X					mvaddch(y,2*x,'0');
+X				else
+X					mvprintw(y,2*x,"%d",1+sct[x+xoffset][y+yoffset].people/50);
+X				break;
+X			case 10:  /*Gold*/
+X				if (sct[x+xoffset][y+yoffset].altitude==WATER)
+X					mvaddch(y,2*x,WATER);
+X				else if(isdigit(sct[x+xoffset][y+yoffset].vegetation)==0) 
+X					mvaddch(y,2*x,'X');
+X				else if((sct[x+xoffset][y+yoffset].owner!=0)
+X				&&(country!=0)
+X				&&(sct[x+xoffset][y+yoffset].owner!=country))
+X					mvaddch(y,2*x,'?');
+X				else if(sct[x+xoffset][y+yoffset].gold>=10)
+X					mvaddch(y,2*x,'+');
+X				else
+X					mvprintw(y,2*x,"%d",sct[x+xoffset][y+yoffset].gold);
+X				break;
+X			case 11:  /*Iron*/
+X				if (sct[x+xoffset][y+yoffset].altitude==WATER)
+X					mvaddch(y,2*x,WATER);
+X				else if(isdigit(sct[x+xoffset][y+yoffset].vegetation)==0) 
+X					mvaddch(y,2*x,'X');
+X				else if((sct[x+xoffset][y+yoffset].owner!=0)
+X				&&(country!=0)
+X				&&(sct[x+xoffset][y+yoffset].owner!=country))
+X					mvaddch(y,2*x,'?');
+X				else if (sct[x+xoffset][y+yoffset].iron>=10)
+X					mvaddch(y,2*x,'+');
+X				else
+X					mvprintw(y,2*x,"%d",sct[x+xoffset][y+yoffset].iron);
+X				break;
+X			default:
+X				break;
+X			}
+X		}
+X	}
+X	else mvaddch(y,2*x,' ');
+X	standend();
+X}
+X
+X/*highlight what is in xy as per highlight mode*/
+Xhighlight(x,y)
+X{
+X	if((x<0)||(y<0)||(x>COLS-21)||(y>=LINES-4)) return;
+X	if(((y+yoffset)<MAPY)&&((x+xoffset)<MAPX)) {
+X		switch(hilmode){
+X		case 0: /*ownership*/
+X			if(country==0) {
+X				if(sct[x+xoffset][y+yoffset].owner>0)
+X					standout();
+X			}
+X			else if(sct[x+xoffset][y+yoffset].owner==country)
+X				standout();
+X			break;
+X		case 1: /*army map*/
+X			if(occ[x+xoffset][y+yoffset]!=0) standout();
+X			break;
+X		default:
+X			break;
+X		}
+X	}
+X}
+X
+X/* check if cursor is out of bounds*/
+Xcoffmap()
+X{
+X	if((xcurs<1)||(ycurs<1)||(xcurs>=SCREEN_X_SIZE)
+X	||((ycurs>=SCREEN_Y_SIZE))||((XREAL)>=MAPX)
+X	||((YREAL)>=MAPY)) offmap();
+X   
+X	/*update map*/
+X	if(redraw==TRUE) {
+X		clear();
+X		makemap(); /* update map*/
+X		makebottom();
+X		redraw=FALSE;
+X	}
+X	move(ycurs,2*xcurs);
+X	makeside();  /*update side*/
+X	move(ycurs,2*xcurs);
+X	refresh();
+X}
+X
+Xoffmap()
+X{
+X	redraw=FALSE;
+X	/*set offset offsets can not be < 0*/
+X	if(xcurs<1){
+X		if(XREAL<=0) {
+X			xoffset=0;
+X			xcurs=0;
+X		}
+X		else {
+X			redraw=TRUE;
+X			xoffset-=15;
+X			xcurs+=15;
+X		}
+X	}
+X	else if(xcurs >= (COLS-22)/2){
+X		if(XREAL<MAPX) {
+X			redraw=TRUE;
+X			xoffset+=15;
+X			xcurs-=15;
+X		}
+X	}
+X	if(XREAL>=MAPX) xcurs=MAPX-1-xoffset;
+X	if(xoffset<0) xoffset=0;
+X	if(xcurs<0) xcurs=0;
+X	else if(xcurs >= (COLS-22)/2) {
+X		redraw=TRUE;
+X		xoffset+=15;
+X		xcurs-=15;
+X	}
+X
+X	if(ycurs<1){
+X		if(YREAL<=0) {
+X			yoffset=0;
+X			ycurs=0;
+X		}
+X		else {
+X			redraw=TRUE;
+X			ycurs+=15;
+X			yoffset-=15;
+X		}
+X	}
+X	else if(ycurs >= SCREEN_Y_SIZE){
+X		if(YREAL<MAPY) {
+X			redraw=TRUE;
+X			yoffset+=15;
+X			ycurs-=15;
+X		}
+X	}
+X	if(YREAL>=MAPY) ycurs=MAPY-1-yoffset;
+X	if(yoffset<0) yoffset=0;
+X	if(ycurs<0) ycurs=0;
+X	else if(ycurs >= SCREEN_Y_SIZE) {
+X		redraw=TRUE;
+X		yoffset+=15;
+X		ycurs-=15;
+X	}
+X}
+X
+Xprintscore()
+X{
+X 	int i;
+X 	int nationid;    	/*current nation id */
+X 
+X 	printf("id	race	class	score	gold	militia	people	sectors	name\n");
+X 	for (nationid=1; nationid<MAXNTN; nationid++) {
+X 		if(ntn[nationid].active==0) 
+X 			continue;
+X 		printf("%d",nationid);
+X 		for(i=1;i<8;i++)
+X 			if(ntn[nationid].race==*(races+i)[0])
+X 				printf("	%s",*(races+i));
+X 		if(ntn[nationid].active>=2) printf("	NPC");
+X 		else printf("	%s",*(Class+ntn[nationid].class));
+X 		printf("	%d	%d	%d	%d	%d",
+X 			ntn[nationid].score ,ntn[nationid].tgold
+X 			,ntn[nationid].tmil ,ntn[nationid].tciv
+X 			,ntn[nationid].tsctrs );
+X 		printf("	%s\n",ntn[nationid].name);
+X 	}
+X}
+END_OF_io.c
+if test 12673 -ne `wc -c <io.c`; then
+    echo shar: \"io.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+echo shar: End of archive 6 \(of 6\).
+cp /dev/null ark6isdone
+MISSING=""
+for I in 1 2 3 4 5 6 ; do
+    if test ! -f ark${I}isdone ; then
+	MISSING="${MISSING} ${I}"
+    fi
+done
+if test "${MISSING}" = "" ; then
+    echo You have unpacked all 6 archives.
+    rm -f ark[1-9]isdone
+else
+    echo You still need to unpack the following archives:
+    echo "        " ${MISSING}
+fi
+##  End of shell archive.
+exit 0

@@ -1,0 +1,2178 @@
+Path: uunet!seismo!sundc!pitstop!sun!amdcad!ames!ll-xn!mit-eddie!uw-beaver!tektronix!tekgen!tekred!games-request
+From: games-request@tekred.TEK.COM
+Newsgroups: comp.sources.games
+Subject: v03i072:  conquer - version 2 of the renamed conquest adventure game, Part03/06
+Message-ID: <2106@tekred.TEK.COM>
+Date: 22 Jan 88 21:33:59 GMT
+Sender: billr@tekred.TEK.COM
+Lines: 2168
+Approved: billr@tekred.TEK.COM
+
+Submitted by: ihnp4!mhuxd!smile (Ed Barlow)
+Comp.sources.games: Volume 3, Issue 72
+Archive-name: conquer/Part03
+
+#! /bin/sh
+
+# This is a shell archive.  Remove anything before this line, then unpack
+# it by saving it into a file and typing "sh file".  To overwrite existing
+# files, type "sh file -c".  You can also feed this as standard input via
+# unshar, or by typing "sh <file", e.g..  If this archive is complete, you
+# will see the following message at the end:
+#		"End of archive 3 (of 6)."
+# Contents:  commands.c magic.c main.c run
+# Wrapped by billr@tekred on Fri Jan 22 13:27:06 1988
+PATH=/bin:/usr/bin:/usr/ucb ; export PATH
+if test -f commands.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"commands.c\"
+else
+echo shar: Extracting \"commands.c\" \(18869 characters\)
+sed "s/^X//" >commands.c <<'END_OF_commands.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*	commands.c		*/
+X
+X/*include files*/
+X#include "header.h"
+X#include "data.h"
+X#include <ctype.h>
+X
+Xextern short xcurs,ycurs,xoffset,yoffset;
+Xextern FILE *fexe;		/*execute file pointer*/
+Xextern short country;
+Xextern short selector;
+Xextern short pager;
+Xextern short xcurs,ycurs,xoffset,yoffset;
+X
+X/*change current hex designation*/
+Xredesignate()
+X{
+X	char newdes;
+X	short x,y;
+X
+X	if(country==0){
+X		mvaddstr(LINES-1,0,"SUPER USER: CHANGE (v)egitation, (e)levation, (d)esig, (o)wner");
+X		refresh();
+X		switch(getch()){
+X		case 'e':
+X			/*simple contour map definitions*/
+X			mvprintw(LINES-2,7,"ELEVATIONS: change to %c, %c, %c, %c or %c?",WATER,PEAK,MOUNTAIN,HILL,CLEAR);
+X			refresh();
+X			newdes=getch();
+X			if(newdes!=WATER&&newdes!=PEAK&&newdes!=MOUNTAIN
+X			&&newdes!=HILL&&newdes!=CLEAR) return;
+X			sct[XREAL][YREAL].altitude=newdes;
+X			if((newdes==PEAK)||(newdes==WATER)) {
+X				sct[XREAL][YREAL].owner=0;
+X				sct[XREAL][YREAL].people=0;
+X				sct[XREAL][YREAL].fortress=0;
+X			}
+X			/*will fall through as must change vegetation*/
+X		case 'v':
+X			/*vegetation types*/
+X			mvprintw(LINES-2,7,"VEGITATIONS: change to %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c or %c?",
+X			VOLCANO,DESERT,WASTE,BARREN,LT_VEG,
+X			GOOD,WOOD,FORREST,JUNGLE,SWAMP,ICE,NONE);
+X			refresh();
+X			newdes=getch();
+X			if(newdes!=VOLCANO
+X			&&newdes!=DESERT&&newdes!=WASTE
+X			&&newdes!=BARREN&&newdes!=LT_VEG
+X			&&newdes!=NONE&&newdes!=GOOD
+X			&&newdes!=WOOD&&newdes!=FORREST&&newdes!=JUNGLE
+X			&&newdes!=SWAMP&&newdes!=ICE) return;
+X			sct[XREAL][YREAL].vegetation=newdes;
+X			if(isdigit(sct[XREAL][YREAL].vegetation)==0) 
+X				sct[XREAL][YREAL].designation=newdes;
+X			return;
+X		case 'o':
+X			mvprintw(LINES-2,7,"what nation owner:");
+X			refresh();
+X			x = get_number();
+X			sct[XREAL][YREAL].owner=x;
+X			return;
+X		}
+X	}
+X	if((country!=0)&&(sct[XREAL][YREAL].owner!=country)) {
+X		mvprintw(LINES-1,0,"You do not own: hit any key");
+X		refresh();
+X		getch();
+X		return;
+X	}
+X	mvprintw(LINES-1,0,"hit space to not redesignate anything");
+X	clrtoeol();
+X	mvprintw(LINES-2,7,"$%d: redesignate to %c, %c, %c, %c or %c?",DESCOST,DMINE,DGOLDMINE,DFARM,DCITY,DCAPITOL);
+X	clrtoeol();
+X	refresh();
+X	/*read answer*/
+X	newdes=getch();
+X
+X	if(newdes!=DMINE&&newdes!=DGOLDMINE&&newdes!=DFARM&&newdes!=DCITY&&newdes!=DCAPITOL) return;
+X
+X	if((SOWN==country)||(country==0)) {
+X		if((isdigit(sct[XREAL][YREAL].vegetation)!=0)||(country==0)) {
+X			if(((newdes!=DCITY)&&(newdes!=DCAPITOL))||(country==0)) {
+X				/*decrement treasury*/
+X				sct[XREAL][YREAL].designation=newdes;
+X				if(country==0) {
+X					country=sct[XREAL][YREAL].owner;
+X					SADJDES;
+X					country=0;
+X				}
+X				else {
+X					SADJDES;
+X					ntn[country].tgold-=DESCOST;
+X				}
+X			}
+X			else if((newdes==DCAPITOL)
+X			&&(sct[XREAL][YREAL].designation==DCITY)){
+X
+X				ntn[country].tgold-=5*DESCOST;
+X				ntn[country].tiron-=DESCOST;
+X				x=ntn[country].capx;
+X				y=ntn[country].capy;
+X				sct[x][y].designation=DCITY;
+X				if(country==0) {
+X					country=sct[x][y].owner;
+X					SADJDES2;
+X					country=0;
+X				}
+X				else SADJDES2;
+X				sct[XREAL][YREAL].designation=newdes;
+X				ntn[country].capx=XREAL;
+X				ntn[country].capy=YREAL;
+X				if(country==0) {
+X					country=sct[XREAL][YREAL].owner;
+X					SADJDES;
+X					country=0;
+X				}
+X				else SADJDES;
+X			}
+X			else if((newdes==DCAPITOL)
+X			&&(sct[XREAL][YREAL].designation!=DCITY)){
+X				mvprintw(LINES-1,0,"Sector must be a city: hit any key  ");
+X				refresh();
+X				getch();
+X			}
+X			else if((ntn[country].tiron>DESCOST)
+X			&&(newdes==DCITY)){
+X				if(sct[XREAL][YREAL].people>=500){
+X					ntn[country].tgold-=5*DESCOST;
+X					ntn[country].tiron-=DESCOST;
+X					sct[XREAL][YREAL].designation=newdes;
+X					if(country==0) {
+X						country=sct[XREAL][YREAL].owner;
+X						SADJDES;
+X						country=0;
+X					}
+X					else SADJDES;
+X				}
+X				else {
+X				mvprintw(LINES-1,0,"Need 500 people to build to city");
+X				refresh();
+X				getch();
+X				}
+X			}
+X			else {
+X			mvprintw(LINES-1,0,"Not enough iron: hit any key  ");
+X			refresh();
+X			getch();
+X			}
+X		}
+X		else {
+X		mvprintw(LINES-1,0,"vegetation unlivable: hit any key  ");
+X		refresh();
+X		getch();
+X		}
+X	}
+X	else {
+X	mvprintw(LINES-1,0,"Sorry, you don't own sector: hit any key ");
+X	refresh();
+X	getch();
+X	}
+X}
+X
+X/*build fort or ship-type */
+Xconstruct()
+X{
+X	int nearsea;
+X	long cost;
+X	int armbonus;
+X	int x,y;
+X	short nvynum=0;
+X	short mnumber,wnumber;
+X	short isgod=0;
+X	char type;
+X
+X	if(country==0){
+X		isgod=1;
+X		country=sct[XREAL][YREAL].owner;
+X	}
+X
+X	if(sct[XREAL][YREAL].owner!=country) {
+X		mvaddstr(LINES-1,0,"You do not own: hit any key");
+X		refresh();
+X		getch();
+X		if(isgod==1) country=0;
+X		return;
+X	}
+X
+X	if((isgod == 0) && (ntn[country].tgold < 0 )) {
+X		mvaddstr(LINES-1,0,"You are broke: hit any key");
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	if((sct[XREAL][YREAL].designation==DCITY)
+X	||(sct[XREAL][YREAL].designation==DCAPITOL)) {
+X		/*calculate cost for fort*/
+X		cost=FORTCOST;
+X		if(isgod==1) cost=0;
+X		else for(x=1;x<=sct[XREAL][YREAL].fortress;x++) 
+X			cost*=2;
+X
+X		if(sct[XREAL][YREAL].designation==DCITY) armbonus=8;
+X		else if(sct[XREAL][YREAL].designation==DCAPITOL) armbonus=10;
+X		if(magic(country,ARCHITECT)==1) armbonus*=2;
+X
+X		move(LINES-1,0);
+X		clrtoeol();
+X		mvprintw(LINES-2,0,"Construct <f>ortifications (+%d%% - %ld gold) or <s>hips?:",armbonus,cost);
+X		clrtoeol();
+X		refresh();
+X		type=getch();
+X	}
+X	else {
+X		mvprintw(LINES-2,0,"Must construct in city or capitol--hit any key");
+X		clrtoeol();
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	/* construct ships*/
+X	if (type=='s') {
+X		/*check if next to sea*/
+X		nearsea=0;
+X		for(x=XREAL-1;x<=XREAL+1;x++)
+X			for(y=YREAL-1;y<=YREAL+1;y++)
+X				if(sct[x][y].altitude==WATER) nearsea=1;
+X
+X		if (nearsea==0) {
+X			mvprintw(LINES-2,0,"not in a harbor: hit space");
+X			clrtoeol();
+X			refresh();
+X			getch();
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X
+X		mvprintw(LINES-2,0,"build how many merchant ships:");
+X		clrtoeol();
+X		refresh();
+X		mnumber = get_number();
+X		mvprintw(LINES-2,0,"build how many warships:");
+X		clrtoeol();
+X		refresh();
+X		wnumber = get_number();
+X		/*sanity checks*/
+X		if((wnumber>100)||(wnumber<0)) wnumber=0;
+X		if((mnumber>100)||(mnumber<0)) mnumber=0;
+X		mvprintw(LINES-2,0,"constructing %hd warships and %hd merchant",wnumber,mnumber);
+X		clrtoeol();
+X
+X		if((nvynum=getselunit()-MAXARM)>=0){
+X			if(nvynum>=MAXNAVY){
+X				mvaddstr(LINES-1,0,"INVALID NAVY--hit any key");
+X				clrtoeol();
+X				refresh();
+X				getch();
+X				if(isgod==1) country=0;
+X				return;
+X			}
+X			mvaddstr(LINES-1,0,"Do you wish to raise a new fleet (y or n)");
+X			clrtoeol();
+X			refresh();
+X			if(getch()=='y') nvynum=(-1);
+X		}
+X
+X		if(nvynum<0) {
+X			mvprintw(LINES-2,0,"raising a new fleet");
+X			clrtoeol();
+X			refresh();
+X
+X			nvynum=0;
+X			x=(-1);
+X			while((x==(-1))&&(nvynum<MAXNAVY)) {
+X				if(NWAR+NMER<=0) {
+X					x=nvynum;
+X					NWAR=0;
+X					NMER=0;
+X					NADJSHP;
+X				}
+X				nvynum++;
+X			}
+X			nvynum=x;
+X		}
+X
+X		if(nvynum==(-1)){
+X			mvaddstr(LINES-1,0,"NO FREE NAVIES--hit any key");
+X			clrtoeol();
+X			refresh();
+X			getch();
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X
+X		mvprintw(LINES-3,0,"Raising fleet %d",nvynum);
+X		if((nvynum>=0)&&(nvynum<MAXNAVY)) {
+X			NXLOC=XREAL;
+X			NYLOC=YREAL;
+X			NWAR+=wnumber;
+X			NMER+=mnumber;
+X			if(isgod==0) {
+X			ntn[country].tgold -= (long) wnumber*WARSHPCOST;
+X			ntn[country].tgold -= (long) mnumber*MERSHPCOST;
+X			}
+X			NMOVE=0;
+X			NADJSHP;
+X			NADJLOC;
+X			NADJMOV;
+X		}
+X		else mvprintw(LINES-2,0,"ERROR!!!!!!!!!!!!!");
+X
+X		refresh();
+X		makebottom();
+X	}
+X	/* construct fortification points*/
+X	else if(type=='f'){
+X		if(sct[XREAL][YREAL].people>=500) {
+X
+X			mvprintw(LINES-1,25,"you build %d%% fort points for %ld gold",armbonus,cost);
+X			ntn[country].tgold-=cost;
+X			sct[XREAL][YREAL].fortress++;
+X			INCFORT;
+X		}
+X		else mvprintw(LINES-1,25,"need 500 people");
+X	}
+X	else mvprintw(LINES-1,0,"error");
+X
+X	if(isgod==1) country=0;
+X	refresh();
+X}
+X
+X/*DRAFT IF IN A CITY*/
+Xdraft()
+X{
+X	short armynum;
+X	int men=0;
+X	short army=(-1);
+X	short isgod=0;
+X	if(country==0) {
+X		isgod=1;
+X		country=sct[XREAL][YREAL].owner;
+X	}
+X	else if(sct[XREAL][YREAL].owner!=country) {
+X		mvprintw(LINES-1,0,"You do not own: hit any key");
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	if((sct[XREAL][YREAL].designation!=DCITY)
+X	&&(sct[XREAL][YREAL].designation!=DCAPITOL)) {
+X		mvprintw(LINES-1,0,"must raise in cities: hit any key");
+X		refresh();
+X		getch();
+X		if(isgod==1) country=0;
+X		return;
+X	}
+X
+X	if((sct[XREAL][YREAL].designation==DCITY)
+X	&&(sct[XREAL][YREAL].people*(2*CITYLIMIT+(ntn[country].tsctrs/2))<ntn[country].tciv)){
+X		mvprintw(LINES-1,0,"need %d people in city: hit any key",ntn[country].tciv/(2*CITYLIMIT+(ntn[country].tsctrs/2)));
+X		refresh();
+X		getch();
+X		if(isgod==1) country=0;
+X		return;
+X	}
+X
+X	if(ntn[country].tgold <= 0){
+X		mvprintw(LINES-1,0,"you dont have any gold: hit any key");
+X		refresh();
+X		getch();
+X		if(isgod==1) country=0;
+X		return;
+X	}
+X
+X	/*raise an untrained army */
+X	mvprintw(LINES-3,0,"how many men do you wish to raise:");
+X	clrtoeol();
+X	refresh();
+X	men = get_number();
+X	if(men<=0) return;
+X	if(men > sct[XREAL][YREAL].people/4) {
+X		mvprintw(LINES-2,0,"can only raise %d soldiers",sct[XREAL][YREAL].people/4);
+X		clrtoeol();
+X		refresh();
+X		men = sct[XREAL][YREAL].people/4;
+X	}
+X	if(men >  (int) (ntn[country].tiron/10)) {
+X		mvprintw(LINES-2,0,"aborting--only enough iron for %d troops",ntn[country].tiron/10);
+X		clrtoeol();
+X		refresh();
+X		getch();
+X		if(isgod==1) country=0;
+X		return;
+X	}
+X	else {
+X		move(LINES-2,0);
+X		clrtoeol();
+X		ntn[country].tiron -= 10*men;
+X	}
+X
+X	/*count is order of that army in sector*/
+X	/*armynum is number of that army*/
+X	if((armynum=getselunit())>=0){
+X		if(armynum>=MAXARM) {
+X			army = -1;
+X		} else {
+X			mvaddstr(LINES-1,0,"Do you wish to raise a new army:");
+X			clrtoeol();
+X			refresh();
+X			if(getch()!='y') army=armynum;
+X			else army= -1;
+X		}
+X	}
+X	if(army==(-1)) {
+X		mvprintw(LINES-2,0,"raising a new army");
+X		clrtoeol();
+X		refresh();
+X		armynum=0;
+X		while((army==(-1))&&(armynum<MAXARM)) {
+X			if(ASOLD<=0) {
+X				army=armynum;
+X				ASOLD=0;
+X				ASTAT=DEFEND; /* set new armies to DEFEND */
+X				AADJSTAT;
+X				AADJMEN;
+X			}
+X			armynum++;
+X		}
+X		if(army==(-1)){
+X			mvaddstr(LINES-1,0,"NO FREE ARMIES--hit any key");
+X			clrtoeol();
+X			refresh();
+X			getch();
+X			if(isgod==1) country=0;
+X			return;
+X		}
+X		armynum=army;
+X	}
+X
+X	AYLOC=YREAL;
+X	AXLOC=XREAL;
+X	AADJLOC;
+X	AMOVE=0;
+X	AADJMOV;
+X	ASOLD+=men;
+X	AADJMEN;
+X	sct[XREAL][YREAL].people -= men;
+X	SADJCIV;
+X	makemap(); /* if display 'y' is set, this will show new army */
+X	if(isgod==0)
+X		/*magiced get 1/2 enlistment costs*/
+X		if((magic(country,WARRIOR)==1)
+X		||(magic(country,WARLORD)==1)
+X		||(magic(country,CAPTAIN)==1))
+X			ntn[country].tgold -= (long) men*ENLISTCOST/2;
+X		else ntn[country].tgold -= (long) men*ENLISTCOST;
+X	else country=0;
+X}
+X
+X/*adjust picked army*/
+Xadjarm()
+X{
+X	short status;
+X	short armynum=0;
+X	armynum=getselunit();
+X	if((armynum<0)||(armynum>=MAXARM)) {
+X		beep();
+X		mvprintw(LINES-1,0,"Sorry you have an Invalid army number (%d)",armynum);
+X		refresh();
+X		getch();
+X		return;
+X	}
+X	if(ASTAT==SCOUT) {
+X		beep();
+X		mvprintw(LINES-1,0,"Sorry can't change scouts");
+X		refresh();
+X		getch();
+X		return;
+X	}
+X	clear();
+X	mvprintw(0,10,"ADJUST ARMY %d OF NATION %s",armynum,ntn[country].name);
+X	mvaddstr(2,10,"1.  March ");
+X	mvaddstr(3,10,"2.  Scouting--will not engage enemy if possible");
+X	mvaddstr(4,10,"3.  Attack anybody (Hostile+) within 2 sectors");
+X	mvaddstr(5,10,"4.  Defend ");
+X	mvaddstr(6,10,"5.  Garrison--for a city or Capital");
+X	mvaddstr(12,10,"Enter your choice (return to continue):");
+X	refresh();
+X	status = get_number();
+X	if((status<1)||(status>5)) return;
+X	if((status==SCOUT)&&(ASOLD>25)){
+X		clear();
+X		mvaddstr(12,(COLS/2)-6,"MUST HAVE < 25 MEN TO SCOUT");
+X		mvaddstr(13,(COLS/2)-12,"HIT ANY KEY TO CONTINUE");
+X		refresh();
+X		getch();
+X		return;
+X	}
+X	ASTAT=status;
+X	AADJSTAT;
+X}
+X
+X/*go through msgfile not rewriting to temp messages you discard*/
+X/* then move temp to msgfile*/
+Xrmessage()
+X{
+X	FILE *mesgfp;
+X	FILE *fptemp;
+X	int i;
+X	int count;
+X	int contd;
+X	int done=0;
+X	char tempfile[ 30 ];
+X	char mesgfile[ 30 ];
+X	char line[80];
+X	char save[20][80];
+X
+X	clear();
+X	/*open file*/
+X	sprintf(tempfile,"%s:temp",msgfile);
+X	if( (fptemp = fopen(tempfile,"w")) == NULL ) {
+X		mvprintw(0,0,"error on creating %s--hit return", tempfile);
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	sprintf(mesgfile,"%s%d",msgfile,country);
+X	if ((mesgfp=fopen(mesgfile,"r"))==NULL) {
+X		mvprintw(0,0,"no messages in %s, hit return",mesgfile);
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	/*read in file a line at at time*/
+X	if(fgets(line,80,mesgfp)==NULL) done=1;
+X	while(done==0) {
+X		contd=0;
+X		count=3;
+X		if(strncmp(line,ntn[country].name,strlen(ntn[country].name))==0) {
+X			clear();
+X			standout();
+X			/*print to end of message*/
+X			while(contd==0) {
+X				if(count<22) strcpy(save[count-3],line);
+X				mvprintw(count,0,"%s",line);
+X				standend();
+X				for(i=0;i<strlen(ntn[country].name);i++) 
+X					mvaddch(count,i,' ');
+X				count++;
+X				if(fgets(line,80,mesgfp)==NULL) contd=1;
+X				if(strncmp(line,"END",3)==0) contd=1;
+X			}
+X			standout();
+X			mvaddstr(LINES-3,(COLS/2)-22,"HIT RETURN TO SAVE MESSAGE");
+X			mvaddstr(LINES-2,(COLS/2)-22,"HIT ANY OTHER KEY TO CONTINUE");
+X			standend();
+X			refresh();
+X			if(getch()=='\n') {
+X				for(i=0;i<count-3;i++) fputs(save[i],fptemp);
+X				strcpy(line,"END\n");
+X				fputs(line,fptemp);
+X			}
+X		}
+X		else fputs(line,fptemp);
+X		if(fgets(line,80,mesgfp)==NULL) done=1;
+X	}
+X	fclose(mesgfp);
+X	fclose(fptemp);
+X
+X	/*IMPLEMENT A MOVE BETWEEN TMP FILE AND REAL FILE HERE*/
+X	move_file( tempfile, mesgfile );
+X}
+X
+Xwmessage()
+X{
+X	FILE *fp, *fopen();
+X	int x,y;
+X	int done=0;
+X	char ch;
+X	char name[12];
+X	char realname[12];
+X	int temp=(-1);
+X	int linedone;
+X	char line[100];
+X	int nationid;
+X
+X	/*what nation to send to*/
+X	clear();
+X	mvprintw(0,0,"to send a message to the administrator, send to 'god':");
+X	mvprintw(2,0,"What country name do you wish to send to:");
+X	refresh();
+X	echo();
+X	getstr(name);
+X	noecho();
+X
+X	/*is name valid*/
+X	for(nationid=0;nationid<MAXNTN;nationid++) if(ntn[nationid].active!=0)
+X		if(strcmp(name,ntn[nationid].name)==0) temp=nationid;
+X
+X	if(strcmp(name,"god")==0) {
+X		temp=0;
+X		strcpy(realname,"unowned");
+X	}
+X	else strcpy(realname,name);
+X
+X	if (temp==(-1)) {
+X		mvprintw(2,0,"error--invalid name");
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	sprintf(line,"%s%d",msgfile,temp);
+X	if ((fp=fopen(line,"a+"))==NULL) {
+X		mvprintw(4,0,"error opening %s",line);
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	move(0,0);
+X	clrtoeol();
+X	move(2,0);
+X	clrtoeol();
+X	standout();
+X	mvprintw(3,(COLS-25)/2,"message to nation %s",name);
+X	mvprintw(LINES-2,(COLS-25)/2,"end with a return on a new line");
+X	mvprintw(LINES-1,(COLS-35)/2,"btw... This is my first editor, any comments?");
+X	standend();
+X
+X	fprintf(fp,"%s Message to %s from %s\n",realname,name,ntn[country].name);
+X	fprintf(fp,"%s \n",realname);
+X	y=6;
+X	x=0;
+X	refresh();
+X	while(done==0) {
+X		linedone=0;
+X		ch=' ';
+X		/*read line*/
+X		while(linedone==0){
+X			if(ch=='\b'){
+X				if(x>0) x--;
+X				mvaddch(y,x,' ');
+X				move(y,x);
+X				line[x]=' ';
+X				refresh();
+X				ch=getch();
+X			}
+X			else if(ch=='\n') linedone=1;
+X			else{
+X				/*concatonate to end*/
+X				line[x]=ch;
+X				mvaddch(y,x,ch);
+X				if(x<99) x++;
+X				else linedone=1;
+X				refresh();
+X				ch=getch();
+X			}
+X		}
+X		line[x]='\0';
+X		if(x<=1) done=1;
+X		/*write to file*/
+X		fprintf(fp,"%s %s\n",realname,line);
+X		x=0;
+X		y++;
+X	}
+X	fputs("END\n",fp);
+X	mvprintw(20,0,"Done with messaging");
+X	fclose(fp);
+X}
+X
+X/*strategic move of civilians...once only*/
+Xmoveciv()
+X{
+X	short people;
+X	short i,j;
+X
+X	mvaddstr(LINES-1,0,"Moving civilians costs 50 per civilian");
+X	if(sct[XREAL][YREAL].owner!=country){
+X		mvprintw(LINES-2,0,"you do not own:  hit return");
+X		clrtoeol();
+X		refresh();
+X		getch();
+X		return;
+X	}
+X	else if(sct[XREAL][YREAL].people==0){
+X		mvaddstr(LINES-2,0,"nobody lives here!!!:  hit return");
+X		clrtoeol();
+X		refresh();
+X		getch();
+X		makebottom();
+X		return;
+X	}
+X
+X	clear();
+X	mvaddstr(0,0,"Moving civilians costs 50 per civilian");
+X	mvprintw(1,0,"sector contains %d people",sct[XREAL][YREAL].people);
+X	mvaddstr(2,0,"how many people to move?");
+X	clrtoeol();
+X	refresh();
+X	people = get_number();
+X	if((people<0)
+X	||(people>sct[XREAL][YREAL].people)
+X	||(people*50>ntn[country].tgold)){
+X		mvaddstr(5,0,"Sorry...Input error or you do not have the gold");
+X		clrtoeol();
+X		refresh();
+X		getch();
+X		makebottom();
+X		return;
+X	}
+X
+X	mvprintw(5,0,"sector location is x=%d, y=%d",XREAL,YREAL);
+X	mvaddstr(7,0,"what x location to move to?");
+X	refresh();
+X	i = get_number();
+X
+X	if((i-(XREAL))>2||(i-(XREAL))<-2) {
+X		mvprintw(10,0,"can only move 2 sectors (you tried %hd)...--hit any key",i-(XREAL));
+X		refresh();
+X		getch();
+X		return;
+X	}
+X
+X	mvaddstr(10,0,"what y location to move to?");
+X	clrtoeol();
+X	refresh();
+X	j = get_number();
+X	if((j-(YREAL)>2)||((YREAL)-j>2)) {
+X		mvprintw(10,0,"sorry, can only move 2 sectors (you tried %hd)...--hit any key",j-(XREAL));
+X		refresh();
+X		getch();
+X	}
+X	else if(sct[i][j].owner!=country){
+X		mvaddstr(12,0,"sorry, you dont own it...");
+X		clrtoeol();
+X		refresh();
+X		getch();
+X	}
+X	/*need to check move cost > 0 for sector*/
+X	else if(movecost[i][j]<0){
+X		mvaddstr(12,0,"you can't enter there...");
+X		clrtoeol();
+X		refresh();
+X		getch();
+X	}
+X	else {
+X		ntn[country].tgold-=50*people;
+X		sct[XREAL][YREAL].people-=people;
+X		SADJCIV;
+X		sct[i][j].people+=people;
+X		SADJCIV2;
+X	}
+X}
+X
+Xarmygoto()
+X{
+X	short armynum=0,loop=0;
+X	armynum=getselunit();
+X	if((armynum<0)||(armynum>MAXARM)) armynum=0;
+X	else armynum++;
+X	/* move to next army with > 0 soldiers*/
+X	while ((armynum < MAXARM) && (ASOLD <= 0)) armynum++;
+X	if(armynum >= MAXARM)  {
+X		armynum=0;
+X		if(ASOLD <= 0) return(0);
+X	}
+X	/*move to correct location*/
+X	xcurs = AXLOC - xoffset;
+X	ycurs = AYLOC - yoffset;
+X	coffmap();
+X
+X	/*select correct unit*/
+X	selector=0;
+X	pager=0;
+X	while((getselunit() != armynum) && (loop++ < 500)) {
+X		selector+=2;
+X		if(selector>=10) {
+X			selector=0;
+X			pager+=1;
+X		}
+X	}
+X	return(1);
+X}
+X
+Xnavygoto()
+X{
+X	short nvynum=0,loop=0;
+X	nvynum=getselunit()-MAXARM;
+X	if((nvynum<0)||(nvynum>MAXNAVY)) nvynum=0;
+X	else nvynum++;
+X	/* move to next nvy with > 0 soldiers*/
+X	while ((nvynum < MAXNAVY) && (NMER+NWAR <= 0)) nvynum++;
+X	if(nvynum >= MAXNAVY) {
+X		nvynum=0;
+X		if(NMER+NWAR <= 0) return(0);
+X	}
+X	/*move to correct location*/
+X	xcurs = NXLOC - xoffset;
+X	ycurs = NYLOC - yoffset;
+X	coffmap();
+X	
+X	/*select correct unit*/
+X	selector=0;
+X	pager=0;
+X	while(((getselunit()-MAXARM) != nvynum) && (loop++ < 500)) {
+X		selector+=2;
+X		if(selector>=10) {
+X			selector=0;
+X			pager+=1;
+X		}
+X	}
+X	return(1);
+X}
+END_OF_commands.c
+if test 18869 -ne `wc -c <commands.c`; then
+    echo shar: \"commands.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f magic.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"magic.c\"
+else
+echo shar: Extracting \"magic.c\" \(9841 characters\)
+sed "s/^X//" >magic.c <<'END_OF_magic.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*create a new login for a new player*/
+X#include "header.h"
+X#include "data.h"
+X#include <ctype.h>
+X
+Xextern short country;
+Xextern short redraw;
+Xextern FILE *fexe;
+Xextern FILE *fnews;
+X
+X/*give player one new magic power in current magic (powers)*/
+X/*do nothing if that player has that power or it is not permitted*/
+X/*getmagic() returns the value of the power gained, and stores it in power*/
+X
+Xgetmagic()
+X{
+Xint newpower;
+X  	newpower=1<<rand()%MAXPOWER;
+X	switch(newpower){
+X	case WARRIOR:
+X	case CAPTAIN:
+X	case WARLORD:
+X		if(magic(country,WARRIOR)!=1){
+X			ntn[country].powers|=WARRIOR;
+X			return(WARRIOR);
+X		}
+X		else if(magic(country,CAPTAIN)!=1){
+X			ntn[country].powers|=CAPTAIN;
+X			return(CAPTAIN);
+X		}
+X		else if(magic(country,WARLORD)!=1){
+X			ntn[country].powers|=WARLORD;
+X			return(WARLORD);
+X		}
+X		break;
+X	case MI_MONST:
+X	case AV_MONST:
+X	case MA_MONST:
+X		if(ntn[country].race!=ORC) return(0);
+X		if(magic(country,MI_MONST)!=1){
+X			ntn[country].powers|=MI_MONST;
+X			return(MI_MONST);
+X		}
+X		else if(magic(country,AV_MONST)!=1){
+X			ntn[country].powers|=AV_MONST;
+X			return(AV_MONST);
+X		}
+X		else if(magic(country,MA_MONST)==1){
+X			ntn[country].powers|=MA_MONST;
+X			return(MA_MONST);
+X		}
+X		break;
+X	case SPY:
+X	case KNOWALL:
+X	case DERVISH:
+X	case HIDDEN:
+X	case ARCHITECT:
+X	case URBAN:
+X	case THE_VOID:
+X	case HEALER:
+X	case ARCHER:
+X	case CAVALRY:
+X		if(magic(country,newpower)==1) return(0);
+X		ntn[country].powers|=newpower;
+X		return(newpower);
+X	case DESTROYER:
+X		if((ntn[country].race!=ELF)&&(magic(country,DESTROYER)!=1)){
+X			ntn[country].powers|=DESTROYER;
+X			return(DESTROYER);
+X		}
+X		break;
+X	case VAMPIRE:
+X		if((ntn[country].race!=ELF)&&(magic(country,VAMPIRE)!=1)){
+X			ntn[country].powers|=VAMPIRE;
+X			return(VAMPIRE);
+X		}
+X		break;
+X	case MINER:
+X		if((ntn[country].race!=ELF)&&(ntn[country].race!=DWARF)&&(magic(country,MINER)!=1)){
+X			ntn[country].powers|=MINER;
+X			return(MINER);
+X		}
+X		break;
+X	case STEEL:
+X		if(magic(country,STEEL)==1) return(0);
+X		if(magic(country,MINER)!=1) return(0);
+X		ntn[country].powers|=STEEL;
+X		return(STEEL);
+X	case BREEDER:
+X		if(magic(country,BREEDER)==1) return(0);
+X		if(ntn[country].race!=ORC) return(0);
+X		ntn[country].powers|=BREEDER;
+X		return(BREEDER);
+X	}
+X	return(0);
+X}
+X
+X/*form to interactively get a magic power*/
+Xdomagic()
+X{
+X  	int x, count, done=0, loop=0, i, chance;
+X	long price;
+X	short isgod=0;
+X	if(country==0) {
+X		isgod=1;
+X		clear();
+X		mvaddstr(0,0,"WHAT NATION NUMBER:");
+X		refresh();
+X		country = get_number();
+X	}
+X
+X	while(done==0){
+X		done=1;
+X		clear();
+X		count=3;
+X		redraw=TRUE;
+X		standout();
+X		mvprintw(0,(COLS/2)-15,"MAGIC POWERS FOR %s",ntn[country].name);
+X		standend();
+X		/*print the powers that you have*/
+X		if(magic(country,WARRIOR)==1)
+X			mvaddstr(count++,0,"you have WARRIOR power (Fighter Level 1)");
+X		if(magic(country,CAPTAIN)==1)
+X			mvaddstr(count++,0,"you have CAPTAIN power (Fighter Level 2)");
+X		if(magic(country,WARLORD)==1)
+X			mvaddstr(count++,0,"you have WARLORD power (Fighter Level 3)");
+X		if(magic(country,MI_MONST)==1)
+X			mvaddstr(count++,0,"you have MINOR MONSTER power");
+X		if(magic(country,AV_MONST)==1)
+X			mvaddstr(count++,0,"you have AVERAGE MONSTER power");
+X		if(magic(country,MA_MONST)==1) 
+X			mvaddstr(count++,0,"you have MAJOR MONSTER power");
+X		if(magic(country,SPY)==1) 
+X			mvaddstr(count++,0,"you have SPY power");
+X		if(magic(country,KNOWALL)==1)
+X			mvaddstr(count++,0,"you have KNOWALL power");
+X		if(magic(country,DERVISH)==1) 
+X			mvaddstr(count++,0,"you have DERVISH power");
+X		if(magic(country,DESTROYER)==1)
+X			mvaddstr(count++,0,"you have DESTROYER power");
+X		if(magic(country,HIDDEN)==1) 
+X			mvaddstr(count++,0,"you have HIDDEN power");
+X		if(magic(country,THE_VOID)==1)
+X			mvaddstr(count++,0,"you have THE_VOID power");
+X		if(magic(country,ARCHITECT)==1)
+X			mvaddstr(count++,0,"you have ARCHITECT power");
+X		if(magic(country,VAMPIRE)==1)
+X			mvaddstr(count++,0,"you have VAMPIRE power");
+X		if(magic(country,HEALER)==1)
+X			mvaddstr(count++,0,"you have HEALER power");
+X		if(magic(country,MINER)==1) 
+X			mvaddstr(count++,0,"you have MINER power");
+X		if(magic(country,URBAN)==1)
+X			mvaddstr(count++,0,"you have URBAN power");
+X		if(magic(country,STEEL)==1)
+X			mvaddstr(count++,0,"you have STEEL power");
+X		if(magic(country,ARCHER)==1)
+X			mvaddstr(count++,0,"you have ARCHER power");
+X		if(magic(country,CAVALRY)==1)
+X			mvaddstr(count++,0,"you have CAVALRY power");
+X		if(magic(country,BREEDER)==1)
+X			mvaddstr(count++,0,"you have BREEDER power");
+X
+X		standout();
+X			
+X		if (count-3 >= MAXPOWER) {
+X			mvaddstr(count++,0,"You have all the available powers");
+X			refresh();
+X			getch();
+X		}
+X		price = JWL_MGK;
+X		for (i=1; i<count-3; i++) {
+X			price <<= 1;
+X			if (price > 500000000)
+X				break;
+X		}
+X
+X		if((ntn[country].race==ORC)&& ntn[country].jewels>=100000L){
+X			if(magic(country,MA_MONST)==1) {
+X			mvaddstr(count++,0,"  You have a 10 percent chance for 100K Jewels to take over other orcs");
+X			chance=10;
+X			} else if(magic(country,AV_MONST)==1) {
+X			mvaddstr(count++,0,"  You have a 6 percent chance for 100K Jewels to take over other orcs");
+X			chance=6;
+X			} else if(magic(country,MI_MONST)==1){
+X			mvaddstr(count++,0,"  You have a 3 percent chance for 100K Jewels to take over other orcs");
+X			chance=3;
+X			}
+X			mvprintw(count++,0,"DO YOU WISH TO TAKE OVER AN ORC NPC NATION (enter y or n):");
+X			refresh();
+X			if(getch()=='y'){
+X				done=0;
+X				mvaddstr(count++,0,"  What orc nation:");
+X				refresh();
+X				i=get_number();
+X				if(ntn[i].race==ORC){
+X					ntn[country].jewels-=100000L;
+X					if(i=takeover(chance,i)==1)
+X		 			mvprintw(count++,0," Successful: %d",i);
+X				}
+X		 		else mvaddstr(count++,0,"  Wrong Race");
+X			}
+X		}
+X
+X		count++;
+X		if(ntn[country].jewels>=price) {
+X			mvprintw(count++,0,"YOU CURRENTLY HAVE %ld JEWELS IN YOUR TREASURY",ntn[country].jewels);
+X			mvprintw(count++,0,"DO YOU WISH TO BUY A RANDOM NEW POWER FOR %ld JEWELS (enter y or n):",price);
+X			standend();
+X			refresh();
+X			if(getch()=='y'){
+X				done=0;
+X				loop = 0;
+X				while(loop++ < 500) if((x=getmagic())!=0){
+X					ntn[country].jewels -= price;
+X					CHGMGK;
+X					exenewmgk(x);
+X					refresh();
+X					break;
+X				}
+X				if (loop >= 500)
+X					mvaddstr(count++,0,"You have too many powers!");
+X			}
+X		} else {
+X			mvaddstr(count++,0,"NOT ENOUGH JEWELS TO PURCHASE NEW MAGIC -- hit any key");
+X			refresh();
+X			getch();
+X		}
+X	}
+X	if(isgod==1) country=0;
+X}
+X
+X
+X/*do magic for both npcs and pcs in update*/
+X/*if target is 0 then it is update and target will be picked randomly*/
+Xint
+Xtakeover(percent,target)
+X{
+Xint loop=1,y,save,isupdate=0;
+X	save=country;
+X	if(target==country) return(0);
+X	if(target==0) isupdate=1;
+X	country=target;
+X	if(rand()%100<percent){
+X		loop=0;
+X		y=0;
+X		if (target==0) while(loop==0){
+X			y++;
+X			country=rand()%MAXNTN;
+X			if((ntn[country].race==ntn[save].race)
+X			&&(ntn[country].active>=2)) loop=1;
+X			else if(y>=500) {
+X				country=save;
+X				return(0);
+X			}
+X		}
+X		sct[ntn[country].capx][ntn[country].capy].owner=save;
+X		if(isupdate==1){
+X		printf("nation %s taken over by %s\n",ntn[country].name,ntn[save].name);
+X		fprintf(fnews,"1.\tnation %s taken over by %s\n",ntn[country].name,ntn[save].name);
+X		}
+X		else DESTROY;
+X		destroy();
+X		y=country;
+X		country=save;
+X		return(y);
+X	}
+X	country=save;
+X	return(0);
+X}
+X
+X/*execute new magic*/
+Xexenewmgk(newpower)
+X{
+X	short x,y;
+X	switch(newpower){
+X		case WARRIOR:
+X			ntn[country].aplus+=10;
+X			ntn[country].dplus+=10;
+X			break;
+X		case CAPTAIN:
+X			ntn[country].aplus+=10;
+X			ntn[country].dplus+=10;
+X			break;
+X		case WARLORD:
+X			ntn[country].aplus+=10;
+X			ntn[country].dplus+=10;
+X			break;
+X		case HEALER:
+X			if(ntn[country].race==ORC) {
+X				if(ntn[country].repro<=11)
+X					ntn[country].repro+=2;
+X				else	ntn[country].repro=13;
+X			}
+X			else if(ntn[country].repro<=8){
+X				ntn[country].repro=10;
+X			}
+X			else if(ntn[country].repro==9){
+X				ntn[country].repro=10;
+X				ntn[country].dplus+=5;
+X			}
+X			else if(ntn[country].repro>=10){
+X				ntn[country].dplus+=10;
+X			}
+X			break;
+X		case DESTROYER:
+X			for(x=ntn[country].capx-3;x<=ntn[country].capx+3;x++) {
+X				for(y=ntn[country].capy-3;y<=ntn[country].capy+3;y++){
+X					if((ONMAP)
+X					&&(sct[x][y].altitude!=WATER)
+X					&&(isdigit(sct[x][y].vegetation)==0)){
+X						sct[x][y].vegetation=DESERT;
+X						sct[x][y].designation=DESERT;
+X					}
+X				}
+X			}
+X  			updmove(ntn[country].race);
+X			break;
+X		case DERVISH:
+X  			updmove(ntn[country].race);
+X  			break;
+X		case MI_MONST:
+X		case AV_MONST:
+X		case MA_MONST:
+X		case SPY:
+X		case KNOWALL:
+X		case HIDDEN:
+X		case THE_VOID:
+X		case ARCHITECT:
+X		case MINER:
+X			break;
+X		case VAMPIRE:
+X			ntn[country].aplus-=35;
+X			ntn[country].dplus-=35;
+X			ntn[country].maxmove-=2;
+X			break;
+X		case URBAN:
+X			if(ntn[country].race==ORC) {
+X				ntn[country].repro+=3;
+X				if(ntn[country].repro>=13){
+X				ntn[country].maxmove+=2*(ntn[country].repro-13);
+X				ntn[country].repro=13;
+X				}
+X			}
+X			else if(ntn[country].repro<=9){
+X				ntn[country].repro+=3;
+X			}
+X			else {
+X				ntn[country].maxmove+=2*(ntn[country].repro-9);
+X				ntn[country].repro=12;
+X			}
+X			break;
+X		case STEEL:
+X			break;
+X		case ARCHER:
+X			ntn[country].dplus+=10;
+X			break;
+X		case CAVALRY:
+X			ntn[country].aplus+=10;
+X			ntn[country].maxmove+=6;
+X			break;
+X		case BREEDER:
+X			ntn[country].repro+=3;
+X			ntn[country].dplus-=10;
+X			ntn[country].dplus-=10;
+X			break;
+X	}
+X}
+END_OF_magic.c
+if test 9841 -ne `wc -c <magic.c`; then
+    echo shar: \"magic.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f main.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"main.c\"
+else
+echo shar: Extracting \"main.c\" \(20136 characters\)
+sed "s/^X//" >main.c <<'END_OF_main.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*include files*/
+X#include <ctype.h>
+X#include "header.h"
+X#include "data.h"
+X#include <signal.h>
+X#include <fcntl.h>
+X#include  <pwd.h>
+X
+X/*initialization data*/
+X/*Movement costs*/
+Xchar *ele=       "#^%-~";
+Xchar *elename[]= {  "PEAK", "MOUNTAIN", "HILL", "FLAT","WATER"};
+Xchar *veg=       "VDW46973JSI~";
+Xchar *vegname[]= { "VOLCANO", "DESERT", "WASTE", "BARREN(4)", "LT VEG(6)",
+X"GOOD (9)", "WOOD (7)", "FOREST(3)", "JUNGLE", "SWAMP", "ICE", "NONE"};
+Xchar *numbers=   "0123456789";
+Xchar *Class[]= { "NPC", "king", "emperor", "wizard", "priest", "pirate", 
+X"trader", "tyrant", "demon", "dragon", "shadow"};
+Xchar *races[]= { "GOD","ORC","ELF","DWARF","LIZARD",
+X"HUMAN","PIRATE","BARBARIAN","NOMAD","UNKNOWN"};
+Xchar *diploname[]= { "UNMET", "CONFEDERACY", "ALLIED", "FRIENDLY",
+X"NEUTRAL", "HOSTILE", "WAR", "JIHAD"};
+Xchar *soldname[]= { "","MARCH","SCOUT","ATTACK","DEFEND","GARRISON"};
+Xchar *des=       "cCmfx$!-";
+Xchar *desname[]= {"CITY", "CAPITOL", "MINE", "FARM", "DEVASTATED", "GOLDMINE", 
+X"CASTLE", "NODESIG", "PEAK", "WATER"};
+Xchar	*exefile =  "execute";
+Xchar	*datafile = "data";
+Xchar	*msgfile =  "messages";
+Xchar	*npcsfile = "nations";
+Xchar	*helpfile = "help";
+Xchar	*newsfile = "news";
+X
+X/*Declarations*/
+Xstruct s_sector sct[MAPX][MAPY];
+Xstruct nation ntn[NTOTAL];   /* player nation stats */
+X/*is sector occupied by an army?*/
+Xchar	occ[MAPX][MAPY];
+Xshort movecost[MAPX][MAPY];
+Xextern int armornvy;
+Xlong startgold=0;
+X
+X/*offset of upper left hand corner*/
+Xshort xoffset=0,yoffset=0;
+X/*current cursor postion (relative to 00 in upper corner)*/
+X/*	position is 2*x,y*/
+Xshort xcurs=0,ycurs=0;
+X/*redraw map in this turn if redraw is a 1*/
+Xshort redraw=TRUE;
+X/*1 if you have quit*/
+Xint done=0;
+X/*display state*/
+Xshort hilmode=0;   /*highlight modes: 0=owned sectors, 1= armies, 2=none*/
+Xshort dismode=2;   /*display mode: 1=vegetation, 2=desig, 3=contour*/
+X/*		 4=armies/navies, 5=commodities, 6=fertility*/
+Xshort selector=0;  /*selector (y vbl) for which army/navy... is "picked"*/
+Xshort pager=0;     /*pager for selector 0,1,2,3*/
+X/* nation id of owner*/
+Xshort country=0;
+X
+XFILE *fexe, *fopen();
+X
+Xmain(argc,argv)
+Xint argc;
+Xchar **argv;
+X{
+X	register int i;
+X	char *name;
+X	void srand();
+X	int getopt();
+X	char passwd[20];
+X	long time();
+X	/*mflag = makeworld, a=add player, x=execute, p=print, h=help, s=score*/
+X	int mflag, aflag, xflag, pflag, sflag;
+X	char string[80];
+X	extern char *optarg;
+X	char defaultdir[256];
+X	int uid;
+X	struct passwd *getpwnam();
+X
+X	mflag = aflag = xflag = pflag = sflag = 0;
+X	srand((unsigned) time((long *) 0));
+X	strcpy(defaultdir, DEFAULTDIR);
+X	name = string;
+X	*name = 0;
+X
+X	/* process the command line arguments */
+X	while((i=getopt(argc,argv,"maxphn:d:s"))!=EOF) switch(i){
+X	/* process the command line arguments */
+X	case 'm':  /* make a new world*/
+X		mflag++;
+X		break;
+X	case 'a': /* anyone with password can add player*/
+X		aflag++;
+X		break;
+X	case 'x': /* execute program*/
+X		xflag++;
+X		break;
+X	case 'p': /* print the map*/
+X		pflag++;
+X		break;
+X	case 'h': /* execute help program*/
+X		initscr();
+X		savetty();
+X		noecho();
+X		crmode();			/* cbreak mode */
+X		signal(SIGINT,SIG_IGN);		/* disable keyboard signals */
+X		signal(SIGQUIT,SIG_IGN);
+X		help();
+X		endwin();
+X		putchar('\n');
+X		exit(1);
+X	case 'd':
+X		strcpy(defaultdir, optarg);
+X		break;
+X	case 'n':
+X		strcpy(name, optarg);
+X		break;
+X        case 's': /*print the score*/
+X		sflag++;
+X		break;
+X	case '?': /*  print out command line arguments */
+X		printf("Cmd line format: conquer [-maxdhp]\n");
+X		printf("\t-a       add new player\n");
+X		printf("\t-d DIR   to use play different game\n");
+X		printf("\t-h       print help text\n");
+X		printf("\t-m       make a world\n");
+X		printf("\t-n NAT   play as nation NAT\n");
+X		printf("\t-p       print a map\n");
+X		printf("\t-x       execute program\n");
+X		exit(0);
+X	};
+X
+X	/* now that we have parsed the args, we can got to the
+X	 * dir where the files are kept and do some work.
+X	 */
+X	if (chdir(defaultdir)) {
+X		printf("unable to change dir to %s\n",defaultdir);
+X		exit(1);
+X	}
+X	if (mflag) {
+X		makeworld();
+X		exit(0);
+X	}
+X
+X	/* read data*/
+X	readdata();
+X	verifydata( __FILE__, __LINE__ );
+X
+X	if (aflag) { /* a new player */
+X		if(strncmp(crypt(getpass("\nwhat is super user password:"),SALT),ntn[0].passwd,PASSLTH)!=0) {
+X			printf("sorry, must be super user to add player\n");
+X			exit(1);
+X		}
+X		newlogin();
+X		exit(1);
+X	} else if (pflag) {	/* print a map of the game */
+X		if(strncmp(crypt(getpass("\nwhat is super user password:"),SALT),ntn[0].passwd,PASSLTH)!=0) {
+X			printf("sorry, must be super user to get map\n");
+X			exit(1);
+X		}
+X		printf("what type of map\noptions are\n");
+X		printf("\t1) altitudes\n\t2) vegetations\n");
+X		printf("\t3) nations\n\n");
+X		printf("\tINPUT:");
+X		scanf("%hd",&dismode);
+X		if(dismode==1) printele();
+X		else if(dismode==2) printveg();
+X		else pr_ntns();
+X		exit(1);
+X	} else if (sflag) {	/* update the game */
+X		printscore();
+X		exit(0);
+X	} else if (xflag) {	/* update the game */
+X		uid=geteuid();
+X		if ( uid != (getpwnam(LOGIN))->pw_uid ){
+X			printf("sorry -- your uid is invalid for updating\n");
+X			printf("you need to be logged in as %s\n",LOGIN);
+X			exit(-100); /* boom */
+X		}
+X		update();
+X		writedata();
+X		exit(1);
+X	}
+X
+X	/* must be a normal interactive game */
+X	armornvy=AORN;
+X
+X	/* identify the player and the country he represents */
+X
+X	/* get nation name either from command line or by asking
+X         *     if you fail will give you the name of administrator of game
+X         */
+X
+X	/* verify existence of nation*/
+X	printf("conquer: %s copyrighted by Ed Barlow (1986)\n",VERSION);
+X	if (*name == 0) {
+X		printf("what nation would you like to be:");
+X		scanf("%s",name);
+X	}
+X	if(strcmp(name,"god")==0) strcpy(name,"unowned");
+X	country=(-1);
+X	for(i=0;i<NTOTAL;i++)
+X		if(strcmp(name,ntn[i].name)==0) country=i;
+X
+X	if(country==(-1)) {
+X		printf("name not found\n");
+X		printf("\nfor rules type <conquer -h>");
+X		printf("\nfor more information please contact %s\n",OWNER);
+X		return;
+X	}
+X
+X	/*get encrypted password*/
+X	strcpy(passwd,crypt(getpass("\nwhat is your password:"),SALT));
+X	if((strncmp(passwd,ntn[country].passwd,PASSLTH)!=0)
+X	&&(strncmp(passwd,ntn[0].passwd,PASSLTH)!=0)) {
+X		strcpy(passwd,crypt(getpass("\nerror: reenter your password:"),SALT));
+X		if((strncmp(passwd,ntn[country].passwd,PASSLTH)!=0)
+X		&&(strncmp(passwd,ntn[0].passwd,PASSLTH)!=0)) {
+X			printf("\nsorry:");
+X			printf("\nfor rules type <conquer -h>");
+X			printf("\nfor more information on the system please contact %s\n",OWNER);
+X			exit(1);
+X		}
+X	}
+X
+X	/* check if user is super-user nation[0] */
+X	/* 	else setup cursor to capitol*/
+X	if(country==0) {
+X		printf("welcome super user\n");
+X		xcurs=1;
+X		xoffset=0;
+X		ycurs=1;
+X		yoffset=0;
+X	}
+X	else {
+X		printf("\nverifing that nation %s exists\n",ntn[country].name);
+X		startgold = ntn[country].tgold;
+X		execute();
+X		if(ntn[country].capx>15) {
+X			xcurs=15;
+X			xoffset= (ntn[country].capx-15);
+X		}
+X		else {
+X			xcurs= ntn[country].capx;
+X			xoffset= 0;
+X		}
+X		if(ntn[country].capy>10) {
+X			ycurs=10;
+X			yoffset= (ntn[country].capy-10);
+X		}
+X		else {
+X			yoffset= 0;
+X			ycurs= ntn[country].capy;
+X		}
+X	}
+X
+X	updmove(ntn[country].race);
+X
+X	/* open output for future printing*/
+X	{
+X	    char filename[80];
+X	    sprintf(filename,"%s%d",exefile,country);
+X	    if ((fexe=fopen(filename,"a"))==NULL) {
+X		    beep();
+X		    printf("error opening %s\n",filename);
+X		    exit(1);
+X	    }
+X	}
+X
+X	/* SET UP THE SCREEN */
+X	printf("about to set up the screen");
+X	initscr();
+X	crmode();			/* cbreak mode */
+X	signal(SIGINT,SIG_IGN);		/* disable keyboard signals */
+X	signal(SIGQUIT,SIG_IGN);
+X
+X	prep();
+X	noecho();
+X
+X	/*main while routine*/
+X	done=0;
+X	while (done==0)
+X	{
+X		/* check if cursor is out of bounds*/
+X		coffmap();
+X		/*get commands, make moves and input command*/
+X		parse();
+X	}
+X
+X	if(country==0) writedata();
+X	else {
+X	fprintf(fexe,"L_NGOLD\t%d \t%d \t%ld \t0 \t0 \t%s\n",
+X		XNAGOLD ,country,ntn[country].tgold,"null");
+X	fprintf(fexe,"L_NIRON\t%d \t%d \t%ld \t0 \t0 \t%s\n",
+X		XNAIRON ,country,ntn[country].tiron,"null");
+X	fprintf(fexe,"L_NJWLS\t%d \t%d \t%ld \t0 \t0 \t%s\n",
+X		XNARGOLD ,country,ntn[country].jewels,"null");
+X	}
+X	/*done so quit*/
+X	clear();
+X	printw("quitting\n");
+X	refresh();
+X	nocrmode();
+X	endwin();
+X	fclose(fexe);
+X	exit(1);
+X}
+X
+X/*make the bottom of the screen*/
+Xmakebottom()
+X{
+X	move(LINES-4,0);
+X	clrtoeol();
+X	mvprintw(LINES-3,0,"Conquer: %s",VERSION);
+X	clrtoeol();
+X	mvaddstr(LINES-1,0,"  type ? for help");
+X	clrtoeol();
+X	mvaddstr(LINES-2,0,"  type Q to quit");
+X	clrtoeol();
+X	if(country==0) mvaddstr(LINES-3,COLS-20,"nation..GOD  ");
+X	else {
+X		mvprintw(LINES-3,COLS-20,"nation...%s",ntn[country].name);
+X		mvprintw(LINES-2,COLS-20,"treasury.%ld",ntn[country].tgold);
+X		mvprintw(LINES-1,COLS-20,"score....%d",ntn[country].score);
+X	}
+X}
+X
+X/* parse */
+Xparse()
+X{
+X	register int i;
+X	char name[20];
+X	char passwd[12];
+X	int ocountry;
+X
+X	switch(getch()) {
+X	case '':	/*redraw the screen*/
+X		redraw=TRUE;
+X		break;
+X	case 'a':	/*army report*/
+X		redraw=TRUE;
+X		armyrpt();
+X		break;
+X	case 'A':	/*adjust army*/
+X		redraw=TRUE;
+X		adjarm();
+X		break;
+X	case 'b':	/*move south west*/
+X		pager=0;
+X		selector=0;
+X		xcurs--;
+X		ycurs++;
+X		break;
+X	case 'B':	/*budget*/
+X		redraw=TRUE;
+X		budget();
+X		break;
+X	case 'c':	/*change nation stats*/
+X		redraw=TRUE;
+X		change();
+X		break;
+X	case 'C':	/*construct*/
+X		construct();
+X		break;
+X	case 'd':	/*change display*/
+X		newdisplay();
+X		break;
+X	case 'D':	/*draft*/
+X		draft();
+X		break;
+X	case 'f': /*report on ships and load/unload*/
+X		redraw=TRUE;
+X		fleetrpt();
+X		break;
+X	case 'F':	/*go to next army*/
+X		navygoto();
+X		break;
+X	case 'G':	/*go to next army*/
+X		armygoto();
+X		break;
+X	case 'H':	/*scroll west*/
+X		pager=0;
+X		selector=0;
+X		xcurs-=((COLS-22)/4);
+X		break;
+X	case 'h':	/*move west*/
+X		pager=0;
+X		selector=0;
+X		xcurs--;
+X		break;
+X	case 'J':	/*scroll down*/
+X		pager=0;
+X		selector=0;
+X		ycurs+=((SCREEN_Y_SIZE)/2);
+X		break;
+X	case 'j':	/*move down*/
+X		pager=0;
+X		selector=0;
+X		ycurs++;
+X		break;
+X	case 'k':	/*move up*/
+X		pager=0;
+X		selector=0;
+X		ycurs--;
+X		break;
+X	case 'K':	/*scroll up*/
+X		pager=0;
+X		selector=0;
+X		ycurs-=((SCREEN_Y_SIZE)/2);
+X		break;
+X	case 'l':	/*move east*/
+X		pager=0;
+X		selector=0;
+X		xcurs++;
+X		break;
+X	case 'L':	/*scroll east*/
+X		pager=0;
+X		selector=0;
+X		xcurs+=((COLS-22)/4);
+X		break;
+X	case 'm': 	/*move selected item to new x,y */
+X		mymove();
+X		prep();
+X		pager=0;
+X		selector=0;
+X		break;
+X	case 'M': 	/*magic*/
+X		redraw=TRUE;
+X		domagic();
+X		break;
+X	case 'n':	/*move south-east*/
+X		pager=0;
+X		selector=0;
+X		ycurs++;
+X		xcurs++;
+X		break;
+X	case 'N':	/*read newspaper */
+X		redraw=TRUE;
+X		newspaper();
+X		break;
+X	case 'p':	/*pick*/
+X		selector+=2;
+X		if(selector>=10) {
+X			selector=0;
+X			pager+=1;
+X		}
+X		/*current selected unit is selector/2+5*pager*/
+X		if((selector/2)+(pager*5)>=units_in_sector(XREAL,YREAL,country)) {
+X			pager=0;
+X			selector=0;
+X		}
+X		break;
+X	case 'P':	/*production*/
+X		redraw=TRUE;
+X		produce();
+X		break;
+X	case 'Q':	/*quit*/
+X	case 'q':	/*quit*/
+X		done=1;
+X		break;
+X	case 'r': 	/*redesignate*/
+X		redesignate();
+X		makemap();
+X		makebottom();
+X		break;
+X		/*list*/
+X	case 'R': 	/*Read Messages*/
+X		redraw=TRUE;
+X		rmessage();
+X		refresh();
+X		break;
+X	case 's':	/*score*/
+X		redraw=TRUE;
+X		showscore();
+X		break;
+X	case 'S':	/*diplomacy screens*/
+X		diploscrn();
+X		redraw=TRUE;
+X		break;
+X	case 'u':	/*move north-east*/
+X		pager=0;
+X		selector=0;
+X		ycurs--;
+X		xcurs++;
+X		break;
+X	case 'W': 	/*message*/
+X		redraw=TRUE;
+X		wmessage();
+X		break;
+X	case 'y':	/*move north-west*/
+X		pager=0;
+X		selector=0;
+X		ycurs--;
+X		xcurs--;
+X		break;
+X	case 'Z':	/*move civilians up to 2 spaces*/
+X		redraw=TRUE;
+X		moveciv();
+X		break;
+X	case 'z':	/*login as new user */
+X		clear();
+X		if(country != 0) {
+X		redraw=TRUE;
+X		fprintf(fexe,"L_NGOLD\t%d \t%d \t%ld \t0 \t0 \t%s\n",
+X			XNAGOLD ,country,ntn[country].tgold,"null");
+X		fprintf(fexe,"L_NIRON\t%d \t%d \t%ld \t0 \t0 \t%s\n",
+X			XNAIRON ,country,ntn[country].tiron,"null");
+X		fprintf(fexe,"L_NJWLS\t%d \t%d \t%ld \t0 \t0 \t%s\n",
+X			XNARGOLD ,country,ntn[country].jewels,"null");
+X		}
+X		else mvaddstr(2,0,"SUPER-USER: YOUR CHANGES WILL NOT BE SAVED IF YOU DO THIS!!!");
+X		standout();
+X		mvaddstr(0,0,"change login to : ");
+X		standend();
+X		refresh();
+X		echo();
+X		scanw("%s",name);
+X		noecho();
+X
+X		ocountry=country;
+X		country=(-1);
+X		if(strcmp(name,"god")==0) country=0;
+X		else for(i=1;i<NTOTAL;i++)
+X			if((strcmp(name,ntn[i].name)==0)&&(ntn[i].active>=1))
+X				country=i;
+X
+X		if(country==(-1)) {
+X			mvaddstr(2,0,"name not found");
+X			country=ocountry;
+X			break;
+X		}
+X
+X		/*get password*/
+X		mvaddstr(2,0,"what is your password:");
+X		refresh();
+X		getstr(passwd);
+X		strcpy(name,crypt(passwd,SALT));
+X
+X		if((strncmp(name,ntn[country].passwd,PASSLTH)!=0)
+X		&&(strncmp(name,ntn[0].passwd,PASSLTH)!=0)){
+X			mvaddstr(3,0,"sorry:");
+X			refresh();
+X			country=ocountry;
+X			break;
+X		}
+X
+X		fclose(fexe);
+X		/* open output for future printing*/
+X	    	sprintf(name,"%s%d",exefile,country);
+X	    	if ((fexe=fopen(name,"a"))==NULL) {
+X			beep();
+X		   	printf("error opening %s\n",name);
+X		   	exit(1);
+X	    	}
+X
+X		readdata();
+X		startgold = ntn[country].tgold;
+X		execute();
+X
+X		updmove(ntn[country].race);
+X		/*go to that nations capital*/
+X		if(country!=0) {
+X			if(ntn[country].capx>15) {
+X				xcurs=15;
+X				xoffset= (ntn[country].capx-15);
+X			}
+X			else {
+X				xcurs= ntn[country].capx;
+X				xoffset= 0;
+X			}
+X			if(ntn[country].capy>10) {
+X				ycurs=10;
+X				yoffset= (ntn[country].capy-10);
+X			}
+X			else {
+X				yoffset= 0;
+X				ycurs= ntn[country].capy;
+X			}
+X		}
+X		break;
+X	case '?':	/*display help screen*/
+X		redraw=TRUE;
+X		help();
+X		break;
+X	default:
+X		beep();
+X	}
+X}
+X
+Xmakeside()
+X{
+X	int i;
+X	int armbonus=0;
+X	int found=0,nvyfnd=0;
+X	int enemy;
+X	int y;
+X	short armynum;
+X	short nvynum;
+X	int count;
+X	int nfound=0;
+X
+X	/*clear side if you cant see it as you are out of bounds*/
+X	if(inch()==' ') {
+X		for(i=0;i<LINES-3;i++){
+X			move(i,COLS-21);
+X			clrtoeol();
+X		}
+X		return;
+X	}
+X
+X	/*clear top right hand side each new sector*/
+X	for(count=0;count<11;count++){
+X		move(count,COLS-21);
+X		clrtoeol();
+X	}
+X
+X	/*check for your armies*/
+X	count=units_in_sector(XREAL,YREAL,country);
+X	if(pager*5>count) pager=0;
+X
+X	/*first army found is #0*/
+X	/*show armies / navies in range pager*5 to pager*5 + 4*/
+X	/*so if pager=0 show 0 to 4, pager=2 show 10 to 14*/
+X	/*current selected unit is selector/2+5*pager*/
+X
+X	if(count>(5+(pager*5))) mvaddstr(10,COLS-20,"MORE...");
+X
+X	nfound=0;
+X	for(armynum=0;armynum<MAXARM;armynum++){
+X		if((ASOLD>0)&&(AXLOC==XREAL)&&(AYLOC==YREAL)) {
+X			if((nfound>=pager*5)&&(nfound<=4+(pager*5))) {
+X				/*print that army to nfound%5*/
+X				mvaddch((nfound%5)*2,COLS-21,'>');
+X				if(selector==(nfound%5)*2) standout();
+X				mvprintw((nfound%5)*2,COLS-20,"army %d: %d men  ",armynum,ASOLD);
+X				mvprintw((nfound%5)*2+1,COLS-20," mv:%d st:%s",AMOVE,*(soldname+ASTAT));
+X				standend();
+X			}
+X			nfound++;
+X		}
+X		if((occ[XREAL][YREAL]!=0)
+X		&&(occ[XREAL][YREAL]!=country)
+X		&&((SOWN==country)||((ASOLD>0)&&(AXLOC<=XREAL+1)
+X		&&(AXLOC>=XREAL-1)&&(AYLOC<=YREAL+1)&&(AYLOC>=YREAL-1)))) 
+X			found=1;
+X	}
+X
+X	if(nfound<4+(pager*5)) for(nvynum=0;nvynum<MAXNAVY;nvynum++){
+X		if(((NWAR+NMER)!=0)&&(NXLOC==XREAL)&&(NYLOC==YREAL)) {
+X			if((nfound>=pager*5)&&(nfound<=4+(pager*5))) {
+X				/*print a navy*/
+X				mvaddch((nfound%5)*2,COLS-21,'>');
+X				if(selector==(nfound%5)*2) standout();
+X				mvprintw((nfound%5)*2,COLS-20,"navy %d: move %d",nvynum,NMOVE);
+X				mvprintw((nfound%5)*2+1,COLS-20," war:%d mer:%d",NWAR,NMER);
+X				standend();
+X			}
+X			nfound++;
+X		}
+X		if((occ[XREAL][YREAL]!=0)&&(occ[XREAL][YREAL]!=country)
+X		&&(sct[XREAL][YREAL].altitude==WATER)
+X		&&(NWAR+NMER>0)&&(NXLOC<=XREAL+1)&&(NXLOC>=XREAL-1)
+X		&&(NYLOC<=YREAL+1)&&(NYLOC>=YREAL-1)) 
+X			nvyfnd=1;
+X	}
+X
+X	count=0;
+X	if(found==1) for(i=0;i<NTOTAL;i++) {
+X		if( !magic(i,HIDDEN) || country == 0 ){
+X			enemy=0;
+X			for(armynum=0;armynum<MAXARM;armynum++){
+X				if((i!=country)
+X				&&(ntn[i].arm[armynum].xloc==XREAL)
+X				&&(ntn[i].arm[armynum].yloc==YREAL)
+X				&&(ntn[i].arm[armynum].sold>0)) 
+X				enemy+=ntn[i].arm[armynum].sold;
+X			}
+X			if(enemy>0) {
+X				if((magic(country,SPY)==1) || country == 0 )
+X					mvprintw(nfound*2+count,COLS-20,"%s: %d men  ",ntn[i].name,enemy);
+X				else if(magic(i,THE_VOID)==1){
+X				mvprintw(nfound*2+count,COLS-20,"%s: ?? men  ",ntn[i].name);
+X				clrtoeol();
+X				}
+X				else mvprintw(nfound*2+count,COLS-20,"%s: %d men  ",ntn[i].name,(enemy*(rand()%60+70)/100));
+X				count++;
+X			}
+X		}
+X	}
+X	if(nvyfnd==1) for(i=0;i<NTOTAL;i++) {
+X		if( magic(i,HIDDEN)!=1 || country == 0 ) 
+X		for(nvynum=0;nvynum<MAXNAVY;nvynum++)
+X		if((ntn[i].arm[nvynum].xloc==XREAL)
+X		&&(ntn[i].arm[nvynum].yloc==YREAL)
+X		&&(ntn[i].arm[nvynum].sold>0)){
+X			if((magic(country,SPY)==1) || country == 0 ){
+X				mvprintw(nfound*2+count,COLS-20,"%s: %d ships  ",
+X				ntn[i].name,ntn[i].nvy[nvynum].warships+ntn[i].nvy[nvynum].merchant);
+X			}
+X			else if(magic(i,THE_VOID)==1){
+X			mvprintw(nfound*2+count,COLS-20,"%s: ?? ships",ntn[i].name);
+X			clrtoeol();
+X			}
+X			else mvprintw(nfound*2+count,COLS-20,"%s: %d ships  ",
+X			ntn[i].name,(ntn[i].nvy[nvynum].warships+ntn[i].nvy[nvynum].merchant)*(rand()%6+7)/10);
+X			count++;
+X		}
+X	}
+X
+X	standend();
+X	mvprintw(11,COLS-20,"x is %d  ",XREAL);
+X	mvprintw(11,COLS-11,"y is %d  ",YREAL);
+X
+X	if((country!=0)&&(sct[XREAL][YREAL].altitude==WATER)){
+X		for(y=12;y<=20;y++) mvaddstr(y,COLS-20,"                    ");
+X		mvaddstr(14,COLS-9,"WATER");
+X	}
+X	else {
+X	if((country!=0)&&(country!=sct[XREAL][YREAL].owner)
+X	&&(magic(sct[XREAL][YREAL].owner,THE_VOID)==1)){
+X		for(y=13;y<=20;y++) mvaddstr(y,COLS-20,"                    ");
+X	}
+X	else {
+X
+X		for(y=13;y<=14;y++) mvaddstr(y,COLS-20,"                    ");
+X
+X		for(i=0;i<=7;i++)
+X			if(sct[XREAL][YREAL].designation==*(des+i)){
+X			mvprintw(13,COLS-20,"%s",*(desname+i));
+X			clrtoeol();
+X			}
+X
+X		if((sct[XREAL][YREAL].owner==country)||(country==0))
+X		mvprintw(15,COLS-20,"people: %6d",sct[XREAL][YREAL].people);
+X		else 	
+X		mvprintw(15,COLS-20,"people: %6d",sct[XREAL][YREAL].people*(rand()%60+70)/100);
+X
+X		if((sct[XREAL][YREAL].owner==country)
+X		||(sct[XREAL][YREAL].owner==0)
+X		||(sct[XREAL][YREAL].owner>=MAXNTN)){
+X			mvprintw(17,COLS-20,"gold is:   %3d",sct[XREAL][YREAL].gold);
+X			mvprintw(18,COLS-20,"iron is:   %3d",sct[XREAL][YREAL].iron);
+X			if(sct[XREAL][YREAL].fortress>0){
+X			if(sct[XREAL][YREAL].designation==DCASTLE)
+X				armbonus=5*sct[XREAL][YREAL].fortress;
+X			else if(sct[XREAL][YREAL].designation==DCITY){
+X				if(magic(country,ARCHER)==1) armbonus=30;
+X				if(magic(country,ARCHITECT)==1){
+X				armbonus+=10+16*sct[XREAL][YREAL].fortress;
+X				}
+X				else armbonus+=10+8*sct[XREAL][YREAL].fortress;
+X			}
+X			else if(sct[XREAL][YREAL].designation==DCAPITOL){
+X				if(magic(country,ARCHER)==1) armbonus=30;
+X				if(magic(country,ARCHITECT)==1){
+X				armbonus+=20+20*sct[XREAL][YREAL].fortress;
+X				}
+X				else armbonus+=20+10*sct[XREAL][YREAL].fortress;
+X			}
+X			mvprintw(19,COLS-20,"fortress: +%2d%%",armbonus);
+X			}
+X			else mvaddstr(19,COLS-20,"               ");
+X		}
+X		else {
+X		for(y=17;y<=19;y++) mvaddstr(y,COLS-20,"                    ");
+X		}
+X	}
+X
+X	standout();
+X	if(sct[XREAL][YREAL].owner==0) mvaddstr(12,COLS-20,"unowned");
+X	else mvprintw(12,COLS-20,"owner: %s",ntn[sct[XREAL][YREAL].owner].name);
+X	standend();
+X	clrtoeol();
+X
+X	for(i=0;i<=10;i++)
+X		if(sct[XREAL][YREAL].vegetation==*(veg+i))
+X		mvprintw(13,COLS-9,"%s",*(vegname+i));
+X
+X	if(sct[XREAL][YREAL].owner!=0) for(i=1;i<=8;i++)
+X		if(ntn[sct[XREAL][YREAL].owner].race==*(races+i)[0]){
+X		mvprintw(14,COLS-20,"%s",*(races+i));
+X		clrtoeol();
+X		}
+X
+X	for(i=0;i<=4;i++)
+X		if(sct[XREAL][YREAL].altitude==*(ele+i))
+X		mvprintw(14,COLS-9,"%s",*(elename+i));
+X	}
+X
+X	if(movecost[XREAL][YREAL]<0) 
+X	mvaddstr(16,COLS-20,"YOU CAN'T ENTER HERE");
+X	else
+X	mvprintw(16,COLS-20,"move cost:  %2d      ",movecost[XREAL][YREAL]);
+X
+X}
+END_OF_main.c
+if test 20136 -ne `wc -c <main.c`; then
+    echo shar: \"main.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f run -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"run\"
+else
+echo shar: Extracting \"run\" \(1789 characters\)
+sed "s/^X//" >run <<'END_OF_run'
+X#below is a shell script that runs updates 3 times a day every day but sunday
+X#
+X#PLEASE CHANGE TIME* VARIABLES TO APPROPRIATE TIMES, and CHANGE PATH VARIABLES
+X#
+X#KEEP THE TIMES IN CHRONOLOGICAL ORDER AND THE TIME1H and TIME2H values
+X#represent the hours of TIME1 and TIME2
+X#########################################################
+X# use the command "at -l" to get a list of existing at jobs
+X# use the command "at -r <jobname>" to remove existing at jobs
+X#########################################################
+XTIME1=1000
+XTIME1H=10
+XTIME2=1700
+XTIME2H=17
+XTIME3=2300
+X#Below is the full command to update a game of conquer 
+XPATHTOCONQ="/d7/c7913/smile/oldgame/conquer -x -d/d7/c7913/smile/oldgame/temp"
+X#Path to this file
+XPATHTORUN=/d7/c7913/smile/oldgame/run
+X#LOG is full path name of log file
+XLOG=/d7/c7913/smile/oldgame/runlog
+X
+X/bin/date >> $LOG
+X$PATHTOCONQ >> $LOG
+X
+XDAY=`/bin/date | /usr/bin/awk '{ print $1 }'`
+Xecho "day is $DAY" >> $LOG
+XHOUR=`/bin/date|/usr/bin/awk '{ print $4 }'|/usr/bin/awk -F: '{ print $1 }'`
+Xecho "hour is $HOUR" >> $LOG
+X#BELOW IS AN EXAMPLE OF A BSD SCRIPT
+X#switch $DAY
+X#	case Sat:
+X#		set nextday=mon
+X#		breaksw
+X#	default:
+X#		set nextday =
+X#		breaksw
+X#endsw
+Xcase $DAY in
+X	Sat)
+X 		nextday=mon
+X		;;
+X	*)
+X 		nextday=""
+X		;;
+Xesac
+X#switch $HOUR
+X#	case 00:
+X#		set nexthour=$TIME1
+X#		breaksw
+X#	default:
+X#		set nexthour=$TIME2
+X#		breaksw
+X#endsw
+Xcase $HOUR in
+X$TIME1H)
+X 	nexthour=$TIME2
+X	echo "nexthour is $nexthour" >> $LOG
+X	;;
+X$TIME2H)
+X 	nexthour=$TIME3
+X	echo "nexthour is $nexthour" >> $LOG
+X	;;
+X*)
+X	nexthour=$TIME1
+X	echo "nexthour is $nexthour" >> $LOG
+X	;;
+Xesac
+X#below for bsd (i think)
+X#/usr/bin/at $nexthour $nextday $PATHTORUN 
+X#below for SYSV
+Xecho "/usr/bin/at $nexthour $nextday < $PATHTORUN" >> $LOG
+Xecho "XXX" >> $LOG
+X/usr/bin/at $nexthour $nextday < $PATHTORUN 
+END_OF_run
+if test 1789 -ne `wc -c <run`; then
+    echo shar: \"run\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+echo shar: End of archive 3 \(of 6\).
+cp /dev/null ark3isdone
+MISSING=""
+for I in 1 2 3 4 5 6 ; do
+    if test ! -f ark${I}isdone ; then
+	MISSING="${MISSING} ${I}"
+    fi
+done
+if test "${MISSING}" = "" ; then
+    echo You have unpacked all 6 archives.
+    rm -f ark[1-9]isdone
+else
+    echo You still need to unpack the following archives:
+    echo "        " ${MISSING}
+fi
+##  End of shell archive.
+exit 0

@@ -1,0 +1,1833 @@
+Path: uunet!seismo!sundc!pitstop!sun!amdcad!ames!ll-xn!mit-eddie!uw-beaver!tektronix!tekgen!tekred!games-request
+From: games-request@tekred.TEK.COM
+Newsgroups: comp.sources.games
+Subject: v03i071:  conquer - version 2 of the renamed conquest adventure game, Part02/06
+Message-ID: <2105@tekred.TEK.COM>
+Date: 22 Jan 88 21:33:26 GMT
+Sender: billr@tekred.TEK.COM
+Lines: 1823
+Approved: billr@tekred.TEK.COM
+
+Submitted by: ihnp4!mhuxd!smile (Ed Barlow)
+Comp.sources.games: Volume 3, Issue 71
+Archive-name: conquer/Part02
+
+#! /bin/sh
+
+# This is a shell archive.  Remove anything before this line, then unpack
+# it by saving it into a file and typing "sh file".  To overwrite existing
+# files, type "sh file -c".  You can also feed this as standard input via
+# unshar, or by typing "sh <file", e.g..  If this archive is complete, you
+# will see the following message at the end:
+#		"End of archive 2 (of 6)."
+# Contents:  cexecute.c makeworld.c npc.c
+# Wrapped by billr@tekred on Fri Jan 22 13:27:00 1988
+PATH=/bin:/usr/bin:/usr/ucb ; export PATH
+if test -f cexecute.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"cexecute.c\"
+else
+echo shar: Extracting \"cexecute.c\" \(3670 characters\)
+sed "s/^X//" >cexecute.c <<'END_OF_cexecute.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*EXECUTE THE PROGRAM*/
+X#include "header.h"
+X#include "data.h"
+Xextern short country;
+X
+Xexecute()
+X{
+X	FILE *fp, *fopen();
+X	int cmd,savectry;
+X	char comment[20];
+X	char temp[10];
+X	long longvar,long2var;
+X	int armynum;
+X	short int x,y;
+X	int execed=0;
+X	int done=0;
+X	char line[80];
+X
+X	/*execute in random order*/
+X	/*open exefile file*/
+X	sprintf(line,"%s%d",exefile,country);
+X	if ((fp=fopen(line,"r"))==NULL) {
+X		/*THIS MEANS THAT THE NATION HAS NOT MOVED YET*/
+X		return(0);
+X	}
+X	savectry=country;
+X
+X	/*read in file*/
+X	if(fgets(line,80,fp)==NULL) done=1;
+X	while(done==0) {
+X		/*read and parse a new line*/
+X		/*CODE IF YOU USE LONG VAR IS L_*/
+X  		if( line[0] == 'L' && line[1] == '_' ) {
+X  			sscanf(line,"%s %d %hd %ld %ld %hd %s",
+X  				temp,&cmd,&country,&longvar,&long2var,&y,comment);
+X  		} else {
+X  			sscanf(line,"%s %d %hd %d %hd %hd %s",
+X  				temp,&cmd,&country,&armynum,&x,&y,comment);
+X  		}
+X		execed=1;
+X		switch(cmd){
+X		case XASTAT:		/*Aadjstat*/
+X			if((x>0)&&(x<6))  ASTAT=x;
+X			break;
+X		case XAMEN:	/*Aadjmen*/
+X			armynum= (int) longvar;
+X			ASOLD= (int) long2var;
+X			break;
+X		case XALOC:	/*Aadjloc*/
+X			AXLOC=x;
+X			AYLOC=y;
+X			break;
+X		case XNLOC: /*nadjloc*/
+X			ntn[country].nvy[armynum].xloc=x;
+X			ntn[country].nvy[armynum].yloc=y;
+X			break;
+X		case XNASHP: /*nadjshp*/
+X			ntn[country].nvy[armynum].merchant=x;
+X			ntn[country].nvy[armynum].warships=y;
+X			break;
+X		case XECNAME:	/*Nadjname*/
+X			strcpy(ntn[country].name,comment);
+X			break;
+X		case XECPAS:	/*Nadjpas*/
+X			strncpy(ntn[country].passwd,comment,PASSLTH);
+X			break;
+X		case XECMARK:	/*Echgmark*/
+X			ntn[country].mark=comment[0];
+X			break;
+X		case XSADES:	/*Sadjdes*/
+X			if((sct[x][y].owner==country)||(country==0)) {
+X				sct[x][y].designation=comment[0];
+X			}
+X			if(sct[x][y].designation==DCAPITOL){
+X				ntn[country].capx=x;
+X				ntn[country].capy=y;
+X			}
+X			break;
+X		case XSACIV:	/*Sadjciv*/
+X			sct[x][y].people=armynum;
+X			break;
+X		case XSIFORT:	/*Sincfort*/
+X			sct[x][y].fortress++;
+X			break;
+X		case XNAGOLD:	/*Nadjgold:*/
+X			ntn[country].tgold = longvar;
+X			break;
+X		case XAMOV:
+X			AMOVE=x;
+X			break;
+X		case XNMOV:
+X			ntn[country].nvy[armynum].smove=x;
+X			break;
+X		case XSAOWN:
+X			sct[x][y].owner=country;
+X			break;
+X		case EDADJ:
+X			ntn[country].dstatus[armynum]=x;
+X			break;
+X		case XNARGOLD:
+X			ntn[country].jewels = longvar;
+X			break;
+X		case XNAIRON:
+X			ntn[country].tiron = longvar;
+X			break;
+X		case INCAPLUS:
+X			ntn[country].aplus++;
+X			break;
+X		case INCDPLUS:
+X			ntn[country].dplus++;
+X			break;
+X		case DESTRY:
+X			sct[ntn[armynum].capx][ntn[armynum].capy].owner=savectry;
+X			country=armynum;
+X			destroy();
+X			country=savectry;
+X			break;
+X		case CHG_MGK:
+X			ntn[country].powers|=long2var;
+X			if(ntn[country].powers!=longvar){
+X			printf("\nERROR ON MAGIC READ %ld != %d (or of %d)",longvar,ntn[country].powers,long2var);
+X			getchar();
+X			}
+X			exenewmgk(long2var);
+X			long2var=0;
+X		}
+X		if(fgets(line,80,fp)==NULL) done=1;
+X	}
+X	fclose(fp);
+X	/*return 1 if it did something*/
+X	country=savectry;
+X	if(execed==1) return(1);
+X	else return(0);
+X}
+X
+END_OF_cexecute.c
+if test 3670 -ne `wc -c <cexecute.c`; then
+    echo shar: \"cexecute.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f makeworld.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"makeworld.c\"
+else
+echo shar: Extracting \"makeworld.c\" \(21365 characters\)
+sed "s/^X//" >makeworld.c <<'END_OF_makeworld.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*Create a world*/
+X
+X/*DEFINE TEMPORARY VARIABLES FROM MAKEFILE*/
+X#include <ctype.h>
+X#include <stdio.h>
+X#include "header.h"
+X#include "data.h"
+X
+X#define HALF 2
+X#define LAND 3
+X
+Xextern short country;
+Xint area_map[MAXX][MAXY];/*Value Map of Areas*/
+Xint type[MAPX][MAPY];
+X
+Xmakeworld()
+X{
+X	register int i,j;
+X	register int x,y;
+X	int n; /*count used in string searches*/
+X	float avvalue; /*Average water tvalue of sectors*/
+X	int number[5]; /*Number of sectors with type=[0-4]*/
+X	char passwd[12];
+X	int alloc = NUMAREAS * 2;/*Value Allocated*/
+X	int place[MAXX][MAXY] ;/*Temporary matrix to see if an area is placed*/
+X	int X, Y;
+X	int X1,Y1;
+X	int X2,Y2;
+X	int valid;
+X	int nranges;
+X	int rnd;
+X	int tempfd;
+X	char newstring[40];
+X
+X	/*abort if datafile currently exists*/
+X	if(tempfd=open(datafile,0)!=-1) {
+X		printf("ABORTING: File %s exists\n",datafile);
+X		printf("\tthis means that a game is in progress. To proceed, you must remove \n");
+X		printf("\tthe existing data file. This will, of course, destroy that game.\n\n");
+X		exit(1);
+X	}
+X	printf("\n**********************WELCOME TO CONQUER**********************");
+X	printf("\nThe world will now be created...Your super user login will be 'god'.");
+X	printf("\nNon player countries will be read from data stored in the nations file"); 
+X	printf("\n& will have the same password as god (about to be entered). Add player");
+X	printf("\nnations with the command <conquer -a>.  Have fun!!!\n");
+X	printf("\nRemember to check the world out before playing to make sure");
+X	printf("\nno nations are in bad positions (surrounded by water... )");
+X	printf("******************************************************************\n\n");
+X
+X	printf("First, we must zero extraneous files from prior games\n");
+X	sprintf(newstring,"rm %s*\n",exefile);
+X	printf("\t%s",newstring);
+X	system(newstring);
+X	sprintf(newstring,"rm %s*\n",msgfile);
+X	printf("\t%s",newstring);
+X	system(newstring);
+X	sprintf(newstring,"> %s",newsfile);
+X	printf("\t%s\n",newstring);
+X	system(newstring);
+X	printf("OK This has been done, Now to set up a new world\n\n");
+X
+X	printf("please enter new super user password (remember this!):");
+X	scanf("%s",passwd);
+X	getchar();
+X	printf("please reenter password:");
+X	scanf("%s",ntn[0].passwd);
+X	getchar();
+X	if((strlen(ntn[0].passwd)<2)
+X	||(strncmp(passwd,ntn[0].passwd,PASSLTH)!=0)) {
+X		printf("\ninvalid super user password\n");
+X		exit(1);
+X	}
+X	strncpy(ntn[0].passwd,crypt(passwd,SALT),PASSLTH);
+X
+X	printf("\n\ncreating world\n");
+X	/*initialize variables */
+X	avvalue = (((float) PWATER/25.0)); /*Average water tvalue of sectors*/
+X	for(i=0;i<MAXX;i++) for(j=0;j<MAXY;j++) {
+X		place[i][j]=0;
+X		area_map[i][j]=0;
+X	}
+X	for(i=0;i<MAPX;i++) for(j=0;j<MAPY;j++) sct[i][j].vegetation=NONE;
+X
+X	for(i=0;i<5;i++) number[i] = NUMAREAS/5;  /*areas with type=[i]*/
+X	number[2]=NUMAREAS - 4*number[0]; /*correct for roundoff*/
+X
+X	/*determine # of area types to areas*/
+X	for(i=0;i<250;i++) {
+X		if((avvalue*NUMAREAS)>alloc) {
+X			/*have not allocated high enough so Allocate more */
+X			x = rand()%4;   /*0 to 3*/
+X			if(number[x]>0) {
+X				number[x] = number[x] - 1;
+X				number[x+1] = number[x+1] + 1;
+X				alloc = alloc + 1;
+X			}
+X		}
+X		else	{
+X			/*have allocated too much  Allocate less */
+X			x = (rand()%4) +1; /*1 to 4*/
+X			if(number[x]>0) {
+X				number[x] = number[x] - 1;
+X				number[x-1] = number[x-1] + 1;
+X				alloc = alloc - 1;
+X			}
+X		}
+X	}
+X
+X	i=0;
+X	while((number[4]>0)&&(i<500)) {
+X		i++;
+X		/*place a full land sector anywhere but on edge*/
+X		X = ((rand()%(MAXX-2))+1); /*1 to MAXX-2)*/
+X		Y = ((rand()%(MAXY-2))+1); /*1 to MAXY-2)*/
+X		if(place[X][Y] == 0) {
+X			place[X][Y]=1;
+X			area_map[X][Y]=4;
+X			number[4]=number[4] - 1;
+X			/*place surrounding sectors*/
+X			if(place[X+1][Y] == 0) {
+X				rnd = rand()%100 + 1; /*1 to 100*/
+X				if((rnd<25) && (number[4]>0)) {
+X					area_map[X+1][Y]=4;
+X					number[4]=number[4]-1;
+X					place[X+1][Y]=1;
+X				}
+X				if(rnd>25 && number[3]>0) {
+X					area_map[X+1][Y]=3;
+X					number[3]=number[3]-1;
+X					place[X+1][Y]=1;
+X				}
+X			}
+X			if(place[X-1][Y] == 0) {
+X				rnd = rand()%100 + 1 ; /*(1 to 100)*/
+X				if(rnd<25 && number[4]>0) {
+X					area_map[X-1][Y]=4;
+X					number[4]=number[4]-1;
+X					place[X-1][Y]=1;
+X				}
+X				if(rnd>25 && number[3]>0) {
+X					area_map[X-1][Y]=3;
+X					number[3]=number[3]-1;
+X					place[X-1][Y]=1;
+X				}
+X			}
+X			if(place[X][Y+1] == 0) {
+X				rnd = rand()%100 + 1 ; /*(1 to 100)*/
+X				if(rnd<25 && number[4]>0) {
+X					area_map[X][Y+1]=4;
+X					number[4]=number[4]-1;
+X					place[X][Y+1]=1;
+X				}
+X				if(rnd>25 && number[3]>0) {
+X					area_map[X][Y+1]=3;
+X					number[3]=number[3]-1;
+X					place[X][Y+1]=1;
+X				}
+X			}
+X			if(place[X][Y-1] == 0) {
+X				rnd = rand()%100 + 1 ; /*(1 to 100)*/
+X				if(rnd<25 && number[4]>0) {
+X					area_map[X][Y-1]=4;
+X					number[4]=number[4]-1;
+X					place[X][Y-1]=1;
+X				}
+X				if(rnd>25 && number[3]>0) {
+X					area_map[X][Y-1]=3;
+X					number[3]=number[3]-1;
+X					place[X][Y-1]=1;
+X				}
+X			}
+X		}
+X	}
+X
+X	/* place all other areas*/
+X	for(X=0;X<MAXX;X++) for(Y=0;Y<MAXY;Y++) {
+X		while(place[X][Y] == 0) {
+X			rnd = rand()%5; /*(0 to 4)*/
+X			if(number[rnd]>0) {
+X				area_map[X][Y]=rnd;
+X				number[rnd]=number[rnd]-1;
+X				place[X][Y]=1;
+X			}
+X		}
+X	}
+X
+X	/*ALL AREAS PLACED, NOW DETERMINE SECTOR TYPE
+X *fill in each area with sectors
+X *      1)   water
+X *      2)   water with major islands (25% land)
+X *      3)   50/50 water/land 
+X *      4)   land with major water (75% Land)
+X *      5)   land 
+X */
+X	for(Y=0;Y<MAXY;Y++) for(X=0;X<MAXX;X++) {
+X		/*fill in edges*/
+X		fill_edge(X,Y);
+X		/*fill in center*/
+X		for(i=1;i<7;i++) {
+X			for(j=1;j<7;j++) switch(area_map[X][Y]){
+X
+X			case 0:
+X				if((rand()%100) < 95) type[X*8+i][Y*8+j]=WATER;
+X				else type[X*8+i][Y*8+j]=HALF;
+X				break;
+X			case 1:
+X				if(rand()%2 == 0) type[X*8+i][Y*8+j]=WATER;
+X				else type[X*8+i][Y*8+j]=HALF;
+X				break;
+X			case 2:
+X				if (rand()%2 == 0) type[X*8+i][Y*8+j]=WATER;
+X				else type[X*8+i][Y*8+j]=LAND;
+X				break;
+X			case 3:
+X				if (rand()%2 == 0) type[X*8+i][Y*8+j]=LAND;
+X				else type[X*8+i][Y*8+j]=HALF;
+X				break;
+X			case 4:
+X				if ((rand()%100) < 95) type[X*8+i][Y*8+j]=LAND;
+X				else type[X*8+i][Y*8+j]=HALF;
+X				break;
+X			default:
+X				printf("ERROR");
+X			}
+X		}
+X	}
+X
+X	/*calculate all 50% areas*/
+X	for(X=0;X<MAPX;X++) for(Y=0;Y<MAPY;Y++) {
+X		if(type[X][Y] == HALF)
+X			if(rand()%2 == 0) {
+X				type[X][Y] = LAND;
+X			}
+X			else type[X][Y] = WATER;
+X	}
+X
+X
+X	/*Adjust world given sectors as land or sea, place vegetation, designation, 
+X and altitude */
+X
+X	for(i=0;i<MAPX;i++) for(j=0;j<MAPY;j++)
+X		if(type[i][j]==LAND) sct[i][j].altitude = CLEAR;
+X		else sct[i][j].altitude = WATER;
+X
+X	/*place mountain ranges */
+X
+X	nranges=(rand()%10+3)*avvalue;
+X	printf("%d mountain ranges to be placed",nranges);
+X
+X	while(nranges>0) {
+X		/*Place one range randomly*/
+X		X1 = rand()%(MAPX-6);
+X		Y1 = rand()%(MAPY-6);
+X		if((type[X1][Y1]==LAND)
+X		&&(type[X1+1][Y1+1]==LAND)
+X		&&(type[X1+1][Y1]==LAND)
+X		&&(type[X1][Y1+1]==LAND)
+X		&&(type[X1+2][Y1+2]==LAND)) {
+X			/*place second endpoint */
+X			valid = 0;
+X			i=0;
+X			nranges--;
+X			while((valid==0) && (i<500)) {
+X				i++;
+X				X2 = (rand()%7) + X1;
+X				Y2 = (rand()%7) + Y1;
+X				if(type[X2][Y2] == LAND) {
+X					valid = 1;
+X					/*fill in mountain range*/
+X					for(x=X1;x<=X2;x++) {
+X						if(X1<X2) y=((Y2-Y1)*(x-X1)/(X2-X1))+Y1;
+X						else y=Y1;
+X						if(type[x][y] == LAND)
+X							if(rand()%100>80) sct[x][y].altitude=PEAK;
+X							else sct[x][y].altitude=MOUNTAIN;
+X						if((y < MAPY - 1) 
+X						&& type[x][y+1] == LAND) {
+X							rnd=rand()%100+1;
+X							if(rnd>90) sct[x][y+1].altitude=PEAK;
+X							else if(rnd>50) sct[x][y+1].altitude=MOUNTAIN;
+X							else if(rnd>20) sct[x][y+1].altitude=HILL;
+X						}
+X						if((y!=0)
+X						&& type[x][y-1] == LAND ) {
+X							rnd=rand()%100+1;
+X							if(rnd>90) sct[x][y-1].altitude=PEAK;
+X							else if(rnd>50) sct[x][y-1].altitude=MOUNTAIN;
+X							else if(rnd>20) sct[x][y-1].altitude=HILL;
+X						}
+X						if((y>=2)
+X						&&(type[x][y-2] == LAND )) {
+X							rnd=rand()%100+1;
+X							if(rnd>90) sct[x][y-2].altitude=MOUNTAIN;
+X							else if(rnd>50) sct[x][y-2].altitude=HILL;
+X						}
+X						if((y < MAPY - 2)
+X						&&(type[x][y+2] == LAND )) {
+X							rnd=rand()%100+1;
+X							if(rnd>90) sct[x][y+2].altitude=MOUNTAIN;
+X							else if(rnd>50) sct[x][y+2].altitude=HILL;
+X						}
+X					}
+X				}
+X			}
+X		}
+X	}
+X
+X	/*fill in random hills to work out,not to left of to water*/
+X	for(i=1;i<NUMAREAS*3;i++) {
+X		x = rand()%(MAPX-1);
+X		y = rand()%(MAPY-1);
+X		if((type[x][y]==LAND)&&(type[x+1][y]==LAND))
+X			sct[x][y].altitude=HILL;
+X	}
+X
+X	/*make sure no peak or mountain is next to water*/
+X	for(y=1;y<MAPY-1;y++) for(x=1;x<MAPX-1;x++)
+X		if((sct[x][y].altitude==PEAK)
+X		||(sct[x][y].altitude==MOUNTAIN))
+X			for(i=0;i<=2;i++) for(j=0;j<=2;j++)
+X				if(sct[x+i-1][y+j-1].altitude==WATER)
+X					sct[x][y].altitude=HILL;
+X
+X	/*FIGURE OUT SECTOR VEGETATION TYPE
+X *use sector.altitude, and sector to determine vegetation
+X *from water is distance from nearest water
+X */
+X
+X	/*char veg[]="VDW46973JSI~"*/
+X	/*char veg[]="VDWBLGWFJSI~"*/
+X
+X	for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++)
+X		if(type[x][y]==LAND)
+X		{
+X			sct[x][y].vegetation=(*(veg+3+rand()%5));
+X			/*if hill then decrement vegetation*/
+X			if(sct[x][y].altitude==HILL) {
+X				for(n=3;n<9;n++)
+X					if(sct[x][y].vegetation==(*(veg+n)))
+X						sct[x][y].vegetation=(*(veg+n-1));
+X				if(area_map[x/8][y/8]<=1) sct[x][y].vegetation=VOLCANO;
+X			}
+X			else if(sct[x][y].altitude==MOUNTAIN)
+X				if((rand()%6==4)&&((y>MAPY/2+8)||(y<MAPY/2-8)))
+X					sct[x][y].vegetation=ICE;
+X				else sct[x][y].vegetation=(*(veg+2+rand()%3));
+X			else if(sct[x][y].altitude==PEAK)
+X				if((rand()%3==0)&&((y>MAPY/2+8)||(y<MAPY/2-8)))
+X					sct[x][y].vegetation=ICE;
+X				else sct[x][y].vegetation=VOLCANO;
+X		}
+X
+X	/*REWORK POLEAR/EQUATORIAL sector.vegetation*/
+X	/*Determine which areas are North Pole and Equatorial*/
+X	/*char veg[]="VDW46973JSI~"*/
+X	/*char veg[]="VDWBLGWFJSI~"*/
+X	/*               012345678901*/
+X
+X	/*polar work*/
+X	for(x=0;x<MAPX;x++)
+X	{
+X		for(y=0;y<6;y++) if(type[x][y]==LAND)
+X		{
+X			if(rand()%4 == 0) sct[x][y].vegetation = ICE;
+X			else for(n=3;n<10;n++)
+X				if(sct[x][y].vegetation==(*(veg+n)))
+X					sct[x][y].vegetation=(*(veg+(n-1)));
+X		}
+X		for(y=MAPY-7;y<MAPY;y++) if(type[x][y]==LAND)
+X		{
+X			if(rand()%4 == 0) sct[x][y].vegetation = ICE;
+X			else for(n=3;n<10;n++)
+X				if(sct[x][y].vegetation==(*(veg+n)) )
+X					sct[x][y].vegetation=(*(veg+(n-1)));
+X		}
+X	}
+X
+X	/*insert equator*/
+X	for(y=(MAPY/2)-8;y<=(MAPY/2)+8;y++) for(x=0;x<MAPX;x++)
+X		if(type[x][y]==LAND)
+X			if(rand()%10 ==0) sct[x][y].vegetation=DESERT;
+X			/*increment vegetation if between Waste and Jungle*/
+X			else for(n=2;n<9;n++)
+X				if((sct[x][y].vegetation==(*(veg+n)))
+X				&&(sct[x][y].altitude==CLEAR)
+X				&&(rand()%4==0)) 
+X				sct[x][y].vegetation=(*(veg+(n+1)));
+X
+X	/*char veg[]="VDW46973JSI~"*/
+X	/*char veg[]="VDWBLGWFJSI~"*/
+X	/*               012345678901*/
+X
+X	for(y=((MAPY/2)-2);y<=((MAPY/2)+2);y++) for(x=0;x<MAPX;x++)
+X		if((type[x][y]==LAND)&&(sct[x][y].altitude==CLEAR))
+X			if(rand()%10 == 0) sct[x][y].vegetation=DESERT;
+X			else if(rand()%10 == 0) sct[x][y].vegetation=JUNGLE;
+X			else if(rand()%10 == 0) sct[x][y].vegetation=SWAMP;
+X			/*increment vegetation again, but only Waste to Light*/
+X			else for(n=2;n<4;n++)
+X				if(sct[x][y].vegetation==(*(veg+n)))
+X					sct[x][y].vegetation=(*(veg+(n+1)));
+X
+X	/*expand swamps*/
+X	for(y=2;y<MAPY;y++) for(x=2;x<MAPX;x++)
+X		if(sct[x][y].vegetation==SWAMP)
+X			for(i=0;i<2;i++) for(j=0;j<2;j++)
+X				if((type[x-i][y-j]==LAND)&&((rand()%3)==0))
+X					sct[x-i][y-j].vegetation=SWAMP;
+X	/*expand deserts*/
+X	for(y=2;y<MAPY;y++) for(x=2;x<MAPX;x++)
+X		if(sct[x][y].vegetation==DESERT)
+X			for(i=0;i<2;i++) for(j=0;j<2;j++)
+X				if((type[x-i][y-j]==LAND)&&((rand()%3)==0))
+X					sct[x-i][y-j].vegetation=DESERT;
+X
+X	/*change all volcanos to peaks */
+X	for(y=1;y<MAPY;y++) for(x=1;x<MAPX;x++)
+X		if(sct[x][y].vegetation==VOLCANO) sct[x][y].altitude=PEAK;
+X
+X	/*make sure no desert is next to water*/
+X	for(y=1;y<MAPY-1;y++) for(x=1;x<MAPX-1;x++)
+X		if(sct[x][y].vegetation==DESERT)
+X			for(i=0;i<=2;i++) for(j=0;j<=2;j++)
+X				if(sct[x+i-1][y+j-1].altitude==WATER)
+X					sct[x][y].vegetation=LT_VEG;
+X
+X	/*PLACE EACH SECTOR'S RAW MATERIALS */
+X
+X	printf("\nplacing raw materials\n");
+X	for(y=0;y<MAPY;y++) for(x=0;x<MAPX;x++) {
+X
+X		/*gold*/
+X		if(rand()%10==0) sct[x][y].gold=rand()%4+4;
+X		else if(rand()%4==0) sct[x][y].gold=rand()%4;
+X		else sct[x][y].gold=0;
+X
+X		/*iron*/
+X		if(rand()%10==0) sct[x][y].iron=rand()%4+4;
+X		else if(rand()%4==0) sct[x][y].iron=rand()%4;
+X		else sct[x][y].iron=0;
+X
+X		/*default designations*/
+X		sct[x][y].designation=sct[x][y].vegetation;
+X
+X		/*default owner is unowned*/
+X		sct[x][y].owner=0;
+X	}
+X	populate();
+X	close(tempfd);
+X	writedata();
+X}
+X
+X/*fill: subroutine to fill in a square edges with land or sea*/
+Xfill_edge(AX,AY)
+X{
+X/*      1)   water
+X *      2)   water with major islands (25% land)
+X *      3)   50/50 water/land 
+X *      4)   land with major water (75% Land)
+X *      5)   land 
+X */
+X	register int i;
+X	int edgearea, X0, Y0, X1, Y1, X2, Y2, X3, Y3, X4, Y4;
+X	int area;
+X
+X	X0=AX;
+X	Y0=AY;
+X	X1=X0-1;
+X	Y1=Y0;
+X	X2=X0+1;
+X	Y2=Y0;
+X	X3=X0;
+X	Y3=Y0-1;
+X	X4=X0;
+X	Y4=Y0+1;
+X
+X	/*NORMALIZE FOR EDGE OF WORLD*/
+X  	if( X1 < 0 ) X1 = MAXX - 1;
+X  	if( X2 >= MAXX ) X2 = 0;
+X  	if( Y3 < 0 ) Y3 = MAXY - 1;
+X  	if( Y4 >= MAXY ) Y4 = 0;
+X
+X	area=area_map[X0][Y0];
+X	/*fill in south*/
+X	edgearea=area_map[X4][Y4];
+X	if(area + edgearea > 6) for(i=0;i<8;i++) type[X0*8+i][Y0*8+7] = LAND;
+X	else if((area + edgearea)>3) {
+X		for(i=0;i<8;i++)
+X			if(rand()%2 == 0) type[(X0*8)+i][Y0*8+7] = LAND;
+X			else type[(X0*8)+i][Y0*8+7] = WATER;
+X	}
+X	else for(i=0;i<8;i++) type[(X0*8)+i][Y0*8+7] = WATER;
+X	/*fill in east*/
+X	edgearea=area_map[X2][Y2];
+X	if(area + edgearea > 6) for(i=0;i<8;i++) type[X0*8+7][Y0*8+i] = LAND;
+X	else if((area + edgearea)>3) {
+X		for(i=0;i<8;i++)
+X			if(rand()%2==0) type[X0*8+7][Y0*8+i] = LAND;
+X			else type[X0*8+7][Y0*8+i] = WATER;
+X	}
+X	else for(i=0;i<8;i++) type[X0*8+7][Y0*8+i] = WATER;
+X	/*fill in west*/
+X	edgearea=area_map[X1][Y1];
+X	if(area + edgearea > 6) for(i=0;i<=7;i++) type[X0*8][Y0*8+i] = LAND;
+X	else if((area + edgearea)>3) {
+X		for(i=0;i<8 ;i++)
+X			if(rand()%2==0) type[X0*8][Y0*8+i] = LAND;
+X			else type[X0*8][Y0*8+i] = WATER;
+X	}
+X	else for(i=0;i<8 ;i++) type[X0*8][Y0*8+i] = WATER;
+X	/*fill in north*/
+X	edgearea=area_map[X3][Y3];
+X	if(area + edgearea > 6) for(i=0;i<8 ;i++) type[X0*8+i][Y0*8] = LAND;
+X	else if((area + edgearea)>3) {
+X		for(i=0;i<8 ;i++)
+X			if(rand()%2==0) type[(X0*8)+i][Y0*8] = LAND;
+X			else type[(X0*8)+i][Y0*8] = WATER;
+X	}
+X	else for(i=0;i<8 ;i++) type[(X0*8)+i][Y0*8] = WATER;
+X}
+X
+X/* ALLOCATE POPULATIONS OF THE WORLD*/
+Xpopulate()
+X{
+X	int i=0,x=0,y=0,j=0;
+X	int nvynum=0,army2num=0,armynum=0;
+X	int temp;
+X	int cnum=0;
+X	FILE *fp, *fopen();
+X	int done=0;
+X	char line[80];
+X
+X
+X	/*randomly scatter lizard city (want in DESERTS/swamp/Ice) */
+X	/*don't reproduce. Their cities are fortified and stockpiled */
+X#ifdef LZARD 
+X	strncpy(ntn[NLIZARD].name,"lizard",10);
+X	strncpy(ntn[NLIZARD].leader,"dragon",10);
+X	strcpy(ntn[NLIZARD].passwd,ntn[0].passwd);
+X	ntn[NLIZARD].race=LIZARD;
+X	ntn[NLIZARD].mark='*';
+X	ntn[NLIZARD].active=2;
+X	ntn[NLIZARD].aplus=0;
+X	ntn[NLIZARD].dplus=0;
+X	ntn[NLIZARD].maxmove=0;
+X	ntn[NLIZARD].repro=0;
+X	ntn[NLIZARD].powers=KNOWALL;
+X	for(i=0;i<NTOTAL;i++) if(i!=NLIZARD) {
+X		ntn[NLIZARD].dstatus[i]=WAR;
+X		ntn[i].dstatus[NLIZARD]=WAR;
+X	}
+X
+X	armynum=0;
+X	country=NLIZARD;
+X	while(armynum<MAXARM-2){
+X		x = (rand()%MAPX);
+X		y = (rand()%MAPY);
+X		if (is_habitable(x,y)) {
+X			sct[x][y].designation = DCASTLE;
+X			sct[x][y].fortress = 5+rand()%5;
+X			sct[x][y].gold = 15+rand()%20;
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(i>=0&&j>=0&&i<MAPX&&j<MAPX)
+X					if(sct[i][j].altitude!=WATER)
+X						sct[i][j].owner = NLIZARD;
+X			AMOVE=0;
+X			AXLOC=x;
+X			AYLOC=y;
+X			ASTAT=GARRISON;
+X			ASOLD=750+100*rand()%10;
+X			armynum++;
+X			AMOVE=8;
+X			AXLOC=x;
+X			AYLOC=y;
+X			ASTAT=ATTACK;
+X			ASOLD=750+100*rand()%10;
+X			armynum++;
+X		}
+X	}
+X	printf("%d lizards placed\n",armynum/2);
+X#endif
+X
+X	/* Place Brigands, Barbarians, and Nomads*/
+X#ifdef MONSTER 
+X	armynum=0;
+X	army2num=0;
+X	strcpy(ntn[NBARBARIAN].name,"bbarian");
+X	strcpy(ntn[NBARBARIAN].leader,"shaman");
+X	strcpy(ntn[NBARBARIAN].passwd,ntn[0].passwd);
+X	ntn[NBARBARIAN].race=BARBARIAN;
+X	ntn[NBARBARIAN].powers=KNOWALL;
+X	ntn[NBARBARIAN].mark='*';
+X	ntn[NBARBARIAN].active=2;
+X	ntn[NBARBARIAN].aplus=0;
+X	ntn[NBARBARIAN].dplus=10;
+X	ntn[NBARBARIAN].maxmove=4;
+X	ntn[NBARBARIAN].repro=5;
+X	for(i=0;i<NTOTAL;i++) if(i!=NBARBARIAN) {
+X		ntn[NBARBARIAN].dstatus[i]=WAR;
+X		ntn[i].dstatus[NBARBARIAN]=WAR;
+X	}
+X	ntn[NBARBARIAN].dstatus[NBARBARIAN]=NEUTRAL;
+X
+X	strcpy(ntn[NNOMAD].name,"nomad");
+X	strcpy(ntn[NNOMAD].leader,"khan");
+X	strcpy(ntn[NNOMAD].passwd,ntn[0].passwd);
+X	ntn[NNOMAD].powers=KNOWALL;
+X	ntn[NNOMAD].race=NOMAD;
+X	ntn[NNOMAD].mark='*';
+X	ntn[NNOMAD].active=2;
+X	ntn[NNOMAD].aplus=10;
+X	ntn[NNOMAD].dplus=0;
+X	ntn[NNOMAD].maxmove=4;
+X	ntn[NNOMAD].repro=5;
+X	for(i=0;i<NTOTAL;i++) if(i!=NNOMAD) {
+X		ntn[NNOMAD].dstatus[i]=WAR;
+X		ntn[i].dstatus[NNOMAD]=WAR;
+X	}
+X	ntn[NNOMAD].dstatus[NNOMAD]=NEUTRAL;
+X
+X	strcpy(ntn[NPIRATE].name,"pirate");
+X	strcpy(ntn[NPIRATE].leader,"captain");
+X	strcpy(ntn[NPIRATE].passwd,ntn[0].passwd);
+X	ntn[NPIRATE].powers=KNOWALL;
+X	ntn[NPIRATE].race=PIRATE;
+X	ntn[NPIRATE].mark='*';
+X	ntn[NPIRATE].active=2;
+X	ntn[NPIRATE].aplus=20;
+X	ntn[NPIRATE].dplus=0;
+X	ntn[NPIRATE].maxmove=4;
+X	ntn[NPIRATE].repro=5;
+X	for(i=0;i<NTOTAL;i++) if(i!=NPIRATE) {
+X		ntn[NPIRATE].dstatus[i]=WAR;
+X		ntn[i].dstatus[NPIRATE]=WAR;
+X	}
+X	ntn[NPIRATE].dstatus[NPIRATE]=NEUTRAL;
+X
+X	temp=(rand()%10+1)*(rand()%10+1);
+X	for(i=0;i<temp;i++){
+X		/*50% chance will be on edge, else anywhere*/
+X		if(rand()%2==0){
+X			if(rand()%2==0) {
+X				x=(rand()%20);
+X				y=(rand()%20);
+X			}
+X			else {
+X				x=(MAPX-(rand()%20)-1);
+X				y=(MAPY-(rand()%20)-1);
+X			}
+X			if(rand()%2==0) x = rand()%MAPX;
+X			else y = rand()%MAPY;
+X		}
+X		else {
+X			x = rand()%MAPX;
+X			y = rand()%MAPY;
+X		}
+X
+X		/* now place people*/
+X		if (is_habitable(x,y)) {
+X			if(rand()%2==0) {
+X				sct[x][y].owner = NBARBARIAN;
+X				country=NBARBARIAN;
+X				AXLOC=x;
+X				AYLOC=y;
+X				ASTAT=ATTACK;
+X				ASOLD=200+100*rand()%10;
+X				if(armynum<MAXARM-1) armynum++;
+X			}
+X			else {
+X				sct[x][y].owner = NNOMAD;
+X				ntn[NNOMAD].arm[army2num].xloc=x;
+X				ntn[NNOMAD].arm[army2num].yloc=y;
+X				ntn[NNOMAD].arm[army2num].stat=ATTACK;
+X				ntn[NNOMAD].arm[army2num].sold=100+100*rand()%15;
+X				if(army2num<MAXARM-1) army2num++;
+X			}
+X		}
+X		else if(nvynum<MAXNAVY) {
+X			country=NPIRATE;
+X			NXLOC=x;
+X			NYLOC=y;
+X			NWAR=2*(1+rand()%10);
+X			nvynum++;
+X		}
+X	}
+X	printf("all random population placed\n");
+X#endif
+X
+X	/*set up god but dont place*/
+X	strcpy(ntn[0].name,"unowned");
+X	strcpy(ntn[0].leader,"god");
+X	ntn[cnum].race=GOD;
+X	ntn[cnum].mark='-';
+X	ntn[cnum].active=0;
+X	ntn[cnum].location=GOD;
+X	ntn[cnum].powers=KNOWALL;
+X	cnum++;
+X
+X	if ((fp=fopen(helpfile,"r"))==NULL) {
+X		printf("\terror on read of %s file\n",helpfile);
+X		printf("\tdo you wish to use default help file (y or n)?");
+X		if(getchar()=='y'){
+X		sprintf(line,"cp %s/%s %s",DEFAULTDIR,helpfile,helpfile);
+X		printf("\n%s\n",line);
+X		system(line);
+X		} else {
+X			printf("\nOK; no NPC nations used\n");
+X			return;
+X		}
+X		getchar();
+X	}
+X
+X#ifdef NPC
+X
+X	/*open npcsfile file*/
+X	if ((fp=fopen(npcsfile,"r"))==NULL) {
+X		printf("error on read of %s file\n",npcsfile);
+X		printf("do you wish to use default NPC nations file (y or n)?");
+X		if(getchar()=='y'){
+X		sprintf(line,"%s/%s",DEFAULTDIR,npcsfile);
+X		if ((fp=fopen(line,"r"))==NULL) {
+X			printf("\nsorry; error on read of %s file\n",line);
+X			return;
+X		} else printf("\nOK; default nations used\n");
+X		} else {
+X			printf("\nOK; no NPC nations used\n");
+X			return;
+X		}
+X	}
+X	else printf("reading npc nation data from file: %s\n",npcsfile);
+X
+X	/*set up npc nation*/
+X	if(fgets(line,80,fp)==NULL) done=1;
+X  	while(done==0) {
+X  		/*read and parse a new line*/
+X  		if(line[0]!='#') {
+X  			sscanf(line,"%s %s %c %c %c %hd %hd %hd %ld %ld %ld %hd %hd",
+X 			ntn[cnum].name,ntn[cnum].leader,&ntn[cnum].race,
+X  			&ntn[cnum].mark,&ntn[cnum].location,&ntn[cnum].aplus,
+X  			&ntn[cnum].dplus,&ntn[cnum].maxmove,&ntn[cnum].tgold,
+X  			&ntn[cnum].tmil,&ntn[cnum].tciv,&ntn[cnum].repro,
+X  			&ntn[cnum].active);
+X  			ntn[cnum].active++;
+X  			ntn[cnum].class=0;
+X  			strcpy(ntn[cnum].passwd,ntn[0].passwd);
+X			country=cnum;
+X			if(ntn[country].race==HUMAN){
+X				ntn[country].powers=WARRIOR;
+X				exenewmgk(WARRIOR);
+X			}
+X			else if(ntn[country].race==DWARF){
+X				ntn[country].powers=MINER;
+X				exenewmgk(MINER);
+X			}
+X			else if(ntn[country].race==ELF){
+X				ntn[country].powers=THE_VOID;
+X				exenewmgk(THE_VOID);
+X			}
+X			else if(ntn[country].race==ORC){
+X				ntn[country].powers=MI_MONST;
+X				exenewmgk(MI_MONST);
+X			}
+X			else ntn[country].powers=WARRIOR;
+X			ntn[country].tfood=24000L;
+X			ntn[country].tiron=10000L;
+X			ntn[country].jewels=10000L;
+X			printf("\tnation %d: %s",cnum,line);
+X			cnum++;
+X			place();
+X		}
+X		if(fgets(line,80,fp)==NULL) done=1;
+X	}
+X	printf("all npc nations placed\n");
+X#endif
+X}
+END_OF_makeworld.c
+if test 21365 -ne `wc -c <makeworld.c`; then
+    echo shar: \"makeworld.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f npc.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"npc.c\"
+else
+echo shar: Extracting \"npc.c\" \(24352 characters\)
+sed "s/^X//" >npc.c <<'END_OF_npc.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X#include "header.h"
+X#include "data.h"
+X#include <ctype.h>
+X
+Xextern FILE *fnews;
+X
+Xextern short country;
+Xextern int attr[MAPX][MAPY];     /*sector attactiveness*/
+Xextern short movecost[MAPX][MAPY];
+Xint peace;   	/*is 8 if at peace, 12 if at war*/
+X
+X#ifdef NPC
+Xnationrun()
+X{
+X	int armynum,price;
+X	int x,y,i,z;
+X
+X	prep();
+X
+X	/* is there an error*/
+X	if((sct[ntn[country].capx][ntn[country].capy].owner==country)
+X	&&(sct[ntn[country].capx][ntn[country].capy].designation!=DCAPITOL)){
+X		sct[ntn[country].capx][ntn[country].capy].designation=DCAPITOL;
+X	}
+X
+X	/*go to war*/
+X	for(x=1;x<MAXNTN;x++) {
+X		/*if they at war with you go to war with them*/
+X		if(ntn[x].dstatus[country]>=WAR) {
+X			ntn[country].dstatus[x]=WAR;
+X		}
+X		/*else adjust diplomacy*/
+X		else if((ntn[country].dstatus[x]!=UNMET)
+X		&&(ntn[country].dstatus[x]!=JIHAD)
+X		&&(ntn[country].dstatus[x]!=CONFEDERACY)
+X		&&(ntn[country].active!=1)){
+X			if((ntn[x].tmil>4*ntn[country].tmil)
+X			&&(ntn[x].score>4*ntn[country].score)){
+X				if(rand()%3==0)  ntn[country].dstatus[x]=WAR;
+X				else if(rand()%8==0)  
+X					ntn[country].dstatus[x]=JIHAD;
+X			}
+X			/*if 2* mil and 2* score then not like them*/
+X			else if((ntn[x].tmil>2*ntn[country].tmil)
+X			&&(ntn[x].score>2*ntn[country].score)){
+X				if((ntn[country].dstatus[x]!=WAR)
+X				&&(ntn[x].race!=ntn[country].race)){
+X					if(rand()%3==0) 
+X						ntn[country].dstatus[x]++;
+X				}
+X			}
+X			/*adjust based on your status with them*/
+X			if((ntn[country].dstatus[x]==WAR)
+X			&&(ntn[x].dstatus[country]<WAR))
+X				if(rand()%3==0) ntn[country].dstatus[x]--;
+X
+X			if((ntn[country].dstatus[x]<WAR)
+X			&&(ntn[country].dstatus[x]>ALLIED)){
+X				if(ntn[x].dstatus[country]>1+ntn[country].dstatus[x]){
+X					if(rand()%3==0) 
+X						ntn[country].dstatus[x]++;
+X				}
+X				else 
+X				if(ntn[x].dstatus[country]+1<ntn[country].dstatus[x]){
+X					if(rand()%3==0) 
+X						ntn[country].dstatus[x]--;
+X				}
+X				if(ntn[x].race==ntn[country].race)
+X					if(rand()%3==0) 
+X						ntn[country].dstatus[x]--;
+X			}
+X			if(rand()%6==0) {
+X				if(ntn[country].dstatus[x]!=JIHAD)
+X					ntn[country].dstatus[x]++;
+X			}
+X			else if((rand()%5==0)
+X			&&(ntn[country].dstatus[x]!=CONFEDERACY)) {
+X				ntn[country].dstatus[x]--;
+X			}
+X		}
+X	}
+X
+X	/*move units */
+X	/*are they at war with any normal countries*/
+X	peace=0;
+X	for(i=1;i<MAXNTN;i++) if(ntn[country].dstatus[i]>peace)
+X		peace=ntn[country].dstatus[i];
+X
+X	if(peace<WAR){
+X		peace=8;
+X		pceattr();
+X		for(armynum=1;armynum<MAXARM;armynum++)
+X			if((ASOLD!=0)&&(ASTAT!=GARRISON)) armymove(armynum);
+X	}
+X	/*if war then attack &/or expand */
+X	else {
+X		peace=12;
+X		/*are they attacking or defending */
+X		for(x=0;x<MAXNTN;x++) if(ntn[country].dstatus[x]>HOSTILE){
+X			if(100*(ntn[country].tmil*(ntn[country].aplus+100))/((ntn[country].tmil*(ntn[country].aplus+100))+(ntn[x].tmil*(ntn[x].dplus+100)))>rand()%100){
+X				/*attacker*/
+X				for(armynum=1;armynum<MAXARM;armynum++)
+X					if((ASOLD>0)&&(ASTAT!=GARRISON)) 
+X						ASTAT=ATTACK;
+X				atkattr();
+X			}
+X			/*defender*/
+X			else {
+X				for(armynum=1;armynum<MAXARM;armynum++)
+X					if((ASOLD>0)&&(ASTAT!=GARRISON)){
+X						if(ASOLD<350) ASTAT=DEFEND;
+X						else ASTAT=ATTACK;
+X					}
+X				defattr();
+X			}
+X		}
+X
+X		for(armynum=1;armynum<MAXARM;armynum++)
+X			if((ASOLD!=0)&&(ASTAT!=GARRISON)) armymove(armynum);
+X	}
+X
+X	/*redesignate sectors*/
+X	if(ntn[country].active!=1) for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++)
+X		if((sct[x][y].owner==country)
+X			&&(is_habitable(x,y))) npcredes(x,y);
+X	if(ntn[country].active==1) for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++)
+X		if((sct[x][y].owner==country)
+X			&&((sct[x][y].designation)!=DCITY) 
+X			&&((sct[x][y].designation)!=DFARM) 
+X			&&((sct[x][y].designation)!=DMINE) 
+X			&&((sct[x][y].designation)!=DGOLDMINE) 
+X			&&((sct[x][y].designation)!=DCAPITOL)
+X			&&(is_habitable(x,y)))
+X				npcredes(x,y);
+X
+X	/*build forts in any cities*/
+X	if(ntn[country].active!=1) for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++)
+X		if(((sct[x][y].designation==DCITY)
+X			||(sct[x][y].designation==DCAPITOL))
+X			&&(sct[x][y].fortress<(sct[x][y].people%1000))
+X			&&(sct[x][y].fortress<5))
+X			sct[x][y].fortress++;
+X
+X	/*redo mil*/
+X	/*rate position -- any cities with no garison get one*/
+X	if(ntn[country].active!=1) redomil();
+X
+X	/*buy new powers and/or new weapons*/
+X	price=JWL_MGK;
+X	for(armynum=1; armynum<num_powers(country); armynum++ ) price <<= 1;
+X
+X	if(ntn[country].jewels > 2 * price) {
+X		if((z=getmagic())!=0){
+X			fprintf(fnews,"2.\tnation %s gets magic power number %d\n",ntn[country].name,z);
+X			exenewmgk(z);
+X			ntn[country].jewels-=price;
+X		}
+X		else if((z=getmagic())!=0){
+X			fprintf(fnews,"2.\tnation %s gets magic power number %d\n",ntn[country].name,z);
+X			exenewmgk(z);
+X			ntn[country].jewels-=price;
+X		}
+X		else if((z=getmagic())!=0){
+X			fprintf(fnews,"2.\tnation %s gets magic power number %d\n",ntn[country].name,z);
+X			exenewmgk(z);
+X			ntn[country].jewels-=price;
+X		}
+X	}
+X	i=0;
+X	if(magic(country,WARLORD)==1) i=30;
+X	else if(magic(country,CAPTAIN)==1) i=20;
+X	else if(magic(country,WARRIOR)==1) i=10;
+X	x = max ( ntn[country].aplus-i, 10 ) / 10;
+X	if(ntn[country].tiron >  3 * IRONORE * ntn[country].tmil*x*x){
+X		ntn[country].aplus+=1;
+X		ntn[country].dplus+=1;
+X		ntn[country].tiron-=2*IRONORE*ntn[country].tmil*x*x;
+X	}
+X}
+X
+X/*calculate attractiveness when at peace*/
+Xpceattr()
+X{
+X	int x,y,temp;
+X	/*add around capital*/
+X	for(x=ntn[country].capx-2;x<=ntn[country].capx+2;x++)
+X		for(y=ntn[country].capy-2;y<=ntn[country].capy+2;y++)
+X			if((ONMAP)&&(sct[x][y].owner==0)) attr[x][y]+=180;
+X
+X	/*add to attractiveness for unowned sectors*/
+X	for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++) if(sct[x][y].owner==0) {
+X		/*temp stands for the distance from the capital*/
+X		temp=0;
+X		if(x>ntn[country].capx) temp+=x-ntn[country].capx;
+X		else temp+=ntn[country].capx-x;
+X		if(y>ntn[country].capy) temp+=y-ntn[country].capy;
+X		else temp+=ntn[country].capy-y;
+X		if(temp<3) attr[x][y]+=300-(50*temp);
+X		else if(temp<20) attr[x][y]+=100;
+X	}
+X	else if((sct[x][y].owner==NNOMAD)
+X	||(sct[x][y].owner==NBARBARIAN)
+X	||(sct[x][y].owner==NPIRATE)) attr[x][y]+=100;
+X
+X	if(sct[ntn[country].capy][ntn[country].capy].owner!=country){
+X		attr[ntn[country].capy][ntn[country].capy]=1000;
+X	}
+X}
+X
+X/*calculate attractiveness of attacking sectors*/
+Xatkattr()
+X{
+X	int nation,armie,x,y,x1,x2,Y1,y2;
+X
+X	for(x=ntn[country].capx-2;x<=ntn[country].capx+2;x++)
+X		for(y=ntn[country].capy-2;y<=ntn[country].capy+2;y++)
+X			if((ONMAP)&&(sct[x][y].owner==0)) attr[x][y]+=80;
+X
+X	for(x=0;x<MAPX;x++) 
+X		for(y=0;y<MAPY;y++) 
+X			if((sct[x][y].owner==0)
+X			||(sct[x][y].owner==NNOMAD)
+X			||(sct[x][y].owner==NBARBARIAN)
+X			||(sct[x][y].owner==NPIRATE)) 
+X				attr[x][y]+=100;
+X
+X	/*adjust for each nation that you are at war with*/
+X	for(nation=1;nation<MAXNTN;nation++) 
+X	if((ntn[country].dstatus[nation]>=WAR)&&(ntn[country].active!=0)){
+X
+X		/*plus 1/2 men if in sector with their army*/
+X		/*defend your capital if occupied, +50 more if with their army*/
+X		for(armie=1;armie<MAXARM;armie++){
+X			if(ntn[nation].arm[armie].sold > 0) {
+X
+X				attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/10;
+X
+X			if((ntn[nation].arm[armie].xloc<=ntn[country].capx+2)
+X			&&(ntn[nation].arm[armie].yloc<=ntn[country].capy+2)
+X			&&(ntn[nation].arm[armie].xloc>=ntn[country].capx-2)
+X			&&(ntn[nation].arm[armie].yloc>=ntn[country].capy-2)){
+X				attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/5;
+X				if((rand()%3==0)
+X				&&(ntn[country].dstatus[nation]<WAR))
+X					ntn[country].dstatus[nation]++;
+X			if((ntn[nation].arm[armie].xloc==ntn[country].capx)
+X			&&(ntn[nation].arm[armie].yloc==ntn[country].capy)){
+X					if(ntn[country].dstatus[nation]==WAR)
+X					ntn[country].dstatus[nation]=JIHAD;
+X					if(ntn[nation].arm[armie].sold>2*ntn[country].arm[0].sold){
+X						attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/2;
+X					}
+X					else attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/5;
+X				}
+X				}
+X			}
+X		}
+X
+X		/*plus 40 if next to their capital */
+X		for(x=ntn[nation].capx-1;x<=ntn[nation].capy+1;x++){
+X			for(y=ntn[nation].capy-1;y<=ntn[nation].capy+1;y++){
+X				if(ONMAP)
+X				attr[x][y]+=40;
+X			}
+X		}
+X
+X		/*plus 100 if on their capital*/
+X		attr[ntn[nation].capx][ntn[nation].capy]+=100;
+X
+X		/*+60 if between the two capitals*/
+X		if (ntn[nation].capx < ntn[country].capx){
+X			x1=ntn[nation].capx;
+X			x2=ntn[country].capx;
+X		}
+X		else {
+X			x1=ntn[country].capx;
+X			x2=ntn[nation].capx;
+X		}
+X		if (ntn[nation].capy < ntn[country].capy){
+X			Y1=ntn[nation].capy;
+X			y2=ntn[country].capy;
+X		}
+X		else {
+X			Y1=ntn[country].capy;
+X			y2=ntn[nation].capy;
+X		}
+X		for(x=x1;x<=x2;x++) for(y=Y1;y<=y2;y++) {
+X			if(ONMAP) attr[x][y]+=60;
+X		}
+X
+X		/*for each sector +60 if their sector*/
+X		for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++)
+X			if((sct[x][y].owner==nation)&&(occ[x][y]==0))
+X				attr[x][y]+=100;
+X			else if(sct[x][y].owner==nation) 
+X				attr[x][y]+=60;
+X	}
+X	if(sct[ntn[country].capy][ntn[country].capy].owner!=country){
+X		attr[ntn[country].capy][ntn[country].capy]=1000;
+X	}
+X}
+X
+Xdefattr()
+X{
+X	int nation,armie,x,y,x1,x2,y1,y2;
+X
+X	for(x=0;x<MAPX;x++) 
+X		for(y=0;y<MAPY;y++) 
+X			if((sct[x][y].owner==0)
+X			||(sct[x][y].owner==NNOMAD)
+X			||(sct[x][y].owner==NBARBARIAN)
+X			||(sct[x][y].owner==NPIRATE)) 
+X				attr[x][y]+=100;
+X
+X	for(x=ntn[country].capx-2;x<=ntn[country].capx+2;x++)
+X		for(y=ntn[country].capy-2;y<=ntn[country].capy+2;y++)
+X			if(ONMAP&&(sct[x][y].owner==0)) attr[x][y]+=80;
+X
+X	for(nation=1;nation<MAXNTN;nation++) 
+X	if((ntn[nation].active!=0)&&(ntn[country].dstatus[nation]>=WAR)) {
+X
+X		/*plus if near enemy army*/
+X		/*plus 30 if next to their army*/
+X		/*plus 60 if with their army*/
+X		for(armie=1;armie<MAXARM;armie++) 
+X		if(ntn[nation].arm[armie].sold > 0) {
+X
+X			attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/10;
+X
+X			if((ntn[nation].arm[armie].xloc<=ntn[country].capx+2)
+X			&&(ntn[nation].arm[armie].yloc<=ntn[country].capy+2)
+X			&&(ntn[nation].arm[armie].xloc>=ntn[country].capx-2)
+X			&&(ntn[nation].arm[armie].yloc>=ntn[country].capy-2)){
+X				attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/5;
+X				if((rand()%3==0)
+X				&&(ntn[country].dstatus[nation]<WAR))
+X					ntn[country].dstatus[nation]++;
+X				if((ntn[nation].arm[armie].xloc==ntn[country].capx)
+X				&&(ntn[nation].arm[armie].yloc==ntn[country].capy)){
+X					if(ntn[country].dstatus[nation]==WAR)
+X					ntn[country].dstatus[nation]=JIHAD;
+X					if(ntn[nation].arm[armie].sold>2*ntn[country].arm[0].sold){
+X						attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/2;
+X					}
+X					else attr[ntn[nation].arm[armie].xloc][ntn[nation].arm[armie].yloc]+=ntn[nation].arm[armie].sold/5;
+X				}
+X			}
+X		}
+X
+X
+X		/*plus if strategic blocking sector*/
+X		/*+60 if between the two capitals*/
+X		if (ntn[nation].capx < ntn[country].capx){
+X			x1=ntn[nation].capx;
+X			x2=ntn[country].capx;
+X		}
+X		else {
+X			x1=ntn[country].capx;
+X			x2=ntn[nation].capx;
+X		}
+X		if (ntn[nation].capy < ntn[country].capy){
+X			y1=ntn[nation].capy;
+X			y2=ntn[country].capy;
+X		}
+X		else {
+X			y1=ntn[country].capy;
+X			y2=ntn[nation].capy;
+X		}
+X
+X		for(x=x1;x<=x2;x++) for(y=y1;y<=y2;y++) {
+X			if(ONMAP) attr[x][y]+=60;
+X		}
+X
+X		/*plus 80 if near your capital */
+X		for(x=ntn[country].capx-1;x<=ntn[country].capy+1;x++){
+X			for(y=ntn[country].capy-1;y<=ntn[country].capy+1;y++){
+X				if(ONMAP) attr[x][y]+=80;
+X			}
+X		}
+X
+X		/*plus based on defensive value*/
+X		for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++) {
+X			if(movecost[x][y]==1) attr[x][y] += 50;
+X			else if(movecost[x][y]<=3) attr[x][y] += 20;
+X			else if(movecost[x][y]<=5) attr[x][y] += 10;
+X
+X			if((sct[x][y].designation==DCITY)
+X			&&((sct[x][y].owner==country)
+X			||(sct[x][y].owner==nation))){
+X				attr[x][y] += 50;
+X			}
+X
+X			/* plus 60 if they own and unoccupied*/
+X			if((sct[x][y].owner==nation)&&(occ[x][y]==0)) 
+X				attr[x][y]+=100;
+X			else if(sct[x][y].owner==nation) attr[x][y]+=60;
+X		}
+X	}
+X
+X	if(sct[ntn[country].capy][ntn[country].capy].owner!=country){
+X		attr[ntn[country].capy][ntn[country].capy]=1000;
+X	}
+X}
+X#endif
+X
+X/*ntn 1 is nation you are updating*/
+Xnewdip(ntn1,ntn2)
+X{
+X	if(ntn[ntn1].active<2) {
+X		if(ntn[ntn1].dstatus[ntn2]==UNMET)
+X			ntn[ntn1].dstatus[ntn2]=NEUTRAL;
+X	}
+X	else if(ntn[ntn1].race==ntn[ntn2].race){
+X		if(rand()%5<3) ntn[ntn1].dstatus[ntn2]=FRIENDLY;
+X		else if(rand()%2==0) ntn[ntn1].dstatus[ntn2]=ALLIED;
+X		else ntn[ntn1].dstatus[ntn2]=NEUTRAL;
+X	}
+X	else switch(ntn[ntn1].race) {
+X	case DWARF:
+X		switch(ntn[ntn2].race) {
+X		case ELF:
+X			ntn[ntn1].dstatus[ntn2]=HOSTILE;
+X			break;
+X		case HUMAN:
+X			ntn[ntn1].dstatus[ntn2]=NEUTRAL;
+X			break;
+X		case ORC:
+X		default:
+X			ntn[ntn1].dstatus[ntn2]=WAR;
+X			break;
+X		}
+X		break;
+X	case ELF:
+X		switch(ntn[ntn2].race) {
+X		case DWARF:
+X			ntn[ntn1].dstatus[ntn2]=HOSTILE;
+X			break;
+X		case HUMAN:
+X			ntn[ntn1].dstatus[ntn2]=NEUTRAL;
+X			break;
+X		case ORC:
+X		default:
+X			ntn[ntn1].dstatus[ntn2]=WAR;
+X			break;
+X		}
+X		break;
+X	case ORC:
+X		switch(ntn[ntn2].race) {
+X		case HUMAN:
+X			ntn[ntn1].dstatus[ntn2]=NEUTRAL;
+X			break;
+X		case DWARF:
+X		case ELF:
+X		default:
+X			ntn[ntn1].dstatus[ntn2]=WAR;
+X			break;
+X		}
+X		break;
+X	case HUMAN:
+X		switch(ntn[ntn2].race) {
+X		case DWARF:
+X		case ELF:
+X			ntn[ntn1].dstatus[ntn2]=NEUTRAL;
+X			break;
+X		case ORC:
+X			ntn[ntn1].dstatus[ntn2]=HOSTILE;
+X			break;
+X		default:
+X			ntn[ntn1].dstatus[ntn2]=WAR;
+X			break;
+X		}
+X		break;
+X	default:
+X		ntn[ntn1].dstatus[ntn2]=WAR;
+X		break;
+X	}
+X}
+X
+X/*destroy nation--special case if capital not owned by other nation*/
+Xdestroy()
+X{
+X	short armynum, nvynum;
+X	int i, x, y;
+X	fprintf(fnews,"1.\tDESTROY NATION %s",ntn[country].name);
+X	if(country!=sct[ntn[country].capx][ntn[country].capy].owner){
+X		fprintf(fnews,"\t(their capitol is owned by %s)\n",ntn[sct[ntn[country].capx][ntn[country].capy].owner].name);
+X		/*get +5% to combat skill*/
+X		ntn[sct[ntn[country].capx][ntn[country].capy].owner].aplus+=5;
+X	}
+X	else fprintf(fnews,"\t(they own their capitol)\n");
+X
+X	ntn[country].active=0;
+X	for(armynum=0;armynum<MAXARM;armynum++) if(ASOLD>0) {
+X		if(ntn[sct[AXLOC][AYLOC].owner].race==ntn[country].race)
+X			sct[AXLOC][AYLOC].people+=ASOLD;
+X		ASOLD=0;
+X	}
+X	for(nvynum=0;nvynum<MAXNAVY;nvynum++) {
+X		NMER=0;
+X		NWAR=0;
+X	}
+X	for(i=0;i<MAXNTN;i++) {
+X		ntn[i].dstatus[country]=UNMET;
+X		ntn[country].dstatus[i]=UNMET;
+X	}
+X
+X	/*if take them you get their gold*/
+X	if(country!=sct[ntn[country].capx][ntn[country].capy].owner){
+X		if(ntn[country].tgold>0) ntn[sct[ntn[country].capx][ntn[country].capy].owner].tgold+=ntn[country].tgold;
+X		if(ntn[country].jewels>0) ntn[sct[ntn[country].capx][ntn[country].capy].owner].jewels+=ntn[country].jewels;
+X		if(ntn[country].tiron>0) ntn[sct[ntn[country].capx][ntn[country].capy].owner].tiron+=ntn[country].tiron;
+X		if(ntn[country].tfood>0) ntn[sct[ntn[country].capx][ntn[country].capy].owner].tfood+=ntn[country].tfood;
+X	}
+X
+X	/*if god destroys then kill all population*/
+X	if(country==sct[ntn[country].capx][ntn[country].capy].owner){
+X		for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++) 
+X		if(sct[x][y].owner==country) {
+X			sct[x][y].people=0;
+X			sct[x][y].owner=0;
+X			if(isdigit(sct[x][y].vegetation)!=0)
+X				sct[x][y].designation=DNODESIG;
+X		}
+X	}
+X	/*slowly take over and all people flee*/
+X	else if(ntn[sct[ntn[country].capx][ntn[country].capy].owner].race!=ntn[country].race){
+X		for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++) 
+X		if(sct[x][y].owner==country) {
+X			/*all kinds of refugees to neighboring countries*/
+X			flee(x,y,1);
+X			sct[x][y].people=0;
+X			sct[x][y].owner=0;
+X			if(isdigit(sct[x][y].vegetation)!=0)
+X				sct[x][y].designation=DNODESIG;
+X		}
+X	}
+X	/*else same race, so give all land to conqueror*/
+X	else {
+X		for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++) 
+X		if(sct[x][y].owner==country){
+X			sct[x][y].owner=sct[ntn[country].capx][ntn[country].capy].owner;
+X			if(isdigit(sct[x][y].vegetation)!=0)
+X				sct[x][y].designation=DNODESIG;
+X		}
+X	}
+X	return;
+X}
+X
+Xmonster()
+X{
+X	short nvynum,armynum;
+X	int x, y;
+X
+X	/*move nomads randomly until within 2 of city then attack*/
+X	country=NNOMAD;
+X	for(armynum=0;armynum<MAXARM;armynum++) if(ASOLD>0){
+X		x=AXLOC+rand()%4-2;
+X		y=AYLOC+rand()%4-2;
+X		if(ONMAP&&(is_habitable(x,y)) 
+X		&&(land_reachp(AXLOC,AYLOC,x,y,ntn[country].arm[armynum].smove,country))){
+X			AXLOC=x;
+X			AYLOC=y;
+X			/*if owned & unoccupied you take & people flee*/
+X			if( (sct[x][y].owner) == 0 || solds_in_sector( x, y, sct[x][y].owner) == 0 ) {
+X				if(sct[x][y].owner==0)
+X					fprintf(fnews,"3.\tnomads take sector %d,%d\n",x,y);
+X				else fprintf(fnews,"3.\tnomads capture sector %d,%d\n",x,y);
+X				if(sct[x][y].owner!=0) flee(x,y,1);
+X				sct[x][y].owner=NNOMAD;
+X				sct[x][y].designation=DDEVASTATED;
+X			}
+X		}
+X	}
+X	else {
+X		/*place a new Nomad army*/
+X		x=(rand()%(MAPX-8))+4;
+X		y=(rand()%(MAPY-8))+4;
+X		if((rand()%4==0)&&(is_habitable(x,y))) {
+X			AXLOC=x;
+X			AYLOC=y;
+X			ASOLD=100+100*rand()%10;
+X			ASTAT=ATTACK;
+X		}
+X	}
+X	fprintf(fnews,"2.\t%s are updated\n",ntn[NPIRATE].name);
+X	/*if pirate fleet within 3 attack if outnumber any fleets */
+X	for(nvynum=0;nvynum<MAXNAVY;nvynum++){
+X	for(x=1;x<MAXNTN;x++) for(y=0;y<MAXNAVY;y++)
+X	if((ntn[x].nvy[y].xloc-NXLOC<2)
+X	&&(ntn[x].nvy[y].xloc-NXLOC>(-2))
+X	&&(ntn[x].nvy[y].yloc-NYLOC<2)
+X	&&(ntn[x].nvy[y].yloc-NYLOC>(-2))
+X	&&(sct[ntn[x].nvy[y].xloc][ntn[x].nvy[y].yloc].altitude==WATER)){
+X		NXLOC= ntn[x].nvy[y].xloc;
+X		NYLOC= ntn[x].nvy[y].yloc;
+X	}
+X	/*add one warship to random pirate fleet*/
+X	if((NWAR>0)&&(rand()%3==0)) NWAR++;
+X	}
+X}
+X
+Xnpcredes(x,y)
+X{
+X	long food;
+X	/*large enough for a city now?*/
+X	if(((sct[x][y].people*(CITYLIMIT+(ntn[sct[x][y].owner].tsctrs/3))>ntn[sct[x][y].owner].tciv)
+X	||((ntn[sct[x][y].owner].tciv<30000)
+X	&&(sct[x][y].people>1000)))
+X	&&(ntn[sct[x][y].owner].tfood>ntn[sct[x][y].owner].tciv*2)){
+X		if((rand()%2==0)
+X		&&((sct[x][y].designation==DFARM)
+X		   ||(sct[x][y].designation==DGOLDMINE)
+X		   ||(sct[x][y].designation==DMINE))
+X		&&(sct[x][y].iron<5)
+X		&&(sct[x][y].gold<5))
+X			sct[x][y].designation=DCITY;
+X	}
+X	/*not large enough for city and not enough food*/
+X	else if((sct[x][y].designation==DCITY)
+X	&&(ntn[sct[x][y].owner].tfood<ntn[sct[x][y].owner].tciv*2)
+X	&&(todigit(sct[x][y].vegetation)>5)){
+X		sct[x][y].designation=DFARM;
+X		food= (long) todigit(sct[x][y].vegetation)*sct[x][y].people;
+X		ntn[sct[x][y].owner].tfood += food;
+X		ntn[sct[x][y].owner].tgold += food*TAXFOOD/100-(sct[x][y].people * TAXCITY/100);
+X	}
+X	/*not large enough for a city but enough food*/
+X	else if((sct[x][y].designation==DCITY)&&(rand()%5==0)){
+X		sct[x][y].designation=DFARM;
+X		food= (long) todigit(sct[x][y].vegetation)*sct[x][y].people;
+X		ntn[sct[x][y].owner].tfood += food;
+X		ntn[sct[x][y].owner].tgold += food*TAXFOOD/100-(sct[x][y].people * TAXCITY/100);
+X	}
+X
+X	/*what if it is not a city*/
+X	if((sct[x][y].designation!=DCITY)&&(sct[x][y].designation!=DCAPITOL)){
+X		sct[x][y].designation=DFARM;
+X		/*crisis situation -- need more food producers*/
+X		if(ntn[sct[x][y].owner].tfood<=2*ntn[sct[x][y].owner].tciv){
+X			if(sct[x][y].iron>5)
+X				sct[x][y].designation=DMINE;
+X			if((sct[x][y].gold>5)
+X			&&(sct[x][y].gold>sct[x][y].iron-2))
+X				sct[x][y].designation=DGOLDMINE;
+X		}
+X		/*non crisis situation -- need more food producers*/
+X		else {
+X			if(sct[x][y].iron>2)
+X				sct[x][y].designation=DMINE;
+X			if((sct[x][y].gold>2)
+X			&&(sct[x][y].gold>sct[x][y].iron-2))
+X				sct[x][y].designation=DGOLDMINE;
+X		}
+X	}
+X}
+X
+Xredomil()
+X{
+X	short x,y,armynum;
+X	int i, free, done, ideal;
+X	long diff;
+X
+X	/*make sure enough men in army 0 -- garrison duty in capital*/
+X	armynum=0;
+X	ASTAT=GARRISON;
+X	AXLOC=ntn[country].capx;
+X	AYLOC=ntn[country].capy;
+X
+X	/*Ideally ASOLD[0]*MILINCAP=tmil*peace/10*/
+X	ideal = ntn[country].tmil * peace / (10*MILINCAP);
+X/*if(peace==8) printf("\tpeace - incap is %d, ideal is %d,",ASOLD,ideal);
+X *else if(peace==12)  printf("\twar - incap is %d, ideal is %d,",ASOLD,ideal);
+X *else printf("error - incap is %d ideal is %d",ASOLD,ideal);
+X */
+X	/*MILRATIO ratio mil:civ for non player countries*/
+X	/*MILINCAP ratio (mil in cap):mil for NPCs*/
+X
+X	if((ASOLD*10) < (9*ideal)){
+X
+X	/*too few soldiers on garrison*/
+X	/*diff is number to change mil in cap (>0)*/
+X	if(ntn[country].tgold<0L) diff=0;
+X	else diff = (long) min ( ideal-ASOLD , (int) (ntn[country].tiron/10));
+X
+X	diff = (long) min ((int) diff, sct[ntn[country].capx][ntn[country].capy].people/2);
+X	if(ntn[country].tgold<=0 || ntn[country].tiron<=0) if(diff > 0) diff=0;
+X
+X	/*printf(" add-diff is %d",diff);*/
+X	sct[ntn[country].capx][ntn[country].capy].people-=diff;
+X	ASOLD+=diff;
+X	ntn[country].tciv-=diff;
+X	ntn[country].tmil+=diff;
+X	ntn[country].tgold-=diff*ENLISTCOST;
+X	ntn[country].tiron-=diff*10;
+X	}
+X	/*else split garrison army if 1.25* needed number*/
+X	else if(ASOLD *4 > 5*ideal){
+X		/*diff here is a negative number*/
+X		diff=((4*ASOLD)-(5*ideal))/4;
+X		/*printf(" split diff is %d",diff);*/
+X		free=0;
+X		ASOLD-=diff;
+X		ntn[country].tmil-=diff;
+X		ntn[country].tciv+=diff;
+X		sct[ntn[country].capx][ntn[country].capy].people+=diff;
+X		/*I add back gold as armies get redone anyway*/
+X		ntn[country].tiron+=diff*10;
+X		ntn[country].tgold+=diff*ENLISTCOST;
+X	}
+X	/*else printf(" no action - diff=%d",diff);*/
+X	/*printf(" new Arm 0 is %d",ASOLD);*/
+X
+X	/*build ships and/or armies*/
+X	done=0;
+X	ideal = ntn[country].tciv * peace / (10 * MILRATIO);
+X	/*printf("\n\ttmil is %d ideal is %d",ntn[country].tmil,ideal);*/
+X	/*if tmil*MILRATIO<tciv build new army in the capital if possible*/
+X	if(ntn[country].tmil < (.8*ideal)) {
+X	for(armynum=1;armynum<MAXARM;armynum++) 
+X	if((done==0)&&(ASOLD==0)) {
+X		done=1;
+X		ASOLD = min ((int) (ideal-ntn[country].tmil), (int) (ntn[country].tiron/10));
+X		ASOLD = min (ASOLD,sct[ntn[country].capx][ntn[country].capy].people/2);
+X		ASOLD = min (ASOLD, (int) (ntn[country].tgold/ENLISTCOST));
+X		if(ASOLD>0){
+X		/*printf(" build army %d to %d men",armynum,ASOLD);*/
+X		ntn[country].tiron-=ASOLD*10;
+X		AXLOC= ntn[country].capx;
+X		AYLOC= ntn[country].capy;
+X		ntn[country].tmil += ASOLD;
+X		ntn[country].tciv -= ASOLD;
+X		ntn[country].tgold-=ASOLD*ENLISTCOST;
+X		sct[AXLOC][AYLOC].people-=ASOLD;
+X		ASTAT= DEFEND;
+X		AMOVE=0;
+X		}
+X	}
+X	}
+X	/*disband ships and/or armies*/
+X	else if(ntn[country].tmil > 1.2*ideal){
+X		/*disband a pseudo-random army*/
+X		done=0;
+X		diff=ntn[country].tmil-(1.2*ideal);
+X		for(armynum=1;armynum<MAXARM;armynum++)
+X			if((done==0)&&(sct[AXLOC][AYLOC].owner==country)
+X			&&((sct[AXLOC][AYLOC].gold>5)
+X			||(sct[AXLOC][AYLOC].iron>5))
+X			&&(rand()%5==0)&&(ASOLD<diff)){
+X				/*printf(" eliminate army %d",armynum);*/
+X				diff-=ASOLD;
+X				sct[AXLOC][AYLOC].people+=ASOLD;
+X				ntn[country].tmil -= ASOLD;
+X				ntn[country].tciv += ASOLD;
+X				ASOLD=0;
+X				if(ntn[country].tmil < 1.2*ideal) done=1;
+X			}
+X	}
+X	/*printf(" new tmil is %d\n",ntn[country].tmil);*/
+X
+X	/*resize armies */
+X	/*maximum npc army is 200 or tmil/20, minimum is 50*/
+X	for(armynum=1;armynum<MAXARM;armynum++){
+X		if((ASOLD>200)&&(ASOLD>ntn[country].tmil/20)) {
+X			free=0;
+X			for(i=1;i<MAXARM;i++){
+X				if((free==0)&&(ntn[country].arm[i].sold==0)){
+X					free=1;
+X					ASOLD/=2;
+X					ntn[country].arm[i].sold  = ASOLD;
+X					ntn[country].arm[i].smove = AMOVE;
+X					ntn[country].arm[i].stat  = DEFEND;
+X					ntn[country].arm[i].xloc  = AXLOC;
+X					ntn[country].arm[i].yloc  = AYLOC;
+X				}
+X			}
+X		}
+X	/*minimum npc army is 50, merge them*/
+X		else if(ASOLD<50) {
+X			free=0;
+X			for(i=1;i<MAXARM;i++){
+X				if((ntn[country].arm[i].sold>0)
+X				&&(ntn[country].arm[i].xloc==AXLOC)
+X				&&(ntn[country].arm[i].yloc==AYLOC)
+X				&&(i!=armynum)&&(free==0)){
+X					free=1;
+X					ntn[country].arm[i].sold += ASOLD;
+X					ASOLD=0;
+X				}
+X			}
+X		}
+X	}
+X
+X	for(x=0;x<MAPX;x++) for(y=0;y<MAPY;y++) 
+X	if((sct[x][y].owner==country)&&(sct[x][y].designation==DCITY)){
+X		free=0;
+X		for(armynum=0;armynum<MAXARM;armynum++){
+X			if((AXLOC==x)&&(AYLOC==y)) free=1;
+X		}
+X		/*move army in*/
+X		if(free==0){
+X			for(armynum=1;armynum<MAXARM;armynum++)
+X				if((abs(AXLOC-x)<=1)&&(abs(AYLOC-y)<=1))
+X					free=armynum;
+X			if(free>0){
+X				armynum=free;
+X				AXLOC=x;
+X				AYLOC=y;
+X			}
+X		}
+X	}
+X}
+END_OF_npc.c
+if test 24352 -ne `wc -c <npc.c`; then
+    echo shar: \"npc.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+echo shar: End of archive 2 \(of 6\).
+cp /dev/null ark2isdone
+MISSING=""
+for I in 1 2 3 4 5 6 ; do
+    if test ! -f ark${I}isdone ; then
+	MISSING="${MISSING} ${I}"
+    fi
+done
+if test "${MISSING}" = "" ; then
+    echo You have unpacked all 6 archives.
+    rm -f ark[1-9]isdone
+else
+    echo You still need to unpack the following archives:
+    echo "        " ${MISSING}
+fi
+##  End of shell archive.
+exit 0

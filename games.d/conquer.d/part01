@@ -1,0 +1,1563 @@
+Path: uunet!seismo!sundc!pitstop!sun!amdcad!ames!ll-xn!mit-eddie!uw-beaver!tektronix!tekgen!tekred!games-request
+From: games-request@tekred.TEK.COM
+Newsgroups: comp.sources.games
+Subject: v03i070:  conquer - version 2 of the renamed conquest adventure game, Part01/06
+Message-ID: <2104@tekred.TEK.COM>
+Date: 22 Jan 88 21:32:59 GMT
+Sender: billr@tekred.TEK.COM
+Lines: 1553
+Approved: billr@tekred.TEK.COM
+
+Submitted by: ihnp4!mhuxd!smile (Ed Barlow)
+Comp.sources.games: Volume 3, Issue 70
+Archive-name: conquer/Part01
+
+	[As the subject indicates, this is version 2 of Ed's
+	 adventure type game, originally called conquest.  This
+	 has all of the latest bug fixes and enhancements.  -br]
+
+#! /bin/sh
+# This is a shell archive.  Remove anything before this line, then unpack
+# it by saving it into a file and typing "sh file".  To overwrite existing
+# files, type "sh file -c".  You can also feed this as standard input via
+# unshar, or by typing "sh <file", e.g..  If this archive is complete, you
+# will see the following message at the end:
+#		"End of archive 1 (of 6)."
+# Contents:  README MANIFEST help newlogin.c
+# Wrapped by billr@tekred on Fri Jan 22 13:26:55 1988
+PATH=/bin:/usr/bin:/usr/ucb ; export PATH
+if test -f README -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"README\"
+else
+echo shar: Extracting \"README\" \(6256 characters\)
+sed "s/^X//" >README <<'END_OF_README'
+X
+X			NOTES TO INSTALLER OF CONQUER
+X
+XWhat you have here is a copyrighted release 2 version version of CONQUER.  
+XI make no guaranties to the sanity or style of this code, but do believe
+Xthat it should work as documented.  I have included numerous bugfixes
+Xfrom the release 1 posting, and have added numerous enhancements. 
+X
+XOne note.  I am probably going to switch jobs soon.  My current email
+Xaddress is {ihnp4}!mhuxd!smile, but this will change.  I recommend that
+Xanybody interested in corresponding with me send me *their* address
+Xso I can inform them of my new address when I get one.  If your mail
+Xbounces, my home phone is 201-671-2896 and *current* work phone is
+X201-949-4407.  Note that I only work on Conquer out of work hours.
+X
+XIncluded in this file are the following:
+X
+X	1) A Brief Description of Conquer
+X	2) Installation (unpacking) Instructions
+X	3) Configuration Instructions
+X	4) Compilation Instructions
+X	5) Administration instructions
+X	6) Execution instructions (how to play)
+X	7) A list of further enhancements I am planning on making
+X	8) Bug list and unimplemented options
+X
+XThis version should not be redistributed and probably has bugs.  
+XAny comments and bug reports would be appreciated.
+X
+X-----------------------------------------------------------
+XI   A Brief Description of Conquer
+X-----------------------------------------------------------
+X
+XREAD FILE "man.page" FOR A DESCRIPTION OF CONQUER.  A more complete
+Xdescription can be found in the file "help". The help file can be
+Xread in nice format by using "conquer -h" after compilation.
+XHard copy of documentation can be made by typing "make docs".
+X
+X-----------------------------------------------------------
+XII  Installation (unpacking) Instructions
+X-----------------------------------------------------------
+X
+XThis program came in 5 shar scripts, which can be unpacked
+Xby using "sh filename".  If you are reading this, you know this.
+X
+XIf you suspect missing files, please check the MANIFEST.
+X
+X-----------------------------------------------------------
+XIII Configuration
+X-----------------------------------------------------------
+X
+XTHE FOLLOWING FILES SHOULD BE MODIFIED TO REFLECT YOUR ENVIRONMENT
+XAND THE TYPE OF GAME YOU WISH TO PLAY.
+X
+Xheader file: header.h modify as per instructions
+X             data.h   probably needs no modifications
+Xmakefile: Makefile    modify as per instructions
+X          main.c      probably needs no modifications
+X
+XI have tried to comment this stuff appropriately.
+X
+X-----------------------------------------------------------
+XIV  Compilation Instructions
+X-----------------------------------------------------------
+X
+XBrowse the file header.h.  This sets up configurable parameters for the
+Xgame.  This program should be easy to compile. 
+X
+X- Sometimes termcap/termlib... are not on systems.  You will know this
+X    is the error if all the '.c' files compile but will not compile together.
+X    Unreferenced symbol errors will occur.  Try adding "-ltermcap" after
+X    the "-lcurses" line in the makefile.
+X
+X-----------------------------------------------------------
+XV   administration instructions
+X-----------------------------------------------------------
+X
+XNow that you have compiled it, this is how you administer the game.
+XI recommend following these instructions once yourself in a mock game 
+X(ie. no other players) for a few turns to get things straight.  Then you 
+Xcan add other players.
+X
+XYou can type the following commands to help administer the game
+X
+XMake:		Compiles the code.
+XMake clobber:   Clobber everything but the source (destroys executable)
+XMake clean:     Clean up objects (does not destroy executable)
+XMake install:	Installs executable & data in appropriate directories (header.h)
+XMake docs:	Creates documentation from help file
+Xrun:		read this file, it permits you to run the update automatically
+X		run needs to be modified for time to update
+X
+XThis is the command line format for conquer:
+X	Cmd line format: conquer [-maxhp]
+X		(no options) play the game
+X		-m  make a world ('data' file must not exist, need god password)
+X		-a  add new player (must know god password)
+X		-x  execute program (must know god password)
+X		-p  print a map to stdout (must know god password)
+X                -h  Print out help text.
+X                -n  NTN Run as nation NTN.
+X                -d  DIR Run on data in directory DIR.  Each game has its own 
+X                    data directory.  The default is set up at compile time and 
+X                    should only be used if only one game is run.
+X                 -s Print out scores of all nations in the world.
+X
+XAgain, prior to the compile, you should have followed the instructions
+Xin the Makefile and in header.h.  
+X
+XFirst, make a directory in which to play the game.  You should then
+Xmove the nations and help files into the target directory.
+X
+XThen create the world via:
+X	<conquer -m>    this will make your world.  Try it.
+X			 This also sets up npc nations as per the nations file
+X			 npc stats can be adjusted by editing nations
+X			 prior to making the world.  Non player nations have
+X			 the same password as god.
+X
+XAdd 0 or more players via
+X	<conquer -a>    which should be self explanatory
+X
+X
+XLearn the commands (Type '?' to get help) & play around to get your 
+Xsyntax right.
+X
+XTry logging in as either a player or non player nation (they use the super
+Xuser password) and noticing any differences.
+X
+XNow move around on the map and learn where the players are
+Xpositioned.  If there is a problem (they are surrounded by water...), 
+Xuse the redesignate command to change elevation or vegetation. 
+XIn the worst case, god can destroy a nation
+Xwith 'c', the change nation command.  Once you
+Xthink the game will be fair, it is time to allow players to proceed.
+X
+XNow you are all set -- play via 
+X	<conquer>
+X
+Xand update with <conquer -x> via 
+Xan "at" script. This is contained in the shell script "run".
+X
+X--------------------------------------------------------------------
+XVI a list of further enhancements/bug fixes I am planning on making
+X--------------------------------------------------------------------
+X
+XTrade is unimplemented
+XNaval combat and movement has not been system tested
+XOnly one type of soldier and one type of warship allowed (see data.h)
+XCharacter Classes and leaders are not fully implemented
+END_OF_README
+if test 6256 -ne `wc -c <README`; then
+    echo shar: \"README\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f MANIFEST -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"MANIFEST\"
+else
+echo shar: Extracting \"MANIFEST\" \(744 characters\)
+sed "s/^X//" >MANIFEST <<'END_OF_MANIFEST'
+X   File Name		Archive #	Description
+X-----------------------------------------------------------
+X MANIFEST                  1	This shipping list
+X Makefile                  5	
+X README                    1	
+X cexecute.c                2	
+X combat.c                  4	
+X commands.c                3	
+X data.h                    6	
+X forms.c                   4	
+X help                      1	
+X io.c                      6	
+X magic.c                   3	
+X main.c                    3	
+X makeworld.c               2	
+X misc.c                    5	
+X move.c                    4	
+X nations                   5	
+X newlogin.c                1	
+X npc.c                     2	
+X randevent.c               5	
+X reports.c                 5	
+X run                       3	
+END_OF_MANIFEST
+if test 744 -ne `wc -c <MANIFEST`; then
+    echo shar: \"MANIFEST\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f help -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"help\"
+else
+echo shar: Extracting \"help\" \(19552 characters\)
+sed "s/^X//" >help <<'END_OF_help'
+X                      CONQUER COMMAND HELP SCREEN
+X
+X    MOVEMENT                 COMMANDS                    ADMINISTRATION
+X'h': move west           'a': army report            'p': pick item 
+X'y': move north-west     'r': redesignate            'd': change display 
+X'k': move north          'ctrl-L': redraw screen     'c': administration
+X'u': move north-east     'm': move selected unit     '?': help screen
+X'l': move east           'A': adjust army            's': score
+X'n': move south-east     'f': fleet report           'B': budget status 
+X'j': move south          'Z': move people 2 Sectors  'P': production stats
+X'b': move south west     'S': diplomacy status       'N': read newspaper
+X'J': scroll south        'Q': quit (saves changes)   'W': write message
+X'K': scroll north        'M': magic                  'R': read messages
+X'L': scroll east         'C': construct
+X'H': scroll west         'D': draft
+X                         'G': go to your next army
+X                         'F': go to your next fleet
+XEND
+X                           WELCOME TO CONQUER
+X
+XCONQUER is a multi player computer game designed to run under the UNIX 
+Xoperating system.  In CONQUER,  each player is the leader of a nation, 
+Xcomposed of people (humans, orcs, elves, dwarves), recourses, and land.  
+XRulers customize their nation at creation by chosing their race and by giving 
+Xtheir nation special powers (magic, combat factor, location, speed...)
+Xand resources (civilians, troops, iron, gold...).  Play involves building, 
+Xmoving, and controlling armies and navies, diplomacy with other players, 
+Xand adjusting economic activity, which is primarily geared to the production 
+Xof gold for your treasury.  Iron is needed, however to build ships & armies, 
+Xand food is needed to prevent revolts and keep people alive.  
+X
+XCommand line format: conquer [-maxhps -nNAT -dDIR]  
+X       -m       make a world                    -a       add new player
+X       -x       execute program                 -h       print this help text
+X       -n NTN   run as nation NTN               -p       print map of world
+X       -d DIR   run on data in directory DIR    -s       print out scores
+X
+XIt is suggested that each player set up an alias for their game & nation.
+XEND
+X                                THE WORLD
+X
+XThe Conquer world is very bloody, and a player needs skills at war gaming,
+Xdiplomacy, and building an economy to succeed.  Rival races are constantly 
+Xat war, and the world starts filled with player nations, random peoples
+X(lizard men in their cities of gold, barbarians, nomads, pirates, brigands),
+Xand both hostile and friendly computer controlled non player countries.
+XConquer can be played solitaire.  The computer uses an highly intelligent
+Xmovement algorithm to run the armies and navies of these non player
+Xnations, and has intelligent algorithms built in that control these nations
+Xdiplomacy, construction, and economies.  You can find NPCs allied with 
+Xyou against a common enemy,  but can also suddenly be stabbed in the 
+Xback and find hostile NPC armies at your doorstep.
+XEND
+X                     WHAT IS WHAT IN THE WORLD
+X
+XThe world is composed of a 2 dimensional map of sectors, created by the 
+Xcomputer at the beginning of the game.  Each sector has about 10 unique 
+Xcharacteristics (altitude, gold, vegetation...).   
+X
+XSECTOR ELEVATIONS include:        WATER    '~'        PEAK     '#' 
+X                MOUNTAIN '^'      HILL     '%'        CLEAR    '-' 
+X
+XSECTOR VEGETATION
+XUninhabitable Areas (do not produce food and people simply do not like)
+X     VOLCANO   'V'        DESERT 'D'     JUNGLE  'J'
+X     WASTE     'W'        ICE 'I'        SWAMP  'S'
+X
+XInhabitable (people like, number is relative value of food production)
+X     LIGHT VEGETATION         '6'         GOOD   '9'     FOREST   '3'
+X     WOOD                     '7'         BARREN '4'
+X
+XCONQUER is designed so each race likes their appropriate terrain.  Elves 
+Xlike woods & forests,  Humans like good & light vegetation, and Orcs and 
+XDwarves like hills and mountains.
+XEND
+X                             RACES OF THE WORLD
+X
+XORC      'O'    Poor at combat but they reproduce like mad (they can go over 
+X                10% reproduction ceiling). Orcs are lousy fighters and are 
+X                led by minor monsters (they start with MINOR MONSTER power).
+XELF       'E'   Great at defense and quick, but few in numbers.  They start 
+X                with VOID power, which is perhaps the most potent power in the 
+X                game, but which costs them an extra distribution point.  
+XDWARF     'D'   Dwarves are good at combat, but slow and few in numbers.  They
+X                start with MINER power, which allows them to quickly mine 
+X                iron/jewels, and thus build up their combat skills and powers.
+XHUMAN     'H'   Humans start average at everything -- with reasonable numbers,
+X                of people, and WARRIOR power, which gives them +10% in combat.
+X                They have OK reproduction and good movement.
+XLIZARD    'L'   (NPC only)  An ancient race bound to their cities of gold 
+XPIRATE    'P'   (NPC only)  Wandering pirates/brigands intent on plunder
+XNOMAD     'N'   (NPC only)  Will the wandering nomads tribes leave you alone?
+XBARBARIAN 'B'   (NPC only)  Indigenous natives
+XEND
+X                        POSSIBLE SECTOR DESIGNATIONS
+X
+XMINE       'm'   Produces 100*Iron*People Talons + Produces Iron Ores
+XFARM       'f'   Produces 100*Vegetation*People Talons + Produces Food 
+XGOLD MINE  '$'   Produces 100*Gold*People Talons + Produces Jewels 
+XCASTLE     '!'   Fortified Cities of the Lizards (only)
+XDEVASTATED 'x'   devastated sector
+X
+XCITY       'c'   Cities and Capitols are the bases of your power.  They
+XCAPITOL    'C'   are the only places you can draft armies or construct 
+X                 ships. Drafting only works if the sectors people is
+X                 greater than your total civilians divided by the quantity
+X                 16+(number of sectors)/2.  Cities give 750 talons per
+X                 person and Capitols give 1000 talons per person. Cities and
+X                 Capitols cost more to redesignate.  To capture an 
+X                 unoccupied city/capitol, you must be the only occupant when
+X                 the world is updated.
+XEND
+X                          CURSOR MOVEMENT
+X
+X                              NORTH
+X
+X                               (K) 
+X                          y     k     u
+X                            \   |   /
+X                              \ | /
+X           WEST      (H) h ---- 0 ---- l (L)       EAST
+X                              / | \
+X                            /   |   \
+X                          b     j     n
+X                               (J)
+X
+X                              SOUTH
+X
+X              Figures in parenthesis indicate scrolling
+XEND
+X                                   COSTS
+X
+XCosts in gold talons are as follows:
+X
+X                Ship Maintenance:        $1000/turn
+X                Draft Soldier:             $90
+X                Soldier Maintenance:       $40/turn
+X                Designation Costs:        $300 
+X                Fortification:           $1000 * (2**Fort Level)
+X                Build Warship:          $30000
+X                Build Merchant:         $20000
+X                Bribe Nation:          $100000 per level diplomacy
+X                Move Civilians:            $50 per civilian
+XEND
+X                        DIFFERENT CHARACTER CLASSES
+X
+XPlayers choose a country class at creation, which will give them the
+Xdifferent victory conditions and, in some cases, special powers.
+X
+X1. king      (Humans, Dwarves, and Elves)
+X2. emperor   (Humans, Dwarves, and Elves)
+X3. wizard    (Humans, Dwarves, and Elves)...................Cost = 1 Point
+X        A wizard will have the magical SPY power automatically. 
+X4. theocracy (Humans Only)...............................Cost = 2 Points
+X        A theocracy will have the magical HEALER power automatically. 
+X5. pirate    (Humans & Orcs Only)
+X6. trader    (Elves & Dwarves Only)
+X7. tyrant    (Humans & Orcs Only)
+X8. demon     (Orcs Only)....................................Cost = 2 Points
+X        A demon will have the magical DESTROYER power automatically
+X9. dragon    (Orcs Only)....................................Cost = 2 Points
+X        A dragon will have the magical MAJOR MONSTER power automatically
+X10. shadow    (Orcs Only)...................................Cost = 1 Point
+X        A shadow will have the magical HIDDEN power automatically
+XEND
+X                          SCORING & CHARACTER CLASSES
+X
+XVictory points are based on your nations class and the following table.
+XFor example, an empire gains points by controlling sectors, people, gold, and
+Xsoldiers. Some of these types also have magic powers.  
+X
+X                     Per    1000    1000      100K 100K   100K   Magic  10
+X             Races   Sector People  Soldiers  Gold Jewels Iron   Power Ship
+X"kingdom"    EDHO    1        1        2       3    0      0      0     0
+X"empire"     H       1.5      0        0       0    0      0      0     0
+X"wizard"     EH      0        2        1       0    3      5      20    0
+X"theocracy"  HO      1        1        0       0    3      0      7     0
+X"pirate"     HO      0        0        5       0    10     10     1     5
+X"miner"      D       0        0        5       0    10     10     1     5
+X"trader"     EHO     1        1        0       0    1      1      1     8
+X"tyranny"    DHO     1        1        2       0    1      1      1     0
+X"demon"      DHO     1        0        1       0    1      0      10    0
+X"dragon"     HO      0        0        0       10   20     0      0     0
+X"shadow"     O       1        0        0       0    0      5      0     0
+X"NPC"        EDHO    1        1        0       0    1      1      1     0
+XEND
+X                        POSSIBLE ARMY STATUS
+X
+XMARCH   :Marching doubles army movement at the expense of combat strength.
+XSCOUT   :Scouts avoid any enemy, if possible, and can move through hostile
+X        :   armies, but must have less than 25 men per army and can not take
+X        :   even unowned land.  They are useful to check out the  map and
+X        :   to determine the enemy combat strength.  You must draft scouts
+X        :   as you can not split scouts from an army.
+XATTACK  :Armies in this mode can take owned sectors, initiate
+X        :   combat, and have they reasonable movement rates.
+XDEFEND  :In this mode, can take owned sectors and have good defense 
+X        :   and movement, but can not initiate combat.
+XGARRISON:This mode offers the strongest defense but is used only in cities
+X        :   and castles.  Garrisons may not move.
+X
+XNote: It takes 75 men to take a sector.  Your attack bonus increases by 
+X        5% if you take over a non player country. 
+XEND
+X                              NON PLAYER NATIONS 
+X
+XDiplomacy with non player nations is important in this game.  This determines  
+Xif you get attacked or not.  
+X
+Xuse your gold talons to bribe non player countries that are at war with
+X        you.  It may not work, but may allow you some breathing room and 
+X        at some point the gold becomes irrelevant anyway.
+X
+Xyou had best not be at war with NPCs when you bribe them.  If you are,
+X        you have just wasted your money.
+XEND
+X                           ADDITIONAL NOTES ON COMBAT
+X
+XLosses per unit are inversely proportional to a units combat bonus.
+X
+XYou can expect to take several turns to reduce a large army, especially
+X        on a City or Capitol.  NPC defenders will draft new troops each turn
+X
+XThe only method to take an occupied City or Capitol is to be the the only
+X        army in the sector when the combat is *over*.
+X
+XShips are more powerful than you might expect.  They permit rapid relocation of
+X	armies & civilians to strategic points.  Their movement is 3x that of
+X        a land army and they pay 1 move point per sector (coast lands) and
+X	4 move points in deep water. Naval combat has not been play tested.
+X
+XTHE NEXT PAGE IS THE COMBAT RESULTS TABLE                        
+X        basically the attacker wants a high roll and the defender wants low.
+X
+XEND
+X               6-1 5-1 4-1 3-1 2-1 3-2 5-4 1-1 4-5 2-3 1-2 1-3 1-4 1-5 1-6
+X    <--010     20% 40% 50% 60% 70% 80% 90% 100%100%100%110%120%120%130%130%
+X   010-020     20% 30% 40% 50% 50% 60% 60% 90% 90% 90% 100%110%110%110%120%
+X   020-030     20% 20% 30% 40% 40% 40% 50% 60% 80% 80% 100%110%100%110%110%
+X   030-040     20% 20% 30% 30% 40% 40% 50% 60% 70% 80% 90% 100%100%100%110%
+X   040-050     20% 20% 30% 30% 40% 40% 50% 60% 70% 70% 80% 90% 90% 100%110%
+XD  050-060     15% 20% 20% 30% 40% 40% 40% 60% 70% 70% 80% 90% 90% 90% 100%
+XI  060-070     10% 20% 20% 20% 30% 30% 40% 50% 60% 60% 80% 90% 90% 90% 100%
+XE  070-080     10% 10% 20% 20% 30% 30% 30% 50% 60% 60% 80% 90% 90% 90% 90%
+X   080-090     10% 10% 20% 20% 20% 30% 30% 40% 50% 50% 70% 80% 80% 80% 90%
+XR  090-100     10% 10% 10% 20% 20% 30% 30% 40% 50% 50% 60% 80% 80% 80% 90%
+XO  100-110      5% 10% 10% 10% 20% 20% 30% 40% 50% 50% 60% 70% 70% 70% 80%
+XL  110-120      5%  5% 10% 10% 20% 20% 30% 40% 50% 50% 60% 70% 70% 70% 80%
+XL  120-130      5%  5% 10% 10% 10% 20% 30% 30% 40% 40% 50% 70% 70% 70% 80%
+X   130-140      5%  5%  5% 10% 10% 20% 30% 30% 40% 40% 50% 70% 70% 70% 70%
+X   140-150      5%  0%  5%  5% 10% 20% 30% 30% 40% 40% 50% 60% 60% 60% 70%
+X   150-160      0%  0%  5%  5% 10% 20% 30% 30% 40% 40% 50% 50% 50% 50% 50%
+X   160-170      0%  0%  0%  5% 10% 20% 30% 20% 40% 40% 50% 50% 50% 50% 50%
+X   170-180      0%  0%  0%  0%  5% 10% 20% 20% 30% 40% 40% 40% 40% 40% 40%
+X   180-190      0%  0%  0%  0%  5% 10% 10% 20% 20% 30% 30% 30% 30% 40% 40%
+X   190+++       0%  0%  0%  0%  5% 10% 10% 10% 20% 20% 30% 30% 30% 30% 40%
+XEND
+X                          RULES ON IRON, FOOD, AND GOLD
+X
+XFOOD:      You MUST have enough food to feed your people... One civilian eats 
+X        one unit of food, and one soldier eats two units.  If you run out of 
+X        food, half the difference of people in cities die.  Your Granary
+X        will store 3x your civilian population in food.  The remainder 
+X        is converted to gold talons at a rate of 1 per food point.
+XIRON:      You need to have iron to draft new military.  Ten iron units
+X        will suffice to equip one soldier.  You also need 200 gold talons to 
+X        train a soldier. One person produces one iron per point of mineral in 
+X        the sector per turn.  An amount of Iron (based on the number of troops 
+X        you have) can be used to buy +1% in attack or defense.
+XJEWELS:    You can have a maximum of 10 talons debt for every jewel
+X        point that you mined.  After that point, you undergo a TAX REVOLT,
+X        which has not yet been implemented. Thus gold can be negative to 
+X        a certain level.  Jewels are also used in magic, and 100000 Jewels
+X        will buy you one random new power (command M) (it doubles for each
+X        power though).  You can have 10 talons in the treasury for each jewel 
+X	(gold based economy).  After that, your gold talons will be converted 
+X	to jewels at a 10:1 ratio.
+XEND
+X                                MAGIC POWERS   
+X
+XWARRIOR/CAPTAIN/WARLORD: +10% each in combat, 1/2 Enlistment cost
+X(MINOR/AVERAGE/MAJOR) MONSTER: (ORCS ONLY) Army 0 fights at +20% per level.
+X            Monsters have a chance to takeover ORC NPCs at a cost 100K jewels.  
+XSPY         All enemy troop/civilian strength is shown exactly (even voids)
+XKNOWALL     Know all troop strengths and see the whole map (except voids)
+XDERVISH     Desert/ICE sectors => 1 move point, vegetation 6, +30% combat in
+XDESTROYER   Vegetation in 3 sectors of capital = Desert.  Act as Dervish. 
+XHIDDEN      Nobody can count troops in your armies on map. 
+XTHE_VOID    Nobody can see your sectors/armies (appear blank) 
+XARCHITECT   Double strength fortresses, Double city revenue.
+XVAMPIRE     35% of troops killed become yours, -35% in all combat, -2 Move, 
+X            0 cost for soldier maintenance, can't add to combat bonus 
+XHEALER      +2 repro to 10% limit.  excess repro adds to defense
+XMINER       (DWARVES) 2x iron and jewel production
+XBREEDER:    +3% Birth Rate (ORCS ONLY) (beyond 10% limit).  -10% combat.
+XURBAN:      +3% Birth Rate to 12% limit.  remainder gives + to move (roads)
+XSTEEL:      Additional 2x Iron Production for MINERS.
+XARCHER:     +10% on defense, +30% for garrisons
+XCAVALRY:    +10% to attacking combat skill, +6 movement.
+XEND
+X                MORE ON CONQUER COMMANDS -- lower case commands
+X
+X'a': army report:    Gives army details & permits changing army status, merging
+X                     2 armies, splitting armies, and disbanding armies.
+X'c': administration: Report on nation status and then change name, password,
+X                     add to combat bonus, or (if god) destroy a nation.
+X'd': change display: Change display mode.  Numbers in gold screens... are 
+X                     relative values of the materials.
+X'f': fleet report:   Report on the status of your fleets.
+X'm': move unit:      move selected unit. The unit will stop when it runs out 
+X                     of move points or runs into an army larger than it.       
+X'p': pick item:      allows you to select the next army or navy in the
+X                     sector.  Other commands will operate on that unit.
+X'r': redesignate:    you can change habitable sectors you own to other
+X                     designations.  Cities require 500+ people & Capitals 
+X                     require cities.  God can redesignate anything.
+X's': score:          print out a screen showing the scores
+X'?': help screen:    print out this help text
+XEND
+X                MORE ON CONQUER COMMANDS -- upper case commands pg. 1.
+X
+X'A': adjust army:  The quick way to adjust the status of your armies.
+X'B': budget :      ESTIMATE your nations budget statistics
+X'C': construct:    If you have cash, you can build fortifications and 
+X                   ships in your cities.  Ships can only be built in cities
+X                   located on the water.
+X'D': draft:        You may draft a quarter of the population of your 
+X                   cities (those with more than a certain percent of 
+X                   your population in it) if you have the gold.  You 
+X                   need 10 per man iron for this.
+X'F': next fleet:   Move cursor to your next fleet
+X'G': next army:    Move cursor to your next army
+X'M': magic:        Prints your magic powers & offers you the option to 
+X                   purchase more (cost doubles each power). Monster Power
+X                   gives you the chance to take over NPC nations.
+XEND
+X                MORE ON CONQUER COMMANDS -- upper case commands pg. 2.
+X
+X'N': newspaper:    Briefs you on world happenings.  Note the News has 4 pages.
+X'P': production:   ESTIMATE your nations production statistics
+X'S': diplomacy:    Alloy you to see and alter your diplomatic status.          
+X'Q': quit:         Save your move and quit the game.  Note there is no
+X                   means supported to quit without saving your moves.
+X'R': read mail:    Read mail messages
+X'W': write mail:   Write mail messages
+X'Z': move people:  Civilians can move between two of your sectors at a cost
+X                   of 50 per civilian.  Civilians naturally move in the update.
+XEND
+X                        FINAL HINTS
+X
+XIt is important to buy a reproduction rate of 9-10% percent.
+X
+XExtra movement is very useful (especially if your movement is 6)
+X
+XBuy civilians instead of military (who don't reproduce).  This assumes
+X        that you have a military of about 1500 men for taking land.
+X
+XTake as much land as possible in the beginning.
+X
+XMake sure your combat bonus is respectable.
+X
+XEND
+XDONE
+X
+END_OF_help
+if test 19552 -ne `wc -c <help`; then
+    echo shar: \"help\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+if test -f newlogin.c -a "${1}" != "-c" ; then 
+  echo shar: Will not over-write existing file \"newlogin.c\"
+else
+echo shar: Extracting \"newlogin.c\" \(26029 characters\)
+sed "s/^X//" >newlogin.c <<'END_OF_newlogin.c'
+X/*conquer is copyrighted 1986 by Ed Barlow.
+X *  I spent a long time writing this code & I hope that you respect this.  
+X *  I give permission to alter the code, but not to copy or redistribute
+X *  it without my explicit permission.  If you alter the code, 
+X *  please document changes and send me a copy, so all can have it.  
+X *  This code, to the best of my knowledge works well,  but it is my first
+X *  'C' program and should be treated as such.  I disclaim any
+X *  responsibility for the codes actions (use at your own risk).  I guess
+X *  I am saying "Happy gaming", and am trying not to get sued in the process.
+X *                                                Ed
+X */
+X
+X/*create a new login for a new player*/
+X#include <ctype.h>
+X
+X#include "header.h"
+X#include "data.h"
+X
+Xextern FILE *fexe, *fopen();
+Xextern short country;
+X
+Xnewlogin()
+X{
+X	/* use points to create empire, add if late starter*/
+X	int points;
+X	char tempc[10];
+X	int n;
+X	int valid=1;  /*valid == 0 means continue loop*/
+X	int temp;
+X	int more=0; 	/*0 if add another player*/
+X	int loop;
+X	int x;
+X	char tempo[8];
+X	char passwd[8];
+X	register i;
+X
+X	printf("\nPreparing to add player\n");
+X	printf("break at any time to abort\n");
+X
+X	while(more==0) {
+X		points=MAXPTS;
+X		/*find valid nation number type*/
+X		for(i=1;i<MAXNTN;i++)
+X			if(ntn[i].active==0) {
+X				country=i;
+X				break;
+X			}
+X		printf("first valid nation id is %d\n",country);
+X
+X		if(i==MAXNTN) {
+X			beep();
+X			printf("error, cant add new nation\n");
+X			return;
+X		}
+X
+X		/* open output for future printing*/
+X		sprintf(tempc,"%s%d",exefile,i);
+X		if ((fexe=fopen(tempc,"a"))==NULL) {
+X			beep();
+X			printf("error opening %s\n",tempc);
+X			exit(1);
+X		}
+X
+X		ntn[country].active=1;
+X
+X		valid=0;
+X		/*get name*/
+X		while(valid==0) {
+X			valid=1;
+X			printf("\nwhat name would you like your nation to have:");
+X			scanf("%9s",ntn[country].name);
+X
+X			if((strlen(ntn[country].name)<=1)
+X			 ||(strlen(ntn[country].name)>NAMELTH)){
+X				printf("\ninvalid name");
+X				valid=0;
+X			}
+X
+X			/*check if already used*/
+X			if((strcmp(ntn[country].name,"god")==0)
+X			||(strcmp(ntn[country].name,"unowned")==0)){
+X				printf("\nname already used");
+X				valid=0;
+X			}
+X
+X			for(i=1;i<(country-1);i++)
+X				if(strcmp(ntn[i].name,ntn[country].name)==0) {
+X					printf("\nname already used");
+X					valid=0;
+X				}
+X		}
+X
+X		/*get password*/
+X		valid=0;
+X		while(valid==0) {
+X			printf("\nwhat is your nations password:");
+X			scanf("%7s",passwd);
+X			if((strlen(passwd)>PASSLTH)||(strlen(passwd)<2)) {
+X				beep();
+X				printf("\ninvalid password (too short or long)");
+X			}
+X			else {
+X				printf("\nreenter your nations password:");
+X				scanf("%7s",ntn[country].passwd);
+X			}
+X			if(strcmp(passwd,ntn[country].passwd)==0) valid=1;
+X		}
+X		strncpy(ntn[country].passwd,crypt(passwd,SALT),PASSLTH);
+X
+X		/*get your name*/
+X		valid=0;
+X		while(valid==0) {
+X			valid=1;
+X			printf("\nenter either YOUR name (j_smith) or the name of your nations leader (gandalf...)");
+X			printf("\n\t(maximum 10 characters, no spaces):");
+X			scanf("%9s",tempc);
+X			if((strlen(tempc)>=10)||(strlen(tempc)<2)) {
+X				beep();
+X				printf("\ninvalid name (too short or long)");
+X				valid=0;
+X			}
+X			else strcpy(ntn[country].leader,tempc);
+X		}
+X
+X		valid=0;
+X		while(valid==0) {
+X			valid=1;
+X			printf("\nwhat race would you like to be:");
+X			printf("\n\tchoose (d)warf,(e)lf,(o)rc,(h)uman:");
+X			scanf("%1s",tempo);
+X			switch(tempo[0]) {
+X			case 'd':
+X				printf("\ndwarf chosen\n");
+X				/*MINER POWER INATE TO DWARVES*/
+X				printf("you have magical MINING skills\n");
+X				ntn[country].powers=MINER;
+X				x=MINER;
+X				CHGMGK;
+X				points -= getclass(DWARF);
+X				ntn[country].race=DWARF;
+X				ntn[country].tgold=100000;	/*1   pts*/
+X				ntn[country].tfood=12000;     /*0   pts*/
+X				ntn[country].jewels=10000;     /*0   pts*/
+X				ntn[country].tiron=10000;     /*0   pts*/
+X				ntn[country].tciv= 6000;	/*6   pts*/
+X				ntn[country].tmil= 1500;	/*1.5 pts*/
+X				ntn[country].repro=   4;	/*4   pts*/
+X				ntn[country].maxmove= 6;	/*1.5 pts*/
+X				ntn[country].aplus=   20;	/*2   pts*/
+X				ntn[country].dplus=   20;	/*2   pts*/
+X				ntn[country].location=RANDOM;	/*0+  pts*/
+X				points-=18;
+X				break;
+X			case 'e':
+X				printf("\nelf chosen\n");
+X				printf("you have magical cloaking skills\n");
+X				ntn[country].powers=THE_VOID;
+X				x=THE_VOID;
+X				CHGMGK;
+X				points -= getclass(ELF);
+X				ntn[country].race=ELF;
+X				ntn[country].tgold=100000;	/*1  pts*/
+X				ntn[country].tfood=12000;
+X				ntn[country].jewels=10000;
+X				ntn[country].tiron=10000;
+X				ntn[country].tciv=7000;	/*7    pts*/
+X				ntn[country].tmil=200;		/*0   pts*/
+X				ntn[country].repro=3;		/*3   pts*/
+X				ntn[country].maxmove=8;		/*2   pts*/
+X				ntn[country].aplus=10; 		/*1   pts*/
+X				ntn[country].dplus=40;		/*4   pts*/
+X				ntn[country].location=FAIR;	/*1   pts*/
+X				points-=20;	/* VOID COSTS ADDITIONAL PT*/
+X				break;
+X			case 'o':
+X				printf("\norc chosen\n");
+X				/*MINOR MONSTER POWER INATE TO ORCS*/
+X				printf("your leader is a minor monster (army 0 is very potent)\n");
+X				ntn[country].powers=MI_MONST;
+X				x=MI_MONST;
+X				CHGMGK;
+X				points -= getclass(ORC);
+X				ntn[country].race=ORC;
+X				ntn[country].tgold=1000;	/*0   pts*/
+X				ntn[country].tfood=12000;
+X				ntn[country].jewels=10000;
+X				ntn[country].tiron=10000;
+X				ntn[country].tciv=4000;	/*4   pts*/
+X				ntn[country].tmil=2500;	/*2.5 pts*/
+X				ntn[country].repro=10;	/*10  pts*/
+X				ntn[country].maxmove=6;	/*1.5 pts*/
+X				ntn[country].aplus=00;	/*0   pts*/
+X				ntn[country].dplus=00;	/*0   pts*/
+X				ntn[country].location=RANDOM;	/*0   pts*/
+X				points-=18;
+X				break;
+X			case 'h':
+X				printf("\nhuman chosen\n");
+X				ntn[country].race=HUMAN;
+X				/*WARRIOR POWER INATE TO HUMANS*/
+X				printf("you have magical WARRIOR skills\n");
+X				ntn[country].powers=WARRIOR;
+X				x=WARRIOR;
+X				CHGMGK;
+X				points -= getclass(HUMAN);
+X				ntn[country].tgold=1000;	/*0  pts*/
+X				ntn[country].tfood=12000;	/*0   pts*/
+X				ntn[country].jewels=10000;	/*0   pts*/
+X				ntn[country].tiron=10000;	/*0   pts*/
+X				ntn[country].tciv=6000;		/*6   pts*/
+X				ntn[country].tmil=1000;		/*1   pts*/
+X				ntn[country].repro=5;		/*5   pts*/
+X				ntn[country].maxmove=10;	/*2.5 pts*/
+X				ntn[country].aplus=10;	/*1   pts*/
+X				ntn[country].dplus=10;	/*1   pts*/
+X				ntn[country].location=RANDOM;	/*0   pts*/
+X				points-=18;
+X				break;
+X			default:
+X				printf("\ninvalid race\n ");
+X				valid=0;
+X			}
+X		}
+X
+X		ntn[country].mark=(*ntn[country].name);
+X		printf("\ntesting first letter of name (%c) for nation mark...",ntn[country].mark);
+X		valid=1;
+X		while(valid==1) {
+X			valid=0;
+X			if((isprint(ntn[country].mark)==0)
+X			||(isspace(ntn[country].mark)!=0)) {
+X				printf("\n%c is not a graphical character",ntn[country].mark);
+X				valid=1;
+X			}
+X			if(valid==0) for(i=0;i<=3;i++) if(ntn[country].mark==(*(ele+i))) {
+X				printf("\n%c is an altitude character",ntn[country].mark);
+X				valid=1;
+X			}
+X			if(valid==0) for(i=0;i<=11;i++) if(ntn[country].mark==(*(veg+i))) {
+X				printf("\n%c is a vegetation character", ntn[country].mark );
+X				valid=1;
+X			}
+X			if(valid==0) for(i=1;i<country;i++) if(ntn[i].mark==ntn[country].mark) {
+X				printf("\n%c is an already used character",ntn[country].mark);
+X				valid=1;
+X			}
+X			if(valid==0) if(ntn[i].mark=='*') {
+X				printf("\n'*' is invalid character");
+X				valid=1;
+X			}
+X			if(valid==1){
+X				printf("\nplease reenter new national mark for maps:");
+X				printf("\n (this can be any printing key like ! or O)");
+X				scanf("%1s",tempc);
+X				ntn[country].mark=(*tempc);
+X			}
+X			else printf("\nvalid...");
+X		}
+X
+X		printf("mark currently is %c\n",ntn[country].mark);
+X
+X		while(points>0) {
+X			printf("\n\nwhat would you like to buy with your remaining %d points\n\n",points);
+X			printf("\t1. population (1000/pt):\t\tnow have %ld civilians\n",ntn[country].tciv);
+X			printf("\t2. more gold ($100000/pt):\t\tnow have %ld gold pieces\n",ntn[country].tgold);
+X			printf("\t3. better location:\t\t\tlocation is now is %c\n",ntn[country].location);
+X			printf("\t4. more soldiers (1000/pt):\t\tnow have %ld soldiers\n",ntn[country].tmil);
+X			printf("\t5. better attack (10%%/pt):\t\tnow is +%d\n ",ntn[country].aplus);
+X			printf("\t6. better defence (10%%/pt):\t\tnow is +%d\n",ntn[country].dplus);
+X			printf("\t7. higher reproduction (1%%/pt):\t\trate is now %d%%\n",ntn[country].repro);
+X			printf("\t8. higher movement (4/pt): \t\tnow move %d sectors\n",ntn[country].maxmove);
+X			printf("\t9. double raw recourses (1 pt): \tfood now %ld\n",ntn[country].tfood);
+X			printf("\t                                \tjewels now %ld\n",ntn[country].jewels);
+X			printf("\t                                \tiron now %ld\n",ntn[country].tiron);
+X			printf("\t10. additional random magic power (1 pt)\n");
+X
+X
+X			printf("\nWhat option to buy:");
+X			scanf("%d",&n);
+X			switch(n) {
+X
+X			case 1:
+X				printf("additional population costs 1 pt per 1000\n");
+X				printf("how many points to spend on population:");
+X				scanf("%d",&temp);
+X				putchar('\n');
+X				if(points >= temp) {
+X					points -= temp;
+X					ntn[country].tciv+=temp*1000;
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 2:
+X				printf("you now have $%ld\n",ntn[country].tgold);
+X				printf("and can buy gold at $100000 per point\n");
+X				printf("how many points to spend on added gold:");
+X				scanf("%d",&temp);
+X				putchar('\n');
+X				if(points>=temp)
+X				{
+X					points-=temp;
+X					ntn[country].tgold+=temp*100000;
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 3:
+X				printf("you now are in %c location\n",ntn[country].location);
+X				printf("  R=random, F=fair, G=good\n");
+X				if(ntn[country].location==RANDOM){
+X					printf("2pts for (g)ood location or 1pts for (f)air\n");
+X				}
+X				if(ntn[country].location==FAIR){
+X					printf("1pts for (g)ood location\n");
+X				}
+X				if(ntn[country].location==GREAT) return;
+X
+X				printf("what type of location do you wish:");
+X				scanf("%1s",tempo);
+X				switch(tempo[0]) {
+X				case 'g':
+X				case GREAT:
+X					if(ntn[country].location==FAIR){
+X						printf("1pts for (g)ood location\n");
+X						if(points>=1) {
+X							points -=1;
+X							ntn[country].location=GREAT;
+X						}
+X						else printf("You dont have enough points left");
+X					}
+X					else {
+X						if(points>=2) {
+X							points -=2;
+X							ntn[country].location=GREAT;
+X						}
+X						else printf("You dont have enough points left");
+X					}
+X					break;
+X				case 'f':
+X				case FAIR:
+X					if(ntn[country].location==RANDOM){
+X						if(points>=1) {
+X							points -=1;
+X							ntn[country].location=FAIR;
+X						}
+X						else printf("You dont have enough points left");
+X					}
+X					else printf("\nlocation unchanged\n");
+X					break;
+X				default:
+X					printf("\nlocation unchanged\n");
+X				}
+X				putchar('\n');
+X				break;
+X			case 4:
+X				printf("you start with %ld soldiers\n",ntn[country].tmil);
+X				printf("additional military costs 1 /  1000\n");
+X				printf("how many points you wish:");
+X				scanf("%d",&temp);
+X				putchar('\n');
+X				if(points >= temp) {
+X					points -= temp;
+X					ntn[country].tmil+=temp*1000;
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 5:
+X				if(magic(country,VAMPIRE)==1) {
+X				printf("you have vampire power and cant add to combat bonus\n");
+X				break;
+X				}
+X				printf("now have %d percent attack bonus\n",ntn[country].aplus);
+X				printf("an additional 10 percent per point\n");
+X				printf("how many points you wish:");
+X				scanf("%d",&temp);
+X				putchar('\n');
+X				if(points >= temp) {
+X					points -= temp;
+X					ntn[country].aplus+=temp*10;
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 6:
+X				if(magic(country,VAMPIRE)==1) {
+X				printf("you have vampire power and cant add to combat bonus\n");
+X				break;
+X				}
+X				printf("now have %d percent defence bonus\n",ntn[country].dplus);
+X				printf("an additional 10 percent per point\n");
+X				printf("how many points you wish:");
+X				scanf("%d",&temp);
+X				putchar('\n');
+X				if(points >= temp) {
+X					points -= temp;
+X					ntn[country].dplus+=temp*10;
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 7:
+X				printf("repro rate costs 1 per percent\n");
+X				printf("you now have %d percent\n",ntn[country].repro);
+X				if((ntn[country].race!=ORC)
+X				&&(ntn[country].repro>10)){
+X					printf("you have the maximum rate");
+X					break;
+X				}
+X				printf("how many points you wish:");
+X				scanf("%d",&temp);
+X				putchar('\n');
+X				if(points >= temp) {
+X					if((ntn[country].race!=ORC)
+X					&&(ntn[country].repro+temp>10)){
+X					printf("that exceeds the 10%% limit");
+X					}
+X					else {
+X					points -= temp;
+X					ntn[country].repro+=temp;
+X					}
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 8:
+X				printf("additional movement costs 1 per +4 sct/turn\n");
+X 				printf("you start with a rate of %d\n",ntn[country].maxmove);
+X 				printf("you now have a rate of %d\n",ntn[country].maxmove+4);
+X				putchar('\n');
+X				if(points >= 1) {
+X					points -= 1;
+X					ntn[country].maxmove+=4;
+X				}
+X				else printf("You dont have enough points left");
+X				break;
+X			case 9:
+X				printf("doubling raw materials\n");
+X				if((ntn[country].tfood<8000000)
+X				&&(points >0)) {
+X					points--;
+X					ntn[country].tfood*=2;
+X					ntn[country].jewels*=2;
+X					ntn[country].tiron*=2;
+X				}
+X				else printf("sorry\n");
+X				break;
+X			case 10:
+X				printf("choosing basic magic at 1 point cost\n");
+X				printf("log in and read the magic screen to be informed of your powers\n");
+X				if(points >0) {
+X					points--;
+X					loop=0;
+X					while(loop==0) if((x=getmagic())!=0){
+X						CHGMGK;
+X						loop=1;
+X					}
+X				}
+X				else printf("sorry not enough points\n");
+X				break;
+X			default:
+X				printf("invalid option\n");
+X			}
+X		}
+X
+X		ntn[country].powers=0;;
+X		printnat();
+X		printf("\nhit 'y' if OK?");
+X		getchar();
+X		if(getchar()!='y'){
+X			ntn[country].active=0;
+X			getchar();
+X			printf("\n OK, nation deleted\n");
+X			printf("\nhit return to add another nation");
+X			printf("\nhit any other key to continue?");
+X			if(getchar()=='\n') more=0;
+X			else more=1;
+X			putchar('\n');
+X		}
+X		else {
+X			place();
+X			getchar();
+X			printf("\nNation is now added to world");
+X			printf("\nhit return to add another nation");
+X			printf("\nhit any other key to continue?");
+X			if(getchar()=='\n') more=0;
+X			else more=1;
+X			putchar('\n');
+X		}
+X		fclose(fexe);
+X	}
+X	writedata();
+X}
+X
+Xprintnat()
+X{
+X	int i;
+X	i=country;
+X	printf("about to print stats for nation %d\n\n",i);
+X	printf("name is %10s\n",ntn[i].name);
+X	printf("leader is %10s\n",ntn[i].leader);
+X	printf("total sctrs %2d\n",ntn[i].tsctrs);
+X	printf("class is %8s\n",*(Class+ntn[i].class));
+X	printf("mark is %c\n",ntn[i].mark);
+X	printf("race is %c\n",ntn[i].race);
+X	printf("attack plus is +%2d\n",ntn[i].aplus);
+X	printf("defence plus is +%2d\n",ntn[i].dplus);
+X	printf("gold is %5ld\n",ntn[i].tgold);
+X	printf("maxmove is %2d sctrs\n",ntn[i].maxmove);
+X	printf("jewels is %2ld\n",ntn[i].jewels);
+X	printf("# military %5ld\n",ntn[i].tmil);
+X	printf("# civilians %5ld\n",ntn[i].tciv);
+X	printf("repro is %2d percent\n",ntn[i].repro);
+X	printf("total iron %5ld\n",ntn[i].tiron);
+X	printf("total food %5ld\n",ntn[i].tfood);
+X	printf("total ships %2d\n",ntn[i].tships);
+X}
+X
+X/*PLACE NATION*/
+Xplace()
+X{
+X	int placed=0;
+X	int t;
+X	int temp;
+X	int n; /*count vbl for inf loop*/
+X	short armynum=0;
+X	register i,j,x,y;
+X
+X	n=0;
+X	updmove(ntn[country].race);
+X	switch(ntn[country].location) {
+X	case OOPS:
+X		while ((placed == 0)&&(n++<2000)){
+X			if(ntn[country].active==1){
+X				x = (rand()%(MAPX-8))+4;
+X				y = (rand()%(MAPY-8))+4;
+X			}
+X			else {
+X				x = (rand()%(MAPX-2))+1;
+X				y = (rand()%(MAPY-2))+1;
+X			}
+X			if(is_habitable(x,y)) placed=1;
+X
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(sct[i][j].owner!=0) placed=0;
+X			temp=0;
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(sct[i][j].altitude==WATER) temp++;
+X			if(temp>=7) placed=0;
+X
+X			if((movecost[x][y]<=0)||(movecost[x][y]>5)) placed=0;
+X		}
+X		break;
+X	case RANDOM:
+X		while ((placed == 0)&&(n++<2000)){
+X			if(ntn[country].active==1){
+X#if (MAPX>12)
+X				x = rand()%(MAPX-12)+6;
+X				y = rand()%(MAPY-12)+6;
+X#else
+X				x = rand()%(MAPX-8)+4;
+X				y = rand()%(MAPY-8)+4;
+X#endif
+X				if(is_habitable(x,y)) placed=1;
+X				/*important that no countries near*/
+X				for(i=x-4;i<=x+4;i++) for(j=y-4;j<=y+4;j++)
+X					if((sct[i][j].owner<MAXNTN)
+X					&&(sct[i][j].owner!=0)) placed=0;
+X			}
+X			else {
+X				x = (rand()%(MAPX-6))+3;
+X				y = (rand()%(MAPY-6))+3;
+X				if(is_habitable(x,y)) placed=1;
+X				/*important that no countries near*/
+X				for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++)
+X					if((sct[i][j].owner<MAXNTN)
+X					&&(sct[i][j].owner!=0)) placed=0;
+X			}
+X			temp=0;
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(sct[i][j].altitude==WATER) temp++;
+X			if(temp>=7) placed=0;
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(sct[i][j].owner!=0) placed=0;
+X			if((movecost[x][y]<=0)||(movecost[x][y]>4)) placed=0;
+X		}
+X		if (placed==1) for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X			if(sct[i][j].altitude!=WATER) sct[i][j].vegetation=GOOD;
+X		break;
+X	case FAIR:
+X		while ((placed == 0)&&(n++<2000)) {
+X			if(ntn[country].active==1){
+X#if (MAPX>24)
+X				x = rand()%(MAPX-24)+12;
+X				y = rand()%(MAPY-24)+12;
+X#else
+X				x = rand()%(MAPX-14)+7;
+X				y = rand()%(MAPY-14)+7;
+X#endif
+X			}
+X			else {
+X				x = rand()%(MAPX-10)+5;
+X				y = rand()%(MAPY-10)+5;
+X			}
+X
+X			if(is_habitable(x,y)) placed=1;
+X
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(sct[i][j].owner!=0) placed=0;
+X
+X			if((movecost[x][y]>0)&&(movecost[x][y]<=4)){
+X#if(PWATER>50)
+X				temp=0;
+X				for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X					if(sct[i][j].altitude==WATER) temp++;
+X				if(temp>=7) placed=0;
+X
+X				/*important that no countries near*/
+X				for(i=x-3;i<=x+3;i++) for(j=y-3;j<=y+3;j++){
+X				if((sct[i][j].owner<MAXNTN)
+X					&&(sct[i][j].owner!=0)) placed=0;
+X				}
+X#else
+X				temp=0;
+X				for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X					if(sct[i][j].altitude==WATER) temp++;
+X				if(temp>=5) placed=0;
+X
+X				/*important that no countries near*/
+X				for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++){
+X				if((sct[i][j].owner<MAXNTN)
+X					&&(sct[i][j].owner!=0)) placed=0;
+X				}
+X#endif
+X			}
+X			else placed=0;
+X		}
+X		if (placed==1) for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X			if(sct[i][j].altitude!=WATER) sct[i][j].vegetation=GOOD;
+X		break;
+X	case GREAT:
+X		placed = 0;
+X		while ((placed == 0) && (n++<2000)){
+X			if(ntn[country].active==1){
+X#if (MAPX>40)
+X				x = rand()%(MAPX-40)+20;
+X				y = rand()%(MAPY-40)+20;
+X#else
+X				x = rand()%(MAPX-18)+9;
+X				y = rand()%(MAPY-18)+9;
+X#endif
+X
+X				if(is_habitable(x,y)) placed=1;
+X				/*important that no countries near*/
+X				for(i=x-4;i<=x+4;i++) for(j=y-4;j<=y+4;j++){
+X				if((sct[i][j].owner<MAXNTN)
+X					&&(sct[i][j].owner!=0)) placed=0;
+X				}
+X			}
+X			else {
+X#if (MAPX>24)
+X				x = rand()%(MAPX-24)+12;
+X				y = rand()%(MAPY-24)+12;
+X#else
+X				x = rand()%(MAPX-12)+6;
+X				y = rand()%(MAPY-12)+6;
+X#endif
+X				if(is_habitable(x,y)) placed=1;
+X				/*important that no countries near*/
+X				for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++){
+X				if((sct[i][j].owner<MAXNTN)
+X					&&(sct[i][j].owner!=0)) placed=0;
+X				}
+X			}
+X
+X			for(i=x-1;i<=x+1;i++) for(j=y-1;j<=y+1;j++)
+X				if(sct[i][j].owner!=0) placed=0;
+X
+X			if((movecost[x][y]>0)&&(movecost[x][y]<4)){
+X				temp=0;
+X#if(PWATER>50)
+X				/*if any water within 2 sectors placed = 0*/
+X				for(i=x-2;i<=x+2;i++) for(j=y-2;j<=y+2;j++)
+X					if(movecost[x][y]<0) temp++;
+X				if(temp>=18) placed=0;
+X#else 
+X				for(i=x-2;i<=x+1;i++) for(j=y-2;j<=y+1;j++)
+X					if(movecost[x][y]<0) temp++;
+X				if(temp>=15) placed=0;
+X#endif
+X
+X				if (placed==1) switch(ntn[country].race) {
+X				case DWARF:
+X					sct[x][y].altitude=MOUNTAIN;
+X					sct[x][y].designation=MOUNTAIN;
+X					for(i=x-1;i<=x+1;i++) 
+X					for(j=y-1;j<=y+1;j++) 
+X					if((i!=x)&&(j!=y)
+X					&&(sct[i][j].altitude!=WATER)){
+X						if (rand()%3==0) {
+X						sct[i][j].altitude=MOUNTAIN;
+X						sct[i][j].designation=MOUNTAIN;
+X						sct[i][j].gold=rand()%6;
+X						sct[i][j].iron=rand()%6;
+X						}
+X						else {
+X						sct[i][j].altitude=HILL;
+X						sct[i][j].designation=HILL;
+X						sct[i][j].iron=rand()%4;
+X						sct[i][j].gold=rand()%4;
+X						}
+X					}
+X					break;
+X				case ELF:
+X					sct[x][y].vegetation = FORREST;
+X					for(i=x-1;i<=x+1;i++) 
+X					for(j=y-1;j<=y+1;j++) 
+X					if((i!=x)&&(j!=y)
+X					&&(sct[i][j].altitude!=WATER)) {
+X						if (rand()%3==0)
+X						sct[i][j].vegetation=FORREST;
+X						else sct[i][j].vegetation=WOOD;
+X
+X						if (rand()%2==0)
+X							sct[i][j].gold=rand()%8;
+X						else sct[i][j].gold=rand()%4;
+X					}
+X					break;
+X				case ORC:
+X					sct[x][y].altitude=MOUNTAIN;
+X					for(i=x-1;i<=x+1;i++) 
+X					for(j=y-1;j<=y+1;j++) 
+X					if((i!=x)&&(j!=y)
+X					&&(sct[i][j].altitude!=WATER)) {
+X						if (rand()%3==0) {
+X						sct[i][j].altitude=MOUNTAIN;
+X						sct[i][j].designation=MOUNTAIN;
+X						}
+X						else {
+X						sct[i][j].altitude=HILL;
+X						sct[i][j].designation=HILL;
+X						}
+X						if (rand()%2==0){
+X							sct[i][j].iron=rand()%8;
+X							sct[i][j].gold=rand()%8;
+X						}
+X						else {
+X							sct[i][j].iron=rand()%4;
+X							sct[i][j].gold=rand()%4;
+X						}
+X					}
+X					break;
+X				case HUMAN:
+X					sct[x][y].altitude = CLEAR;
+X					for(i=x-1;i<=x+1;i++) 
+X					for(j=y-1;j<=y+1;j++) 
+X					if((i!=x)&&(j!=y)
+X					&&(sct[i][j].altitude!=WATER)) {
+X						if (rand()%2==0)
+X						sct[x][y].altitude = CLEAR;
+X
+X						if (rand()%2==0)
+X						sct[i][j].vegetation=WOOD;
+X						else 
+X						sct[i][j].vegetation=GOOD;
+X
+X						if (rand()%2==0)
+X						sct[i][j].gold=rand()%7+1;
+X						else 
+X						sct[i][j].iron=rand()%7+1;
+X					}
+X					break;
+X				}
+X			}
+X			else placed=0;
+X		}
+X	}
+X
+X	/*done with one try*/
+X	if(placed==1) {
+X		ntn[country].capx = x;
+X		ntn[country].capy = y;
+X		sct[x][y].designation=DCAPITOL;
+X		sct[x][y].owner=country;
+X		sct[x][y].people=ntn[country].tciv;
+X		sct[x][y].fortress=5;
+X
+X		/* put all military into armies of 100 */
+X		armynum=0;
+X		temp= (int) ntn[country].tmil;
+X		ASOLD= (int) ntn[country].tmil/3;
+X		temp-=ASOLD;
+X		ASTAT=GARRISON;
+X		AMOVE=0;
+X		AXLOC=ntn[country].capx;
+X		AYLOC=ntn[country].capy;
+X		armynum++;
+X		while ((armynum < MAXARM-1)&&(temp>0)) {
+X			if(temp>100){
+X				ASOLD=100;
+X				temp-=100;
+X			}
+X			else {
+X				ASOLD=temp;
+X				temp=0;
+X			}
+X			AXLOC=ntn[country].capx;
+X			AYLOC=ntn[country].capy;
+X			ASTAT=DEFEND;
+X			AMOVE=ntn[country].maxmove;
+X			armynum++;
+X		}
+X		if(temp>0) {
+X			armynum=0;
+X			ASOLD+=temp;
+X		}
+X
+X		/* give you some terain to start with: pc nations get more*/
+X		if ((ntn[country].active>=2)&&(ntn[country].location==GREAT))
+X			t=1;
+X		else if (ntn[country].active>=2) t=0;
+X		else if (ntn[country].location==OOPS) t=0;
+X		else if (ntn[country].location==RANDOM) t=0;
+X		else if (ntn[country].location==FAIR) t=1;
+X		else if (ntn[country].location==GREAT) t=2;
+X		else printf("error");
+X
+X		for(i=x-t;i<=x+t;i++) for(j=y-t;j<=y+t;j++)
+X			if((movecost[i][j]>=0)
+X			&&(sct[i][j].owner==0)
+X			&&(sct[i][j].people==0)) {
+X				sct[i][j].owner=country;
+X				sct[i][j].designation=DFARM;
+X			}
+X	}
+X	else {
+X		if(ntn[country].location==OOPS) printf("ERROR\n");
+X		else if(ntn[country].location==RANDOM) {
+X			printf("RANDOM PLACE FAILED, TRYING TO PLACE AGAIN\n");
+X			ntn[country].location=OOPS;
+X			place();
+X		}
+X		else if(ntn[country].location==FAIR) {
+X			printf("FAIR PLACE FAILED, TRYING AGAIN - adding 1000 people to nation\n");
+X			/*give back one point -> 1000 people*/
+X			ntn[country].tciv+=1000;
+X			ntn[country].location=RANDOM;
+X			place();
+X		}
+X		else if(ntn[country].location==GREAT) {
+X			printf("GOOD PLACE FAILED, TRYING AGAIN - adding 1000 people to nation\n");
+X			/*give back one point -> 1000 people*/
+X			ntn[country].tciv+=1000;
+X			ntn[country].location=FAIR;
+X			place();
+X		}
+X	}
+X}
+X
+X/*get class routine*/
+X/* return the number of points needed */
+Xgetclass(race)
+X{
+X	short check=0;
+X	int x;
+X	short tmp;
+X	while(check==0){
+X		printf("what type of nation would you like to be\n");
+X		if(race!=ORC){
+X			printf("1. king      (Humans, Dwarves, and Elves)\n");
+X			printf("2. emperor   (Humans, Dwarves, and Elves)\n");
+X			printf("3. wizard    (Humans, Dwarves, and Elves)........Cost = 1 Point\n");
+X			printf("\tA wizard will have the magical SPY power automatically. \n");
+X		}
+X		if(race==HUMAN){
+X			printf("4. theocracy (Humans Only).......................Cost = 2 Points\n");
+X			printf("\tA theocracy will have the magical HEALER power automatically. \n");
+X		}
+X		if((race==HUMAN)||(race==ORC))
+X			printf("5. pirate    (Humans & Orcs Only)\n");
+X		if((race==ELF)||(race==DWARF))
+X			printf("6. trader    (Elves & Dwarves Only)\n");
+X		if((race==HUMAN)||(race==ORC))
+X			printf("7. tyrant    (Humans & Orcs Only)\n");
+X		if(race==ORC){
+X			printf("8. demon     (Orcs Only).........................Cost = 2 Points\n");
+X			printf("\tA demon will have the magical DESTROYER power automatically\n");
+X			printf("9. dragon    (Orcs Only).........................Cost = 2 Points\n");
+X			printf("\tA dragon will have the magical MAJOR MONSTER power automatically\n");
+X			printf("10. shadow    (Orcs Only)........................Cost = 1 Point\n");
+X			printf("\tA shadow will have the magical HIDDEN power automatically\n");
+X		}
+X		printf("\tinput:");
+X		scanf("%hd",&tmp);
+X		if((tmp>=1)&&(tmp<=10)) {
+X			if((race==HUMAN)&&((tmp<6)||(tmp==7))) check=1;
+X			else if((race==DWARF)&&((tmp<=3)||(tmp==6))) check=1;
+X			else if((race==ELF)&&((tmp==6)||(tmp<=3))) check=1;
+X			else if((race==ORC)&&((tmp==5)||(tmp>6))) check=1;
+X			else printf("bad input \n\n\n");
+X		} 
+X		else printf("\tinvalid input\n\n\n");
+X	}
+X	ntn[country].class=tmp;
+X	switch(tmp){
+X	case 3: 
+X		printf("\nwizards have the magical SPY power automatically");
+X		ntn[country].powers|=SPY;
+X		x=SPY;
+X		CHGMGK;
+X		return(1);
+X	case 4: 
+X		printf("\ntheocracies have magical HEALER power automatically. ");
+X		ntn[country].powers|=HEALER;
+X		x=HEALER;
+X		CHGMGK;
+X		return(2);
+X	case 8: 
+X		printf("\ndemons have the magical DESTROYER power automatically");
+X		ntn[country].powers|=DESTROYER;
+X		x=DESTROYER;
+X		CHGMGK;
+X		return(2);
+X	case 9: 
+X		printf("\ndragons have the magical MAJOR MONSTER power automatically");
+X		ntn[country].powers|=AV_MONST;
+X		x=AV_MONST;
+X		CHGMGK;
+X		ntn[country].powers|=MA_MONST;
+X		x=MA_MONST;
+X		CHGMGK;
+X		return(2);
+X	case 10: 
+X		printf("\nshadows have the magical HIDDEN power automatically");
+X		ntn[country].powers|=HIDDEN;
+X		x=HIDDEN;
+X		CHGMGK;
+X		return(1);
+X	default:
+X		return(0);
+X	}
+X}
+END_OF_newlogin.c
+if test 26029 -ne `wc -c <newlogin.c`; then
+    echo shar: \"newlogin.c\" unpacked with wrong size!
+fi
+# end of overwriting check
+fi
+echo shar: End of archive 1 \(of 6\).
+cp /dev/null ark1isdone
+MISSING=""
+for I in 1 2 3 4 5 6 ; do
+    if test ! -f ark${I}isdone ; then
+	MISSING="${MISSING} ${I}"
+    fi
+done
+if test "${MISSING}" = "" ; then
+    echo You have unpacked all 6 archives.
+    rm -f ark[1-9]isdone
+else
+    echo You still need to unpack the following archives:
+    echo "        " ${MISSING}
+fi
+##  End of shell archive.
+exit 0
