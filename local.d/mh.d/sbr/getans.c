@@ -14,7 +14,7 @@ static	int interrupted;
 #else	BSD42
 static	jmp_buf sigenv;
 #endif	BSD42
-static int	intrser ();
+static TYPESIG	intrser ();
 
 char  **getans (prompt, ansp)
 char   *prompt;
@@ -78,8 +78,8 @@ struct swit   *ansp;
     }
 }
 
-
-static	int intrser () {
+/* ARGSUSED */
+static	TYPESIG intrser (dummy) {
 #ifndef	BSD42
 	(void) signal(SIGINT, intrser);
 	interrupted = 1;
