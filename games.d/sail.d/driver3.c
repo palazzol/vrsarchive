@@ -179,7 +179,7 @@ register struct ship *from, *to;
 	return from < to;
 }
 
-int dtab[];
+extern int dtab[];
 
 step(com, sp, moved)
 char com;
