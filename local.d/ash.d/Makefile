@@ -1,25 +1,33 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ash.d/Makefile,v 1.2 1987-02-15 15:48:59 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/ash.d/Makefile,v 1.3 1987-06-21 21:51:54 vrs Exp $
 #
-ALL	= ash
+ALL	= ash ash.has
+OPTIONS	= -O
+MODEL	= -i
 include ../../CONFIG
 
 install: $(ALL) $(BINDIR) $(LIBDIR) $(MAN1)
-	cp $(ALL) $(BINDIR)
-	cd $(BINDIR); chmod 755 $(ALL)
-	cp ash.help ash.inst $(LIBDIR)
+	cp ash $(BINDIR)
+	cd $(BINDIR); chmod 755 ash
+	cp ash.help ash.inst ash.has $(LIBDIR)
 	cd $(LIBDIR); chmod 644 ash.help ash.inst
-	cp ash.1 $(MAN1)
+	cd $(LIBDIR); chmod 711 ash.has
+	cp ash.1 $(MAN1)/
 	cd $(MAN1); chmod 644 ash.1
 #
 #	Special rule does fixups needed for current system
 #
 ash:	ash.sh
-	sed '/^PAGE/,/^MAINT/c\
-PAGE=$(PAGER)\
+	sed '/^HELP/,/^FMT/c\
 HELP=$(LIBDIR)/ash.help\
 INST=$(LIBDIR)/ash.inst\
-MAINT=root' $? > $@
+HAS=$(LIBDIR)/ash.has\
+PAGE=$(PAGER)\
+E2="\\c"\
+FMT="pr -t -5"' $? > $@
 
+ash.has: has.c
+	$(CC) $(CFLAGS) has.c -o $@
+	rm -f has.o
 clean:
 	rm -f $(ALL)
