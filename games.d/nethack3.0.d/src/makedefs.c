@@ -28,7 +28,9 @@ extern void exit P((int));
 # define WRMODE  "w+"
 #endif
 #if defined(SYSV) || defined(GENIX) || defined(UNIXDEBUG)
+#ifndef __STDC__
 void rename();
+#endif
 #endif
 #ifdef AMIGA
 # undef freopen
@@ -61,7 +63,6 @@ void rename();
 char	in_line[256];
 extern char *gets P((char *));
 void do_objs(), do_traps(), do_data(), do_date(), do_permonst(), do_rumors();
-char *limit P((char *,boolean));
 FILE *_freopen();
 
 int
@@ -402,6 +403,7 @@ do_objs() {
 }
 
 #if defined(SYSV) || defined(GENIX) || defined(UNIXDEBUG)
+#ifndef __STDC__
 void
 rename(oldname, newname)
 char	*oldname, *newname;
@@ -413,6 +415,7 @@ char	*oldname, *newname;
 	}
 	return;
 }
+#endif
 #endif
 
 #ifdef MSDOS
