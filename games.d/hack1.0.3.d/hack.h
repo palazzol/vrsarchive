@@ -3,13 +3,11 @@
 
 #include "config.h"
 
-#ifdef BSD
+#ifndef SYS5
 #include <strings.h>		/* declarations for strcat etc. */
 #else
 #include <string.h>		/* idem on System V */
-#define	index	strchr
-#define	rindex	strrchr
-#endif BSD
+#endif
 
 #define	Null(type)	((struct type *) 0)
 
@@ -25,7 +23,6 @@ typedef struct {
 #include	"def.obj.h"
 #include	"def.flag.h"
 
-extern char *sprintf();
 #define	plur(x)	(((x) == 1) ? "" : "s")
 
 #define	BUFSZ	256	/* for getlin buffers */
@@ -69,7 +66,7 @@ struct you {
 #ifdef QUEST
 	schar di;		/* direction of FF */
 	xchar ux0, uy0;		/* initial position FF */
-#endif QUEST
+#endif
 	xchar udisx, udisy;	/* last display pos */
 	char usym;		/* usually '@' */
 	schar uluck;
@@ -81,7 +78,7 @@ struct you {
 	unsigned ulevel:4;	/* 1 - 14 */
 #ifdef QUEST
 	unsigned uhorizon:7;
-#endif QUEST
+#endif
 	unsigned utrap:3;	/* trap timeout */
 	unsigned utraptype:1;	/* defined if utrap nonzero */
 #define	TT_BEARTRAP	0
