@@ -1,14 +1,14 @@
 /*
 **	Cake configuration parameters.
 **
-**	$Header: /home/Vince/cvs/local.d/cake.d/conf.h,v 1.1 1987-11-16 17:19:31 vrs Exp $
+**	$Header: /home/Vince/cvs/local.d/cake.d/conf.h,v 1.2 1987-11-18 08:57:04 vrs Exp $
 */
 
 /* type used when type is not known */
-typedef	int	Cast;
+typedef	long	Cast;
 
 /* location of the systemwide cake library */
-#define	SLIB		"/u/pgrad/zs/lib/cake"
+#define	SLIB		CAKELIB"
 
 /* suffix (after $HOME) of personal libraries */
 #define	ULIB		"/lib/cake"
@@ -17,18 +17,21 @@ typedef	int	Cast;
 #define	CPP		"/lib/cpp"
 
 /* location of the statistics file - if not defined, no stats kept */
-#define	STATS_FILE	"/u/pgrad/zs/lib/cake_stats"
+#define	STATS_FILE	CAKELIB/cake_stats"
 
 /* characters always requiring shell attention */
 #define	METACHARS	"*?!&|;<>()[]{}'`\"%$~#"
 
 /* default command to execute non-script shell actions */
-#define	SYSTEM_CMD	"/bin/csh -cf"
+#define	SYSTEM_CMD	"/bin/sh -c"
 
 /* default command to execute shell scripts */
-#define	SCRIPT_CMD	"/bin/csh -f"
+#define	SCRIPT_CMD	"/bin/sh"
 
 /*	System V compatibility			*/
+#ifdef	SYS5
+#define ATT
+#endif
 #ifdef	ATT
 /* the resolution of the times(2) system call */
 #ifdef	exlsi
