@@ -134,5 +134,6 @@ static sigpanic(sig)
 	write(2,buf,strlen(buf));  sleep(2);
 	sncbr();
 	savegame(savefilename); 
-	kill(getpid(),sig); /* this will terminate us */
+	setuid(getuid());	/* Allow a dump if set-uid	*/
+	kill(getpid(),sig);	/* this will terminate us	*/
 	}
