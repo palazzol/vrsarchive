@@ -17,7 +17,7 @@ statres.h: gram.c
 	sed <gram.y >statres.h -f sres.sed
 
 y.tab.h gram.c:	gram.y
-	yacc -d gram.y
+	$(YACC) -d gram.y
 	mv y.tab.c gram.c
 
 lint: sc.h sc.c lex.c gram.c interp.c cmds.c crypt.c
@@ -25,7 +25,7 @@ lint: sc.h sc.c lex.c gram.c interp.c cmds.c crypt.c
 	range.c xmalloc.c -lcurses -lm
 
 vc:	$(OBJS)
-	cc $(CFLAGS) $(OBJS) $(LIBS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 sc.o:	sc.h
 lex.o:	sc.h y.tab.h experres.h statres.h
