@@ -20,20 +20,24 @@ extern struct ltchars save_special_chars;
 #define use_crmode
 #endif
 
+#ifndef SIG_T
+#define SIG_T int
+#endif
+typedef SIG_T (*sig_t)();
 int error_sig, error_code;
-int (*core_dump)();
+sig_t core_dump;
 #ifdef USG
 /* no suspend signal */
 #else
-int (*suspend_handler)();
+sig_t suspend_handler;
 #endif
 
 /* This signal package was brought to you by           -JEW-  */
 
-(*signal())();
-signal_save_core();
-signal_save_no_core();
-signal_ask_quit();
+sig_t signal();
+SIG_T signal_save_core();
+SIG_T signal_save_no_core();
+SIG_T signal_ask_quit();
 
 init_signals()
 {
@@ -54,6 +58,7 @@ init_signals()
 
 /*ARGSUSED*/
 #ifdef USG
+SIG_T
 signal_save_core(sig)
 int sig;
 {
@@ -81,6 +86,7 @@ int sig;
   exit_game();
 }
 #else
+SIG_T
 signal_save_core(sig, code, scp)
 int sig, code;
 struct sigcontext *scp;
@@ -111,6 +117,7 @@ struct sigcontext *scp;
 
 /*ARGSUSED*/
 #ifdef USG
+SIG_T
 signal_save_no_core(sig)
 int sig;
 {
@@ -120,6 +127,7 @@ int sig;
   exit_game();
 }
 #else
+SIG_T
 signal_save_no_core(sig, code, scp)
 int sig, code;
 struct sigcontext *scp;
@@ -133,6 +141,7 @@ struct sigcontext *scp;
 
 /*ARGSUSED*/
 #ifdef USG
+SIG_T
 signal_ask_quit(sig)
 int sig;
 {
@@ -158,6 +167,7 @@ int sig;
   erase_line(msg_line, msg_line);
 }
 #else
+SIG_T
 signal_ask_quit(sig, code, scp)
 int sig, code;
 struct sigcontext *scp;
