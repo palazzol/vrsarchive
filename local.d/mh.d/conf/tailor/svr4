@@ -1,0 +1,44 @@
+#
+#	These look redundant or ill advised:
+#
+#bbdomain:	UUCP
+#hostable:	@(MHETCPATH)/hosts
+#mailer:	root
+#mmdelim1:	\001\001\001\001\n
+#mmdelim2:	\001\001\001\001\n
+#okdests:	@(MHETCPATH)/Okdests
+#okhosts:	@(MHETCPATH)/Okhosts
+#overseer:	root
+#pophost:	name-of-pop-service-host
+#sendmail:	/usr/lib/sendmail
+#servers:	name-of-smtp-service-host name-of-alternate-host localhost
+#systemname:	paris.ics.uci.edu
+#tmailqdir:	/usr/tmp
+#umincproc:
+#
+#	These I just did because an example did it:
+#
+localname:
+lockldir:
+mmailid:	0
+#
+#	This is where System V Release 4 puts the SMTP Queues:
+#
+mailqdir:	/usr/spool/smtpq
+#
+#	We use gandalf as our local NNTP server:
+#
+nntphost:	gandalf
+#
+#	The MMDF interface is surprising in that it copies all the UUCP mail
+#	into the MMDF mailbox, then parses *that* into the folder.
+#	Setting a directory to null implies the user's home directory.
+#	Setting a file to null implies the user's login name.
+#	Thus the following specifies that /usr/mail/$USER is to be turned into
+#	MMDF mail in $HOME/.mh_mmdf, then $HOME/.mh_mmdf is turned into messages
+#	in inbox:
+# 
+uucpldir:	/usr/mail
+uucplfil:
+mmdfldir:
+mmdflfil:	.mh_mmdf
