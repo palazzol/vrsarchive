@@ -1,9 +1,9 @@
 #
-#	reversi @(#)Makefile	1.2 10/6/85
+#	reversi @(#)Makefile	1.3 4/8/86
 #
 SHELL	= /bin/sh
 GAMEDIR	= /usr/games
-CFLAGS	= -O -i
+CFLAGS	= -i # -O
 OFILES	= user.o ulex.o move.o display.o hasmove.o fini.o \
 	  minmax.o score.o edges.o corners.o count.o
 SOURCE	= Makefile corners.c count.c display.c edges.c fini.c genedge.c \
