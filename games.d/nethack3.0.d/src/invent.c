@@ -372,7 +372,8 @@ register long q;
  */
 struct obj *
 getobj(let,word)
-register char *let,*word;
+register const char *let;
+register char *word;
 {
 	register struct obj *otmp;
 	register char ilet,ilet1,ilet2;
@@ -1230,9 +1231,14 @@ doprtool(){
 	return 0;
 }
 
+#ifdef __STDC__
+int
+digit(char c)
+#else
 int
 digit(c)
 char c;
+#endif
 {
 	return(c >= '0' && c <= '9');
 }
@@ -1270,11 +1276,16 @@ static const char *names[] = {
 #endif
 	"Rings", "Gems"};
 
+#ifdef __STDC__
+char *
+let_to_name(char let)
+#else
 char *
 let_to_name(let)
 char let;
+#endif
 {
-	char *pos = index(obj_symbols, let);
+	const char *pos = index(obj_symbols, let);
 	/* arbitrary buffer size by Tom May (tom@uw-warp) */
 	static char *buf = NULL;
 
