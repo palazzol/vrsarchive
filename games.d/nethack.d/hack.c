@@ -86,7 +86,8 @@ moverock() {
 	register xchar rx, ry;
 	register struct obj *otmp;
 	register struct trap *ttmp;
-	register struct	monst *mtmp, *m_at();
+	register struct	monst *mtmp;
+	struct	monst *m_at();
 
 	while(otmp = sobj_at(ENORMOUS_ROCK, u.ux+u.dx, u.uy+u.dy)) {
 		rx = u.ux+2*u.dx;
