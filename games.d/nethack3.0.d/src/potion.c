@@ -11,10 +11,15 @@ boolean notonhead = FALSE;
 
 static const char beverages[] = { POTION_SYM, 0 };
 
+#ifdef __STDC__
+void
+make_confused(long xtime,boolean talk)
+#else
 void
 make_confused(xtime,talk)
 long xtime;
 boolean talk;
+#endif
 {
 	long old = HConfusion;
 
@@ -30,10 +35,15 @@ boolean talk;
 	HConfusion = xtime;
 }
 
+#ifdef __STDC__
+void
+make_stunned(long xtime,boolean talk)
+#else
 void
 make_stunned(xtime,talk)
 long xtime;
 boolean talk;
+#endif
 {
 	long old = HStun;
 
@@ -52,10 +62,15 @@ boolean talk;
 	HStun = xtime;
 }
 
+#ifdef __STDC__
+void
+make_sick(long xtime,boolean talk)
+#else
 void
 make_sick(xtime, talk)
 long xtime;
 boolean talk;
+#endif
 {
 	long old = Sick;
 
@@ -73,10 +88,15 @@ boolean talk;
 	Sick = xtime;
 }
 
+#ifdef __STDC__
+void
+make_blinded(long xtime,boolean talk)
+#else
 void
 make_blinded(xtime, talk)
 long xtime;
 boolean talk;
+#endif
 {
 	long old = Blinded;
 
@@ -102,10 +122,15 @@ boolean talk;
 		setsee();
 }
 
+#ifdef __STDC__
+void
+make_hallucinated(long xtime,boolean talk)
+#else
 void
 make_hallucinated(xtime, talk)
 long xtime;
 boolean talk;
+#endif
 {
 	long old = Hallucination;
 	register struct monst *mtmp;
@@ -544,10 +569,15 @@ peffects(otmp)
 	return(-1);
 }
 
+#ifdef __STDC__
+void
+healup(int nhp,int nxtra,boolean curesick,boolean cureblind)
+#else
 void
 healup(nhp, nxtra, curesick, cureblind)
-	int	nhp, nxtra;
-	register boolean curesick, cureblind;
+int	nhp, nxtra;
+register boolean curesick, cureblind;
+#endif
 {
 #ifdef POLYSELF
 	if (u.mtimedone && nhp) {
@@ -594,7 +624,7 @@ potionhit(mon, obj)
 register struct monst *mon;
 register struct obj *obj;
 {
-	register char *botlnam = bottlenames[rn2(SIZE(bottlenames))];
+	register const char *botlnam = bottlenames[rn2(SIZE(bottlenames))];
 	boolean uclose, isyou = (mon == &youmonst);
 
 	if(isyou) {
@@ -791,7 +821,7 @@ int
 dodip()
 {
 	register struct obj *potion, *obj;
-	char *tmp;
+	const char *tmp;
 
 	if(!(obj = getobj("#", "dip")))
 		return(0);
