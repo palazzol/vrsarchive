@@ -2,7 +2,7 @@
 #    Instructions to Make, for compilation of ZOT UIP/utility processes
 #
 #	@(MHWARNING)
-# @(#)$Id: mf,v 1.1 1990-04-12 13:27:23 vrs Exp $
+# @(#)$Id: mf,v 1.2 1990-05-07 15:51:11 vrs Exp $
 ##############################################################################
 
 # The following entries were inserted during MH configuration
@@ -10,6 +10,7 @@ BINDIR	=	$(DESTDIR)@(MHBINPATH)
 ETCDIR	=	$(DESTDIR)@(MHETCPATH)
 OPTIONS	=	@(MHOPTIONS) -I..
 LDOPTIONS=	@(LDOPTIONS)
+LDOPTLIB=	@(LDOPTLIB)
 @BEGIN: MF
 ALL	=	uminc umsift muinc musift
 INST-ALL=	inst-uminc inst-umsift inst-muinc inst-musift
@@ -29,7 +30,8 @@ CFLAGS  =	      $(OPTIONS)
 @END: DEBUG
 LDFLAGS =	$(LDOPTIONS)
 LIBES   =	../mts/mts.o ../mts/lock.o
-TWSLIB	=	../tws/dtime.o ../tws/dtimep.o
+LDLIBS	=	$(LIBES) $(LDOPTLIB)
+TWSLIB	=	../tws/dtime.o ../tws/dtimep.o ../tws/lexstring.o
 LINT	=	lint
 LFLAGS	=	-bhu $(OPTIONS)
 LLIBS	=
@@ -77,7 +79,7 @@ $(ETCDIR)/uminc:	xuminc
 uminc:		xuminc
 
 xuminc:		uminc.o uumm.o mf.o $(TWSLIB) $(LIBES)
-		$(CC) $(LDFLAGS) -o $@ uminc.o uumm.o mf.o $(TWSLIB) $(LIBES)
+		$(CC) $(LDFLAGS) -o $@ uminc.o uumm.o mf.o $(TWSLIB) $(LDLIBS)
 
 
 ######################################################################
@@ -95,7 +97,7 @@ $(ETCDIR)/umsift:	xumsift
 umsift:		xumsift
 
 xumsift:	umsift.o uumm.o mf.o $(TWSLIB) $(LIBES)
-		$(CC) $(LDFLAGS) -o $@ umsift.o uumm.o mf.o $(TWSLIB) $(LIBES)
+		$(CC) $(LDFLAGS) -o $@ umsift.o uumm.o mf.o $(TWSLIB) $(LDLIBS)
 
 
 ######################################################################
@@ -120,7 +122,7 @@ $(ETCDIR)/muinc:	xmuinc
 muinc:		xmuinc
 
 xmuinc:		muinc.o mmuu.o mf.o $(TWSLIB) $(LIBES)
-		$(CC) $(LDFLAGS) -o $@ muinc.o mmuu.o mf.o $(TWSLIB) $(LIBES)
+		$(CC) $(LDFLAGS) -o $@ muinc.o mmuu.o mf.o $(TWSLIB) $(LDLIBS)
 
 
 ####################################################################
@@ -138,7 +140,7 @@ $(ETCDIR)/musift:	xmusift
 musift:		xmusift
 
 xmusift:	musift.o mmuu.o mf.o $(TWSLIB) $(LIBES)
-		$(CC) $(LDFLAGS) -o $@ musift.o mmuu.o mf.o $(TWSLIB) $(LIBES)
+		$(CC) $(LDFLAGS) -o $@ musift.o mmuu.o mf.o $(TWSLIB) $(LDLIBS)
 
 
 ######################################################################
