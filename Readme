@@ -1,0 +1,54 @@
+	This directory contains the local source.  Each Makefile must provide
+rules for clean and install, and set ALL.  Things should degenerate cleanly
+so that nothing is made on systems where a given program is inappropriate.
+
+	Each Makefile should include /etc/CONFIG.  Sample /etc/CONFIG files are
+provided for XENIX, V.3.2, and V.4.0.  CONFIG files have the following
+external interfaces:
+
+Imported Macros:
+	MODEL	Special flags for compiling and linking 286 binaries
+	OPTIONS	Compilation options to be added to CFLAGS
+	ALL		A list of the thinks 'make all' should make
+
+Exported Macros:
+	SYSNAME	a shell expression that expands to the name of the system
+	ROOT	the root directory of the target system
+	SAFEUID	is the login name of a relatively safe login.
+	SETUID	is the login name for set-uid programs.
+	SAFEGRP	is the group name of a relatively safe group.
+	CFLAGS	Flags used during compilation and linking of C code
+	LIBS	List of libraries for use in linking
+	BERKLIB	Special library for BSD compatiblity, if needed
+	DIRLIB	Special library for directory manipulation, if needed
+	RANLIB	The command to run on newly constructed archives
+	PAGER	The program that pages output on this system
+	NROFF	The program to convert troff input to printable ascii
+	TROFF	The program to convert troff input to printed paper
+	CCLIB	A path to place libraries so the C compiler will find them
+	NET		A path to place binaries so uux can find them
+	ETC		A path for run-time config files read by your binaries
+	BINDIR	A path where user interface executables should go
+	LIBDIR	A path where support files and executables should go
+	INCDIR	A path where local include files should go
+	LIBUUCP	The path where UUCP looks for config files
+	LIBMAIL	The path where mail looks for config files
+	LIBNEWS	The path where news looks for support files and executables
+	LIBTMAC	The path where troff looks for macro packages
+	GAMDIR	The path where game user interface binaries should go
+	GAMLIB	The path where game support files and binaries should go
+	SPOOLN	The path where news is spooled
+	MAN1	The path where user interface man pages should go
+	MAN2	The path where system call man pages should go
+	MAN3	The path where library routine man pages should go
+	MAN4	The path where file format man pages should go
+	MAN5	The path where macro package man pages should go
+	MAN6	The path where game man pages should go
+	MAN7	The path where device driver man pages should go
+	MAN8	The path where system administration man pages should go
+
+Exported Rules:
+	An 'all' rule that makes $(ALL)
+	A '.c' rule that links C code with $(LIBS)
+	Rules that make all the paths exported if they don't already exist
+	A '.d' rule that recusrively descends into directories and does a make
