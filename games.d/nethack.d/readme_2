@@ -1,0 +1,40 @@
+Submitted by: mike@genat.UUCP (Mike Stephenson)
+Comp.sources.games: Volume 2, Issue 1
+Archive-name: nethack/Part01
+
+	[OK hack fans, here it is.  This posting and the following 15
+	 compose the latest version of hack, known as nethack.  -br]
+
+[[From the author:
+To make NetHack on any Unix system, copy "Makefile.unix" to "Makefile",
+edit it and "config.h" then type "make".  I've tested it out on 4.2BSD and
+System V Unix systems, and there seems to be no obvious build problems.
+
+To make NetHack on a SCO Xenix system, copy "Makefile.xenix" to "Makefile",
+edit "config.h" (Makefile.xenix" should??? be OK), then type "make".  I know
+that it won't run, as it exists now, under Xenix, but maybe someone out there
+can get it working - especially the hackers at SCO - maybe in time for the
+2.3 release????
+
+To make NetHack on a Dos PC, copy "Makefile.pc" to "Makefile", edit config.h,
+then type "make".  This one may not even link properly, although it should
+compile.
+
+If anyone comes across a bug, or manages to get the program to run under Xenix
+or Dos, ***please*** send me a set of diffs or whatever so that I can patch
+my code and get a release with the proper information out to the net in
+general.  Also, if anyone wants to put the 3.51 --> 3.61 PC Hack changes into
+the source, send me diffs.  Once I have a significantly large set of mods, I
+will send them to the moderator of comp.sources.games so that he can post them.
+
+I will try to keep the postings of diffs up to a level of about one posting per
+month, although I am taking three weeks vacation about a month from now.  I can
+hopefully get the first set of mods out before I take off.
+
+						Mike Stephenson
+
+Mail:	Genamation Inc.		Phone:	(416) 475-9434
+	351 Steelcase Rd. W
+	Markham, Ontario.	UUCP:	{seismo, utzoo}!mnetor!genat!mike
+	Canada   L3R 3W1
+]]
