@@ -1,0 +1,9 @@
+	@(#)README	1.1 12/2/84
+
+This is a rewrite of talk to run on System 3/System 5 based systems.
+Talk was originally distributed on the net and based on 4.1 mpx files.
+It was then picked up by Berkeley and modified to use the 4.2 networking
+features and distributed with 4.2.  This is based roughly on the 4.2
+version, but with all the network stuff replaced with an implementation
+using named pipes for the communication.  Like the early mpx scheme,
+this version does not require a talk daemon.
