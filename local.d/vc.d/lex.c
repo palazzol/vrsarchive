@@ -301,9 +301,9 @@ nmgetch()
     static char *dumpindex;
 
 #ifdef SYSV3
-    void timeout();
+    void atimeout();
 #else
-    int timeout();
+    int atimeout();
 #endif
 
     if (dumpindex && *dumpindex)
@@ -334,7 +334,7 @@ nmgetch()
 
     if (almost) { 
 
-        (void) signal(SIGALRM, timeout);
+        (void) signal(SIGALRM, atimeout);
         (void) alarm(1);
 
 	if (setjmp(wakeup) == 0) { 
@@ -400,7 +400,7 @@ nmgetch()
 #ifdef SYSV3
 void
 #endif
-timeout()
+atimeout()
 {
     longjmp(wakeup, -1);
 }
