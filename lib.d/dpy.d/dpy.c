@@ -523,19 +523,13 @@ char *format;
 va_dcl
 {
 	register int count;
-	FILE siop;
 	va_list ap;
 	char	buf[5000];		/* data storage */
 
-	siop._cnt = sizeof(buf) ;
-	siop._base = siop._ptr = &buf[0] ;
-	siop._flag = _IOWRT;
-	siop._file = _NFILE;
 	va_start(ap);
-	count = _doprnt(format, ap, &siop);
+	count = vsprintf(buf, format, ap);
 	va_end(ap);
-	*siop._ptr = '\0'; /* plant terminating null character */
-	return(dpywrite(buf, siop._ptr - buf));
+	return(dpywrite(buf, count));
 }
 #endif	USG
 
