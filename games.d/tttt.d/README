@@ -1,0 +1,15 @@
+This is a 4 by 4 version of tic-tac-toe with "wraparound
+edges" (so you can have off-center diagonal wins).
+
+I've compiled it under 4.3 BSD Unix, but it should compile
+ok just about everywhere that has a curses package.
+
+Edit the Makefile as necessary, then make.
+
+If you improve the code, please let me know.  I'd be interested
+in seeing any changes to it.
+
+This program is public domain.
+
+-Eric Lechner,  6 March 1990
+lechner@ucscb.ucsc.edu         ...!ucbvax!ucscc!ucscb!lechner
