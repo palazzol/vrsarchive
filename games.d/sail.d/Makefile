@@ -26,13 +26,13 @@ CTAGFILES= ${DFILES} ${PFILES} ${LFILES} ${COMFILES}
 JUNKFILES= make.out core sail driver sail.log tags
 
 sail: ${POBJS} ${COMOBJS}
-	${CC} $(CFLAGS) ${COMOBJS} ${POBJS} ${LIBS} -o sail
+	${CC} $(CFLAGS) ${COMOBJS} ${POBJS} ${LIBS} -o $@
 
 driver: ${DOBJS} ${COMOBJS}
-	${CC} $(CFLAGS) ${COMOBJS} ${DOBJS} ${LIBS} -o driver
+	${CC} $(CFLAGS) ${COMOBJS} ${DOBJS} ${LIBS} -o $@
 
 sail.log: ${LOBJS} globals.o
-	${CC} $(CFLAGS) ${LOBJS} globals.o -o sail.log
+	${CC} $(CFLAGS) ${LOBJS} globals.o ${LIBS} -o $@
 
 lint:
 	lint -z $(PFILES) $(COMFILES) -lcurses
