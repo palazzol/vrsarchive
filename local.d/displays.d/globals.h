@@ -13,3 +13,4 @@
 
 EXTERN int cmdchar EQUALS('_'&037);
 EXTERN int curvdsp EQUALS(0);
+EXTERN int trace EQUALS(0);

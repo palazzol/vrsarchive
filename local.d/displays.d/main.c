@@ -6,8 +6,10 @@
 
 extern void done();
 
-main()
+main(argc, argv)
 {
+	if (argc > 1)
+		trace++;
 	pipe_init();		/* Init the ptys for each vdisp	*/
 	while (1)
 		pchar();	/* Is there any output waiting?	*/
