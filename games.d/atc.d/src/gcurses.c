@@ -28,6 +28,12 @@ getAChar()
 	return (getchar());
 }
 
+putAChar(c)
+char c;
+{
+	putchar(c);
+}
+
 erase_all()
 {
 	PLANE	*pp;
@@ -332,5 +338,14 @@ redraw()
 	/* refresh input last to get cursor in right place */
 	touchwin(input);
 	wrefresh(input);
+	fflush(stdout);
+}
+
+noise()
+{
+	if (VB != 0)
+		tputs(VB, 1, putAChar);
+	else
+		putAChar('\007');
 	fflush(stdout);
 }
