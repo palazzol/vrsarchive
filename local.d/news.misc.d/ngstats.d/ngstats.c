@@ -20,8 +20,12 @@
  * ndir upward compatibility routines.
  */
 
+#ifndef ACTIVE
 #define ACTIVE "/usr/lib/news/active"
+#endif
+#ifndef SPOOLDIR
 #define SPOOLDIR "/usr/spool/news"
+#endif
 
 #define WEEKS 7 * 24 * 60 * 60
 #define READ_DELTA (2*WEEKS)
