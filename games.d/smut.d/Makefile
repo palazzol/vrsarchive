@@ -1,28 +1,29 @@
-SHELL	= /bin/sh
 #
 # Configuration options
 #  This is the directory where the letter files will be installed.
 #
-BINDIR	= $(DESTDIR)/usr/games
-LIBDIR	= $(BINDIR)/lib
-CFLAGS	= -i -O
+OPTIONS	= -O
+MODEL	= -i
+ALL	= letter ret
+include ../../CONFIG
 OBJS	= ret.o
 SRCS	= $(OBJS:.o=.c) $(SOBJS:.o=.c)
 
 ret:	$(OBJS)
 	$(CC) -o $@ $(CFLAGS) $(OBJS)
 
+.sh:
+	sed '/^GAMLIB/,/^PAGER/c\
+GAMLIB=$(GAMLIB)\
+PAGER=$(PAGER)' $? > $@
+
 $(OBJS): words.h
 
-$(BINDIR) $(LIBDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: letter ret $(BINDIR) $(LIBDIR)
-	cp ret $(LIBDIR)/letter
-	chmod 711 $(LIBDIR)/letter
-	cp letter $(BINDIR)
-	chmod 755 $(BINDIR)/letter
+install: letter ret $(GAMDIR) $(GAMLIB)
+	cp ret $(GAMLIB)/letter
+	chmod 711 $(GAMLIB)/letter
+	cp letter $(GAMDIR)
+	chmod 755 $(GAMDIR)/letter
 
 clean:
 	rm -f $(OBJS) ret letter core make.out
