@@ -46,7 +46,7 @@ outrip(){
 		index(vowels, *killer) ? " an" : " a");
 	center(8, buf);
 	(void) strcpy(buf, killer);
-	if(strlen(buf) > 16) {
+	if(strlen(buf) > (unsigned)16) {
 	    register int i,i0,i1;
 		i0 = i1 = 0;
 		for(i = 0; i <= 16; i++)
@@ -80,6 +80,6 @@ outrip(){
 center(line, text) int line; char *text; {
 register char *ip,*op;
 	ip = text;
-	op = &rip[line][28 - ((strlen(text)+1)/2)];
+	op = &rip[line][28 - ((strlen(text)+1)/(unsigned)2)];
 	while(*ip) *op++ = *ip++;
 }
