@@ -73,7 +73,7 @@
 
 /*  */
 
-static int	alrmser ();
+static TYPESIG	alrmser ();
 
 static int  sm_addrs = 0;
 static int  sm_alarmed = 0;
@@ -752,7 +752,7 @@ static int  sm_rerror () {
 
 /* ARGSUSED */
 
-static	int alrmser (i)
+static	TYPESIG alrmser (i)
 int     i;
 {
 #ifndef	BSD42

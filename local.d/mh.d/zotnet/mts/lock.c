@@ -1,6 +1,6 @@
 /* lock.c - universal locking routines */
 #ifndef	lint
-static char ident[] = "@(#)$Id: lock.c,v 1.1 1990-04-12 13:29:45 vrs Exp $";
+static char ident[] = "@(#)$Id: lock.c,v 1.2 1990-05-06 22:45:47 vrs Exp $";
 #endif	lint
 
 #ifdef	MMDFONLY
@@ -347,7 +347,7 @@ static struct lock *l_top = NULLP;
 
 /* ARGSUSED */
 
-static alrmser (sig)
+static TYPESIG alrmser (sig)
 int	sig;
 {
     register int    j;
