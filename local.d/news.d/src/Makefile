@@ -75,6 +75,8 @@ cp: all $(LIBDIR) $(BINDIR) help vnews.help
 defs.h:	defs.dist localize.sh
 	sh localize.sh
 
+makefile: Makefile
+
 Makefile: Makefile.$(OSTYPE) localize.sh defs.dist
 	sh localize.sh
 

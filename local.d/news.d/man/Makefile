@@ -2,6 +2,8 @@ DEST	= ${DESTDIR}/usr/man/manl
 
 all:;
 
+makefile: Makefile
+
 Makefile:;
 
 $(DEST):
