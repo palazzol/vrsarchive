@@ -23,7 +23,7 @@ folder +`pwd`
 sortm
 rm `pick -subject "introduction to alt" 2>/dev/null` 2>/dev/null
 rmm `pick -not -search "M............................................................" 2>/dev/null` 2>/dev/null
-fgrep "Message-ID:" [1-9]* |
+fgrep "Message-ID:" [1-9]* /dev/null |
 sort -t: +2 |
 awk -F: '
 	BEGIN   	{ prev = ""; art = 0; }
