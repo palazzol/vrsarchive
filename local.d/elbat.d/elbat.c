@@ -92,8 +92,21 @@ char	**argv;
 	printf(/*{*/ "} t = {\n" /*}*/);	/* Stupid emacs! */
 	printf("/*bset    */\t\t0%o,\n", t.bset);
 	printf("/*breset  */\t\t0%o,\n", t.breset);
+#ifdef __STDC__
+#define intshow(memb) \
+		printf("/" "*%-8s*/\t\t%d,\n", #memb, t.memb)
+#define show(memb) \
+		printf("/" "*%-8s*/\t\t\"", #memb);\
+		vprint(t.memb);\
+		printf("\",\n")
+#else
 #define intshow(memb) \
 		printf("/\*%-8s*/\t\t%d,\n", "memb", t.memb)
+#define show(memb) \
+		printf("/\*%-8s*/\t\t\"", "memb");\
+		vprint(t.memb);\
+		printf("\",\n")
+#endif
 	intshow(Hor);
 	intshow(Vert);
 	intshow(Newline);
@@ -101,10 +114,6 @@ char	**argv;
 	intshow(Em);
 	intshow(Halfline);
 	intshow(Adj);
-#define show(memb) \
-		printf("/\*%-8s*/\t\t\"", "memb");\
-		vprint(t.memb);\
-		printf("\",\n")
 	show(twinit);
 	show(twrest);
 	show(twnl);
