@@ -37,7 +37,9 @@ main (argc, argv)
 {
 	int x;
 	char *aptr;
+#ifdef A_OUT
 	struct exec exhdr;
+#endif
 
 	argv[argc] = NULL;
 	for (x = 1; argc > 1 && *(aptr = argv[x]) == '-'; x++,argc--) {
@@ -60,6 +62,7 @@ main (argc, argv)
 				perror (argv[x - 1]);
 				exit (errno);
 			}
+#ifdef A_OUT
 		if (!dataflag &&
 		    fread(&exhdr, sizeof(exhdr), 1, stdin) == 1 &&
 		    !N_BADMAG(exhdr)) {
@@ -68,9 +71,12 @@ main (argc, argv)
 			strings ((long )exhdr.a_data,
 			    (long )(N_TXTOFF(exhdr) + exhdr.a_text));
 		} else {
+#endif
 			fseek(stdin, 0L, 0);
 			strings (-1L, 0L);
+#ifdef A_OUT
 		}
+#endif
 	} while (argv[x] != NULL);
 }
 
