@@ -7,21 +7,10 @@
  */
 
 /*
- * include the correct include file for the current machine
+ * include the correct include file for the current machine.  This is
+ * controlled by the -I flag used by the system dependant Makefile.
  */
-
-#ifdef  vax
-#include "vax/conf.h"
-#endif
-#ifdef  pdp11
-#include "pdp11/conf.h"
-#endif
-#ifdef  m68000
-#include "m68000/conf.h"
-#endif
-#ifdef  pyramid
-#include "pyramid/conf.h"
-#endif
+#include "conf.h"
 
 #define MASK            0377
 #define SPECIAL         0200            /* top bit set */

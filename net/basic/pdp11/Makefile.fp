@@ -1,10 +1,10 @@
-SEPID=-i
 # which cursor control file you want . either ucl or ukc
-CURSOR = ucl
+CURSOR	= ucl
+CFLAGS	= -i -O -Ipdp11
 
 basic:  bas1.o bas2.o bas3.o bas4.o bas5.o bas6.o bas7.o bas8.o \
        bas9.o cursor.o termcap.o fpassist.o term.o
-	cc -s -O ${SEPID} fpassist.o bas1.o bas2.o bas3.o bas4.o bas5.o \
+	cc -s $(CFLAGS) fpassist.o bas1.o bas2.o bas3.o bas4.o bas5.o \
        bas6.o bas7.o bas8.o bas9.o cursor.o termcap.o term.o -lm -o basic
 
 clean:
@@ -12,11 +12,11 @@ clean:
 
 fpassist.o: pdp11/fpassist.s
 	cp pdp11/fpassist.s fpassist.s
-	cc -O -c fpassist.s
+	cc $(CFLAGS) -c fpassist.s
 	rm -f fpassist.s
 
 term.o: term.c
-	cc -O -c term.c
+	cc $(CFLAGS) -c term.c
 
 term.c: pdp11/term.c pdp11/conf.h
 	cp pdp11/term.c term.c
@@ -26,13 +26,13 @@ cursor.c: cursor/cursor.c.${CURSOR}
 	cp cursor/cursor.c.${CURSOR} cursor.c
 
 cursor.o: cursor.c
-	cc -0 -c cursor.c
+	cc $(CFLAGS) -c cursor.c
 
 termcap.o: bas.h termcap.c
-	cc -O -c termcap.c
+	cc $(CFLAGS) -c termcap.c
 
 .c.o:   $*.c
-	cc -O -f -c $*.c
+	cc $(CFLAGS) -f -c $*.c
 
 bas.h: pdp11/conf.h
 

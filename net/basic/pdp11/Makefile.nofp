@@ -1,10 +1,10 @@
-SEPID=-i
 # which cursor key file you want - ucl or ukc
 CURSOR = ucl
+CFLAGS	= -i -O -Ipdp11
 
 basic:  bas1.o bas2.o bas3.o bas4.o bas5.o bas6.o bas7.o bas8.o \
        bas9.o cursor.o termcap.o assist.o lfunc.o nfp.o term.o
-	cc -s -O ${SEPID} assist.o bas1.o bas2.o bas3.o bas4.o bas5.o bas6.o \
+	cc -s $(CFLAGS) assist.o bas1.o bas2.o bas3.o bas4.o bas5.o bas6.o \
        bas7.o bas8.o bas9.o cursor.o termcap.o lfunc.o nfp.o term.o -o basic
 
 clean:
@@ -12,36 +12,36 @@ clean:
 
 assist.o: pdp11/assist.s
 	cp pdp11/assist.s assist.s
-	cc -O -c assist.s
+	cc $(CFLAGS) -c assist.s
 	rm -f assist.s
 
 lfunc.o: pdp11/lfunc.s
 	cp pdp11/lfunc.s lfunc.s
-	cc -O -c lfunc.s
+	cc $(CFLAGS) -c lfunc.s
 	rm -f lfunc.s
 
 nfp.o: pdp11/nfp.s
 	cp pdp11/nfp.s nfp.s
-	cc -O -c nfp.s
+	cc $(CFLAGS) -c nfp.s
 	rm -f nfp.s
 
 cursor.c: cursor/cursor.c.${CURSOR}
 	cp cursor/cursor.c.${CURSOR} cursor.c
 
 cursor.o: cursor.c
-	cc -O -c cursor.c
+	cc $(CFLAGS) -c cursor.c
 
 termcap.o: bas.h termcap.c
-	cc -O -c termcap.c
+	cc $(CFLAGS) -c termcap.c
 
 term.o: term.c
-	cc -O -c term.c
+	cc $(CFLAGS) -c term.c
 
 term.c: pdp11/term.c pdp11/conf.h
 	cp pdp11/term.c term.c
 
 .c.o:   bas.h $*.c
-	cc -O -c -f -DSOFTFP $*.c
+	cc $(CFLAGS) -c -f -DSOFTFP $*.c
 
 bas.h:  pdp11/conf.h
 
