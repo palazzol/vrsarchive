@@ -9,7 +9,7 @@ Simplifying Kernel I/O Configuration in Intel XENIX Release 3
 .FS
 XENIX is a trademark of Microsoft Corporation.
 .FE
-Revision 1.1
+Revision 1.2
 .AU
 Vincent R. Slyngstad
 .AI
@@ -22,14 +22,14 @@ combinations.  The increase in the variety of configurations desired will
 generate pressure to make changes to the configuration as easy as possible.
 This paper describes an enhancement to the ease with which the XENIX I/O
 configuration may be changed in the field.  The proposal has been implemented
-and is presented for feedback regarding the desirability of the enhancement,
-which is available from XENIX Software Specialists.
+as an unsupported tool and is presented for feedback regarding the desirability
+of the enhancement, which is available from XENIX Software Specialists.
 .AE
 .NH 1
 Introduction
 .PP
-One major feature of the Intel XENIX System is its configurability,
-and I/O flexibility is an area where Intel particularly shines.  Few
+One major feature of the Intel XENIX System is its configurability
+and I/O flexibility.  Few
 situations are encountered where a XENIX kernel cannot be generated
 for a new peripheral configuration.  While Intel's XENIX I/O drivers
 are very flexible, the many training sessions the XENIX Applications
@@ -42,9 +42,7 @@ to the kernel I/O configuration.
 Future articles on configuration in XENIX will discuss the configuration of
 the UUCP communication software, and other software included with XENIX.
 The series is an attempt to address the issues of configuration at a higher
-level of user friendliness than has been available before.  We in Applications
-Marketing believe the next step is to make the configurability of XENIX as
-easy to use as it is flexible.
+level of user friendliness than has been available before.
 .NH 1
 Kernel I/O Configuration in XENIX
 .PP
@@ -63,24 +61,28 @@ File Name	Function
 /etc/bootcfg	Disk Drive Configuration Specification
 /etc/ttys	Terminal Baud Rate Specification
 /etc/ttytype	Terminal Type Specification
-/sys/cfg/c188.c	SBC188/48 Terminal Controller Configuration
-/sys/cfg/c215g.c	SBC215/SBC215G Disk Controller Configuration
-/sys/cfg/c534.c	SBC534 Terminal Controller Configuration
-/sys/cfg/c544.c	SBC544 Terminal Controller Configuration
+/sys/cfg/c188.c	iSBC188/48 Terminal Controller Configuration
+/sys/cfg/c215g.c	iSBC215/iSBC215G Disk Controller Configuration
+/sys/cfg/c534.c	iSBC534 Terminal Controller Configuration
+/sys/cfg/c544.c	iSBC544 Terminal Controller Configuration
 /sys/conf/master	Interrupt Vector Specification, etc.
 /sys/conf/xenixconf	Kernel Device Driver Selection/Time Zone, etc.
 .TE
+.FS
+iSBC188/48, iSBC215, iSBC215G, iSBC534, and iSBC544, are trademarks of Intel
+Corporation.
+.FE
 .PP
 Each device controller has its own set of operating parameters, and most
-of these are configurable by the user.  The SBC215 configuration, for example,
-will consist of one or more SBC215 boards, each with an interrupt vector,
+of these are configurable by the user.  The iSBC215 configuration, for example,
+will consist of one or more iSBC215 boards, each with an interrupt vector,
 wakeup address, etc. set by the hardware.  In addition, a floppy controller
-is almost always attached to the SBC215, and a tape controller may also be
-attached.  Each SBC215 may thus have up to four each hard disks, floppy disks,
-and tapes.  The specifications for each drive, and the mapping to device nodes
-must all be specified in the file \fB/sys/cfg/c215g.c\fR.  One can see that
-the overall task of configuring a kernel for a specific I/O configuration can
-become quite involved.
+is almost always attached to the iSBC215 disk controller, and a tape controller
+may also be attached.  Each iSBC215 disk controller may thus have up to four
+each hard disks, floppy disks, and tapes.  The specifications for each drive,
+and the mapping to device nodes must all be specified in the file
+\fB/sys/cfg/c215g.c\fR.  One can see that the overall task of configuring
+a kernel for a specific I/O configuration can become quite involved.
 .PP
 While the extreme flexibility implied by the ability to specify all of these
 parameters is definitely desirable, what is needed is a tool to make some
@@ -130,7 +132,7 @@ Reboot after the ``Normal System Shutdown''
 .in -.5i
 .fi
 .PP
-The system administrator has had to answer eight questions about the
+The system administrator has answered eight questions about the
 system to completely establish the I/O configuration of the system.
 This is accomplished by using a high level utility that understands the
 basic relationships between the files involved in kernel configuration,
@@ -145,14 +147,14 @@ by presence or absence of devices of that type in the system.
 .PP
 In the above dialogue the top level
 (``icp,'' for interactive configuration program) has called utilities to
-configure for the SBC215 (disk/tape) controller and the SBC188/48, SBC534,
-and SBC544 terminal controllers.  The SBC534 and SBC544 configuration
-utilities generated warnings that the use of the SBC188/48 precludes the
-use of the SBC534 or SBC544.  (This could be changed, but is beyond the
-scope of the utilities described here because it would also require jumper
-changes on the terminal controller boards).
+configure for the iSBC215 (disk/tape) controller and the iSBC188/48, iSBC534,
+and iSBC544 terminal controllers.  The iSBC534 and iSBC544 configuration
+utilities generated warnings that the use of the iSBC188/48 terminal controller
+precludes the use of the iSBC534 or iSBC544 terminal controllers.  (This could
+be changed, but is beyond the scope of the utilities described here because it
+would also require jumper changes on the terminal controller boards).
 .PP
-The higher level utility is written in such a way that it recognizes new
+The higher level utility is written such that it recognizes new
 device configuration utilities automatically, and will communicate with
 each one in a standard way.  The chief advantage of this modular approach
 is that the configuration interface is extensible.  As new drivers are
