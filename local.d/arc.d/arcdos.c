@@ -133,7 +133,9 @@ unsigned INT date, time;               /* desired date, time */
 #else
     {
 #ifndef timezone
+#ifndef CYGWIN
     extern long timezone;
+#endif
 #endif
     tmbuf = localtime(&m_time);        /* check for Daylight Savings Time */
     if (tmbuf->tm_isdst != 0)
