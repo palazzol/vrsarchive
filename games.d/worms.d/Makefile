@@ -1,25 +1,19 @@
 #
 #	Worms %W% %G%
 #
-SHELL	= /bin/sh
-GAMEDIR	= $(DESTDIR)/usr/games
-CFLAGS	= -O -i -F 2000
-OBJS	= worms.o
-CFILES	= worms.c
-LIBS	= -lcurses -ltermlib
+ALL	= worms
+OPTIONS	= -O
+MODEL	= -i -F 2000
 LFLAGS	= -h
+include ../../CONFIG
 
-worms: ${OBJS}
-	cc $(CFLAGS) ${OBJS} ${LIBS} -o $@
 
 lint: ${CFILES} 
 	lint ${LFLAGS} ${CFILES} ${LIBS} 
 
-install: $(GAMEDIR)/worms
-
-$(GAMEDIR)/worms: worms
-	cp worms $(GAMEDIR)
-	chmod 711 $@
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
 
 clean:
 	rm -f ${OBJS} make.out core worms

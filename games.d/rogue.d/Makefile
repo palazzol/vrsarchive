@@ -6,14 +6,10 @@
 #	-DWIZARD	Compile in "wizard mode" (reguires large machine)
 #	-DDUMP		Allow core dumps (bad idea for production)
 #
-DEFS	= -UWIZARD -UDUMP
-#
-#	System dependant compiler and linker options
-#
-CFLAGS	= -Mm -DSYSIII $(DEFS) -O
-LDFLAGS	= -Mm -F 1800 $(STRIP)	# For Xenix final version: make STRIP=-s
-CRLIB	= -lcurses -ltermlib
-LFLAGS	= $(CRLIB) -lx
+ALL	= rogue scedit
+OPTIONS	= -UWIZARD -UDUMP -O
+MODEL	= -M2m -F 1800 $(STRIP)
+include ../../CONFIG
 #
 #	Where the scoreboard should be kept.
 #
@@ -35,7 +31,7 @@ SF	= -DSCOREFILE='"$(SCOREFILE)"'
 #MACHDEP = -DMAXUSERS=4 -DUCOUNT -DCHECKTIME=4 -DUTMP='"/etc/utmp"'
 
 PROFLAGS= -pg -O
-PCRLIB	= -lcurses -ltermlib	# Profiling needs small model in Xenix
+PLIBS	= -lcurses -ltermlib	# Profiling needs small model in Xenix
 VGRIND	= /usr/ucb/vgrind
 
 SHELL	= /bin/sh
@@ -68,41 +64,42 @@ BINARY	= distr.out
 	@cc -c $(PROFLAGS) x.c
 	@mv x.o $*.po
 
-.c.o:
-	@echo $(CC) -c $(CFLAGS) $*.c
-	@cc -E $(CFLAGS) $*.c | xstr -c -
-	@cc -c $(CFLAGS) -NT $* x.c
-	@mv x.o $*.o
+#.c.o:
+#	@echo $(CC) -c $(CFLAGS) $*.c
+#	@cc -E $(CFLAGS) $*.c | xstr -c -
+#	@cc -c $(CFLAGS) -NT $* x.c
+#	@mv x.o $*.o
+#
+#rogue: $(HDRS) $(OBJS) xs.o
+#	@rm -f x.c
+#	$(CC) $(CFLAGS) xs.o $(OBJS) $(LIBS) -o $@
+#	size rogue
 
-a.out: $(HDRS) $(OBJS) xs.o
-	@rm -f x.c
-	$(CC) $(LDFLAGS) xs.o $(OBJS) $(LFLAGS)
-	size a.out
+rogue: $(HDRS) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
+	size rogue
 
 vers.o:
-	$(CC) -c $(CFLAGS) vers.c
+	$(CC) $(CFLAGS) -c vers.c
 
 mach_dep.o:
-	$(CC) -c $(CFLAGS) $(SF) $(NL) $(MACHDEP) mach_dep.c
+	$(CC) $(CFLAGS) $(SF) $(NL) $(MACHDEP) -c mach_dep.c
 
 xs.o: strings
 	xstr
-	$(CC) -c $(CFLAGS) xs.c
+	$(CC) $(CFLAGS) -c xs.c
 
-rogue: a.out
-	cp a.out rogue
-#	strip rogue
-
-install: rogue
+install: $(ALL)
 	cp rogue $(DESTDIR)/usr/games/rogue
-	chown cron $(DESTDIR)/usr/games/rogue
-	chmod u+s $(DESTDIR)/usr/games/rogue
+	chown $(SAFEUID) $(DESTDIR)/usr/games/rogue
+	chmod 4711 $(DESTDIR)/usr/games/rogue
 	touch $(SCOREFILE)
-	chown cron $(SCOREFILE)
+	(echo "w"; echo "q") | ./scedit >/dev/null
+	chown $(SAFEUID) $(SCOREFILE)
 
 distr: rmmach distmod.o mach_dep.o
 	@rm -f x.c
-	$(CC) -s $(LDFLAGS) -o =bin/$(BINARY) distmod.o mach_dep.o $(CRLIB)
+	$(CC) -s $(CFLAGS) -o =bin/$(BINARY) distmod.o mach_dep.o $(LIBS)
 	size =bin/$(BINARY)
 
 rmmach:
@@ -116,20 +113,20 @@ findpw: findpw.c
 	$(CC) -s -o findpw findpw.c
 
 prob: prob.o extern.o xs.o
-	$(CC) $(LDFLAGS) -o prob prob.o extern.o xs.o
+	$(CC) $(CFLAGS) -o prob prob.o extern.o xs.o
 
 prob.o: prob.c rogue.h
 	$(CC) $(CFLAGS) -c prob.c
 
 scedit: scedit.o scmisc.o vers.o
-	$(CC) $(LDFLAGS) -o scedit vers.o scedit.o scmisc.o -lcurses
+	$(CC) $(CFLAGS) -o scedit vers.o scedit.o scmisc.o -lcurses
 
 scmisc.o scedit.o:
 	$(CC) $(CFLAGS) -c $(SF) $*.c
 
 p.out:	$(HDRS) $(POBJS) xs.po
 	@rm -f x.c
-	$(CC) $(PROFLAGS) $(LDFLAGS) -o p.out xs.po $(POBJS) $(CRLIB)
+	$(CC) $(PROFLAGS) $(CFLAGS) -o p.out xs.po $(POBJS) $(LIBS)
 	size p.out
 
 vers.po:
@@ -156,10 +153,10 @@ tags: $(HDRS) $(CFILES)
 	sort tags -o tags
 
 lint:
-	lint $(LFLAGS) $(DEFS) $(MACHDEP) $(SF) $(NL) $(CFILES) > linterrs 2>&1
+	lint $(LIBS) $(CFLAGS) $(MACHDEP) $(SF) $(NL) $(CFILES) > linterrs 2>&1
 
 clean:
-	rm -f $(POBJS) $(OBJS) core a.out p.out rogue strings make.out \
+	rm -f $(ALL) $(POBJS) $(OBJS) core p.out strings make.out \
 	 	? rogue.tar vgrind.* x.c x.o xs.c xs.o linterrs findpw \
 		distmod.o xs.po scmisc.o scedit.o
 

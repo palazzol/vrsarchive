@@ -1,6 +1,7 @@
-SHELL	= /bin/sh
-GAMDIR	= $(DESTDIR)/usr/games
-CFLAGS	= -O -Drindex=strrchr
+ALL	= tko
+OPTIONS	= -O -Drindex=strrchr
+MODEL	= -i
+include ../../CONFIG
 
 tko:	tko.o names.o subs1.o subs2.o tables.o
 	cc $(CFLAGS) tko.o names.o subs1.o subs2.o tables.o -o tko
@@ -15,10 +16,6 @@ subs2.o: def.h extern.h subs2.c
 	cc -c $(CFLAGS) subs2.c
 tables.o: def.h extern.h tables.c
 	cc -c $(CFLAGS) tables.c
-
-$(GAMDIR):
-	mkdir $@
-	chmod 755 $@
 
 install: tko $(GAMDIR)
 	cp tko $(GAMDIR)

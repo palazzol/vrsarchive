@@ -2,23 +2,15 @@
 # sniglets %W%	%G%
 #
 #
-GAMEDIR	= /usr/games
-SHELL	= /bin/sh
-OBJS	= sniglets.o
-
-sniglets: $(OBJS)
-	cc -o sniglets $(OBJS)
+ALL	= sniglets
+include ../../CONFIG
 
 lint:
-	lint $(OBJS:.o=.c) | tee lint.out
+	lint sniglets.c | tee lint.out
 
 clean:
-	rm -f core *.o sniglets a.out
+	rm -f core $(ALL)
 
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: sniglets $(GAMEDIR)
-	cp sniglets $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/sniglets
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)

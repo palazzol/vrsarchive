@@ -1,21 +1,16 @@
 #
 #	vtrek @(#)Makefile	1.4 10/3/86
 #
-SHELL	= /bin/sh
 OBJS	= main.o plot.o sub1.o sub2.o termio.o
-LIBS	= -lm -ltermcap
-GAMDIR	= $(DESTDIR)/usr/games
-GAMLIB	= $(GAMDIR)/lib
-CFLAGS	= -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\" -F 2000
+OPTIONS	= -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\"
+MODEL	= -i -F 2000
+ALL	= vtrek
+include ../../CONFIG
 
 vtrek:	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 $(OBJS): vtrek.h
-
-$(GAMDIR) $(GAMLIB):
-	mkdir $@
-	chmod 755 $@
 
 install: $(GAMDIR) $(GAMLIB) vtrek
 	cp vtrek $(GAMDIR)

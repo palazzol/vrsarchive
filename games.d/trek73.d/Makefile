@@ -1,63 +1,16 @@
 #
 # Makefile for TREK73
 #
-
-#
-# Select which operating system you are using.
-# Acceptable flags are BSD and SYSV.
-#
-OS =	SYSV
-
+ALL	= trek73 bpv shipyard
+OPTIONS	= -O #-DTRACE
+MODEL	= -i
+include ../../CONFIG
 #
 # Select method of installing the binaries into the system
 # NOTE: UNIX System V Release 2.0 does not have install
 # and should therefore use either mv or cp.
 #
 INSTALL = : install
-
-#
-# Select destination directory in the system.
-# This option need only be set when actually ready to install
-# the binaries.
-#
-DESTDIR = /usr/games
-
-#
-# Select whether you wish to use symbolic debugger or not.
-# NOTE: UNIX System V Release 2.0 cannot do profiling on programs
-# compiled with -g.  Also, sdb will not be very useful if the
-# symbols are stripped from the load module. (See STRIP)
-#SDB =	-g
-SDB =
-
-#
-# Select whether code optimization is to be done.
-OPT =	-i
-#OPT = -O -i
-
-#
-# Select whether profiling is to be done.
-# NOTE: In System V Relase 2.0, this is incompatible with
-# both SDB and STRIP.
-# PROF =	-p
-PROF =
-
-#
-# Select whether or not the load module is to be stripped.
-# This is incompatible with both SDB and PROF.
-# Note: In BSD Unix, this option should always be blank
-# STRIP =	-s
-STRIP =
-
-#
-# Select whether or not tracing mode is to be turned on.
-# This is useful when testing new strategies.
-#TRACE =	-DTRACE
-TRACE =
-
-
-DEFINES = -D${OS}
-CFLAGS = ${DEFINES} ${SDB} ${OPT} ${PROF} ${STRIP}
 
 T73OBJECTS = cmds1.o cmds2.o cmds3.o cmds4.o damage.o dist.o endgame.o\
 	enemycom.o firing.o globals.o init.o main.o misc.o mission.o\
@@ -86,27 +39,18 @@ LIBS= -lm
 FLUFF = parsit.o make.out errs core lint.errs a.out tags\
 	shar.1 shar.2 shar.3 shar.4
 
-BINS = trek73 bpv shipyard
-
-
-all:	${BINS}
-
 trek73:	${T73OBJECTS}
-	cc ${CFLAGS} ${T73OBJECTS} ${LIBS}
-	mv a.out trek73
+	$(CC) -o $@ ${CFLAGS} ${T73OBJECTS} ${LIBS}
 
 bpv:	${BPVOBJECTS}
-	cc ${CFLAGS} ${BPVOBJECTS}
-	mv a.out bpv
+	$(CC) -o $@ ${CFLAGS} ${BPVOBJECTS}
 
 shipyard:	${DYOOBJECTS}
-	cc ${CFLAGS} ${DYOOBJECTS} -lm
-	mv a.out shipyard
+	cc -o $@ ${CFLAGS} ${DYOOBJECTS} -lm
 
-install:	${BINS}
-	${INSTALL} trek73 ${DESTDIR}
-	${INSTALL} bpv ${DESTDIR}
-	${INSTALL} shipyard ${DESTDIR}
+install: ${ALL} ${GAMDIR}
+	cp ${ALL} ${GAMDIR}
+	cd ${GAMDIR}; chmod 711 ${ALL}
 
 ${T73OBJECTS}: ${HEADS}
 
@@ -121,10 +65,10 @@ count:
 	wc ${T73CFILES} ${HEADS}
 
 lint:
-	lint -abchx ${DEFINES} ${T73CFILES} > lint.errs
+	lint -abchx ${CFLAGS} ${T73CFILES} > lint.errs
 
 clean:
-	rm -f ${BINS} ${T73OBJECTS} ${DYOOBJECTS} ${BPVOBJECTS} ${FLUFF}
+	rm -f ${ALL} ${T73OBJECTS} ${DYOOBJECTS} ${BPVOBJECTS} ${FLUFF}
 
 shar: shar.1 shar.2 shar.3 shar.4
 

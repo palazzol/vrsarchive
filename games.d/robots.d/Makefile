@@ -1,43 +1,21 @@
 #
 #	Robots %W%
 #
-CFLAGS	= -DALLSCORES -DOLDSCORES
-LFLAGS	= -F 2000	# Required for XENIX only
-LIBS	= -lx		# Required for XENIX only
-GAMEDIR	= /usr/games
-MAN	= /usr/man
-MANDIR	= $(MAN)/man6
-SHELL	= /bin/sh
+ALL	= robots
+OPTIONS	= -DALLSCORES -DOLDSCORES -DGAMLIB=\"$(GAMLIB)
+MODEL	= -i -F 2000	# Required for XENIX only
+include ../../CONFIG
 
-robots:		robots.o
-		cc $(LFLAGS) robots.o -o robots -lcurses -ltermcap $(LIBS)
-
-$(MAN):
-		mkdir $@
-		chmod 755 $@
-
-$(MANDIR):	$(MAN)
-		mkdir $@
-		chmod 755 $@
-
-$(GAMEDIR):
-		mkdir $@
-		chmod 755 $@
-
-$(GAMEDIR)/lib:
-		mkdir $@
-		chmod 755 $@
-
-install:	$(GAMEDIR) $(GAMEDIR)/lib $(MANDIR) robots
-		cp robots.6 $(MANDIR)/robots.6
-		chmod 644 $(MANDIR)/robots.6
-		cp robots $(GAMEDIR)/robots
-		chmod 4711 $(GAMEDIR)/robots
-		touch $(GAMEDIR)/lib/robots_hof
-		touch $(GAMEDIR)/lib/robots_tmp
+install:	$(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
+		cp $(ALL) $(GAMDIR)
+		cd $(GAMDIR); chmod 4711 $(ALL)
+		cd $(GAMLIB); touch robots_hof
+		cd $(GAMLIB); touch robots_tmp
+		cp robots.6 $(MAN6)/robots.6
+		chmod 644 $(MAN6)/robots.6
 
 clean:
-		rm -f robots *.o
+		rm -f $(ALL)
 
 lint:
 		lint -lcurses -ltermcap robots.c | tee lint.out

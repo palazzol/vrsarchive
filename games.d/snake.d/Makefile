@@ -2,31 +2,25 @@
 #	snake %W% %G%
 #
 #
-GAMEDIR	= /usr/games
-SHELL	= /bin/sh
-LFLAGS	= -F 2000	# XENIX only
-LIBS	= -lcurses -ltermlib
+ALL	= snake snake2
+OPTIONS	= -O
+MODEL	= -i -F 2000
+include ../../CONFIG
 
-all:	snake snake2
+snake:	snake.c
+	$(CC) $(CFLAGS) -o $@ snake.c $(LIBS)
 
-snake:	snake.o
-	cc $(LFLAGS) -o snake snake.o $(LIBS)
-
-snake2: snake2.o
-	cc $(LFLAGS) -o snake2 snake2.o $(LIBS)
+snake2: snake2.c
+	$(CC) $(CFLAGS) -o $@ snake2.c $(LIBS)
 
 lint:
 	lint -lcurses -ltermlib snake.c | tee lint.out
 
 clean:
-	rm -f core *.o snake snake2 a.out
+	rm -f $(ALL) core
 
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: snake snake2 $(GAMEDIR)
-	cp snake $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/snake
-	cp snake2 $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/snake2
+install: snake snake2 $(GAMDIR)
+	cp snake $(GAMDIR)
+	chmod 711 $(GAMDIR)/snake
+	cp snake2 $(GAMDIR)
+	chmod 711 $(GAMDIR)/snake2

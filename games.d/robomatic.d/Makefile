@@ -1,28 +1,19 @@
 #
 #	robomatic @(#)Makefile	1.7 10/19/85
 #
-SHELL	= /bin/sh
-CFLAGS	= -O -i -F 2000 # -p
-LIBS	= -lcurses -ltermcap -lx
-GAMDIR	= $(DESTDIR)/usr/games
-USRMAN	= $(DESTDIR)/usr/man
-MANDIR	= $(USRMAN)/man6
+ALL	= robomatic
+OPTIONS	= -O -DGAMDIR=\"$(GAMDIR) -DGAMLIB=\"$(GAMLIB)
+MODEL	= -i -F 2000
+include ../../CONFIG
 
-robomatic: robomatic.o
-	cc $(CFLAGS) -o $@ robomatic.o $(LIBS)
-
-$(GAMDIR) $(USRMAN) $(MANDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: robomatic $(GAMDIR) $(USRMAN) $(MANDIR)
-	cp robomatic $(GAMDIR)
-	chmod 711 $(GAMDIR)/robomatic
-	cp robomatic.6 $(MANDIR)
-	chmod 711 $(MANDIR)/robomatic.6
+install: $(ALL) $(GAMDIR) $(MAN6)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp robomatic.6 $(MAN6)
+	chmod 711 $(MAN6)/robomatic.6
 
 lint:
-	lint $(LIBS) robomatic.c | tee lint.out
+	lint $(CFLAGS) $(LIBS) robomatic.c | tee lint.out
 
 clean:
-	rm -f *.o robomatic lint.out core trace.log
+	rm -f $(ALL) lint.out core

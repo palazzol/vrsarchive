@@ -1,53 +1,35 @@
 #
 #	reversi @(#)Makefile	1.3 4/8/86
 #
-SHELL	= /bin/sh
-GAMEDIR	= /usr/games
-CFLAGS	= -i # -O
+MODEL	= -i -F 2000
+ALL	= reversi
+include ../../CONFIG
+YFLAGS	= -dv
 OFILES	= user.o ulex.o move.o display.o hasmove.o fini.o \
 	  minmax.o score.o edges.o corners.o count.o
 SOURCE	= Makefile corners.c count.c display.c edges.c fini.c genedge.c \
 	  hasmove.c makeedge.y minmax.c move.c reversi.h score.c ulex.l user.y
 
 reversi: $(OFILES)
-	cc $(CFLAGS) -F 2000 -o reversi $(OFILES) -lcurses -ltermlib
+	cc $(CFLAGS) -o $@ $(OFILES) $(LIBS)
 
 reversi.shar: $(SOURCE)
 	shar -c $(SOURCE) > reversi.shar
 
 $(OFILES): reversi.h
-user.o: user.c
-user.c: user.y
-	yacc -dv user.y
-	mv y.tab.c user.c
-ulex.o: ulex.c
-ulex.c: ulex.l
-	lex ulex.l
-	mv lex.yy.c ulex.c
-corners.o: corners.c
-	$(CC) $(CFLAGS) -c corners.c
 
 edges.o: edges.c edges.out
 	$(CC) $(CFLAGS) -c edges.c
 edges.out: makeedge genedge
 	genedge | makeedge > edges.out
-makeedge: makeedge.o
-	$(CC) $(CFLAGS) -o makeedge makeedge.o
-makeedge.o: makeedge.c
+
 makeedge.c: makeedge.y
 	yacc makeedge.y
 	mv y.tab.c makeedge.c
-genedge: genedge.o
-	$(CC) $(CFLAGS) -o genedge genedge.o
-genedge.o: genedge.c
 
-install: reversi $(GAMEDIR)
-	cp reversi $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/reversi
-
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
 
 clean:
 	rm -f *.o makeedge.c ulex.c user.c makeedge.c genedge makeedge reversi
