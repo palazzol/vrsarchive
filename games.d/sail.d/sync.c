@@ -109,7 +109,7 @@ int a, b, c, d;
 
 Sync()
 {
-	int (*sig1)(), (*sig2)();
+	void (*sig1)(), (*sig2)();
 	register n;
 	int type, shipnum, isstr, a, b, c, d;
 	char buf[80];
