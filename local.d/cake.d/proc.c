@@ -3,14 +3,16 @@
 */
 
 static	char
-rcs_id[] = "$Header: /home/Vince/cvs/local.d/cake.d/proc.c,v 1.1 1987-11-16 17:22:11 vrs Exp $";
+rcs_id[] = "$Header: /home/Vince/cvs/local.d/cake.d/proc.c,v 1.2 1987-11-18 08:57:21 vrs Exp $";
 
 #include	"cake.h"
 #include	<ctype.h>
 #include	<errno.h>
 #include	<signal.h>
 #include	<fcntl.h>
+#ifndef M_XENIX
 #include	<sys/param.h>
+#endif
 
 extern	List	*active_procs;		/* of Proc	*/
 
