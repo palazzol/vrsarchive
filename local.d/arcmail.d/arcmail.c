@@ -13,9 +13,9 @@
 */
 
 #include <stdio.h>
-#define ARCDIR "/usr/vrs/mail/old"
-#define DEFMBOX "/usr/vrs/mail/box"
-#define USER "vrs"
+char ARCDIR[BUFSIZ];
+char DEFMBOX[BUFSIZ];
+char USER[BUFSIZ];
 
 #define FALSE 0
 #define TRUE 1
@@ -26,6 +26,11 @@
 #define ISTO(x) (!strncmp(x,"To: ",4))
 #define ISUSER(x) (!strncmp(x,USER,strlen(USER)))
 #define ISSUBJECT(x) (!strncmp(x,"Subject: ",9))
+
+extern char *getenv();
+extern char *getlogin();
+extern char *strchr();
+extern char *strrchr();
 
 char line[MAXLINE];
 char filename[MAXLINE];
@@ -39,6 +44,13 @@ int argc;
 char *argv[];
 {
     FILE *fclose(), *fopen();
+
+    strcpy(ARCDIR, getenv("HOME"));
+    strcat(ARCDIR, "/Mail");
+    strcpy(DEFMBOX, ARCDIR);
+    strcat(ARCDIR, "/old");
+    strcat(DEFMBOX, "/box");
+    strcpy(USER, getlogin());
 
     if (argc <= 1) {
 	if (freopen(DEFMBOX,"r",stdin)==NULL) {
@@ -173,7 +185,7 @@ FILE *make_file()
     p = &user[strlen(user)-1];
     while (p > &user[0]) 
     {
-	if (index("!@", *p)) {
+	if (strchr("!@", *p)) {
 	    bangs++;
 	    *p = '.';
 	}
@@ -208,12 +220,11 @@ char *dirname;
 {
 	char buf[200], sysbuf[200];
 	register char *p;
-	char *rindex();
 	int rc;
 	struct passwd *pw;
 
 	strcpy(buf, dirname);
-	p = rindex(buf, '/');
+	p = strrchr(buf, '/');
 	if (p)
 		*p = '\0';
 	if (access(buf,0) == 0)
