@@ -20,7 +20,6 @@
  * Also, the code for suspend and various ioctls is only given for BSD4.2
  * (I do not have access to a SYSV system.)
  */
-/* #define BSD		/* delete this line on System V */
 
 /* #define STUPID */	/* avoid some complicated expressions if
 			   your C compiler chokes on them */
@@ -46,7 +45,9 @@
  * (This might be preferable for security reasons.)
  * #define DEF_PAGER	".../mydir/mypager"
  */
+#ifndef PAGER
 #define PAGER "/usr/bin/more"
+#endif
 
 /*
  * If you define MAIL, then the player will be notified of new mail
@@ -62,10 +63,10 @@
 
 #define SHELL		/* do not delete the '!' command */
 
-#ifdef BSD
+#ifndef SYS5
 #define	SUSPEND		/* let ^Z suspend the game */
-#endif BSD
-#endif UNIX
+#endif
+#endif
 
 #ifdef CHDIR
 /*
@@ -82,7 +83,7 @@
  * simultaneously, define HACKDIR, SECURE and MAX_NR_OF_PLAYERS.
  * #define MAX_NR_OF_PLAYERS	6
  */
-#endif CHDIR
+#endif
 
 /* size of terminal screen is (at least) (ROWNO+2) by COLNO */
 #define	COLNO	80
@@ -127,4 +128,4 @@ typedef	xchar	boolean;		/* 0 or 1 */
 
 #define	SIZE(x)	(int)(sizeof(x) / sizeof(x[0]))
 
-#endif CONFIG
+#endif

@@ -15,7 +15,7 @@ register struct permonst *pa = magr->data, *pd = mdef->data;
 int hit;
 schar tmp;
 boolean vis;
-	if(index("Eauy", pa->mlet)) return(0);
+	if(strchr("Eauy", pa->mlet)) return(0);
 	if(magr->mfroz) return(0);		/* riv05!a3 */
 	tmp = pd->ac + pa->mlevel;
 	if(mdef->mconf || mdef->mfroz || mdef->msleep){
@@ -83,7 +83,7 @@ register struct permonst *pd = mdef->data;
 /* drop a rock and remove monster */
 monstone(mdef) register struct monst *mdef; {
 	extern char mlarge[];
-	if(index(mlarge, mdef->data->mlet))
+	if(strchr(mlarge, mdef->data->mlet))
 		mksobj_at(ENORMOUS_ROCK, mdef->mx, mdef->my);
 	else
 		mksobj_at(ROCK, mdef->mx, mdef->my);
@@ -146,7 +146,7 @@ register thrown;
 	    if(obj == uwep && (obj->otyp > SPEAR || obj->otyp < BOOMERANG))
 		tmp = rnd(2);
 	    else {
-		if(index(mlarge, mon->data->mlet)) {
+		if(strchr(mlarge, mon->data->mlet)) {
 			tmp = rnd(objects[obj->otyp].wldam);
 			if(obj->otyp == TWO_HANDED_SWORD) tmp += d(2,6);
 			else if(obj->otyp == FLAIL) tmp += rnd(4);
@@ -189,7 +189,7 @@ register thrown;
 			killed(mon);
 			return(FALSE);
 		case CLOVE_OF_GARLIC:		/* no effect against demons */
-			if(index(UNDEAD, mon->data->mlet))
+			if(strchr(UNDEAD, mon->data->mlet))
 				mon->mflee = 1;
 			tmp = 1;
 			break;
@@ -299,7 +299,7 @@ register struct monst *mtmp;
 		else if(uwep->otyp == DAGGER) tmp += 2;
 		else if(uwep->otyp == CRYSKNIFE) tmp += 3;
 		else if(uwep->otyp == SPEAR &&
-			index("XDne", mdat->mlet)) tmp += 2;
+			strchr("XDne", mdat->mlet)) tmp += 2;
 	}
 	if(mtmp->msleep) {
 		mtmp->msleep = 0;
@@ -333,7 +333,7 @@ register struct monst *mtmp;
 			if(mtmp->wormno)
 				cutworm(mtmp, u.ux+u.dx, u.uy+u.dy,
 					uwep ? uwep->otyp : 0);
-#endif NOWORM
+#endif
 		}
 		if(mdat->mlet == 'a') {
 			if(rn2(2)) {

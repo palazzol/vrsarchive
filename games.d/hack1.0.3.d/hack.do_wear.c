@@ -48,7 +48,7 @@ doremring() {
 		char answer;
 
 		pline("What ring, Right or Left? [ rl?]");
-		if(index(quitchars, (answer = readchar())))
+		if(strchr(quitchars, (answer = readchar())))
 			return(0);
 		switch(answer) {
 		case 'l':
@@ -65,7 +65,7 @@ doremring() {
 	/* NOTREACHED */
 #ifdef lint
 	return(0);
-#endif lint
+#endif
 }
 
 dorr(otmp) register struct obj *otmp; {
@@ -193,7 +193,7 @@ dowearring() {
 		char answer;
 
  		pline("What ring-finger, Right or Left? ");
-		if(index(quitchars, (answer = readchar())))
+		if(strchr(quitchars, (answer = readchar())))
 			return(0);
 		switch(answer){
 		case 'l':
