@@ -1,0 +1,6 @@
+  This directory contains XENIX versions of games which exist on
+the system.  These programs are ported from vaxen, with portability
+improvements to get them to run.
+
+The adventure, rain, rogue, and worms directories contain sources
+that require special permission to possess.
