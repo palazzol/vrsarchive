@@ -721,7 +721,7 @@ Computing Science Technical Report No. \\*(MN
 .if \\n(KM>0 \!.KD \\$1
 .if \\n(KM=0 .if \\n(.t<\\$1 .di KJ
 ..
-.ds NA "Mohandas Nair
+.ds NA "
 .de PT
 \c
 .po 1.2i
@@ -738,7 +738,7 @@ Computing Science Technical Report No. \\*(MN
 .if \\n%=1\{\
 'sp 7
 .ce 2
-APPLICATIONS MARKETING
+OMS UNIX EVALUATION ENGINEERING
 .sp
 \\*(mg
 .sp 3 \}
@@ -1371,6 +1371,8 @@ Attached:
 .if n \(br\\kA\|\\$1\|\\kB\(br\v'-1v'\h'|\\nBu'\l'|\\nAu'\v'1v'\l'|\\nAu'
 ..
 .nr PI 0.3i
+.nr PS 12
+.nr VS 12
 .nr HM 1.3i
 .nr PO 1.2i
 .nr LL 6.5i
