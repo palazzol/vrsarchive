@@ -59,6 +59,15 @@
  *				<_/
  */
 
+/*
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/12/05  09:18:09  hyc
+ * Added #ifdef's for MTS CBell, or Bell Labs C in MTS.
+ * (The Michigan Terminal System, our homegrown IBM 370 OS. Funstuff.
+ *  But hey, it was the first 370 OS with a real filesystem...  }-)
+ * 
+ */
+
 #include <stdio.h>
 #include "cursive.h"
 
@@ -215,6 +224,12 @@ int l,i;
 char *ch;
 short lcode;
 
+#ifdef mts
+
+int mode=&0x040, lnum=0;
+
+	etoa(s,strlen(s));
+#endif
 	lasttail = -1;
 	firstletter = 1;
 	space = 0;
@@ -257,8 +272,13 @@ short lcode;
 	/* print the line and release the memory */
 	for (i=0;i<6;i++)
 	{
+#ifdef mts
+		lcode=(short)c[i];
+		mtswrite(buffer[i],&lcode,&mod,&lnum,"SPRINT  ");
+#else
 		buffer[i][c[i]++] = '\n';
 		write(1,buffer[i],c[i]);
+#endif
 		free(buffer[i]);
 	}
 }
