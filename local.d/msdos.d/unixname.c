@@ -24,16 +24,16 @@ char *ext;
 	strncpy(tname, name, 8);
 	s = strchr(tname, ' ');
 	if (s != NULL)
-		*s = NULL;
-	tname[8] = NULL;
+		*s = '\0';
+	tname[8] = '\0';
 
 	strncpy(text, ext, 3);
 	s = strchr(text, ' ');
 	if (s != NULL)
-		*s = NULL;
-	text[3] = NULL;
+		*s = '\0';
+	text[3] = '\0';
 
-	if (*text != NULL) {
+	if (*text != '\0') {
 		ans = malloc(strlen(tname)+1+strlen(text)+1);
 		strcpy(ans, tname);
 		strcat(ans, ".");
@@ -58,8 +58,10 @@ char *name;
 	char *s, *malloc(), *strcpy(), *strrchr();
 	static char *temp;
 
-	if (*name == NULL)
-		return(NULL);
+	if (name == NULL)
+		return("");		/* return an empty name */
+	if (*name == '\0')
+		return("");		/* "name" may alias an auto */
 
 	temp = malloc(strlen(name)+1);
 	strcpy(temp, name);
@@ -90,8 +92,10 @@ char *name;
 	char *s, *s1, *malloc(), *strcpy(), *strrchr();
 	static char *temp;
 
+	if (name == NULL)
+		return("");		/* return a null path */
 	if (*name == NULL)
-		return(NULL);
+		return("");		/* "name" may alias an auto */
 
 	temp = malloc(strlen(name)+1);
 	strcpy(temp, name);
@@ -100,12 +104,12 @@ char *name;
 	s1 = strrchr(temp, '\\');
 					/* if both are NULL , no path */
 	if (s1 == s)
-		return(NULL);
+		return("");
 					/* zap which ever is last separator */
 	if (s1 > s)
-		*s1 = NULL;
+		*s1 = '\0';
 	if (s > s1)
-		*s = NULL;
+		*s = '\0';
 					/* translate to upper case */
 	for (s = temp; *s; ++s) {
 		if (islower(*s))

@@ -23,13 +23,16 @@ char *name;
 	char *s, *tmp, *path, *malloc(), *strchr(), *strcpy(), *strcat();
 	static int code;
 	int getdir();
-					/* if full pathname */
-	if (*name == '/' || *name == '\\') {
+
+	if (name == NULL) {
+		tmp = malloc(strlen(mcwd)+1);
+		strcpy(tmp, mcwd);
+	} else if (*name == '/' || *name == '\\') {
+		/* full pathname */
 		tmp = malloc(strlen(name)+1);
 		strcpy(tmp, name);
-	}
-					/* if relative to MCWD */
-	else {
+	} else {
+		/* relative to MCWD */
 		if (!strlen(name)) {
 			tmp = malloc(strlen(mcwd)+1);
 			strcpy(tmp, mcwd);
@@ -54,7 +57,7 @@ char *name;
 	for (s = tmp; *s; ++s) {
 		if (*s == '\\' || *s == '/') {
 			path = tmp;
-			*s = NULL;
+			*s = '\0';
 			if (getdir(path))
 				return(1);
 			tmp = s+1;
@@ -78,13 +81,15 @@ char *path;
 	struct directory *dir, *search();
 
 					/* nothing required */
-	if (*path == NULL)
+	if (path == NULL)
+		return(0);
+	if (*path == '\0')
 		return(0);
 
 	for (entry=0; entry<dir_entries; entry++) {
 		dir = search(entry);
 					/* if empty */
-		if (dir->name[0] == NULL)
+		if (dir->name[0] == '\0')
 			break;
 					/* if erased */
 		if (dir->name[0] == 0xe5)
