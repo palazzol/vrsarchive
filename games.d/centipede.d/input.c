@@ -126,8 +126,12 @@ move_guy()
 	    }
 	}
     }
-    if (changed)
+    if (changed) {
 	refresh();
+	raw();
+	noraw();
+	crmode();
+    }
 }
 
 /*
