@@ -32,11 +32,21 @@ char *calloc ();
 #define SCALEU	29		/* graphics scaling */
 #define SCALEL	40
 
+#ifdef ROSS
+#define TSCALEU	139		/* text mode scaling */
+#define TSCALEL	20
+#else
 #define TSCALEU	69		/* text mode scaling */
 #define TSCALEL	10
+#endif
 
+#ifdef ROSS
+#define XOFF	460		/* text centering offset (in decipoints) */
+#define YOFF	(-80)		/* previously, XOFF=1060; YOFF=(-80) */
+#else
 #define XOFF	520		/* text centering offset (in decipoints) */
 #define YOFF	(-50)		/* previously, XOFF=1060; YOFF=(-80) */
+#endif
 
 #define HPLJETXMAX 743		/* Number of pixels in X-axis */
 #define HPLJETYMAX 557		/* Number of pixels in Y-axis */
@@ -116,6 +126,10 @@ char s;
 	x = (x*TSCALEU)/TSCALEL + XOFF; /* adjust to bitmap size */
 	y = (y*TSCALEU)/TSCALEL + YOFF;
 
+#ifdef ROSS
+	if( x < 0 )	x = 0;
+	if( y < 0 )	y = 0;
+#endif
 	printf ("\033&a%dh%dV%c", x, y, s);
 }
 
@@ -128,6 +142,10 @@ char *s;
 	x = (x*TSCALEU)/TSCALEL + XOFF; /* adjust to bitmap size */
 	y = (y*TSCALEU)/TSCALEL + YOFF;
 
+#ifdef ROSS
+	if( x < 0 )	x = 0;
+	if( y < 0 )	y = 0;
+#endif
 	printf ("\033&a%dh%dV%s", x, y, s);
 }
 
