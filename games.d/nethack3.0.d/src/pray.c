@@ -388,7 +388,7 @@ ohno:
 
 static void
 pleased() {
-	char	*tmp;
+	const char	*tmp;
 	int trouble = in_trouble ();	/* what's your worst difficulty? */
 	int pat_on_head = 0;
 
@@ -1135,9 +1135,14 @@ a_gname()
 	return(a_gname_at(u.ux, u.uy));
 }
 
+#ifdef __STDC__
+char *
+a_gname_at(xchar x,xchar y)     /* returns the name of an altar's deity */
+#else
 char *
 a_gname_at(x,y)     /* returns the name of an altar's deity */
 xchar x, y;
+#endif
 {
 	register int align;
 
