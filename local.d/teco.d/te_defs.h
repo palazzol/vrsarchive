@@ -4,6 +4,9 @@
 */
 
 /* te_defs.h definitions file		1/9/87	*/
+#ifdef SYS5
+#define TERMIO
+#endif
 
 #include <stdio.h>
 #include <ctype.h>
