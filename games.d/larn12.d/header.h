@@ -327,6 +327,7 @@ struct sphere
 #define DEMONLORD 57
 #define DEMONPRINCE 64
 
+#undef  NULL
 #define NULL 0
 #define BUFBIG	4096			/* size of the output buffer */
 #define MAXIBUF	4096			/* size of the input buffer */
