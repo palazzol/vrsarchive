@@ -28,7 +28,7 @@ Building the system
 This system has been built and tested on a Vax running 4.2 (4.1) on a
 pdp11 (with and without floating point hardware ) running V6 V7 BSD 2.8 and
 BSD 2.9, a pyramid 98X and on a unisoft 68000 (V7) system. With
-appropriate convertion of the terminal handling routines (about 20 lines
+appropriate conversion of the terminal handling routines (about 20 lines
 of code) it should run on System V systems as well.
 
 The system dependent code has been extracted and placed in relevent
