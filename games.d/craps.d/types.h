@@ -30,3 +30,4 @@
 #define HELP	17
 #define SHELL	18
 #define ROLL	19
+#define REFRESH	20
