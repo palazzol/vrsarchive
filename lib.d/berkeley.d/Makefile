@@ -3,7 +3,7 @@
 #
 ALL	= Slibberkeley.a Mlibberkeley.a Llibberkeley.a
 OPTIONS	= -I./h -DPORT=\"/tmp/sockXXXXXX\"
-include ../../CONFIG
+include /etc/CONFIG
 BRKSYS	= $(INCDIR)/sys
 HFILES	= h/*.h h/sys/*.h
 #

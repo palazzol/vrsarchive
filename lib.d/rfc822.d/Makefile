@@ -1,9 +1,8 @@
-##
-CFLAGS	= -O
+OPTIONS	= -O
+ALL		= atest
+include /etc/CONFIG
 OBJS	= addr.o rfc822.o
 SRCS	= addr.c rfc822.c atest.c
-
-all:		atest
 
 atest:		$(OBJS) atest.c
 	$(CC) -o atest $(CFLAGS) atest.c $(OBJS)
