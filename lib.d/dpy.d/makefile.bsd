@@ -1,0 +1,55 @@
+# @(#)makefile.bsd	1.6	2/27/85
+# Makefile for BSD systems
+
+.SUFFIXES: .c .o .s
+
+CFLAGS = -O -DBSD
+CC = cc
+AS = as
+RANLIB = ranlib
+LIBDIR = /usr/lib
+
+CFILES = dpy.c dpymove.c dpyplace.c dpyget.c dpyread.c dpywindow.c
+OFILES = dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o dpywindow.o
+SOURCES = ${CFILES} dpy.h vaxsubs.s ns32ksubs.s gensubs.c
+
+# Machine dependent assembly routines.  Define MACHINEFILES appropriately
+# to select the target machine.  Gensubs is a portable version of the
+# subroutines applicable to any machine (but slower than the assembly ones).
+
+GENFILES = gensubs.o		# generic subroutines
+NS32KFILES= ns32ksubs.o		# National Semiconductor 32032 subroutines
+VAXFILES = vaxsubs.o		# VAX subroutines
+MACHINEFILES = ${VAXFILES}	# subroutines to be used
+
+
+libdpy.a: ${OFILES} ${MACHINEFILES}
+	ar rc libdpy.a ${OFILES} ${MACHINEFILES}
+	${RANLIB} libdpy.a
+
+sources: ${SOURCES}
+
+${SOURCES}:
+	sccs get $@
+
+${OFILES}: dpy.h
+
+install: libdpy.a
+	cp libdpy.a ${LIBDIR}
+	${RANLIB} ${LIBDIR}/libdpy.a
+	chmod 644 ${LIBDIR}/libdpy.a
+
+test1:	test1.o libdpy.a
+	${CC} -o test1 test1.o libdpy.a -ltermlib
+
+test2:	test2.o libdpy.a
+	${CC} -o test2 test2.o libdpy.a -ltermlib
+
+clean:
+	rm -f *.o libdpy.a test1 test2
+
+.s.o:
+	${AS} -o $*.o $*.s
+
+.c.o:
+	${CC} -c ${CFLAGS} $*.c

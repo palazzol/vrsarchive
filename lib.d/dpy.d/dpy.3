@@ -1,0 +1,542 @@
+.TH DPY 3 "7 March 1985"
+.UC 4
+.SH NAME
+dpy \- new screen updating routines
+.SH SYNOPSIS
+.nf
+.ft B
+dpyinit(ttytype, modestring)
+char *ttytype, *modestring;
+
+dpywindow(minrow, maxrow, mincol, maxcol)
+int minrow, maxrow, mincol, maxcol;
+
+dpyread(prompt, routine, buf, count)
+char *prompt;
+int (*routine)();
+char *buf;
+int count;
+
+dpymove(row, col)
+int row, col;
+
+dpyplace(row, col, ch)
+int row, col;
+char ch;
+
+dpywrite(buf, count)
+char *buf;
+int count;
+
+dpyprintf(fmt [,args] ...)
+char *fmt;
+
+dpychar(ch)
+char ch;
+
+dpystr(str)
+char *str;
+
+dpyget(row, col)
+int row, col;
+
+dpyclrline()
+
+dpyclrwindow()
+
+dpyhome()
+
+dpygetrow()
+
+dpygetcol()
+
+dpyupdate()
+
+dpyredraw()
+
+dpystop()
+
+dpyclose()
+.ft R
+.fi
+.SH DESCRIPTION
+.I
+Dpy
+is a terminal display package much like
+.IR curses (3).
+However,
+.I dpy
+does not provide all of the capabilities of
+.IR curses ,
+but instead tries to focus on the following two goals:
+.TP 5n
+1.
+Allow the programmer to easily define and update many different
+rectangles of data on the screen at the same time.
+.TP
+2.
+Be as fast as possible.
+.PP
+A tutorial on the usage of
+.I dpy
+appears later in this document.
+The remainder of this section describes the procedures.
+
+.I Dpyinit
+must be called before any other call to
+.I dpy (except for
+.IR dpyclose ).
+It allocates memory for two screen images,
+defines the current window to be the whole screen,
+sets the current write location to the upper left corner of the screen,
+uses
+.IR signal (2)
+to cause the terminal stop character to trap to
+.I dpystop
+for pretty program stopping (only on BSD systems), and sets the terminal
+modes to allow for terminal input of various kinds.
+The actual terminal screen is not cleared until the first
+.I dpyupdate
+call is made, so that you can initialize your program based upon the
+terminal size before deciding to continue.
+.I Ttytype
+is a string specifying the terminal type (example: "vt100"),
+or NULL to use the value specified by the
+.I TERM
+environment variable.
+.I Modestring
+is a string specifying how input is to be treated from the terminal.
+Each mode is specified by a single letter, preceeded by an (optional) plus
+sign to enable the mode, or preceeded by a minus sign to disable the mode.
+Modes can be separated by spaces.
+Modes not mentioned in the string are unchanged.
+The currently defined mode letters are:
+.TP 5n
+.B e
+(echo) Echoing of input characters occurs.
+.TP
+.B c
+(cbreak) Characters are returned without waiting for a newline and tty
+signals are processed.
+.TP
+.B r
+(raw) Characters are returned exactly as typed and tty signals are disabled.
+.PP
+Thus the normal terminal modes before starting
+.I dpy
+are described by the string "e -c -r".
+If
+.I modestring
+is a NULL pointer, then the default modes of "-e c" are used.
+If the
+.I dpyread
+call is to be used in your program, then you must specify that echoing
+is disabled, and that either cbreak or raw mode is enabled.
+.I Dpyinit
+returns nonzero with an error message typed if it cannot initialize.
+
+.I Dpyclose
+homes down to the lower left corner of the terminal screen, clears the last
+line of the screen, frees the memory allocated by
+.IR dpyinit,
+and restores the original terminal modes.
+This is useful just before exiting from your program.
+.I Dpyclose
+is guaranteed to do nothing if
+.I dpyinit
+has not yet been completed, so that it is safe to call
+.I dpyclose
+at any time.
+
+.I Dpyupdate
+makes the terminal screen look like the future screen image,
+using a minimal amount of terminal I/O.
+The cursor is also positioned to the current write location.
+This routine must be called when you have completed your writing of data to
+the future screen image, in order to make those changes visible to the user.
+
+.I Dpywindow
+specifies the rectangle where characters will be placed in the future
+screen image, and sets the current write location to the top left
+corner of the rectangle.
+The upper left corner of the window has the coordinates specified by
+.I minrow
+and
+.IR mincol ,
+and the lower right corner has the coordinates specified by
+.I maxrow
+and
+.IR maxcol .
+These coordinates are the absolute screen coordinates, where
+the upper left corner of the screen is row 0 and column 0.
+Negative numbers specify row or column numbers from the bottom or
+right edges of the screen.
+For example,
+.nf
+	dpywindow(0, -1, 0, -1);
+.fi
+defines a window which fills the whole screen.
+Returns nonzero if the coordinates are illegal.
+
+.I Dpywrite
+writes
+.I count
+characters from location
+.I buf
+to the future screen image at the current write location in the current
+window, and updates the current write location appropriately.
+This call does not do any actual I/O to the terminal.
+Control characters are handled reasonably, as is running off the end
+of a line or the window.
+This routine is called by
+.IR dpychar,
+.IR dpystr,
+and
+.IR dpyprintf,
+and is therefore the most efficient way to give characters to
+.IR dpy .
+Returns nonzero if not all the characters fit in the window.
+
+.I Dpychar
+writes the single character
+.I ch
+to the future screen image.
+Returns nonzero if the character couldn't fit in the window.
+
+.I Dpystr
+writes the null terminated string
+.I str
+to the future screen image.
+Returns nonzero if any of the string couldn't fit in the window.
+
+.I Dpyprintf
+writes a formated string to the future screen image in the manner of
+.IR printf (3).
+.I Fmt
+is the format string, and
+.I args
+are arguments to the format string.
+Returns nonzero if any of the string couldn't fit in the window.
+
+.I Dpyclrline
+clears the rest of the line in the future screen image (by changing
+the characters to spaces), but does not change the current write location.
+Writing a linefeed to the future screen performs this function,
+in addition to moving the write location to the next line.
+
+.I Dpyclrwindow
+clears the rest of the window in the future screen image, but
+does not change the current write location.
+When rewriting a window completely, this should be called when done so
+that any old contents of the window will be sure to be cleared out.
+
+.I Dpymove
+changes the current write location to the specified
+.I row
+and
+.I column
+numbers, relative to the upper left corner of the current window.
+The upper left corner of the window is row 0 and column 0.
+Negative numbers measure from the last row or column of the window.
+For example,
+.nf
+	dpymove(-1, 0);
+.fi
+positions to the beginning of the last line of the window.
+This does not set the actual terminal's cursor location unless it is
+also followed by a call to
+.IR dpyupdate .
+Returns nonzero if the coordinates are illegal.
+
+.I Dpyhome
+moves the current write location to the top left corner of the window.
+This function is useful between updates if your program iteratively
+rewrites the whole screen as one window.
+
+.I Dpygetrow
+returns the row number of the current write location.
+This is the row number where the next character written would go.
+If the next character written would not fit in the window, -1 is returned.
+This number is relative to the first line of the current window.
+For example, if the current write location is at the beginning of
+the top line of the window, this function returns zero.
+
+.I Dpygetcol
+returns the column number of the current write location.
+This is the column number where is next character written would go.
+If the next character written would not fit in the window, -1 is returned.
+This number is relative to the current window.
+For example, if the current write location is at the beginning of a line
+in the window, this function returns zero.
+
+.I Dpyredraw
+redraws the screen to make it look like the current screen image.
+This is used to fix the screen when it becomes trashed due to glitches or
+other programs also writing to the screen.
+This does not change the current or future screen images.
+
+.I Dpystop
+suspends execution of the process in a nice way by homing down to the lower
+left corner of the terminal screen, clearing the last line of the screen,
+restoring the original terminal modes, and then stopping the process.
+If the process is continued, terminal modes are restored,
+the screen is redrawn, and execution proceeds.
+This is called automatically when the terminal's stop character (usually ^Z)
+is typed by the user.
+.I Dpystop
+is a null routine for non-BSD systems.
+
+.I Dpyplace
+places the character
+.I ch
+within the current window at the coordinates specified by
+.I row
+and
+.IR col .
+The character should not be a control character.
+The coordinates can be negative to measure from the last row or column
+of the window.
+The current write location is unchanged.
+Like
+.I dpywrite
+and similar routines, this routine only affects the
+future screen image, and does no terminal I/O.
+Returns nonzero if the coordinates are illegal.
+
+.I Dpyget
+Returns the character from the current window which is at the coordinates
+specified by
+.I row
+and
+.IR col.
+The coordinates can be negative to measure from the last row or column of
+the window.
+The character returned is from the future screen image, not the current
+screen image.
+The current write location is unchanged.
+Returns negative if the coordinates are illegal.
+
+.I Dpyread
+reads input from the user while showing the input
+data on the screen.
+Editing of the input and updating of the screen is automatically
+performed by
+.IR dpy .
+The entire current window is used to display the input, and therefore
+you must set the window to your desired input location before calling
+.IR dpyread .
+Typically, you specify the window to be a single line at the top or bottom
+of the screen.
+If the
+.I prompt
+string pointer is not NULL, then the prompt string will appear at the
+beginning of the window, followed by the data typed by the user.
+To display the user's input without any prompt, specify a pointer to a
+null string.
+If
+.I prompt
+is NULL, then the window will be untouched and no terminal I/O at all will
+be performed (useful when input is from a script or file).
+.I Buf
+and
+.I count
+specify the area in the calling program where the
+data being read is stored, in the manner of
+.IR read (2).
+The data will be what was typed by the
+user, not what is seen on the screen (i.e. control characters appear
+on the screen as ^X, but appear in the buffer as themselves).
+If more data is typed than fits in the window, the data in the window
+is automatically scrolled to keep the current input location visible.
+.I Routine
+is a function variable which specifies a routine which is called to
+provide the input characters for
+.IR dpyread .
+.I Routine
+is called with the previous character read (-1 on the first call).
+It must return the next character read, or -1 to end input and cause
+.I dpyread
+to return.
+Providing the previous character as an argument allows a routine to easily
+return a break character as input, and then end the input on the next call.
+If
+.I routine
+is 0, then a default routine will be used which reads from the standard input
+until an end of file or newline is typed (which is included in the buffer).
+Whenever the character count would be exceeded, then
+.I dpyread
+will warn the user with a bell and discard the input character.
+.I Dpyread
+returns the number of characters read into the buffer, which is not
+guaranteed to contain a terminating null or newline character.
+.SH "TUTORIAL"
+The routines in the
+.I dpy
+library are called directly by the user program.
+None of these routines are a macro, so that there is no need to include a
+header file to use
+.IR dpy .
+These routines use the
+.I termlib
+(or
+.I curses
+under System V) library routines to obtain the proper terminal escape sequences.
+Therefore, you load your program as in the following examples:
+.nf
+
+	cc -o yourprog yourprog.c -ldpy -ltermlib	for BSD
+or:
+	cc -o yourprog yourprog.c -ldpy -lcurses	for System V
+
+.fi
+.I Dpy
+keeps two arrays which hold images of the terminal screen.
+The first array (the "current screen") is a copy of what the terminal
+screen really looks like.
+The second array (the "future screen") is a copy of what the
+calling program wants the screen to look like.
+The use of
+.I dpy
+proceeds in two phases under the control of the calling program, as follows:
+
+In the first phase, only the future screen is manipulated.
+The calling program positions the "current write location" as desired
+within the future screen, and writes new information within it.
+The
+.IR dpywrite ,
+.IR dpychar ,
+.IR dpystr ,
+.IR dpyprintf ,
+and
+.I dpyplace
+routines are used for this purpose.
+During this phase, no actual I/O occurs and the terminal screen remains
+unchanged.
+
+In the second phase, the calling program uses the
+.I dpyupdate
+routine to update the screen.
+.I Dpy
+compares the future screen contents with the current screen contents,
+and does whatever terminal I/O is required in order to make the current
+screen look like the future screen.
+After this is done, the two screen images are identical.
+In addition, the terminal's cursor is positioned to the current write position.
+
+The calling program usually uses
+.I dpy
+by looping between the above two phases.
+It defines what the screen should look like, updates the screen,
+defines the screen again, updates it again, and so on.
+In doing so, the program can be "dumb" or "smart".
+A dumb program rewrites all of the data in its windows each iteration of
+the loop, and depends on
+.I dpy
+to prevent terminal I/O for unchanging data.
+Thus a dumb program can be very trivial, and doesn't have to know anything
+about what is happening on the screen.
+
+If generating a new screenful of data from scratch is too much work for
+the program to do for each iteration, then a good compromise is to keep an
+internal copy of the screen in the program, update that copy appropriately,
+and then execute one
+.I dpywrite
+call to give
+.I dpy
+the new data.
+
+A smart program knows the exact locations of the desired screen changes
+each iteration of the loop, and only rewrites the necessary locations
+by using appropriate
+.I dpymove
+and
+.I dpyplace
+calls.
+This runs faster than a dumb program, but has the disadvantage of
+introducing complexity and possible bugs into the program.
+
+Putting data into the future screen is much like writing to a real terminal.
+There is a "current write location", which is similar to the cursor of the
+terminal.
+Like a terminal, characters written to
+.I dpy
+appear at the current write location, and automatically advance its location.
+When the rightmost location on a line is reached, the current write location
+is automatically moved to the leftmost location on the next line.
+
+Printing characters are stored as is, and will later be visible.
+But control characters have special effects like on a terminal.
+In particular, linefeed moves to the beginning of the next line, return
+moves back to the beginning of the current line, tab moves to the next
+tab stop as if the corresponding number of spaces were given, and backspace
+backs up by one location.
+Other control characters appear in ^X format.
+
+Writing to the future screen differs from writing to most real terminals
+in a couple of ways.
+Firstly, scrolling does not occur.
+If the end of the screen is reached, any further characters are ignored.
+The
+.I dpyread
+call is an exception, and does provide for scrolling.
+
+Secondly, it is possible to limit output to a
+.IR window,
+which is a rectangle of any size on the screen.
+The location and size of a window is specified by the program when it wants to
+limit output to a rectangle.
+This window acts just like a regular terminal screen of the appropriate size.
+Furthermore, coordinates are relative to the window's upper left corner,
+so a routine which writes in the window does not need to know where it is.
+Data in the future screen which lies outside of the window is untouched,
+no matter what is done within the window.
+
+Typically, a program divides the screen up into several windows
+which do not overlap.
+Data can then be written to each window independently,
+without regard to where each window is.
+For example, a linefeed character moves to the beginning of the next line in
+the current window, instead of to the beginning of the next line of the screen.
+Multiple writes to the same location do not cause any problems.
+Therefore, when windows do overlap and then
+.I dpyupdate
+is called, each screen location just displays the character which was
+last written there.
+
+Final hints:
+
+A window can be filled with a background character by simply writing that
+character to the window until a nonzero return value is obtained, meaning
+the window is full.
+
+If a region of the screen is never changed (such as a help text), then that
+region should be in its own window.
+Then it only needs to be written once.
+
+The terminal size can be found after calling
+.I dpyinit
+by calling
+.nf
+	dpymove(-1, -1);
+.fi
+to move to the lower right corner of the screen, and then calling
+.I
+dpygetrow
+and
+.I dpygetcol
+to return the row and column numbers.
+
+While writing data to the window,
+.I dpygetrow
+and
+.I dpygetcol
+are useful in order to
+remember the location of a particular position in the window.
+When all of the data has been written, then
+.I dpymove
+can be used to position the cursor back to that location.
+In this way, you don't have to worry about line wrapping or control character
+expansions when computing how to position the cursor on a particular
+character of your data.
+.SH AUTHOR
+David I. Bell

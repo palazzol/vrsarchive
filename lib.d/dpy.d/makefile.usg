@@ -1,0 +1,85 @@
+# @(#)makefile.usg	1.5	2/27/85
+# Makefile for USG systems
+
+.SUFFIXES: .c .o .s
+
+CC = cc
+OFLAG = -O
+DFLAG =
+SYSTEM = -DUSG
+CFLAGS = $(OFLAG) $(DFLAG) $(SYSTEM)
+AS = as
+LIBDIR = /usr/lib
+LIB = libdpy.a
+
+CFILES = dpy.c dpymove.c dpyplace.c dpyget.c dpyread.c dpywindow.c
+OFILES = dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o dpywindow.o
+
+LIBOBJS =	$(LIB)(dpy.o) \
+		$(LIB)(dpymove.o) \
+		$(LIB)(dpyplace.o) \
+		$(LIB)(dpyget.o) \
+		$(LIB)(dpyread.o) \
+		$(LIB)(dpywindow.o)
+
+SOURCES = dpy.h ${CFILES} vaxsubs.s ns32ksubs.s gensubs.c
+
+# Machine dependent assembly routines.  Define MACHINEFILES appropriately
+# to select the target machine.  Gensubs is a portable version of the
+# subroutines applicable to any machine (but slower than the assembly ones).
+
+GENFILES = gensubs.o		# generic subroutines
+NS32KFILES = ns32ksubs.o	# National Semiconductor 32032 subroutines
+VAXFILES = vaxsubs.o		# VAX subroutines
+MACHINEFILES = ${VAXFILES}	# subroutines to be used
+
+
+libdpy.a: ${LIBOBJS} $(MACHINEFILES)
+	$(MAKE) -$(MAKEFLAGS) -f dpy.mk.usg $? OFLAG=$(OFLAG) \
+		DFLAG=$(DFLAG) SYSTEM=$(SYSTEM)
+	ar rv libdpy.a $?
+	/bin/rm $?
+
+$(LIB)(vaxsubs.o) vaxsubs.o : vaxsubs.s
+
+$(LIB)(gensubs.o) gensubs.o : gensubs.s
+
+$(LIB)(ns32ksubs.o) ns32ksubs.o : ns32ksubs.s
+
+sources: ${SOURCES}
+
+$(LIBOBJS) ${OFILES}: dpy.h
+
+install: libdpy.a
+	cp libdpy.a ${LIBDIR}
+	chmod 644 ${LIBDIR}/libdpy.a
+
+test1:	test1.o libdpy.a
+	$(CC) test1.o $(LDFLAGS) -o test1 libdpy.a -lcurses
+
+test2:	test2.o libdpy.a
+	$(CC) test2.o $(LDFLAGS) -o test2 libdpy.a -lcurses
+
+print:	${SOURCES} makefile
+	pr -w120 -n ${SOURCES} makefile >dpy.lst
+	@echo dpy.lst finished
+
+clean:
+	rm -f *.o libdpy.a test1 test2
+
+PRECIOUS:	libdpy.a
+
+.c.a:
+	@echo $*.c
+
+.s.a:
+	@echo $*.s
+
+.s.o:
+	${AS} -o $*.o $*.s
+
+.c.o:
+	${CC} -c ${CFLAGS} $*.c
+
+.s~.s:
+	$(GET) $(GFLAGS) -p $< > $*.s
