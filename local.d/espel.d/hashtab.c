@@ -6,7 +6,7 @@ extern	ENTRY	*table[ HASHSIZE ];
 ENTRY	*new_space();
 char	*savestr();
 char	*malloc();
-int	index();
+int	in_dex();
 
 
 hashtab()
@@ -42,8 +42,8 @@ hashin( t, r )
 	p->e_target = savestr( t );
 	p->e_replace = savestr( r );
 
-	p->e_next = table[ index( t ) ];
-	table[ index( t ) ] = p;
+	p->e_next = table[ in_dex( t ) ];
+	table[ in_dex( t ) ] = p;
 	DEBUG( 8, "target: %s", t );
 	DEBUG( 8, "replac: %s\n", r );
 }
@@ -81,11 +81,11 @@ savestr( str )
 }
 
 /*
- * index
+ * in_dex
  *	computes the index into the hashtable of the parameter str
  */
 
-index( str )
+in_dex( str )
 	register	char	*str;
 {
 	register	int hashval;
