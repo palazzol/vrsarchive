@@ -33,8 +33,7 @@
 #include "stats.h"
 
 #if OPSYS==UNIX
-#include <strings.h>
-#include <sys/wait.h>
+#include <string.h>
 #endif
 
 #if OPSYS==MSDOS
@@ -146,7 +145,7 @@ void ExecFile (Prog,Arg)
    {
       if (Debug & DebugFile) printf ("ExecFile (%s,%s)\n",Prog,Arg);
 #if OPSYS==UNIX
-      if (fork ()) (void) wait ((union wait *)NULL);
+      if (fork ()) (void) wait ((int *)NULL);
       else {
 	 if (Debug & DebugFile) printf ("prepare to flush\n");
 	 (void) fflush (stdout);
@@ -241,7 +240,7 @@ void Shell (U)
    register InDesc *U;
    {
       if (Debug & DebugFile) printf ("Shell: '%s'\n",U->InPtr);
-      if (fork ()) (void) wait ((union wait *)NULL);
+      if (fork ()) (void) wait ((int *)NULL);
       else {
 	 (void) fflush (stdout);
 	 execl ("/bin/sh","sh","-c",U->InPtr,(char *)NULL);
