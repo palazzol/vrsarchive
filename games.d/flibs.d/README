@@ -1,0 +1,18 @@
+---------------- FLIBS Revision 1.1 Distribution Notes --------------
+
+This game is distributed to the world.  Play it and enjoy.  Sometimes
+it's dull, sometimes it's interesting, all of the time it's a CPU hog.
+
+I wrote this program to run under UNIX 4.2bsd with termcaps.  Other people
+may want to move it to System V or even use DPY with it.  The operating
+system dependent stuff is in "fopsys.c" and the terminal package
+dependent stuff is in "fterminal.c".
+
+If you do change it, could you send the new source code so that (a) I can
+give it to others who want it, and (b) I can store it away for future
+reference.
+
+To make FLIBS, unshar it and make it.
+
+					Bjorn Benson
+					..!uw-beaver!entropy!dataio!bjorn

@@ -1,0 +1,310 @@
+    BASIC STRATEGY FOR LAS VEGAS SINGLE DECK
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+8               Double on 5 or 6.  Otherwise hit.
+9               Double on 2 to 6.  Otherwise hit.
+10              Double on 2 to 9.  Otherwise hit.
+11              Always double.
+12              Stand on 4 to 6.  Otherwise hit.
+13 to 16        Stand on 2 to 6.  Otherwise hit.
+17 to 21        Always stand.
+A,2 to A,5      Double on 4 to 6.  Otherwise hit.
+A,6             Double on 2 to 6.  Otherwise hit.
+A,7             Double on 3 to 6.  Stand on 2, 7, 8
+		or A.  Hit on 9 or 10.
+A,8             Double on 6.  Otherwise stand.
+A,9             Always stand.
+A,A             Always split.
+2,2             Split on 3 to 7.  Otherwise hit.
+3,3             Split on 4 to 7.  Otherwise hit.
+4,4             Treat as 8 above.
+5,5             Treat as 10 above.
+6,6             Split on 2 to 6.  Otherwise hit.
+7,7             Split on 2 to 7.  Stand on 10.
+		Otherwise hit.
+8,8             Always split.
+9,9             Split on 2 to 9 except 7.  Stand
+		on 7, 10, or A.
+10,10           Always stand.
+
+
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+	(Four-, Six-, or Eight-Deck)
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 8          Always hit
+9               Double on 3 to 6.  Otherwise hit.
+10              Double on 2 to 9.  Otherwise hit.
+11              Double on 2 to 10.  Otherwise hit.
+12              Stand on 4 to 6.  Otherwise hit.
+13 to 16        Stand on 2 to 6.  Otherwise hit.
+17 to 21        Always stand.
+A,2 to A,3      Double on 5, 6.  Otherwise hit.
+A,4 to A,5      Double on 4 to 6.  Otherwise hit.
+A,6             Double on 3 to 6.  Otherwise hit.
+A,7             Double on 3 to 6.  Stand on 2, 7, or 8.
+		Hit on 9, 10, or A.
+A,8 to A,10     Always stand.
+A,A             Always split.
+2,2 and 3,3     Split on 2 to 7.  Otherwise hit.
+4,4             Split on 5, 6.  Otherwise hit.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.  Otherwise hit.
+7,7             Split on 2 to 7.  Otherwise hit.
+8,8             Always split.
+9,9             Split on 2 to 6, 8 or 9.  Stand
+		on 7, 10, or A.
+10,10           Always stand.
+
+
+
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+	     WITH EARLY SURRENDER
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 7          Surrender on Ace. Otherwise hit.
+8               Always hit.
+9               Double on 3 to 6.  Otherwise hit.
+10              Double on 2 to 9.  Hit on 10 or A.
+11              Double on 2 to 10.  Hit on A.
+12              Stand on 4 to 6.  Surrender on A.
+		Otherwise hit.
+13              Stand on 2 to 6.  Surrender on A.
+		Otherwise hit.
+14 or 15        Stand on 2 to 6.  Surrender on 10
+		or A.  Otherwise hit.
+16              Stand on 2 to 6.  Surrender on 10
+		or A.  Surrender (10,6 or 9,7)* on
+		9.  Otherwise hit.
+17              Surrender on A.  Otherwise stand.
+18 to 21        Always stand.
+A,2 to A,3      Double on 5, 6.  Otherwise hit.
+A,4 to A,5      Double on 4 to 6.  Otherwise hit.
+A,6             Double on 3 to 6.  Otherwise hit.
+A,7             Double on 3 to 6.  Stand on 2, 7, or 8.
+		Hit on 9, 10, or A.
+A,8 to A,10     Always stand.
+A,A             Always split.
+2,2             Split on 2 to 7.  Otherwise hit.
+3,3             Split on 2 to 7.  Surrender on A.
+		Otherwise hit.
+4,4             Split on 5, 6.  Otherwise hit.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.  Surrender on A.
+		Otherwise hit.
+7,7             Split on 2 to 7.  Surrender on 10
+		or A.  Otherwise hit.
+8,8             Surrender on 10 or A.  Otherwise split.
+9,9             Split on 2 to 6, 8 or 9.  Stand
+		on 7, 10, or A.
+10,10           Always stand.
+
+* You do not surrender 8,8 on a 9 up-card; only a
+10,6 or 9,7.
+
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+WITH USTON SIMPLE PLUS/MINUS COUNT MODIFICATIONS
+	    Plus Strategy Table
+	(Four-, Six-, or Eight-Deck)
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 7          Always hit.
+8               Double on 6.  Otherwise hit.
+9               Double on 2 to 6.  Otherwise hit.
+10              Double on 2 to 9.  Otherwise hit.
+11              Always double.
+12              Stand on 3 to 6.  Otherwise hit.
+13 to 15        Stand on 2 to 6.  Otherwise hit.
+16              Stand on 2 to 6 and 10.  Otherwise hit.
+17 to 21        Always stand.
+A,2 to A,5      Double on 4 to 6.  Otherwise hit.
+A,6             Double on 2 to 6.  Otherwise hit.
+A,7             Double on 2 to 6.  Hit on 9,10.
+		Otherwise stand.
+A,8 to A,10     Double on 5,6.  Otherwise stand.
+A,A             Always split.
+2,2 and 3,3     Split on 2 to 7.
+4,4             Split on 5, 6.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.
+7,7             Split on 2 to 7.
+8,8             Split on 2 to 9.
+9,9             Split on 2 to 9 except 7.
+10,10           Always stand.
+
+    *Take insurance when offered.
+
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+WITH USTON SIMPLE PLUS/MINUS COUNT MODIFICATIONS
+	    Minus Strategy Table
+	(Four-, Six-, or Eight-Deck)
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 8          Always hit.
+9               Double on 5,6.  Otherwise hit.
+10              Double on 2 to 8.  Otherwise hit.
+11              Double on 2 to 10.  Otherwise hit.
+12              Always hit.
+13              Stand on 4 to 6.  Otherwise hit.
+14 to 16        Stand on 2 to 6.  Otherwise hit.
+17 to 21        Always stand.
+A,2             Always hit.
+A,3             Double on 6.  Otherwise hit.
+A,4 and A,5     Double on 5,6.  Otherwise hit.
+A,6             Double on 4 to 6.  Otherwise hit.
+A,7             Double on 4 to 6.  Hit on 9 to A.
+		Otherwise stand.
+A,8 to A,10     Stand.
+A,A             Always split.
+2,2 and 3,3     Split on 2 to 7.
+4,4             Always hit.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.
+7,7             Split on 2 to 7.
+8,8             Split on 2 to 9.
+9,9             Split on 2 to 9 except 7.
+10,10           Always stand.
+
+    *Do not take insurance.
+
+
+
+       THE USTON SIMPLE PLUS/MINUS COUNT
+
+Keep a running count of of the deck as the cards are drawn.
+Start at 0 (I start at 50 to avoid negative numbers).  For
+each 3,4,5,6, and 7 add +1.  For each 10-valued card and
+aces add -1.  For 8,9 add 0.  Note that minuses and plusses
+add to 0 for a deck.  Practice counting by passing cards from
+a deck in one hand to the other hand.  You should of course
+end up with 0 at the end of the deck.  The book says you should
+be able to do this in 25 seconds.  I can do it in 35.
+
+You need to vary both your betting strategy and your playing
+strategy as you pass through the "strike" numbers:
+
+No. decks Use Plus strategy Use Minus strategy
+in game   Bet 4 units       Bet 1 unit
+----------------------------------------------
+   1          +2                -2
+   2          +3                -3
+   3          +4                -4
+   4          +6                -6
+   5          +8                -8
+   6          +9                -9
+   7         +11               -11
+   8         +12               -12
+
+Use Basic strategy and bet 2 units when inbetween the strike numbers.
+
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+WITH USTON SIMPLE PLUS/MINUS COUNT MODIFICATIONS
+	    Plus Strategy Table
+	(Four-, Six-, or Eight-Deck)
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 7          Always hit.
+8               Double on 6.  Otherwise hit.
+9               Double on 2 to 6.  Otherwise hit.
+10              Double on 2 to 9.  Otherwise hit.
+11              Always double.
+12              Stand on 3 to 6.  Otherwise hit.
+13 to 15        Stand on 2 to 6.  Otherwise hit.
+16              Stand on 2 to 6 and 10.  Otherwise hit.
+17 to 21        Always stand.
+A,2 to A,5      Double on 4 to 6.  Otherwise hit.
+A,6             Double on 2 to 6.  Otherwise hit.
+A,7             Double on 2 to 6.  Hit on 9,10.
+		Otherwise stand.
+A,8 to A,10     Double on 5,6.  Otherwise stand.
+A,A             Always split.
+2,2 and 3,3     Split on 2 to 7.
+4,4             Split on 5, 6.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.
+7,7             Split on 2 to 7.
+8,8             Split on 2 to 9.
+9,9             Split on 2 to 9 except 7.
+10,10           Always stand.
+    *Take insurance when offered.
+
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+	(Four-, Six-, or Eight-Deck)
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 8          Always hit
+9               Double on 3 to 6.  Otherwise hit.
+10              Double on 2 to 9.  Otherwise hit.
+11              Double on 2 to 10.  Otherwise hit.
+12              Stand on 4 to 6.  Otherwise hit.
+13 to 16        Stand on 2 to 6.  Otherwise hit.
+17 to 21        Always stand.
+A,2 to A,3      Double on 5, 6.  Otherwise hit.
+A,4 to A,5      Double on 4 to 6.  Otherwise hit.
+A,6             Double on 3 to 6.  Otherwise hit.
+A,7             Double on 3 to 6.  Stand on 2, 7, or 8.
+		Hit on 9, 10, or A.
+A,8 to A,10     Always stand.
+A,A             Always split.
+2,2 and 3,3     Split on 2 to 7.  Otherwise hit.
+4,4             Split on 5, 6.  Otherwise hit.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.  Otherwise hit.
+7,7             Split on 2 to 7.  Otherwise hit.
+8,8             Always split.
+9,9             Split on 2 to 6, 8 or 9.  Stand
+		on 7, 10, or A.
+10,10           Always stand.
+
+
+  BASIC STRATEGY FOR ATLANTIC CITY MULTI-DECK
+WITH USTON SIMPLE PLUS/MINUS COUNT MODIFICATIONS
+	    Minus Strategy Table
+	(Four-, Six-, or Eight-Deck)
+
+Your Hand       Rules for Dealer's Up Cards
+-------------------------------------------------
+5 to 8          Always hit.
+9               Double on 5,6.  Otherwise hit.
+10              Double on 2 to 8.  Otherwise hit.
+11              Double on 2 to 10.  Otherwise hit.
+12              Always hit.
+13              Stand on 4 to 6.  Otherwise hit.
+14 to 16        Stand on 2 to 6.  Otherwise hit.
+17 to 21        Always stand.
+A,2             Always hit.
+A,3             Double on 6.  Otherwise hit.
+A,4 and A,5     Double on 5,6.  Otherwise hit.
+A,6             Double on 4 to 6.  Otherwise hit.
+A,7             Double on 4 to 6.  Hit on 9 to A.
+		Otherwise stand.
+A,8 to A,10     Stand.
+A,A             Always split.
+2,2 and 3,3     Split on 2 to 7.
+4,4             Always hit.
+5,5             Never split.  Treat as 10 above.
+6,6             Split on 2 to 6.
+7,7             Split on 2 to 7.
+8,8             Split on 2 to 9.
+9,9             Split on 2 to 9 except 7.
+10,10           Always stand.
+    *Do not take insurance.

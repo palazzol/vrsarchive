@@ -1,0 +1,17 @@
+The first file is cbj.c.  To compile, use: cc cbj.c -o cbj
+
+The second file is the man page cbj.6.
+
+The third file is a summary of strategies.  A counting technique is included
+as well as simple table strategies.
+
+The program is written in C for Berkeley UNIX 4.2.  No claims are made
+for other operating systems.  Note that surrender is not currently allowed
+in Atlantic City, but you can still play it.  Enjoy!
+
+				- Miles Murdocca
+				  4B-525
+				  AT&T Bell Laboratoories
+				  Crawfords Corner Road
+				  Holmdel, NJ  07733
+				  (201) 949-2504

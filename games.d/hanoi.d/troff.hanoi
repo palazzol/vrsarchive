@@ -1,0 +1,11 @@
+.\"------------------troff.hanoi----------------------------------
+.de H
+.nr d \\$1-1
+.if \\nd .H \\nd \\$2 \\$4 \\$3
+ Transfer ring \\$1 from tower \\$2 to tower \\$3.
+.nr d \\$1-1
+.if \\nd .H \\nd \\$4 \\$3 \\$2
+..
+Initial state:  \nr rings all on tower A; #1 on top.
+.H \nr A B C
+ Done!

@@ -1,0 +1,50 @@
+If you put the 60-line sed script near the end of this message
+in a file, e.g. sed.hanoi, and then do
+	sed -f sed.hanoi
+and type in, say
+	:abcd: : :<CR><CR>
+(notice-- TWO carriage returns-- a peculiarity of sed), then
+it will output the sequence of states involved in moving 4 rings,
+the largest called "a" and the smallest called "d", from the
+first to the second of three towers, so that the rings on any
+tower at any time are in descending order of size.  You can start with
+a different arrangement and a different number of rings, say
+:ce:b:ax: and it will still give the shortest procedure for
+moving them all to the middle tower.  The rules are: the names
+of the rings must all be lower-case letters, they must be input within
+3 fields (representing the towers) delimited by 4 colons, such that
+the letters within each field are in alphabetical order (= rings in
+descending order of size).
+     For the benefit of anyone who wants to figure out the script,
+I will explain that an "internal" line of the form
+		b:0abx:1a2b3 :2   :3x2     
+has the following meaning: the material after the three markers :1 :2
+:3 represents the three towers; in this case the current set-up is
+:ab :   :x  :.  The numbers after a, b and x in these fields indicate
+that the next time it gets a chance, it will move a to tower 2, move b
+to tower 3, and move x to tower 2.  The string after :0 just keeps
+track of the alphabetical order of the names of the rings.  The b at the
+beginning means that it is now dealing with ring  b  (either about to
+move it, or re-evaluating where it should next be moved to).
+     Although this version is "limited" to 26 rings because of the size
+of the alphabet, one could write a script using the same idea in which
+the rings were represented by arbitrary [strings][within][brackets], and
+in place of the built-in line of the script giving the order of the
+letters of the alphabet, it would accept from the user a line giving the
+ordering to be assumed, e.g. [ucbvax][decvax][hplabs][foo][bar].
+     While on the subject, I will repeat at the very end of this note
+a much shorter file to do Towers of Hanoi using troff that a friend
+posted for me a year or so ago, before I was on a machine that
+subscribed to the net.  If you put it in a file "troff.hanoi", and
+do  nroff -rr5 troff.hanoi,  it will output instructions for moving 5
+rings from tower 1 to tower 2; generally, just put the desired number
+of rings after the -rr on the command line.  In this case, you don't
+have a choice of initial state, aside from choosing the number of rings.
+			Have fun!
+			George Bergman
+			Math, UC Berkeley 94720 USA
+
+		ucbvax!ucbcartan!gbergman (if your mailer can
+			digest a 9-letter name; if not maybe:)
+		ucbvax!cartan:gbergman  or
+		gbergman%cartan@berkeley
