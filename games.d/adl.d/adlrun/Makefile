@@ -74,7 +74,7 @@ lint		:
 clean		:
 	rm -f ${OBJS} core adlrun1.shar adlrun2.shar adlrun$(EXE)
 
-adlrun		: ${OBJS} ${UTIL}
+adlrun$(EXE)	: ${OBJS} ${UTIL}
 	$(CC) $(CFLAGS) -o $@ ${OBJS} ${UTIL} ${LIBS}
 
 adlerr.o	: adlerr.c	${HDRS}
