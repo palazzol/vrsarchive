@@ -12,6 +12,6 @@ export SHELL LETTERSTATS BIGRAMSTATS TRIGRAMSTATS DICTIONARY
 #	have ks and ke.
 #
 if test -x /bin/tset || test -x /usr/bin/tset; then
-  eval `tset -I -S | sed "s/';$/:ks=:ke=:k1=\\EOP:k2=\\EOQ:k3=\\EOR:&/"`
+  eval `tset -I -S | sed "s/';$/:ks=:ke=:k1=^[OP:k2=^[OQ:k3=^[OR:&/"`
 fi
 exec $CBWLIB/cbw $*
