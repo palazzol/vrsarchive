@@ -118,6 +118,37 @@ struct dent {
 
 	unsigned short keep : 1;
 
+#ifdef CAPITALIZE
+	/*
+	** if followcase is set, the actual word entry (dent->word)
+	** is followed by one or more further strings giving exact
+	** capitalizations.   The first byte after the uppercase word
+	** gives the number of capitalizations.  Each capitalization
+	** is preceded by the character "+" if it is to be kept, or
+	** "-" if it is to be discarded from the personal dictionary.
+	** For example, the entry "ITCORP\0\3+ITcorp\0+ITCorp\0+ItCorp\0"
+	** gives various ways of writing my e-mail address.  If all-lowercase
+	** is acceptable, an all-lower entry must appear.  Simple
+	** capitalization, on the other hand, is signified by the "capitalize"
+	** flag.
+	**
+	** Suffixes always match the case of the final character of a word.
+	**
+	** If "allcaps" is set, the other two flags must be clear.
+	*/
+	unsigned short allcaps : 1;	/* Word must be all capitals */
+	unsigned short capitalize : 1;	/* Capitalize the word */
+	unsigned short followcase : 1;	/* Follow capitalization exactly */
+	/*
+	** The following entries denote the flag values that are actually
+	** to be kept for this dictionary entry.  They may differ if the
+	** "a" command is used for a word that differs only in capitalization.
+	*/
+	unsigned short k_allcaps : 1;
+	unsigned short k_capitalize : 1;
+	unsigned short k_followcase : 1;
+#endif
+
 };
 
 #define WORDLEN 30
@@ -128,51 +159,59 @@ struct hashheader {
 	int tblsize;
 };
 
-#define MAGIC 1
+/* hash table magic number */
+#define MAGIC 2
 
 	
 /*
  * termcap variables
  */
-char *tgetstr();
-char PC;	/* padding character */
-char *BC;	/* backspace if not ^H */
-char *UP;	/* Upline (cursor up) */
-char *cd;	/* clear to end of display */
-char *ce;	/* clear to end of line */
-char *cl;	/* clear display */
-char *cm;	/* cursor movement */
-char *dc;	/* delete character */
-char *dl;	/* delete line */
-char *dm;	/* delete mode */
-char *ed;	/* exit delete mode */
-char *ei;	/* exit insert mode */
-char *ho;	/* home */
-char *ic;	/* insert character */
-char *il;	/* insert line */
-char *im;	/* insert mode */
-char *ip;	/* insert padding */
-char *nd;	/* non-destructive space */
-char *vb;	/* visible bell */
-char *so;	/* standout */
-char *se;	/* standout end */
-int bs;
-int li, co;	/* lines, columns */
+#ifdef MAIN
+# define EXTERN /* nothing */
+#else
+# define EXTERN extern
+#endif
 
-char termcap[1024];
-char termstr[1024];	/* for string values */
-char *termptr;
+EXTERN char *tgetstr();
+EXTERN char PC;	/* padding character */
+EXTERN char *BC;	/* backspace if not ^H */
+EXTERN char *UP;	/* Upline (cursor up) */
+EXTERN char *cd;	/* clear to end of display */
+EXTERN char *ce;	/* clear to end of line */
+EXTERN char *cl;	/* clear display */
+EXTERN char *cm;	/* cursor movement */
+EXTERN char *dc;	/* delete character */
+EXTERN char *dl;	/* delete line */
+EXTERN char *dm;	/* delete mode */
+EXTERN char *ed;	/* exit delete mode */
+EXTERN char *ei;	/* exit insert mode */
+EXTERN char *ho;	/* home */
+EXTERN char *ic;	/* insert character */
+EXTERN char *il;	/* insert line */
+EXTERN char *im;	/* insert mode */
+EXTERN char *ip;	/* insert padding */
+EXTERN char *nd;	/* non-destructive space */
+EXTERN char *vb;	/* visible bell */
+EXTERN char *so;	/* standout */
+EXTERN char *se;	/* standout end */
+EXTERN int bs;
+EXTERN int li, co;	/* lines, columns */
 
-char rootword[BUFSIZ];
-struct dent *lastdent;
+EXTERN char termcap[1024];
+EXTERN char termstr[1024];	/* for string values */
+EXTERN char *termptr;
 
-char *hashstrings;
+EXTERN char rootword[BUFSIZ];
+EXTERN struct dent *lastdent;
 
+EXTERN char *hashstrings;
+EXTERN struct hashheader hashheader;
 
-int aflag;
-int lflag;
+extern int aflag;
+extern int lflag;
 
-int erasechar;
-int killchar;
+EXTERN int erasechar;
+EXTERN int killchar;
 
-char tempfile[200];
+EXTERN char tempfile[200];
+

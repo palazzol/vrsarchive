@@ -7,8 +7,8 @@
  */
 
 #include <stdio.h>
-#include "ispell.h"
 #include "config.h"
+#include "ispell.h"
 
 
 struct dent *treelookup();
@@ -22,7 +22,6 @@ static inited = 0;
 linit ()
 {
 	int hashfd;
-	struct hashheader hashheader;
 	register int i;
 	register struct dent *dp;
 

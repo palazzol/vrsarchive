@@ -13,6 +13,7 @@
 #include <sgtty.h>
 #endif
 #include <signal.h>
+#include "config.h"
 #include "ispell.h"
 
 int putch();
@@ -62,13 +63,16 @@ putch (c)
 struct termio sbuf, osbuf;
 #else
 struct sgttyb sbuf, osbuf;
+struct ltchars ltc, oltc;
 #endif
 static termchanged = 0;
-
+static int (*oldint) ();
+static int (*oldterm) ();
 
 terminit ()
 {
 	int done();
+
 #ifdef USG
 	if (!isatty(0)) {
 		fprintf (stderr, "Can't deal with non interactive use yet.\n");
@@ -88,44 +92,62 @@ terminit ()
 	erasechar = osbuf.c_cc[VERASE];
 	killchar = osbuf.c_cc[VKILL];
 
-	signal (SIGINT, done);
 #else
 	int tpgrp;
 	int onstop();
 	extern short ospeed;
 
 retry:
-	sigsetmask(1<<SIGTSTP | 1<<SIGTTIN | 1<<SIGTTOU);
+#ifdef SIGTSTP
+	sigsetmask(1<<(SIGTSTP-1) | 1<<(SIGTTIN-1) | 1<<(SIGTTOU-1));
+#endif
+#ifdef TIOCGPGRP
 	if (ioctl(0, TIOCGPGRP, &tpgrp) != 0) {
 		fprintf (stderr, "Can't deal with non interactive use yet.\n");
 		exit (1);
 	}
+#endif
+#ifdef SIGTSTP
 	if (tpgrp != getpgrp(0)) { /* not in foreground */
-		sigsetmask(1<<SIGTSTP | 1<<SIGTTIN);
+		sigsetmask(1<<(SIGTSTP-1) | 1<<(SIGTTIN-1));
 		signal(SIGTTOU, SIG_DFL);
 		kill(0, SIGTTOU);
 		/* job stops here waiting for SIGCONT */
 		goto retry;
 	}
+#endif
 
 	ioctl (0, TIOCGETP, &osbuf);
+	ioctl (0, TIOCGLTC, &oltc);
 	termchanged = 1;
 
 	sbuf = osbuf;
 	sbuf.sg_flags &= ~ECHO;
-	sbuf.sg_flags |= RAW;
+	sbuf.sg_flags |= TERM_MODE;
 	ioctl (0, TIOCSETP, &sbuf);
 
 	erasechar = sbuf.sg_erase;
 	killchar = sbuf.sg_kill;
 	ospeed = sbuf.sg_ospeed;
 
-	signal (SIGINT, done);
+	ltc = oltc;
+	ltc.t_suspc = -1;
+	ioctl (0, TIOCSLTC, &ltc);
 
+	if ((oldint = signal (SIGINT, SIG_IGN)) != SIG_IGN)
+		signal (SIGINT, done);
+	if ((oldterm = signal (SIGTERM, SIG_IGN)) != SIG_IGN)
+		signal (SIGTERM, done);
+
+#ifdef SIGTTIN
 	sigsetmask(0);
-	signal(SIGTTIN, onstop);
-	signal(SIGTTOU, onstop);
-	signal(SIGTSTP, onstop);
+	if (signal (SIGTTIN, SIG_IGN) != SIG_IGN)
+		signal(SIGTTIN, onstop);
+	if (signal (SIGTTOU, SIG_IGN) != SIG_IGN)
+		signal(SIGTTOU, onstop);
+	if (signal (SIGTSTP, SIG_IGN) != SIG_IGN)
+		signal(SIGTSTP, onstop);
+#endif
 #endif
 
 	tgetent(termcap, getenv("TERM"));
@@ -164,6 +186,7 @@ done ()
 		ioctl (0, TCSETAW, &osbuf);
 #else
 		ioctl (0, TIOCSETP, &osbuf);
+		ioctl (0, TIOCSLTC, &oltc);
 #endif
 	exit (0);
 }
@@ -173,30 +196,38 @@ onstop(signo)
 int signo;
 {
 	ioctl (0, TIOCSETP, &osbuf);
+	ioctl (0, TIOCSLTC, &oltc);
 	signal(signo, SIG_DFL);
+	sigsetmask(sigblock(0) & ~(1 << (signo-1)));
 	kill(0, signo);
 	/* stop here until continued */
 	signal(signo, onstop);
 	ioctl (0, TIOCSETP, &sbuf);
+	ioctl (0, TIOCSLTC, &ltc);
 }
 
 stop ()
 {
+#ifdef SIGTSTP
 	onstop (SIGTSTP);
+#endif
+	;
 }
 #endif
 
 shellescape (buf)
 char *buf;
 {
+
 #ifdef USG
 	ioctl (0, TCSETAW, &osbuf);
-	signal (SIGINT, SIG_IGN);
-	signal (SIGQUIT, SIG_IGN);
 #else
 	ioctl (0, TIOCSETP, &osbuf);
-	signal (SIGINT, 1);
-	signal (SIGQUIT, 1);
+	ioctl (0, TIOCSLTC, &oltc);
+#endif
+	signal (SIGINT, oldint);
+	signal (SIGTERM, oldterm);
+#ifdef SIGTTIN
 	signal(SIGTTIN, SIG_DFL);
 	signal(SIGTTOU, SIG_DFL);
 	signal(SIGTSTP, SIG_DFL);
@@ -204,19 +235,24 @@ char *buf;
 
 	system (buf);
 
-#ifndef USG
-	signal(SIGTTIN, onstop);
-	signal(SIGTTOU, onstop);
-	signal(SIGTSTP, onstop);
+	if (signal (SIGINT, SIG_IGN) != SIG_IGN)
+		signal (SIGINT, done);
+	if (signal (SIGTERM, SIG_IGN) != SIG_IGN)
+		signal (SIGTERM, done);
+
+#ifdef SIGTTIN
+	signal(SIGTTIN, oldttin);
+	signal(SIGTTOU, oldttou);
+	signal(SIGTSTP, oldtstp);
 #endif
-	signal (SIGINT, done);
-	signal (SIGQUIT, SIG_DFL);
 
 #ifdef USG
 	ioctl (0, TCSETAW, &sbuf);
 #else
 	ioctl (0, TIOCSETP, &sbuf);
+	ioctl (0, TIOCSLTC, &ltc);
 #endif
 	printf ("\n-- Type space to continue --");
+	fflush (stdout);
 	getchar ();
 }

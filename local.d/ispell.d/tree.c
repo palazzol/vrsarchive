@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/param.h>
-#include "ispell.h"
 #include "config.h"
+#include "ispell.h"
 
 char *getenv();
 struct dent *lookup();
@@ -57,22 +57,28 @@ static int goodsizes[] = {
 struct dent *treeinsert();
 struct dent *tinsert();
 struct dent *treelookup();
+char *upcase ();
+char *lowcase ();
 
 static char personaldict[MAXPATHLEN];
 static FILE *dictf;
 static newwords = 0;
 
 extern char *index ();
+extern char *calloc ();
+extern char *malloc ();
+extern char *realloc ();
+
 extern struct dent *hashtbl;
 extern int hashsize;
 
 treeinit (p)
 char *p;
 {
-	char *h;
+	register char *h;
 	char *orig;
 	char buf[BUFSIZ];
-	struct dent *dp;
+	register struct dent *dp;
 
 	/*
 	** if p exists and begins with '/' we don't really need HOME,
@@ -221,24 +227,9 @@ char *p;
 	newwords = 0;
 
 	if (!lflag && !aflag && access (personaldict, 2) < 0)
-		printf ("Warning: Cannot update personal dictionary (%s)\r\n", personaldict);
-}
-
-treeprint ()
-{
-	register int i;
-	register struct dent *dp;
-	register struct dent *cp;
-
-	printf ("(");
-	for (i = 0;  i < hsize;  i++) {
-		dp = &htab[i];
-		if (dp->used) {
-			for (cp = dp;  cp != NULL;  cp = cp->next)
-				printf ("%s ", cp->word);
-		}
-	}
-	printf (")");
+		fprintf (stderr,
+		    "Warning: Cannot update personal dictionary (%s)\r\n",
+		    personaldict);
 }
 
 struct dent *
@@ -246,23 +237,25 @@ treeinsert (word, keep)
 char *word;
 {
 	register int i;
-	struct dent *dp;
+	register struct dent *dp;
 	struct dent *olddp;
 	struct dent *oldhtab;
 	int oldhsize;
 	char nword[BUFSIZ];
+#ifdef CAPITALIZE
+	register char *cp;
+	char *saveword;
+	int capspace;
+#endif
 
 	strcpy (nword, word);
 	upcase (nword);
-	if ((dp = lookup (nword, strlen (nword), 0)) != NULL) {
-		if (keep)
-			dp->keep = 1;
-		return dp;
-	}
+	if ((dp = lookup (nword, strlen (nword), 0)) != NULL)
+		dp->keep = keep;
 	/*
 	 * Expand hash table when it is MAXPCT % full.
 	 */
-	if (!cantexpand  &&  (hcount * 100) / MAXPCT >= hsize) {
+	else if (!cantexpand  &&  (hcount * 100) / MAXPCT >= hsize) {
 		oldhsize = hsize;
 		oldhtab = htab;
 		for (i = 0;  i < sizeof goodsizes / sizeof (goodsizes[0]);  i++)
@@ -311,9 +304,138 @@ char *word;
 		}
 		if (oldhtab != NULL)
 			free ((char *) oldhtab);
+		dp = NULL;		/* This will force the insert below */
 	}
 	newwords |= keep;
-	return tinsert (nword, (struct dent *) NULL, keep);
+	if (dp == NULL)
+		dp = tinsert (nword, (struct dent *) NULL, keep);
+#ifdef CAPITALIZE
+	if (dp == NULL)
+		return NULL;
+	/*
+	** Figure out the capitalization rules from the
+	** capitalization of the sample entry.  If the sample is
+	** all caps, we don't change the existing flags, since
+	** all-caps gives us no information.  Tinsert initializes
+	** new entries with "allcaps" set, so if the word is truly
+	** required to appear in capitals, the correct result
+	** will be achieved.
+	*/
+	for (cp = word;  *cp;  cp++) {
+		if (mylower (*cp))
+			break;
+	}
+	if (*cp) {
+		/*
+		** Sample entry has at least some lowercase.  See if
+		** the case is mixed.
+		*/
+		for (cp = word;  *cp;  cp++) {
+			if (myupper (*cp))
+				break;
+		}
+		if (*cp == '\0'  &&  !dp->followcase) {
+			/*
+			** Sample entry is all lowercase, and word is not
+			** followcase.  Clear all of the capitalization flags.
+			*/
+			dp->allcaps = 0;
+			dp->capitalize = 0;
+			if (keep) {
+				dp->k_allcaps = 0;
+				dp->k_capitalize = 0;
+				dp->k_followcase = 0;
+			}
+		}
+		else {
+			/*
+			** The sample entry is mixed case (or all-lower and the
+			** entry is already followcase).  If it's simply
+			** capitalized, set the capitalize flag and that's that.
+			*/
+			for (cp = word + 1;  *cp  &&  !myupper (*cp);  )
+				cp++;
+			if (*cp == 0  &&  myupper (*word)) {
+				dp->allcaps = 0;
+				dp->capitalize = 1;
+				if (keep) {
+					dp->k_allcaps = 0;
+					dp->k_capitalize = 1;
+				}
+			}
+			else {
+				/*
+				** The sample entry is followcase.  Make the
+				** dictionary entry followcase if necessary.
+				*/
+				if (!dp->followcase) {
+					dp->followcase = 1;
+					if (keep)
+						dp->k_followcase = 1;
+					capspace = 2 * (strlen (dp->word) + 2);
+					if (dp->word >= hashstrings
+					  &&  dp->word <=
+					    hashstrings
+					     + hashheader.stringsize) {
+						cp = dp->word;
+						dp->word = malloc (capspace);
+						if (dp->word)
+							strcpy (dp->word, cp);
+					}
+					else
+						dp->word = realloc (dp->word,
+								    capspace);
+					if (dp->word == NULL) {
+						fprintf (stderr,
+						  "Ran out of space for personal dictionary\n");
+						exit (1);
+					}
+					cp = dp->word + strlen (dp->word) + 1;
+					if (dp->capitalize  ||  dp->allcaps)
+						*cp++ = 0;
+					else {
+						*cp++ = 1;
+						strcpy (cp + 1, dp->word);
+						lowcase (cp + 1);
+					}
+					*cp = dp->keep ? '+' : '-';
+				}
+				dp->allcaps = 0;
+				if (keep)
+					dp->k_allcaps = 0;
+				cp = dp->word + strlen (dp->word) + 1;
+				/* Add a new capitalization */
+				(*cp)++;
+				capspace = (cp - dp->word + 1)
+					    * ((*cp & 0xFF) + 1);
+				if (dp->word >= hashstrings
+				  &&  dp->word <=
+				    hashstrings + hashheader.stringsize) {
+					saveword = dp->word;
+					dp->word = malloc (capspace);
+					if (dp->word) {
+						cp = dp->word;
+						while (--capspace >= 0)
+							*cp++ = *saveword++;
+					}
+				}
+				else
+					dp->word = realloc (dp->word, capspace);
+				if (dp->word == NULL) {
+					fprintf (stderr,
+					  "Ran out of space for personal dictionary\n");
+					exit (1);
+				}
+				cp = dp->word + strlen (dp->word) + 1;
+				cp +=
+				  ((*cp & 0xFF) - 1) * (cp - dp->word + 1) + 1;
+				*cp++ = keep ? '+' : '-';
+				strcpy (cp, word);
+			}
+		}
+	}
+#endif
+	return dp;
 }
 
 static
@@ -322,9 +444,10 @@ tinsert (word, proto, keep)
 char *word;			/* One of word/proto must be null */
 struct dent *proto;
 {
-	int hcode;
+	register int hcode;
 	register struct dent *hp; /* Next trial entry in hash table */
-	struct dent *php;	/* Previous value of hp, for chaining */
+	register struct dent *php;	/* Previous value of hp, for chaining */
+	register char *cp;
 
 	if (word == NULL)
 		word = proto->word;
@@ -363,6 +486,7 @@ struct dent *proto;
 			    "Ran out of space for personal dictionary\n");
 			exit (1);
 		}
+		strcpy (hp->word, word);
 		hp->used = 1;
 		hp->next = NULL;
 		hp->d_flag = 0;
@@ -379,7 +503,14 @@ struct dent *proto;
 		hp->x_flag = 0;
 		hp->y_flag = 0;
 		hp->z_flag = 0;
-		strcpy (hp->word, word);
+#ifdef CAPITALIZE
+		hp->allcaps = 1;		/* Assume word is all-caps */
+		hp->k_allcaps = 1;
+		hp->capitalize = 0;
+		hp->k_capitalize = 0;
+		hp->followcase = 0;
+		hp->k_followcase = 0;
+#endif
 		hp->keep = keep;
 		hcount++;
 		return (hp);
@@ -390,7 +521,7 @@ struct dent *
 treelookup (word)
 char *word;
 {
-	int hcode;
+	register int hcode;
 	register struct dent *hp;
 	char nword[BUFSIZ];
 
@@ -412,6 +543,12 @@ char *word;
 
 treeoutput ()
 {
+	register struct dent *cent;	/* Current entry */
+	register struct dent *lent;	/* Linked entry */
+#ifdef SORTPERSONAL
+	register struct dent *lowent;	/* Alphabetically lowest entry */
+	struct dent *firstent;		/* First entry to be kept */
+#endif
 	if (newwords == 0)
 		return;
 
@@ -420,41 +557,117 @@ treeoutput ()
 		return;
 	}
 
-	toutput1 ();
+#ifdef SORTPERSONAL
+	if (hcount >= SORTPERSONAL) {
+#endif
+		for (cent = htab;  cent - htab < hsize;  cent++) {
+			for (lent = cent;  lent != NULL;  lent = lent->next) {
+				if (lent->used  &&  lent->keep)
+					toutent (lent);
+			}
+		}
+		for (cent = hashtbl, lent = hashtbl + hashsize;
+		    cent < lent;
+		    cent++) {
+			if (cent->used  &&  cent->keep)
+				toutent (cent);
+		}
+#ifdef SORTPERSONAL
+		return;
+	}
+	/*
+	** Produce dictionary in sorted order.  We use a selection sort,
+	** which is moderately inefficient, but easy to do in our hash table.
+	** We start by linking all "keep" entries together to save time.
+	*/
+	for (lowent = NULL, cent = hashtbl, lent = hashtbl + hashsize;
+	    cent < lent;
+	    cent++) {
+		if (cent->keep  &&  cent->used) {
+			cent->next = lowent;
+			lowent = cent;
+		}
+	}
+	firstent = lowent;
+	for (cent = htab;  cent - htab < hsize;  cent++) {
+		for (lent = cent;  lent != NULL;  lent = lowent) {
+			lowent = lent->next;
+			if (lent->keep  &&  lent->used) {
+				lent->next = firstent;
+				firstent = lent;
+			}
+		}
+	}
+	/* Now do the sort. */
+	while (1) {
+		lowent = NULL;
+		for (cent = firstent;  cent != NULL;  cent = cent->next) {
+			if (cent->used  &&  cent->keep) {
+				if (lowent != NULL) {
+					if (casecmp (cent->word,
+						    lowent->word) < 0)
+						lowent = cent;
+				}
+				else
+					lowent = cent;
+			}
+		}
+		if (lowent == NULL)
+			break;
+		else {
+			toutent (lowent);
+			lowent->used = 0;
+		}
+	}
+#endif
+
 	newwords = 0;
 
 	fclose (dictf);
 }
 
-static
-toutput1 ()
-{
-	register struct dent *cent;	/* Current entry */
-	register struct dent *lent;	/* Linked entry */
-
-	for (cent = htab;  cent - htab < hsize;  cent++) {
-		for (lent = cent;  lent != NULL;  lent = lent->next) {
-			if (lent->used  &&  lent->keep)
-				toutput2 (lent);
-		}
-	}
-	for (cent = hashtbl, lent = hashtbl + hashsize;
-	    cent < lent;
-	    cent++) {
-		if (cent->used  &&  cent->keep)
-			toutput2 (cent);
-	}
-}
-
 static int hasslash;
 
 static
-toutput2 (cent)
+toutent (cent)
 register struct dent *cent;
 {
+	register char *cp;
+	int len;
+	register int wcount;
 
+	if (cent->k_followcase) {
+		if (cent->k_capitalize) {
+			lowcase (cent->word);
+			if (mylower (cent->word[0]))
+				cent->word[0] = toupper (cent->word[0]);
+			toutword (cent->word, cent);
+		}
+		len = strlen (cent->word) + 1;
+		cp = cent->word + len;
+		wcount = *cp++ & 0xFF;
+		while (--wcount >= 0) {
+			if (*cp++ == '+')
+				toutword (cp, cent);
+			cp += len;
+		}
+	}
+	else {
+		if (!cent->k_allcaps)
+			lowcase (cent->word);
+		if (cent->k_capitalize  &&  mylower (cent->word[0]))
+			cent->word[0] = toupper (cent->word[0]);
+		toutword (cent->word, cent);
+	}
+}
+		
+static
+toutword (word, cent)
+char *word;
+register struct dent *cent;
+{
 	hasslash = 0;
-	fprintf (dictf, "%s", cent->word);
+	fprintf (dictf, "%s", word);
 	if (cent->d_flag)
 		flagout ('D');
 	if (cent->g_flag)
@@ -504,6 +717,20 @@ register char *s;
 	while (*s) {
 		if (mylower (*s))
 			*s = toupper (*s);
+		s++;
+	}
+	return (os);
+}
+
+char *
+lowcase (s)
+register char *s;
+{
+	register char *os = s;
+
+	while (*s) {
+		if (myupper (*s))
+			*s = tolower (*s);
 		s++;
 	}
 	return (os);

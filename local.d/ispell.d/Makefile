@@ -2,8 +2,9 @@
 
 # Look over config.X before building.
 #
-# You may want to edit BINDIR, LIBDIR, DEFHASH, DEFDICT, MANDIR, and
-# MANEXT below; the Makefile will update all other files to match.
+# You may want to edit BINDIR, LIBDIR, DEFHASH, DEFDICT, MAN1DIR, MAN4DIR
+# MAN1EXT, MAN4EXT, and TERMLIB below;
+# the Makefile will update all other files to match.
 #
 # On USG systems, add -DUSG to CFLAGS.
 #
@@ -15,38 +16,43 @@
 #
 #   buildhash <infile> <outfile>
 
-CFLAGS = -O
-# BINDIR, LIBDIR, DEFHASH, DEFDICT, MANDIR, MANEXT
-BINDIR = /usr/local/bin
-LIBDIR = /usr/local/lib
+CC = lcc -v -HL -HD -R tgetflag
+CFLAGS = -n -O -DUSG
+# BINDIR, LIBDIR, DEFHASH, DEFDICT, MAN1DIR, MAN4DIR, MAN1EXT, MAN4EXT,
+# TERMLIB
+BINDIR = /usr/sahbin
+LIBDIR = /tmp2/lib
 DEFHASH = ispell.hash
 DEFDICT = dict.191
-MANDIR	= /usr/man/u_man/man1
-MANEXT	= .1l
+MAN1DIR	= /usr/man/u_man/man1
+MAN4DIR	= /usr/man/u_man/man4
+MAN1EXT	= .1l
+MAN4EXT	= .4l
+# TERMLIB = -lcurses
+TERMLIB = -ltermcap
+
 SHELL = /bin/sh
 
-# TERMLIB = -lcurses
-TERMLIB = -ltermlib
-
-all: buildhash ispell icombine munchlist $(DEFHASH)
+all: buildhash ispell icombine munchlist isexpand $(DEFHASH)
 
 ispell.hash: buildhash $(DEFDICT)
 	./buildhash $(DEFDICT) $(DEFHASH)
 
 install: all
-	cp ispell $(BINDIR)/ispell
-	cp munchlist $(BINDIR)/munchlist
+	cp ispell isexpand munchlist $(BINDIR)
 	cp ispell.hash $(LIBDIR)/$(DEFHASH)
 	cp expand1.sed expand2.sed icombine $(LIBDIR)
-	chmod 755 $(BINDIR)/ispell $(BINDIR)/munchlist $(LIBDIR)/icombine
+	chmod 755 $(BINDIR)/ispell $(BINDIR)/munchlist $(BINDIR)/isexpand \
+	  $(LIBDIR)/icombine
 	chmod 644 $(LIBDIR)/$(DEFHASH) $(LIBDIR)/expand1.sed \
 	  $(LIBDIR)/expand2.sed
-	cp ispell.1 $(MANDIR)/ispell$(MANEXT)
+	cp ispell.1 $(MAN1DIR)/ispell$(MAN1EXT)
+	cp ispell.4 $(MAN4DIR)/ispell$(MAN4EXT)
 
 buildhash: buildhash.o hash.o
 	$(CC) $(CFLAGS) -o buildhash buildhash.o hash.o
 
-icombine:	icombine.c
+icombine:	icombine.c config.h ispell.h
 	$(CC) $(CFLAGS) -o icombine icombine.c
 
 munchlist:	munchlist.X Makefile
@@ -54,11 +60,17 @@ munchlist:	munchlist.X Makefile
 		<munchlist.X >munchlist
 	chmod +x munchlist
 
-OBJS=ispell.o term.o good.o lookup.o hash.o tree.o
+isexpand:	isexpand.X Makefile
+	sed -e 's@!!LIBDIR!!@$(LIBDIR)@' isexpand.X >isexpand
+	chmod +x isexpand
+
+OBJS=ispell.o term.o good.o lookup.o hash.o tree.o xgets.o
+
 ispell: $(OBJS)
 	cc $(CFLAGS) -o ispell $(OBJS) $(TERMLIB)
 
-$(OBJS) buildhash.o: config.h
+$(OBJS) buildhash.o: config.h ispell.h
+ispell.o: version.h
 
 config.h:	config.X Makefile
 	sed -e 's@!!LIBDIR!!@$(LIBDIR)@' -e 's@!!DEFDICT!!@$(DEFDICT)@' \

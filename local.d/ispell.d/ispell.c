@@ -1,5 +1,7 @@
 /* -*- Mode:Text -*- */
 
+#define MAIN
+
 /*
  * ispell.c - An interactive spelling corrector.
  *
@@ -27,8 +29,13 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/param.h>
-#include "ispell.h"
+#ifdef USG
+#include <sys/types.h>
+#endif
+#include <sys/stat.h>
 #include "config.h"
+#include "ispell.h"
+#include "version.h"
 
 FILE *infile;
 FILE *outfile;
@@ -36,6 +43,11 @@ FILE *outfile;
 char hashname[MAXPATHLEN];
 
 extern struct dent *treeinsert();
+extern char *upcase ();
+extern char *lowcase ();
+
+extern char *rindex();
+extern char *strcpy ();
 
 /*
 ** we use extended character set range specifically to allow intl.
@@ -81,7 +93,8 @@ givehelp ()
 	printf ("\r\n\r\n");
 	printf ("-- Type space to continue --");
 	fflush (stdout);
-	getchar ();
+	while (getchar () != ' ')
+		;
 }
 
 
@@ -89,6 +102,7 @@ char *getline();
 
 int cflag = 0;
 int lflag = 0;
+int incfileflag = 0;
 int aflag = 0;
 int fflag = 0;
 #ifndef USG
@@ -103,20 +117,29 @@ static char *Cmd;
 
 usage ()
 {
-	fprintf (stderr, "Usage: %s [-dfile | -pfile | -wchars | -t | -x | -S] file .....\n",Cmd);
-	fprintf (stderr, "       %s [-dfile | -pfile | -wchars | -t] -l\n",Cmd);
-#ifdef USG
-	fprintf (stderr, "       %s [-dfile | -pfile | -ffile | -t | -s] -a\n",Cmd);
+	fprintf (stderr,
+	    "Usage: %s [-dfile | -pfile | -wchars | -t | -x | -S] file .....\n",
+	    Cmd);
+	fprintf (stderr,
+	    "       %s [-dfile | -pfile | -wchars | -t] -l\n",
+	    Cmd);
+#ifndef USG
+	fprintf (stderr,
+	    "       %s [-dfile | -pfile | -ffile | -t | -s] {-a | -A}\n",
+	    Cmd);
 #else
-	fprintf (stderr, "       %s [-dfile | -pfile | -ffile | -t] -a\n",Cmd);
+	fprintf (stderr,
+	    "       %s [-dfile | -pfile | -ffile | -t] {-a | -A}\n",
+	    Cmd);
 #endif
-	fprintf (stderr, "       %s [-wchars] -c\n");
+	fprintf (stderr, "       %s [-wchars] -c\n", Cmd);
+	fprintf (stderr, "       %s -v\n", Cmd);
 	exit (1);
 }
 
 static initckch()
 {
-	int c;
+	register int c;
 
 	Trynum = 0;
 #ifdef NO8BIT
@@ -143,6 +166,7 @@ char **argv;
 	char *cpd;
 	char num[4];
 	unsigned mask;
+	static char outbuf[BUFSIZ];
 
 	Cmd = *argv;
 
@@ -155,8 +179,15 @@ char **argv;
 	argc--;
 	while (argc && **argv == '-') {
 		switch ((*argv)[1]) {
+		case 'v':
+			printf ("%s\n", Version_ID);
+			exit (0);
 		case 't':
 			tflag++;
+			break;
+		case 'A':
+			incfileflag = 1;
+			aflag = 1;
 			break;
 		case 'a':
 			aflag++;
@@ -227,18 +258,42 @@ char **argv;
 				p = *argv;
 			}
 			while (Trynum <= mask && *p != '\0') {
-				if (*p != 'n') {
+				if (*p != 'n'  &&  *p != '\\') {
 					Checkch[((unsigned)(*p))&mask] = (char) 1;
 					Try[Trynum] = *p & mask;
 					++p;
 				}
 				else {
 					++p;
-					num[0] = *p; ++p;
-					num[1] = *p; ++p;
-					num[2] = *p; ++p;
-					Try[Trynum] = atoi(num) & mask;
-					Checkch[atoi(num)&mask] = (char) 1;
+					num[0] = '\0'; 
+					num[1] = '\0'; 
+					num[2] = '\0'; 
+					num[3] = '\0';
+					if (isdigit (p[0]))
+						num[0] = p[0];
+					if (isdigit (p[1]))
+						num[1] = p[1];
+					if (isdigit (p[2]))
+						num[2] = p[2];
+					if (p[-1] == 'n') {
+						p += strlen (num);
+						num[0] = atoi (num);
+					}
+					else {
+						p += strlen (num);
+						if (num[0])
+							num[0] -= '0';
+						if (num[1]) {
+							num[0] <<= 3;
+							num[0] += num[1] - '0';
+						}
+						if (num[2]) {
+							num[0] <<= 3;
+							num[0] += num[2] - '0';
+						}
+					}
+					Try[Trynum] = num[0] & mask;
+					Checkch[num[0] & mask] = 1;
 				}
 				++Trynum;
 			}
@@ -262,6 +317,7 @@ char **argv;
 		exit (0);
 	}
 
+	setbuf (stdout, outbuf);
 	if (lflag) {
 		infile = stdin;
 		checkfile ();
@@ -289,6 +345,8 @@ char *filename;
 {
 	int c;
 	char	bakfile[256];
+	struct stat statbuf;
+	char *cp;
 
 	currentfile = filename;
 
@@ -304,8 +362,10 @@ char *filename;
 		return;
 	}
 
+	fstat (fileno (infile), &statbuf);
 	strcpy(tempfile, TEMPNAME);
 	mktemp (tempfile);
+	chmod (tempfile, statbuf.st_mode);
 	if ((outfile = fopen (tempfile, "w")) == NULL) {
 		fprintf (stderr, "Can't create %s\r\n", tempfile);
 		sleep (2);
@@ -314,6 +374,9 @@ char *filename;
 
 	quit = 0;
 
+	/* See if the file is a .tex file.  If so, set the appropriate flag. */
+	if ((cp = rindex (filename, '.')) != NULL  &&  strcmp (cp, ".tex") == 0)
+		tflag = 1;
 	checkfile ();
 
 	fclose (infile);
@@ -328,7 +391,7 @@ char *filename;
 		return;
 	}
 
-	sprintf(bakfile, "%s.bak", filename);
+	sprintf(bakfile, "%s%s", filename, BAKEXT);
 	if(link(filename, bakfile) == 0)
 		unlink(filename);
 
@@ -338,6 +401,8 @@ char *filename;
 		sleep (2);
 		return;
 	}
+
+	chmod (filename, statbuf.st_mode);
 
 	while ((c = getc (infile)) != EOF)
 		putc (c, outfile);
@@ -352,12 +417,11 @@ char *filename;
 
 checkfile ()
 {
-	int c;
-	char *p;
-	int len;
+	register int c;
+	register char *p;
+	register int len;
 
 	secondbuf[0] = 0;
-	currentchar = secondbuf;
 
 	while (1) {
 		strcpy (firstbuf, secondbuf);
@@ -432,26 +496,42 @@ checkfile ()
 			    {
 				/* formatting escape sequences */
 				if (*currentchar == '\\') {
-				    if(currentchar[1] == 'f') {
-					/* font change: \fX */
-					copyout(&currentchar, 3);
-					continue;
-				    }
-				    else if(currentchar[1] == 's') {
-					/* size change */
-					if(currentchar[2] < 6 &&
-					   currentchar[2] != 0)
-						/* two digit size */
-						copyout(&currentchar, 4);
-					else
-						/* one digit size */
+				switch ( currentchar [1] ) {
+				case 'f':
+					if(currentchar[2] != '(') {
+						/* font change: \fX */
 						copyout(&currentchar, 3);
+					}
+					else {
+						/* font change: \f(XY */
+						copyout(&currentchar, 5);
+					}
 					continue;
-				    }
-				    else if(currentchar[1] == '(') {
+				case 's':
+					/* size change */
+					p = currentchar + 2;
+					if (*p == '+'  ||  *p == '-')
+						p++;
+					/* This looks wierd 'cause we assume
+					** *p is now a digit.
+					*/
+					if (isdigit (p[1]))
+						p++;
+					copyout (&currentchar,
+						    p - currentchar + 1);
+					continue;
+				case '(':
 					/* extended char set escape: \(XX */
 					copyout(&currentchar, 4);
 					continue;
+				case '*':
+					if ( currentchar[2] != '(' )
+						copyout(&currentchar, 3);
+					else
+						copyout(&currentchar, 5);
+					continue;
+				default:
+					break;
 				    }
 				}
 			    }
@@ -472,8 +552,7 @@ checkfile ()
 			*p = 0;
 			if (lflag) {
 				if (!good (token)  &&  !cflag)
-					if (lflag) printf ("%s\n", token);
-					else       printf ("%s\r\n", token);
+					printf ("%s\n", token);
 			} else {
 				if (!quit)
 				correct (token, &currentchar);
@@ -486,7 +565,7 @@ checkfile ()
 	}
 }
 
-#define MAXPOSSIBLE	99	/* Max no. of possibilities to generate */
+#define MAXPOSSIBLE	100	/* Max no. of possibilities to generate */
 
 char possibilities[MAXPOSSIBLE][BUFSIZ];
 int pcount;
@@ -496,16 +575,15 @@ correct (token, currentchar)
 char *token;
 char **currentchar;
 {
-	int c;
-	int i;
+	register int c;
+	register int i;
 	int col_ht;
 	int ncols;
-	char *p;
-	int len;
+	register char *p;
+	char *start_l2;
 	char *begintoken;
 
-	len = strlen (token);
-	begintoken = *currentchar - len;
+	begintoken = *currentchar - strlen (token);
 
 checkagain:
 	if (good (token))
@@ -521,15 +599,15 @@ checkagain:
 
 	/*
 	 * Make sure we have enough room on the screen to hold the
-	 * possibilities.  Reduce the list if necessary.  80 / (maxposslen + 8)
+	 * possibilities.  Reduce the list if necessary.  co / (maxposslen + 8)
 	 * is the maximum number of columns that will fit.
 	 */
 	col_ht = li - 6;		/* Height of columns of words */
-	ncols = 80 / (maxposslen + 8);
+	ncols = co / (maxposslen + 8);
 	if (pcount > ncols * col_ht)
 		pcount = ncols * col_ht;
 
-#if 0
+#ifdef EQUAL_COLUMNS
 	/*
 	 * Equalize the column sizes.  The last column will be short.
 	 */
@@ -542,19 +620,27 @@ checkagain:
 	}
 
 	move (li - 3, 0);
-	printf ("%s\r\n", firstbuf);
+	show_line (firstbuf, firstbuf, 0);
 
-	for (p = secondbuf; p != begintoken; p++)
-		putchar (*p);
-	inverse ();
-	for (i = strlen (token); i > 0; i--)
-		putchar (*p++);
-	normal ();
-	while (*p)
-		putchar (*p++);
-	printf ("\r\n");
+	start_l2 = secondbuf;
+	if (line_size (secondbuf, *currentchar) > co - 1) {
+		start_l2 = begintoken - (co / 2);
+		while (start_l2 < begintoken) {
+			i = line_size (start_l2, *currentchar) + 1;
+			if (i <= co)
+				break;
+			start_l2 += i - co;
+		}
+		if (start_l2 > begintoken)
+			start_l2 = begintoken;
+		if (start_l2 < secondbuf)
+			start_l2 = secondbuf;
+	}
+	show_line (start_l2, begintoken, strlen (token));
+
 
 	while (1) {
+		fflush (stdout);
 		switch (c = (getchar () & NOPARITY)) {
 #ifndef USG
 		case 'Z' & 037:
@@ -564,12 +650,15 @@ checkagain:
 #endif
 		case ' ':
 			erase ();
+			fflush (stdout);
 			return;
 		case 'x': case 'X':
 			printf ("Are you sure you want to throw away your changes? ");
+			fflush (stdout);
 			c = (getchar () & NOPARITY);
 			if (c == 'y' || c == 'Y') {
 				erase ();
+				fflush (stdout);
 				done ();
 			}
 			putchar (7);
@@ -577,10 +666,12 @@ checkagain:
 		case 'i': case 'I':
 			treeinsert (token, 1);
 			erase ();
+			fflush (stdout);
 			return;
 		case 'a': case 'A':
 			treeinsert (token, 0);
 			erase ();
+			fflush (stdout);
 			return;
 		case 'L' & 037:
 			goto checkagain;
@@ -595,9 +686,11 @@ checkagain:
 				if (getline (buf) == NULL) {
 					putchar (7);
 					erase ();
+					fflush (stdout);
 					goto checkagain;
 				}
 				printf ("\r\n");
+				fflush (stdout);
 				shellescape (buf);
 				erase ();
 				goto checkagain;
@@ -649,6 +742,7 @@ checkagain:
 					goto checkagain;
 				}
 				printf ("\r\n\r\n");
+				fflush (stdout);
 				lookharder (buf);
 				erase ();
 				goto checkagain;
@@ -656,6 +750,7 @@ checkagain:
 		case 'q': case 'Q':
 			quit = 1;
 			erase ();
+			fflush (stdout);
 			return;
 		default:
 			putchar (7);
@@ -664,37 +759,140 @@ checkagain:
 	}
 }
 
+show_line (line, invstart, invlen)
+register char *line;
+register char *invstart;
+register int invlen;
+{
+	register int width;
+
+	width = 0;
+	while (line != invstart  &&  width < co - 1)
+		width += show_char (*line++, width);
+	if (invlen) {
+		inverse ();
+		while (--invlen >= 0  &&  width < co - 1)
+			width += show_char (*line++, width);
+		normal ();
+	}
+	while (*line  &&  width < co - 1)
+		width += show_char (*line++, width);
+	printf ("\r\n");
+}
+
+show_char (ch, linew)
+register int ch;
+int linew;
+{
+	if (ch == '\t') {
+		putchar ('\t');
+		return 8 - (linew & 0x07);
+	}
+	else if (ch < ' ') {
+		putchar ('^');
+		putchar (ch + 'A' - '\001');
+		return 2;
+	}
+	putchar (ch);
+	return 1;
+}
+
+line_size (buf, bufend)
+register char *buf;
+register char *bufend;
+{
+	register int width;
+
+	for (width = 0;  buf < bufend  &&  *buf;  buf++) {
+		if (*buf == '\t')
+			width = (width + 8) & ~0x07;
+		else if (*buf < ' ')
+			width += 2;
+		else
+			width++;
+	}
+	return width;
+}
+
 inserttoken (buf, start, token, currentchar)
-char *buf, *start, *token;
+char *buf, *start; 
+register char *token;
 char **currentchar;
 {
 	char copy[BUFSIZ];
-	char *p, *q;
+	register char *p, *q;
 
 	strcpy (copy, buf);
 
 	for (p = buf, q = copy; p != start; p++, q++)
 		*p = *q;
-	while (*token)
-		*p++ = *token++;
 	q += *currentchar - start;
+	while (*token  &&  iswordch (*token))
+		*p++ = *token++;
 	*currentchar = p;
+	if (*token) {
+
+		/*
+		** The token changed to two words.  Split it up and save the
+		** second one for later.
+		*/
+
+		*p++ = *token;
+		*token++ = '\0';
+		while (*token)
+			*p++ = *token++;
+	}
 	while (*p++ = *q++)
 		;
 }
 
+int casecmp (a, b)
+char *a;
+char *b;
+{
+	register char *ap;
+	register char *bp;
+
+	for (ap = a, bp = b;  *ap;  ap++, bp++) {
+		if (mylower (*ap)) {
+			if (mylower (*bp)) {
+				if (*ap != *bp)
+					return *ap - *bp;
+			}
+			else {
+				if (toupper (*ap) != *bp)
+					return toupper (*ap) - *bp;
+			}
+		}
+		else {
+			if (myupper (*bp)) {
+				if (*ap != *bp)
+					return *ap - *bp;
+			}
+			else {
+				if (tolower (*ap) != *bp)
+					return tolower (*ap) - *bp;
+			}
+		}
+	}
+	if (*bp != '\0')
+		return -*bp;
+	return strcmp (a, b);
+}
 
 makepossibilities (word)
-char word[];
+register char *word;
 {
-	int i;
-	extern int strcmp ();
+	register int i;
 
 	for (i = 0; i < MAXPOSSIBLE; i++)
 		possibilities[i][0] = 0;
 	pcount = 0;
 	maxposslen = 0;
 
+#ifdef CAPITALIZE
+	wrongcapital (word);
+#endif
 	if (pcount < MAXPOSSIBLE) wrongletter (word);
 	if (pcount < MAXPOSSIBLE) extraletter (word);
 	if (pcount < MAXPOSSIBLE) missingletter (word);
@@ -702,15 +900,13 @@ char word[];
 
 	if (sortit  &&  pcount)
 		qsort ((char *) possibilities, pcount,
-		    sizeof (possibilities[0]), strcmp);
+		    sizeof (possibilities[0]), casecmp);
 }
 
-char *cap();
-
 insert (word)
-char *word;
+register char *word;
 {
-	int i;
+	register int i;
 
 	for (i = 0; i < pcount; i++)
 		if (strcmp (possibilities[i], word) == 0)
@@ -726,20 +922,41 @@ char *word;
 		return (0);
 }
 
-wrongletter (word)
-char word[];
+#ifdef CAPITALIZE
+wrongcapital (word)
+register char *word;
 {
-	int i, j, c, n;
+	char newword[BUFSIZ];
+
+	/*
+	** All-uppercase is always legal.  If the word matches, "ins_cap"
+	** will recapitalize it correctly.
+	*/
+	strcpy (newword, word);
+	upcase (newword);
+	if (good (newword))
+		return ins_cap (newword, word);
+	return 0;
+}
+#endif
+
+wrongletter (word)
+register char *word;
+{
+	register int i, j, c, n;
 	char newword[BUFSIZ];
 
 	n = strlen (word);
 	strcpy (newword, word);
+#ifdef CAPITALIZE
+	upcase (newword);
+#endif
 
 	for (i = 0; i < n; i++) {
 		for (j=0; j < Trynum; ++j) {
 			newword[i] = Try[j];
 			if (good (newword)) {
-				if (insert (cap (newword, word)) < 0)
+				if (ins_cap (newword, word) < 0)
 					return;
 			}
 		}
@@ -748,9 +965,10 @@ char word[];
 }
 
 extraletter (word)
-char word[];
+register char *word;
 {
-	char newword[BUFSIZ], *p, *s, *t;
+	char newword[BUFSIZ];
+	register char *p, *s, *t;
 
 	if (strlen (word) < 3)
 		return;
@@ -760,18 +978,26 @@ char word[];
 			if (s != p)
 				*t++ = *s;
 		*t = 0;
-		if (good (newword)) {
-			if (insert (cap (newword, word)) < 0)
+#ifdef CAPITALIZE
+		if (good (upcase (newword))) {
+			if (ins_cap (newword, word) < 0)
 				return;
 		}
+#else
+		if (good (newword)) {
+			if (ins_cap (newword, word) < 0)
+				return;
+		}
+#endif
 	}
 }
 
 missingletter (word)
 char word[];
 {
-	char newword[BUFSIZ], *p, *r, *s, *t;
-	int i;
+	char newword[BUFSIZ]; 
+	register char *p, *r, *s, *t;
+	register int i;
 
 	for (p = word; p == word || p[-1]; p++) {
 		for (s = newword, t = word; t != p; s++, t++)
@@ -782,46 +1008,133 @@ char word[];
 		*s = 0;
 		for (i=0; i < Trynum; ++i) {
 			*r = Try[i];
-			if (good (newword)) {
-				if (insert (cap (newword, word)) < 0)
+#ifdef CAPITALIZE
+			if (good (upcase (newword))) {
+				if (ins_cap (newword, word) < 0)
 					return;
 			}
+#else
+			if (good (newword)) {
+				if (ins_cap (newword, word) < 0)
+					return;
+			}
+#endif
 		}
 	}
 }
 
 transposedletter (word)
-char word[];
+register char *word;
 {
 	char newword[BUFSIZ];
-	int t;
-	char *p;
+	register int t;
+	register char *p;
 
 	strcpy (newword, word);
 	for (p = newword; p[1]; p++) {
 		t = p[0];
 		p[0] = p[1];
 		p[1] = t;
-		if (good (newword)) {
-			if (insert (cap (newword, word)) < 0)
+#ifdef CAPITALIZE
+		if (good (upcase (newword))) {
+			if (ins_cap (newword, word) < 0)
 				return;
 		}
+#else
+		if (good (newword)) {
+			if (ins_cap (newword, word) < 0)
+				return;
+		}
+#endif
 		t = p[0];
 		p[0] = p[1];
 		p[1] = t;
 	}
 }
 
-char *
-cap (word, pattern)
-char word[], pattern[];
+/* Insert one or more correctly capitalized versions of pattern */
+ins_cap (word, pattern)
+register char *word, *pattern;
 {
 	static char newword[BUFSIZ];
-	char *p, *q;
+	register char *p, *q;
+	char *psave;
+	register int wcount;
 
 	if (*word == 0)
 		return;
 
+	strcpy (newword, word);
+#ifdef CAPITALIZE
+	if (lastdent->allcaps)
+		return insert (upcase (newword)); /* Uppercase required */
+	for (p = pattern;  *p;  p++)
+		if (mylower (*p))
+			break;
+	if (*p == '\0')
+		return insert (upcase (newword)); /* Pattern was all caps */
+	for (p = pattern;  *p;  p++)
+		if (myupper (*p))
+			break;
+	if (*p == '\0') {			/* Pattern was all lower */
+		if (!lastdent->followcase  &&  !lastdent->capitalize)
+			return insert (lowcase (newword));
+		/*
+		** If there's a followcase version that's all-lower,
+		** insert only that version.
+		*/
+		if (lastdent->followcase) {
+			p = lastdent->word;
+			p += strlen (p) + 1;
+			wcount = (*p++ & 0xFF);
+			while (--wcount >= 0) {
+				for (psave = ++p;
+				    *p  &&  !myupper (*p);
+				    p++)
+					;
+				if (*p == '\0')	/* Was it all lowercase? */
+					return insert (psave);	/* Yup, quit */
+				while (*p++)
+					;	/* Skip to next case sample */
+			}
+		}
+	}
+	/*
+	** The sample wasn't all-upper, and either it wasn't all-lower or
+	** all-lower is illegal.  Insert all legal capitalizations.  In
+	** some cases, this may include all-lowercase.
+	*/
+	if (lastdent->capitalize) {
+		lowcase (newword);
+		if (mylower (newword[0]))
+			newword[0] = toupper (newword[0]);
+		insert (newword);
+	}
+	if (lastdent->followcase) {
+		p = lastdent->word;
+		p += strlen (p) + 1;
+		wcount = (*p++ & 0xFF);
+		while (--wcount >= 0) {
+			/* Insert every variation;  it's easier */
+			if (insert (++p) < 0)
+				return -1;
+			while (*p++)
+				;		/* Skip to end of sample */
+		}
+		return 0;
+	}
+	if (lastdent->capitalize)
+		return 0;
+	/*
+	** We get here only if none of the special capitalization flags are
+	** set.  If first letter of the pattern is capitalized, capitalize
+	** the first letter of the result.  Otherwise produce all lowercase.
+	*/
+	lowcase (newword);
+	if (myupper (pattern[0])  &&  mylower (newword[0]))
+		newword[0] = toupper (newword[0]);
+	return insert (newword);
+#else
 	if (myupper (pattern[0])) {
 		if (myupper (pattern[1])) {
 			for (p = word, q = newword; *p; p++, q++) {
@@ -853,22 +1166,25 @@ char word[], pattern[];
 				*q = *p;
 		*q = 0;
 	}
-	return (newword);
+	return insert (newword);
+#endif
 }
 
 char *
 getline (s)
-char *s;
+register char *s;
 {
-	char *p;
-	int c;
+	register char *p;
+	register int c;
 
 	p = s;
 
 	while (1) {
+		fflush (stdout);
 		c = (getchar () & NOPARITY);
 		if (c == '\\') {
 			putchar ('\\');
+			fflush (stdout);
 			c = (getchar () & NOPARITY);
 			backup ();
 			putchar (c);
@@ -902,7 +1218,7 @@ char *s;
 askmode ()
 {
 	char buf[BUFSIZ];
-	int i;
+	register int i;
 
 	if (fflag) {
 		if (freopen (askfilename, "w", stdout) == NULL) {
@@ -914,7 +1230,7 @@ askmode ()
 	setbuf (stdin, NULL);
 	setbuf (stdout, NULL);
 
-	while (gets (buf) != NULL) {
+	while (xgets (buf) != NULL) {
 		/* *line is like `i', @line is like `a' */
 		if (buf[0] == '*' || buf[0] == '@') {
 			treeinsert(buf + 1, buf[0] == '*');
@@ -952,9 +1268,10 @@ askmode ()
 	}
 }
 
-
+/* Copy/ignore "cnt" number of characters pointed to by *cc. */
 copyout(cc, cnt)
-char	**cc;
+register char	**cc;
+register cnt;
 {
 	while (--cnt >= 0) {
 		if (*(*cc) == 0)
@@ -963,15 +1280,14 @@ char	**cc;
 			putc (*(*cc), outfile);
 		(*cc)++;
 	}
-
 }
 
 lookharder(string)
 char *string;
 {
-	char cmd[150];
-	char *g, *s, grepstr[100];
-	int wild = 0;
+	char cmd[150], grepstr[100];
+	register char *g, *s;
+	register int wild = 0;
 
 	g = grepstr;
 	for (s = string; *s != '\0'; s++)

@@ -32,8 +32,10 @@
 #
 LIBDIR=!!LIBDIR!!
 COMBINE=${LIBDIR}/icombine
-EXPAND1=${LIBDIR}/expand1.sed
-EXPAND2=${LIBDIR}/expand2.sed
+EXPAND1=${LIBDIR}/isexp1.sed
+EXPAND2=${LIBDIR}/isexp2.sed
+EXPAND3=${LIBDIR}/isexp3.sed
+EXPAND4=${LIBDIR}/isexp4.sed
 TDIR=${TMPDIR:-/usr/tmp}
 TMP=${TDIR}/munch$$
 
@@ -68,17 +70,16 @@ do
 done
 trap "/bin/rm -f ${TMP}*; exit 1" 1 2 15
 #
-# Collect all the input (cat), convert to uppercase (tr), expand all
-# the suffix options (two sed's), and preserve (sorted) for later
-# joining in ${TMP}a.
+# Collect all the input and expand all the suffix options (four sed's),
+# and preserve (sorted) for later joining in ${TMP}a.
 #
 if [ $# -eq 0 ]
 then
-    tr '[a-z]' '[A-Z]' \
-      | sed -f $EXPAND1 | sed -f $EXPAND2 | sort -u > ${TMP}a
+    sed -f $EXPAND1 | sed -f $EXPAND2 \
+      | sed -f $EXPAND3 | sed -f $EXPAND4 | sort -u > ${TMP}a
 else
-    cat "$@" | tr '[a-z]' '[A-Z]' \
-      | sed -f $EXPAND1 | sed -f $EXPAND2 | sort -u > ${TMP}a
+    sed -f $EXPAND1 "$@" | sed -f $EXPAND2 \
+      | sed -f $EXPAND3 | sed -f $EXPAND4 | sort -u > ${TMP}a
 fi
 #
 # Unless an explicitly null dictionary was specified, remove all
@@ -97,18 +98,20 @@ fi
 # only interested in words that have at least one suffix (egrep /);  the
 # next step will pick up the rest.  Some of the roots are illegal.  We
 # use join to restrict the output to those root words that are found
-# in the original dictionary.
+# in the original dictionary.  In cheap mode, we re-sort this for
+# icombine's benefit, and then use icombine to scrunch them together.
 #
 # Note:  one disadvantage of this pipeline is that for a large file,
 # the join and icombine may be sitting around for a long time while ispell
-# and sort run.  You can get rid of this by splitting the pipe, at
+# and sorts run.  You can get rid of this by splitting the pipe, at
 # the expense of more temp file space.
 #
 if [ $cheap = yes ]
 then
     ispell $wchars -c -d /dev/null -p /dev/null < ${TMP}b \
       | egrep / | sort -u -t/ +0 -1 +1 \
-      | join -t/ - ${TMP}a | $COMBINE > ${TMP}c
+      | join -t/ - ${TMP}a \
+      | sort -u -t/ +0f -1 +0 -1 +1 | $COMBINE > ${TMP}c
 else
     ispell $wchars -c -d /dev/null -p /dev/null < ${TMP}b \
       | egrep / | sort -u -t/ +0 -1 +1 \
@@ -134,6 +137,7 @@ then
       | sed -n -e '/\/N/s/N$/X/p' -e '/\/G/s/G$/J/p' -e '/\/R/s/R$/Z/p' \
       | sort -u -t/ +0 -1 +1 \
       | join -t/ - ${TMP}a \
+      | sort -u -t/ +0f -1 +0 -1 +1 \
       | $COMBINE > ${TMP}d
 else
     egrep '^[^/]*/S$' ${TMP}c | sed 's@/S$@@' \
@@ -145,7 +149,7 @@ fi
 /bin/rm -f ${TMP}a
 #
 # Now we have to eliminate the stuff covered by ${TMP}d from ${TMP}c.
-# First, we re-expand the suffixes we just made (sed -f pair), and let
+# First, we re-expand the suffixes we just made (four sed's), and let
 # ispell re-create the /S version (ispell -c).  We select the /S versions
 # only (egrep), sort them (sort) for comm, and use comm to delete these
 # from ${TMP}c.  The output of comm (i.e., the trimmed version of
@@ -153,17 +157,19 @@ fi
 # and reduced in size (icombine) to produce a final list of all words
 # that have at least one suffix.
 #
-sed -f $EXPAND1 < ${TMP}d | sed -f $EXPAND2 \
+sed -f $EXPAND1 ${TMP}d | sed -f $EXPAND2 | sed -f $EXPAND3 | sed -f $EXPAND4 \
   | ispell $wchars -c -d /dev/null -p /dev/null \
   | egrep '\/S$' | sort -u -t/ +0 -1 +1 | comm -13 - ${TMP}c \
-  | sort -u -t/ +0 -1 +1 - ${TMP}d \
+  | sort -u -t/ +0f -1 +0 -1 +1 - ${TMP}d \
   | $COMBINE > ${TMP}e
 /bin/rm -f ${TMP}[cd]
 #
 # Now a slick trick.  Use ispell to select those (root) words from the original
 # list (${TMP}b) that are not covered by the suffix list (${TMP}e).  Then we
-# merge these with the suffix list and sort it to produce the final output.
+# merge these with the suffix list, sort it, and use icombine to strip out
+# unnecessary capitalizations and produce the final output.
 #
 ispell $wchars -d /dev/null -p ${TMP}e -l < ${TMP}b \
-  | sort -u -t/ +0 -1 +1 - ${TMP}e
+  | sort -t/ +0f -1 +0 -1 +1 - ${TMP}e \
+  | $COMBINE
 /bin/rm -f ${TMP}*
