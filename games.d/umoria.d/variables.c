@@ -3,7 +3,7 @@
 
 int character_generated = 0;    /* don't save score until char gen finished */
 int highscore_fd;	        /* File descriptor to high score file */
-int player_max_exp;	        /* Max exp possible    */
+long player_max_exp;	        /* Max exp possible    */
 char norm_state[STATE_SIZE];	/* normal seed */
 char randes_state[STATE_SIZE];	/* For encoding colors */
 int randes_seed;                /* for restarting randes_state */
@@ -159,7 +159,7 @@ btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL] = {
 };
 
 /* Base experience levels, may be adjusted up for race and/or class*/
-int player_exp[MAX_PLAYER_LEVEL] = {
+long player_exp[MAX_PLAYER_LEVEL] = {
      10,     25,     45,     70,    100,    140,    200,    280,    380,   500,
     650,    850,   1100,   1400,   1800,   2300,   2900,   3600,   4400,  5400,
    6800,   8400,  10200,  12500,  17500,  25000,  35000,  50000,  75000,100000,
