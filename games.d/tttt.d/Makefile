@@ -27,4 +27,7 @@ tttt.man: tttt.6
 	nroff -man tttt.6 > tttt.man
 
 clean:
-	rm -f tttt *.o tttt.man
+	rm -f tttt *.o tttt.man tttt.shar
+
+shar:
+	shar README Makefile tttt.6 tttt.c > tttt.shar

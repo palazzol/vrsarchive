@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <curses.h>
+#include <signal.h>
 
 #define EMPTY	0
 #define X	1
@@ -22,6 +23,10 @@
 #define TIE	-1		/* for ending when the board is full */
 #define QUIT	-2
 
+#define UP	1		/* definitions for board scrolling routine */
+#define DOWN	2
+#define LEFT	3
+#define RIGHT	4
 #define WIN	100		/* for position rank scoring */
 
 #ifndef TRUE
@@ -32,13 +37,15 @@
 char board [4][4];		/* this is the playing board */
 int pieces;
 
-void	initboard(),
-	printboard();
+void	initboard(),		/* initialize the board */
+	printboard(),		/* print the board */
+	shift();		/* board shifter */
 
-int	check_win(),
-	getrank(),
+int	check_win(),		/* check for a win */
+	getrank(),		/* move ranking */
 	x_move(),		/* "our" move */
-	o_move();		/* the computer player's move */
+	o_move(),		/* the computer player's move */
+	quit();			/* control-c signal exit */
 
 main()
 {
@@ -51,6 +58,8 @@ main()
 	savetty();
 	cbreak();
 	noecho();
+
+	signal(SIGINT,quit);
 
 	initboard();
 
@@ -168,6 +177,26 @@ GetX:	row = col = -1;
 			case 'Q' :
 				return(QUIT);
 				break;
+			case 'j' :
+			case 'J' :
+				shift(DOWN);
+				printboard();
+				goto GetX;
+			case 'k' :
+			case 'K' :
+				shift(UP);
+				printboard();
+				goto GetX;
+			case 'l' :
+			case 'L' :
+				shift(RIGHT);
+				printboard();
+				goto GetX;
+			case 'h' :
+			case 'H' :
+				shift(LEFT);
+				printboard();
+				goto GetX;
 			case 0x12 :
 			case 0x0c :
 				clear();
@@ -347,3 +376,52 @@ int type, row, col;
 	return (0);
 }
 
+/*
+	this is the board shifter.  it's so you can move the
+	board around to look at wraparound edges better...
+*/
+void shift(type)
+int type;
+{
+	int i, j, tmp;
+
+	for (i=0; i<4; i++) {
+		switch (type) {
+			case UP:
+				tmp = board[0][i];
+				for (j=0; j<3; j++)
+					board[j][i] = board[j+1][i];
+				board[3][i] = tmp;
+				break;
+			case DOWN:
+				tmp = board[3][i];
+				for (j=3; j>0; j--)
+					board[j][i] = board[j-1][i];
+				board[0][i] = tmp;
+				break;
+			case LEFT:
+				tmp = board[i][0];
+				for (j=0; j<3; j++)
+					board[i][j] = board[i][j+1];
+				board[i][3] = tmp;
+				break;
+			case RIGHT:
+				tmp = board[i][3];
+				for (j=3; j>0; j--)
+					board[i][j] = board[i][j-1];
+				board[i][0] = tmp;
+				break;
+		}
+	}
+}
+
+int quit()
+{
+	move(21,0);
+	refresh();
+	sleep(2);
+	resetty();
+	endwin();
+
+	exit(0);
+}
