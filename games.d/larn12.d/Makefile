@@ -1,14 +1,11 @@
+# Recompile config.c when ../../CONFIG changes.
+ALL	= larn12.0
+MODEL	= -M2l -K -F 2000
+#
 # Configuration options
 #  LARNHOME is the directory where the larn data files will be installed.
-#  BINDIR is the directory where the larn binary will be installed.
-# Recompile config.c when DESTDIR changes.
-DESTDIR	= //gandalf
-BINDIR	= $(DESTDIR)/usr/games
-LIBDIR	= $(BINDIR)/lib
-LARNHOME= $(LIBDIR)/larn12
 #
-# -ltermlib may need to be changed to -ltermcap on some systems
-TERMLIB	= -ltermlib -lx
+LARNHOME= $(GAMLIB)/larn12
 #
 # Available compile time options:
 #   WIZID=xxx  - this is the userid (or playerid) of the wizard.  Default is
@@ -19,10 +16,6 @@ TERMLIB	= -ltermlib -lx
 #		commands.  For root to become wizard, use WIZID= -1.
 #   EXTRA      - incorporates code to gather additional performance statistics
 #   TIMECHECK  - incorporates code to disable play during working hours (8-5)
-#   SYSV       - use system III/V (instead of V7) type ioctl calls
-#   BSD        - use BSD specific features (mostly timer and signal stuff)
-#   BSD4.1     - use BSD4.1 to avoid some 4.2 dependencies (must be used with
-#		BSD above; do not mix with SYSV)
 #   HIDEBYLINK - if defined, the program attempts to hide from ps
 #   DOCHECKPOINTS - if not defined, checkpoint files are periodically written
 #               by the larn process (no forking) if enabled in the .larnopts
@@ -56,13 +49,10 @@ TERMLIB	= -ltermlib -lx
 #		systems if the nap stuff does not work correctly (possible
 #		hang).  The nap() routine is primarilly used to delay for
 #		effect when casting missile type spells.
-#	KERNELHZ=# - This causes napms() to compute the delay time based on
-#		a clock rate of HERNELHZ ticks per second.  The default rate
-#		is 60 ticks per second.
 #
-# OPTIONS = -DEXTRA -DBSD -DVER=12 -DSUBVER=0 -DTIMECHECK -DWIZID=1000 -DVT100 -DHIDEBYLINK
-OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=-1 -DKERNELHZ=50 -DSAVEINHOME
-CFLAGS= -M2l -K -F 2000 $(OPTIONS) -DLARNHOME=\"$(LARNHOME)/\"
+OPTIONS	= -DEXTRA -DVER=12 -DSUBVER=0 -DWIZID=-1 -DSAVEINHOME \
+	  -DLARNHOME=\"$(LARNHOME)/\"
+include ../../CONFIG
 # End of configurable make options
 ########################################################################
 #
@@ -73,23 +63,25 @@ OBJS= main.o object.o create.o tok.o display.o global.o data.o io.o monster.o\
 DOTFILES= .larn.help .larnmaze .larnopts .lfortune
 
 larn12.0: $(OBJS) 
-	$(CC) $(CFLAGS) $(OBJS) -o larn12.0 $(TERMLIB)
-	size larn12.0
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
+	size $@
 
 $(OBJS): header.h
 
-$(BINDDIR) $(LIBDIR) $(LARNHOME):
+$(LARNHOME):
 	mkdir $@
 	chmod 755 $@
+	chown $(SAFEUID) $@
 
-install: larn12.0 $(BINDDIR) $(LIBDIR) $(LARNHOME)
-	chmod 755 $(LARNHOME)
-	chown cron $(LARNHOME)
-	cp larn12.0 $(BINDIR)/larn
-	chown cron $(BINDIR)/larn
-	chmod 4711 $(BINDIR)/larn
+install: $(ALL) $(GAMDIR) $(GAMLIB) $(LARNHOME)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chown $(SAFEUID) $(ALL)
+	cd $(GAMDIR); chmod 4711 $(ALL)
 	cp $(DOTFILES) $(LARNHOME)
 	cd $(LARNHOME); chmod 644 $(DOTFILES)
+	cd $(LARNHOME); chown $(SAFEUID) $(DOTFILES)
 
 clean:
-	rm -f *.o larn12.0
+	rm -f $(OBJS) $(ALL)
+
+config.o: config.c ../../CONFIG
