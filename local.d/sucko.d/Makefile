@@ -1,14 +1,17 @@
 OPTIONS	= -g
-ALL 	= sucklst sucko active
+ALL 	= sucklst$(EXE) sucko active$(EXE)
 include $(HOME)/CONFIG
 
 all:	$(ALL)
 
-active: active.o nntp.o
+active$(EXE): active.o nntp.o
 	$(CC) $(CFLAGS) -o $@ active.o nntp.o
 
-sucklst: main.o nntp.o
+sucklst$(EXE): main.o nntp.o
 	$(CC) $(CFLAGS) -o $@ main.o nntp.o
+
+sucko:	sucko.sh
+	cp $? $@
 
 clean:
 	rm -f $(ALL) *.o
