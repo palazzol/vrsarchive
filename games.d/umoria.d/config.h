@@ -8,7 +8,7 @@
 #define UID 0
 
 #ifndef LIBDIR
-#define LIBDIR		"/usr/games/lib/moriadir
+#define LIBDIR		/usr/games/lib/moriadir
 #endif
 #ifdef __STDC__
 #define STR(x)	#x
