@@ -21,7 +21,7 @@ char  **argv;
 	sift (stdin);
     else
 	while (--argc) {
-	    if ((fp = fopen (*++argv)) == NULL) {
+	    if ((fp = fopen (*++argv, "r")) == NULL) {
 		perror (*argv);
 		oops++;
 		continue;
