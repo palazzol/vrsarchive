@@ -84,7 +84,7 @@ MAN8	= $(USRMAN)/man8
 # XENIX	- XENIX 286, System 3/5, Large Model, Big Stack.
 #
 CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
-CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" $(OPTIONS)
+CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
 CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
 LBSD	= -lcurses -ltermcap -lm
 LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW
