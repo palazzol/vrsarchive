@@ -15,8 +15,8 @@
 
 #undef max
 #undef min
-#define max(a,b) (a > b ? a : b)
-#define min(a,b) (a < b ? a : b)
+#define max(a,b) ((unsigned)((unsigned)a > (unsigned)b ? a : b))
+#define min(a,b) ((unsigned)((unsigned)a < (unsigned)b ? a : b))
 
 char
     *inname;			/* Input file name			*/
@@ -327,7 +327,7 @@ dumpsymbols( t )
 int16
     t;
 {
-    int
+    address
 	i;
     char
 	*print_type();
@@ -427,7 +427,7 @@ int
 
 dumpglobs()
 {
-    int
+    address
 	i;
 
     fputs( "Globals:\n", stdout );
@@ -443,9 +443,9 @@ dumpglobs()
 dumpinstr()
 {
     long
-	i,		/* Loop counter				*/
 	lastrout;	/* Last routine we've seen		*/
     address
+	i,		/* Loop counter				*/
 	t;
     char
 	printone();	/* Routine to print an instruction	*/
@@ -560,7 +560,7 @@ address
 
 dumpstrings()
 {
-    int16
+    address
 	i;
 
     for( i = bot; i <= top; i++ ) {
@@ -574,7 +574,7 @@ dumpstrings()
 
 dumpnouns()
 {
-    int16
+    address
 	i;
 
     fputs( "Nouns:\n", stdout );
@@ -606,8 +606,8 @@ int16
 
 dumpobjs()
 {
-    int16
-	i, j, t;
+    address i;
+    int16 j, t;
 
     fputs( "Objects:\n", stdout );
     for( i = bot; i <= top; i++ ) {
@@ -651,9 +651,7 @@ dumpobjs()
 dumprouts()
 {
     address
-	j;
-    int16
-	i;
+	i, j;
     char
 	t;
 
@@ -679,8 +677,8 @@ dumprouts()
 
 dumpverbs()
 {
-  int16
-	i, v;
+  address i;
+  int16 v;
 
   fputs( "Verbs:\n", stdout );
     for( i = bot; i <= top; i++ ) {
