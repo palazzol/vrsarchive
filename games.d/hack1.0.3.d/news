@@ -1,0 +1,7 @@
+
+  This is hack version 1.0.3.  So far I have configured it for XENIX 3.4,
+worked around the XENIX compiler's problems with bitfields and assignment
+operators which do arithmetic (+=, ++, -=, --, etc), and built it Large
+Model.  Let me know if you have problems with it.
+
+	Vince
