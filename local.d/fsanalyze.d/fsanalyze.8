@@ -1,0 +1,103 @@
+.TH FSANALYZE 8
+.ad b
+.SH NAME
+fsanalyze \- a file system analyzer tool
+.SH SYNOPSIS
+.B fsanalyze
+[
+.B \-deio
+]
+.B special
+[
+.B files
+]
+.SH DESCRIPTION
+.I Fsanalyze
+is a simple tool that estimates file or file system fragmentation.  It accomplishes
+this by scanning the data blocks of each inode looking for block numbers that
+are out of sequence.  In effect, it is counting the number of disk seeks
+required to read a file sequentially.  Fragmentation is then computed as the
+ratio of actual "seeks" to the potential number "seeks" which would be
+required if the file were completely fragmented.
+.LP
+If the optional \fBfiles\fR argument is omitted,
+.I fsanalyze
+will analyze the entire file system specified by the \fBspecial\fR argument.
+\fBSpecial\fR must be a block-oriented file system device.
+.I Fsanalyze
+reports various statistics regarding file system usage and data-block
+indirection, plus a list of the 10 most fragmented inodes in the file system.
+The 10 most fragmented files are listed in decreasing order of fragmentation
+based on the absolute number of fragments.  For example a 100-block file
+that contains 40 individual fragments is 39.39% fragmented (39 seeks / 99
+potential seeks), but is listed before a 2-block file that contains 2
+fragments (100% fragmented).
+.LP
+If the \fBfiles\fR argument is present,
+.I fsanalyze
+will report the fragmentation of the designated files only.
+.LP
+Before performing any analysis,
+.I fsanalyze
+checks the file system integrity by invoking
+.I fsstat (1M).
+If the file system needs to be checked,
+.I fsanalyze
+terminates with a message to that effect.  If a non-root file system is
+mounted, a warning message is displayed, but analysis continues.  When
+used on a mounted file system, it is recommended that a
+.I sync (1)
+be performed immediately prior to running
+.I fsanalyze .
+If
+.I sync (1)
+is not performed, the file system will not be damaged, but erroneous
+statistics may be reported.
+.SH OPTIONS
+.IP \fB\-d\fR
+display inode numbers as they are examined.  This flag makes it easy to
+chart the progress of fsanalyze through the file system.  Used mainly for
+debugging.
+.IP \fB\-e\fR
+report file size inconsistencies - the inode numbers are reported for files
+where the file size and number of data blocks are inconsistent.  This
+option provides the same information as
+.I fsck (1)
+phase 1.
+.IP \fB\-i\fR
+report double and triple indirection - the inode numbers are reported for
+files that contain double and/or triple data-block indirection.
+.IP \fB\-o\fR
+overrides file system integrity checks.  The file system will be analyzed
+even if
+.I fsstat (1M)
+reports that it is damaged.  Note that
+.I fsanalyze
+may give erroneous results if used on a damaged file system, but the file
+system itself will not be affected.
+.SH EXAMPLES
+fsanalyze /dev/dsk/0s2    # analyze file system
+.br
+fsanalyze /dev/dsk/0s2 *  # analyze files in current dir
+.SH FILES
+/usr/include/sys/filesys.h	super block structure
+.br
+/usr/include/sys/ino.h		disk inode structure
+.br
+/usr/include/sys/param.h	system parameters
+.br
+/usr/include/sys/types.h	system type definitions
+.SH BUGS
+.I Fsanalyze
+is supported by System V Release 2.  It has not yet been ported to any
+other version of Unix.
+.SH "SEE ALSO"
+fsstat(1M), fsck(1M), fsdb(1M)
+.SH AUTHOR
+Michael J. Young
+.br
+{decvax|harvard|linus|mit-eddie}!necntc!necis!mrst!sdti!mjy
+.br
+Internet : mjy%sdti.uucp@harvard.harvard.edu
+.SH VERSION
+v2.04 \- 7 January 1988

@@ -1,0 +1,162 @@
+FSANALYZE - System V File System Analyzer tool - v2.04, 7 Januaray 1988
+
+Author   : Michael J. Young
+USmail   : Software Development Technologies, Inc.
+           375 Dutton Rd
+           Sudbury MA  01776
+UUCP     : {decvax|harvard|linus|mit-eddie}!necntc!necis!mrst!sdti!mjy
+Internet : mjy%sdti.uucp@harvard.harvard.edu
+
+   =========================================================================
+   Note : This program has been placed in the public domain to permit
+   unrestricted distribution and use.  I have placed no copyright on it, but
+   I request that you keep me informed about any enhancements and bug fixes
+   you make so I can keep an up-to-date copy for further distribution.
+   =========================================================================
+
+   Fsanalyze is a simple tool that estimates file system fragmentation.  It
+   accomplishes this by scanning the data blocks for each i-node in the 
+   file system, looking for block numbers that are out of sequence.  In
+   effect, it is counting the number of disk seeks required to read the
+   entire file in sequence.  Fragmentation is then computed as the ratio
+   of actual "seeks" to the potential number of "seeks" if the file were
+   completely fragmented.
+
+   Fsanalyze also provides statistics regarding the number (and identity) of
+   files that are very large, and excessively large directories.
+   
+   Excessively large directories are directories that are over 5120 bytes
+   long (320 entries).  Directories larger than this require data block
+   indirection, making file searches very inefficient.
+
+   After the general file system statistics are displayed, fsanalyze lists
+   the 10 most fragmented i-nodes in the file system.  
+   The 10 most fragmented files are listed in decreasing order of 
+   fragmentation based on the absolute number of fragments.  For example,
+   a 100-block file that contains 40 individual fragments is 39.39%
+   fragmented (39 seeks / 99 potential seeks), but is listed before
+   a 2-block file that contains 2 fragments (100% fragmented).  Thus, larger
+   fragmented files (which have a greater effect on file system performance)
+   are listed before small files.
+
+Revision History:
+
+   Version 2.0 is a major rewrite of fsanalyze that adds the following new
+   features:
+       - The ability to analyze individual files
+       - Display of the 10 most fragmented files in a file system
+       - Enhanced error checking on the file system argument
+
+   Version 2.01 contains a minor modification in which fsanalyze executes
+   /etc/fsstat to determine the health of the file system before analyzing
+   it.
+
+   Version 2.02 contains a minor modification to print out a warning message
+   if the file system being analyzed is currently mounted.
+
+   Version 2.03 contains a fix for a minor bug in which the size of the
+   volume data block size would be printed out incorrectly for large
+   file systems.
+
+   Version 2.04 incorporates the library function l3tol to access inode
+   block numbers.
+
+Installation:
+
+   This program is so simple that I didn't bother to create a Makefile.  To
+   build fsanalyze the steps are:
+      cc -O -o fsanalyze fsanalyze.c
+      mv fsanalyze /bin
+   Where fsanalyze is installed doesn't really matter, but I would recommend
+   placing it somewhere in the root filesystem, which is always mounted.  I
+   typically run fsanalyze during my backup procedure, while my other
+   filesystems are unmounted.
+
+Usage:
+   fsanalyze [-flags] special [file [...]]
+
+   If the optional filename arguments are missing, the entire file system
+   is analyzed.  If present, the specified files are analyzed and reported
+   individually.
+
+   [flags] include the following:
+     d   display i-node numbers as they are examined
+     e   report file size inconsistencies - the inode numbers are reported
+         for files where the file size and number of data blocks are
+         inconsistent.
+     i   report double and triple indirection - the inode numbers are
+         reported for files that contain double and/or triple indirection.
+     o   overrides error checking on file system.  Use this flag if the
+         file system you are analyzing is damaged.  Note that fsanalyze
+         may give erroneous results if used on a damaged file system, but
+         the file system itself will not be affected.
+
+   Example:
+     fsanalyze /dev/dsk/0s2	/* analyzes an entire file system */
+     fsanalyze /dev/dsk/0s2 *	/* analyzes all files in the current
+                                 * directory of the file system */
+
+   Since fsanalyze uses the superblock info ON THE DISK, more accurate
+   results will be returned fsanalyze is run on an unmounted, or read-only
+   mounted file system immediately after a sync(2).
+
+   Note that fsanalyze will work with 512- or 1024-byte filesystems.  In
+   filesystems with 1024-byte blocking-factors, free-blocks, etc., are
+   reported as 1024-byte blocks (unlike df(1) and du(1)).  Therefore, the total
+   number of free blocks in your file system will be reported as half the
+   value reported by df(1).  I prefer it this way.  If you want it the
+   other way, it requires a simple change to print_report().
+
+   Since fsanalyze does its work the old fashioned way (brute-force), it
+   must scan through the file system inode by inode.  It therefore takes
+   about as long as fsck to do its work.  Be patient.
+
+Bugs:
+   Please report any bugs (and possible fixes) to me, so I can keep my
+   source up-to-date.  I would also like to make fsanalyze work on other
+   unix systems, but I don't have access to anything but my little 
+   uport.  If you can help me port it to BSD or anything else, I would
+   appreciate it.
+
+Porting fsanalyze to other systems:
+   Fsanalyze takes its information on the structure of the file system
+   from /usr/include/sys/filsys.h and /usr/include/sys/ino.h.  As long
+   as these files (or equivalent) are present on your system, porting
+   should be straightforward.  When looking for the equivalent of these
+   files on your system, be sure to get the disk-based versions, rather
+   than the in-memory structures -- they are different.  In System V
+   derivatives, these structures should be documented as fs(4 or 5) and
+   inode(4 or 5), on BSD systems and V7 systems as filsys(5), and on
+   XENIX 3.0 and 5.0 as filesystem(F).
+
+   Fsanalyze uses fsstat(1M) to determine file system integrity.  I don't
+   think this program is available in other versions of Unix.  If your
+   system doesn't have it (or anything like it), you will have to rewrite
+   check_fs().  The kinds of things to check when testing for file system
+   integrity include:
+	1.  Make sure the device is block structured.
+	2.  Determine whether or not the device is mounted.
+	3.  Check s_state in the filsys structure to see if it is in a
+	    known state.
+	4.  Anying else you can think of.
+   I used fsstat because it seems to be more robust than anything I
+   could come up with.  It also appears to use undocumented information
+   to determine file system status.
+
+   fsstat(1M) returns 0 if the file system is ok, 1 if it needs to be
+   checked, 2 if it is mounted, and 3 for other errors.  Unfortunately,
+   the exit status appears to be byte-swapped when fsanalyze gets it.
+   I'm not sure if this is a bug in system(3S), or my use of it, but
+   be careful when porting to your system.
+  
+   I attempted to use types defined in /usr/include/sys/types.h wherever
+   possible to ensure portability.  I don't think I made any assumptions
+   about sizeof(int) == sizeof(long) == sizeof(char *), so there should
+   be no problems there.
+
+   Please try to make changes to the source using #defines and #ifdefs
+   wherever possible, and please email me the changes you make along with
+   a description of the system you ported it to (and problems encountered),
+   so I can merge all the changes into a single copy.
+
+   Thanks and good luck!

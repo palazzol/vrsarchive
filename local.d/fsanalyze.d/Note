@@ -1,0 +1,19 @@
+Comp.Sources.Misc: Volume 2, Issue 5
+Submitted-By: Michael J. Young <mjy@sdti.UUCP>
+Archive-Name: sys5-fs-analysis
+
+I've tried posting this to comp.sources.unix a number of times (since
+October!), but I seem to have discovered a black hole between here and that
+newsgroup.  Since I'm starting to get gentle reminders that I'd promised
+this awhile ago, I decided to punt and try posting here.
+
+This is a tool that I wrote to determine file system fragmentation on my
+Microport box.  I mentioned it a few months ago in comp.unix.wizards, and
+got a lot of requests for the source.  It's not very elegant, and it's
+specific to System V, but it's functional.
+
+I'd really like to see it ported to other systems (I only have access to
+System V).  If anyone has lots of spare time(!)  and wants to port it, there
+are some notes in the README file for things to watch out for.  Please send
+me your changes so I can incorporate them into my version.  If you are
+really bored, feel free to add an in-place disk-compression capability! :-)
