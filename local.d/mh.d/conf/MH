@@ -30,7 +30,7 @@ mts	sendmail
 oldload	off
 options	ATZ DUMB FOLDPROT='"0700"' MHRC MSGPROT='"0600"' RPATHS TZNAME
 options BIND NTOHLSWAP SOCKETS
-options MORE='"pg"' NDIR='"dirent.h" SHADOW SYS5 SYS5DIR TYPESIG=void
+options MORE='"pg"' NDIR='"dirent.h"' SHADOW SYS5 SYS5DIR TYPESIG=void
 pop		off
 ranlib	off
 remove	mv -f
