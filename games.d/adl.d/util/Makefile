@@ -24,3 +24,5 @@ vstring.o	: vstring.c	${INC}/adltypes.h	${INC}/virtmem.h
 
 clean		:
 	rm -f ${ALL} core util.shar
+
+install:
