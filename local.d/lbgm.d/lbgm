@@ -1,0 +1,69 @@
+#! /bin/sh
+
+export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh $0; kill $$)
+
+: '/*********************************************************************
+	lbgm
+		Save sources sent over net.sources.
+		Called as a news forwarding program from inews
+
+	Alan S. Watt
+	Slightly modified by Geoff Kuenning
+   
+	Sccsid="@(#)lbgm	1.1 8/15/82 (ITT) [hacked]"
+
+	usage:
+		lbgm [ savedir [ notify ] ]
+
+	arguments:
+		savedir		Directory area to save sources (default
+				is /usr/lbgm).
+		notify		User to notify in case of trouble (default
+				is root).
+   
+	history:
+		08/15/82	original version
+		12/04/84	name changed
+		12/05/84	infinite loop check added, save.log set to a+w
+   *********************************************************************/'
+
+: 'Public source directory (Little Bird Gave Me)'
+sourcedir=${1-"/usr/lbgm"}
+notify=${2-"root"}
+
+: 'format of date command: "Sun Aug 15 15:56:06 EDT 1982"'
+set `date`
+mon=$2
+day=$3
+uniq=$$
+tmp=LBGM.$$.tmp
+logfile=save.log
+
+: 'Lock the save source file and dump standard input there'
+cd $sourcedir
+>$tmp
+limit=`expr $$ + 100`
+while savefile="${mon}_${day}.$uniq"
+do
+	if ln $tmp $savefile 2>&-
+	then
+		break
+	fi
+	uniq=`expr $uniq + 1`
+	if [ $uniq -gt $limit ]
+	then
+		(echo 'Trouble with lbgm - check directory permissions.
+File header of unsaved article follows:
+' ; sed -n '1,/^$/s/^/	/p') \
+		    | mail $notify
+		exit 1
+	fi
+done
+cat >${savefile}
+rm -f $tmp
+
+: 'Dump the news header in a log file (up to a blank line)'
+header="$savefile:
+`sed -n '1,/^$/s/^/	/p' ${savefile}`"
+echo "${header}" >>$logfile
+chmod a+w $logfile
