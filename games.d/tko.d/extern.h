@@ -6,7 +6,7 @@ in the file and remains intact.
 */
 
 /** boxing action card **/
-extern struct action{
+struct action{
 	byte	acrp;		/* ring position */
 	char	acrpchk;	/* check ring position */
 	byte	accf;		/* control factor */
@@ -23,7 +23,7 @@ extern struct action{
 extern struct action act[81];
 
 /** boxer table **/
-extern struct boxer{
+struct boxer {
 	char	fname[NAMSIZ];	/* boxer's first name */
 	char	mname[NAMSIZ];	/* boxer's middle name */
 	char	lname[NAMSIZ];	/* boxer's last name */
@@ -65,7 +65,7 @@ extern struct boxer{
 extern struct boxer bx[];
 
 /** run-time statistics **/
-extern struct rtstat{
+struct rtstat {
 	int	bxptr;		/* pointer to bx[] structure offset */
 	byte	ccf;		/* current control factor */
 	byte	chp;		/* current hit power */
