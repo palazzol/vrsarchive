@@ -37,5 +37,5 @@ char **argv;
 	if (fp == NULL) sysError("error during image file open","imageFile");
 	imageWrite(fp);
 	ignore fclose(fp);
-
+	return(0);
 }

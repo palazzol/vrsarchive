@@ -58,4 +58,5 @@ if (argc > 2) {
 	imageWrite(fp);
 	ignore fclose(fp);
 	}
+return(0);
 }
