@@ -430,7 +430,7 @@ int	AbortCnt,
 	tabstop = 8;
 
 #if !(defined(IBMPC) || defined(MAC))	
-int	(*TTins_line)(),
+void	(*TTins_line)(),
 	(*TTdel_line)();
 #endif /* (defined(IBMPC) || defined(MAC)) */
 
@@ -1048,8 +1048,8 @@ ResetTerm()
    What ever turns you on ...   */
 
 private struct cursaddr {
-	int	cm_numchars,
-		(*cm_proc)();
+	int	cm_numchars;
+	void (*cm_proc)();
 };
 
 private char	*Cmstr;
@@ -1511,8 +1511,8 @@ GENd_lines(top, bottom, num)
 
 struct ID_lookup {
 	char	*ID_name;
-	int	(*I_proc)();	/* proc to insert lines */
-	int	(*D_proc)();	/* proc to delete lines */
+	void	(*I_proc)();	/* proc to insert lines */
+	void	(*D_proc)();	/* proc to delete lines */
 } ID_trms[] = {
 	"generic",	GENi_lines,	GENd_lines,	/* This should stay here */
 #ifdef WIRED_TERMS
