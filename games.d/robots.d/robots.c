@@ -24,7 +24,14 @@
 #  define flock(fd,flag)	locking(fd,flag,0L)
 #  define LOCK_EX		LK_LOCK
 #  define LOCK_UN		LK_UNLCK
-#endif M_XENIX
+#else
+#  ifndef LOCK_EX
+#    include <unistd.h>
+#    define flock(fd,flag)	lockf(fd,flag,0L)
+#    define LOCK_EX		F_LOCK
+#    define LOCK_UN		F_ULOCK
+#  endif
+#endif
 
 #define MIN_ROBOTS	10
 #define MAX_ROBOTS	500
@@ -123,7 +130,7 @@ long	seed;
 #ifdef TIOCGLTC
 struct ltchars	ltc;
 char	dsusp;
-#endif TIOCGLTC
+#endif
 
 int	interrupt();
 
@@ -140,6 +147,9 @@ main(argc,argv)
 	char *argv[];
 {
 	register char *x, **xx;
+	(void) initscr();
+	(void) crmode();
+	(void) noecho();
 	if(argc > 1) {
 		if(argv[1][0] == '-') {
 			switch(argv[1][1]) {
@@ -162,15 +172,12 @@ main(argc,argv)
 	seed = time((long *)0)+pass->pw_uid;
 	(void) signal(SIGQUIT,interrupt);
 	(void) signal(SIGINT,interrupt);
-	(void) initscr();
-	(void) crmode();
-	(void) noecho();
 #ifdef TIOCGLTC
 	(void) ioctl(1,TIOCGLTC,&ltc);
 	dsusp = ltc.t_dsuspc;
 	ltc.t_dsuspc = ltc.t_suspc;
 	(void) ioctl(1,TIOCSLTC,&ltc);
-#endif TIOCGLTC
+#endif
 	for(;;) {
 		count = 0;
 		running = FALSE;
@@ -601,13 +608,13 @@ quit(eaten)
 {
 	move(LINES-1,0);
 	refresh();
+	scoring(eaten);
 	endwin();
 	(void) putchar('\n');
 #ifdef TIOCGLTC
 	ltc.t_dsuspc = dsusp;
 	(void) ioctl(1,TIOCSLTC,&ltc);
-#endif TIOCGLTC
-	scoring(eaten);
+#endif
 	(void) exit(0);
 }
 
@@ -617,10 +624,11 @@ scoring(eaten)
 	static char buf[MAXSTR];
 	(void) sprintf(buf,"for this %s",TEMP_NAME);
 	record_score(eaten,TMP_FILE,TEMP_DAYS,buf);
-	(void) printf("[Press return to continue]");
-	(void) fflush(stdout);
-	(void) gets(buf);
+	(void) printw("[Press return to continue]");
+	(void) refresh();
+	(void) readchar();
 	record_score(eaten,HOF_FILE,MAXINT,"of All Time");
+	(void) refresh();
 }
 
 record_score(eaten,fname,max_days,type_str)
@@ -630,7 +638,7 @@ record_score(eaten,fname,max_days,type_str)
 	char *type_str;
 {
 	int fd;
-	int (*action)();
+	void (*action)();
 	action = signal(SIGINT,SIG_IGN);
 	if((fd = open(fname,2)) < 0) {
 		perror(fname);
@@ -689,7 +697,7 @@ do_score(eaten,fd,max_days,type_str)
 			  else
 			 	break;
 			}
-#endif ALLSCORES
+#endif
 		}
 		if(remove < eof) {
 			if(position == 0 && remove->s_days < limit) position = remove;
@@ -727,24 +735,24 @@ do_score(eaten,fd,max_days,type_str)
 			(void) close(fd);
 		}
 	}
-	(void) printf(
+	clear();
+	(void) printw(
 #ifdef ALLSCORES
 		"\nTop %s Scores %s:\n",
-#else ALLSCORES
+#else
 		"\nTop %s Robotists %s:\n",
-#endif ALLSCORES
+#endif
 		NUMNAME,
 		type_str
 	);
-	(void) printf("Rank   Score    Name\n");
+	(void) printw("Rank   Score    Name\n");
 	count = 0;
 	for(position = sfile; position < eof; position++) {
 		if(position->s_score == 0) break;
-		if(position == this && SO && SE) {
-			(void) tputs(SO,0,_putchar);
-		}
+		if(position == this)
+			(void) standout();
 		if (position->s_days >= limit)
-		{ (void) printf ("%-6d %-8ld %s: %s on level %d.",
+		{ (void) printw ("%-6d %-8ld %s: %s on level %d.",
 			  ++count,
 			  position->s_score,
 			  position->s_name,
@@ -753,21 +761,20 @@ do_score(eaten,fd,max_days,type_str)
 			 );
 #ifdef OLDSCORES
 		} else
-		{ (void) printf ("*OLD*  %-8ld %s: %s on level %d.",
+		{ (void) printw ("*OLD*  %-8ld %s: %s on level %d.",
 			  position->s_score,
 			  position->s_name,
 			  position->s_eaten ? "eaten" : "chickened out",
 			  position->s_level
 			 );
-#endif OLDSCORES
+#endif
 		}
-		if(position == this && SO && SE) {
-			(void) tputs(SE,0,_putchar);
-		}
+		if(position == this)
+			(void) standend();
 #ifndef OLDSCORES
 		if (position->s_days >= limit)
-#endif OLDSCORES
-			(void) putchar ('\n');
+#endif
+			(void) addch ('\n');
 	}
 }
 
