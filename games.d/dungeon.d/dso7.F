@@ -23,7 +23,11 @@ C						!POINTER IN KEYWORD.
 C						!UNBIAS, COMPUTE SUMS.
 	  UKEYW(I)=char(ichar(KEYW(I))-64)
 	  IF(INW(J).LE.char(64)) J=1
+#ifdef SYSV
+	  UINW(I)=ichar(char(ichar(INW(J))-64))
+#else
 	  UINW(I)=ichar(ichar(INW(J))-64)
+#endif
 	  UKEYWS=UKEYWS+ichar(UKEYW(I))
 	  UINWS=UINWS+UINW(I)
 	  J=J+1
@@ -32,7 +36,11 @@ C
 	USUM=MOD(UINWS,8)+(8*MOD(UKEYWS,8))
 C						!COMPUTE MASK.
 	DO 200 I=1,6
+#ifdef SYSV
+	  J=and(xor(xor(UINW(I),ichar(UKEYW(I))),USUM),31)
+#else
 	  J=and(xor(xor(ichar(UINW(I)),ichar(UKEYW(I))),USUM),31)
+#endif
 	  USUM=MOD(USUM+1,32)
 	  IF(J.GT.26) J=MOD(J,26)
 	  OUTW(I)=char(MAX0(1,J)+64)
