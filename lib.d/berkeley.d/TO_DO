@@ -1,0 +1,6 @@
+close.c		Needs SO_LINGER timeout (alarm) implementation.
+getsockopt.c
+recvmsg.c
+sendmsg.c
+socketpair.c
+sockopt.c

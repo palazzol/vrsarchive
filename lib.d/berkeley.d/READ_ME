@@ -1,0 +1,26 @@
+	NOTES FOR C LIBRARY EXTENSIONS FOR DIRECTORY ACCESS
+
+
+The standard C library lacks support for reading UNIX directories, so
+historically programs had knowledge of UNIX directory structure hard-
+wired into them.  When Berkeley changed the format of directories for
+4.2BSD, it became necessary to change programs to work with the new
+structure.  Fortunately Berkeley designed a small set of directory
+access routines to encapsulate knowledge of the new directory format
+so that user programs could deal with directory entries as an abstract
+data type.  The interface to these routines is independent of the
+particular implementation of directories on any given UNIX system.
+
+Therefore it becomes possible to write portable applications that
+search directories by restricting all directory access to these new
+interface routines.  The sources supplied here are a total rewrite of
+Berkeley's code and are in the PUBLIC DOMAIN.  They simulate the new
+4.2BSD directory entries on systems having the original UNIX directory
+structure.  These routines should be added to the standard C library
+on ALL non-BSD UNIX systems and all existing and future code changed to
+use this interface.  Once this is done, there will be no portability
+problems associated with the difference in underlying directory
+structures between 4.2BSD and other UNIX systems.
+
+An additional benefit of these routines is that they buffer directory
+input, which provides improved access speed.
