@@ -206,7 +206,7 @@ register thrown;
 
 	tmp += u.udaminc + dbon();
 	if(u.uswallow) {
-		if((tmp -= u.uswldtim) <= 0) {
+		if((int)(tmp -= u.uswldtim) <= 0) {
 			pline("Your arms are no longer able to hit.");
 			return(TRUE);
 		}
