@@ -34,7 +34,7 @@ Name    Col     Len    Type     Desc
 -------------------------------------------------
 ra	1	6	i6	ra  2000 hhmmss
 dec	7	5	+-i4	dec 2000 -mmss
-mag	12	3	{-}i	magnitude*100 -dd or -ddd
+mag	12	3	{-}i	magnitude*100 (ddd) or -magnitude*10 (-dd)
 type	15	2	c2	object type
 type1	15	1	c1	object type 1	/ star,ga,cl,neb,etc
 type2	16	1	c1	object type 2	/ dbl,open,cl,etc
@@ -118,6 +118,23 @@ Sirus has been reduced from mag -1.46 to -.99, owing to limitations in
 the three character positions used to give magnitude. This may be rectified
 by using the old style format (style is checked on a line and not a file basis),
 but this would remove spectral information and identification.
+
+! Notes on Magnitude
+!
+! Magnitudes on the range -9.9 through 9.99 are represented in the following
+! format: "-99" though "999". Thus, the three position magnitude field is
+! normally taken as mag*100, unless object is of negative magnitude, in which
+! case it represents a value mag*10. This costs us the "hundredths" position
+! for objects of negative magnitude, but this is not objectionable. For very
+! dim objects, 9.99 represents the current limiting magnitude. As there are
+! on the order of 1e6 stars to this brightness, the format provides adequate
+! representation. When used to chart small asteroids or very dim non-stellar
+! objects, magnitudes below +9.99 will occasionally be encountered; we suggest
+! coding such entries as "999", with this value then taken to mean >=9.99.
+!
+! The old yale format which is supported for back compatability allows for
+! a larger four digit field, but its use is not advocated, as code operation
+! is not defined in presense of non-digits (such as leading blanks).
 
 [f] Known Problems and "Features"
 

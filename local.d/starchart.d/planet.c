@@ -1,5 +1,5 @@
 /*  Planets
- *           A program to determine the position of
+ *	     A program to determine the position of
  *	     the Sun., Mer., Ven., Mars, Jup, Sat & Ura
  *
  *  reference Jean Meesus's book, " Astronomical Formulae for
@@ -30,13 +30,26 @@
  !     representation of magnitudes below -.99 (useful for planets), but no
  !     spectral or stellar identification, which is not useful for planets.
  !
+ ! Patched December, 1987 by Alan Paeth (awpaeth@watcgl),
+ ! based on revisions by Kurt Horton (ihnp4!erc780!horton)
+ ! and Stephen Kennedy <ihnp4!cbosgd!smk>
+ ! et al.
+ !
+ ! [1] Mars and Saturn now plot as "m" and "s", not "M" and "S" (Mercury, Sol)
+ ! [2] New guesses at magnitudes are now given, could someone compute them?
+ ! [3] fixed a nasty bug which gave wrong sign for decl between -1 deg and 0.
+ !
  ! See "Time Notes" section below if you plan to rewrite the user interface.
  */
 
 #include <stdio.h>
 #include <math.h>
 
-#include <sys/time.h>	/* for getting current GMT */
+#ifndef SYSV
+#include <sys/time.h>	/* for getting current GMT (generic Unix) */
+#else
+#include <time.h>	/* for getting current GMT (sysV version) */
+#endif
 
 #define CURYEAR	1987	/* default year -- needs to be maintained */
 
@@ -46,9 +59,9 @@
 
 /* crude magnitudes of planets (x100) for output filtering by brightness */
 
-#define MAGSOL 0
-#define MAGMER 150
-#define MAGVEN 0
+#define MAGSOL -99
+#define MAGMER -10
+#define MAGVEN -20
 #define MAGMAR 100
 #define MAGJUP 0
 #define MAGSAT 100
@@ -100,17 +113,24 @@ double currenttime()
     {
 #define GMT1970 2440587.5
 #define SECSPERDAY (60.0*60.0*24.0)
+#ifndef SYSV
     struct timeval tv;
     struct timezone tz;
     gettimeofday(&tv, &tz);
     return(GMT1970 + tv.tv_sec/SECSPERDAY);
+#else
+    long time();
+    return(GMT1970 + (double)time((long *)0)/SECSPERDAY);
+#endif
     }
 
 double commandtime(argc, argv)
     char **argv;
     {
+#ifndef SYSV
     struct timeval tv;
     struct timezone tz;
+#endif
     int mm,dd,yy,aa1,bb1;
     double jd,year,month,day,time,timez;
     int j;
@@ -133,22 +153,27 @@ double commandtime(argc, argv)
 	}
     else
 	{
+
 /*
  * flags present, set up defaults
  */
-    gettimeofday(&tv, &tz);
-    time = 0.0;				/* local time (0.0-23.999) */
-    yy = CURYEAR;			/* local year */
-    mm = 0;				/* local month */
-    dd = 0;				/* local day of month */
-    timez = tz.tz_minuteswest/60.0;	/* local time hrs west of Greenwich */
+#ifndef SYSV
+	gettimeofday(&tv, &tz);
+	timez = tz.tz_minuteswest/60.0;	/* local time hrs west of Greenwich */
+#else
+	timez = timezone/3600+(daylight?1:0);
+#endif
+	time = 0.0;			/* local time (0.0-23.999) */
+	yy = CURYEAR;			/* local year */
+	mm = 0;				/* local month */
+	dd = 0;				/* local day of month */
 /*
  * override defaults
  */
 	for (j=1; j<argc; j++)
 	    {
 	    if (argv[j][0] != '-')
-		die("unknown argument - %s", usage /*argv[j]*/ );
+		die("unknown argument - %s\n%s", argv[j], usage);
 	    switch (argv[j][1])
 		{
 		case 't': time = htod(argv[++j]); break;
@@ -156,7 +181,7 @@ double commandtime(argc, argv)
 		case 'y': yy = atoi(argv[++j]); break;
 		case 'm': mm = atoi(argv[++j]); break;
 		case 'd': dd = atoi(argv[++j]); break;
-		default:  die("unknown switch - %s", usage /* argv[j] */ );
+		default:  die("unknown switch - %s\n%s", argv[j], usage );
 		}
 	    if (j == argc) die("trailing command line flag - %s", argv[j-1]);
 	    }
@@ -425,7 +450,7 @@ main(argc, argv)
 		 +0.000004571*cos((2*M-4*M4+244.702)*rad)
 		 +0.000004409*cos((3*M5-M4-115.828)*rad);
 	r = r + radpert;
-	trans(r,b,ll,Stheta,Sr,epli, MAGMAR, "PM", "Mars");
+	trans(r,b,ll,Stheta,Sr,epli, MAGMAR, "Pm", "Mars");
 	
 /* Now start Jupiter */
 	a0 = 238.049257;
@@ -769,7 +794,7 @@ b = b
 	+0.001236*sin(2*ze)*cos(2*Q)
 	-0.002075*cos(2*ze)*cos(2*Q);
 
-trans(r,b,ll,Stheta,Sr,epli, MAGSAT, "PS", "Saturn");
+trans(r,b,ll,Stheta,Sr,epli, MAGSAT, "Ps", "Saturn");
 
 /* Now Start on Uranus */
 	a0 = 244.197470;
@@ -1079,6 +1104,7 @@ int speak(ra,dec,dis, mag, sym, str)
 	char *sym, *str;
 {
 	int h,m,s,deg;
+	char decsign;
 	
 	if ( ra < 0)
 	{
@@ -1090,20 +1116,18 @@ int speak(ra,dec,dis, mag, sym, str)
 	s = (int) (((ra-h)*60-m)*60);
 	printf("%s\t%2dh %2dm %2ds ",str, h,m,s);
 	fprintf(logfile, "%02d%02d%02d", h, m, s);
+	decsign = '+';
+	if (dec<0)
+	    {
+	    dec = -dec;
+	    decsign = '-';
+	    }
 	deg = (int)aint(dec);
-	m   =(int)((dec - deg)*60);
+	m   = (int)((dec - deg)*60);
 	s   = (int) (((dec - deg)*60 - m)*60);
-	if ( m < 0)
-	{
-		m = m * -1;
-	}
-	if (s < 0)
-	{
-		s = s * -1;
-	}
-	printf("   %+3ddeg %2dm %2ds ",deg,m,s);
+	printf("   %c%2ddeg %2dm %2ds ",decsign,deg,m,s);
 	printf("\t  %.3f\n",dis);
-	fprintf(logfile, "%+03d%02d+%03d%s%s\n", deg, m, mag, sym, str);
+	fprintf(logfile, "%c%02d%02d+%03d%s%s\n", decsign,deg,m,mag,sym,str);
 	return(0);
 }
 
@@ -1182,11 +1206,11 @@ double htod(s)
     return sign * x;
     }
 
-die(a,b)
-    char *a, *b;
+die(a,b,c)
+    char *a, *b, *c;
     {
     fprintf(stderr,"%s: ", progname);
-    fprintf(stderr,a,b);
+    fprintf(stderr,a,b,c);
     fprintf(stderr,"\n");
     exit(1);
     }

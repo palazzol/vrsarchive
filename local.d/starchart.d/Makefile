@@ -6,6 +6,13 @@
 
 SHELL = /bin/sh
 
+#SITE DEPENDENCIES
+#
+# Uncomment out the version appropriate for your site.
+# At present dependencies for sysV UNIX and Silicon Graphics IRIS exist
+#
+#LOCAL=-DSYSV -Dindex=strchr
+#LOCAL= -Zf
 #
 # put the Yale Star Catalog file path here: because the yale.star is
 # static (stars don't change so often :->), consider using some static
@@ -19,6 +26,11 @@ STAR = "./yale.star"
 #MESS = "/usr/lib/starchart/messier.star"
 MESS = "./messier.star"
 
+# and the constellation finder file:
+
+#CONS = "/usr/lib/starchart/con.locs"
+CONS = "./con.locs"
+
 # put the planet position file path here: it should be preferably
 # relative, thus allowing everyone to change planet positions according
 # to their interests.  This file changes when the 'planet' program is
@@ -27,14 +39,15 @@ MESS = "./messier.star"
 PLANET = "./planet.star"
 
 # notice that starchart.o and planet are made dependent on Makefile, due
-# to the STAR, MESS and PLANET definitions here
+# to the STARFILE, MESSFILE, CONSTFILE and PLANETFILE definitions here
 
 # put the installation directory here
 
 BINDIR = "/usr/local/bin"
 
-CFLAGS = -O -DSTARFILE='$(STAR)' -DPLANETFILE='$(PLANET)' -DMESSFILE='$(MESS)'
-LFLAGS = -O
+CFLAGS = -g -DSTARFILE='$(STAR)' -DPLANETFILE='$(PLANET)' -DCONSTFILE='$(CONS)' -DMESSFILE='$(MESS)'\
+	$(LOCAL)
+LFLAGS = -g
 
 # star chart calculation routine file
 
@@ -43,12 +56,7 @@ COBJ = starchart.o
 # default binary names: if you change these, change also the corresponding
 # make tags
 
-BINS = epoch moonphase planet startek stardsp starpic starhp starlaser starpost
-
-
-
-
-
+BINS = epoch moonphase planet startek stardsp starpic staruplot starhp starlaser starpost
 
 test:
 	stardsp -c ori
@@ -56,6 +64,7 @@ test:
 all:	\
 	planet\
 	starhp\
+	staruplot\
 	stardsp\
 	startek\
 	starpic\
@@ -85,6 +94,9 @@ stardsp: $(COBJ) stardsp.o
 starpic: $(COBJ) starpic.o
 	cc $(LFLAGS) $(COBJ) starpic.o -lm -o $@
 
+staruplot: $(COBJ) staruplot.o starimages.o
+	cc $(LFLAGS) $(COBJ) staruplot.o starimages.o -lplot -lm -o $@
+
 startek: $(COBJ) startek.o starimages.o
 	cc $(LFLAGS) $(COBJ) startek.o starimages.o -lm -o $@
 
@@ -94,8 +106,11 @@ starhp: $(COBJ) starhp.o starimages.o
 starlaser: $(COBJ) starlaser.o starimages.o
 	cc $(LFLAGS) $(COBJ) starlaser.o starimages.o -lm -o $@
 
+stariris: $(COBJ) stariris.o starimages.o
+	cc $(LFLAGS) $(COBJ) stariris.o starimages.o -Zf -Zg -lm -o $@
+
 starpost: $(COBJ) starpost.o
 	cc $(LFLAGS) $(COBJ) starpost.o -lm -o $@
 
-make clean:
+clean:
 	rm -f *.o mlog core

@@ -2,6 +2,18 @@
  * PostScript file format driver for startchart.c mainline
  */
 
+/*
+ ! patched December, 1987 by Alan Paeth (awpaeth@watcgl),
+ ! based on revisions by Craig Counterman (ccount@royal.mit.edu)
+ !
+ ! [1] "bigmaster" chart layout now added
+ ! [2] extensive rework and subclassing of non-stellar objects, e.g.
+ !     galaxies, now have both spiral and irregular variants.
+ ! [3] star sizes now extended to magnitude 10
+ ! [4] white halo-ing of text overlays (by analogy to star haloing)
+ !
+ */
+
 #include <stdio.h>
 #include "starchart.h"
 
@@ -10,10 +22,13 @@
  */
 
 mapblock thumbnail =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			3.2, 1.0, 480, 0, 480, 240, 0.0 };
+			3.2, 1.0, 2.05, 480, 0, 480, 240, 0.0 };
 
 mapblock master =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			8.0, 3.0, 0, 370, 960, 960, 0.0 };
+			8.0, 3.0, 2.05, 0, 370, 960, 960, 0.0 };
+
+mapblock bigmaster =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			8.0, 3.0, 2.05, 0, 30, 960, 1400, 0.0 };
 
 /*
  * Generic Star Drawing Stuff
@@ -29,7 +44,7 @@ out(s)
     printf("%s\n", s);
     }
 
-float conv(i)
+double conv(i)
     {
     return(i*PICSCALE+80);	/* 1.1" margins left and bottom */
     }
@@ -63,7 +78,10 @@ out("%");
 out("% show: right, center, left adjust");
 out("%");
 out("/fsize {/Times-Bold findfont exch scalefont setfont} def");
-out("/lshow {5 0 8#040 4 3 roll widthshow} def");
+out("% The default lshow halos glyphs, but is slow. It is especially");
+out("% useful when both the -a and -o switches are in effect (see man page)");
+out("%/lshow {5 0 8#040 4 3 roll widthshow} def %fast version");
+out("/lshow {true charpath gsave 1 setgray stroke grestore 0 setgray fill} def");
 out("/cshow {dup stringwidth pop 2 div neg 0 rmoveto show} def");
 out("/rshow {dup stringwidth pop neg 0 rmoveto show} def");
 out("/gshow {currentfont exch");
@@ -79,12 +97,6 @@ out("/starcirc {newpath 0 360 arc closepath stroke} def");
 out("/starbody {newpath 0 360 arc closepath fill} def");
 out("/starbodyvar {3 copy 1 add starcirc starbody} def");
 out("/starbodydbl {3 copy dup 3 div add starminus starbody} def");
-out("% non-stellar object macros (better designs most welcome)");
-out("/planet  {2 copy 2.5 starcirc 3.5 starplus} def");
-out("/galaxy  {2 copy 2.5 starcirc 3.5 starminus} def");
-out("/nebula  {2 copy 1 setgray 2.5 starcirc 0 setgray [2] 0 setdash");
-out("          2.5 starcirc [] 0 setdash} def");
-out("/cluster {2.5 starcirc} def");
 out("%");
 out("/back {3 copy 0.5 add 1 setgray} def");
 out("/fore {0 setgray} def");
@@ -94,21 +106,67 @@ out("/v {back starbodyvar fore starbodyvar} def");
 out("/s0 {4.5 s} def");
 out("/d0 {4.5 d} def");
 out("/v0 {4.5 v} def");
-out("/s1 {3.8 s} def");
-out("/d1 {3.8 d} def");
-out("/v1 {3.8 v} def");
-out("/s2 {3.1 s} def");
-out("/d2 {3.1 d} def");
-out("/v2 {3.1 v} def");
-out("/s3 {2.4 s} def");
-out("/d3 {2.4 d} def");
-out("/v3 {2.4 v} def");
-out("/s4 {1.7 s} def");
-out("/d4 {1.7 d} def");
-out("/v4 {1.7 v} def");
-out("/s5 {1.0 s} def");
-out("/d5 {1.0 d} def");
-out("/v5 {1.0 v} def");
+out("/s1 {4.0 s} def");
+out("/d1 {4.0 d} def");
+out("/v1 {4.0 v} def");
+out("/s2 {3.5 s} def");
+out("/d2 {3.5 d} def");
+out("/v2 {3.5 v} def");
+out("/s3 {3.0 s} def");
+out("/d3 {3.0 d} def");
+out("/v3 {3.0 v} def");
+out("/s4 {2.5 s} def");
+out("/d4 {2.5 d} def");
+out("/v4 {2.5 v} def");
+out("/s5 {2.0 s} def");
+out("/d5 {2.0 d} def");
+out("/v5 {2.0 v} def");
+out("/s6 {1.7 s} def");
+out("/d6 {1.7 d} def");
+out("/v6 {1.7 v} def");
+out("/s7 {1.5 s} def");
+out("/d7 {1.5 d} def");
+out("/v7 {1.5 v} def");
+out("/s8 {1.3 s} def");
+out("/d8 {1.3 d} def");
+out("/v8 {1.3 v} def");
+out("/s9 {1.1 s} def");
+out("/d9 {1.1 d} def");
+out("/v9 {1.1 v} def");
+out("/s10 {1.0 s} def");
+out("/d10 {1.0 d} def");
+out("/v10 {1.0 v} def");
+out("%");
+out("% non-stellar object macros (better designs most welcome)");
+out("/planet  {2 copy 2.5 starcirc 3.5 starplus} def");
+out("/asteroid { 2 copy newpath 1.5 0 360 arc closepath fill moveto");
+out("        3 3 rmoveto -6 -6 rlineto 6 0 rmoveto -6 6 rlineto stroke } def");
+out("/comet { 2 copy newpath 3 0 360 arc moveto 45 rotate");
+out("  6 3 rmoveto -6 0 rlineto 3 -3 rmoveto 3 0 rlineto 0 -3 rmoveto");
+out("  -6 0 rlineto   closepath stroke -45 rotate } def");
+out("/nebulad  { newpath moveto 3 0 rmoveto -3 -3 rlineto -3 3 rlineto");
+out("  3 3 rlineto 3 -3 rlineto stroke } def");
+out("/nebulap { 2 copy newpath translate 30 rotate 1 .5 scale");
+out("    0 0 3 0 360 arc closepath stroke");
+out("    1 2 scale -30 rotate neg exch neg exch translate } def");
+out("/galaxye { 2 copy newpath translate -30 rotate 1 .5 scale");
+out("    0 0 3 0 360 arc closepath fill");
+out("    1 2 scale 30 rotate neg exch neg exch translate } def");
+out("/galaxys { 2 copy 2 copy newpath translate -30 rotate 1 .5 scale");
+out("    0 0 3 0 360 arc closepath fill");
+out("    -4 -3 moveto -3 0 lineto 4 3 moveto 3 0 lineto ");
+out("    stroke  1 2 scale 30 rotate ");
+out("    neg exch neg exch translate } def");
+out("/galaxyq { 2 copy 2 copy newpath translate -30 rotate 1 .5 scale");
+out("    0 0 3 0 360 arc closepath fill");
+out("    1 2 scale 30 rotate ");
+out("    -3 0 moveto 3 0 lineto 0 -3 moveto 0 3 lineto stroke");
+out("    neg exch neg exch translate } def");
+out("/clustero { 2 copy newpath 1 setgray 3 0 360 arc fill");
+out("    [1 2] 0 setdash 0 setgray 3 0 360 arc stroke [] 0 setdash } def");
+out("/clusterg { 2 copy 2 copy newpath 1 setgray 3 0 360 arc fill");
+out("    [1 2] 0 setdash 0 setgray 3 0 360 arc stroke [] 0 setdash");
+out("    1.5 0 360 arc closepath fill } def");
 out("%");
 out("% alter line drawing defaults, guarentee solid black lines");
 out("0.5 setlinewidth 2 setlinecap");
@@ -175,24 +233,65 @@ vecmovedraw(x1, y1, x2, y2)
     vecdraw(x2, y2);
     }
 
-drawPlan(x, y)
+drawPlan(x, y, mag, type, color)
+    char type, *color;
     {
-    printf("%.1f %.1f planet\n", conv(x), conv(y));
+    switch(type)
+	{
+	case 'A': printf("%.1f %.1f asteroid\n", conv(x), conv(y)); break;
+	case 'C': printf("%.1f %.1f comet\n", conv(x), conv(y)); break;
+	case 'S':
+	case 'M':
+	case 'V':
+	case 'm':
+	case 'J':
+	case 's':
+	case 'U':
+	case 'N':
+	default:  printf("%.1f %.1f planet\n", conv(x), conv(y));
+	}
     }
 
-drawGalx(x, y)
+drawGalx(x, y, mag, type, color)
+    char type, *color;
     {
-    printf("%.1f %.1f galaxy\n", conv(x), conv(y));
+    switch(type)
+	{
+	case 'a':
+	case 'b':
+	case 'c':
+	case 'd':
+	case 'B':
+	case 'S':
+	case 'O': printf("%.1f %.1f galaxys\n", conv(x), conv(y)); break;
+	case 'Q': printf("%.1f %.1f galaxyq\n", conv(x), conv(y)); break;
+	case 'E':
+	case 'I':
+	case 'G':
+	default:  printf("%.1f %.1f galaxye\n", conv(x), conv(y));
+	}
     }
 
-drawNebu(x, y)
+drawNebu(x, y, mag, type, color)
+    char type, *color;
     {
-    printf("%.1f %.1f nebula\n", conv(x), conv(y));
+    switch(type)
+	{
+	case 'P': printf("%.1f %.1f nebulap\n", conv(x), conv(y)); break;
+	case 'D':
+	default:  printf("%.1f %.1f nebulad\n", conv(x), conv(y));
+	}
     }
 
-drawClus(x, y)
+drawClus(x, y, mag, type, color)
+    char type, *color;
     {
-    printf("%.1f %.1f cluster\n", conv(x), conv(y));
+    switch(type)
+	{
+	case 'G': printf("%.1f %.1f clusterg\n", conv(x), conv(y)); break;
+	case 'O':
+	default:  printf("%.1f %.1f clustero\n", conv(x), conv(y));
+	}
     }
 
 drawStar(x, y, mag, type, color)
@@ -210,7 +309,7 @@ drawStar(x, y, mag, type, color)
 	default: vecsize(6); break;
 	}
     if (mag<0) mag = 0;
-    if (mag>5) mag = 5;
+    if (mag>10) mag = 10;
     switch (type)
 	{
 	default:

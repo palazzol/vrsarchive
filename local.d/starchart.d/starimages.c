@@ -29,7 +29,7 @@
 **	drawlen information and ending to ENDCOORD value when ptr == NULL
 **
 ** History:
-** 
+**
 */
 int *
 cstar (ptr)
@@ -43,7 +43,7 @@ char *ptr;
 	int i,j, x, y, s, l;
 	
 	/*
- 	** this is a two state machine - first it just gathers ptr strings
+	** this is a two state machine - first it just gathers ptr strings
 	** until NULL is given, then it 'compiles' the previous strings
 	** and returns offset values for printing the star.
 	*/
@@ -62,7 +62,7 @@ char *ptr;
 	/*
 	** allocate offset area
 	*/
-	retarea = (int *) calloc 
+	retarea = (int *) calloc
 		(len * n * (n / 2 + 1) * 3 + 1, sizeof (int));
 	if  (retarea == NULL) {
 		perror ("Memory allocation failed");
@@ -107,7 +107,8 @@ char *ptr;
 	return retarea;
 } /* cstar */
 
-drawPlan(x, y)
+drawPlan(x, y, max, type, color)
+char type, *color;
 int x,y;
 {
 	static int def, *coord;
@@ -130,23 +131,23 @@ int x,y;
 	}
 }
 
-drawStar (x, y, mag, type, color)
+drawStar(x, y, mag, type, color)
 int x, y, mag;
 char type, *color;
     {
     switch (mag)
 	{
 	case -1:
-	case  0: draw0 (x, y); break;
-	case  1: draw1 (x, y); break;
-	case  2: draw2 (x, y); break;
-	case  3: draw3 (x, y); break;
-	case  4: draw4 (x, y); break;
-	default: draw5 (x, y); break;
+	case  0: drawS0 (x, y); break;
+	case  1: drawS1 (x, y); break;
+	case  2: drawS2 (x, y); break;
+	case  3: drawS3 (x, y); break;
+	case  4: drawS4 (x, y); break;
+	default: drawS5 (x, y); break;
 	}
     }
 
-draw0(x, y)
+drawS0(x, y)
 int x, y;
     {
     static int def, *coord;
@@ -154,7 +155,7 @@ int x, y;
     if  (! def)
 	{
 	def = 1;
-   	(void) cstar (" ***** ");
+	(void) cstar (" ***** ");
 	(void) cstar ("*******");
 	(void) cstar ("*** ***");
 	(void) cstar ("**   **");
@@ -162,16 +163,16 @@ int x, y;
 	(void) cstar ("*******");
 	(void) cstar (" ***** ");
 	coord = cstar (NULL);
-        }
+	}
     i = 0;
     while (coord [i] != ENDCOORD)
-        {
+	{
 	drawlen (x, y, coord [i], coord [i+1], coord [i+2]);
 	i += 3;
 	}
     }
 
-draw1(x, y)
+drawS1(x, y)
 int x, y;
 {
 	static int def, *coord;
@@ -179,7 +180,7 @@ int x, y;
 
 	if  (! def) {
 		def = 1;
-   		(void) cstar (" *** ");
+		(void) cstar (" *** ");
 		(void) cstar ("*****");
 		(void) cstar ("*****");
 		(void) cstar ("*****");
@@ -194,7 +195,7 @@ int x, y;
 	}
 }
 
-draw2(x, y)
+drawS2(x, y)
 int x, y;
 {
 	static int def, *coord;
@@ -202,7 +203,7 @@ int x, y;
 
 	if  (! def) {
 		def = 1;
-   		(void) cstar ("  *  ");
+		(void) cstar ("  *  ");
 		(void) cstar (" *** ");
 		(void) cstar ("*****");
 		(void) cstar (" *** ");
@@ -217,7 +218,7 @@ int x, y;
 	}
 }
 
-draw3(x, y)
+drawS3(x, y)
 int x, y;
 {
 	static int def, *coord;
@@ -238,7 +239,7 @@ int x, y;
 	}
 }
 
-draw4(x, y)
+drawS4(x, y)
 int x, y;
 {
 	static int def, *coord;
@@ -259,7 +260,7 @@ int x, y;
 	}
 }
 
-draw5(x, y)
+drawS5(x, y)
 int x, y;
 {
 	static int def, *coord;
@@ -278,15 +279,16 @@ int x, y;
 	}
 }
 
-drawGalx(x, y)
+drawGalx(x, y, mag, type, color)
 int x, y;
+char type, *color;
 {
 	static int def, *coord;
 	int i;
 
 	if  (! def) {
 		def = 1;
-   		(void) cstar (" *** ");
+		(void) cstar (" *** ");
 		(void) cstar ("*    ");
 		(void) cstar (" *** ");
 		(void) cstar ("    *");
@@ -301,15 +303,16 @@ int x, y;
 	}
 }
 
-drawClus(x, y)
+drawClus(x, y, mag, type, color)
 int x, y;
+char type, *color;
 {
 	static int def, *coord;
 	int i;
 
 	if  (! def) {
 		def = 1;
-   		(void) cstar (" * * ");
+		(void) cstar (" * * ");
 		(void) cstar ("* * *");
 		(void) cstar (" * * ");
 		coord = cstar (NULL);
@@ -322,15 +325,16 @@ int x, y;
 	}
 }
 
-drawNebu(x, y)
+drawNebu(x, y, mag, type, color)
 int x, y;
+char type, *color;
 {
 	static int def, *coord;
 	int i;
 
 	if  (! def) {
 		def = 1;
-   		(void) cstar (" ** ");
+		(void) cstar (" ** ");
 		(void) cstar ("*  *");
 		(void) cstar (" ** ");
 		coord = cstar (NULL);

@@ -2,6 +2,14 @@
  * TTY Display driver for starchart.c mainline
  */
 
+/*
+ ! patched December, 1987 by Alan Paeth (awpaeth@watcgl),
+ !
+ ! [1] formal/actual parmaters for drawNebu, drawPlan.. now agree
+ ! [2] "bigmaster" chart layout now added
+ !
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include "starchart.h"
@@ -15,10 +23,13 @@
  */
 
 mapblock thumbnail =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			3.0, 1.0, 420, 35, 480, 195, 0.0 };
+			3.0, 1.0, 2.05, 420, 35, 480, 195, 0.0 };
 
 mapblock master =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			5.9, 2.0, 20, 265, 880, 500, 0.0 };
+			5.9, 2.0, 2.05, 20, 265, 880, 500, 0.0 };
+
+mapblock bigmaster =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			5.9, 2.0, 2.05, 20, 65, 880, 700, 0.0 };
 
 /*
  * Generic Star Drawing Stuff
@@ -107,7 +118,8 @@ vecmovedraw(x1, y1, x2, y2)
     vecdraw(x2, y2);
     }
 
-drawPlan(x, y)
+drawPlan(x, y, mag, type, color)
+    char type, *color;
     {
     vecsyms(x, y, "+");
     }
@@ -157,17 +169,20 @@ draw5(x, y)
     vecsyms(x, y, ".");
     }
 
-drawGalx(x, y)
+drawGalx(x, y, mag, type, color)
+    char type, *color;
     {
     vecsyms(x, y, "@");
     }
 
-drawNebu(x, y)
+drawNebu(x, y, mag, type, color)
+    char type, *color;
     {
     vecsyms(x, y, "~");
     }
 
-drawClus(x, y)
+drawClus(x, y, mag, type, color)
+    char type, *color;
     {
     vecsyms(x, y, "%");
     }

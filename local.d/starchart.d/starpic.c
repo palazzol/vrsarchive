@@ -2,6 +2,14 @@
  * Unix Pic file format driver for startchart.c mainline
  */
 
+/*
+ ! patched December, 1987 by Alan Paeth (awpaeth@watcgl),
+ !
+ ! [1] formal/actual parmaters for drawNebu, drawPlan.. now agree
+ ! [2] "bigmaster" chart layout now added
+ !
+ */
+
 #include <stdio.h>
 #include "starchart.h"
 
@@ -12,17 +20,20 @@
 #define DHYPH 3
 
 static int style;
-static float xold, yold;
+static double xold, yold;
 
 /*
  * Chart parameters (limiting magnitude and window x,y,w,h)
  */
 
 mapblock thumbnail =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			3.2, 1.0, 480, 0, 480, 240, 0.0 };
+			3.2, 1.0, 2.05, 480, 0, 480, 240, 0.0 };
 
 mapblock master =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			8.0, 3.0, 0, 370, 960, 960, 0.0 };
+			8.0, 3.0, 2.05, 0, 370, 960, 960, 0.0 };
+
+mapblock bigmaster =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			8.0, 3.0, 2.05, 0, 80, 960, 1250, 0.0 };
 
 /*
  * Generic Star Drawing Stuff
@@ -32,7 +43,7 @@ static int oldps, dcount;
 
 #define PICSCALE (1.0/160.0) /* roughly 6.5/1024.0 */
 
-float conv(i)
+double conv(i)
     {
     return(i*PICSCALE);
     }
@@ -111,25 +122,29 @@ vecmovedraw(x1, y1, x2, y2)
     vecdraw(x2, y2);
     }
 
-drawGalx(x, y)
+drawGalx(x, y, mag, type, color)
+    char type, *color;
     {
     vecsize(10);
     vecsymcen(x, y, "@");
     }
 
-drawNebu(x, y)
+drawNebu(x, y, mag, type, color)
+    char type, *color;
     {
     vecsize(10);
     vecsymcen(x, y, "\\v'3p'~\\v'-3p'"); /* vertical motion to lower '~' */
     }
 
-drawClus(x, y)
+drawClus(x, y, mag, type, color)
+    char type, *color;
     {
     vecsize(10);
     vecsymcen(x, y, "%");
     }
 
-drawPlan(x, y)
+drawPlan(x, y, mag, type, color)
+    char type, *color;
     {
     vecsize(10);
     vecsymcen(x, y, "+");

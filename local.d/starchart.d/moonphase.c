@@ -3,16 +3,21 @@
 
      Phase of the Moon. Calculates the current phase of the moon.
      Based on routines from `Practical Astronomy with Your Calculator',
-        by Duffett-Smith.
+	by Duffett-Smith.
      Comments give the section from the book that particular piece
-        of code was adapted from.
+	of code was adapted from.
 
      -- Keith E. Brandt  VIII 1984
 
- ****************************************************************************/
+! modified by awpaeth@watcgl, December 1987 for sysV compatability
+****************************************************************************/
 
 #include <stdio.h>
+#ifndef SYSV
 #include <sys/time.h>
+#else
+#include <time.h>
+#endif
 #include <math.h>
 #define PI         3.141592654
 #define EPOCH   1983

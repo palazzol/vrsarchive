@@ -2,6 +2,12 @@
  * Tektronix driver for startchart.c mainline
  */
 
+/*
+ ! patched December, 1987 by Alan Paeth (awpaeth@watcgl)
+ !
+ ! [1] "bigmaster" chart layout now added
+ !
+ */
 #include <stdio.h>
 #include "starchart.h"
 
@@ -35,10 +41,13 @@
  */
 
 mapblock thumbnail =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			3.2, 1.0, 420, 35, 480, 195, 0.0 };
+			3.2, 1.0, 2.05, 420, 35, 480, 195, 0.0 };
 
 mapblock master =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			8.0, 3.0, 20, 265, 880, 500, 0.0 };
+			8.0, 3.0, 2.05, 20, 265, 880, 500, 0.0 };
+
+mapblock bigmaster =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			8.0, 3.0, 2.05, 20,  65, 880, 700, 0.0 };
 
 /*
  * Generic Star Drawing Stuff
@@ -81,15 +90,6 @@ vecdrawhyph(x, y)
     vecdraw(x, y);	/* dashed and solid the same */
     }
 
-
-vecsym(x, y, s)
-    char s;
-    {
-    tekmove(x, y-11); /* center character strings */
-    tekalpha();
-    printf("%c",s);
-    }
-
 vecsyms(x, y, s)
     char *s;
     {
@@ -104,7 +104,6 @@ vecmovedraw(x1, y1, x2, y2)
     tekdraw(x2, y2);
     fflush(stdout);
     }
-
 
 drawlen(x, y, dx, dy, len)
     {

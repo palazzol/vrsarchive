@@ -82,3 +82,34 @@ be kept relatively simple by coordinating efforts and by not duplicating work.
 awpaeth@watcgl (original author and revisions editor)
 inp@amber.berkeley.EDU (revisionist for user interface)
 pl@sibelius.intrin.FI (support for mini-Yale, Messier and finder catalogs)
+This is the SOFTWARE update kit for StarChart version #2
+which was released in Nov/Dec 1987. The kit performs an upgrade to ver #2.1
+No upgrades to yale.star or other .star files occurs.
+
+This kit updates StarChart version #2 software as it appeared in that release -
+no other patches should already be in place. Virgin copies of version #2 are
+available from the moderator of comp.sources.unix.
+
+
+Overview of Changes
+
+More portability across sysV and IRIS UNIX installations.
+A particularly nasty bug in planet.c was removed.
+Two new device drivers were added (Unix Plot(5) and Iris).
+StarChart now performs full clipping of vectors.
+Additional flags for creating stylized output and larger displays.
+PostScript now has nicer symbols for non-stellar objects.
+More detailed patch and upgrade notes appear in the source code.
+
+FILES
+
+Name			Description/Instructions
+----			------------------------
+README			this file
+patch-*			patches for moonphase.c, planet.c, drivers, yaleformat
+patchall		runs the above patches on the originals
+starchart.1		new man page
+starchart.c		rewritten main driver (easier to reinstall then patch)
+starchart.h		accompanying new .h file for above (ditto)
+stariris.c		new IRIS driver		
+staruplot.c		new UNIX Plot(5) driver

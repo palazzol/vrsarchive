@@ -22,14 +22,24 @@
 #define SCALEL	2
 
 /*
+ ! patched December, 1987 by Alan Paeth (awpaeth@watcgl),
+ !
+ ! [1] "bigmaster" chart layout now added
+ !
+ */
+
+/*
 ** Chart parameters (limiting magnitude and window x,y,w,h)
 */
 
 mapblock thumbnail =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			3.2, 1.0, 420, 35, 480, 195, 0.0 };
+			3.2, 1.0, 2.05, 420, 35, 480, 195, 0.0 };
 
 mapblock master =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			8.0, 3.0, 20, 265, 880, 500, 0.0 };
+			8.0, 3.0, 2.05, 20, 265, 880, 500, 0.0 };
+
+mapblock bigmaster =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			8.0, 3.0, 2.05, 20,  65, 880, 700, 0.0 };
 
 /*
 ** Generic functions
@@ -78,7 +88,7 @@ vecdrawhyph(x, y)
     {
     vecdraw(x, y);	/* solid and dashed currently the same */
     }
-    
+
 xvecsym (x, y, s)
 int x,y;
 char s;

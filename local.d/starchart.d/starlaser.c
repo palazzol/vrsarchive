@@ -11,6 +11,14 @@
 */
 
 /*
+ ! patched December, 1987 by Alan Paeth (awpaeth@watcgl),
+ !
+ ! [1] "bigmaster" chart layout now added
+ ! [2] different XOFF and YOFF values adopted for better margins
+ !
+ */
+
+/*
 ** This code is intended for ALL Laserjet family printers.
 ** Because the base version has only 59 k raster buffer, the
 ** stars are not completely round, but not too ugly either.
@@ -27,8 +35,8 @@ char *calloc ();
 #define TSCALEU	69		/* text mode scaling */
 #define TSCALEL	10
 
-#define XOFF	1060		/* text centering offset (in decipoints) */
-#define YOFF	(-80)
+#define XOFF	520		/* text centering offset (in decipoints) */
+#define YOFF	(-50)		/* previously, XOFF=1060; YOFF=(-80) */
 
 #define HPLJETXMAX 743		/* Number of pixels in X-axis */
 #define HPLJETYMAX 557		/* Number of pixels in Y-axis */
@@ -38,10 +46,13 @@ char *calloc ();
 */
 
 mapblock thumbnail =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			3.2, 1.0, 420, 35, 480, 195, 0.0 };
+			3.2, 1.0, 2.05, 420, 35, 480, 195, 0.0 };
 
 mapblock master =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-			8.0, 3.0, 20, 265, 880, 500, 0.0 };
+			8.0, 3.0, 2.05, 20, 265, 880, 500, 0.0 };
+
+mapblock bigmaster =	{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			8.0, 3.0, 2.05, 20,  65, 880, 700, 0.0 };
 
 /*
 ** Generic functions
@@ -91,7 +102,7 @@ vecdrawhyph(x, y)
     {
     vecdraw(x, y); /* ditto */
     }
-    
+
 /*
 ** Text handling is a pain because of separate text/graphics mode
 ** and separated axises
