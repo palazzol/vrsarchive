@@ -10,13 +10,13 @@
  * then leave those devices undefined.
  */
 
-#define	FLOPPY		"/dev/rflp"
-#define	FLP_40_8_1	"/dev/rflp40t8s1s"
-#define	FLP_40_8_2	"/dev/rflp40t8s2s"
-#define	FLP_40_9_1	"/dev/rflp40t9s1s"
-#define	FLP_40_9_2	"/dev/rflp40t9s2s"
-#define FLP_80_15_2	"/dev/rflp80t15s2s"
-#define FLP_80_9_2	"/dev/rflp80t9s2s"
+#define	FLOPPY		"/dev/rdsk/f0d9dt"
+#define	FLP_40_8_1	"/dev/rdsk/f0d8t"
+#define	FLP_40_8_2	"/dev/rdsk/f0d8dt"
+#define	FLP_40_9_1	"/dev/rdsk/f0d9t"
+#define	FLP_40_9_2	"/dev/rdsk/f0d9dt"
+#define FLP_80_15_2	"/dev/rdsk/f0q15dt"
+#define FLP_80_9_2	"/dev/rdsk/f0q9dt"
 
 struct directory {
 	unsigned char	name[8];	/* file name */

@@ -131,6 +131,6 @@ writefat()
 		perror("writefat: write");
 		exit(1);
 	}
-#endif DUP_FAT
+#endif /*DUP_FAT*/
 	return;
 }
