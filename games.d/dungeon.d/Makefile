@@ -21,7 +21,7 @@ OBJS =  actors.o ballop.o clockr.o demons.o\
 	rooms.o rtim.o sobjs.o sverbs.o verbs.o villns.o
 
 clean:
-	$(RM) $(OBJS) $(ALL)
+	$(RM) $(OBJS) $(ALL) dtext.dat
 
 dungeon$(EXE): $(OBJS)
 	$(FC) -s -o $@ $(OBJS)
