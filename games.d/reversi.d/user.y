@@ -376,7 +376,7 @@ char **argv;
 	level = 2;
 	dispInit ();
 	srand (getpid());
-	while (**++argv == '-') {
+	while ((*++argv != NULL) && (**argv == '-')) {
 		while (*++*argv) {
 			switch (**argv) {
 			case 'b':
