@@ -395,8 +395,8 @@ register char *bufp;
 				/* finish print our string */
 				putstr(bufp);
 				bufp = obufp; /* reset it */
-				if(strlen(obufp) < BUFSIZ-1 &&
-				 strlen(obufp) < COLNO)
+				if(strlen(obufp) < (unsigned)BUFSIZ-1 &&
+				 strlen(obufp) < (unsigned)COLNO)
 					/* set bufp at the end of our
 					 * string
 					 */

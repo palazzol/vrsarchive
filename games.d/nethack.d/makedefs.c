@@ -434,7 +434,7 @@ loop:
 			printf("Cannot skipuntil %s\n", s);
 			exit(1);
 		}
-	if(strlen(s) > lpe-lp+1){
+	if(strlen(s) > (unsigned)(lpe-lp+1)) {
 		register char *lp1, *lp2;
 		lp2 = lp;
 		lp1 = lp = lp0;
@@ -443,7 +443,7 @@ loop:
 		lp0 = lp1;
 		readline();
 		lp0 = lp2;
-		if(strlen(s) > lpe-lp+1) {
+		if(strlen(s) > (unsigned)(lpe-lp+1)) {
 			printf("error in skipuntil");
 			exit(1);
 		}
@@ -614,6 +614,7 @@ char *str;
 	exit(1);
 }
 
+#ifndef __STDC__
 #if defined(SYSV) || defined(GENIX)
 rename(oldname, newname)
 	char	*oldname, *newname;
@@ -625,6 +626,7 @@ rename(oldname, newname)
 		unlink(oldname);
 	}
 }
+#endif
 #endif
 
 #ifdef __TURBOC__
