@@ -11,6 +11,9 @@
  */
 #include "main.h"
 #include <sys/param.h>
+#ifdef SYS5
+#	include <sys/types.h>
+#endif
 #include <sys/times.h>
 #ifndef HZ
 #	define HZ 60
