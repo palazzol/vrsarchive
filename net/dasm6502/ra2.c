@@ -125,7 +125,7 @@ rvrs()
   unsigned mode,imode,size,i;
 
   codeptr = codebuf;
-  relptr = relbuf;
+  relptr = (int *)relbuf;
   xdefptr = xdefhd;
   xrefptr = xrefhd;
   loc = bias;

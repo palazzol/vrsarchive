@@ -8,12 +8,14 @@
 /* external data */
 extern struct label *xdefhd,*xdeftl;  /* head,tail of xdef label list */
 extern struct label *xrefhd,*xreftl;  /* head,tail pointers for xref list */
-extern FILE lst;             /* listing file */
-extern FILE obj;              /* object file */
+extern FILE *lst;              /* listing file */
+extern FILE *obj;              /* object file */
+extern FILE *openfile();
 extern unsigned bias,codesz,relsz,xrefsz,datasz;
 extern char *codebuf;        /* code buffer     */
 extern unsigned prompt;      /* interactive mode flag */
 extern unsigned *relbuf;     /* relocation data */
+extern char *malloc();
 
 /* global data */
 struct label *newlbl;        /* new label pointer */
@@ -30,7 +32,7 @@ char **argv;
 
    while (argc>2) {
      if (!strcmp(*++argv,"-l")) { /* listing option */
-       if ((lst=openfile(*++argv,"w"))==NULL || ferror()) {
+       if ((lst=openfile(*++argv,"w"))==NULL || ferror(lst)) {
          printf("can't open listing file, %s\n",*argv);
          exit();
        }
@@ -52,7 +54,7 @@ char **argv;
 
    if (argc<2) usage();
 
-   if ((obj = openfile(*++argv, "r")) == NULL || ferror()) {
+   if ((obj = openfile(*++argv, "r")) == NULL || ferror(obj)) {
      printf ("can't open object file, %s\n", *argv);
    }
    else {
@@ -91,7 +93,6 @@ reverse()
 /* Input code segment */
 getcode()
 {
-  char *malloc();
 
   codesz = getw(obj);
 #ifdef DEBUG
@@ -108,14 +109,13 @@ getcode()
 
 getrel()
 {
-  char *malloc();
   char *cp; /* temp code pointer */
   unsigned ad,cnt1,cnt2;
   unsigned *rp;
    
 
   relsz = getw(obj);
-  relbuf = (int *) malloc(relsz*2);
+  relbuf = (unsigned *) malloc(relsz*2);
   fread(relbuf,2,relsz,obj);
 #ifdef DEBUG
   fprintf(lst,"%d relocation entries\n",relsz);
@@ -155,7 +155,6 @@ getrel()
 /* Input external identifiers */
 getxdef()
 {
-  char *malloc();
 
   unsigned count,i,ofst;
   char id[MAXID];
@@ -202,7 +201,6 @@ getxdef()
 
 getxref()
 {
-  struct label *malloc();
   unsigned count;
   char id[MAXID];
   struct label *newxref;
@@ -213,7 +211,7 @@ getxref()
 #endif
   while (count--) {
     getid(id,obj); /* input identifier */
-    newxref=malloc(sizeof(struct label));
+    newxref=(struct label *)malloc(sizeof(struct label));
     newxref->name = malloc(strlen(id));
     strcpy(newxref->name,id);
     newxref->next = NULL;
@@ -237,7 +235,7 @@ getxref()
 
 getid(s,f)
 char *s;
-FILE f;
+FILE *f;
 {
   char *s1;
   char c;

@@ -4,7 +4,8 @@
  *
  */
 #include <stdio.h>
-#include <strings.h>
+#include <ctype.h>
+#include <string.h>
 
 #define DEBUG 
 #define MAXID 20

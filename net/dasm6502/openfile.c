@@ -4,10 +4,11 @@
 /* filename: openfile.c              */
 
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 
+FILE *
 openfile(name,how)
-char *name,how;
+char *name, *how;
 
 {
   char *xname;
@@ -33,6 +34,8 @@ char *name,how;
       }
     }
 
+#ifndef M_XENIX
   device(dvc);
+#endif M_XENIX
   return (fopen(xname,how));
 }
