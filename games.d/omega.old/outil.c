@@ -32,7 +32,7 @@ int x,y;
 int random_range(k)
 int k;
 {
-return( k==0 ? 0 : ((int) random()) % k ) ;
+return( k==0 ? 0 : ((int) rand()) % k ) ;
 }
 
 
