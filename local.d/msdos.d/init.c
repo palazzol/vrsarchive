@@ -35,7 +35,7 @@ int mode;
 #ifndef FLP_40_8_1
 			fprintf(stderr, "40 track, 8 sector, single sided: not supported\n");
 			code = 1;
-#else FLP_40_8_1
+#else /*FLP_40_8_1*/
 			dir_start = 3;
 			dir_len = 4;
 			clus_size = 1;
@@ -46,13 +46,13 @@ int mode;
 				perror("init: open");
 				return(1);
 			}
-#endif FLP_40_8_1
+#endif /*FLP_40_8_1*/
 			break;
 		case 0xff:
 #ifndef FLP_40_8_2
 			fprintf(stderr, "40 track, 8 sector, double sided: not supported\n");
 			code = 1;
-#else FLP_40_8_2
+#else /*FLP_40_8_2*/
 			dir_start = 3;
 			dir_len = 7;
 			clus_size = 2;
@@ -63,13 +63,13 @@ int mode;
 				perror("init: open");
 				return(1);
 			}
-#endif FLP_40_8_2
+#endif /*FLP_40_8_2*/
 			break;
 		case 0xfc:
 #ifndef FLP_40_9_1
 			fprintf(stderr, "40 track, 9 sector, single sided: not supported\n");
 			code = 1;
-#else FLP_40_9_1
+#else /*FLP_40_9_1*/
 			dir_start = 5;
 			dir_len = 4;
 			clus_size = 1;
@@ -80,13 +80,13 @@ int mode;
 				perror("init: open");
 				return(1);
 			}
-#endif FLP_40_9_1
+#endif /*FLP_40_9_1*/
 			break;
 		case 0xfd:
 #ifndef FLP_40_9_2
 			fprintf(stderr, "40 track, 9 sector, double sided: not supported\n");
 			code = 1;
-#else FLP_40_9_2
+#else /*FLP_40_9_2*/
 			dir_start = 5;
 			dir_len = 7;
 			clus_size = 2;
@@ -97,7 +97,7 @@ int mode;
 				perror("init: open");
 				return(1);
 			}
-#endif FLP_40_9_2
+#endif /*FLP_40_9_2*/
 			break;
 		case 0xf9:		/* all 80 track disks */
 			version = get_dos_ver();
@@ -107,7 +107,7 @@ int mode;
 #ifndef FLP_80_15_2
 					fprintf(stderr, "80 track, 15 sector, double sided: not supported\n");
 					code = 1;
-#else FLP_80_15_2
+#else /*FLP_80_15_2*/
 					dir_start = 15;
 					dir_len = 14;
 					clus_size = 1;
@@ -118,13 +118,13 @@ int mode;
 						perror("init: open");
 						return(1);
 					}
-#endif FLP_80_15_2
+#endif /*FLP_80_15_2*/
 					break;
 				case '2':
 #ifndef FLP_80_9_2
 					fprintf(stderr, "3.5 inch 80 track, 9 sector, double sided: not supported\n");
 					code = 1;
-#else FLP_80_9_2
+#else /*FLP_80_9_2*/
 					dir_start = 7;
 					dir_len = 7;
 					clus_size = 2;
@@ -135,7 +135,7 @@ int mode;
 						perror("init: open");
 						return(1);
 					}
-#endif FLP_80_9_2
+#endif /*FLP_80_9_2*/
 					break;
 				default:
 					fprintf(stderr, "Unknown DOS version '%02x'\n", version);
@@ -211,6 +211,8 @@ char *dirname;
 	char *s, *malloc(), *strcpy(), *strcat();
 	static char *ans;
 
+	if (dirname == 0)
+		dirname = "/";
 	ans = malloc(strlen(dirname)+2);
 					/* add a leading separator */
 	if (*dirname != '/' && *dirname != '\\') {
