@@ -1,0 +1,714 @@
+Messages from file DSKC:MAIL.MSG[C410AN90]@CMU-CS-A.ARPA
+				on Monday, 10 June 1985 at 2344-EDT:
+
+253?-+10 Jun 85 s r t MOSIS@ISIF@USC Topic: PCBFAB (5851)
+254?-+10 Jun 85 s r t MOSIS@ISIF@USC Topic: PCBTEK (23201)
+
+------------------------------------------------------------------------------
+
+----Message 253 (5851 chrs) is----
+Return-Path:<VLSI@USC-ISIF.ARPA>
+Received: from USC-ISIF.ARPA by CMU-CS-A.ARPA; 10 Jun 85 23:23:15 EDT
+Date: 10 Jun 1985 20:20 PDT
+From: The MOSIS System <VLSI@USC-ISIF> (send requests to MOSIS@ISIF)
+Subject: Topic: PCBFAB
+To: Andreas.Nowatzyk@CMU-CS-A.ARPA
+Your-message-sent: Mon, 10 Jun 85 23:06 EDT
+Your-Message-ID: <10Jun85.230636.AN90@CMU-CS-A.ARPA>
+MOSIS-Message-ID: 85061069502
+
+
+		   STANDARD PCB FABRICATION INSTRUCTIONS
+		   =====================================
+
+Instructions for users
+----------------------
+
+Following is the standard PCB fabrication specifications template.
+When submitting instructions for a project, users must edit the
+following items:
+
+***************************
+* 1. Which layers present *
+***************************
+
+***************************
+* 2. Project feature size *
+***************************
+
+***********************
+* 3. Board dimensions *
+***********************
+
+*********************************
+* 4. Number of boards requested *
+*********************************
+
+******************************************
+* 5. Sizes and quantities of drill holes *
+******************************************
+
+to reflect the actual project specifications.  Users may then submit
+the ENTIRE template as fabrication instructions via REQUEST:ATTENTION
+message to MOSIS@USC-ISIF (naming project ID in subject field).
+
+Should additional items need modification, please flag them in the
+template AND send a separate ATTENTION message requesting clearance.
+
+Fabrication instructions are read by MOSIS Project PCB staff.  Feel free to
+include comments and questions in the template and/or additional ATTENTION
+messages.
+
+
+
+
+
+			SPECIFICATIONS TEMPLATE
+
+Tolerances for positions are given by diameter-of-true-position to
+be measured according to MIL-P-55110-C.  Tolerances for sizes are +/-.
+Hole sizes are of the finished holes, e.g., after plating.
+
+***********************************************************
+* 1. Indicate which artwork layers are present (1:1)      *
+*                                                         *
+*    PC1  - Component side #1                             *
+*    PN2  - Power plane #2                                *
+*    PN3  - Ground plane #3                               *
+*    PC4  - Solder side #4                                *
+*    PSMC - Solder mask (component)                       *
+*    PSMS - Solder mask (solder)    **optional**          *
+*    PSSC - Silkscreen (component)  **optional**          *
+*    PSSS - Silkscreen (solder)     **optional**          *
+*    PD   - Drill layer (PTH, plated-thru-holes)          *
+*    PDNP - Drill layer (non-PTH)   **optional**          *
+*                                                         *
+*    The above layers are for a typical 4-layer board.    *
+*    For 2-layer boards please use PC1 and PC2 for the    *
+*    component and the solder side, respectively.  For    *
+*    other #-layer boards, use layer names of the form    *
+*    PCn or PNn, where n is the serial number of the      *
+*    layer, starting with the component side.             *
+***********************************************************
+
+********************************************************
+* 2. Project feature size (line width/spacing): ?.???" *
+********************************************************
+
+***********************************************************************
+* 3. Board dimensions:  ?? x ?? (typically up to 18.000"  x  16.000") *
+***********************************************************************
+
+************************************
+* 4. Number of boards requested: ? *
+************************************
+
+*******************************************
+* 5. Sizes and quantities of drill holes: * 
+*        0.???, ?# holes                  *
+*        0.???, ?# holes                  *
+*        0.???, ?# holes                  *
+*******************************************
+
+ 6. Layers: 4 layers, with internal layers for power and ground. 
+
+ 7. Etching tolerance:  +/-0.002
+
+ 8. PTH (after plating) size tolerance: +/-0.003"
+
+ 9. Holes position tolerance: 0.003" diameter true position.
+
+10. All drill holes are on 0.025" grid
+
+11. Hole plating copper thickness: 0.001" min
+
+12. Copper on external layers:  1 oz. copper before plating.
+
+13. Copper on internal layers:  1 oz. copper.
+
+14. Layer-to-layer registration: 0.005"
+
+15. Minimum annular ring width for all circular and square pads: 0.005"
+    This does not apply to shaven pads.
+
+16. Material: epoxy glass laminate.  Must meet UL 94V-0 and UL 94V-1
+    flammability specifications.
+
+17. Board thickness across connector finger area: 0.062" +/-0.007"
+
+18. Edge connectors electroplating: min 0.000050" gold over 0.000050" nickel
+
+19. Area to be gold plated:   Defined by engineering drawing.
+
+20. Outside board dimensions tolerance: at edge connectors: +/-0.007"
+                                                 elsewhere: +/-0.015"
+
+21. Solder mask: dry film preferred (both sides)
+
+22. Solder plate: 0.0003" min plus fuse all conductive surfaces
+
+23. Solder mask-solder side:  If no artwork is provided for solder mask-solder
+    side, the solder mask-component side will be used for the solder side.
+
+24. Silk screen color: white
+
+25. Engineering drawing
+
+* Drawing Tolerances: .XX        +/- 0.010"
+                      .XXX       +/- 0.005"
+                       angles    +/- 1 degree
+
+* Center of fingers to end of edge-connector: 0.086"
+
+* Bevel: Connector finger outside corners: 0.03" x 45 degrees 2 places,
+                    Board outside corners: 0.04" x 45 degrees 4 places.
+
+* Board inside corners: 0.06" max Radius, 2 places.
+
+* Chamfer: Connector finger edge: 0.015" x 30 degrees.
+----Message 254 (23201 chrs) is----
+Return-Path:<VLSI@USC-ISIF.ARPA>
+Received: from USC-ISIF.ARPA by CMU-CS-A.ARPA; 10 Jun 85 23:34:38 EDT
+Date: 10 Jun 1985 20:20 PDT
+From: The MOSIS System <VLSI@USC-ISIF> (send requests to MOSIS@ISIF)
+Subject: Topic: PCBTEK
+To: Andreas.Nowatzyk@CMU-CS-A.ARPA
+Your-message-sent: Mon, 10 Jun 85 23:06 EDT
+Your-Message-ID: <10Jun85.230636.AN90@CMU-CS-A.ARPA>
+MOSIS-Message-ID: 85061069502
+
+                               THE MOSIS SYSTEM
+                            PCB FABRICATION SERVICE
+
+
+
+Table of Contents
+
+1. Introduction                                                
+2. General Information                                         
+3. Submitting projects                                         
+4. Fabrication instructions                                    
+5. CIF layers                                                  
+6. CIF to film design rules                                    
+7. CIF to PCB design rules                                     
+8. Miscellaneous recommendations                               
+   8.(A) Plated-Through-Holes (PTHs) for 4-layer boards        
+   8.(B) Components and vias for layers 1 and 4                
+   8.(C) Component connection to power (PN2) and ground (PN3)  
+   8.(D) Connection of signals to power (PN2) and to ground (PN3)
+
+
+1. Introduction
+
+PCBs,  like  integrated  circuits,  are fabricated by a process that produces a
+series of two-dimensional images of possibly different properties,  constructed
+on  top  of one another.  The conducting and insulating layers communicate with
+each other  through  vias  with  patterns  for  that  purpose,  and  also  have
+electrical  interaction where certain spatial relations hold, i.e., transistors
+and inter-layer impedance.
+
+Although PCBs and ICs are made of different  materials,  they  share  a  common
+method  of  specification of the images required on each of their layers.  Both
+are fabricated by a "photographic" process which transfers images to the  media
+surface from a master tooling.
+
+The  single  most important difference between these technologies is the scale,
+or "feature size".  A typical IC device has a feature size of 3 microns  and  a
+size  of 6mm; hence it is 1,000 line-pairs across.  A typical PCB has a feature
+size of 0.004 inches and a size of 15 inches; hence 2,000  line-pairs.    These
+numbers  show that the resolution of the tooling is not significantly different
+between these two technologies.  The most significant  difference,  as  far  as
+fabrication  preparation  (the  job  of MOSIS) is concerned, is the size.  Both
+technologies use 1X tooling.
+
+Realizing these similarities and differences, the MOSIS user community  decided
+to  extend their VLSI design and fabrication tools to accommodate PCBs as well.
+The simple first steps already taken treat PCBs as yet another technology, with
+its  own  set  of conventions, standard cells and, obviously, its own geometric
+and electric design rules.  As with IC designs, the PCB patterns are  expressed
+in  CIF;  from the viewpoint of the user, MOSIS treats the geometric processing
+required to convert CIF into tooling  for  PCBs  just  as  it  does  any  other
+technology.
+
+These technologies differ significantly in fabrication philosophy.  The unit of
+production in the IC arena is a wafer which may have many different  die-types,
+each  possibly with several independent projects.  PCBs, on the other hand, are
+rarely combined in the fabrication process.  Therefore, MOSIS  does  not  apply
+its  standard  Multi-Project-Chip  and Multi-Chip-Wafer procedures to PCBs, but
+fabricates them one at a time.
+
+Conventional tooling for ICs is a set of 1X masks, typically 5  inches  square.
+The  conventional  tooling  for  PCBs is a set of 1X films, typically 20 inches
+square.  The former  are  usually  made  by  E-beam  machines,  the  latter  by
+photo-plotters (and soon also by lasers).
+
+Neither  E-beam  machines  nor  photo-plotters can use the CIF format directly.
+These families of equipment require data formats of totally different  natures:
+E-beam  machines are most efficient while traversing a predefined scan, whereas
+the electro-mechanical photo-plotters enjoy the ability to use  random  motion.
+All the upcoming laser writers are expected to be similar to the E-beam pattern
+generators rather than to the conventional electro-mechanical photo-plotters.
+
+Due  to  the  limitation  of  the  old  photo-mechanical  equipment  used   for
+photo-plotters,  all  of  the  data  formats  ("languages") suffer from various
+archaic idiosyncracies, guaranteed to rule out any compatibility among  various
+vendors.
+
+Complying  with these idiosyncracies and passing them to the designers (in form
+of design rules, for example) is diametrically opposed to the MOSIS philosophy.
+It  was  therefore  decided  to  stay  with the same "combat proven" IC tooling
+preparation method for PCBs.  Hence, MOSIS genertes the patterns  for  all  PCB
+layers  by  using  E-beam  technology, which produces high-quality glass plates
+instead of larger patterns on sheets of film.
+
+Economy, the availability of software for E-beam machines,  and  the  ratio  of
+feature size between IC and PCB technologies suggested that the glass plates be
+made at 0.05X.  This scale allows  the  generation  of  16  patterns,  each  of
+20"x20"  target  size,  on  a standard 5"x5" plate.  A simple (and inexpensive)
+photographic process is used to transfer these images from the glass plates  to
+film  sheets.    The  required magnification of 20X is an integral part of this
+photographic process.  The  resolution  of  the  photographic  process  has  to
+support only 2,000 line-pairs across the whole image, well under the limitation
+of good lenses.
+
+This approach of using a common tooling preparation methodology  for  both  ICs
+and  PCBs  has many advantages: it allows designers to use common tools for the
+design process (with details tailored  specifically  to  each  technology)  and
+allows  MOSIS  to apply the same management procedures and the same geometrical
+processing and tooling preparation methods to PCB technology.
+
+An important and unexpected benefit of this approach is the  existence  of  the
+master tooling on high-quality glass, which does not flex, stretch, scratch, or
+deteriorate with time.  It is easy and common to  protect  glass  mask  masters
+from environmental hazards.
+
+Probably  the  most important feature of the expansion of MOSIS to include PCBs
+is that the expansion has been done in a way which is expected to carry over to
+other  packaging  technologies,  such as various hybrids, ceramic carriers, and
+plastic tapes.
+
+MOSIS has already published design rules, recommended procedures,  and  various
+standard  cells  and  design  frames  for  PCBs, and the service is being used.
+Typical turnaround time from receipt of CIF to delivery of boards is 3-4 weeks.
+
+By adhering to the notion of  separation  of  design  from  fabrication,  MOSIS
+refused  to  burden  its  users  with  many  of  the traditional idiosyncracies
+involved  in  PCB  design,  especially  those  arising  from   aperture-related
+constraints.    Although unconventional, the route to PCB tooling through 0.05X
+E-beam masks has proven to be not only versatile, but economical.
+
+
+                                Acknowledgement
+
+The MOSIS Service wishes to thank Chuck Seitz of Caltech for helping to develop
+the PCB service.
+
+
+2. General Information
+
+
+      MOSIS  assumes  that  users  submitting  PCB  projects  know  what is
+    necessary for designing PCBs. MOSIS does not  verify  in  any  way  the
+    validity of the designs and is not currently able to teach users how to
+    design PCBs.  Users who are familiar with PCB design are encouraged  to
+    share their knowledge with MOSIS.
+
+
+In  order  to  support  fast  turnaround  fabrication of PCBs, MOSIS offers the
+following services to its user community:
+
+        *** CIF to films
+        *** CIF to up to 8-layer PCBs
+
+The CIF used for specifying films and/or PCBs  should  be  submitted  to  MOSIS
+according to the CIF/PCB and MOSIS/PCB design rules and conventions included in
+both this manual and the  MOSIS  information  service  via  REQUEST:INFORMATION
+messages specifying the following topics:
+
+PCBFAB.INF                    Fabrication specifications template to be
+                              edited and submitted to MOSIS via ATTENTION
+                              message for each PCB project.
+
+DIPS.CIF                      Contains CIF symbols for various common DIPs
+                              to use in a (4-layer) PC board layout.
+
+PCSAM1.CIF                    Contains a sample 4-layer PC board CIF file 
+                              with power as PN2 and ground as PN3.
+                              Illustrates the design style of PCBTEK and 
+                              the use of the various design layers.
+
+The DRs are not lambda based.
+
+Users who request CIF to film plotting have to comply with the CIF-to-film/DRs.
+Users who request  CIF  to  PCB  fabrication  have  to  comply  with  both  the
+CIF-to-film-DRs and with the CIF-to-PCB-DRs.
+
+A  discussion  of  values  regarding  line  width,  spacing,  margins,  current
+limitations, preferred grid, gold line specification, etc., is included in this
+manual.
+
+
+3. Submitting projects
+
+Technology name: "PCB1".
+
+Every project must start with a NEW-PROJECT request with the usual parameters.
+
+The PCB FABRICATE request differs from the typical IC FABRICATE request only in
+that an ATTENTION parameter containing  the  specification  "OUTPUT"  with  the
+following values must be included:
+
+
+OUTPUT: ART             for films
+OUTPUT: PCBOARD         for (bare) PC-board fabrication
+OUTPUT: ART/PCBOARD     for both
+
+
+Sample FABRICATE request:
+
+
+REQUEST: FABRICATE
+    ID:          .....
+    P-Password:  .....
+    Technology:  PCB1
+    Lambda:      10 mils (the minimum width/spacing in mils!!)
+    Size:        18000 x 16000 mils
+    Attention:   (a) OUTPUT required (ART and/or PCBOARD)
+                 (b) fabrication-instructions and spec's ...
+                     .......................................
+                 (c) Other requests/information, as needed
+    CIF:
+                 ............................
+                 ............................
+                 END
+REQUEST: END
+
+
+The SIZE parameter should be in mils and should refer to the dimensions of
+the finished board, not including the differential plating bars, engineering
+drawing, etc.  Hence, the SIZE is not the MBB of the CIF file (as it is for
+MOS).
+
+Some  (or  all)  of  the  above  parameters  may be pre-submitted either in the
+NEW-PROJECT or by  using  the  SUBMIT  request  before  requesting  the  actual
+fabrication.
+
+CIF-fragments, CIF-checksum and CIF-FTP may be used for submitting long files.
+
+
+4. Fabrication instructions
+
+Fabrication  instructions must be transmitted to MOSIS via ATTENTION as soon as
+possible.  Please examine instructions and suggested specs in  TOPIC:PCBFAB.INF
+(Appendix "Fabrication specifications template").
+
+When  submitting these text instructions via ATTENTION to MOSIS please mark all
+items that vary from our recommendation by inserting a row  of  asterisks  both
+before  and  after  differences.    PCB  staff  will  then  clear  your special
+requirement(s) with the board fabricator.
+
+The engineering drawing (Layer PF) should show the board outline "crop  marks",
+the  gold  line (end line of the gold plating), and the coordinates origin. The
+board outline should be specified by using a (closed) wire of 1 mil width  (NOT
+A POLYGON).
+
+
+5. CIF layers
+
+The following layers are supported:
+
+        PCn or PNn for n=1,2,3....8
+        PSSC       silk screen, component side
+        PSSS       silk screen, solder side
+        PSMC       solder mask cuts, component side
+        PSMS       solder mask cuts, solder side
+
+        PD         drill (plated-through-holes, PTH)
+        PDNP       drill (non-plated-through-holes, NPTH)
+
+        PF         engineering drawing of the finished board
+
+The  R  commands  on the PD and the PDNP layers are used for defining the drill
+position.  All other commands on these layers will  be  included  in  a  "drill
+plot",  if any, but do not affect the drilling operations.  
+
+The maximum film size is  approximately  20"  by  25".  For  larger  sizes  use
+ATTENTION.
+
+The  standard  film  plotting is black features/geometry (as defined by CIF) on
+clear background/field.  For reverse plotting of any layer use ATTENTION.
+
+Note that both PCn and PNn are plotted with the same polarity even though  they
+have  opposite  electrical  meaning.    It  is  a standard practice to have the
+internal layers (e.g., PN2 and PN3) reversed in the fabrication process.
+
+DD, as usual, is not supported by MOSIS CIF reader(s).
+
+
+6. CIF to film design rules
+
+MOSIS rounds off all coordinates and sizes to be multiples of:
+
+                [1 mil = 0.001" = 25.4 micron = 2540 CIF-units]
+
+Geometrical conventions:
+
+  -  The layers of an n-layer  PCB  are  assigned  consecutive  numbers,
+     according to their order such that the component side is layer #1 and
+     the solder side is #n.
+
+  -  If the CIF features on the nth layer define  conductors  then  this
+     layer  is  called PCn.  If they define non-conducting areas then this
+     layer is called PNn.  Obviously it is illegal to have  both  PCn  and
+     PNn for the same value of n.
+
+  -  All  layers  are  drawn as seen from the component side.  Note that
+     text to be read from the solder side is specified in CIF in  X-mirror
+     image.
+
+
+7. CIF to PCB design rules
+
+The  CIF  for PCB fabrication must comply with the design rules for CIF-to-film
+design rules.  The following rules are required in addition.
+
+For a MOSIS n-layer board (2 <= n <= 8), the following layers are available:
+
+  <M>   PC1          signal layer, component side
+  <M>   PCi/PNi      internal power, ground or signal layers (1 < i < n)
+  <M>   PCn          signal layer, solder side
+
+  [O]   PSSC         silk screen, component side
+  [O]   PSSS         silk screen, solder side
+
+  <M>   PSMC         solder mask cuts, component side
+  [O]   PSMS         solder mask cuts, solder side
+
+  <M>   PD           drill (plated-through-holes, PTH)
+  [O]   PDNP         drill (non-plated-through-holes, NPTH)
+
+  <M>   PF           engineering drawing of the finished board 
+
+
+<M> indicates the mandatory layers.  [O] indicates the optional layers.
+
+For boards requiring more than 8 layers notify MOSIS via ATTENTION.
+
+*If no PSMS is supplied then PSMC is used for both sides.
+
+*If no PDNP is supplied then all holes are plated through.
+
+Edge  connectors  have  to  be  extended  on  the  outside layers to the end of
+differential plating bars (300 to 500 mil) and be  bussed  together  along  the
+edge by a wire of 20 mil width.
+
+All  layers except the internal ones (e.g., PN2 and PN3), including the drills,
+should include "crop marks" which are 0.050" wide and  0.250"  to  0.500"  long
+along  corners  (from the outside of both inside and outside corners, at 0.010"
+to 0.015" off the board edge).  This can be done with the Wire command of  CIF,
+with width of 0.050" and with center line 0.035" outside.
+
+Example  of  "crop-marks"  and of differential plating bars may be found in the
+PCSAM1.CIF file in the MOSIS library.
+
+No copper should be on the internal layers within 0.100" of the edge of the
+board.  (Suggestion: for each non-conducting layer, PNi, trace the outline
+of the board with a line of width of 0.200").
+
+No external (i.e., off-board) alignment marks are required, and none should  be
+supplied.
+
+All  holes,  both  PTH and NPTH, should be covered with a solder mask (SM).  In
+the case of PTH the SM should be a symbol with diameter larger than the  copper
+pad  (circle  or box) by 0.004".  In the case of NPTH the SM should be a circle
+with diameter larger than the NPTH itself by 0.004".
+
+For most designs the same Solder Mask may be used for both sides.  In this case
+please  define  only  the PSMC and use the fabrication instructions text to ask
+that the PSMC be used also for the solder side (i.e., as a PSMS).    Aggressive
+designs using "shaven pads" may need PSMS different than the PSMC.
+
+
+8. Miscellaneous recommendations
+
+MOSIS recommends including the outline of all devices on PSSC.
+
+MOSIS  also recommends marking pin#1 of DIPs if PSSS is not defined (or defined
+without outline). For example by using non-standard PTH symbol --  to  make  it
+easy to recognize pin#1, especially from the solder side.
+
+MOSIS recommends that all component connections to power (e.g., PN2) and ground
+(e.g., PN3) should use thermal reliefs on  these  layers.    Other  connections
+(e.g., of the edge connectors) to the power and ground layers do not need them.
+
+The  following recommendations for PTHs are for 4-layer boards using a minimum
+34 mil hole (after plating) inside 60 mil copper areas with 64 mil solder area.
+These  values  are used here as an example.  Check their applicability with any
+set of specific design rules.
+
+Note that the use of 10 mil wires with 10 mil spacing permits only one to  wire
+pass between adjacent pads of 60 mil diameters on a 100 mil grid.  On the other
+hand the use of 8/8 permits 2 wires to pass between such pads.  The use of  5/5
+would yield 3 wires.  10/10 is standard conservative practice.  8/8 is becoming
+standard.  5/5 is upcoming.
+
+All of the following dimensions are in mils.  Each DS has A/B  =  2540/1,  thus
+allowing geometry specification in mils.
+
+8.(A) Plated Through Holes (PTHs) for 4-layer boards
+
+The following symbol is used in the definition of several types of PTHs.
+
+
+DS 1 2540 1 ; (basic PTH: PC1,PC4,PD,PSMC,PSMS) ;
+        L PC1  ;  R 60 0 0 ;
+        L PC4  ;  R 60 0 0 ;
+        L PD   ;  R 34 0 0 ;
+        L PSMC ;  R 64 0 0 ;
+(use the following line if and only if PSMS is needed: ) ;
+        L PSMS ;  R 64 0 0 ;
+DF ;
+
+
+
+8.(B) Components and vias for layers 1 and 4
+
+MOSIS  recommends  using  symbol#2 for vias between layers 1 and 4 for signals,
+for hand-inserted components, and for sockets.
+
+
+DS 2 2540 1 ; (PTH for vias, components and sockets) ;
+        C    1 ;
+        L  PN2 ;  R  75 0 0 ; (avoid power) ;
+        L  PN3 ;  R  75 0 0 ; (avoid ground) ;
+DF ;
+
+
+The choice of 80 for the PN2 and PN3 layers is recommended in order to  improve
+the  yield at a slight risk of strip line impedance mismatching.  The choice of
+60 does improve the strip line impedance matching, at a slight risk of yield.
+
+For machine-inserted components, and for Holtite, MOSIS  recommends  adding  10
+mils to all of the above diameters.
+
+8.(C) Component connection to power (PN2) and ground (PN3)
+
+For  hand-inserted  components  and for sockets MOSIS recommends using symbol#3
+for power connection and symbol#4 for ground connection.  Symbols  #9  and  #10
+are thermal reliefs for the power and ground planes.
+
+
+DS 3 2540 1 ; (PTH for connecting components to power on PN2) ;
+  C   1 ;
+  L PN2 ; C  9 ; (#9 is a TR for power) ;
+  L PN3 ; R 75 0 0 ;
+DF ;
+
+DS 4 2540 1 ; (PTH for connecting components to ground on PN3) ;
+  C   1 ;
+  L PN2 ; R 75 0 0 ;
+  L PN3 ; C  10 ; (#10 is a TR for ground) ;
+DF ;
+
+
+For  machine  insertions and for Holtite MOSIS recommends adding 10 mils to the
+above diameters.
+
+8.(D) Connection of signals to power (PN2) and to ground (PN3)
+
+For connection of  non-components  from  PC1  and  PC4  to  power  (PN2)  MOSIS
+recommends using symbol#5:
+
+
+DS 5 2540 1 ; (connect signals to power) ;
+        C   1 ;
+        L PN2 ; R 10 0 0 ; (this is a guide hole) ;
+        L PN3 ; R 75 0 0 ;
+DF ;
+
+
+For  connection  of  non-components  from  PC1  and  PC4  to ground (PN3) MOSIS
+recommends using symbol#6:
+
+
+DS 6 2540 1 ; (Connect signal to ground) ;
+        C   1 ;
+        L PN2 ; R 75 0 0 ;
+        L PN3 ; R 10 0 0 ; (this is a guide hole) ;
+DF ;
+
+
+MOSIS recommends using the following symbol#7 for pin#1 of DIPs:
+
+
+DS 7 2540 1 ; (square pin#1) ;
+        L PC1  ;  B 60 60 0 0 ;
+        L PN2  ;  R 75  0 0   ;
+        L PN3  ;  R 75  0 0   ;
+        L PC4  ;  B 60 60 0 0 ;
+        L PD   ;  R 34  0 0   ;
+        L PSMC ;  B 64 64 0 0 ;
+(use the following line if and only if PSMS is needed: ) ;
+        L PSMS ;  B 64 64 0 0 ;
+DF ;
+
+
+MOSIS recommends using the following symbol#8 for alignment marks  on  4  layer
+PCBs:
+
+
+DS 8 2540 1 ; (alignment marks for 4 layers) ;
+        L PC1  ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+        L PN2  ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+        L PN3  ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+        L PC4  ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+        L PSSC ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+        L PSMC ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+(use the following line if and only if PSMS is needed: ) ;
+        L PSMS ; B 40 40  20,20 ; B 40 40 -20,-20 ;
+DF ;
+
+
+Following  are  examples  of  a  Thermal  Relief (symbol#9 for power on PN2 and
+symbol#10 for ground on PN3).  In  this  example  the  TR  is  square,  with  4
+"bridges",  ID  of  0.080"  and OD of 0.100".  TRs may be square or round, with
+different number of "bridges" and with different IDs and ODs.
+
+
+DS 9 2540 1 ; L PN2 ; (TR for the power plane) ;
+  (square, 4 bridges, outside dimension 0.100", inside 0.080") ;
+  B 40 10 -30 -45 ; B 40 10 30 -45 ; B 40 10 -30 45 ; B 40 10 30 45 ;
+  B 10 40 -45 -30 ; B 10 40 45 -30 ; B 10 40 -45 30 ; B 10 40 45 30 ;
+DF ;
+
+DS 10 2540 1 ; L PN3 ; (TR for the ground plane) ;
+  (square, 4 bridges, outside dimension 0.100", inside 0.080") ;
+  B 40 10 -30 -45 ; B 40 10 30 -45 ; B 40 10 -30 45 ; B 40 10 30 45 ;
+  B 10 40 -45 -30 ; B 10 40 45 -30 ; B 10 40 -45 30 ; B 10 40 45 30 ;
+DF ;
+
+
+MOSIS recommends using symbols like the following symbol#14  for  DIPs.    Note
+that  this symbol has already a built-in power connection with a thermal relief
+on pin#14 and a ground connection with thermal relief  on  pin#7.    It  has  a
+square mark for its pin#1 on both sides.
+
+
+DS 14 2540 1 ; (DIP-14);
+  C 7  T 0,    0 ; (#1) ;        C 3  T 300,    0 ; (#14,power) ;
+  C 2  T 0, -100 ; (#2) ;        C 2  T 300, -100 ; (#13) ;
+  C 2  T 0, -200 ; (#3) ;        C 2  T 300, -200 ; (#12) ;
+  C 2  T 0, -300 ; (#4) ;        C 2  T 300, -300 ; (#11) ;
+  C 2  T 0, -400 ; (#5) ;        C 2  T 300, -400 ; (#10) ;
+  C 2  T 0, -500 ; (#6) ;        C 2  T 300, -500 ; (# 9) ;
+  C 4  T 0, -600 ; (#7,ground) ; C 2  T 300, -600 ; (# 8) ;
+  L PSSC ; (outline in silk-screen);
+  W 20 50,50 50,-650 250,-650 250,50 170,50 170,10 130,10 130,50 50,50;
+DF ;
+
+
+The  file  DIPS.CIF  in the MOSIS library contains all of the above symbols and
+symbols for some popular DIPS (14, 16, 18, 20, 22, 24, 24-wide, 28, 40, 48  and
+64).
+
+[]

@@ -1,0 +1,41 @@
+This directory contains the source files to PCB V1.24:
+
+PCB is a PC board editor with integrated routers. It was writen
+for a VAX running UNIX V4.1 BSD that has a AED-512 graphic terminal
+and a Versatec V-80 electrostatic plotter attached.
+
+The PCB source files are:
+
+	paed.c	patr.c	pcdst.h	pcif.c	pcmdl.c	pdiag.c	pfio.c	pleer2.c
+	pleer.c	pleer.h	pmain.c	pmap.c	pmnrt.c	pparm.h	pplow.c	pleer1.c
+	pstat.c	psub.c	pwide.c	pwork.c	pplace.c pupdate.c
+
+Other files:
+
+	pcb.mss		A manual for PCB in SCRIBE-format
+	pcb.1		Unix manual page
+	pcbsdef.CIF	The standart CIF library for PCB
+	Makefile	Compilation commands
+	displays	Sample display location file
+	mosis_pcb.txt	MOSIS documentation on their PC board service
+	test.cp		Sample componet file
+	test.nl		Sample netlist
+	test.ty		Sample type file
+
+The following source file are functions of the CMU library that are
+used by PCB. These routines were included with permission from CMU.
+<leagal mumble saying that you should be thankful that you may use
+ this code and the CMU will get mad if you use it to make money>
+
+	fwantread.c	fwantwrite.c	getbool.c	getfloat.c
+	getint.c	getstr.c	openp.c		searchp.c
+	wantread.c	wantwrite.c
+
+Please send all bug reports, suggestions and improvements to:
+
+		Andreas.Nowatzyk@cmu-cs-vlsi.arpa
+	or	...!seismo!cmu-cs-vlsi!agn
+
+However, I do not promise to do anything about it.
+
+	Have fun  --  Andreas

@@ -1,0 +1,11 @@
+7/4/85	Redundant extern declarations of members of <stdio.h> removed.
+	Redundant "string.h" is no longer referenced. This should
+	avoid warnigs on BSD 4.2 systems.
+7/8/85  CRMOD added to the AED terminal line initialization. This should
+	help on other systems.
+7/23/85 r0 in fillet hole routine reduced to 72 (from 82) because of
+	potential interaction with nearby via-holes: if the via-hole
+        is positioned 6/4 uints from the component hole AND a wire
+        leaves the component hole diagonally towards the unrelated
+	via hole, the seperation between fillet and wire becomes
+        6.5 mil (instead of 8 mil) with the old fillet size.

@@ -1,0 +1,48 @@
+.TH PCB 1 6/16/85
+.CM 4
+.SH "NAME"
+pcb \- PC Board router and editor
+.SH "SYNOPSIS"
+pcb [-sb]
+.SH "DESCRIPTION"
+.B PCB
+is a tool to design a printed circuit board (pcb) for a given circuit.
+The circuit must be described by 3 files: a type definition file that
+has the layout of the used devices, a component definition file that
+lists the devices in the circuit and associates them with an instatiation
+name and optional placement information.
+The third file is a netlist that
+describes the electrical connections that should be realized.
+For special
+devices such as logos, connectors and annotations - a library of geometry
+descriptions must be supplied (in CIF, Caltech Intermediate Format).
+
+Based on these files describing the board, a database of the desired board
+is constructed.
+.B PCB
+has facilities to route the board (either automatic or interactive), plot
+it (either directly on a Versatec plotter or as a CIF file that may be submitted
+to MOSIS for fabrication) and to make changes to it.
+.SH "FILES"
+[v/u]/usr/vlsi/bin/pcb			executable object
+[v/u]/usr/agn/pcb/pcbsdef.CIF		standart CIF library
+[v/u]/usr/vlsi/lib/caesar/displays	graphic terminal list
+[v/u]/usr/agn/pcb/pcb.press       	documentation
+.li
+./pcb.SAV				saved database
+.SH "ENVIRONMENT"
+needs an AED-512 graphic terminal on a direct line to work with.
+.SH "BUGS"
+quite likely.
+.B PCB
+has a fair amount of internal consistency checking build in that tries to
+locate trouble early (and prevent core-dumps).
+If a problem is detected, a
+copy of the current data base is written to 'pcb.ERR' along with some
+diagnostic information to aid debugging.
+Usually, it is possible to restart
+on this data base (move it to pcb.SAV) without loosing work.
+.SH HISTORY
+.TP
+16-Jun-85  Andreas Nowatzyk (agn) at Carnegie-Mellon University
+Created.
