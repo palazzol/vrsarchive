@@ -1,17 +1,21 @@
 /* nap.c		 Larn is copyrighted 1986 by Noah Morgan. */
 #include <signal.h>
+#ifdef M_XENIX
+#include <sys/param.h>
+#else
 #include <sys/types.h>
-#ifdef SYSV
+#endif
+#ifdef SYS5
 #include <sys/times.h>
 #else
 #ifdef BSD
 #include <sys/timeb.h>
 #endif BSD
-#endif SYSV
+#endif SYS5
 
-#ifndef KERNELHZ
-#define KERNELHZ 60
-#endif !KERNELHZ
+#ifndef HZ
+#define HZ 60	/* Take a guess */
+#endif !HZ
 #define MS	(1000/KERNELHZ)	/* Milliseconds per clock tick	*/
 
 /*
@@ -31,7 +35,7 @@ napms(x)	/* do nothing */
 	{
 	}
 #else NONAP
-#ifdef SYSV
+#ifdef SYS5
 /*	napms - sleep for time milliseconds - uses times() */
 /* this assumes that times returns a relative time in 60ths of a second */
 /* this will do horrible things if your times() returns seconds! */
@@ -50,7 +54,7 @@ napms(time)
 		;
 	}
 
-#else not SYSV
+#else not SYS5
 #ifdef BSD
 #ifdef SIGVTALRM
 /* This must be BSD 4.2!  */
@@ -117,5 +121,5 @@ static napms(time)
 #else not BSD
 static napms(time) int time; {}	/* do nothing, forget it */
 #endif BSD
-#endif SYSV
+#endif SYS5
 #endif NONAP
