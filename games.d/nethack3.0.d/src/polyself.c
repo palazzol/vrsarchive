@@ -632,17 +632,17 @@ body_part(part)
 	
 	if (humanoid(uasmon) || (u.usym==S_CENTAUR && 
 		(part==ARM || part==FINGER || part==FINGERTIP
-		|| part==HAND || part==HANDED))) return humanoid_parts[part];
-	if (u.usym==S_CENTAUR || u.usym==S_UNICORN) return horse_parts[part];
+		|| part==HAND || part==HANDED))) return /*humanoid_parts[part]*/;
+	if (u.usym==S_CENTAUR || u.usym==S_UNICORN) return /*horse_parts[part]*/;
 	if (u.usym==S_SNAKE || u.usym==S_NAGA || u.usym==S_WORM)
-		return snake_parts[part];
-	if (u.usym==S_EYE) return sphere_parts[part];
-	if (u.usym==S_JELLY || u.usym==S_PUDDING) return jelly_parts[part];
-	if (u.usym==S_VORTEX || u.usym==S_ELEMENTAL) return vortex_parts[part];
-	if (u.usym==S_FUNGUS) return fungus_parts[part];
-	return animal_parts[part];
+		return /*snake_parts[part]*/;
+	if (u.usym==S_EYE) return /*sphere_parts[part]*/;
+	if (u.usym==S_JELLY || u.usym==S_PUDDING) return /*jelly_parts[part]*/;
+	if (u.usym==S_VORTEX || u.usym==S_ELEMENTAL) return /*vortex_parts[part]*/;
+	if (u.usym==S_FUNGUS) return /*fungus_parts[part]*/;
+	return /*animal_parts[part]*/;
 #else
-	return humanoid_parts[part];
+	return /*humanoid_parts[part]*/;
 #endif
 }
 
