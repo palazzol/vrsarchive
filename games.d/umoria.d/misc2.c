@@ -456,7 +456,8 @@ int row, column;
 /* Print number with header at given row, column 	-RAK-	*/
 prt_num(header, num, row, column)
 vtype header;
-int num, row, column;
+long num;
+int row, column;
 {
   vtype out_val;
 
@@ -630,42 +631,42 @@ prt_charisma()
 /* Prints level						-RAK-	*/
 prt_level()
 {
-  prt_num("\0", (int)py.misc.lev, 13, stat_column+6);
+  prt_num("\0", (long)py.misc.lev, 13, stat_column+6);
 }
 
 
 /* Prints players current mana points (a real number...) -RAK-	*/
 prt_cmana()
 {
-  prt_num("\0", (int)(py.misc.cmana), 15, stat_column+6);
+  prt_num("\0", (long)py.misc.cmana, 15, stat_column+6);
 }
 
 
 /* Prints Max hit points 				-RAK-	*/
 prt_mhp()
 {
-  prt_num("\0", py.misc.mhp, 16, stat_column+6);
+  prt_num("\0", (long)py.misc.mhp, 16, stat_column+6);
 }
 
 
 /* Prints players current hit points (a real number...)	-RAK-	*/
 prt_chp()
 {
-  prt_num("\0", (int)(py.misc.chp), 17, stat_column+6);
+  prt_num("\0", (long)py.misc.chp, 17, stat_column+6);
 }
 
 
 /* prints current AC					-RAK-	*/
 prt_pac()
 {
-  prt_num("\0", py.misc.dis_ac, 19, stat_column+6);
+  prt_num("\0", (long)py.misc.dis_ac, 19, stat_column+6);
 }
 
 
 /* Prints current gold					-RAK-	*/
 prt_gold()
 {
-  prt_num("\0", py.misc.au, 20, stat_column+6);
+  prt_num("\0", (long)py.misc.au, 20, stat_column+6);
 }
 
 
@@ -922,13 +923,13 @@ prt_stat_block()
   prt_stat("DEX : ", py.stats.cdex,         9, stat_column);
   prt_stat("CON : ", py.stats.ccon,        10, stat_column);
   prt_stat("CHR : ", py.stats.cchr,        11, stat_column);
-  prt_num( "LEV : ", (int)py.misc.lev,    13, stat_column);
-  prt_num( "EXP : ", py.misc.exp,         14, stat_column);
-  prt_num( "MANA: ", (int)(py.misc.cmana), 15, stat_column);
-  prt_num( "MHP : ", py.misc.mhp,         16, stat_column);
-  prt_num( "CHP : ", (int)(py.misc.chp),  17, stat_column);
-  prt_num( "AC  : ", py.misc.dis_ac,      19, stat_column);
-  prt_num( "GOLD: ", py.misc.au,          20, stat_column);
+  prt_num( "LEV : ", (long)py.misc.lev,    13, stat_column);
+  prt_num( "EXP : ", (long)py.misc.exp,         14, stat_column);
+  prt_num( "MANA: ", (long)(py.misc.cmana), 15, stat_column);
+  prt_num( "MHP : ", (long)py.misc.mhp,         16, stat_column);
+  prt_num( "CHP : ", (long)(py.misc.chp),  17, stat_column);
+  prt_num( "AC  : ", (long)py.misc.dis_ac,      19, stat_column);
+  prt_num( "GOLD: ", (long)py.misc.au,          20, stat_column);
   if (total_winner)  prt_winner();
   if (0x000003 & py.flags.status)
     prt_hunger();
@@ -979,10 +980,10 @@ put_stats()
   prt_stat("DEX : ", py.stats.cdex, 5, 64);
   prt_stat("CON : ", py.stats.ccon, 6, 64);
   prt_stat("CHR : ", py.stats.cchr, 7, 64);
-  prt_num("+ To Hit   : ", py.misc.dis_th,  9, 3);
-  prt_num("+ To Damage: ", py.misc.dis_td, 10, 3);
-  prt_num("+ To AC    : ", py.misc.dis_tac, 11, 3);
-  prt_num("  Total AC : ", py.misc.dis_ac, 12, 3);
+  prt_num("+ To Hit   : ", (long)py.misc.dis_th,  9, 3);
+  prt_num("+ To Damage: ", (long)py.misc.dis_td, 10, 3);
+  prt_num("+ To AC    : ", (long)py.misc.dis_tac, 11, 3);
+  prt_num("  Total AC : ", (long)py.misc.dis_ac, 12, 3);
 }
 
 
@@ -1007,23 +1008,23 @@ int x, y;
 /* Prints age, height, weight, and SC			-JWT-	*/
 put_misc1()
 {
-  prt_num("Age          : ", (int)py.misc.age, 2, 39);
-  prt_num("Height       : ", (int)py.misc.ht, 3, 39);
-  prt_num("Weight       : ", (int)py.misc.wt, 4, 39);
-  prt_num("Social Class : ", (int)py.misc.sc, 5, 39);
+  prt_num("Age          : ", (long)py.misc.age, 2, 39);
+  prt_num("Height       : ", (long)py.misc.ht, 3, 39);
+  prt_num("Weight       : ", (long)py.misc.wt, 4, 39);
+  prt_num("Social Class : ", (long)py.misc.sc, 5, 39);
 }
 
 
 /* Prints the following information on the screen.	-JWT-	*/
 put_misc2()
 {
-  prt_num("Level      : ", (int)py.misc.lev, 9, 30);
-  prt_num("Experience : ", py.misc.exp, 10, 30);
-  prt_num("Gold       : ", py.misc.au, 11, 30);
-  prt_num("Max Hit Points : ", py.misc.mhp, 9, 53);
-  prt_num("Cur Hit Points : ", (int)py.misc.chp, 10, 53);
-  prt_num("Max Mana       : ", py.misc.mana, 11, 53);
-  prt_num("Cur Mana       : ", (int)py.misc.cmana, 12, 53);
+  prt_num("Level      : ", (long)py.misc.lev, 9, 30);
+  prt_num("Experience : ", (long)py.misc.exp, 10, 30);
+  prt_num("Gold       : ", (long)py.misc.au, 11, 30);
+  prt_num("Max Hit Points : ", (long)py.misc.mhp, 9, 53);
+  prt_num("Cur Hit Points : ", (long)py.misc.chp, 10, 53);
+  prt_num("Max Mana       : ", (long)py.misc.mana, 11, 53);
+  prt_num("Cur Mana       : ", (long)py.misc.cmana, 12, 53);
 }
 
 
@@ -1640,7 +1641,7 @@ prt_experience()
       if (p_ptr->exp > p_ptr->max_exp)
 	p_ptr->max_exp = p_ptr->exp;
     }
-  prt_num("", py.misc.exp, 14, stat_column+6);
+  prt_num("", (long)py.misc.exp, 14, stat_column+6);
 }
 
 
