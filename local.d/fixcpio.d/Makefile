@@ -1,11 +1,10 @@
+ALL		= fixcpio
+include /etc/CONFIG
+
 fixcpio:	fixcpio.c
 	$(CC) $(CFLAGS) -o fixcpio fixcpio.c
 
-# Edit appropriately.
-DESTDIR	= /usr/local/bin
-MANDIR	= /usr/man/man1
-MANPAGE	= fixcpio.1
 install:	fixcpio
-	cp fixcpio $(DESTDIR)
-	strip $(DESTDIR)/fixcpio
-	cp fixcpio.1 $(MANDIR)/$(MANPAGE)
+	cp fixcpio $(LOCAL)
+	cp fixcpio.1 $(MAN1)/
+	cd $(MAN1)/; chmod 644 fixcpio.1
