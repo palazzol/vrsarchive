@@ -1,5 +1,9 @@
+MODEL	= -i
+OPTIONS	= -Dsrandom=srand -Drandom=rand
+CURSESLIBR= libatc.a
+ALL	= $(XLIBR) $(CURSESLIBR)
+include ../../../CONFIG
 DEST	      = .
-
 EXTHDRS	      = /usr/include/ctype.h \
 		/usr/include/curses.h \
 		/usr/include/math.h \
@@ -11,21 +15,13 @@ EXTHDRS	      = /usr/include/ctype.h \
 		/usr/include/sys/file.h \
 		/usr/include/sys/ioctl.h \
 		/usr/include/time.h
-
 HDRS	      = def.h \
 		extern.h \
 		include.h \
 		struct.h \
 		tunable.h
-
-CFLAGS        = -Dsrandom=srand -Drandom=rand -i
-
 YFLAGS        =	-d
-
-LIBS	      = -ll -lcurses -ltermcap
-
 MAKEFILE      = Makefile
-
 OBJS	      = extern.o \
 		grammar.o \
 		input.o \
@@ -34,15 +30,9 @@ OBJS	      = extern.o \
 		log.o \
 		main.o \
 		update.o
-
 CURSES_OBJ    = gcurses.o
-
 LOBJS	      = tunable.o
-
 PRINT	      = pr
-
-CURSESLIBR    = libatc.a
-
 SRCS	      = extern.c \
 		grammar.y \
 		gcurses.c \
@@ -52,14 +42,9 @@ SRCS	      = extern.c \
 		log.c \
 		main.c \
 		update.c
-
 LSRCS	      =	tunable.c
-
 MAKEFILES     = Makefile.dist Makefile.parent
-
 ASRCS	      = $(SRCS) $(LSRCS) $(HDRS) $(MAKEFILES)
-
-all:		$(XLIBR) $(CURSESLIBR)
 
 co:
 		co $(ASRCS)
@@ -68,7 +53,7 @@ $(CURSESLIBR):	$(OBJS) $(CURSES_OBJ)
 		ar r $@ $(OBJS) $(CURSES_OBJ)
 		ranlib $@
 
-clean:;		@rm -f $(OBJS) $(CURSES_OBJ)
+clean:;		rm -f $(OBJS) $(CURSES_OBJ) $(ALL) y.tab.h
 
 depend:;	@mkmf -f $(MAKEFILE) LIBR=$(LIBR) DEST=$(DEST)
 
