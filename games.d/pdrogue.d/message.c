@@ -144,13 +144,13 @@ rgetchar()
 		case '\022':
 			wrefresh(curscr);
 			break;
-#ifdef UNIX_BSD4_2
+#ifdef SIGTSTP
 		case '\032':
 			printf(CL);
 			fflush(stdout);
 			tstp();
 			break;
-#endif UNIX_BSD4_2
+#endif
 		case 'X':
 			save_screen();
 			break;
@@ -234,7 +234,7 @@ register stat_mask;
 			mvaddstr(row, 56, "Exp: ");
 		}
 		/*  Max exp taken care of in add_exp() */
-		sprintf(buf, "%d/%D", rogue.exp, rogue.exp_points);
+		sprintf(buf, "%d/%ld", rogue.exp, rogue.exp_points);
 		mvaddstr(row, 61, buf);
 		pad(buf, 11);
 	}
