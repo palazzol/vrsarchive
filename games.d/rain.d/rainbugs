@@ -1,0 +1,575 @@
+From guy@sun.uucp (Guy Harris) Sat Jul 20 18:06:01 1985
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Posting-Version: version B 2.10.2 9/18/84 SMI; site sun.uucp
+Path: omssw2!reed!tektronix!uw-beaver!cornell!vax135!houxm!ihnp4!mhuxn!mhuxm!sftig!sftri!sfmag!eagle!ulysses!allegra!mit-eddie!genrad!decvax!decwrl!sun!guy
+From: guy@sun.uucp (Guy Harris)
+Newsgroups: net.bugs.4bsd
+Subject: Re: "rain" and "worms" don't understand "termcap" delays
+Message-ID: <2457@sun.uucp>
+Date: 21 Jul 85 01:06:01 GMT
+Date-Received: 31 Jul 85 23:34:33 GMT
+References: <2444@sun.uucp>
+Distribution: net
+Organization: Sun Microsystems, Inc.
+Lines: 875
+
+I think this one got hit by the line eater, so here it is again.  WOULD
+EVERY SITE WHICH IS RUNNING "news" FROM THE 4.2BSD TAPE, OR WHICH PROVIDED
+SUCH A VERSION TO THE SITES THEY FEED OR TOLD THEIR SITES TO RUN THAT
+VERSION, PLEASE REPLACE IT ASAP WITH A FIXED VERSION?
+
+Index:	games/rain.c games/worms.c 4.2BSD (probably 4.3BSD also)
+
+Description:
+	"rain" and "worms" use "fputs" to output "termcap" strings.  This
+	is strictly a Bozo No-No, as those strings may have delays
+	at the beginning.  If, for example, you run either program on a
+	VT100 with the standard termcap, it leaves little "5"s all over
+	the screen.
+Repeat-By:
+	Run it on a VT100 with the standard "termcap" string.
+Fix:
+	Your line numbers may differ.
+
+	Also note that these fixes enable "rain" and "worms" to run on
+	USG (System III, System V) systems with "termcap" or "terminfo",
+	fixes "rain" to work on terminals which aren't 80 by 24, and
+	fixes "worms" to put "ti" when entered and "te" when exited.
+
+	#define constants control which system it's built for.  #define USG
+	for System III or System V-based systems; #define BSD for 4.xBSD-based
+	systems; don't define either one for systems based on any other system,
+	like V7.  Xenix 3.0, for instance, is System III-based, so #define USG.
+
+	Here's how to fix "rain.c":
+
+*** rain.c.orig	Mon Jul 15 14:13:55 1985
+--- rain.c	Mon Jul 15 14:16:47 1985
+***************
+*** 3,7
+  
+  #include <stdio.h>
+  #include <sgtty.h>
+  #include <signal.h>
+  /* rain 11/3/1980 EPS/CITHEP */
+
+--- 3,10 -----
+  
+  #include <stdio.h>
++ #ifdef USG
++ #include <termio.h>
++ #else
+  #include <sgtty.h>
+  #endif
+  #include <signal.h>
+***************
+*** 3,8
+  
+  #include <stdio.h>
+  #include <sgtty.h>
+  #include <signal.h>
+  /* rain 11/3/1980 EPS/CITHEP */
+  /* cc rain.c -o rain -O -ltermlib */
+
+--- 6,12 -----
+  #include <termio.h>
+  #else
+  #include <sgtty.h>
++ #endif
+  #include <signal.h>
+  /* rain 11/3/1980 EPS/CITHEP */
+  /* cc rain.c -o rain -O -ltermlib */
+***************
+*** 6,16
+  #include <signal.h>
+  /* rain 11/3/1980 EPS/CITHEP */
+  /* cc rain.c -o rain -O -ltermlib */
+! #define cursor(col,row) tputs(tgoto(CM,col,row),1,outc)
+! outc(c)
+! {
+! 	putchar(c);
+! }
+  extern char *UP;
+  extern short ospeed;
+  struct sgttyb old_tty;
+
+--- 10,16 -----
+  #include <signal.h>
+  /* rain 11/3/1980 EPS/CITHEP */
+  /* cc rain.c -o rain -O -ltermlib */
+! #define cursor(col,row) tputs(tgoto(CM,col,row),1,fputchar)
+  extern char *UP;
+  extern short ospeed;
+  #ifdef USG
+***************
+*** 13,18
+  }
+  extern char *UP;
+  extern short ospeed;
+  struct sgttyb old_tty;
+  char *LL, *TE, *TI;
+  main(argc,argv)
+
+--- 13,21 -----
+  #define cursor(col,row) tputs(tgoto(CM,col,row),1,fputchar)
+  extern char *UP;
+  extern short ospeed;
++ #ifdef USG
++ struct termio old_tty;
++ #else
+  struct sgttyb old_tty;
+  #endif
+  char *LL, *TE, *TI;
+***************
+*** 14,19
+  extern char *UP;
+  extern short ospeed;
+  struct sgttyb old_tty;
+  char *LL, *TE, *TI;
+  main(argc,argv)
+  int argc;
+
+--- 17,23 -----
+  struct termio old_tty;
+  #else
+  struct sgttyb old_tty;
++ #endif
+  char *LL, *TE, *TI;
+  main(argc,argv)
+  int argc;
+***************
+*** 28,33
+      register int x, y, j;
+      static int xpos[5], ypos[5];
+      register char *CM, *BC, *DN, *ND;
+      char *tcp;
+      register char *term;
+      char tcb[100];
+
+--- 32,38 -----
+      register int x, y, j;
+      static int xpos[5], ypos[5];
+      register char *CM, *BC, *DN, *ND;
++     int CO, LI;
+      char *tcp;
+      register char *term;
+      char tcb[100];
+***************
+*** 31,36
+      char *tcp;
+      register char *term;
+      char tcb[100];
+      struct sgttyb sg;
+      setbuf(stdout,malloc(BUFSIZ));
+      if (!(term=getenv("TERM"))) {
+
+--- 36,44 -----
+      char *tcp;
+      register char *term;
+      char tcb[100];
++ #ifdef USG
++     struct termio sg;
++ #else
+      struct sgttyb sg;
+  #endif
+      float cols, lines;
+***************
+*** 32,37
+      register char *term;
+      char tcb[100];
+      struct sgttyb sg;
+      setbuf(stdout,malloc(BUFSIZ));
+      if (!(term=getenv("TERM"))) {
+  	fprintf(stderr,"%s: TERM: parameter not set\n",*argv);
+
+--- 40,48 -----
+      struct termio sg;
+  #else
+      struct sgttyb sg;
++ #endif
++     float cols, lines;
++ 
+      setbuf(stdout,malloc(BUFSIZ));
+      if (!(term=getenv("TERM"))) {
+  	fprintf(stderr,"%s: TERM: parameter not set\n",*argv);
+***************
+*** 49,54
+      if (!(BC=tgetstr("bc",&tcp))) BC="\b";
+      if (!(DN=tgetstr("dn",&tcp))) DN="\n";
+      if (!(ND=tgetstr("nd",&tcp))) ND=" ";
+      TE=tgetstr("te",&tcp);
+      TI=tgetstr("ti",&tcp);
+      UP=tgetstr("up",&tcp);
+
+--- 60,71 -----
+      if (!(BC=tgetstr("bc",&tcp))) BC="\b";
+      if (!(DN=tgetstr("dn",&tcp))) DN="\n";
+      if (!(ND=tgetstr("nd",&tcp))) ND=" ";
++     if ((CO = tgetnum("co")) == -1)
++ 	CO = 80; 
++     if ((LI = tgetnum("li")) == -1)
++ 	LI = 24; 
++     cols = CO - 4;
++     lines = LI - 4;
+      TE=tgetstr("te",&tcp);
+      TI=tgetstr("ti",&tcp);
+      UP=tgetstr("up",&tcp);
+***************
+*** 53,58
+      TI=tgetstr("ti",&tcp);
+      UP=tgetstr("up",&tcp);
+      if (!(LL=tgetstr("ll",&tcp))) strcpy(LL=malloc(10),tgoto(CM,0,23));
+      gtty(1, &sg);
+      ospeed=sg.sg_ospeed;
+      for (j=SIGHUP;j<=SIGTERM;j++)
+
+--- 70,79 -----
+      TI=tgetstr("ti",&tcp);
+      UP=tgetstr("up",&tcp);
+      if (!(LL=tgetstr("ll",&tcp))) strcpy(LL=malloc(10),tgoto(CM,0,23));
++ #ifdef USG
++     ioctl(1, TCGETA, &sg);
++     ospeed=sg.c_cflag&CBAUD;
++ #else
+      gtty(1, &sg);
+      ospeed=sg.sg_ospeed;
+  #endif
+***************
+*** 55,60
+      if (!(LL=tgetstr("ll",&tcp))) strcpy(LL=malloc(10),tgoto(CM,0,23));
+      gtty(1, &sg);
+      ospeed=sg.sg_ospeed;
+      for (j=SIGHUP;j<=SIGTERM;j++)
+  	if (signal(j,SIG_IGN)!=SIG_IGN) signal(j,onsig);
+      gtty(1, &old_tty);	/* save tty bits for exit */
+
+--- 76,82 -----
+  #else
+      gtty(1, &sg);
+      ospeed=sg.sg_ospeed;
++ #endif
+      for (j=SIGHUP;j<=SIGTERM;j++)
+  	if (signal(j,SIG_IGN)!=SIG_IGN) signal(j,onsig);
+  #ifdef USG
+***************
+*** 57,62
+      ospeed=sg.sg_ospeed;
+      for (j=SIGHUP;j<=SIGTERM;j++)
+  	if (signal(j,SIG_IGN)!=SIG_IGN) signal(j,onsig);
+      gtty(1, &old_tty);	/* save tty bits for exit */
+      gtty(1, &sg);
+      sg.sg_flags&=~(CRMOD|ECHO);
+
+--- 79,92 -----
+  #endif
+      for (j=SIGHUP;j<=SIGTERM;j++)
+  	if (signal(j,SIG_IGN)!=SIG_IGN) signal(j,onsig);
++ #ifdef USG
++     ioctl(1, TCGETA, &old_tty);	/* save tty bits for exit */
++     ioctl(1, TCGETA, &sg);
++     sg.c_iflag&=~ICRNL;
++     sg.c_oflag&=~ONLCR;
++     sg.c_lflag&=~ECHO;
++     ioctl(1, TCSETAW, &sg);
++ #else
+      gtty(1, &old_tty);	/* save tty bits for exit */
+      gtty(1, &sg);
+      sg.sg_flags&=~(CRMOD|ECHO);
+***************
+*** 61,67
+      gtty(1, &sg);
+      sg.sg_flags&=~(CRMOD|ECHO);
+      stty(1, &sg);
+!     if (TI) fputs(TI,stdout);
+      tputs(tgetstr("cl",&tcp),1,fputchar);
+      fflush(stdout);
+      for (j=5;--j>=0;) {
+
+--- 91,98 -----
+      gtty(1, &sg);
+      sg.sg_flags&=~(CRMOD|ECHO);
+      stty(1, &sg);
+! #endif
+!     if (TI) tputs(TI,1,fputchar);
+      tputs(tgetstr("cl",&tcp),1,fputchar);
+      fflush(stdout);
+      for (j=5;--j>=0;) {
+***************
+*** 65,72
+      tputs(tgetstr("cl",&tcp),1,fputchar);
+      fflush(stdout);
+      for (j=5;--j>=0;) {
+! 	xpos[j]=(int)(76.*ranf())+2;
+! 	ypos[j]=(int)(20.*ranf())+2;
+      }
+      for (j=0;;) {
+  	x=(int)(76.*ranf())+2;
+
+--- 96,103 -----
+      tputs(tgetstr("cl",&tcp),1,fputchar);
+      fflush(stdout);
+      for (j=5;--j>=0;) {
+! 	xpos[j]=(int)(cols*ranf())+2;
+! 	ypos[j]=(int)(lines*ranf())+2;
+      }
+      for (j=0;;) {
+  	x=(int)(cols*ranf())+2;
+***************
+*** 69,76
+  	ypos[j]=(int)(20.*ranf())+2;
+      }
+      for (j=0;;) {
+! 	x=(int)(76.*ranf())+2;
+! 	y=(int)(20.*ranf())+2;
+  	cursor(x,y); fputchar('.');
+  	cursor(xpos[j],ypos[j]); fputchar('o');
+  	if (j==0) j=4; else --j;
+
+--- 100,107 -----
+  	ypos[j]=(int)(lines*ranf())+2;
+      }
+      for (j=0;;) {
+! 	x=(int)(cols*ranf())+2;
+! 	y=(int)(lines*ranf())+2;
+  	cursor(x,y); fputchar('.');
+  	cursor(xpos[j],ypos[j]); fputchar('o');
+  	if (j==0) j=4; else --j;
+***************
+*** 78,84
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-1);
+  	fputchar('-');
+! 	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputs("|.|",stdout);
+  	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputchar('-');
+
+--- 109,115 -----
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-1);
+  	fputchar('-');
+! 	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputs("|.|",stdout);
+  	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputchar('-');
+***************
+*** 80,86
+  	fputchar('-');
+  	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputs("|.|",stdout);
+! 	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar('-');
+
+--- 111,117 -----
+  	fputchar('-');
+  	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputs("|.|",stdout);
+! 	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar('-');
+***************
+*** 84,90
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar('-');
+! 	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputs("/ \\",stdout);
+  	cursor(xpos[j]-2,ypos[j]);
+  	fputs("| O |",stdout);
+
+--- 115,121 -----
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar('-');
+! 	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputs("/ \\",stdout);
+  	cursor(xpos[j]-2,ypos[j]);
+  	fputs("| O |",stdout);
+***************
+*** 90,96
+  	fputs("| O |",stdout);
+  	cursor(xpos[j]-1,ypos[j]+1);
+  	fputs("\\ /",stdout);
+! 	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar(' ');
+
+--- 121,127 -----
+  	fputs("| O |",stdout);
+  	cursor(xpos[j]-1,ypos[j]+1);
+  	fputs("\\ /",stdout);
+! 	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar(' ');
+***************
+*** 94,101
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar(' ');
+! 	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+! 	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+  	cursor(xpos[j]-2,ypos[j]);
+  	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+  	fputs(ND,stdout); fputchar(' ');
+
+--- 125,132 -----
+  	fputchar('-');
+  	if (j==0) j=4; else --j;
+  	cursor(xpos[j],ypos[j]-2); fputchar(' ');
+! 	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+! 	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+  	cursor(xpos[j]-2,ypos[j]);
+  	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+  	tputs(ND,1,fputchar); fputchar(' ');
+***************
+*** 97,104
+  	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+  	cursor(xpos[j]-2,ypos[j]);
+! 	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+! 	fputs(ND,stdout); fputchar(' ');
+  	cursor(xpos[j]-1,ypos[j]+1);
+  	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+  	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+
+--- 128,135 -----
+  	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+  	cursor(xpos[j]-2,ypos[j]);
+! 	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+! 	tputs(ND,1,fputchar); fputchar(' ');
+  	cursor(xpos[j]-1,ypos[j]+1);
+  	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+  	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+***************
+*** 100,107
+  	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+  	fputs(ND,stdout); fputchar(' ');
+  	cursor(xpos[j]-1,ypos[j]+1);
+! 	fputchar(' '); fputs(ND,stdout); fputchar(' ');
+! 	fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+  	fputchar(' ');
+  	xpos[j]=x; ypos[j]=y;
+  	fflush(stdout);
+
+--- 131,138 -----
+  	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+  	tputs(ND,1,fputchar); fputchar(' ');
+  	cursor(xpos[j]-1,ypos[j]+1);
+! 	fputchar(' '); tputs(ND,1,fputchar); fputchar(' ');
+! 	tputs(DN,1,fputchar); tputs(BC,1,fputchar); tputs(BC,1,fputchar);
+  	fputchar(' ');
+  	xpos[j]=x; ypos[j]=y;
+  	fflush(stdout);
+***************
+*** 110,115
+  onsig(n)
+  int n;
+  {
+      struct sgttyb sg;
+      fputs(LL, stdout);
+      if (TE) fputs(TE, stdout);
+
+--- 141,149 -----
+  onsig(n)
+  int n;
+  {
++ #ifdef USG
++     struct termio sg;
++ #else
+      struct sgttyb sg;
+  #endif
+      tputs(LL, 1, fputchar);
+***************
+*** 111,118
+  int n;
+  {
+      struct sgttyb sg;
+!     fputs(LL, stdout);
+!     if (TE) fputs(TE, stdout);
+      fflush(stdout);
+      stty(1, &old_tty);
+      kill(getpid(),n);
+
+--- 145,153 -----
+      struct termio sg;
+  #else
+      struct sgttyb sg;
+! #endif
+!     tputs(LL, 1, fputchar);
+!     if (TE) tputs(TE, 1, fputchar);
+      fflush(stdout);
+  #ifdef USG
+      ioctl(1, TCSETAW, &old_tty);
+***************
+*** 114,119
+      fputs(LL, stdout);
+      if (TE) fputs(TE, stdout);
+      fflush(stdout);
+      stty(1, &old_tty);
+      kill(getpid(),n);
+      _exit(0);
+
+--- 149,157 -----
+      tputs(LL, 1, fputchar);
+      if (TE) tputs(TE, 1, fputchar);
+      fflush(stdout);
++ #ifdef USG
++     ioctl(1, TCSETAW, &old_tty);
++ #else
+      stty(1, &old_tty);
+  #endif
+      kill(getpid(),n);
+***************
+*** 115,120
+      if (TE) fputs(TE, stdout);
+      fflush(stdout);
+      stty(1, &old_tty);
+      kill(getpid(),n);
+      _exit(0);
+  }
+
+--- 153,159 -----
+      ioctl(1, TCSETAW, &old_tty);
+  #else
+      stty(1, &old_tty);
++ #endif
+      kill(getpid(),n);
+      _exit(0);
+  }
+***************
+*** 124,128
+      putchar(c);
+  }
+  float ranf() {
+      return((float)rand()/2147483647.);
+  }
+
+--- 163,169 -----
+      putchar(c);
+  }
+  float ranf() {
++ #ifdef BSD
+      return((float)rand()/2147483647.);
+  #else
+      return((float)rand()/32767.);
+***************
+*** 125,128
+  }
+  float ranf() {
+      return((float)rand()/2147483647.);
+  }
+
+--- 165,171 -----
+  float ranf() {
+  #ifdef BSD
+      return((float)rand()/2147483647.);
++ #else
++     return((float)rand()/32767.);
++ #endif
+  }
