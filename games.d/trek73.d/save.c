@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.4 1987-12-25 20:52:06 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.5 1987-12-25 21:54:04 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/save.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.4 1987-12-25 20:52:06 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.5 1987-12-25 21:54:04 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.4  87/12/25  20:52:06  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.1  87/10/09  11:10:52  11:10:52  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -21,7 +24,7 @@
 #ifdef BSD
 #include <strings.h>
 #endif
-#ifdef SYSV
+#ifdef SYS5
 #include <string.h>
 #endif
 #include <pwd.h>
@@ -173,7 +176,7 @@ char **envp;
     register int inf;
 #ifdef PARANOID
     register char syml;
-#endif PARANOID
+#endif /*PARANOID*/
     extern char **environ;
     char buf[MAXSTR];
     long lseek();
@@ -183,7 +186,7 @@ char **envp;
 #ifdef BSD
     (void) signal(SIGTSTP, SIG_IGN);
 #endif
-#ifdef SYSV
+#ifdef SYS5
     (void) signal(SIGQUIT, SIG_IGN);
 #endif
 
@@ -197,7 +200,7 @@ char **envp;
 #ifdef BSD
     syml = symlink(file);
 #endif
-#ifdef SYSV
+#ifdef SYS5
     syml = link(file);
 #endif
     if (unlink(file) < 0)
@@ -205,7 +208,7 @@ char **envp;
 	printf("Cannot unlink file\n");
 	return 0;
     }
-#endif PARANOID
+#endif /*PARANOID*/
 
     fflush(stdout);
     encread(buf, (unsigned int) (strlen(version) + 1), inf);
@@ -239,11 +242,11 @@ char **envp;
 	    exit(1);
 	}
 #endif
-#endif PARANOID
+#endif /*PARANOID*/
 #ifdef BSD
     (void) signal(SIGTSTP, SIG_DFL);
 #endif
-#ifdef SYSV
+#ifdef SYS5
     (void) signal(SIGQUIT, SIG_DFL);
 #endif
 
@@ -252,7 +255,7 @@ char **envp;
     playit();
 #ifdef PARANOID
     syml = syml;		/* LINT */
-#endif PARANOID
+#endif /*PARANOID*/
     /*NOTREACHED*/
 }
 

@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.4 1987-12-25 20:50:46 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.5 1987-12-25 21:53:58 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/defines.h,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.4 1987-12-25 20:50:46 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.5 1987-12-25 21:53:58 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.4  87/12/25  20:50:46  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.2  87/11/23  09:19:04  09:19:04  okamoto (Jeff Okamoto)
  * Moved parse_opts flags here and removed parseopts.h
  * 
@@ -28,7 +31,7 @@ extern float rectify(), bearing(), round();
 #ifdef BSD
 extern long random();
 #endif
-#ifdef SYSV
+#ifdef SYS5
 #define random()	((long)(rand()))
 #define srandom(seed)	(srand((unsigned)(seed)))
 #endif

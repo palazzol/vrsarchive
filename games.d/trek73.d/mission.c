@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/mission.c,v 1.4 1987-12-25 20:51:11 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/mission.c,v 1.5 1987-12-25 21:53:59 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/mission.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/mission.c,v 1.4 1987-12-25 20:51:11 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/mission.c,v 1.5 1987-12-25 21:53:59 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.4  87/12/25  20:51:11  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.1  87/10/09  11:08:31  11:08:31  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -20,7 +23,7 @@
 #ifdef BSD
 #include <sys/time.h>
 #endif
-#ifdef SYSV
+#ifdef SYS5
 #include <time.h>
 #endif
 

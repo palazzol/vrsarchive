@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/parsit.c,v 1.4 1987-12-25 20:51:18 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/parsit.c,v 1.5 1987-12-25 21:54:01 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/parsit.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/parsit.c,v 1.4 1987-12-25 20:51:18 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/parsit.c,v 1.5 1987-12-25 21:54:01 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.4  87/12/25  20:51:18  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.1  87/10/09  11:10:13  11:10:13  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -18,7 +21,7 @@
  *
  */
 
-#ifdef SYSV
+#ifdef SYS5
 #define index strchr
 #endif
 

@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.3 1987-12-25 20:52:02 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.4 1987-12-25 21:54:02 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/externs.h,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.3 1987-12-25 20:52:02 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.4 1987-12-25 21:54:02 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.3  87/12/25  20:52:02  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.1  87/10/09  11:06:05  11:06:05  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -18,12 +21,12 @@
 
 /* UNIX include files needed for most (if not all) of the C files */
 #include <stdio.h>
-#ifdef SYSV
+#ifdef SYS5
 #include <string.h>
-#endif SYSV
+#endif /*SYS5*/
 #ifdef BSD
 #include <strings.h>
-#endif BSD
+#endif /*BSD*/
 #include <math.h>
 
 /* UNIX extern declarations of functions used which do not
@@ -32,9 +35,9 @@ extern char	*getenv(), *malloc();
 extern long	time();
 extern unsigned	sleep(), alarm();
 extern void	exit(), free(), perror();
-#ifdef SYSV
+#ifdef SYS5
 extern void	srand();
-#endif SYSV
+#endif /*SYS5*/
 extern char	*optarg;
 
 /*
