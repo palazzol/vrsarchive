@@ -7,7 +7,8 @@ extern FILE *popen();
 char *list[] = {
   0,				/* Filled in with user's login name	*/
   0,				/* Filled in with system name		*/
-#include "crack.h"
+#include "primo.h"	/* These have worked before			*/
+#include "crack.h"	/* These haven't worked yet			*/
   0
 };
 
