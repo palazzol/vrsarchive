@@ -21,86 +21,28 @@ OTHERS	= setup.c findscore.c datesub.l histplot.c rgmplot.c gene.c\
 #
 # General makefile stuff:
 #
-arms.o: types.h globals.h
-	$(CC) -c $(CFLAGS) arms.c
-command.o: types.h globals.h
-	$(CC) -c $(CFLAGS) command.c
-database.o: types.h globals.h
-	$(CC) -c $(CFLAGS) database.c
+anim: anim.c utility.o
+	$(CC) -o $@ anim.c utility.o $(LIBS)
+rgmplot: rgmplot.o utility.o
+	$(CC) $(CFLAGS) -o $@ rgmplot.o utility.o $(LIBS)
+rogomatic: setup.o findscore.o scorefile.o utility.o
+	$(CC) $(CFLAGS) -o $@ setup.o findscore.o scorefile.o utility.o $(LIBS)
 datesub.c: datesub.l
 	lex datesub.l
 	mv lex.yy.c datesub.c
-datesub.o: datesub.c
-	$(CC) -c $(CFLAGS) datesub.c
-datesub: datesub.o
-	$(CC) $(CFLAGS) -o datesub datesub.o
-debug.o: types.h globals.h install.h
-	$(CC) -c $(CFLAGS) debug.c
-explore.o: types.h globals.h
-	$(CC) -c $(CFLAGS) explore.c
-findscore.o: install.h
-	$(CC) -c $(CFLAGS) findscore.c
 gene: gene.c rand.o learn.o stats.o utility.o types.h install.h
-	$(CC) $(CFLAGS) $(CFLAGS) -o gene gene.c \
-		rand.o learn.o stats.o utility.o -lm
+	$(CC) $(CFLAGS) $(CFLAGS) -o $@ gene.c \
+		rand.o learn.o stats.o utility.o $(LIBS)
+genetest: genetest.o learn.o rand.o stats.o utility.o types.h
+	$(CC) -o $@ genetest.o learn.o rand.o stats.o utility.o $(LIBS)
 histplot: histplot.o utility.o
-	$(CC) $(CFLAGS) -o histplot histplot.o utility.o
-io.o: types.h globals.h termtokens.h install.h
-	$(CC) -c $(CFLAGS) io.c
-mess.o: types.h globals.h
-	$(CC) -c $(CFLAGS) mess.c
-learn.o: types.h
-	$(CC) -c $(CFLAGS) learn.c
-ltm.o: types.h globals.h install.h
-	$(CC) -c $(CFLAGS) ltm.c
-main.o: install.h termtokens.h types.h globals.h
-	$(CC) -c $(CFLAGS) main.c
-monsters.o: types.h globals.h
-	$(CC) -c $(CFLAGS) monsters.c
-pack.o: types.h globals.h
-	$(CC) -c $(CFLAGS) pack.c
+	$(CC) $(CFLAGS) -o histplot histplot.o utility.o $(LIBS)
+lint:	$(SRCS)
+	lint $(CFLAGS) $(LIBS) $(SRCS)
 player: $(OBJS)
-	$(CC) $(CFLAGS) -o player $(OBJS) -lm -lcurses -ltermcap
-	size player
-rand.o: rand.c
-	$(CC) -c $(CFLAGS) rand.c
-replay.o: types.h globals.h
-	$(CC) -c $(CFLAGS) replay.c
-rgmplot.o: rgmplot.c
-	$(CC) -c $(CFLAGS) rgmplot.c
-rgmplot: rgmplot.o utility.o
-	$(CC) $(CFLAGS) -o rgmplot rgmplot.o utility.o
-rogomatic: setup.o findscore.o scorefile.o utility.o
-	$(CC) $(CFLAGS) -o rogomatic setup.o findscore.o scorefile.o utility.o
-	size rogomatic
-rooms.o: types.h globals.h
-	$(CC) -c $(CFLAGS) rooms.c
-scorefile.o: types.h globals.h install.h
-	$(CC) -c $(CFLAGS) scorefile.c
-search.o: types.h globals.h
-	$(CC) -c $(CFLAGS) search.c
-setup.o: install.h termtokens.h
-	$(CC) -c $(CFLAGS) setup.c
-stats.o: types.h
-	$(CC) -c $(CFLAGS) stats.c
-strategy.o: types.h globals.h install.h
-	$(CC) -c $(CFLAGS) strategy.c
-survival.o: types.h globals.h
-	$(CC) -c $(CFLAGS) survival.c
-tactics.o: types.h globals.h install.h
-	$(CC) -c $(CFLAGS) tactics.c
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 testfind: testfind.o findscore.o utility.o
-	$(CC) $(CFLAGS) -o testfind testfind.o findscore.o utility.o
-things.o: types.h globals.h
-	$(CC) -c $(CFLAGS) things.c
-titlepage.o: titlepage.c
-	$(CC) -c $(CFLAGS) titlepage.c
-titler.o: titler.c
-	$(CC) -c titler.c
-utility.o: install.h
-	$(CC) -c $(CFLAGS) utility.c
-worth.o: types.h globals.h
-	$(CC) -c $(CFLAGS) worth.c
+	$(CC) $(CFLAGS) -o $@ testfind.o findscore.o utility.o $(LIBS)
 #
 # Miscellaneous useful pseduo-makes
 #
@@ -121,10 +63,6 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(PUBDIR)
 	cp player rgmplot datesub histplot gene $(PUBDIR)
 	cd $(PUBDIR); chmod 711 player rgmplot datesub histplot gene
 
-titler: titler.c
-	$(CC) -o titler titler.c -lcurses -ltermcap
-anim: anim.c utility.o
-	$(CC) -o anim anim.c utility.o -lcurses -ltermcap
 index: $(SRCS)
 	ctags -x $(SRCS) > index
 fluff: $(SRCS)
@@ -143,8 +81,32 @@ dist: $(SRCS) $(HDRS) $(OTHERS) makefile rogomatic.6 README
 	chmod 0444 $(PUBDIR)/*
 	du $(PUBDIR)
 
-genetest: genetest.o learn.o rand.o stats.o utility.o types.h
-	$(CC) -g -o genetest genetest.o learn.o rand.o stats.o utility.o -lm
-
-gplot: gplot.c
-	$(CC) -g -o gplot gplot.c -lm
+arms.o: types.h globals.h
+command.o: types.h globals.h
+database.o: types.h globals.h
+debug.o: types.h globals.h install.h
+explore.o: types.h globals.h
+findscore.o: install.h
+io.o: types.h globals.h termtokens.h install.h
+mess.o: types.h globals.h
+learn.o: types.h
+ltm.o: types.h globals.h install.h
+main.o: install.h termtokens.h types.h globals.h
+monsters.o: types.h globals.h
+pack.o: types.h globals.h
+rand.o: rand.c
+replay.o: types.h globals.h
+rgmplot.o: rgmplot.c
+rooms.o: types.h globals.h
+scorefile.o: types.h globals.h install.h
+search.o: types.h globals.h
+setup.o: install.h termtokens.h
+stats.o: types.h
+strategy.o: types.h globals.h install.h
+survival.o: types.h globals.h
+tactics.o: types.h globals.h install.h
+things.o: types.h globals.h
+titlepage.o: titlepage.c
+titler.o: titler.c
+utility.o: install.h
+worth.o: types.h globals.h
