@@ -1,0 +1,221 @@
+#	Hack or Quest Makefile.
+#	SCCS Id: @(#)Makefile.xenix	1.3	87/07/14
+
+# if you are cross-compiling (eg. from Xenix into a Dos enviornment)
+# you will have to redefine these filenames.
+MAIN = unixmain.c
+TTY  = unixtty.c
+UNIX = unixunix.c
+
+# on some systems the termcap library is in -ltermcap
+TERMLIB = -ltermlib
+# TERMLIB = /lib/Llibtermlib.a
+# CRT0   = /lib/crt0.o
+CRT0   =
+LIBS = ${TERMLIB} -lc
+# LIBS = ${TERMLIB} /lib/Llibc.a
+
+# make NetHack
+GAME = nethack
+GAMEUID = cron
+GAMEGRP = cron
+GAMEDIR = /usr/games/lib/$(GAME)dir
+SHELLDIR = /usr/games
+MANDIR  = /usr/man/man6
+CFLAGS = -O -M2lt100
+LFLAGS = -M2lt100
+HACKCSRC = apply.c bones.c decl.c\
+	cmd.c do.c dothrow.c do_name.c do_wear.c dog.c dogmove.c eat.c end.c\
+	engrave.c fight.c fountain.c hack.c invent.c ioctl.c lev.c main.c\
+	makemon.c mhitu.c mklev.c mkmaze.c mkobj.c mkshop.c\
+	mon.c monmove.c monst.c o_init.c objnam.c options.c\
+	pager.c polyself.c potion.c pray.c pri.c prisym.c read.c rip.c\
+	rumors.c save.c search.c shk.c shknam.c sit.c spell.c steal.c\
+	termcap.c timeout.c topl.c topten.c track.c trap.c tty.c unix.c\
+	u_init.c vault.c wield.c wizard.c worm.c worn.c write.c zap.c\
+	version.c rnd.c alloc.c
+
+CSOURCES = $(HACKCSRC) makedefs.c
+
+HSOURCES = hack.h mfndpos.h config.h edog.h eshk.h extern.h\
+	flag.h func_tab.h gold.h mkroom.h monst.h obj.h\
+	objclass.h objects.h permonst.h rm.h spell.h trap.h wseg.h you.h
+
+SOURCES = $(CSOURCES) $(HSOURCES)
+
+AUX = help hh nethack.6 nethack.sh
+VARAUX = data rumors
+
+DISTR = $(SOURCES) $(AUX) $(VARAUX) README.OLD README\
+	Makefile.unix Makefile.xenix Makefile.pc Make.ini
+
+HOBJ = apply.o bones.o decl.o cmd.o do.o dothrow.o do_name.o do_wear.o dog.o\
+	dogmove.o eat.o end.o engrave.o fight.o fountain.o hack.o\
+	invent.o ioctl.o lev.o main.o makemon.o mhitu.o mklev.o\
+	mkmaze.o mkobj.o mkshop.o mon.o monmove.o monst.o\
+	o_init.o objnam.o options.o pager.o polyself.o potion.o pray.o\
+	pri.o prisym.o read.o rip.o rumors.o save.o search.o shk.o shknam.o\
+	sit.o spell.o steal.o termcap.o timeout.o topl.o topten.o track.o\
+	trap.o tty.o unix.o u_init.o vault.o wield.o wizard.o worm.o worn.o\
+	write.o zap.o version.o rnd.o alloc.o
+
+$(GAME):	specifics $(HOBJ) Makefile
+	@echo "Loading ..."
+	@cc $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(LIBS)
+
+all:	$(GAME) lint
+	@echo "Done."
+
+makedefs:	makedefs.c alloc.o config.h
+	cc ${CFLAGS} -o makedefs alloc.o makedefs.c
+
+RUMORFILES= rumors.base rumors.kaa rumors.mrx
+
+rumors:	config.h $(RUMORFILES) makedefs
+	./makedefs -r
+
+data:	config.h data.base makedefs
+	./makedefs -d
+
+date.h:	$(SOURCES) makedefs
+	./makedefs -D
+
+trap.h:	config.h makedefs
+	./makedefs -t
+
+onames.h:	makedefs objects.h
+	./makedefs -o
+
+specifics:	main.o tty.o unix.o
+
+main.c:	unixmain.c hack.h
+	cp ${MAIN} main.c
+
+tty.c:	unixtty.c extern.h
+	cp ${TTY} tty.c
+
+unix.c:	unixunix.c hack.h mkroom.h
+	cp ${UNIX} unix.c
+
+lint:
+# lint cannot have -p here because (i) capitals are meaningful:
+# [Ww]izard, (ii) identifiers may coincide in the first six places:
+# doweararm() versus dowearring().
+# _flsbuf comes from <stdio.h>, a bug in the system libraries.
+	@echo lint -axbh -DLINT ...
+	@lint -axbh -DLINT $(HACKCSRC) | sed '/_flsbuf/d'
+
+
+diff:
+	@- for i in $(SOURCES) $(AUX) ; do \
+		cmp -s $$i $D/$$i || \
+		( echo diff $D/$$i $$i ; diff $D/$$i $$i ; echo ) ; done
+
+distribution: Makefile
+	@- for i in READ_ME $(SOURCES) $(AUX) Makefile date.h onames.h\
+		; do \
+		cmp -s $$i $D/$$i || \
+		( echo cp $$i $D ; cp $$i $D ) ; done
+# the distribution directory also contains the empty files perm and record.
+
+initial:
+	-rm -rf $(GAMEDIR)
+	-mkdir $(SHELLDIR)
+	mkdir $(GAMEDIR) $(GAMEDIR)/save
+	touch $(GAMEDIR)/perm
+	touch $(GAMEDIR)/record
+	chown $(GAMEUID) $(GAMEDIR) $(GAMEDIR)/*
+	chgrp $(GAMEGRP) $(GAMEDIR) $(GAMEDIR)/*
+	chmod 666 $(GAMEDIR)/*
+	chmod 777 $(GAMEDIR) $(GAMEDIR)/save
+
+install: $(VARAUX)
+	-rm -f $(GAMEDIR)/$(GAME)
+	-rm -f $(GAMEDIR)/bones*
+	-rm -f $(GAMEDIR)/save/*
+	cp help hh rumors data $(GAMEDIR)
+	cp $(GAME).sh $(SHELLDIR)/$(GAME)
+	cp $(GAME) $(GAMEDIR)/$(GAME)
+	chown $(GAMEUID) $(SHELLDIR)/$(GAME) $(GAMEDIR)/*
+	chgrp $(GAMEGRP) $(SHELLDIR)/$(GAME) $(GAMEDIR)/*
+	chmod 0755 $(SHELLDIR)/$(GAME)
+	chmod 04755 $(GAMEDIR)/$(GAME)
+	-cp nethack.6 $(MANDIR)
+
+clean:
+	rm -f *.o
+
+spotless: clean
+	rm -f a.out core $(GAME) makedefs
+	rm -f Makefile $(VARAUX) main.c tty.c unix.c
+
+alloc.o:
+bones.o:  hack.h
+decl.o:  hack.h mkroom.h
+end.o:  hack.h
+hack.o:  hack.h
+ioctl.o:  config.h
+o_init.o:  config.h objects.h onames.h
+objnam.o:  hack.h
+rnd.o:
+u_init.o:  hack.h
+version.o:  hack.h date.h
+apply.o:  hack.h edog.h mkroom.h
+cmd.o:  hack.h func_tab.h
+do.o:  hack.h
+dothrow.o:  hack.h
+do_name.o:  hack.h
+do_wear.o:  hack.h
+dog.o:  hack.h edog.h mkroom.h
+dogmove.o:  hack.h mfndpos.h
+eat.o:  hack.h
+engrave.o:  hack.h
+fight.o:  hack.h
+fountain.o:  hack.h
+invent.o:  hack.h wseg.h
+lev.o:  hack.h mkroom.h wseg.h
+makemon.o:  hack.h
+mhitu.o:  hack.h
+mklev.o:  hack.h mkroom.h
+mkmaze.o:  hack.h mkroom.h
+mkobj.o:  hack.h
+mkshop.o:  hack.h mkroom.h eshk.h
+mon.o:  hack.h mfndpos.h
+monmove.o:  hack.h mfndpos.h
+monst.o:  hack.h eshk.h
+options.o:  config.h hack.h
+pager.o:  hack.h
+polyself.o: hack.h
+potion.o:  hack.h
+pray.o: hack.h
+pri.o:  hack.h
+prisym.o:  hack.h wseg.h
+read.o:  hack.h
+rip.o:  hack.h
+rumors.o:  hack.h
+save.o:  hack.h
+search.o:  hack.h
+shk.o:  hack.h mfndpos.h mkroom.h eshk.h
+shknam.o:  hack.h
+sit.o:  hack.h
+spell.o:  hack.h
+steal.o:  hack.h
+termcap.o:  config.h flag.h
+timeout.o:  hack.h
+topl.o:  hack.h
+topten.o:  hack.h
+track.o:  hack.h
+trap.o:  hack.h mkroom.h
+vault.o:  hack.h mkroom.h
+wield.o:  hack.h
+wizard.o:  hack.h
+worm.o:  hack.h wseg.h
+worn.o:  hack.h
+write.o:  hack.h
+zap.o:  hack.h
+extern.h: config.h
+	touch extern.h
+hack.h:  config.h objclass.h monst.h gold.h trap.h obj.h flag.h rm.h permonst.h spell.h onames.h extern.h you.h
+	touch hack.h
+objects.h:  config.h objclass.h
+	touch objects.h
