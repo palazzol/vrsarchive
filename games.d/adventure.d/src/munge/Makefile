@@ -25,7 +25,7 @@ HEADER	= mdefs.h
 all:	munge
 
 munge: $(MAIN) mlib.a
-	cc $(CFLAGS) $(MAIN) mlib.a $(KLIB) -o munge
+	$(CC) $(CFLAGS) $(MAIN) mlib.a $(KLIB) $(LIBS) -o munge
 	size munge
 
 $(SRC) $(MAIN):: mdefs.h

@@ -32,7 +32,7 @@ HEADER	= adefs.h
 all:	adv
 
 adv:	alib.a
-	cc $(CFLAGS) $(MAIN) alib.a $(KLIB) -o $@
+	$(CC) $(CFLAGS) $(MAIN) alib.a $(KLIB) $(LIBS) -o $@
 	size adv
 
 $(SRC):: $(HEADER)
