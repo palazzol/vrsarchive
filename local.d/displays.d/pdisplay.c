@@ -8,35 +8,37 @@ extern void done();
 
 redraw_screen()
 {
-	clearok(stdscr, TRUE);
-	wrefresh(stdscr);
+	clearok(curscr, TRUE);
+	wrefresh(curscr);
 }
 
 message(msg)
 char *msg;
 {	int y, x;
 
-	getyx(stdscr, y, x);
-	move(LINES-1, 0);
-	addstr(msg);
-	move(y, x);
-	refresh();
+	getyx(curscr, y, x);
+	wmove(curscr, LINES-1, 0);
+	waddstr(curscr, msg);
+	wmove(curscr, y, x);
+	wrefresh(curscr);
 }
 
 /* Initialize the physical display properly. */
 pdisp_init()
 {
 	initscr();
-	raw();
-	noecho();
 	signal(SIGHUP, done);
 	signal(SIGTERM, done);
+	scrollok(curscr, TRUE);
+	nonl();
+	raw();
+	noecho();
 }
 
 /*
  * Clean up physical display stuff.
  */
-pwrapup()
+pdisp_wrapup()
 {
 	clear();
 	refresh();
@@ -46,7 +48,6 @@ pwrapup()
 #ifndef A_REVERSE
 beep()
 {
-	refresh();
 	write(1, "\007", 1);
 }
 #endif
