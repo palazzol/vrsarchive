@@ -1,0 +1,103 @@
+This is the source directory for uuhosts, which may be used to display
+UUCP mail and USENET news information previously extracted from the
+USENET newsgroup mod.map.  Mail routing information as produced by
+pathalias is also displayed.  Since uuhosts needs the map information
+from the USENET spool directory for mod.map extracted into a more
+accessible (and permanent) location, it can be used to do that, too.
+
+This version of uuhosts, 1.59, works with the latest (September 1985)
+mod.map postings.  It uses newsgroup mod.map instead of newsgroup
+mod.map.uucp, which version 1.58 and all previous uuhosts used.  It
+also does map extraction quite differently from versions previous to
+1.52.  Rather than immediately extracting each article when it arrives,
+a list is kept of the pathnames of incoming articles, and "uuhosts -unbatch"
+is called nightly to do the extraction.  Because of both of these changes
+--->  It is necessary to completely reinstall uuhosts <--- using the new
+installation instructions.
+
+Output paging by means of more, pg, etc. has been added, due to popular
+demand.  A default pager must be set in the Makefile.  If the compile-time
+parameters get much more complicated, I will probably pick up Larry Wall's
+configuration package.
+
+Peculiar failures which I have not been able to reproduce here have
+been reported from some systems running some ports of System V.  Please
+let me know of any problems, such as uuhosts not recognizing articles
+in mod.map as valid, and mailing them to postmaster rather than
+extracting them.
+
+
+If you don't have a UNIX group named news in /etc/group, you should 
+create one, as uuhosts depends on it.
+
+To install uuhosts, first look at the beginning of the Makefile and
+adjust any pathnames or other parameters which are incorrect for your
+system.  Then do "make" to be sure everything compiles correctly.
+To install the necessary shell script, C program, and manual entry,
+as well as creating all necessary new directories, do "make install"
+as root.
+
+Once the program is installed, you will want to extract any existing
+mod.map articles so uuhosts can display their information.  To do
+this, type "uuhosts -setup &".  Do not do it as root!  Do it as some
+user in group news.  It will take a while:  display speed has been
+bought by slowness in extraction.  You should only ever need to do
+this once, because of the last installation steps:
+
+Finally, modify NEWS/sys by hand so that inews will batch incoming
+mod.map articles, and also arrange for "uuhosts -unbatch" to
+be called nightly by cron.  See the MAINTENANCE section of the uuhosts
+manual entry for how to do this.  Do not call "uuhosts -unbatch" as root!
+Have it called as some user in group news.
+
+
+Pathalias is not included here:  it was posted to net.sources recently.
+If you have uupath, you may want to use it to look up UUCP routing
+information instead of the method uuhosts uses by default.
+Just look for uupath in uuhosts.sh and it's obvious what to change.
+
+
+For the mod.map extraction (and *only* that extraction), uuhosts
+depends on a small setuid program called mapsh (included here) which
+uses chroot(2), which is in (at least) 4BSD, System N, and Version 7.
+The purpose of mapsh is to limit the commands which may be executed
+when found in a map article.  If you trust everyone who can post to
+USENET from any machine in the world, you can probably replace mapsh
+with "cd $MAPS; sh".  Or you can use unmvax!lee's article parser in C,
+if you like.
+
+				John Quarterman
+				Department of Computer Sciences
+				University of Texas at Austin
+				Austin, Texas 78712 USA
+				jsq@sally.utexas.edu (jsq@ut-sally.ARPA)
+				{ihnp4,seismo,gatech,harvard,ctvax}!ut-sally!jsq
+
+Here is an example of the most common use of uuhosts, which is to
+display information about a particular host:
+
+sally% uuhosts bang
+UUCP mail path for bang:
+bang	ihnp4!bang!%s
+UUCP mail path for bang annotated by location:
+bang(usa.ca.s)	ihnp4(att.il)!bang(usa.ca.s)!%s
+
+UUCP mail information for host bang (#USENET lines show USENET news links):
+#Name		      bang
+#System-CPU-OS	      Model 16B - Xenix
+#Organization	      Bang World Communications
+#Contact	      Bret Marquis
+#Electronic-Address      {ihnp4, sdcsvax}!bang!bam
+#Telephone	      (619) 450-2110
+#Postal-Address	      La Jolla, CA
+#Latitude-Longitude	32 51 N / 117 16 W city 
+#Remarks	
+#Written-by	      web 4/28/85, web 4/6/85, web per bam 3/28/85
+#USENET	sys1 futura
+#
+bang    blia(EVENING), cbosgd(DEMAND), celerity(DIRECT), crash(DIRECT),
+	epicom(WEEKLY), futura(WEEKLY), ihnp4(DEMAND), netword(EVENING), 
+	noscvax(DIRECT), orca(DEMAND), sdchema(DIRECT), sdcsvax(DIRECT),
+	sdhubbs(WEEKLY), sys1(DEMAND), systech(DAILY), telesoft(DIRECT),
+	vis(DEMAND), westsci(DAILY), wolf(DIRECT)
+

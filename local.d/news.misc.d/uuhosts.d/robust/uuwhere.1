@@ -1,0 +1,44 @@
+.TH UUW\HERE 1L 85/08/11
+.SH NAME
+uuwhere \- annotate UUCP mail routes by host location
+.SH SYNOPSIS
+.B
+/user/mkt/vrs/lib/uuwhere
+[ -c ]
+[ infile ]
+.SH DESCRIPTION
+The \fIuuwhere\fP command is used take a list of UUCP routes,
+such as produced by \fIpathalias\fP, and make a similar list,
+annotated by the geographical location of each host as found
+in the UUCP map posted to USENET newsgroup mod.map.uucp.
+It is ordinarily called with no arguments by \fIuuhosts\fP(1L),
+and will update \fB/user/mkt/vrs/lib/nmail.where\fP, taking routes from \fB/user/mkt/vrs/lib/nmail.paths\fP and locations
+from \fB/user/mkt/vrs/lib/news/maps/mod.map/Index\fP, if either
+\fB/user/mkt/vrs/lib/nmail.paths\fP or \fB/user/mkt/vrs/lib/news/maps/mod.map/Index\fP is newer than \fB/user/mkt/vrs/lib/nmail.where\fP.
+The information in \fB/user/mkt/vrs/lib/nmail.where\fP is displayed by \fIuuhosts\fP itself.
+.PP
+Input file names may be specified as arguments.
+This also causes output to go to standard output instead of directly to
+Input file name \fI-\fP is taken to be standard input.
+\fB/user/mkt/vrs/lib/nmail.where\fP.
+.TP
+\-\fBc
+\fIUuwhere\fP uses a \fIdbm\fP(3) database to store the location information
+from \fB/user/mkt/vrs/lib/news/maps/mod.map/Index\fP before creating output.
+This option causes \fIuuwhere\fP to recreate the database regardless
+of the state of any input files.
+.SH FILES
+.TP
+/user/mkt/vrs/lib/nmail.where
+The place where the output of \fIuuwhere\fP is usually kept for use
+by \fIuuhosts\fP.
+.TP
+/user/mkt/vrs/lib/nmail.paths
+The default route list used as input by \fIuuwhere\fP.
+Produced by \fIuuhosts\fP.
+.TP
+/user/mkt/vrs/lib/news/maps/mod.map/Index
+The source of the location information used by \fIuuwhere\fP.
+Produced by \fIpathalias\fP.
+.SH SEE ALSO
+uuhosts(1), pathalias(1), dbm(3).

@@ -1,0 +1,258 @@
+#!/bin/sh
+# '@(#) uuhosts.sh 1.59 85/09/17'
+# uuhosts - UUCP mail and USENET news information
+
+DEFPAGER=cat
+BIN=/usr/local
+LIB=/usr/local/lib
+NEWS=$LIB/news
+MAPS=$NEWS/maps
+UUCPMAPGROUP=mod.map
+UUCPMAP=$UUCPMAPGROUP
+MAPSH=$NEWS/mapsh
+UUCPSPOOL=/usr/spool/news/mod/map
+
+# Routing information produced by pathalias.
+PATHS=$LIB/nmail.paths
+# Munged by uuwhere for location information.
+WHERE=$LIB/nmail.where
+
+pager="${PAGER-$DEFPAGER}"
+
+cd $NEWS
+
+case $1 in
+	-setup)
+		# Initial setup.  Should only need to be done once.
+		ls $UUCPSPOOL/[0-9]* > $MAPS/$UUCPMAP/Batch
+		exec $BIN/uuhosts -unbatch
+		exit 1
+	;;
+
+	-unbatch)
+		# Unbatch map articles batched by sys.  Called from cron.
+		cd $MAPS/$UUCPMAP
+		if [ -f Batch ]; then
+			:
+		else
+			exit 0
+		fi
+		mv Batch Batch.working
+		for f in `cat Batch.working`
+		do
+			$BIN/uuhosts -x < $f
+			sleep 60
+		done
+		rm Batch.working
+		exec $BIN/uuhosts -i
+		exit 1
+	;;
+
+	-x)
+		# extract a new map piece into a map directory
+		temphead=/tmp/maphead.$$
+		temptext=/tmp/maptext.$$
+		tempcomm=/tmp/mapcomm.$$
+		cp /dev/null $temphead
+		cp /dev/null $temptext
+		echo 'exec /bin/mail postmaster' > $tempcomm
+		echo 'Reply-To: postmaster' > $temphead
+		awk '
+BEGIN	{
+	temphead = "'$temphead'"; tempcomm = "'$tempcomm'";
+	isuucpmap = 1;	# Assume most postings are map entries.
+	shead = 0; stext = 1; suucp = 2;
+	state = shead;
+}
+state == shead && ($1 == "From:" || $1 == "Sender:" \
+    || $1 == "Date:" || $1 == "Message-ID:" || $1 == "Message-Id:") {
+	print "Original-" $0 >> temphead;
+	next;
+}
+state == shead && $1 == "Newsgroups:" {	# no cross-postings allowed
+ 	if ($2 != "'$UUCPMAPGROUP'") {
+		isuucpmap = 0;
+ 		print "Bad-Newsgroups: " $2 " (should be '"$UUCPMAPGROUP"')" \
+ 			>> temphead;
+ 		next;
+	}
+}
+state == shead && $1 == "Subject:" {
+	# the odd initial test is to avoid certain brain damaged awks
+	if ("X" ~ /X/ \
+	&& $2 !~ /^UUCP/ && $2 !~ /^uucp/ && $2 !~ /^Uucp/) {
+		print "Subject:  not a map update" >> temphead;
+		print "Original-" $0 >> temphead;
+		isuucpmap = 0;
+	} else
+		print $0 >> temphead;
+	next;
+}
+state == shead && /^$/	{
+	if (isuucpmap != 0) {
+	print "PATH=/bin; umask 0002; cd '$UUCPMAP'" | "'$MAPSH'";
+		state = suucp;
+	} else
+		state = stext;
+}
+state == shead {
+		print $0 >> temphead;
+}
+state == suucp	{
+	print | "'$MAPSH'";
+}
+state == stext	{
+	print;
+}
+' > $temptext 2>&1
+		cat $temphead $temptext | sh $tempcomm
+		rm -f $temphead $temptext $tempcomm
+		exit 0
+	;;
+
+	-i)
+		cd $MAPS/$UUCPMAP
+		hostmarker="#N"
+		if [ ! -f Local ]; then
+			cp /dev/null Local
+		fi
+		cp /dev/null Index.t.$$
+		for f in Local [a-z]* 
+		do
+ 			awk '
+BEGIN {
+	isinside = 0;
+}
+$1 == "'"$hostmarker"'" {
+	if (isinside)
+	    printf ("%s\t%s\t%d\t%d\n", hostname, FILENAME, firstline, NR - 1);
+	isinside = 1;
+	hostname = $2;
+	firstline = NR;
+}
+END {
+	if (isinside)
+		printf ("%s\t%s\t%d\t%d\n", hostname, FILENAME, firstline, NR);
+}
+' $f >> Index.t.$$
+		done
+		sort -f Index.t.$$ > Index.s.$$
+ 		mv Index.s.$$ Index
+		rm Index.t.$$
+		exit 0
+	;;
+
+	-r)
+		# by region
+		cd $MAPS/$UUCPMAP
+		shift
+		case $# in
+		0)
+			exec ls
+			exit 1
+		;;
+		esac
+		exec $pager $*
+		exit 1
+	;;
+
+	-u)
+		exec $BIN/uuhosts -r
+		exit 1
+	;;
+
+	-n)
+		exec $BIN/uuhosts -r
+		exit 1
+	;;
+
+	-k)
+		# by keyword
+		cd $MAPS/$UUCPMAP
+		shift
+		exec awk '
+BEGIN		{ inside = 1; outside = 0; state = outside; }
+/^#N/ && state == inside	{
+	if (useit == 1) {
+		for (i = 0; i < count; i++) {
+			print block[i];
+		}
+	}
+	state = outside;
+}
+/^#N/	{ state = inside; count = 0; useit = 0; }
+state == inside	{ block[count++] = $0; }
+/'"$*"'/	{ useit = 1; }
+END {
+	if (useit == 1) {
+		for (i = 0; i < count; i++) {
+			print block[i];
+		}
+	}
+}
+' * | $pager
+		exit 1
+	;;
+
+	-*)
+		# unknown option
+	;;
+
+	"")
+		# no arguments
+	;;
+
+	*)
+		# by host name
+		if [ -f /usr/bin/look ]; then
+			look=/usr/bin/look
+			lookopt="-f "
+		else
+			look=grep
+			lookopt="^"
+		fi
+		for arg in $*
+		do
+			echo 'UUCP mail path for '$arg':'
+			$look $lookopt$arg $PATHS
+# 			uupath $arg
+			if [ -f $WHERE ]; then
+			echo 'UUCP mail path for '$arg' annotated by location:'
+				$look $lookopt$arg $WHERE
+				$LIB/uuwhere &
+			fi
+			echo '
+UUCP mail information for host '$arg' (#USENET lines show USENET news links):'
+			cd $MAPS/$UUCPMAP
+			eval `$look $lookopt$arg Index | awk '
+/^'$arg'/ {
+	printf ("sed -n -e \"%d,%dp\" %s;\n", $3, $4, $2);
+}'` | sed -e '
+s/^#N/#Name		/
+s/^#S/#System-CPU-OS	/
+s/^#O/#Organization	/
+s/^#C/#Contact	/
+s/^#E/#Electronic-Address/
+s/^#T/#Telephone	/
+s/^#P/#Postal-Address	/
+s/^#L/#Latitude-Longitude/
+s/^#R/#Remarks	/
+s/^#W/#Written-by	/
+s/^#U/#USENET/'
+		done | $pager
+		exit 0
+	;;
+esac
+
+echo 'Usage:	'uuhosts' hostname ...
+for information about a particular UUCP or USENET host or hosts, or
+
+	'uuhosts' -r region
+for information about hosts in a region of the UUCP or USENET networks, or
+
+	'uuhosts' -r
+for a list of known regions.
+
+See uuhosts(1) or "uuhosts -r README" for further details.
+'
+exit 1
