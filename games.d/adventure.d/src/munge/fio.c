@@ -86,7 +86,15 @@ int Getc ()
 {
 	register int c ;
 	static int Eof = 0 ;
+	int first_time = 1;
 
+	if (first_time)
+	{
+		fx[0].fd = stdin;
+		fx[1].fd = stdout;
+		fx[2].fd = stderr;
+		first_time = 0;
+	}
 	if ( pbp > 0 )
 	{
 		c = pbuf[pbp--] ;
