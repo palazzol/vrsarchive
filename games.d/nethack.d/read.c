@@ -479,7 +479,7 @@ seffects(sobj)
 			pline("You feel guilty.");
 			break;
 		}
-		pline("You are being punished for your misbehaviour!");
+		pline("You are being punished for your misbehavior!");
 		if(Punished){
 			pline("Your iron ball gets heavier.");
 			uball->owt += 15;

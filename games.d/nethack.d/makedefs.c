@@ -247,7 +247,7 @@ FILE	*freopen();
 #ifdef NEWCLASS
 	    if(!strcmp(inline, "^	a trap")) {
 		puts(inline);
-		printf("\\tan opulant throne.\n");
+		printf("\\tan opulent throne.\n");
 	    } else
 #endif
 		puts(inline);

@@ -171,7 +171,7 @@ doweararm() {
 	delay = -objects[otmp->otyp].oc_delay;
 	if(delay){
 		nomul(delay);
-		nomovemsg = "You finished your dressing manoeuvre.";
+		nomovemsg = "You finished your dressing maneuver.";
 	}
 	otmp->known = 1;
 	return(1);
@@ -260,7 +260,7 @@ register long mask;
 	mask = obj->owornmask & W_RING;
 	setworn((struct obj *) 0, obj->owornmask);
 	if(!(u.uprops[PROP(obj->otyp)].p_flgs & mask))
-		impossible("Strange... I didnt know you had that ring.");
+		impossible("Strange... I didn't know you had that ring.");
 	u.uprops[PROP(obj->otyp)].p_flgs &= ~mask;
 	switch(obj->otyp) {
 	case RIN_FIRE_RESISTANCE:

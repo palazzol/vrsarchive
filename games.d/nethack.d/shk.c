@@ -203,7 +203,7 @@ register roomno = inroom(u.ux,u.uy);
 			pline("It looks rather muddy down here.");
 		} else
 		if(rt == COURT) {
-			pline("You are in an opulant throne room!");
+			pline("You are in an opulent throne room!");
 		} else
 		if(rt == MORGUE) {
 			if(midnight())

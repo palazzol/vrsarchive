@@ -506,7 +506,7 @@ char *hcolors[] = { "ultraviolet","infrared","hot pink", "psychedelic",
 "bluish-orange","reddish-green","dark white","light black","loud",
 "salty","sweet","sour","bitter","luminescent","striped","polka-dotted",
 "square","round","triangular","brilliant","navy blue","cerise",
-"charteruse","copper","sea green","spiral","swirly","blotchy",
+"chartreuse","copper","sea green","spiral","swirly","blotchy",
 "fluorescent green","burnt orange","indigo","amber","tan",
 "sky blue-pink","lemon yellow" };
 

@@ -20,7 +20,7 @@ dosit() {
 		pline("You are floating in the air, you can't sit!");
 	} else	if(IS_THRONE(levl[u.ux][u.uy].typ)) {
 
-		pline("As you sit in the opulant throne");
+		pline("As you sit in the opulent throne");
 		if (rnd(6) > 4)  {
 
 			switch (rnd(13))  {

@@ -609,7 +609,7 @@ pickup(all)
 		}
 	lift_some:
 		if(inv_cnt() >= 52) {
-		    pline("Your knapsack cannot accomodate any more items.");
+		    pline("Your knapsack cannot accommodate any more items.");
 		    break;
 		}
 		if(wt > -5) pline("You have a little trouble lifting");

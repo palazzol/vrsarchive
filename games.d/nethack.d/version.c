@@ -66,7 +66,7 @@ doMSCversion()
 	pg_line("");
 	pg_line("PC and UNIX HACK were merged by Mike Stephenson and Ken Arromdee");
 	pg_line("incorporating many modifications and features made by the above,");
-	pg_line("as well as the following honoured hackers:");
+	pg_line("as well as the following honored hackers:");
 
 	pg_line("");
 	pg_line("    Scott R. Turner    Tom Almy          John S. Bien");
