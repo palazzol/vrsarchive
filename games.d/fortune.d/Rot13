@@ -1,0 +1,7 @@
+: /bin/sh
+if test "`echo HI | tr A-Z a-z`" = "hi"
+then
+	tr n-za-mN-ZA-M a-zA-Z < $1
+else
+	tr "[n-z][a-m][N-Z][A-M]" "[a-z][A-Z]" < $1
+fi
