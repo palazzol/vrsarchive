@@ -1,0 +1,77 @@
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\"	@(#)fortune.6	6.1 (Berkeley) 5/20/85
+.\"
+.\" $Header: /home/Vince/cvs/games.d/fortune.d/fortune.6,v 1.1 1987-06-13 14:55:15 vrs Exp $
+.TH FORTUNE 6 "31 Apr, 1987"
+.UC 4
+.SH NAME
+fortune \- print a random, hopefully interesting, adage
+.SH SYNOPSIS
+.B /usr/games/fortune
+[
+.B \-
+] [
+.B \-wslaoi
+]
+[
+.B \-m
+.I pattern
+]
+[ file ]
+.SH DESCRIPTION
+When
+.I fortune
+is run with no arguments
+it prints out a random epigram. The flags mean:
+.PP
+.TP 5
+.B \-w
+Wait before termination
+for an amount of time calculated from the number of characters in the message.
+This is useful if it is executed as part of the logout procedure
+to guarantee that the message can be read before the screen is cleared.
+.TP 5
+.B \-s
+Short apothegms only.
+.TP 5
+.B \-l
+Long dictums only.
+.TP
+.B \-o
+Choose from an alternate list of aphorisms,
+often used for potentially offensive ones.
+.TP
+.B \-a
+Choose from either list of maxims.
+.TP
+.B \-m
+Print out all fortunes which match the regular expression
+.I pattern .
+See
+.BR regex (3)
+or
+.BR regcmp (3)
+for description of patterns.
+.TP
+.B \-i
+Ignore case for
+.B \-m
+patterns.
+.PP
+The user may specify a file of sayings.
+This file must be created by strfile(8),
+and be given by the user as
+.I file.
+Only one such file may be named;
+if more are,
+.I fortune
+uses the last one specified.
+.SH FILES
+/usr/games/lib/fortunes.dat
+.SH AUTHOR
+Ken Arnold
+.SH "SEE ALSO"
+regex(3), regcmp(3), strfile(8)
