@@ -11,7 +11,7 @@ LIBDIR = /usr/games/lib/omegalib
 objects = o.o oaux1.o oaux2.o ochar.o ocity.o ocom.o odepths.o\
 	oeffect1.o oeffect2.o\
 	oetc.o ofile.o ogen.o oguild.o oinititem1.o oinititem2.o\
-	oinitmon0to3.o oinitmon4to7.o oinitmon8to10.o\
+	oinimon0to3.o oinimon4to7.o oinimon8to10.o\
 	oinv.o oitem.o oitemf.o olev.o omon.o omonf.o omove.o\
 	oscr.o osite.o ospell.o otime.o outil.o
 
