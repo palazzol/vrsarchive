@@ -136,7 +136,7 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVEDIR)
 	cd $(MAN6); chmod 644 nethack.6
 
 clean:
-	rm -f $(ALL) *.o a.out core makedefs main.c tty.c unix.c
+	rm -f $(ALL) *.o a.out core makedefs main.c tty.c unix.c onames.h
 
 bones.o:  hack.h
 decl.o:  hack.h mkroom.h
