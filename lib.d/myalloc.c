@@ -76,6 +76,7 @@ free(ap)
 char *ap;
 {
 	register Header *p;
+	register Header *q;
 
 	p = (Header *)ap - 1;
 	/*
@@ -86,8 +87,10 @@ char *ap;
 	 */
 	if (p->s.ptr != p)
 		abort();
-	p = (Header *)brkctl(BR_ARGSEG,(long)sizeof(Header)-p->s.size,p);
+	q = (Header *)brkctl(BR_ARGSEG,(long)sizeof(Header)-p->s.size,p);
 					/* Shrink to just a header	*/
+	if (q-1 != p)
+		abort();		/* brkctl failed		*/
 	p->s.ptr = freelist;
 	freelist = p;			/* Link into freelist		*/
 }
