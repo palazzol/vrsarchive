@@ -5,24 +5,20 @@
  * Various tokens used by the screen reading package.
  */
 
+/*
+ *	If XX_CHR is defined, the control sequence <ESC> <CHR> will be replaced
+ *	by XX_TOK.  Otherwise, the control token is assumed to oocur literally
+ *	in the input.  ER_TOK is the token for an invalid escape sequence.
+*/
+# define ROGUETERM "vc404"
+# define ROGUECAP "M8|vc404:am:bs:ce=^V:cl=^X:cm=^P%+ %+ :co#80:li#24:up=^Z:do=^J:nd=^U:"
+# define ER_TOK -2		/* -1 is reserved for EOF */
 # define BS_TOK ctrl('H')
-# define CE_CHR ctrl('S')
-# define CE_TOK -2
-# define CL_CHR ctrl('L')
-# define CL_TOK ctrl('L')
-# define CM_CHR 'a'
-# define CM_TOK -3
+# define CE_TOK ctrl('V')
+# define CL_TOK ctrl('X')
+# define CM_TOK ctrl('P')
 # define CR_TOK ctrl('M')
-# define DO_CHR '<'
-# define DO_TOK -4
-# define ER_TOK -5
 # define LF_TOK ctrl('J')
-# define ND_CHR '='
-# define ND_TOK -6
-# define SE_CHR 'd'
-# define SE_TOK -7
-# define SO_CHR 'D'
-# define SO_TOK -8
+# define ND_TOK ctrl('U')
 # define TA_TOK ctrl('I')
-# define UP_CHR ';'
-# define UP_TOK -9
+# define UP_TOK ctrl('Z')
