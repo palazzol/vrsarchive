@@ -1,0 +1,44 @@
+This is my current version of a Tektronix previewer for ditroff output.  Any
+ditroff output may be processed for (hopefully) all Tektronix 41xx terminal.
+This program is different than tc.  tc is written for a 4015 terminal: a
+different command set.
+
+This version is far superior to the version posted to the net about 2 months
+ago (previously called tk, now ditk).  This version is currently being used 
+by secretaries here with great satisfaction.  Fifty page documents are checked 
+routinely.  They report no errors.
+
+I wish to thank the following people for their extended efforts:
+		Phil Gross
+		Paul Magelli
+		Paul Pomes
+
+short synopsis: (see also man page)
+	supports all sizes of text
+	uses hardware character fonts
+	special fonts map to ascii equivalent; color changes
+	some special characters supported
+	line drawing supported
+	circle/arc routine included in library; needs testing.
+	character slant in library; needs testing.
+	forward and backward paging (absolute and relative)
+	displays any ditroff output (device independent previewer)
+	Tek terminals that it works on (tested): 4107, 4109, 4113
+	Tek terminals it should work on: 4111, 4115
+	Tek terminals that lose features: 4105 (no zoom & pan)
+					  4112 (no color)
+	Tek terminals not listed I am unsure of
+	certain wide characters (m,w) display narrower on the Tek terms than our
+	  laser printer and phototypesetter; thus there may be a gap following
+	  these letter.
+
+Hints for performance:
+	4105, 07, 09's will run at 38400 baud.  Makes text output fast.
+
+command: ditk [-p#] ditroff.output
+		p - page to begin at
+
+To compile set the system type in ditk.c.  See note at top of ditk.c
+
+
+Jeff [ihnp4!uiucdcs!uiucme!slaney; 217)333-9044]
