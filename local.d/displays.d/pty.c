@@ -88,7 +88,8 @@ int status;
 {	int i;
 
 	keybd_wrapup();
-	pwrapup();
+	vdisp_wrapup();
+	pdisp_wrapup();
 	for (i = 0; i < MAXVDISP; i++) {
 		kill(pty_pid[i], SIGTERM);
 		wait((int *)0);
