@@ -147,7 +147,7 @@ register struct monst *mtmp;
 		if(Cold_resistance) pline("You don't seem affected by it.");
 		else {
 			xchar dn;
-			if(17-(u.ulevel/2) > rnd(20)) {
+			if((unsigned)(17-(u.ulevel/2)) > rnd(20)) {
 				pline("You get blasted!");
 				dn = 6;
 			} else {

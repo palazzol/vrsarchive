@@ -411,7 +411,7 @@ register char *let,*word;
 			pline("You don't have that object.");
 			continue;
 		}
-		if(cnt < 0 || otmp->quan < cnt) {
+		if(cnt < 0 || otmp->quan < (unsigned)cnt) {
 			pline("You don't have that many! [You have %u]"
 			, otmp->quan);
 			continue;
@@ -790,7 +790,7 @@ extern char *occtxt;
 static long goldcounted;
 
 countgold(){
-	if((goldcounted += 100*(u.ulevel + 1)) >= u.ugold) {
+	if((unsigned)(goldcounted += 100*(u.ulevel + 1)) >= u.ugold) {
 		long eps = 0;
 		if(!rn2(2)) eps = rnd((int) (u.ugold/100 + 1));
 		pline("You probably have about %ld gold pieces.",

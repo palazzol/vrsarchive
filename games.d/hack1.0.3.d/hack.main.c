@@ -20,8 +20,8 @@ int (*afternmv)();
 int (*occupation)();
 char *occtxt;			/* defined when occupation != NULL */
 
-int done1();
-int hangup();
+SIG_T done1();
+SIG_T hangup();
 
 int hackpid;				/* current pid */
 int locknum;				/* max num of players */
@@ -327,7 +327,7 @@ not_recovered:
 						u.uhp = u.uhpmax;
 					}
 				} else if(Regeneration ||
-					(!(moves%(22-u.ulevel*2)))) {
+					(!(moves%(unsigned)(22-u.ulevel*2)))) {
 					flags.botl = 1;
 					u.uhp++;
 				}

@@ -8,14 +8,19 @@
 #include "config.h"
 #ifndef SYS5
 #include	<sgtty.h>
-struct ltchars ltchars, ltchars0;
 #else
 #include	<sys/types.h>
 #include	<termio.h>	/* also includes part of <sgtty.h> */
 #ifndef TCGETA
 #include	<sys/ioctl.h>
 #endif
+#ifdef __STDC__
+#include <sys/ttold.h>
+#endif
 struct termio termio;
+#endif
+#ifdef TIOCGLTC
+struct ltchars ltchars, ltchars0;
 #endif
 
 getioctls() {
