@@ -46,7 +46,7 @@ register struct monst *shk;
 		}
 	}
 gottype:
-#endif WIZARD
+#endif
 	for(sroom = &rooms[0], roomno = 0; ; sroom++, roomno++){
 		if(sroom->hx < 0) return;
 		if(sroom - rooms >= nroom) {
@@ -59,7 +59,7 @@ gottype:
 		if(
 #ifdef WIZARD
 		   (wizard && getenv("SHOPTYPE") && sroom->doorct != 0) ||
-#endif WIZARD
+#endif
 			sroom->doorct == 1) break;
 	}
 
@@ -97,11 +97,12 @@ gottype:
 		}
 		more();
 	    }
-#endif WIZARD
+#endif
 	    return;
 	}
 	if(!(shk = makemon(PM_SHK,sx,sy))) return;
-	shk->isshk = shk->mpeaceful = 1;
+	shk->mpeaceful = 1;
+	shk->isshk = 1;
 	shk->msleep = 0;
 	shk->mtrapseen = ~0;	/* we know all the traps already */
 	ESHK->shoproom = roomno;
@@ -271,4 +272,4 @@ dist2(x0,y0,x1,y1){
 sq(a) int a; {
 	return(a*a);
 }
-#endif QUEST
+#endif

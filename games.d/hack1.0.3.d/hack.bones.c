@@ -80,13 +80,15 @@ register fd,x,y,ok;
 	if((fd = open(bones, 0)) < 0) return(0);
 	if((ok = uptodate(fd)) != 0){
 		getlev(fd, 0, dlevel);
-		for(x = 0; x < COLNO; x++) for(y = 0; y < ROWNO; y++)
-			levl[x][y].seen = levl[x][y].new = 0;
+		for(x = 0; x < COLNO; x++) for(y = 0; y < ROWNO; y++) {
+			levl[x][y].new = 0;
+			levl[x][y].seen = 0;
+		}
 	}
 	(void) close(fd);
 #ifdef WIZARD
 	if(!wizard)	/* duvel!frans: don't remove bones while debugging */
-#endif WiZARD
+#endif
 	    if(unlink(bones) < 0){
 		pline("Cannot unlink %s .", bones);
 		return(0);

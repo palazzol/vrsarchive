@@ -92,7 +92,7 @@ register struct monst *mtmp;
 				mtmp->mflee = 1;
 				if(rn2(4)) mtmp->mfleetim = rnd(100);
 			}
-			if(tmp < 3) mtmp->mcansee  = mtmp->mblinded = 0;
+			if(tmp < 3) mtmp->mcansee = 0, mtmp->mblinded = 0;
 			else {
 				tmp2 = mtmp->mblinded;
 				tmp2 += rnd(1 + 50/tmp);

@@ -145,8 +145,10 @@ register boolean at_stairs;
 	u.ustuck = 0;				/* idem */
 	keepdogs();
 	seeoff(1);
-	if(u.uswallow)				/* idem */
-		u.uswldtim = u.uswallow = 0;
+	if(u.uswallow) {			/* idem */
+		u.uswallow = 0;
+		u.uswldtim = 0;
+	}
 	flags.nscrinh = 1;
 	u.ux = FAR;				/* hack */
 	(void) inshop();			/* probably was a trapdoor */
@@ -344,7 +346,7 @@ dothrow()
 				  /* mon still alive */
 #ifndef NOWORM
 				  cutworm(mon,bhitpos.x,bhitpos.y,obj->otyp);
-#endif NOWORM
+#endif
 				} else mon = 0;
 				/* weapons thrown disappear sometimes */
 				if(obj->otyp < BOOMERANG && rn2(3)) {
