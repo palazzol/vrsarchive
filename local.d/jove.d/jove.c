@@ -8,6 +8,9 @@
 /* Contains the main loop initializations, and some system dependent
    type things, e.g. putting terminal in CBREAK mode, etc. */
 
+#include <signal.h>
+#include <errno.h>
+
 #include "jove.h"
 #include "io.h"
 #include "termcap.h"
@@ -19,14 +22,14 @@
 #	include <sys/stat.h>
 #endif
 
-#include <signal.h>
-#include <errno.h>
-
 #ifdef UNIX
 #	ifndef SYSV
 #		include <sgtty.h>
 #	else
 #		include <termio.h>
+#ifdef TIOCSLTC
+#include <sys/ttold.h>
+#endif
 #	endif /* SYSV */
 #endif /* UNIX */
 
@@ -69,7 +72,7 @@ struct tchars	tc1,
 		tc2;
 #endif
 
-#ifdef PASS8			/* use pass8 instead of raw for meta-key */
+#ifdef LPASS8			/* use pass8 instead of raw for meta-key */
 int	lm_word1,		/* local mode word */
 	lm_word2;
 #endif
@@ -452,12 +455,11 @@ PauseJove()
 void
 Push()
 {
-	int
 #ifndef MSDOS
-		pid,
-		(*old_quit)() = signal(SIGQUIT, SIG_IGN),
+	int	pid;
+	SIG_T	(*old_quit)() = signal(SIGQUIT, SIG_IGN);
 #endif /* MSDOS */
-   		(*old_int)() = signal(SIGINT, SIG_IGN);
+   	SIG_T	(*old_int)() = signal(SIGINT, SIG_IGN);
 
 #ifndef MSDOS
 #ifdef IPROCS
@@ -1115,7 +1117,8 @@ register char	**args,
 int	UpdFreq = 30,
 	inIOread = 0;
 
-updmode()
+SIG_T
+updmode(dummy)
 {
 	UpdModLine = YES;
 	if (inIOread)
@@ -1130,7 +1133,7 @@ updmode()
 #ifndef MSDOS
 #ifdef TIOCGWINSZ
 #ifdef SIGWINCH
-extern win_reshape();
+extern SIG_T win_reshape();
 #endif
 #endif
 #else /* MSDOS */
@@ -1141,7 +1144,8 @@ char	ttbuf[BUFSIZ];
 
 #ifdef TIOCGWINSZ
 #ifdef SIGWINCH
-win_reshape()
+SIG_T
+win_reshape(dummy)
 {
 	register int oldsize;
 	register int newsize, total;
@@ -1200,8 +1204,6 @@ win_reshape()
 }
 #endif
 #endif
-
-void
 
 #ifdef MAC	/* will get args from user, if option key held during launch */
 main()

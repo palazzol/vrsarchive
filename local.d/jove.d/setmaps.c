@@ -107,8 +107,6 @@ char	*into,
 }
 
 
-void
-
 #ifdef MAC
 _main()		/* for Mac, so we can use redirection */
 #else
