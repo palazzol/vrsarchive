@@ -14,7 +14,7 @@ extern int		clock, safe_planes, test_mode;
 
 extern FILE		*filein, *fileout;
 
-extern SCREEN		screen, *sp;
+extern screen_t		screen, *sp;
 
 extern LIST		air, ground;
 

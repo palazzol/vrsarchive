@@ -32,7 +32,7 @@ typedef struct {
 	LINE	*line;
 	BEACON	*beacon;
 	AIRPORT	*airport;
-} SCREEN;
+} screen_t;
 
 typedef struct plane {
 	struct plane	*next, *prev;

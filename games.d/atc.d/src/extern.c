@@ -19,7 +19,7 @@ char		*File;
 
 FILE		*filein, *fileout;
 
-SCREEN		screen, *sp = &screen;
+screen_t	screen, *sp = &screen;
 
 LIST		air, ground;
 
