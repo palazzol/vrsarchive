@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.6 2002-11-24 05:18:36 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.7 2002-11-26 07:35:53 vrs Exp $
 #
 ALL	= displays$(EXE)
 OPTIONS	= -O
@@ -16,7 +16,7 @@ clean:
 
 install: $(ALL) $(BINDIR)
 	cp $(ALL) $(BINDIR)
-	cd $(BINDIR); chown root $(ALL)
+	cd $(BINDIR); chown $(SAFEUID) $(ALL)
 	cd $(BINDIR); chmod 4711 $(ALL)
 
 lint:	$(SRCS)
