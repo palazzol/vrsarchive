@@ -23,6 +23,9 @@
 #include <sys/proc.h>
 #include <sys/stat.h>
 #include <sys/var.h>
+#ifdef NFPCHUNK
+#include <sys/sysi86.h>
+#endif
 
 #define sys(n) (n*60)                   /* Minutes to internal time     */
 #define min(n) ((n+30)/60)              /* Internal time to minutes     */
@@ -95,6 +98,15 @@ struct proc *p;
 	}
 	return(&user);
 #else
+#ifdef NFPCHUNK
+	static struct user user;	/* Local buffer			*/
+
+	if (sysi86(RDUBLK, p->p_epid, &user, sizeof(user)) == -1) {
+		fprintf(stderr, "error: can't get u structure\n");
+		return (struct user *)NULL;
+	}
+	return(&user);
+#else
 	/* declaration of space for reading in the ubptbl */
 	union {
 		char	cbuf[NBPPT];
@@ -132,6 +144,7 @@ struct proc *p;
 	}
 	return((struct user *)user);
 #endif
+#endif
 }
 
 /*
@@ -146,7 +159,7 @@ killit()
 
   if (fork() > 0) {			/* Notification may block	*/
     tty = fopen(device,"w");		/* Open terminal for writing    */
-    if (tty < 0)
+    if (tty == NULL)
       fprintf(stderr,"%s: Can't warn %s\n",argv[0],device);
     else
       fprintf(tty,"\n\7Your job will be killed IMMEDIATELY.\7\n");
@@ -181,7 +194,7 @@ time_t t;                               /* Minutes to go                */
 { FILE *tty;                            /* Used to open a tty           */
 
   tty = fopen(device,"w");              /* Open terminal for writing    */
-  if (tty < 0)
+  if (tty == NULL)
     fprintf(stderr,"%s: Can't warn %s\n",argv[0],device);
   else
     fprintf(tty,"\n\7Your job will be killed in %ld minutes.\7\n",min(t));
