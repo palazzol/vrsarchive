@@ -74,7 +74,7 @@ rollwand()
 unconfuse()
 {
 	player.t_flags &= ~ISHUH;
-	msg("You feel less %s now", on(player, ISTRIP) ? "trippy" : "confused");
+	msg("You feel less %s now", on(player, ISTRIPY) ? "trippy" : "confused");
 }
 
 /*
@@ -106,7 +106,7 @@ sight()
 		player.t_flags &= ~ISBLIND;
 		if (!(proom->r_flags & ISGONE))
 			enter_room(&hero);
-		if (on(player, ISTRIP))
+		if (on(player, ISTRIPY))
 			msg("Far out!  Everything is cosmic again");
 		else
 			msg("The veil of darkness lifts");
@@ -145,7 +145,7 @@ stomach()
 		running = FALSE;
 		count = 0;
 		hungry_state = 3;
-		if (on(player, ISTRIP))
+		if (on(player, ISTRIPY))
 			msg("You freak out");
 		else
 			msg("You faint");
@@ -158,7 +158,7 @@ stomach()
 		if (food_left < MORETIME && oldfood >= MORETIME)
 		{
 			hungry_state = 2;
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg("The munchies are interfering with your motor skills");
 			else
 				msg("You are starting to feel weak");
@@ -166,7 +166,7 @@ stomach()
 		else if (food_left < 2 * MORETIME && oldfood >= 2 * MORETIME)
 		{
 			hungry_state = 1;
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg("Getting the munchies");
 			else
 				msg("Getting hungry");
@@ -183,7 +183,7 @@ come_down()
 	register THING *tp;
 	register bool seemonst;
 
-	if (!on(player, ISTRIP))
+	if (!on(player, ISTRIPY))
 		return;
 
 	kill_daemon(visuals);
@@ -216,7 +216,7 @@ come_down()
 				mvaddch(tp->t_pos.y, tp->t_pos.x, chat(tp->t_pos.y, tp->t_pos.x));
 		else if (seemonst)
 			mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_type);
-	player.t_flags &= ~ISTRIP;
+	player.t_flags &= ~ISTRIPY;
 	msg("Everything looks SO boring now");
 }
 

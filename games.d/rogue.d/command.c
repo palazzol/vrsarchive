@@ -212,7 +212,7 @@ command()
 						fp = &flat(delta.y, delta.x);
 						if (chat(delta.y, delta.x) != TRAP)
 							msg("No trap there");
-						else if (on(player, ISTRIP) && !(*fp & F_SEEN))
+						else if (on(player, ISTRIPY) && !(*fp & F_SEEN))
 							msg(tr_name(rnd(NTRAPS)));
 						else {
 							msg(tr_name(*fp & F_TMASK));
@@ -364,7 +364,7 @@ search()
 		return;
 	ey = hero.y + 1;
 	ex = hero.x + 1;
-	probinc = (on(player, ISTRIP) ? 3 : 0);
+	probinc = (on(player, ISTRIPY) ? 3 : 0);
 	for (y = hero.y - 1; y <= ey; y++) 
 		for (x = hero.x - 1; x <= ex; x++)
 		{
@@ -388,7 +388,7 @@ search()
 						chat(y, x) = TRAP;
 						*fp |= F_REAL;
 						count = running = FALSE;
-						if (on(player, ISTRIP))
+						if (on(player, ISTRIPY))
 							msg(tr_name(rnd(NTRAPS)));
 						else {
 							msg(tr_name(*fp & F_TMASK));
