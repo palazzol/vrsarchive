@@ -64,9 +64,15 @@ C
 C OBJECT IS ON LIST... IS IT A MATCH?
 C
 	  IF(and(OFLAG1(I),VISIBT).EQ.0) GO TO 1000
+#ifdef SYSV
+	  IF(and(.not.(NOCARE),(and(OFLAG1(I),TAKEBT).EQ.0)) .OR.
+&		((and(OFLAG1(I),F1).EQ.0).AND.
+&		 (and(OFLAG2(I),F2).EQ.0))) GO TO 500
+#else
 	  IF(and(not(NOCARE),(and(OFLAG1(I),TAKEBT).EQ.0)) .OR.
 &		((and(OFLAG1(I),F1).EQ.0).AND.
 &		 (and(OFLAG2(I),F2).EQ.0))) GO TO 500
+#endif
 	  IF(FWIM.EQ.0) GO TO 400
 C						!ALREADY GOT SOMETHING?
 	  FWIM=-FWIM
