@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <curses.h>
+#include "sc.h"
 
 extern char *malloc();
 #ifdef SYSV3
