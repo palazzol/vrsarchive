@@ -93,7 +93,7 @@ extern byte kdtab[200];
 extern byte cuttab[90];
 extern byte atko[15];
 
-extern savegm();
+extern SIG_T savegm();
 
 extern int nboxers;	/* number of boxers in the names file */
 extern int nrounds;	/* number of rounds in the fight */

@@ -234,7 +234,7 @@ int deftag;
 	p = strchr(cp->tags, deftag);		/* look it up */
 	if(p == NULL ){
 		variant = 0;
-		printf("??/%c??", deftag );
+		printf("?? /%c ??", deftag );
 		deftag = ' ';		/* for passing as deftag */
 	}else variant = p - cp->tags;
 

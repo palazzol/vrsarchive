@@ -18,7 +18,8 @@ in the file and remains intact.
 #include "extern.h"
 extern char *strrchr();
 
-savegm()
+SIG_T
+savegm(dummy)
 {
 	write(1, "\033[;H\033[2J", 8); /* DEC VT100 only */
 	speed = 0;

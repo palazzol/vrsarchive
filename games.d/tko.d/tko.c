@@ -29,18 +29,15 @@ main()
 
 	for(w=1; w < 12; w++)
 		printf("%d= %s\n",w,wc[w]);
-loopw:
 	for(;;)		/* query the operator for weight class */
 	{
 		printf("Enter the weight class number: ");
 		gets(temp);
 		sscanf(temp,"%d",&w);
-		if((w < 1) || (w > 11))
-		{
+		if((w < 1) || (w > 11)) {
 			printf("?TKO: no such weight class number\n");
-			goto loopw;
-		}
-		else break;
+		} else
+			break;
 	}
 
 	printf("Do you wish to see a list of the boxers' names? ");
@@ -96,18 +93,15 @@ printf("?TKO: You can't match a %s with a %s!\n",wc[bx[b].weight],wc[bx[a].weigh
 
 	getrtst();	/* get run-time boxer statistics */
 
-loop2:
 	for(;;)		/* query the operator for the speed of the fight */
 	{
 		printf("Specify fight speed [0 (fast) to 10 (slow)]: ");
 		gets(temp);
 		sscanf(temp,"%d",&speed);
-		if(speed > 10)
-		{
+		if(speed > 10) {
 			printf("?TKO: valid speeds are from 0 to 10\n");
-			goto loop2;
-		}
-		else break;
+		} else
+			break;
 	}
 
 	fagg = getagg();	/* get the aggressor of the fight */
