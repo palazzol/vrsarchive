@@ -740,7 +740,7 @@ dropobj()
 	{
 	register int i;
 	register char *p;
-	long amt;
+	long amt, tmp;
 	p = &item[playerx][playery];
 	while (1)
 		{
@@ -757,18 +757,18 @@ dropobj()
 				if (amt>c[GOLD])
 					{ lprcat("\nYou don't have that much!"); return; }
 				if (amt<=32767)
-					{ *p=OGOLDPILE; i=amt; }
+					{ *p=OGOLDPILE; tmp=amt; }
 				else if (amt<=327670L)
-					{ *p=ODGOLD; i=amt/10; amt = 10*i; }
+					{ *p=ODGOLD; tmp=amt/10; amt = 10*tmp; }
 				else if (amt<=3276700L)
-					{ *p=OMAXGOLD; i=amt/100; amt = 100*i; }
+					{ *p=OMAXGOLD; tmp=amt/100; amt = 100*tmp; }
 				else if (amt<=32767000L)
-					{ *p=OKGOLD; i=amt/1000; amt = 1000*i; }
+					{ *p=OKGOLD; tmp=amt/1000; amt = 1000*tmp; }
 				else
-					{ *p=OKGOLD; i=32767; amt = 32767000L; }
+					{ *p=OKGOLD; tmp=32767; amt = 32767000L; }
 				c[GOLD] -= amt; 
 				lprintf("You drop %d gold pieces",(long)amt);
-				iarg[playerx][playery]=i; bottomgold();
+				iarg[playerx][playery]=tmp; bottomgold();
 				know[playerx][playery]=0; dropflag=1;  return;
 				}
 			drop_object(i-'a');
