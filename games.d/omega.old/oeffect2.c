@@ -708,7 +708,7 @@ int blessing;
 	     (Dungeon[Dlevel][x][y].p_locf == L_STATUE_WAKE) ||
 	     (Dungeon[Dlevel][x][y].p_locf == L_TRAP_TELEPORT) ||
 	     (Dungeon[Dlevel][x][y].p_locf == L_TRAP_DISINTEGRATE)) {
-      Dungeon[Dlevel][x][y].p_locf == L_NO_OP;
+      Dungeon[Dlevel][x][y].p_locf = L_NO_OP;
       if (Dungeon[Dlevel][x][y].locchar == TRAP)
 	Dungeon[Dlevel][x][y].locchar = FLOOR;
     }
