@@ -9,7 +9,7 @@ GAMEGRP = $(SAFEGRP)
 HACKDIR	= $(GAMLIB)/$(GAME)dir
 SAVEDIR	= $(HACKDIR)/save
 OPTIONS	= -DHACKDIR=\"$(HACKDIR)\"
-MODEL	= -M2lt50
+MODEL	= -M2lt50 -F 2000
 include ../../CONFIG
 
 # if you are cross-compiling (eg. from Xenix into a Dos environment)
