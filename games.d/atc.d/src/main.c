@@ -10,9 +10,6 @@
 #include "include.h"
 #include <sgtty.h>
 
-struct sgttyb tty_start, tty_new;
-char erase_char, kill_char;
-
 int interval;
 
 main(ac, av)
@@ -115,14 +112,6 @@ main(ac, av)
 #endif
 	signal(SIGHUP, log_score);
 	signal(SIGTERM, log_score);
-
-	ioctl(fileno(stdin), TIOCGETP, &tty_start);
-	erase_char = tty_start.sg_erase;
-	kill_char = tty_start.sg_kill;
-	bcopy(&tty_start, &tty_new, sizeof(tty_new));
-	tty_new.sg_flags |= CBREAK;
-	tty_new.sg_flags &= ~ECHO;
-	ioctl(fileno(stdin), TIOCSETP, &tty_new);
 
 	signal(SIGALRM, update);
 	interval = 0;
