@@ -1,11 +1,12 @@
+ALL		= adldebug adltouch
+MODEL	= -M2l
+OPTIONS	= -O -DHPUX -I${INC}
+include /etc/CONFIG
 # Where utility routines live
 UTL = ../util
 
 # Where include files live
 INC = ../include
-
-# Flags for CC
-CFLAGS = -M2l -O -DHPUX -I${INC}
 
 # Commands for shar
 # AR = shar -c -v
@@ -20,8 +21,6 @@ D = misc/
 UTIL =	${UTL}/virtmem.o	${UTL}/vstring.o	${UTL}/mytime.o
 
 # The rules
-all		:	adldebug adltouch
-
 install		:	adldebug adltouch
 	strip adldebug adltouch
 	cp adldebug adltouch ${BIN}
