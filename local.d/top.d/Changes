@@ -1,3 +1,5 @@
+	@(#)Changes	1.2	3/30/85
+
 Tue Nov 20 1984 - wnl (1.6)
 	Added an "exit" if sbrk's fail.  Added changes from Jonathon
 	Feiber at Sun:  ifdef SUN to make top work on Suns (they don't use

@@ -1,3 +1,5 @@
+	@(#)README	1.2	3/30/85
+
 This file contains a few comments about "top".
 
 "top" is a program that will give continual reports about the state of the

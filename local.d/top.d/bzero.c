@@ -1,3 +1,7 @@
+/*
+ *	@(#)bzero.c	1.2	3/30/85
+ *	Portable version - doesn't use any undocumented features.
+*/
 bzero(memory, amount)
 register char *memory;
 register int amount;
