@@ -1,10 +1,10 @@
 /*
  * code for when the good (berkeley) random number generator is around
  */
+extern long	random();
 
 rnd(num)
 {
-	extern long	random();
 
 	return (random() % num);
 }
