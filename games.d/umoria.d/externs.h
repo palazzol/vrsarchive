@@ -114,7 +114,7 @@ extern treasure_type down_stair;
 /* Following are creature arrays and variables			*/
 extern creature_type c_list[MAX_CREATURES];
 extern monster_type m_list[MAX_MALLOC];
-extern int m_level[MAX_MONS_LEVEL];
+extern int m_level[MAX_MONS_LEVEL+1];
 extern monster_type blank_monster;	/* Blank monster values	*/
 extern int muptr;	/* Cur used monster ptr	*/
 extern int mfptr;	/* Cur free monster ptr	*/
