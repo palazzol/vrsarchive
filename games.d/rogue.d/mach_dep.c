@@ -95,6 +95,9 @@ setup()
 #ifndef DUMP
 		signal(SIGILL, auto_save);
 		signal(SIGTRAP, auto_save);
+#ifndef SIGIOT
+#define SIGIOT	SIGABRT
+#endif
 		signal(SIGIOT, auto_save);
 		signal(SIGEMT, auto_save);
 		signal(SIGFPE, auto_save);
