@@ -25,8 +25,8 @@
 #define DESTRUCTIVE_RESTORE 1
 
 /* If CATCH_SIGNALS is set to 1, will not dump core, nicer for players. */
-/* dbx still instercepts the signals first, so its ok for debugging */
-#define CATCH_SIGNALS 1
+/* dbx still intercepts the signals first, so its ok for debugging */
+#define CATCH_SIGNALS 0
 
 /* Don't change anything from here on (unless you know what you're doing) */
 #define VERSION 60
@@ -893,3 +893,9 @@ typedef oltype *pol;
 /* random  function declarations */
 char *malloc(),*calloc();
 int free();
+
+#ifndef BSD
+extern long lrand48;
+#define random()	lrand48()
+#define srandom()	srand48()
+#endif

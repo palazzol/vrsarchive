@@ -137,7 +137,7 @@ int game_restore(),signalexit(),main();
 /* This may be implementation dependent */
 void initrand()
 {
-  srand((unsigned)time((long *)0)+Seed);
+  srandom((unsigned)time((long *)0)+Seed);
 }
 
 
@@ -253,4 +253,3 @@ int signalexit()
   endgraf();
   exit(0);
 }
-
