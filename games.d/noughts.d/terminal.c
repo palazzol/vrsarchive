@@ -2,8 +2,14 @@
 
 /* Routines using termcap for positioning */
 
+#ifdef __STDC__
+# include <termios.h>
+struct termios argp;
+#else
 # include <sgtty.h>
 struct sgttyb argp;
+#endif
+
 short ospeed;
 
 extern putchar();
@@ -24,8 +30,13 @@ char *term;
 	char *pc;
 	char *tgetstr();
 
+#ifdef __STDC__
+	tcgetattr(0, &argp);
+	ospeed = argp.c_ospeed;
+#else
 	gtty(0, &argp);
 	ospeed = argp.sg_ospeed;
+#endif
 
 	switch (tgetent(tcbuf, term)) {
 	case -1:

@@ -49,7 +49,11 @@
 #ifdef UNIX
 
 #include <stdio.h>
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 #include <sys/types.h>
 #include <sys/file.h>
 #include <fcntl.h>
