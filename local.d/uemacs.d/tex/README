@@ -1,0 +1,23 @@
+The documentation is provided in three files:
+
+emacs-doc.tex    ;Main LaTeX file that includes part1.tex and part2.tex
+    part1.tex    ;first half of documentation
+    part2.tex    ;second half of documentation
+emacs-doc.toc    ;Table of Contents generated on a previous run of LaTeX
+emacs-index.tex  ;Index entries, modified from emacs-doc.idx
+
+The files emacs-doc.tex, part1.tex and part2.tex contain everything
+needed to generate the manual for microemacs 3.8i.  The files
+emacs-doc.toc and emacs-index.tex are included so that emacs-doc.dvi
+can be created in one pass.
+
+sh> latex emacs-doc
+
+There are a couple of LaTeX warnings about underfull boxes, but they
+don't make too much of a difference so I left them.
+
+If you want to change the document so that pagebreaks will change
+you will need to recreate the emacs-doc.toc and emacs-index.tex files.
+The emacs-doc.toc file is created by LaTeX.  The emacs-index.tex file
+is a sorted and slightly modified version of emacs-doc.idx (which is 
+also created by LaTeX).
