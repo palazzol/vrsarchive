@@ -150,7 +150,10 @@ char monst;
 				printw(" by %s", killname((char) scp->sc_monster, TRUE));
 			if (prflags == 1)
 			{
-				struct passwd *pp, *getpwuid();
+				struct passwd *pp;
+#ifndef __STDC__
+				struct passwd *getpwuid();
+#endif
 
 				if ((pp = getpwuid((int)scp->sc_uid)) == NULL)
 					printw(" (%d)", scp->sc_uid);
