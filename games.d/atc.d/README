@@ -1,0 +1,15 @@
+
+Here is a game that I wrote myself!  And it even has a doc.
+Bugs to me.  I am still supporting this.  I have seen it work
+on a vax, pyramid and even a sun all running 4BSD.  I have no idea
+about sys V.  Keep me informed.  		--ed
+					ucbvax!edjames
+					edjames@ic.berkeley.edu
+
+To install the game:
+
+	make makesrc
+	vi dist/tunable.c	# Tailor SPECIAL_DIR to atc library directory
+	vi Makefile		# Change DESTINATION to your games directory
+				# and change OWNER to your standard games uid
+	make install
