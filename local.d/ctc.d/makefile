@@ -1,12 +1,17 @@
-CFLAGS	= -O
-LFLAGS	= -F 2000
-LIBS	= -ltermcap
+ALL	= ctc
+MODEL	= -i -F 2000
+OPTIONS	= -O
+include ../../CONFIG
 OBJ	= ctc.o termcap.o
 
-all:    ctc
+install: $(ALL) $(BINDIR) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp ctc.1 $(MAN1)
+	cd $(MAN1); chmod 644 ctc.1
 
 ctc:    $(OBJ)
-	cc ${LFLAGS} ${OBJ} -o ctc ${LIBS}
+	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LIBS)
 
 clean:
-	rm -f ${OBJ} ctc make.out core
+	rm -f $(OBJ) $(ALL)
