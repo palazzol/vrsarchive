@@ -22,7 +22,8 @@ register struct monst *mtmp = makemon(&li_dog,u.ux,u.uy);
 }
 
 initedog(mtmp) register struct monst *mtmp; {
-	mtmp->mtame = mtmp->mpeaceful = 1;
+	mtmp->mpeaceful = 1;
+	mtmp->mtame = 1;
 	EDOG(mtmp)->hungrytime = 1000 + moves;
 	EDOG(mtmp)->eattime = 0;
 	EDOG(mtmp)->droptime = 0;
@@ -159,7 +160,7 @@ int info[9];
 			edog->droptime = moves;
 		}
 	} else {
-		if(obj = o_at(omx,omy)) if(!index("0_", obj->olet)){
+		if(obj = o_at(omx,omy)) if(!strchr("0_", obj->olet)){
 		    if((otyp = dogfood(obj)) <= CADAVER){
 			nix = omx;
 			niy = omy;
@@ -181,7 +182,7 @@ int info[9];
 	gtyp = UNDEF;	/* no goal as yet */
 #ifdef LINT
 	gx = gy = 0;	/* suppress 'used before set' message */
-#endif LINT
+#endif
 	for(obj = fobj; obj; obj = obj->nobj) {
 		otyp = dogfood(obj);
 		if(otyp > gtyp || otyp == UNDEF) continue;
@@ -227,7 +228,7 @@ int info[9];
 				gx = u.ux;
 				gy = u.uy;
 			}
-#endif QUEST
+#endif
 		}
 		appr = (udist >= 9) ? 1 : (mtmp->mflee) ? -1 : 0;
 		if(after && udist <= 4 && gx == u.ux && gy == u.uy)
@@ -373,7 +374,7 @@ inroom(x,y) xchar x,y; {
 			return(croom - rooms);
 		croom++;
 	}
-#endif QUEST
+#endif
 	return(-1);	/* not in room or on door */
 }
 
@@ -392,8 +393,8 @@ register struct obj *obj;
 	if(mtmp->mtame || mtmp->mfroz ||
 #ifndef NOWORM
 		mtmp->wormno ||
-#endif NOWORM
-		mtmp->isshk || mtmp->isgd || index(" &@12", mtmp->data->mlet))
+#endif
+		mtmp->isshk || mtmp->isgd || strchr(" &@12", mtmp->data->mlet))
 		return(0); /* no tame long worms? */
 	if(obj) {
 		if(dogfood(obj) >= MANFOOD) return(0);
