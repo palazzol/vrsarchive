@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/mille.d/Makefile,v 1.4 2002-11-23 04:09:41 Vincent Exp $
+#	$Header: /home/Vince/cvs/games.d/mille.d/Makefile,v 1.5 2002-11-24 20:09:58 vrs Exp $
 #
 ALL	= mille$(EXE)
 MODEL	= -i
@@ -30,7 +30,7 @@ install: $(ALL) $(GAMDIR)
 	cp $(ALL) $(GAMDIR)
 	cd $(GAMDIR); chmod 711 $(ALL)
 
-pmb:	$(POBJS)
+pmb$(EXE):	$(POBJS)
 	$(CC) $(CFLAGS) -pg -o $@ $(POBJS) $(LIBS)
 
 mille.po: mille.c
@@ -38,10 +38,10 @@ mille.po: mille.c
 	$(CC) $(CFLAGS) -DPROF -p -c x.c
 	mv x.o $@
 
-table: table.o extern.o
+table$(EXE): table.o extern.o
 	$(CC) $(CFLAGS) -i -o table table.o extern.o
 
-readdump: readdump.o extern.o varpush.o
+readdump$(EXE): readdump.o extern.o varpush.o
 	$(CC) $(CFLAGS) -i -o $@ readdump.o extern.o varpush.o
 
 ctags:
