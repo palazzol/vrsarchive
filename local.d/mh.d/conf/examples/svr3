@@ -1,0 +1,41 @@
+#
+#	A V.3.2 system running SMTP with sendmail
+#
+# -UALTOS -UATHENA -UBANG -UBERK -UBSD41A -UBSD42 -UBSD43 -UCOMPAT -UDBM
+# -UDPOP -UPOPSERVICE -URPOP -UISI -ULINK -Ulocname -UMHE -UNFS
+# -UIOCTLH -UNOMHSEQ -UOVERHEAD -USBACKUP -USENDMAILBUG -USUN40 -UTTYD
+# -URPATHS -UUCI -UUK -UV7 -UWP -UWHATNOW
+#lex	lex -nt
+#slibdir /usr/lib
+bbdelivery on
+bbhome	/usr/spool/news
+bboards	nntp
+bin		/usr/local/bin
+cc		cc
+ccoptions
+chown	chown
+curses	-lcurses
+debug	off
+#editor	vi
+etc		/usr/local/lib/mh
+ldoptions
+ldoptlibs	-lsocket #-lnsl
+mail	/usr/mail
+mailgroup mail
+mandir	/usr/local/man
+manuals	standard
+mf		off
+mts		sendmail/smtp
+oldload	on
+options	ATZ TZNAME
+options	DUMB
+options	MHRC
+options	FOLDPROT='"0700"' MSGPROT='"0600"'
+options BIND NTOHLSWAP SOCKETS
+options MORE='"pg"' NDIR='"dirent.h"' SHADOW SYS5 SYS5DIR TYPESIG=void
+pop		off
+ranlib	off
+remove	rm -f
+sharedlib off
+sprintf	int
+tma		off
