@@ -15,7 +15,7 @@ extern char erase_char, kill_char;
 #define MAXDEPTH	15
 
 #define RETTOKEN	'\n'
-#define REDRAWTOKEN	'\014'	/* CTRL(L) */
+#define REDRAWTOKEN	'\f'	/* CTRL(L) */
 #define HELPTOKEN	'?'
 #define ALPHATOKEN	256
 #define NUMTOKEN	257
@@ -240,12 +240,6 @@ getcommand()
 	pp->delayd = p.delayd;
 	pp->delayd_no = p.delayd_no;
 	return (0);
-}
-
-noise()
-{
-	putchar('\007');
-	fflush(stdout);
 }
 
 gettoken()
