@@ -10,6 +10,10 @@
      Dave Taylor, HP Colorado Networks
 **/
 
+#ifdef __STDC__
+#include <stdarg.h>
+#include <stdlib.h>
+#endif
 #include <stdio.h>
 
 #ifdef RAWMODE
@@ -325,15 +329,30 @@ EndInverse()
        return(0);
 }
 
+#ifdef __STDC__
+void
+PutLine(int x, int y, char *line, ...)
+#else
 PutLine(x, y, line, args)
 int x,y;
 char *line;
 int  args;
+#endif
 {
-        /** write line, with 'args', at location x,y **/
+#ifdef __STDC__
+	va_list args;
 
+        /** write line, with 'args', at location x,y **/
+	va_start(args, line);
+        MoveCursor(x,y);
+        vfprintf(stdout, line, args);
+	va_end(args);
+#else
+
+        /** write line, with 'args', at location x,y **/
         MoveCursor(x,y);
         _doprnt(line, &args, stdout);
+#endif
         fflush(stdout);    /* ensure it actually gets out! */
 }
 
