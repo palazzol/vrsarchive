@@ -12,7 +12,7 @@
  * Change this to whatever you want.  Be sure to have to path end 
  * with a '/', like "/usr/games/lib/atc/".
  */
-char	SPECIAL_DIR[] =		"/usr/games/lib/atc/";
+char	SPECIAL_DIR[] =		GAMLIB/atc/";
 
 /*
  * NUM_SCORES - Number of scores that are kept track of.
