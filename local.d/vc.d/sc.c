@@ -280,12 +280,7 @@ char  **argv; {
 	signals();
 	initscr ();
 	clear ();
-#ifdef BSD42
 	raw ();
-#endif
-#ifdef SYSV
-	nonl(); cbreak();
-#endif
 	noecho ();
     }
     initkbd();
@@ -709,12 +704,7 @@ char  **argv; {
     move (LINES - 1, 0);
     clrtoeol();
     refresh ();
-#ifdef BSD42
     noraw ();
-#endif
-#ifdef SYSV
-    nocbreak(); nl();
-#endif
     echo ();
     endwin ();
 }
@@ -737,12 +727,7 @@ quit()
     move (LINES - 1, 0);
     clrtoeol();
     refresh ();
-#ifdef BSD42
     noraw ();
-#endif
-#ifdef SYSV
-    nocbreak(); nl();
-#endif
     echo ();
     endwin ();
     exit();
