@@ -355,7 +355,7 @@ extern short nobeep,oldx,oldy,playerx,playery;
 extern int dayplay,enable_scroll,srcount,yrepcount,userid,wisid,lfd,fd;
 extern long initialtime,outstanding_taxes,skill[],gtime,c[],cbak[];
 extern unsigned long randx;
-extern struct cel *cell;
+extern struct cel *cell[MAXLEVEL+MAXLEVEL];
 extern struct monst monster[];
 extern struct sphere *spheres;
 extern struct _itm itm[];
