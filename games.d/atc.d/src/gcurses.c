@@ -246,7 +246,8 @@ ioerror(pos, len, str)
 	fflush(stdout);
 }
 
-quit()
+SIG_T
+quit(dummy)
 {
 	int			c, y, x;
 
@@ -284,7 +285,7 @@ planewin()
 
 	werase(planes);
 	wmove(planes, 0,0);
-	wprintw(planes, "Time: %-4d Safe: %d", clock, safe_planes);
+	wprintw(planes, "Time: %-4d Safe: %d", gclock, safe_planes);
 	wmove(planes, 2, 0);
 
 	waddstr(planes, "pl dt  comm");

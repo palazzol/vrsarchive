@@ -3,7 +3,7 @@
 #
 ALL	= battlestar
 MODEL	= -M2l
-OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
+OPTIONS	= -O -DGAMLIB=$(GAMLIB)
 include /etc/CONFIG
 LOGFILE	= $(GAMLIB)/battlestar.log
 DAYF	= $(GAMLIB)/dayfile
@@ -32,16 +32,16 @@ mkwlist: mkwlist.c
 	$(CC) $(CFLAGS) -o mkwlist mkwlist.c
 
 wlist.c: battlewords mkwlist
-	mkwlist battlewords
+	./mkwlist battlewords
 
 mkobjs: mkobjs.c
 	$(CC) $(CFLAGS) -o mkobjs mkobjs.c
 
 dayobjs.c: dayobjs mkobjs
-	mkobjs dayobjs
+	./mkobjs dayobjs
 
 nightobjs.c: nightobjs mkobjs
-	mkobjs nightobjs
+	./mkobjs nightobjs
 
 lint: $(CFILES) 
 	lint $(LFLAGS) $(CFILES) $(LIBS) 

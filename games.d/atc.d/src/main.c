@@ -20,7 +20,7 @@ main(ac, av)
 	int			f_printpath = 0;
 	char			*File = NULL;
 	char			*name, *ptr;
-	extern int		update(), quit(), log_score();
+	extern SIG_T	update(), quit(), log_score();
 	extern char		*default_game(), *okay_game();
 
 	seed = start_time = time((long *)0);

@@ -13,11 +13,12 @@ static char *sccsid = "@(#)fly.c	1.2 11/28/84";
 int row, column;
 int dr = 0, dc = 0;
 char destroyed;
-int clock = 120;		/* time for all the flights in the game */
+int gclock = 120;		/* time for all the flights in the game */
 char cross = 0;
 void (*oldsig)();
 
-succumb()
+SIG_T
+succumb(dummy)
 {
 	if (oldsig == SIG_DFL) {
 		endfly();
@@ -31,7 +32,7 @@ succumb()
 
 visual()
 {
-	int moveenemy();
+	SIG_T moveenemy();
 
 	destroyed = 0;
 	savetty();
@@ -130,7 +131,7 @@ visual()
 			endfly();
 			return(1);
 		}
-		if (clock <= 0){
+		if (gclock <= 0){
 			endfly();
 			die();
 		}
@@ -198,7 +199,8 @@ blast()
 	alarm(1);
 }
 
-moveenemy()
+SIG_T
+moveenemy(dummy)
 {
 	double d;
 	int oldr, oldc;
@@ -219,7 +221,7 @@ moveenemy()
 		row += (rnd(9) - 4) % (4 - abs(row - MIDR));
 		column += (rnd(9) - 4) % (4 - abs(column - MIDC));
 	}
-	clock--;
+	gclock--;
 	mvaddstr(oldr, oldc - 1, "   ");
 	if (cross)
 		target();
@@ -229,7 +231,7 @@ moveenemy()
 	move(LINES-1, 42);
 	printw("%3d", fuel);
 	move(LINES-1, 57);
-	printw("%3d", clock);
+	printw("%3d", gclock);
 	refresh();
 	signal(SIGALRM, moveenemy);
 	alarm(1);

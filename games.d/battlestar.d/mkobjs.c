@@ -58,6 +58,7 @@ getnum()
 }
 
 error(fmt, a, b, c, d)
+char *fmt;
 {
 	printf("line %d: ", line);
 	printf(fmt, a, b, c, d);

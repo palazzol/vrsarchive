@@ -24,10 +24,10 @@
 
 %{
 #include "include.h"
-
+#ifndef __STDC__
 extern char *malloc();
 extern char *realloc();
-
+#endif
 int	errors = 0;
 int	line = 1;
 %}

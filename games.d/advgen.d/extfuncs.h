@@ -33,7 +33,9 @@ void	init_syms();		/* lookup.c */
 void	init_verbs();		/* specials.c */
 symbol	*lookup();		/* lookup.c */
 void	main();			/* advgen.c */
+#ifndef __STDC__
 char	*malloc();		/* C library */
+#endif
 void	muldecl();		/* error.c */
 void	muldef();		/* error.c */
 void	negate();		/* code.c */

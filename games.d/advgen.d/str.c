@@ -1,4 +1,5 @@
 #include	"advgen.h"
+#include	<malloc.h>
 
 char *
 strsave(s)

@@ -11,7 +11,8 @@
 
 extern int interval;
 
-update()
+SIG_T
+update(dummy)
 {
 	int	i, dir_diff, mask, unclean;
 	PLANE	*pp, *p1, *p2, *p;
@@ -19,7 +20,7 @@ update()
 
 	signal(SIGALRM, update);
 	sig = signal(SIGINT, SIG_IGN);
-	clock++;
+	gclock++;
 
 	erase_all();
 
@@ -39,7 +40,7 @@ update()
 	/* do altitude change and basic movement */
 	for (pp = air.head; pp != NULL; pp = pp->next) {
 		/* type 0 only move every other turn */
-		if (pp->plane_type == 0 && clock & 1)
+		if (pp->plane_type == 0 && gclock & 1)
 			continue;
 
 		pp->fuel--;
