@@ -9,7 +9,8 @@
 
 extern char		GAMES[], LOG[], *File;
 
-extern int		clock, safe_planes, start_time, test_mode;
+extern long		start_time;
+extern int		clock, safe_planes, test_mode;
 
 extern FILE		*filein, *fileout;
 
@@ -20,3 +21,5 @@ extern LIST		air, ground;
 extern DISPLACEMENT	displacement[MAXDIR];
 
 extern PLANE		*findplane(), *newplane();
+
+extern long		time();

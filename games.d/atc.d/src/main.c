@@ -26,7 +26,7 @@ main(ac, av)
 	extern int		update(), quit(), log_score();
 	extern char		*default_game(), *okay_game();
 
-	start_time = seed = time((long *)0);
+	seed = start_time = time((long *)0);
 
 	name = *av++;
 	while (*av) {
