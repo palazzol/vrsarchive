@@ -13,7 +13,15 @@ C
 C
  	COMMON /TIME/ PLTIME,SHOUR,SMIN,SSEC
 C
+#ifdef SYSV
+	INTEGER TM(3)
+ 	CALL ITIME(TM)
+ 	H = TM(1)
+ 	M = TM(2)
+ 	S = TM(3)
+#else
  	CALL ITIME(H,M,S)
+#endif
  	T=((H*60)+M)-((SHOUR*60)+SMIN)
  	IF(T.LT.0) T=T+1440
  	T=T+PLTIME
