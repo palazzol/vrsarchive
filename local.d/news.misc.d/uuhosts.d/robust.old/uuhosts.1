@@ -1,0 +1,94 @@
+.TH UUHOSTS 1L 84/12/16
+.SH NAME
+uuhosts \- USENET news and UUCP mail information.
+.SH SYNOPSIS
+.B
+uuhosts
+hostname ...
+.br
+.B
+uuhosts
+-g geographical-region
+.br
+.B
+uuhosts
+-g
+.br
+.B
+uuhosts
+-k keyword
+.br
+.B
+uuhosts
+-x
+.SH DESCRIPTION
+The \fIuuhosts\fP command is used to look up information about
+the configurations of the UUCP mail network and the USENET news network.
+.TP
+uuhosts \fIhostname\fP ...
+for information about a particular UUCP or USENET host or hosts.
+The UUCP mail path is given first, followed by the USENET news site information.
+Any hosts with names for which the argument is a prefix are shown, e.g.:
+.TP
+uuhosts ut
+gets information about all hosts whose names start with ``ut''.
+.TP
+uuhosts -g \fIgeographical-region\fP
+for information about USENET news hosts in a geographical region.
+.TP
+uuhosts -g README
+gets an introduction to the USENET news map.
+.TP
+uuhosts -g Local
+gets USENET news information known only locally.
+.TP
+uuhosts -g
+for a list of known USENET geographical-regions.
+.TP
+uuhosts -k \fIkeyword\fP
+for a list of known USENET sites whose entries contain the word \fIkeyword\fP.
+.TP
+uuhosts
+with no arguments gets a short usage message.
+.SH MAINTENANCE
+In addition to the options mentioned above, there is
+.TP
+uuhosts -x
+Extract pieces of the USENET news or UUCP mail maps from a
+mod.map.news or mod.map.uucp article.
+.PP
+This should be called automatically by a line in \fB/usr/local/lib/news/sys\fP
+like
+.IP
+maps:mod.map.news,mod.map.mail:B:/usr/local/uuhosts -x
+.LP
+There are more details in the uuhosts shell script itself.
+.SH FILES
+.TP
+/usr/local/lib/nmail.paths
+UUCP mail path database as produced by \fIpathalias\fP and used by \fInmail\fP
+(which is called automatically from \fIsendmail\fP on \fIut\-sally\fP)
+It is searched by \fIlook\fP(1), if present, else \fIgrep\fP(1).
+.TP
+/usr/local/lib/news/maps/mod.map.news
+USENET news site information taken from newsgroup \fBmod.map.news\fP
+(thanks to \fBcbosgd!map\fP).
+Notices of updates are mailed to usenet, which should be an alias
+redistributing to the local USENET administrators.
+.TP
+/usr/local/lib/news/maps/mod.map.news/Index
+This index is used to decrease search time on the map about an order
+of magnitude.
+The search is done by either \fIlook\fP(1) or \fIgrep\fP(1), as above.
+The index is updated each time a mod.map.news article arrives.
+.TP
+/usr/local/lib/news/maps/mod.map.uucp
+UUCP mail site information taken from newsgroup \fBmod.map.uucp\fP
+(thanks to the UUCP mapping project).
+Notices of updates are mailed to postmaster, which should be an alias
+redistributing to the local mail and UUCP administrators.
+.TP
+/usr/local/lib/news/sys
+Contains arrangements to call "uuhosts -x".
+.SH SEE ALSO
+vnews(1), readnews(1), mail(1), sendmail(8), look(1)
