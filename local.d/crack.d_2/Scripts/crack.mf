@@ -1,0 +1,39 @@
+###
+# This program written by ADE Muffett (aem@aber.ac.uk), August 1991,
+# as part of the 'Crack' password cracking package.
+###
+
+###
+# Add other dictionaries here, absolute path, or relative to $CRACK_HOME
+#
+DICTSRC=	/usr/dict/words /usr/ucblib/dict/words DictSrc/*
+
+###
+# Not-so configurable bitz...
+###
+PPDRIVER=	Scripts/do_dicts
+SRCDIR=		Sources
+DICTDIR=	Dicts
+DS=		$(DICTDIR)/dictstamp
+
+dictstamp:	$(DS)
+
+###
+# You could have a dependency here, but it would make an awfful mess of
+# using wildcards
+$(DS):
+		@echo Using Sources '$(DICTSRC)'
+		$(PPDRIVER) $$CRACK_ARCH $(DICTSRC)
+		touch $(DS)
+
+cleanprogs:
+		-( cd $(SRCDIR) && make clean )
+
+clean:		cleanprogs
+		-rm -f Runtime/die.* Runtime/pnt.* dict.? tmp.* nohup.out
+
+spotless:	clean
+		-( cd $(DICTDIR) && rm dict* )
+		-rm -f out.*
+		-Scripts/mrgfbk
+
