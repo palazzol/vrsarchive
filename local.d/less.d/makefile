@@ -1,8 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.3 1990-03-30 17:03:01 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/less.d/makefile,v 1.4 1990-04-13 14:33:18 vrs Exp $
 #
 ALL	= less
-OPTIONS = "-Doff_t=$(off_t)" "-DVOID=$(VOID)" \
+OPTIONS = "-DVOID=$(VOID)" \
 	  "-DREGCMP=$(REGCMP)" "-DRECOMP=$(RECOMP)" \
 	  "-DSHELL_ESCAPE=$(SHELL_ESCAPE)" \
 	  "-DEDITOR=$(EDITOR)" "-DEDIT_PGM=\"$(EDIT_PGM)\"" \
@@ -39,10 +39,6 @@ SHELL	= /bin/sh
 # VOID is 1 if your C compiler supports the "void" type,
 # 0 if it does not.
 VOID = 1
-
-# off_t is the type which lseek() returns.
-# It is also the type of lseek()'s second argument.
-off_t = long
 
 ##########################################################################
 # Optional and semi-optional features

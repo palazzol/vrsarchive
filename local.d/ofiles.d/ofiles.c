@@ -1,5 +1,5 @@
 #ifndef lint
-static char rcsid[]="$Header: /home/Vince/cvs/local.d/ofiles.d/ofiles.c,v 1.2 1987-12-26 20:19:38 vrs Exp $";
+static char rcsid[]="$Header: /home/Vince/cvs/local.d/ofiles.d/ofiles.c,v 1.3 1990-04-13 14:34:17 vrs Exp $";
 static char sccsid[]="%W% %G% cspencer";
 #endif /*lint*/
 
@@ -26,6 +26,9 @@ static char sccsid[]="%W% %G% cspencer";
 #include <sys/var.h>
 #include <pwd.h>
 #include <stdio.h>
+#ifdef NFPCHUNK
+#include <sys/sysi86.h>
+#endif
 #include "fstab.h"
 
 #define CDIR	01
@@ -40,7 +43,7 @@ int mem;		/* Fd for Physical Memory			*/
 int kmem;		/* Fd for kernel DS				*/
 int swap;		/* Fd for /dev/swap				*/
 short rootdev;		/* Device number of root device			*/
-unsigned procbase;	/* Pointer to _proc in kmem			*/
+struct proc *procbase;	/* Pointer to _proc in kmem			*/
 struct var v;		/* Kernel configuartion parameters		*/
 int pids_only = 0;	/* If non-zero, only output process ids		*/
 char *progname;		/* Name of this program (for messages)		*/
@@ -58,7 +61,11 @@ struct nlist nl[] = {
 #else
 struct nlist nl[] = {
 #define X_PROC		0
+#ifdef NFPCHUNK
+	{"practive"},
+#else
 	{"proc"},
+#endif
 #define X_V		1
 	{"v"},
 #define X_ROOTDEV	2
@@ -72,14 +79,18 @@ main(argc, argv)
 int 	argc;
 char	*argv[];
 {
-
-	struct inode *i,*getinode();
 	struct stat s;
 	struct user *u, *getuser();
 	struct proc p;
 	register int filen, flags, procn;
 	register char *filename, *fsname;
 	struct fstab *fs, *getfsfile(), *getfsspec();
+#ifdef NFPCHUNK
+	struct vnode *i,*getinode();
+	struct ufchunk *ofile;
+#else
+	struct inode *i,*getinode();
+#endif
 
 	progname = argv[0];
 
@@ -129,7 +140,7 @@ char	*argv[];
 			printf("%-8.8s\tpid\ttype\tcmd\n", "user");
 		}
 		for(procn = 0; procn < nproc; procn++){
-			procslot(procn, &p);
+			procslot(&p);
 			flags = 0;
 			if(p.p_stat == 0 || p.p_stat == SZOMB)
 				continue;
@@ -144,6 +155,7 @@ char	*argv[];
 			if(check(&s,i))
 				flags |= CDIR;
 
+#ifndef NFPCHUNK	/* older, static array case */
 			for(filen = 0; filen < NOFILE; filen++) {
 				struct file f;
 
@@ -161,6 +173,30 @@ char	*argv[];
 						flags |= OFILE;
 				}
 			}
+#else
+			for (ofile = &u->u_flist; ofile; ) {
+				for(filen = 0; filen < NFPCHUNK; filen++) {
+					struct file f;
+
+					if(u->u_flist.uf_ofile[filen] == NULL)
+						continue;
+
+					eseek(kmem,(long)u->u_flist.uf_ofile[filen],0,"file");
+					eread(kmem,(char *)&f, sizeof(f), "file");
+
+					if(f.f_count > 0) {
+						if (f.f_vnode == 0)
+							continue;
+						i = getinode(f.f_vnode, "file");
+						if(check(&s,i))
+							flags |= OFILE;
+					}
+				}
+				ofile = u->u_flist.uf_next;
+				eseek(kmem,(long)ofile,0,"fchunk");
+				eread(kmem,(char *)&u->u_flist, sizeof(u->u_flist), "fchunk");
+			}
+#endif
 			if(flags) gotone(u,&p,flags);
 		}
 		if(! pids_only)
@@ -181,7 +217,7 @@ int f;
 
 	/* only print pids and return */
 	if(pids_only) {
-			printf("%d ",p->p_pid);
+			printf("%d ",p->p_epid);
 			fflush(stdout);
 			return;
 	}
@@ -189,8 +225,8 @@ int f;
 	if(pw)
 		printf("%-8.8s\t", pw->pw_name );
 	else
-		printf("(%d)\t", u->u_uid);
-	printf("%d\t", p->p_pid);
+		printf("%d)\t", u->u_uid);
+	printf("%d\t", p->p_epid);
 	if(f & OFILE) putchar('f');	/* proc has a file 		   */	
 	else putchar(' ');
 	if(f & CDIR)  putchar('p');	/* proc's current dir is on device */
@@ -207,15 +243,36 @@ int f;
  */
 check(s, i)
 struct stat *s;
+#ifdef NFPCHUNK
+struct vnode *i;
+#else
 struct inode *i;
+#endif
 {
+#ifdef NFPCHUNK
+	switch (s->st_mode & S_IFMT) {
+	case S_IFBLK:
+		if ((i->v_type == VBLK) && s->st_rdev == i->v_rdev)
+			return 1;
+		break;
+	case S_IFCHR:
+		if ((i->v_type == VCHR) && s->st_rdev == i->v_rdev)
+			return 1;
+		break;
+	default:
+/* XXX */
+		if((s->st_dev == i->v_rdev) /*&& (s->st_ino == i->i_number)*/)
+				return 1;
+	}
+#else
 	if ((s->st_mode & S_IFMT) == S_IFBLK && s->st_rdev == i->i_dev)
 			return 1;
 	if ((s->st_mode & S_IFMT) == S_IFCHR && s->st_rdev == i->i_dev)
 			return 1;
-	else if((s->st_dev == i->i_dev) && (s->st_ino == i->i_number))
+	if((s->st_dev == i->i_dev) && (s->st_ino == i->i_number))
 			return 1;
-	else return 0;
+#endif
+	return 0;
 }
 
 
@@ -223,10 +280,27 @@ struct inode *i;
  *	getinode - read an inode from from mem at address "addr"
  * 	      return pointer to inode struct. 
  */
-struct inode *getinode(ip,s)
+#ifdef NFPCHUNK
+struct vnode *
+#else
+struct inode *
+#endif
+getinode(ip,s)
 struct inode *ip;
 char *s;
 {
+#ifdef NFPCHUNK
+	static struct vnode vn;
+
+	if (ip == NULL) {
+		vn.v_rdev = rootdev;
+		/*vn.v_number = ROOTINO; XXX */
+	} else {
+		eseek(kmem, (long)ip, 0, "vnode");
+		eread(kmem, (char *)&vn, sizeof(vn), "vnode");
+	}
+	return &vn;
+#else
 	static struct inode i;
 
 	if (ip == NULL) {
@@ -237,6 +311,7 @@ char *s;
 		eread(kmem, (char *)&i, sizeof(i), "inode");
 	}
 	return &i;
+#endif
 }
 
 /* 
@@ -260,6 +335,15 @@ struct proc *p;
 	}
 	(void) lseek(fd, addr, 0);
 	if (read(fd, (char *)&user, sizeof(user))!=sizeof(user)){
+		fprintf(stderr, "error: can't get u structure\n");
+		return (struct user *)NULL;
+	}
+	return(&user);
+#else
+#ifdef NFPCHUNK
+	static struct user user;	/* Local buffer			*/
+
+	if (sysi86(RDUBLK, p->p_epid, &user, sizeof(user)) == -1) {
 		fprintf(stderr, "error: can't get u structure\n");
 		return (struct user *)NULL;
 	}
@@ -301,6 +385,7 @@ struct proc *p;
 		}
 	}
 	return((struct user *)user);
+#endif
 #endif
 }
 
@@ -369,7 +454,12 @@ getsyms()
 				KERNEL, nl[i].n_name);
 			exit(1);
 		}
+#ifdef NFPCHUNK
+	eseek(kmem, (long)nl[X_PROC].n_value, 0);
+	eread(kmem, &procbase, sizeof(procbase), "proc list base");
+#else
 	procbase = nl[X_PROC].n_value;
+#endif
 	eseek(kmem, (long)nl[X_ROOTDEV].n_value, 0);
 	eread(kmem, &rootdev, sizeof(rootdev), "root device number");
 	eseek(kmem, (long)nl[X_V].n_value, 0);
@@ -380,13 +470,17 @@ getsyms()
 			
 
 /*
- * read proc table entry "n" into buffer "p"
+ * read proc table entry "n" into buffer "p" and set up for next proc.
  */
-procslot(n, p)
-int n;
+procslot(p)
 struct proc *p;
 {
-	eseek(kmem, procbase + (long)(n * sizeof(struct proc)), 0);
+	eseek(kmem, procbase, 0);
 	eread(kmem, (char *)p, sizeof(struct proc), "proc structure");
+#ifdef NFPCHUNK
+	procbase = p->p_next;
+#else
+	procbase++;
+#endif
 	return;
 }

@@ -66,7 +66,7 @@ int  showrange;		/* Causes ranges to be highlighted */
 int  lastmx, lastmy;	/* Screen address of the cursor */
 int  lastcol;		/* Spreadsheet Column the cursor was in last */
 char *under_cursor = " "; /* Data under the < cursor */
-char *rev = "$Revision: 1.5 $";
+char *rev = "$Revision: 1.6 $";
 
 int seenerr;
 
@@ -309,7 +309,7 @@ update () {
 		    char field[1024];
 		    (void)sprintf(field,"%*.*f", fwidth[col],
 					         precision[col], (*p)->v);
-		    if(strlen(field) > fwidth[col]) {
+		    if(strlen(field) > (unsigned)fwidth[col]) {
 			for(i = 0; i<fwidth[col]; i++)
 			    (void)addch('*');
 		    } else {
@@ -520,7 +520,7 @@ char  **argv; {
 	if ((c < ' ') || ( c == 0177 ))
 	    switch (c) {
 #if defined(BSD42) || defined (BSD43)
-		case ctl (z):
+		case ctl('z'):
 		    deraw();
 #ifndef V7
 		    (void) kill(getpid(),SIGTSTP);
@@ -531,15 +531,15 @@ char  **argv; {
 		    goraw();
 		    break;
 #endif
-		case ctl (r):
-		case ctl (l):
+		case ctl('r'):
+		case ctl('l'):
 		    FullUpdate++;
 		    (void) clearok(stdscr,1);
 		    break;
 		default:
 		    error ("No such command  (^%c)", c + 0100);
 		    break;
-		case ctl (b):
+		case ctl('b'):
 		    while (--arg>=0) {
 			if (curcol)
 			    curcol--;
@@ -549,25 +549,25 @@ char  **argv; {
 			    curcol--;
 		    }
 		    break;
-		case ctl (c):
+		case ctl('c'):
 		    running = 0;
 		    break;
-		case ctl (e):
+		case ctl('e'):
 		    switch (nmgetch()) {
 		    case 'j':
-		    case ctl(n):
+		    case ctl('n'):
 			doend(1,0);
 			break;
 		    case 'k':
-		    case ctl(p):
+		    case ctl('p'):
 			doend(-1,0);
 			break;
 		    case 'h':
-		    case ctl(b):
+		    case ctl('b'):
 			doend(0,-1);
 			break;
 		    case 'l':
-		    case ctl(f):
+		    case ctl('f'):
 			doend(0,1);
 			break;
 		    default:
@@ -575,7 +575,7 @@ char  **argv; {
 			break;
 		    }
 		    break;
-		case ctl (f):
+		case ctl('f'):
 		    while (--arg>=0) {
 			if (curcol < MAXCOLS - 1)
 			    curcol++;
@@ -585,19 +585,19 @@ char  **argv; {
 			    curcol++;
 		    }
 		    break;
-		case ctl (g):
-		case ctl ([):
+		case ctl('g'):
+		case ctl('['):
 		    showrange = 0;
 		    linelim = -1;
 		    (void) move (1, 0);
 		    (void) clrtoeol ();
 		    break;
 		case 0177:
-		case ctl (h):
+		case ctl('h'):
 		    while (--arg>=0) if (linelim > 0)
 			line[--linelim] = 0;
 		    break;
-		case ctl (i): 		/* tab */
+		case ctl('i'): 		/* tab */
 		    if (linelim > 0) {
 			if (!showrange) {
 			    startshow();
@@ -611,8 +611,8 @@ char  **argv; {
 			linelim = strlen (line);
 		    }
 		    break;
-		case ctl (m):
-		case ctl (j):
+		case ctl('m'):
+		case ctl('j'):
 		    showrange = 0;
 		    if (linelim < 0)
 			line[linelim = 0] = 0;
@@ -622,7 +622,7 @@ char  **argv; {
 			linelim = -1;
 		    }
 		    break;
-		case ctl (n):
+		case ctl('n'):
 		    while (--arg>=0) {
 			if (currow < MAXROWS - 1)
 			    currow++;
@@ -632,7 +632,7 @@ char  **argv; {
 			    currow++;
 		    }
 		    break;
-		case ctl (p):
+		case ctl('p'):
 		    while (--arg>=0) {
 			if (currow)
 			    currow--;
@@ -642,11 +642,11 @@ char  **argv; {
 			    currow--;
 		    }
 		    break;
-		case ctl (q):
+		case ctl('q'):
 		    break;	/* ignore flow control */
-		case ctl (s):
+		case ctl('s'):
 		    break;	/* ignore flow control */
-		case ctl (t):
+		case ctl('t'):
 		    error("Toggle - n:numeric  t:top row  x:encryption");
 		    (void) refresh();
 		    switch (nmgetch()) {
@@ -666,20 +666,20 @@ char  **argv; {
 			    error("Bad toggle switch");
 		    }
 		    break;
-		case ctl (u):
+		case ctl('u'):
 		    narg = arg * 4;
 		    nedistate = 1;
 		    break;
-		case ctl (v):	/* insert variable name */
+		case ctl('v'):	/* insert variable name */
 		    if (linelim > 0) {
 		    (void) sprintf (line+linelim,"%s", v_name(currow, curcol));
 			linelim = strlen (line);
 		    }
 		    break;
-		case ctl (w):	/* insert variable expression */
+		case ctl('w'):	/* insert variable expression */
 		    if (linelim > 0) editexp(currow,curcol);
 		    break;
-		case ctl (a):	/* insert variable value */
+		case ctl('a'):	/* insert variable value */
 		    if (linelim > 0) {
 			struct ent *p = tbl[currow][curcol];
 
@@ -1270,7 +1270,7 @@ char *endstr;
  	if (ch != 'n' && ch != 'N')
  	    if (writefile(curfile, 0, 0, maxrow, maxcol) < 0)
  		return (1);
-	else if (ch == ctl (g) || ch == ctl([)) return(1);
+	else if (ch == ctl('g') || ch == ctl('[')) return(1);
     } else if (modflg) {
 	char ch, lin[100];
 
