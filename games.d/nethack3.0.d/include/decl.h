@@ -8,7 +8,7 @@
 #define E extern
 
 E int bases[];
-E int warnlevel;	/* defined in mon.c */
+E uchar warnlevel;	/* defined in mon.c */
 E int occtime;
 E int nroom;
 E int multi;

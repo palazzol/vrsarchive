@@ -1,6 +1,10 @@
 #	Hack Makefile.
 #	SCCS Id: @(#)Makefile.unix	3.0	88/10/17
-
+MODEL	= -Ml -Gt24
+OPTIONS	= -O -I../include
+GAME	= nethack
+ALL		= $(GAME)
+include /etc/CONFIG
 # This makefile replaces the previous Makefile.unix, Makefile.xenix,
 # Makefile.3B2, Makefile.att, and Makefile.tos.
 # Set SYSTEM to one of:
@@ -26,19 +30,6 @@ SHELL=/bin/sh
 # Systos wants 'pc'; everything else normally wants 'unix'
 TARG = unix
 
-# flags may have to be changed as required
-# flags for 286 Xenix:
-# CFLAGS = -O -Gt24 -LARGE -Ml -I../include
-# LFLAGS = -Ml
-# flags for 286 Microport SysV-AT
-# CFLAGS = -DDUMB -Ml -I../include
-# LFLAGS = -Ml
-# flags for debugging:
-# CFLAGS = -g -I../include
-
-CFLAGS = -O -I../include
-LFLAGS =
-
 # object files for makedefs
 MAKEOBJS = makedefs.o monst.o objects.o panic.o
 # objects files for makedefs for 286 Xenix
@@ -55,8 +46,9 @@ SPLEVOBJS = lev_comp.o lev_lex.o lev_main.o alloc.o monst.o objects.o panic.o
 # TERMLIB = -ltermcap
 # TERMLIB = -lcurses
 # TERMLIB = -ltermlib
-T_LIB_DIR = /usr/sat/c_src/lib
-TERMLIB = $(T_LIB_DIR)/gnutcap.o $(T_LIB_DIR)/sysdep.o $(T_LIB_DIR)/tparam.o
+#T_LIB_DIR = /usr/sat/c_src/lib
+#TERMLIB = $(T_LIB_DIR)/gnutcap.o $(T_LIB_DIR)/sysdep.o $(T_LIB_DIR)/tparam.o
+TERMLIB	= $(LIBS)
 
 # yacc/lex programs to use to generate lev_comp.c, lev_comp.h, and lev_lex.c.
 # if, instead of yacc/lex you have bison/flex, comment/uncomment the following.
@@ -64,9 +56,6 @@ YACC     = yacc
 LEX      = lex
 #YACC     = bison
 #LEX      = flex
-
-# make NetHack
-GAME     = nethack
 
 # if you defined RANDOM in unixconf.h/pcconf.h since your system did not come
 # with a reasonable random number generator -- also remember to get random.c
@@ -260,15 +249,19 @@ Spanic.o:	panic.c
 #	even though it doesn't include this file.
 #
 ../include/date.h:	$(CSOURCES) ../include/hack.h makedefs
+	chmod u+w $@
 	./makedefs -v
 
 ../include/trap.h:	../include/config.h makedefs
+	chmod u+w $@
 	./makedefs -t
 
 ../include/onames.h:	makedefs
+	chmod u+w $@
 	./makedefs -o
 
 ../include/pm.h:	makedefs
+	chmod u+w $@
 	./makedefs -p
 
 #
@@ -308,7 +301,7 @@ tags: $(CSOURCES)
 	@( cd ../include ; ctags -tw $(HSOURCES) )
   
 clean:
-	rm -f *.o
+	rm -f *.o $(ALL)
 
 spotless: clean
 	rm -f a.out core $(GAME) lev_comp makedefs
