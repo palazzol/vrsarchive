@@ -9,8 +9,8 @@
 #ifdef USG
 #include <sys/types.h>
 #endif
-#include <sys/stat.h>
 #include <sys/param.h>
+#include <sys/stat.h>
 #include "ispell.h"
 #include "config.h"
 
