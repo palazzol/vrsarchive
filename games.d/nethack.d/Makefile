@@ -3,7 +3,7 @@
 
 # make NetHack
 GAME	= nethack
-ALL	= $(GAME) $(VARAUX)
+ALL	= $(GAME)$(EXE) $(VARAUX)
 GAMEUID = $(SAFEUID)
 GAMEGRP = $(SAFEGRP)
 HACKDIR	= $(GAMLIB)/$(GAME)dir
