@@ -8,6 +8,8 @@
 # include <stdio.h>
 # include "types.h"
 
+extern char *malloc();
+
 # define TRIALS(g)		((g)->score.count)
 # define NONE		(-1)
 # define MAXM		100
