@@ -13,7 +13,7 @@
 #	ROOT is the root directory of the local system.  It is used to create
 #	networked versions of the binaries.  For non-networked binaries, use /.
 #
-#SYSNAME	= `uuname -l`
+#SYSNAME = `uuname -l`
 SYSNAME	= `hostname`
 DOMAIN	= .msn.com
 ROOT	= $(HOME)
@@ -97,13 +97,14 @@ MAN8	= $(USRMAN)/man8
 # XENIX	- XENIX 286, System 3/5, Large Model, Big Stack.
 #
 CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
-CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) #-fwritable-strings
+CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
 CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
 CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
 LBSD	= -lcurses -ltermcap -lm
 LCYGWIN	= -lcurses $(DIRLIB) -lm -lcrypt
 LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW
 LXENIX	= -lcurses -ltermcap $(DIRLIB) -lm
+WSTRINGS= -fwritable-strings
 #
 #	Default to make $(ALL)
 #
