@@ -1,6 +1,6 @@
 #ifndef lint
 static char	*sccsid = "@(#)yylex.c	7.1 (down!honey) 85/08/06";
-#endif lint
+#endif /*lint*/
 
 #include "def.h"
 #include "y.tab.h"

@@ -1,7 +1,7 @@
 /* pathalias -- by steve bellovin, as told to peter honeyman */
 #ifndef lint
 static char	*sccsid = "@(#)addlink.c	7.1 (down!honey) 85/08/06";
-#endif lint
+#endif /*lint*/
 
 #include "def.h"
 link	*
@@ -44,7 +44,7 @@ char	netdir;
 		return(l);
 	}
 
-#endif !SQUANDER
+#endif /*!SQUANDER*/
 	l = newlink();
 
 	if (prev) {

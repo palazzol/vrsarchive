@@ -1,7 +1,7 @@
 /* pathalias -- by steve bellovin, as told to peter honeyman */
 #ifndef lint
 static char	*sccsid = "@(#)addnode.c	7.1 (down!honey) 85/08/07";
-#endif lint
+#endif /*lint*/
 
 #include "def.h"
 
@@ -173,7 +173,7 @@ rehash()
 
 #ifdef DEBUG
 	hashanalyze();
-#endif DEBUG
+#endif /*DEBUG*/
 	optr = Table + Tabsize - 1;	/* ptr to last */
 	otable = Table;
 	osize = Tabsize;

@@ -45,8 +45,8 @@
 #ifdef MAIN
 #ifndef lint
 static char	*c_sccsid = "@(#)config.h	7.1 (down!honey) 85/08/06";
-#endif lint
-#endif MAIN
+#endif /*lint*/
+#endif /*MAIN*/
 
 #ifdef MYMALLOC
 
@@ -58,33 +58,33 @@ char	*sbrk(), *mymalloc();
 
 #if ALIGN == 0
 #undef ALIGN
-#endif ALIGN == 0
+#endif /*ALIGN == 0*/
 
-#endif ALIGN
+#endif /*ALIGN*/
 
 #ifndef ALIGN
 #define memget sbrk
-#else ALIGN
+#else /*ALIGN*/
 char	*memget();
-#endif ALIGN
+#endif /*ALIGN*/
 
-#endif MYMALLOC
+#endif /*MYMALLOC*/
 
 #ifdef STRCHR
 #define index strchr
 #define rindex strrchr
-#endif STRCHR
+#endif /*STRCHR*/
 
 #ifdef BZERO
 #define strclear(s, n)	((void) bzero((s), (n)))
-#else !BZERO
+#else /*!BZERO*/
 #	ifdef MEMSET
 char	*memset();
 #	define strclear(s, n)	((void) memset((s), 0, (n)))
-#	else !MEMSET
+#	else /*!MEMSET*/
 	void strclear();
-#	endif MEMSET
-#endif BZERO
+#	endif /*MEMSET*/
+#endif /*BZERO*/
 
 long	atol();
 char	*malloc();

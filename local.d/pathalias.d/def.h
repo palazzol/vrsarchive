@@ -2,8 +2,8 @@
 #ifndef lint
 #ifdef MAIN
 static char	*h_sccsid = "@(#)def.h	7.1 (down!honey) 85/08/06";
-#endif MAIN
-#endif lint
+#endif /*MAIN*/
+#endif /*lint*/
 
 #include <stdio.h>
 #include <ctype.h>
@@ -15,10 +15,10 @@ typedef struct link link;
 
 #ifdef lint
 #define vprintf fprintf
-#else !lint -- this gives null effect warning
+#else /*!lint -- this gives null effect warning*/
 /* because it's there ... */
 #define vprintf		!Vflag ? 0 : fprintf
-#endif lint
+#endif /*lint*/
 
 /* scanner (yylex) states */
 #define OTHER 0
@@ -147,4 +147,3 @@ extern char	*Linkout;
 extern node	*Private;
 extern int	Hashpart;
 extern int	Scanstate;
-

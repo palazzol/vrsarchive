@@ -1,7 +1,7 @@
 /* pathalias -- by steve bellovin, as told to peter honeyman */
 #ifndef lint
 static char	*sccsid = "@(#)local.c	7.1 (down!honey) 85/08/06";
-#endif lint
+#endif /*lint*/
 
 #include <stdio.h>
 #include "def.h"
@@ -18,7 +18,7 @@ local()
 	return(utsname.nodename);
 }
 
-#else !UNAME
+#else /*!UNAME*/
 
 char	*
 local()
@@ -79,5 +79,5 @@ char	*name;
 	/* aw hell, i give up!  is this a real unix? */
 	return;
 }
-#endif GETHOSTNAME
-#endif UNAME
+#endif /*GETHOSTNAME*/
+#endif /*UNAME*/

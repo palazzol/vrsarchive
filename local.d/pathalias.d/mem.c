@@ -1,7 +1,7 @@
 /* pathalias -- by steve bellovin, as told to peter honeyman */
 #ifndef lint
 static char	*sccsid = "@(#)mem.c	7.1 (down!honey) 85/08/06";
-#endif lint
+#endif /*lint*/
 
 #include "def.h"
 
@@ -50,7 +50,7 @@ register int len;
 	while (--len >= 0)
 		*dst++ = 0;
 }
-#endif strclear
+#endif /*strclear*/
 
 node	**
 newtable(size)
@@ -69,9 +69,9 @@ register node	**t;
 {
 #ifdef MYMALLOC
 	addtoheap((char *) t, (long) (size * sizeof(*t)));
-#else !MYMALLOC
+#else /*!MYMALLOC*/
 	free((char *) t);
-#endif MYMALLOC
+#endif /*MYMALLOC*/
 }
 
 nomem()
@@ -118,7 +118,7 @@ register int	n;
 		adjustment = align(mem);
 		mem += adjustment;
 		size -= adjustment;
-#endif ALIGN
+#endif /*ALIGN*/
 		if (n > size) {
 			/* look in the heap -- already aligned */
 			if (Heap) {
@@ -153,7 +153,7 @@ char	*s;
 {
 #ifdef lint
 	s = s;
-#endif lint
+#endif /*lint*/
 }
 
 #ifdef ALIGN
@@ -182,6 +182,6 @@ register char	*n;
 		adjustment = (1 << ALIGN) - abits;
 	return(adjustment);
 }
-#endif ALIGN
+#endif /*ALIGN*/
 
-#endif MYMALLOC
+#endif /*MYMALLOC*/

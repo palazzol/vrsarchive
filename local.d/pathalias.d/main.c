@@ -2,7 +2,7 @@
 #ifndef lint
 #define MAIN
 static char	*sccsid = "@(#)main.c	7.1 (down!honey) 85/08/06";
-#endif lint
+#endif /*lint*/
 
 #include "def.h"
 
@@ -14,7 +14,7 @@ char	*argv[];
 
 #ifdef lint
 	argc = argc;
-#endif lint
+#endif /*lint*/
 
 	ProgName = argv[0];
 	while (*++argv && **argv == '-') {
@@ -119,7 +119,7 @@ badmagic(n)
 {
 #ifdef DEBUG
 	abort();
-#else !DEBUG
+#else /*!DEBUG*/
 	exit(n);
-#endif DEBUG
+#endif /*DEBUG*/
 }

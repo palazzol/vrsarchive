@@ -2,7 +2,7 @@
 /* pathalias -- by steve bellovin, as told to peter honeyman */
 #ifndef lint
 static char	*sccsid = "@(#)parse.y	7.1 (down!honey) 85/08/06";
-#endif lint
+#endif /*lint*/
 
 #include "def.h"
 
