@@ -15,7 +15,7 @@ char *argv[];
   while ((opt = getopt(argc, argv, "td:")) != EOF) {
     switch (opt) {
       case 't':
-        trace++;
+        traceit++;
         break;
       case 'd':
         displays = atoi(optarg);

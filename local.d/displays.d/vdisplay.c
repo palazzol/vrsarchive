@@ -55,7 +55,7 @@ vdisp_init()
 		}
 		for (i = 0; i < COLS; i++)
 			screen[curvdsp].tstop[i] = (i%8 == 0);
-		if (trace) {
+		if (traceit) {
 			sprintf(buf, "screen%d", curvdsp);
 			screen[curvdsp].trace_fd = fopen(buf, "w");
 			if (screen[curvdsp].trace_fd == NULL) {
@@ -93,7 +93,7 @@ register char c;
 #define wmove_xn(y, x)	(wmove(vd, y, x), screen[vdisp].xn_flag = 0)
 
 	c &= 0177;
-	if (trace)
+	if (traceit)
 		fputc(c, screen[vdisp].trace_fd);
 	vd = screen[vdisp].display;
 	getyx(vd, y, x);
@@ -338,7 +338,7 @@ register char c;
 vdisp_wrapup()
 {	int i;
 
-	if (trace) {
+	if (traceit) {
 		for (i = 0; i < displays; i++)
 			fclose(screen[i].trace_fd);
 	}
