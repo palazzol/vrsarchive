@@ -19,8 +19,8 @@ COORD guy = {22,28};            /* your coordinates */
 COORD shot;                     /* the shot's coordinates */
 int fired = 0;                  /* a shot has been fired */
 long score = 0;
-int board = 1;
-int extramen = 3;
+long board = 1;
+long extramen = 3;
 long nextman = FREEMAN;
 int finished;                   /* time since board ended */
 int breeding;                   /* are they breeding */

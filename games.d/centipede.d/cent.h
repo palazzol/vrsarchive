@@ -4,9 +4,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
        /* stdio.h and sgtty.h are included by curses.h */
-#ifdef SYSV
+#ifdef SYS5
 #   include <fcntl.h>
-#   include <sgtty.h>
 #endif
 
 #define FREEMAN 12000
@@ -48,14 +47,14 @@ typedef struct pede {
 
 extern PEDE *centipede, *lastpede;
 extern char mushw[24][57];
-extern int inter,stopped,dead,fired,finished,board,fleahere,
-	fleashot,extramen,breeding,breedtime,moves,nummushrooms,
+extern int inter,stopped,dead,fired,finished,fleahere,
+	fleashot,breeding,breedtime,moves,nummushrooms,
 	scorphere,scorpthisboard,scorpvel,gameover,spiderhere,spiderdir,
 	spidcount,gameover,author,gamestarted,numpedes,fleafreq,niceness;
 #ifdef WIZARD
 extern int author;
 #endif
-extern long score,nextman;
+extern long score,nextman,board,extramen;
 extern COORD guy,shot,flea,scorp,spider,spidervel;
 extern char name[],rscorpion[],lscorpion[],*scorppic,*spiderpic[];
 extern char in_map[];
