@@ -6,11 +6,11 @@
 /* 
  * Routines in terminal abstraction:
  *
- *	set_term()
+ *	Set_term()
  *		Initialize terminal, clear the screen.
  *
- *	unset_term()
- *		Return terminal to state before set_term().
+ *	unSet_term()
+ *		Return terminal to state before Set_term().
  *
  *	char2sym(char)
  *		Return the symbol used to display the given char in the
@@ -197,11 +197,11 @@ keycmd	keycmdtab[100];
 keycmd	*keycmdp;		/* Pointer to next free entry. */
 
 
-
+#ifdef later
 /* Saved process control characters.
  */
 struct	tchars	saved_tchars;
-
+#endif
 
 /* Buffer for termcap entry. */
 #define TBUFSIZ 1024
@@ -217,15 +217,15 @@ int	termmode = -1;
  * and termcap subroutine packages, although the old code is used
  * for screen refresh.
  */
-set_term()
+Set_term()
 {
 	printf("\n\nInitializing terminal ...");
 	fflush(stdout);
 
+	savetty();
 	get_termstrs();
 	get_genv();
 	get_kenv();
-	savetty();
 	crmode();
 	noecho();
 	noflow();
@@ -511,6 +511,7 @@ char	**strp;
  */
 noflow()
 {
+#ifdef later
 	struct	tchars	new_tchars;
 	
 	/* Turn off C-Q, C-S flow control. */
@@ -525,6 +526,7 @@ noflow()
 		perror("noflow iocl set");
 		exit(1);
 	}
+#endif
 }
 
 
@@ -532,10 +534,12 @@ noflow()
  */
 restore_flow()
 {
+#ifdef later
 	if (ioctl(0, TIOCSETC, &saved_tchars) < 0)  {
 		perror("restore_flow iocl set");
 		exit(1);
 	}
+#endif
 }
 
 
@@ -583,15 +587,31 @@ get_termstrs()
 	cm = tgetstr("cm", &fr);		/* for cursor positioning */
 	start_kp = tgetstr("ks", &fr);
 	end_kp = tgetstr("ke", &fr);
-
-	if ((term_is == NULL) || (erase_eol == NULL) ||
-	    (erase_eos == NULL) || (erase_scr == NULL) ||
-	    (cm == NULL) ||
-	    (end_kp == NULL) || (start_kp == NULL) ||
-	    (end_alt == NULL) || (start_alt == NULL) ||
-	    (end_so == NULL) || (start_so == NULL) )  {
-		disperr("A required termcap capability is missing.");
-		disperr("\t one of: ce, cd, cl, so, se, cm, ks, ke.");
+	if ((end_kp == NULL) || (start_kp == NULL))  {
+		start_kp = end_kp = "";		/* VRS */
+	}
+	if (erase_eol == NULL) {
+		disperr("The ce termcap capability is missing.");
+		exit(1);
+	}
+	if (erase_eos == NULL) {
+		disperr("The cd termcap capability is missing.");
+		exit(1);
+	}
+	if (erase_scr == NULL) {
+		disperr("The cl termcap capability is missing.");
+		exit(1);
+	}
+	if (cm == NULL) {
+		disperr("The cm termcap capability is missing.");
+		exit(1);
+	}
+	if ((end_kp == NULL) || (start_kp == NULL))  {
+		disperr("The ks or ke termcap capability is missing.");
+		exit(1);
+	}
+	if ((end_so == NULL) || (start_so == NULL))  {
+		disperr("The so or se termcap capability is missing.");
 		exit(1);
 	}
 
@@ -610,7 +630,7 @@ get_termstrs()
 
 /* Restore the terminal to its original mode.
  */
-unset_term()
+unSet_term()
 {
 	enter_mode(SMNORMAL);
 	Puts(end_kp);		/* Can't tell if this is original. */
