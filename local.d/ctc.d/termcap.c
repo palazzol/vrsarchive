@@ -14,12 +14,21 @@
 #include <ctype.h>
 /* M000 begin */
 /*#include "local/uparm.h"*/
+#ifdef __STDC__
+#define libpath(file) "/usr/lib/" #file
+#define loclibpath(file) "/usr/local/lib/" #file
+#define binpath(file) "/usr/bin/" #file
+#define usrpath(file) "/usr/" #file
+#define E_TERMCAP	"/etc/termcap"
+#define B_CSH		"/bin/csh"
+#else
 #define libpath(file) "/usr/lib/file"
 #define loclibpath(file) "/usr/local/lib/file"
 #define binpath(file) "/usr/bin/file"
 #define usrpath(file) "/usr/file"
 #define E_TERMCAP	"/etc/termcap"
 #define B_CSH		"/bin/csh"
+#endif
 /* M000 end */
 
 /*

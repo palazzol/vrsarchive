@@ -35,7 +35,11 @@ char buf[1024];
 char *
 mytty()
 { static struct nlist nl[] = {
+#ifdef M_XENIX
     { "_u" },
+#else
+    { "u" },
+#endif
     { NULL }
   };
   int fd;
