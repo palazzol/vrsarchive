@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.1 1987-02-07 19:05:16 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/libchangetty/Makefile,v 1.2 1987-02-07 20:27:48 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
 # Revision 1.2  86/07/11  15:23:24  osadr
@@ -21,7 +21,8 @@ CFLAGS= -O `cat ../flags`
 
 $(TARGET): $(OBJS) ../flags
 	/bin/ar ruv $(TARGET) $(OBJS)
-	if test -r /usr/bin/ranlib; then /usr/bin/ranlib $(TARGET); fi
+	if test -x /usr/bin/ranlib; then /usr/bin/ranlib $(TARGET); fi
+	if test -x /bin/ranlib; then /bin/ranlib $(TARGET); fi
 
 clean:
 	rm -fr $(OBJS)
