@@ -1,3 +1,7 @@
+MODEL	= -M2l
+OPTIONS	= -I${INC} -O
+ALL		= adlrun
+include /etc/CONFIG
 # The include directory
 INC = ../include
 
@@ -15,9 +19,6 @@ D = adlrun/
 # Where adlrun will reside, after make install
 #BIN = /users/cunniff/bin
 
-# Flags for CC
-CFLAGS = -I${INC} -M2l -O
-
 # Flags for the linker - you may need to change -lcurses to -ltermcap
 # or -ltermlib.
 #LIBS = -lcurses
@@ -27,7 +28,7 @@ LFLAGS = ${DFLAGS} -DLINT -I${INC} -C
 
 
 # Utilities used by adlrun
-UTIL =	${UTL}/virtmem.o	${UTL}/vstring.o	${UTL}/mytime.o
+UTIL =	${UTL}/virtmem.o ${UTL}/vstring.o ${UTL}/mytime.o
 
 # Headers used in all adlrun source files
 HDRS =	${INC}/adltypes.h	${INC}/adlprog.h	${INC}/adldef.h	\
@@ -35,13 +36,11 @@ HDRS =	${INC}/adltypes.h	${INC}/adlprog.h	${INC}/adldef.h	\
 	${INC}/vstring.h
 
 # The adlrun object files
-OBJS =	adlarith.o	adldwim.o	adlfuncs.o	adlintrn.o	\
-	adlmach.o	adlmacro.o	adlmiscr.o	adlobjr.o	\
-	adlrun.o	adlspec.o	adlstr.o	adltrans.o	\
-	rtlex.o		rtparse.o	adlerr.o	adlscrn.o	\
-	rtdict.o	rtglob.o
-
-all		: adlrun
+OBJS =	adlarith.o adldwim.o adlfuncs.o adlintrn.o \
+	adlmach.o adlmacro.o adlmiscr.o adlobjr.o \
+	adlrun.o adlspec.o adlstr.o adltrans.o \
+	rtlex.o rtparse.o adlerr.o adlscrn.o \
+	rtdict.o rtglob.o
 
 shar		: adlrun1.shar	adlrun2.shar
 
