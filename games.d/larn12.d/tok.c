@@ -59,7 +59,11 @@ yylex()
 
 		do		/* if keyboard input buffer is too big, flush some of it */
 			{
+#ifdef FIONREAD
 			ioctl(0,FIONREAD,&ic);
+#else
+			ic = rdchk(0);
+#endif FIONREAD
 			if (ic>flushno)   read(0,&cc,1);
 			}
 		while (ic>flushno);
@@ -98,7 +102,11 @@ flushall()
 	int ic;
 	for (;;)		/* if keyboard input buffer is too big, flush some of it */
 		{
+#ifdef FIONREAD
 		ioctl(0,FIONREAD,&ic);
+#else
+		ic = rdchk(0);
+#endif FIONREAD
 		if (ic<=0) return;
 		while (ic>0)   { read(0,&cc,1); --ic; } /* gobble up the byte */
 		}
