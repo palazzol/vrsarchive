@@ -21,28 +21,28 @@ MRD = mrd.o getfat.o init.o search.o unixname.o putfat.o subdir.o
 MREN = mren.o getfat.o init.o search.o fixname.o unixname.o putfat.o subdir.o \
 	isdir.o
 
-mdir:	$(MDIR)
+mdir$(EXE):	$(MDIR)
 	$(CC) $(CFLAGS) $(MDIR) -o $@
 
-mread:	$(MREAD)
+mread$(EXE):	$(MREAD)
 	$(CC) $(CFLAGS) $(MREAD) -o mread
 
-mwrite:	$(MWRITE)
+mwrite$(EXE):	$(MWRITE)
 	$(CC) $(CFLAGS) $(MWRITE) -o mwrite
 
-mdel:	$(MDEL)
+mdel$(EXE):	$(MDEL)
 	$(CC) $(CFLAGS) $(MDEL) -o mdel
 
-mtype:	$(MTYPE)
+mtype$(EXE):	$(MTYPE)
 	$(CC) $(CFLAGS) $(MTYPE) -o mtype
 
-mmd:	$(MMD)
+mmd$(EXE):	$(MMD)
 	$(CC) $(CFLAGS) $(MMD) -o mmd
 
-mrd:	$(MRD)
+mrd$(EXE):	$(MRD)
 	$(CC) $(CFLAGS) $(MRD) -o mrd
 
-mren:	$(MREN)
+mren$(EXE):	$(MREN)
 	$(CC) $(CFLAGS) $(MREN) -o mren
 
 install: $(ALL) $(BINDIR) $(MAN1)
