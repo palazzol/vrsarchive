@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.14 2002-11-23 20:56:25 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/Makefile,v 1.15 2002-11-23 21:00:18 Vincent Exp $
 #
 MODEL	= -M2em -F 2000
 OPTIONS	= -DMAP=\"$(LIBDIR)/uucp.map\"
@@ -33,7 +33,7 @@ NAMES=$(LIBDIR)/names' $? > $@
 	chmod 755 $@
 
 install: $(ALL)
-	for i in $(SUBDIR); do (cd $$i.d; make install); done
+	for i in $(SUBDIR); do (cd $$i.d && make install); done
 	cp $(M0711) $(M0755) $(M4711) $(BINDIR)
 	cd $(BINDIR); chmod 0711 $(M0711)
 	cd $(BINDIR); chmod 0755 $(M0755)
@@ -42,5 +42,5 @@ install: $(ALL)
 	cd $(ETC); chmod 0700 $(M0700)
 
 clean:
-	for i in $(SUBDIR); do (cd $$i.d; make clean); done
+	for i in $(SUBDIR); do (cd $$i.d && make clean); done
 	rm -f *.o $(ALL)
