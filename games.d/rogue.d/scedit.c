@@ -229,7 +229,8 @@ insert_score(new)
 SCORE	*new; {
 
 		register SCORE	*scp, *sc2;
-		register int	flags, uid, amount;
+		register int	flags, uid;
+		unsigned  amount;
 
 		flags = new->sc_flags;
 		uid = new->sc_uid;

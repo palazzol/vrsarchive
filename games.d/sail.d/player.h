@@ -58,11 +58,7 @@
 #define SLOT_B		VIEW_B
 #define SLOT_R		(SLOT_L+SLOT_X-1)
 
-#ifdef SIGTSTP
-#define SCREENTEST()	(initscr() != ERR && signal(SIGTSTP, SIG_DFL) != BADSIG && STAT_R < COLS && SCROLL_Y > 0)
-#else
 #define SCREENTEST()	(initscr(), STAT_R < COLS && SCROLL_Y > 0)
-#endif
 
 WINDOW *view_w;
 WINDOW *slot_w;
@@ -75,7 +71,7 @@ char loaded, fired, changed, repaired;
 char dont_adjust;
 int viewrow, viewcol;
 char movebuf[sizeof SHIP(0)->file->movebuf];
-char version[];
+extern char version[];
 int player;
 struct ship *ms;		/* memorial structure, &cc->ship[player] */
 struct File *mf;		/* ms->file */

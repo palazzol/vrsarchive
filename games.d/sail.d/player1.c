@@ -8,7 +8,48 @@ static	char *sccsid = "@(#)player1.c	2.8 84/12/12";
 #  include <sys/wait.h>
 #endif
 
-int choke(), child();
+SIG_T
+choke(dummy)
+{
+	leave(LEAVE_QUIT);
+}
+
+SIG_T
+child(dummy)
+{
+#ifdef BERKELEY
+	union wait status;
+#else
+	int status;
+#endif
+	int pid;
+
+#ifdef SIGCHLD
+	(void) signal(SIGCHLD, SIG_IGN);
+#else
+	(void) signal(SIGCLD, SIG_IGN);
+#endif
+#ifdef BERKELEY
+	do {
+		pid = wait3(&status, WNOHANG, (struct rusage *)0);
+		if (pid < 0 || pid > 0 && !WIFSTOPPED(status))
+			hasdriver = 0;
+	} while (pid > 0);
+#else
+	/*
+	 *	Kernel stacks SIGCLD nicely, will call us again on return
+	 *	if necessary.
+	*/
+	pid = wait(&status);
+	if (pid < 0)
+		hasdriver = 0;
+#endif
+#ifdef SIGCHLD
+	(void) signal(SIGCHLD, child);
+#else
+	(void) signal(SIGCLD, child);
+#endif
+}
 
 /*ARGSUSED*/
 main(argc, argv)
@@ -16,9 +57,9 @@ int argc;
 char **argv;
 {
 	char nodrive = 0, randomize = 0, debug = 0;
-	extern char _sobuf[];
+	extern unsigned char _sobuf[];
 
-	setbuf(stdout, _sobuf);
+	setbuf(stdout, (char *)_sobuf);
 	isplayer = 1;
 
 	while (*++argv && **argv == '-')
@@ -322,45 +363,4 @@ int conditions;
 	sync_close(!hasdriver);
 	cleanupscreen();
 	exit(0);
-}
-
-choke()
-{
-	leave(LEAVE_QUIT);
-}
-
-child()
-{
-#ifdef BERKELEY
-	union wait status;
-#else
-	int status;
-#endif
-	int pid;
-
-#ifdef SIGCHLD
-	(void) signal(SIGCHLD, SIG_IGN);
-#else
-	(void) signal(SIGCLD, SIG_IGN);
-#endif
-#ifdef BERKELEY
-	do {
-		pid = wait3(&status, WNOHANG, (struct rusage *)0);
-		if (pid < 0 || pid > 0 && !WIFSTOPPED(status))
-			hasdriver = 0;
-	} while (pid > 0);
-#else
-	/*
-	 *	Kernel stacks SIGCLD nicely, will call us again on return
-	 *	if necessary.
-	*/
-	pid = wait(&status);
-	if (pid < 0)
-		hasdriver = 0;
-#endif
-#ifdef SIGCHLD
-	(void) signal(SIGCHLD, child);
-#else
-	(void) signal(SIGCLD, child);
-#endif
 }

@@ -20,7 +20,6 @@ extern char *sbrk();
 extern char *strcpy();
 extern gettmode();
 extern setterm();
-extern tstp();
 
 STAT sbuf;
 
@@ -114,7 +113,8 @@ gotfile:
  *	Automatically save a file.  This is used if a HUP signal is
  *	recieved
  */
-auto_save()
+SIG_T
+auto_save(dummy)
 {
 	register FILE *savef;
 	register int i;
@@ -151,6 +151,9 @@ register FILE *savef;
 	fclose(savef);
 }
 
+#ifndef Def_term
+#define Def_term	"vt100"
+#endif
 /*
  * restore:
  *	Restore a saved game from a file with elaborate checks for file
