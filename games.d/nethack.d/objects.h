@@ -208,7 +208,7 @@ struct objclass objects[] = {
 	ARMOR("ring mail",		12, 5, 3, 7, 0),
 	/* the armors below do not rust */
 	ARMOR("studded leather armor",	12, 3, 3, 7, 1),
-	ARMOR("elfin chain mail",	 1, 1, 2, 5, 3),
+	ARMOR("elven chain mail",	 1, 1, 2, 5, 3),
 	ARMOR("bronze plate mail",	 6, 5, 9, 4, 0),
 	ARMOR("crystal plate mail",	 1, 5, 9, 3, 2),
 	ARMOR("leather armor",		15, 3, 2, 8, 0),
@@ -297,7 +297,7 @@ struct objclass objects[] = {
 	WAND("probing",		"oak",		0,	IMMEDIATE),
 #endif
 	WAND("digging",		"iron",		5,	RAY),
-	WAND("magic missile",	"aluminium",	10,	RAY),
+	WAND("magic missile",	"aluminum",	10,	RAY),
 	WAND("fire",		"steel",	5,	RAY),
 	WAND("sleep",		"curved",	5,	RAY),
 	WAND("cold",		"short",	5,	RAY),
