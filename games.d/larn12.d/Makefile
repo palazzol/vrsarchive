@@ -81,9 +81,13 @@ $(BINDDIR) $(LIBDIR) $(LARNHOME):
 	chmod 755 $@
 
 install: larn12.0 $(BINDDIR) $(LIBDIR) $(LARNHOME)
-	chmod a+w $(LARNHOME)
+	chmod 755 $(LARNHOME)
+	chown cron $(LARNHOME)
 	cp larn12.0 $(BINDIR)/larn
+	chown cron $(BINDIR)/larn
+	chmod 4711 $(BINDIR)/larn
 	cp $(DOTFILES) $(LARNHOME)
+	cd $(LARNHOME); chmod 644 $(DOTFILES)
 
 clean:
 	rm -f *.o larn12.0
