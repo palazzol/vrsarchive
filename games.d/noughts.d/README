@@ -1,0 +1,83 @@
+README          This file.
+
+makefile
+
+def.h           header.
+
+adm.c
+	cheat()         Interupt routine to run when someone trys to
+			exit program.
+	main()          The main program which make initialisations and
+			administrates who is on the move.
+
+inmove.c
+	normal()        stops the program play self.
+	inmove()        The main event loop.
+	inposition()    Converts text string to position.
+	emptyline()     empty a line at input.
+
+terminal.c
+	getcap()        Initialises termcap.
+	pos()           Positions on the screen.
+	up()            Move up one line.
+	clear()         Clear screen from cursor.
+	home()          Cursor home.
+
+utboard.c
+	utboard()       Draws the board.
+
+automat.c
+	automat[][]     A computer generated table which defines a finite
+			automat for calculating points in a string of
+			<space> o and x.
+
+autom.c
+	autom()         A subroutine which from the table automat[][]
+			calculates points.
+
+chose.c
+	chose()         This one is the most central subroutine. It choses
+			a move to do. You may call this the algorithm for
+			chosing moves. Now it only choses the move that
+			gets the highest threat and point score. To be
+			better it should also test moves and see whats
+			changing on the board!
+
+catch.c
+	catch()         Fetches patterns from the board and puts them in
+			temporaray strings.
+
+upd.c
+	update()        This one is the second most central subroutine.
+			It administrates the updating of points and
+			threats. The code can be difficult to read because
+			it is optimised for doing as little as possible.
+			If a more complicated algorithm is used in chose()
+			this have to be a fast one!
+
+updtht.c
+	updtht()        A help routine for update. It updates the points
+			on the threat board.
+
+There are three more files. Those files you don't need if you don't want
+to change the computing of points. The comments are in Swedish but i don't
+think that will be of any inconvinience.
+
+make_header     The beginning of an automat.c file.
+
+maketabell      Defines the computing of points. First there is a table
+		that defines threatpoint and point for some letters. Then
+		those letters are used in patterns to define where those
+		points are found.
+
+makeautomat.c   Compile this with cc and run makeautomat < maketabell to
+		make a new automat.c file.
+
+PS. If you make any improvments or/and have any suggestions please send the
+improvments/suggestions to me.
+
+	Roland Karlsson                      roland@ttds
+	Dept. of Telecomm. and Computer Systems
+	Royal Institute of Technology
+	S-100 44 Stockholm
+	Sweden

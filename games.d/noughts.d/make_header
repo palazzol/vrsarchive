@@ -1,0 +1,8 @@
+# define __ 00,
+
+/* Detta {r en tabell vilken defenierar en finit automat f|r m|nsters|kning */
+
+unsigned char automat[][13] = {
+/*                  Automat     Antal      1            2            3      */
+/*                  .   O   X         of  hot  po  of  hot  po  of  hot  po */
+

@@ -1,0 +1,65 @@
+a  0  1 /* Splittrad 2:a  a=type 0=threat 1=points */
+b  0  2 /* Solid 2:a */
+c  0  3 /* Splittrad 3:a */
+d  0  4 /* Solid 3:a */
+e  1  5 /* Splittrad ostoppad 3:a */
+f  1 10 /* Solid ostoppad 3:a */
+g  2  5 /* Splittrad 4:a */
+h  2 10 /* Solid 4:a */
+i  3 20 /* Forcerad vinst */
+j  4 30 /* 5:a */
+
+.abX.
+.bXb.
+.Xba.
+
+.cdXX
+.cXdX
+cdXXd
+.XccX
+cXdXc
+dXXdc
+XccX.
+XdXc.
+XXdc.
+
+.efXXd
+.eXfXc
+.fXXfc
+.XeeX.
+.XfXe.
+.XXfe.
+
+ghXXX
+gXhXX
+gXXhX
+hXXXh
+XhXXg
+XXhXg
+XXXhg
+
+.iXXXh
+.XiXXg
+.XXiXg
+.XXXig
+
+X..XXd
+X.iXXhX
+X.X.Xd
+X.XiXgX
+X.XX.d
+X.XXigX
+
+XX.cXdX
+XX.iXhXX
+XX.XccX
+XX.XigXX
+
+XXX..dXX
+XXX.ihXXX
+
+jXXXX
+XjXXX
+XXjXX
+XXXjX
+XXXXj

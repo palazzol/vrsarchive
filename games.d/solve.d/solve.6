@@ -1,0 +1,23 @@
+.TH SOLVE 6
+.UC 4
+.SH NAME
+solve \- Computer solution of number puzzles
+.SH SYNOPSIS
+.B solve [-v] word1 word2 sum
+.SH DESCRIPTION
+The
+.I solve
+program attempts to solve sums in which digits have been replaced by numbers.
+For example, if send+more=money, the value of the digits s, e, n, d, m, o, r,
+and y can be found via the command:
+.sp
+.in +1i
+.nf
+solve send more money
+.in -1i
+.fi
+.sp
+The -v option displays a trace of every attempted substitution of a digit for
+a letter, and is incredibly verbose.
+.SH AUTHOR
+Andreas Bormann

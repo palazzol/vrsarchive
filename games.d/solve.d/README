@@ -1,0 +1,28 @@
+Here is a programm to solve cryptarithmetic puzzles like this one:
+
+	SEND
+      + MORE
+      ======
+       MONEY
+
+where to substitute the letters with digits.
+
+The program will give you all possible solutions and with the verbose option,
+you can watch the searching process.
+
+Enjoy!
+
+
+--
+Andreas Bormann
+University of Dortmund  [UniDo]
+West Germany
+
+Uucp:   ab@unido.uucp
+Path:   {USA}!seismo!{mcvax}!unido!ab
+	{Europe}!{cernvax,diku,enea,ircam,mcvax,prlb2,tuvie,ukc}!unido!ab
+Bitnet: ab@ddoinf6.bitnet
+		 \
+Missiles:    -=>-->-*>      N 51 29' 05"   E 07 24' 42"
+		 /
+
