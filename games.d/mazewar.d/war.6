@@ -1,0 +1,523 @@
+.TH WAR 6 "3 April 1985"
+.UC
+.SH NAME
+war \- two person seek and destroy game played in mazes
+.SH SYNOPSIS
+.B war
+[
+.B \-f
+setupfile ] [
+.B \-s
+setupname ] [
+.B \-o
+objectfile ] username [ ttyname ]
+.br
+.B war -e
+[
+.B \-f
+setupfile ] [
+.B \-s
+setupname ] [
+.B \-o
+objectfile ]
+.SH DESCRIPTION
+.I War
+is a war game played between two people on display terminals.
+It is played on a board which has 24 rows and 48 columns.
+The top and bottom ten rows of the board are the
+.I home
+areas for the two players.
+The middle four rows are the
+.IR "no man's land" .
+At the beginning of the game each player creates a maze in his own home
+area, and populates it with fighting men, blasting men, and a goal.
+After this setup phase is complete, the two players fight each other.
+The object of the game is to find and destroy the enemy goal.
+Along the way, battles are fought between your men and the enemy's men,
+the enemy's maze is explored and perhaps blasted through,
+and your own maze and goal is defended.
+.I War
+is a game of imperfect information.
+You know everything about your own men, but know very little about the enemy.
+As the game progresses, you can determine the flow of the battle from a
+set of statistics which are displayed for both players.
+However, you do not know the details concerning any specific men.
+To know where the enemy men are, you must place your own men close enough
+to them to seen them.
+.PP
+The person to play with is specified by giving his login name.
+If he is logged in on more than one terminal, you must then also give
+the terminal name to play with.
+Of course, for the game to actually play, the opponent must also run
+.I war
+and specify you as the person for him to play with.
+If you don't want to play with anyone, but just want to edit different
+mazes for future play, then use the
+.B \-e
+option.
+.SH "THE DISPLAY"
+The screen is split up into three parts.
+The left half of the screen contains a picture of the playing board.
+The board occupies all the space between the two vertical rows of characters.
+Your home area is always in the upper ten rows of the board, and the
+enemy's home area is always in the lower ten rows.
+This means that if you compare your view of the board with the other player,
+his view seems flipped over.
+However, directions are transformed uniformly so that no problems appear.
+You can always see all of your own walls and men.
+However, you cannot see the enemy's walls or men unless you have men close
+enough to them (even in your own maze).
+However, once you have see any of the enemy's walls (or other immovable
+objects), they will stay visible as long as they exist.
+.PP
+The lower right of the screen shows the status of the game.
+You can compare the status of your men with the enemy's men.
+Each pair of numbers separated with a slash gives the number of men
+left of that type, and the total life of those men.
+.PP
+The upper right of the screen shows the current status of all of your men.
+The parameters of the men are configurable, and are normally read from
+the file
+.IR /usr/games/lib/objects.war .
+You can play with different men by creating a new configuration file and
+specifying it using the
+.B \-o
+option.
+The enemy has men similar to yours, but you don't know their life values or
+which ones are still alive.
+This display only shows men which are still alive, so when a man of yours
+dies, it is removed from the display.
+The two characters under the OBJ heading are a description of your men.
+The leftmost character is how your object (man or wall) appears to you.
+The rightmost character is how your object appears to the enemy.
+Notice that several men appear identically to the enemy (as numbers), so
+that he can't distinguish between them.
+Different kinds of men have different characters, however.
+.PP
+The life of the object is how many hits it can take before it is destroyed.
+For walls, the life is instead an indication of how tough each wall is
+to blast away.
+The view of the object is the range at which the object can see enemy objects.
+The range specifies a square of the specified radius (not a circle).
+Thus a man with a view of 3 could see an enemy man which was 3 rows down
+and 3 columns to the right.
+Viewing is normally blocked by walls and men, so the full viewing range is
+not always usable (especially when inside a cramped maze).
+.PP
+The flags column gives the capabilities of the object.
+These capabilities are as follows:
+.TP 6
+.B b
+Object can blast walls.
+.TP
+.B f
+Object can fight men.
+.TP
+.B g
+Object is a goal.
+.TP
+.B i
+Object is immobile.
+.TP
+.B t
+Object is transparent.
+.TP
+.B v
+Object is always visible.
+.TP
+.B w
+Object is a wall.
+.TP
+.B x
+Object has x-ray vision.
+This means it can see through walls and men.
+.SH "SETUP PHASE"
+The first phase of the game is the setup, or editing phase.
+This is when you design your maze and place your men into it.
+To make this phase go quicker, you can read in a setup that you had
+previous created.
+This can be done on the command line by using the
+.B \-s
+option.
+You can also read in the setup after starting the program.
+These setups are stored in the file ".warsetups" in your HOME directory.
+This can be changed to be any file you wish by using the
+.B \-f
+option.
+A setup file contains a number of setups in sequence.
+Each setup begins with a line containing a name surrounded by double quotes.
+Following the name is simply a picture of the setup.
+.PP
+An example of a setup file entry named 'nice' is:
+.sp
+.nf
+	"nice"
+	*    *                      *   *
+	*  *   ****************** *   * * * ***********
+	****** *             *  * ******* *          *
+	 ** **** ********* *    * *#      * ******** * *
+	      **    *   *   ***** ********* * *   *  *
+	 ******  ** * *   *                 *   *    **
+	 ******* ** ************************************
+						  E X
+	**********BDC*****H*****G***F*************Y Z***
+	***********A******************************* ****
+.fi
+.PP
+If you read in a setup, you can still perform last minute changes to it
+before playing.
+Once you create a setup that you like, you can save it in your setup file
+for use in later games.
+.PP
+There is a restriction on the creation of a setup.
+Walls cannot block off any location on the board (even other walls).
+That is, there must be a path from below the setup to every location
+in the home area, without having to travel through a wall.
+The path must exist orthogonally (left-right or up-down).
+This restriction prevents the creation of mazes which are just made up of
+solid walls.
+It also guarantees that the goal is accessible without having to remove
+any walls.
+The program enforces this restriction rigidly, even if a saved setup is
+read in.
+.PP
+Commands in the setup phase are single letter commands, possibly preceeded
+by a numeric argument, which is used as a repeat count.
+These commands do not echo, and need no terminating carriage return.
+Before completion, the normal editing characters can be used, and
+the escape character will clear the command.
+Unknown or illegal commands will ring the terminal bell.
+Most commands are executed immediately when they are completely typed.
+But those commands with dangerous consequences or that require input strings
+will prompt you for a response.
+All such responses require a terminating carriage return.
+If a blank response or an escape is typed, the command is aborted.
+.PP
+The commands used for editing a setup are the following:
+.TP 6
+.B r
+Clears the current setup and reads in a setup from your ".warsetups" file.
+The name of the setup is prompted for.
+The first setup in the file which matches the name is used.
+The setup will be checked for legality, and unknown or illegal locations
+will be left blank.
+.TP
+.B w
+Writes the current setup to your ".warsetups" file.
+The name of the setup will be prompted for.
+The setup is appended to the end of the file, and so duplications of
+a setup name are undetected.
+.TP
+.B f
+Flips the setup from left to right.
+This allows you to create the mirror image of a setup.
+.TP
+.B c
+Clears the current setup.
+You are asked to confirm this command.
+.TP
+.B p
+Places an object at the current position.
+The object to be placed is typed immediately after the 'p'.
+This object is also remembered later for certain other commands.
+If the object is unknown or cannot be placed, nothing is done.
+.TP
+.B "."
+Places the remembered object at the current position.
+This is mostly useful for walls, so that you can easily place many of them.
+.TP
+.B x
+Removes the object at the current position, and moves to the next column.
+If a count is specified, many objects in a row can be removed.
+.TP
+.B <cr>
+Moves to the beginning of the next row.
+.TP
+.B \-
+Moves to the beginning of the previous row.
+.TP
+.B <tab>
+Moves to the next column which is at a multiple of 8.
+.TP
+.B ^
+Moves to the beginning of the current row.
+.TP
+.B $
+Moves to the end of the current row.
+.TP
+.B h
+Moves to the left.
+.TP
+.B j
+Moves down.
+.TP
+.B k
+Moves up.
+.TP
+.B l
+Moves right.
+.TP
+.B <space>
+Moves right.
+.TP
+.B y
+Moves to the upper left.
+.TP
+.B u
+Moves to the upper right.
+.TP
+.B b
+Moves to the lower left.
+.TP
+.B n
+Moves to the lower right.
+.TP
+.B H
+Moves to the left placing as many objects as it can.
+The object that is placed is the remembered object from the 'p' command.
+This and similar commands stop when an illegal placement is attempted,
+or when the specified count is reached.
+If no count is specifed, a large one is assumed.
+This command is used to place many walls in a row.
+.TP
+.B J
+Moves down placing many objects.
+.TP
+.B K
+Moves up placing many objects.
+.TP
+.B L
+Moves right placing many objects.
+.TP
+.B Y
+Moves to the upper left placing many objects.
+.TP
+.B U
+Moves to the upper right placing many objects.
+.TP
+.B B
+Moves to the lower left placing many objects.
+.TP
+.B N
+Moves to the lower right placing many objects.
+.TP
+.B s
+Start to play the game.
+If you have not specified a player you wish to play with,
+or if your setup is not complete because of missing men,
+then the terminal bell will ring and the command will be ignored.
+If playing is allowed, you are asked to confirm this command.
+Once you have confirmed that you want to play, no further setup commands
+can be used.
+Therefore you must save your setup previous to this command if you want
+to use it again in a new game.
+.I War
+will then wait until both players have said that they are ready to play.
+When this is so, the terminal bell will beep and the second phase of
+the game begins.
+Your input then controls the running of your men.
+.TP
+.B q
+Quit the program.
+You are asked to confirm this command.
+If you wish to save your setup, you must do so before quiting.
+.TP
+.B ^L
+Redraws the screen.
+.SH "PLAYING PHASE"
+The game is played in turns lasting about 2 seconds each.
+Play alternates between the two players in real-time.
+Therefore, the game does not wait for your input.
+Instead, you type your commands while the game plays,
+and they are acted upon on the next time is is your turn.
+If you type fast, then you can specify many commands each turn.
+.PP
+You program each of your men with a sequence of simple commands which
+tells each man how to act.
+These simple commands direct the man to move, fight, or blast.
+When your turn arrives, each man tries to execute each command of his program
+in sequence until one of them succeeds.
+At that point, the man has finished moving for the current turn.
+When none of your men can successfully execute anything, then the turn is over.
+Each man will continue to try to execute its command sequence each turn,
+until you supercede it or the man dies.
+.PP
+Each of your commands cancels the existing command sequence for a man,
+and completely replaces it with the new sequence.
+Your skill in the game depends on recognizing when commands need changing
+for your men, and to specify the new commands quickly and accurately.
+You specify a new set of commands for a man by typing the character of
+the man, the set of commands to be executed, and then a space or carriage
+return character.
+Until you type the terminating space or return, the command is incomplete
+and can be edited with the normal editing characters.
+It can also be cancelled by typing an escape character.
+When a command is completed, it is checked for legality before it is used.
+If an illegal command was specified, the terminal bell will be rung,
+and the man's previous commands are still in effect.
+If the command sequence was legal, it then immediately becomes the new
+command sequence for the specified man.
+.PP
+If you require careful timing for the specifying of a sequence of commands,
+then you can type it all except for the final space, wait until conditions
+are right, and then terminate the command.
+You must do this immediately after the screen updates, otherwise the
+next turn could already be started.
+.SH "MOVEMENT"
+Movement of all men is orthogonal (left-right or up-down).
+When a man is able to move, it moves by exactly one location.
+This means that it takes many turns for a man to cross the board.
+No man can move through another man, or through a wall.
+If commands are specified which attempt to do this, the command fails.
+However, if conditions later change (such as other men moving out of the way),
+then the command could then be executed successfully.
+.PP
+It is very often useful to specify several directions for a man to move.
+This allows a man to automatically travel around many obstacles.
+For example, you can specify to move right and then down.
+When rightward movement is possible, the man moves right.
+Whenever that way is blocked, the man moves down instead.
+Sometimes it is even convenient to specify three directions for movement.
+.PP
+If a count is given for a movement command, then after that many moves have
+been made, that movement command will be ignored.
+This allows you to position a man exactly, since it will stop when the
+specified count runs out.
+.SH "FIGHTING"
+Whenever one of your men and one of the enemy's men are next to each other
+in an orthogonal direction (left-right or up-down), then fighting can occur.
+If you allow your man to fight, then he can take one shot each turn.
+Each shot has a 50% chance of success.
+If successful, then the life of the enemy man is reduced by one.
+When the life is reduced to zero, the man dies and is removed from the board.
+If there is someone to fight, the turn is used even if the shot misses.
+.PP
+You normally do not need to actively specify that fighting should occur.
+An implicit fight command is added to the end of every command you set
+for a man, so that if the man fails to execute your commands, fighting will
+then occur when possible.
+One reason to explicitly specify a fight command is when you want to fight
+first, and move only when there is no one to fight.
+.PP
+The other reason for specifing the fight command is when there are multiple
+men you could fight with.
+If you have a choice, and you have not specified otherwise, then your man
+picks one of the men at random each turn, and fights him.
+This means that you are spreading your attacks between more than one person.
+If you specify an attack in a certain direction, then the other men will
+be ignored.
+This is important if you are surrounded and need to kill one of your
+attackers in order to escape before you die.
+.SH "BLASTING"
+Certain men have the capability to blast walls.
+This is done by moving your man next to the wall to be blasted, and
+specifying that a wall is to be blasted.
+Blasting of a wall is probabilistic, and depends on the "life" of the wall.
+Each time that your man can attempt blasting, the chance of the blast
+succeeding is the inverse of the walls' life.
+Thus if a wall has a life of 10, there is a 10% chance of a blast succeeding.
+When a wall is successfully blasted, it is simply removed from the board.
+Men can then travel through the opening.
+Even when an attempt to blast fails, it succeeds in using up a turn.
+.PP
+Unlike fighting, blasting is not an implicit activity.
+Men only attempt to blast when you direct it.
+This is because much harm can occur from misdirected blasting (especially
+in your own maze).
+.PP
+When combined with movement commands, blasting can automatically punch a
+hole through multiple walls.
+To do this you specify that the man blasts in a direction, and then moves
+in the direction.
+When blasting is possible, the man blasts.
+When blasting is not possible (because the wall is gone), the man moves.
+.PP
+You should be careful of losing all of your blasting men, because if you
+do so then you cannot do anything about the opponent's maze defense.
+.SH "PLAYING COMMANDS"
+Following are the commands used in the playing phase of the game.
+These commands can be preceeded by an optional number, which is a
+repeat count.
+They can be edited before they are complete by using the normal
+editing characters.
+A partial command can be cleared by typing an escape character.
+.TP 6
+.B h
+Move to the left when possible.
+A missing count means move left by one location.
+.TP
+.B j
+Move downward when possible.
+.TP
+.B k
+Move upward when possible.
+.TP
+.B l
+Move right when possible.
+.TP
+.B H
+Move to the left when possible.
+A missing count implies an infinite movement.
+.TP
+.B J
+Move downward when possible.
+.TP
+.B K
+Move upward when possible.
+.TP
+.B L
+Move to the right when possible.
+.TP
+.B F<dir>
+Fight the man in the specified direction when possible.
+The direction character can be one of the four characters 'h', 'j', 'k', or 'l'.
+Also, 'a' picks randomly among all directions where men can be fought.
+Finally, 'n' fights in no direction at all.
+.TP
+.B B<dir>
+Blast a wall in the specified direction when possible.
+The direction characters are the same as in the 'F' command.
+.TP
+.B <space>
+If a null command is given, then this causes the man to stop and return
+to the idle state.
+In this state, fighting still occurs if possible because of the implicit
+fight command.
+.TP
+.B ^L
+Redraw the screen to fix glitches.
+This command does not need any terminating space or carriage return.
+.PP
+The following gives some examples of commands to give to men.
+In the following, "<sp>" represents the space character.
+.sp
+.TP 15
+.B aL4j<sp>
+Tell man 'a' to move as far as possible to the right, and to move a total
+of four rows down.
+The rightmost movement is to occur first when possible.
+.TP
+.B ybkK<sp>
+Tell man 'y' to try to blast a wall directly above him, and when there is
+no wall to blast, then try to move up.
+.TP
+.B cfjfh<sp>
+Tell man 'c' to fight a man directly down from him, and if there is no
+man there, then fight the man to his left.
+.TP
+.B b<sp>
+Tell man 'b' to do nothing.
+However, if any enemy is next to him, he will fight them.
+.TP
+.B efn<sp>
+Tell man 'e' to really do nothing, not even fight.
+.SH AUTHOR
+David I. Bell
+.SH BUGS
+If the two players don't use the same object file, havoc will result.
+Multiple setups in a setup file by the same name should be detected.
+The other player should be notified that you are ready to play.
+Players should be able to send messages to each other.
+There is no way to temporarily stop the game (except for using ^Z).
+There is no code for determining when the game is won, so the game
+will keep playing until one player quits.
