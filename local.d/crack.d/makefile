@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.4 1988-01-02 20:59:06 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.5 1988-11-28 11:32:23 vrs Exp $
 #
 ALL	= crack
 MODEL	= -i -K
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 crack:	crack.o
 	cc $(CFLAGS) -o $@ crack.o
