@@ -1,0 +1,92 @@
+
+
+			 Welcome to Centipede!
+
+    The object of this game is to survive as long as you can and get as many
+points as possible. You are situated in a strange garden, and there are
+different forms of life there. The main part of the game is the centipede,
+which starts up on the top of the screen, and moves across, coming down when it
+hits something. There are many mushrooms scattered about, blocking your way.
+You can shoot these 3 times to destroy them. There are other creatures such
+as fleas, scorpions, and spiders. You have to hit fleas twice to destroy them.
+    You get 1 shot. You can fire again as soon as hits something, or after it
+goes off the top of the screen. You are represented on the screen by an
+exclamation point (!), and your shot by an asterisk (*). Anything that moves
+on the screen can kill you, so be careful. You start off with 3 men (lives),
+and get a free man for every 12,000 points that you score. You can move within
+the region on the bottom of the screen below the horizontal dashes.
+    If you just want to see the high score list, start the game with the -s
+flag, i.e. cent -s. You can save your game at any time by pausing with the
+<tab> key, and then typing s. To restore a saved game, start the game with the
+savefile as an argument, i.e. cent savefile. Warning: do not do anything to a
+saved game file, or you will not be able to restore the game. When the game
+is paused, you can save your game as described earlier, or redraw the
+screen by typing ^L.
+    Other details of the game you will find out by playing.
+
+	Controls: (default)
+	<space>                 fire                           On an H19,
+	   1                    move left                 the movement commands
+	   3                    move right                can be made using the
+	   .                    move down                 lower 12 keys of the
+	   5                    move up                   numeric keypad.
+	   4                    move up and left
+	   6                    move up and right
+	   0                    move down and left
+	<enter>                 move down and right
+	   7                    move 8 spaces to the left
+	   9                    move 8 spaces to the right
+	 <tab>                  make the game pause
+	   ^L                   redraw the screen (only while paused)
+	   s                    save the game (only while paused)
+	   ^C                   quit
+	   ^Z                   stop the game temporarily
+	   ^\                   emergency quit (if all else fails)
+
+	To satisfy your own idea of what the controls for this game should be,
+	you can define your own characters to represent the movement commands
+	by using the environment variable CENTOPTS. This variable should contain
+	a string of the form "opt1,opt2,...,optn", where each opti is a string
+	of the form "cmdname=char", where cmdname is the name of the command
+	whose character you are defining, and char is the character you want to
+	associate the named command with. E.g., my CENTOPTS variable might
+	contain "fi=2", to set the character representing the command to fire to
+	'2', and to actually set the variable, I would type
+		% setenv CENTOPTS "fi=2"
+	The names of the characters and the commands they represent are:
+	   up = up        ri = right     dl = downleft   fl = fastleft
+	   do = down      ul = upleft    dr = downright  fr = fastright
+	   le = left      ur = upright   fi = fire       pa = pause
+	It is advisable not to define the same character to be associated
+	with two different commands, for obvious reasons.
+	(Note: you cannot specify space, tab or newline as the character
+	for a command (though carriage return is ok). As mentioned already,
+	space and tab are the default characters for fire and pause, but
+	they cannot be used for any other commands.)
+
+	Scoring:
+	   O                    centipede head          100
+	   o                    centipede body          10
+	   P p . X x ,          mushroom                1
+	   @                    flea                    200
+	`oo'--/                 scorpion                1,000
+
+	 /\  /\                                        /300
+	 /\oo/\                 spider                < 600
+						       \900
+    
+
+	Load average checking is done by the game automatically.
+	Whenever the (five minute) load average rises above the
+	maximum allowed (4.0), you will be informed. At this point
+	you have 2 minutes to quit/save your game before it is
+	forceably ended. If the load drops, you are permitted to
+	continue.
+
+
+			Good luck!
+
+Please mail any bugs, comments, or suggestions to Nathan Glasser
+(nathan@mit-eddie.uucp or nathan@xx.lcs.mit.edu)
+								
+Centipede is a trademark of Atari Corporation.

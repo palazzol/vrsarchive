@@ -1,0 +1,28 @@
+You should have the files:
+install.doc - This file
+cent.doc - A file describing how to play.
+sys_dep.c - A C file with system dependent constants.
+sys_dep.h - A C header file with definitions of default movement commands
+makefile - The makefile for compilation
+
+Other source files:
+cent.h cent.c extern.c input.c interrupts.c la.c move.c options.c 
+save.c score.c shoot.c stuff.c
+
+
+You should look at sys_dep.{c,h} and modify the constants there to suit
+your system. Then just run make to compile the program.
+
+Note: the score file should be protected 666, and it is assumed that
+the file exists when the program is run. Hence you should create an empty
+file under the name given in sys_dep.c initially.
+
+One way to insure that there will be no tampering with the score file
+is to make a directory which is protected 711, giving only execute access.
+Within this directory make another subdirectory with protection 777, and in
+here put the score file, and define (in sys_dep.c) the lockfile to be a file
+in here. The lockfile is assumed not to exist at the beginning. The purpose
+of the lockfile is to ensure exclusive access to the scorefile. (E.g.,
+/usr/games/lib/cdir is protected 711, and contains other subdirectories,
+one containing a score file, one for the lockfiles. This directory could
+also contain cent.doc.)

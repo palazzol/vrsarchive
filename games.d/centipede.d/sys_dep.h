@@ -1,0 +1,13 @@
+/* User commands */
+#define LEFT '1'
+#define RIGHT '3'
+#define UPWARD '5'
+#define DOWN '.'
+#define FIRE ' '
+#define UPRIGHT '6'
+#define UPLEFT '4'
+#define DOWNRIGHT '\r'
+#define DOWNLEFT '0'
+#define FASTLEFT '7'
+#define FASTRIGHT '9'
+#define PAUSEKEY '\t'
