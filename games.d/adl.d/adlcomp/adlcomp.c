@@ -580,7 +580,7 @@ write_code()
 				hdr.strtabindex.objsize * NUMSTR;
   
     /* Set the timestamp and the magic number */
-    hdr.adlid = time( 0 );
+    hdr.adlid = time( (int32 *)0 );
     hdr.magic = M_ADL;
     sprintf( hdr.adlname, "#! %s%s%s\n", ADL_NAME,
 		   (header?" -h":"\0"),
