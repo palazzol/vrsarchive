@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/calls.d/makefile,v 1.4 2002-11-23 07:49:02 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/calls.d/makefile,v 1.5 2002-11-24 03:26:15 Vincent Exp $
 #
-ALL	= calls
+ALL	= calls$(EXE)
 MODEL	= -i
 OPTIONS	= -O
 include $(HOME)/CONFIG
