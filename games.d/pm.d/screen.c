@@ -99,11 +99,30 @@ void	old_screen ()
 */
 void	redraw ()
 {
+#ifdef OLDWAY
 	alarm(0);	/* make sure the alarm is off */
 	clearok(stdscr, TRUE);
 	msg("");
 	draw();
 	sleep(1);
+#else
+	reg	int	i;
+
+	alarm(0);	/* make sure the alarm is off */
+	msg("");
+	flush();
+	draw();
+	p_scores();
+	p_dots();
+	standout();
+	p_barriers();
+	standend();
+	p_energizers();
+	p_monsters();
+	p_fruits();
+	draw();
+	sleep(1);
+#endif
 }
 
 /*
@@ -249,7 +268,7 @@ void	p_barriers ()
 	{
 		reg	char	**str = _board;
 
-		if ((tmp = newwin(0, 0, 0, 0)) == ERR)
+		if ((tmp = newwin(0, 0, 0, 0)) == 0)
 		{
 			move(0, 0);
 			printw("barriers(): newwin() error");
