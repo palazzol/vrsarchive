@@ -1,4 +1,4 @@
-#define LPUNIT(dev)	(minor(dev)>>1)	/* Which printer is this?	*/
+#define LPUNIT(dev)	(minor(dev)>>3)	/* Which printer is this?	*/
 #define	LPPRI		(PZERO+1)	/* allow sleepers to wakeup early */
 #define LPTIMEO		(10*HZ)		/* Time between not-ready checks */
 
