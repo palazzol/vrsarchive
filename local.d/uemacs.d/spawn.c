@@ -30,6 +30,7 @@ extern int vttidy();
 
 #if	MSDOS & (MSC | TURBO)
 #include	<process.h>
+extern int _doserrno;
 #endif
 
 /*
@@ -687,7 +688,7 @@ extern int _oserr;
 extern int errno;
 #endif
 
-#if	MSDOS & (TURBO | LATTICE | AZTEC)
+#if	MSDOS & (TURBO | LATTICE | AZTEC | MSC)
 /*	SHELLPROG: Execute a command in a subshell		*/
 
 shellprog(cmd)
@@ -822,7 +823,7 @@ char *cmd;	/*  Incoming command line to execute  */
 	} else
 		rval = -errno;		/* failed child call */
 #endif
-#if	TURBO
+#if	TURBO | MSC
 	intdosx(&regs, &regs, &segreg);
 	if (regs.x.cflag == 0) {
 		regs.h.ah = 0x4d;	/* get child process return code */
