@@ -32,17 +32,17 @@ SETUID	= $(SAFEUID)
 #	CFLAGS can be $(CBSD), $(CXENIX), or $(CSYS5).
 #	LIBS   can be $(LBSD), $(LXENIX), or $(LSYS5).
 #	If you don't have readdir(), set DIRLIB = -ldir else DIRLIB =
-#	If you don't need ranlib, set RANLIB = :, else RANLIB = ranlib
+#	If you don't need ranlib, set RANLIB = sync, else RANLIB = ranlib
 #
 CFLAGS	= $(CSYS5)
 LIBS	= $(LSYS5)
-BERKLIB	= -lberkeley
-DIRLIB	= #-ldir
+BERKLIB	= -lsocket -lnsl # -lberkeley
+DIRLIB	= # -ldir
 DPYLIB	= -ldpy
 PAGER	= pg
-RANLIB	= : # ranlib
-NROFF	= :
-TROFF	= :
+RANLIB	= sync # ranlib
+NROFF	= sync
+TROFF	= sync
 #
 #	This keeps USG make from trying to use the user's shell.  We want to
 #	always use the Bourne Shell.
@@ -58,7 +58,7 @@ SHELL	= /bin/sh
 CCLIB	= /usr/lib
 NET	= $(ROOT)/usr/bin
 ETC	= $(ROOT)/etc
-LOCAL	= $(ROOT)/usr/local
+LOCAL	= $(ROOT)/usr/elf386
 BINDIR	= $(LOCAL)/bin
 LIBDIR	= $(LOCAL)/lib
 INCDIR	= $(LOCAL)/include
@@ -66,10 +66,10 @@ LIBUUCP	= $(ROOT)/usr/lib/uucp
 LIBMAIL	= $(ROOT)/usr/lib/mail
 LIBNEWS	= $(ROOT)/usr/lib/news
 LIBTMAC	= $(ROOT)/usr/lib/tmac
-GAMDIR	= $(ROOT)/usr/games
-GAMLIB	= $(ROOT)/usr/games/lib
+GAMDIR	= $(LOCAL)/games
+GAMLIB	= $(GAMDIR)/lib
 SPOOLN	= $(ROOT)/usr/spool/news
-USRMAN	= $(ROOT)/usr/man
+USRMAN	= $(LOCAL)/man
 MAN1	= $(USRMAN)/man1
 MAN2	= $(USRMAN)/man2
 MAN3	= $(USRMAN)/man3
@@ -86,10 +86,11 @@ MAN8	= $(USRMAN)/man8
 # XENIX	- XENIX 286, System 3/5, Large Model, Big Stack.
 #
 CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
-CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
+CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) -DTERMINFO
 CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
 LBSD	= -lcurses -ltermcap -lm
-LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW
+#LSYS5	= -lcurses $(DIRLIB) -lm -lPW -lc_s
+LSYS5	= -lcurses $(DIRLIB) -lm -L/usr/ccs/lib -lelf -lgen
 LXENIX	= -lcurses -ltermcap $(DIRLIB) -lm
 #
 #	Default to make $(ALL)
@@ -123,4 +124,4 @@ $(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8): $(USRMAN)
 #
 .SUFFIXES: .d
 .d:
-	@cd $?; make
+	-cd $?; make
