@@ -6,21 +6,39 @@
  * Gets, parsit (courtesy, P. Lapsley)
  *
  */
-#include <stdio.h>
-static int gindex;
-static char **argv;
-char *
-Gets(buf)
-char *buf;
-{
-	extern char *gets();
 
-	if (argv[gindex] == NULL)
-		return (gets (buf));
-	++gindex;
-	if (argv[gindex] == NULL)
-		return (gets (buf));
-	strcpy (buf, argv[gindex]);
+#ifdef SYSV
+#define index strchr
+#endif
+
+#include <stdio.h>
+extern void free();
+extern char *gets(), *malloc(), *strcpy(), *index();
+
+static int gindx;
+static char **argv;
+
+char *
+Gets(buf, len)
+char *buf;
+int len;
+{
+	register char *tmp;
+
+	if (argv[gindx] == NULL) {
+		(void) fgets(buf, len, stdin);
+		if (tmp = index(buf, '\n'))
+			*tmp = '\0';
+		return(buf);
+	}
+	++gindx;
+	if (argv[gindx] == NULL) {
+		(void) fgets(buf, len, stdin);
+		if (tmp = index(buf, '\n'))
+			*tmp = '\0';
+		return (buf);
+	}
+	(void) strcpy (buf, argv[gindx]);
 	puts (buf);
 	return (buf);
 }
@@ -61,13 +79,14 @@ char ***array;
 	char *linecp;
 	int i, j, num_words;
 
-	gindex = 0;
+	gindx = 0;
 	argv = *array;
 	if (argv != (char **) NULL) {  /* Check to see if we should */
-		i = 0;		       /* free up the old array */
-		while (argv[i] != (char *) NULL)
-			free(argv[i++]);/* If so, free each member */
-		free(argv);		/* and then free the ptr itself */
+		/* free up the old array */
+		for (i=0; argv[i] != (char *) NULL; i++) {
+			free(argv[i]);	/* If so, free each member */
+		}
+		free((char *)argv);		/* and then free the ptr itself */
 	}
 
 	linecp = line;
@@ -87,7 +106,7 @@ char ***array;
 
 	/* Then malloc enough for that many words plus 1 (for null) */
 
-	if ((argv = (char **) malloc((num_words + 1) * sizeof(char *))) ==
+	if ((argv = (char **) malloc((unsigned)((num_words + 1) * sizeof(char *)))) ==
 		(char **) NULL) {
 		fprintf(stderr, "parsit: malloc out of space!\n");
 		return(0);
@@ -110,7 +129,7 @@ char ***array;
 			return(0);
 		}
 
-		strcpy(argv[j], word);
+		(void) strcpy(argv[j], word);
 		++j;
 		if (*line == '\0')
 			break;
