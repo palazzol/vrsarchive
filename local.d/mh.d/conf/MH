@@ -20,7 +20,7 @@ debug	off
 etc		/usr/elf386/lib/mh
 ldoptions
 ldoptlibs	-lsocket -lnsl
-mail	/usr/mail
+mail	.mh_mmdf
 mailgroup mail
 mandir	/usr/elf386/man
 manuals	standard
