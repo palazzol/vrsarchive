@@ -24,7 +24,7 @@ restore()
 	}
 	fread(&WEIGHT, sizeof WEIGHT, 1, fp);
 	fread(&CUMBER, sizeof CUMBER, 1, fp);
-	fread(&clock, sizeof clock, 1, fp);
+	fread(&gclock, sizeof gclock, 1, fp);
 	fread(inven, sizeof inven, 1, fp);
 	fread(wear, sizeof wear, 1, fp);
 	fread(injuries, sizeof injuries, 1, fp);
@@ -78,7 +78,7 @@ save()
 	printf("Saved in %s.\n", home1);
 	fwrite(&WEIGHT, sizeof WEIGHT, 1, fp);
 	fwrite(&CUMBER, sizeof CUMBER, 1, fp);
-	fwrite(&clock, sizeof clock, 1, fp);
+	fwrite(&gclock, sizeof gclock, 1, fp);
 	fwrite(inven, sizeof inven, 1, fp);
 	fwrite(wear, sizeof wear, 1, fp);
 	fwrite(injuries, sizeof injuries, 1, fp);

@@ -159,7 +159,7 @@ log_score(list_em)
 		cp++;
 		strcpy(thisscore.game, cp);
 
-		thisscore.time = clock;
+		thisscore.time = gclock;
 		thisscore.planes = safe_planes;
 		thisscore.real_time = time((long *)0) - start_time;
 

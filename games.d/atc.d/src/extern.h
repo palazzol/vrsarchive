@@ -10,7 +10,7 @@
 extern char		GAMES[], LOG[], *File;
 
 extern long		start_time;
-extern int		clock, safe_planes, test_mode;
+extern int		gclock, safe_planes, test_mode;
 
 extern FILE		*filein, *fileout;
 

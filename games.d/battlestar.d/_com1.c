@@ -141,7 +141,7 @@ news()
 	}
 	if (testbit(location[position].objects,CYLON)){
 		puts("Oh my God, you're being shot at by an alien spacecraft!");
-		printf("The targeting computer says we have %d seconds to attack!\n",clock);
+		printf("The targeting computer says we have %d seconds to attack!\n",gclock);
 		fflush(stdout);
 		sleep(1);
 		if (!visual()){

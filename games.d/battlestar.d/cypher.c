@@ -270,10 +270,10 @@ cypher()
 				fgets(buffer,10,stdin);
 				if (*buffer != '\n')
 					sscanf(buffer,"%d",&WEIGHT);
-				printf("Clock (was %d) = ",clock);
+				printf("Clock (was %d) = ",gclock);
 				fgets(buffer,10,stdin);
 				if (*buffer != '\n')
-					sscanf(buffer,"%d",&clock);
+					sscanf(buffer,"%d",&gclock);
 				printf("Wizard (was %d, %d) = ",wiz, tempwiz);
 				fgets(buffer,10,stdin);
 				if (*buffer != '\n'){
