@@ -9,7 +9,7 @@
 #include "header.h"
 
 #ifndef LARNHOME
-#define LARNHOME "/usr/games/larn/"		/* normally supplied by a Makefile */
+#define LARNHOME "/usr/games/lib/larn/"		/* normally supplied by a Makefile */
 #endif
 
 #ifndef WIZID
