@@ -3,14 +3,22 @@
  *      for too long.  An idle job is defined as one running on a terminal
  *      which has not been accessed (read) for more than TOOLONG minutes.
 */
-
 #include <a.out.h>
 #include <signal.h>
 #include <stdio.h>
+#ifndef M_XENIX
+#include <sys/types.h>
+#endif
 #include <utmp.h>
 #include <sys/param.h>
 #include <sys/dir.h>
+#ifdef M_XENIX
 #include <sys/mmu.h>
+#else
+#include <sys/immu.h>
+#include <sys/region.h>
+#include <sys/sysmacros.h>
+#endif
 #include <sys/user.h>
 #include <sys/proc.h>
 #include <sys/stat.h>
@@ -29,10 +37,10 @@ int utemp;                              /* /etc/utmp file descriptor    */
 char device[80];                        /* Name of pty or tty           */
 struct utmp ut;                         /* Login accounting record      */
 struct stat sbuf;                       /* Status of pty or tty         */
-struct user u;                          /* User structure of a process  */
 char **argv;                            /* Invocation argv              */
 unsigned tosleep;			/* Time to sleep                */
 daddr_t	swplo;				/* Base of swap space in kernel	*/
+struct var v;				/* Copy of kernel parameters    */
 struct nlist nl[] = {
   { "_v" },
 #define X_V	0
@@ -43,7 +51,6 @@ struct nlist nl[] = {
   { NULL },
 };
 char *malloc();                         /* Memory allocator             */
-char *sprintf();
 long lseek();
 time_t time();
 
@@ -51,21 +58,66 @@ time_t time();
  *        Read the user structure for a given process.  This is a lot of
  *      trouble to go to just to see if it is running on a given terminal.
 */
+struct user *
 get_user_structure(p)
 struct proc *p;
-{ int file;
-  long addr;
+{
+#ifdef M_XENIX
+	int fd;			/* File to read			*/
+	long addr;		/* Where to read		*/
+	static struct user user;/* Local buffer			*/
 
-  if (p->p_flag & SLOAD) {
-    addr = mltoa((long) p->p_addr.p_caddr);
-    file = mem;
-  } else {
-    addr = (swplo + p->p_addr.p_daddr) << BSHIFT;
-    file = swap;
-  }
-  addr += OFFUSRPG;	/* Skip kernel mode stack */
-  lseek(file, addr, 0);
-  read(file, (char *)&u, sizeof(u));
+	if ((p->p_flag & SLOAD) == 0) {
+		fd = swap;
+		addr = ((long)BSIZE)*(p->p_addr.p_daddr);
+	} else {
+		fd = mem;
+		addr = mltoa(p->p_addr.p_caddr);
+	}
+	(void) lseek(fd, addr, 0);
+	if (read(fd, (char *)&user, sizeof(user))!=sizeof(user)){
+		fprintf(stderr, "error: can't get u structure\n");
+		return (struct user *)NULL;
+	}
+	return(&user);
+#else
+	/* declaration of space for reading in the ubptbl */
+	union {
+		char	cbuf[NBPPT];
+		pde_t	ptbl[NBPPT/sizeof(pde_t)];
+	} upt;
+	static char *user = 0;
+	static int usize;
+	char *cp, *cp1;
+	int i;
+
+	if (user == 0) {
+		usize = sizeof(struct user)
+			+ (v.v_nofiles-1)*sizeof(struct file *);
+		user = malloc(usize);
+	}
+	if (p->p_flag & SLOAD) {
+		lseek(kmem, ubptbl((p)), 0);
+		read(kmem, upt.cbuf, NBPPT); /* read in the U block pt */
+		/* Now read in each page of the U area */
+		cp1 = user + usize;
+		i = 0;
+		for(cp = user; cp < cp1; i++, cp += NBPP) {
+			lseek(mem, ctob(upt.ptbl[i].pgm.pg_pfn), 0);
+			if (read(mem, cp, cp1-cp > NBPP ? NBPP : cp1-cp) < 0) {
+			    fprintf(stderr, "error: can't get u structure\n");
+			    return((struct user *)0);
+			}
+		}
+	} else {
+		lseek(swap, dtob(((dbd_t *)(&p->p_ubptbl))->dbd_blkno), 0);
+		if (read (swap, user, usize) != usize) {
+			fprintf(stderr, "error: can't get u structure\n");
+			return((struct user *)0);
+		}
+	}
+	return((struct user *)user);
+#endif
 }
 
 /*
@@ -76,7 +128,7 @@ killit()
   static struct proc *aproc;            /* Process table address        */
   static unsigned nproc;                /* Process table size           */
   static struct proc p;			/* Copy of kernel proc entry    */
-  static struct var v;			/* Copy of kernel parameters    */
+  static struct user *u;		/* Pointer to copy of u struct	*/
 
   if (fork() > 0) {			/* Notification may block	*/
     tty = fopen(device,"w");		/* Open terminal for writing    */
@@ -95,9 +147,12 @@ killit()
     lseek(kmem, (long)aproc, 0);	/* Read process table           */
     read(kmem, (char *)&p, sizeof p);
     if (p.p_stat && p.p_pgrp)
-      { get_user_structure(&p);
-        if (u.u_ttyd == sbuf.st_rdev)
+      { u = get_user_structure(&p);
+        if (u == NULL)
+	  continue;
+        if (u->u_ttyd == sbuf.st_rdev)
           kill(p.p_pid,SIGHUP);
+	free(u);
       }
     aproc++;
     nproc--;
