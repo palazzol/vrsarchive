@@ -106,6 +106,7 @@ object *monster;
 			wait_for_ack(0);
 		} else {
 			close(fd);
+			break;
 		}
 	}
 	put_scores(monster, other);
