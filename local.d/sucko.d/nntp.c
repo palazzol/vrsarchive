@@ -1,7 +1,7 @@
 #define _POSIX_SOURCE
 #define _ALL_SOURCE
 #ifndef lint
-static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.4 1992-09-09 17:36:50 vrs Exp $";
+static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.5 1992-09-09 18:21:57 vrs Exp $";
 #endif
 /*
  *	This code was shamelessly stolen from XRN by vrs.
@@ -708,8 +708,8 @@ long artnumber;  /* number of article in the current group to retrieve */
 			byteCount += 60;
 			continue;
 			}
-			if (fputs(msg, articlefp) <= 0) {
-			    mesgPane("write error %d on temporary file %s", ferror(articlefp), filename);
+			if (*msg && fputs(msg, articlefp) <= 0) {
+			    mesgPane("write error %d on temporary file '%s'", ferror(articlefp), filename);
 			    (void) fclose(articlefp);
 			    (void) unlink(filename);
 			    errno = EIO;
