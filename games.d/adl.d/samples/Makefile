@@ -4,10 +4,10 @@ AR = post -c -v -p 8 17
 B = ..
 D = samples/
 
-all		:
-	@(cd aard;	make all)
-	@(cd mpu;	make all)
-	@(cd demos;	make all)
+all install:
+	@(cd aard;	make $@)
+	@(cd mpu;	make $@)
+	@(cd demos;	make $@)
 
 touch		:
 	(cd aard;	make all -t)

@@ -6,6 +6,8 @@ D = samples/mpu/
 
 all		: mpu
 
+install:
+
 mpu		: *.adl ../../adlcomp/adlcomp ../standard.adl
 	../../adlcomp/adlcomp mpu.adl -i.. -o mpu
 

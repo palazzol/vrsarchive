@@ -6,6 +6,8 @@ D = samples/aard/
 
 all		: aard
 
+install:
+
 aard		: *.adl ../../adlcomp/adlcomp ../standard.adl
 	../../adlcomp/adlcomp aard.adl -w -o aard -i..
 shar		: aard1.shar	aard2.shar

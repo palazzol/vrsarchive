@@ -4,6 +4,8 @@ D = samples/demos/
 
 all		: actdemo baby multi tiny
 
+install:
+
 clean		:
 	rm -f core actdemo tiny baby multi demos.shar
 

@@ -13,3 +13,5 @@ include.shar	: README Makefile *.h
 
 clean		:
 	rm -f core include.shar
+
+install:
