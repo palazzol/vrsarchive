@@ -1,7 +1,7 @@
 /* Screen interface package
  *
  * Author: Bob Baldwin  June 1983
- * $Date: 1987-06-23 20:03:43 $
+ * $Date: 1987-06-24 07:23:09 $
  * $Log: not supported by cvs2svn $
  * Revision 1.1  86/01/15  16:04:16  baldwin
  * Initial revision
@@ -31,12 +31,12 @@
 
 
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 #include "window.h"
 #include "terminal.h"
 #include "specs.h"
 
-
+extern char *tgoto();
 
 /* These variables contain the current location of the cursor.
  * The origin, or home, of the  cursor is in the upper lefthand
@@ -272,6 +272,13 @@ char	*s;
 Puts(s)
 char *s;
 {
-	while(*s)
-		putchar(*s++);
+	void Outc();
+	tputs(s, 1, Outc);
+}
+
+void
+Outc(ch)
+char ch;
+{
+	putchar(ch);
 }
