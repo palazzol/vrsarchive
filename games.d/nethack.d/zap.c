@@ -344,6 +344,11 @@ int	damage = 0;
 	       case WAN_UNDEAD_TURNING:
 	       case WAN_NOTHING:
 		    break;
+#ifdef PROBING
+	       case WAN_PROBING:
+		    ustatusline();
+		    break;
+#endif
 	       default: impossible("object %d zap?",obj->otyp);
 	  }
 	return(damage);
