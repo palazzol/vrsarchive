@@ -722,7 +722,7 @@ int monptr, dam;
       monster_death((int)m_ptr->fy, (int)m_ptr->fx, c_list[m_ptr->mptr].cmove);
       c_ptr = &c_list[m_ptr->mptr];
       p_ptr = &py.misc;
-      acc_tmp = ((long)c_ptr->mexp) * ((c_ptr->level+0.1)/p_ptr->lev);
+      acc_tmp = ((long)c_ptr->mexp) * ((unsigned)(c_ptr->level+0.1)/p_ptr->lev);
       i = acc_tmp;
       acc_exp += (acc_tmp - i);
       if (acc_exp > 1) 
@@ -1575,7 +1575,7 @@ int item_val;
 facts(tbth, tpth, tdam, tdis)
 int *tbth, *tpth, *tdam, *tdis;
 {
-  int tmp_weight;
+  unsigned tmp_weight;
   treasure_type *i_ptr;
 
   i_ptr = &inventory[INVEN_MAX];
@@ -1846,10 +1846,10 @@ bash()
 	      i_ptr->weight = py.stats.cstr;
 	      i_ptr->tval   = 1;
 	      p_ptr = &py;
-	      p_ptr->misc.bth    = ((p_ptr->stats.cstr+
+	      p_ptr->misc.bth    = ((int)(p_ptr->stats.cstr+
 					 p_ptr->misc.wt)/6.0);
 	      p_ptr->misc.ptohit = 0;
-	      p_ptr->misc.ptodam = (p_ptr->misc.wt/75.0) + 1;
+	      p_ptr->misc.ptodam = ((float)p_ptr->misc.wt/75.0) + 1;
 	      if (py_attack(y, x)) 
 		{
 		  m_ptr = &m_list[c_ptr->cptr];
@@ -1874,7 +1874,7 @@ bash()
 	      py.misc.ptohit = old_ptohit;
 	      py.misc.ptodam = old_ptodam;
 	      py.misc.bth    = old_bth;
-	      if (randint(140) > py.stats.cdex) 
+	      if ((unsigned)randint(140) > py.stats.cdex) 
 		{
 		  msg_print("You are off-balance.");
 		  py.flags.paralysis = randint(3);

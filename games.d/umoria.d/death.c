@@ -66,11 +66,11 @@ char *fill_str(p1)
 char *p1;
 {
   vtype s1, s2;
-  int i;
+  unsigned i;
 
   s1[0] = '\0';
   s2[0] = '\0';
-  i = (strlen(p1) / 2);
+  i = (strlen(p1) / (unsigned)2);
   (void) strcpy(s1, pad(s2, " ", 15 - i));
   (void) strcat(s1, pad(p1, " ", 31));
   s1[31] = '\0';
@@ -83,7 +83,8 @@ dprint(str, row)
 char *str;
 int row;
 {
-  int i, j, nblanks, xpos;
+  unsigned i;
+  int j, nblanks, xpos;
   vtype prt_str;
   char tmp_str[2];
 

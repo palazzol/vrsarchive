@@ -286,7 +286,7 @@ int monptr;
   objdes(ddesc, INVEN_MAX, TRUE);
   /* End DIED_FROM                 */
 
-  while (strlen(attstr) > 0)
+  while (strlen(attstr) != 0)
     {
       string = index(attstr, '|');
       if (string)
@@ -308,7 +308,7 @@ int monptr;
       flag = FALSE;
       if (py.flags.protevil > 0) 
 	if (c_ptr->cdefense & 0x0004)
-	  if ((py.misc.lev + 1) > c_ptr->level) 
+	  if ((unsigned)(py.misc.lev + 1) > c_ptr->level) 
 	    {
 	      attype = 99;
 	      adesc = 99;
@@ -567,7 +567,7 @@ int monptr;
 	      break;
 	    case 12:    /*Steal Money     */      
 	      p_ptr = &py.misc;
-	      if ((randint(124) < py.stats.cdex) && (py.flags.paralysis < 1)) 
+	      if (((unsigned)randint(124) < py.stats.cdex) && (py.flags.paralysis < 1)) 
 		msg_print("You quickly protect your money pouch!");
 	      else
 		{
@@ -586,7 +586,8 @@ int monptr;
 		}
 	      break;
 	    case 13:    /*Steal Object   */       
-	      if ((randint(124) < py.stats.cdex) && (py.flags.paralysis < 1)) 
+	      if (((unsigned)randint(124) < py.stats.cdex)
+	      &&  (py.flags.paralysis < 1)) 
 		msg_print("You grab hold of your backpack!");
 	      else
 		{
@@ -858,7 +859,7 @@ int *mm;
 	      if (t_list[c_ptr->tptr].tval == 102) 
 		if (t_list[c_ptr->tptr].subval == 99) 
 		  {
-		    if (randint(OBJ_RUNE_PROT) <
+		    if ((unsigned)randint(OBJ_RUNE_PROT) <
 			c_list[m_list[monptr].mptr].level) 
 		      {
 			if ((newy==char_row) && (newx==char_col)) 
@@ -888,7 +889,7 @@ int *mm;
 		    r_ptr = &c_list[m_ptr->mptr];
 		    msg_print("Your hands stop glowing.");
 		    py.flags.confuse_monster = FALSE;
-		    if ((randint(MAX_MONS_LEVEL) < r_ptr->level) ||
+		    if (((unsigned)randint(MAX_MONS_LEVEL) < r_ptr->level) ||
 			(0x1000 & r_ptr->cdefense)) 
 		      {
 			(void) sprintf(tmp_str, "The %s is unaffected.", 
@@ -1183,7 +1184,8 @@ int *took_turn;
 int mon_move(monptr)
 int monptr;
 {
-  int i, j, k;
+  unsigned i, j;
+  int k;
   int move_test;
   int movem;
   creature_type *c_ptr;
@@ -1314,7 +1316,7 @@ int attack;
 	  if (k > 0) 
 	    for (j = 0; j < movement_rate(m_ptr->cspeed); j++)
 	      {
-		if ((m_ptr->cdis <= c_list[m_ptr->mptr].aaf) ||
+		if (((unsigned)m_ptr->cdis <= c_list[m_ptr->mptr].aaf) ||
 		    (m_ptr->ml)) 
 		  {
 		    if (m_ptr->csleep > 0) 
