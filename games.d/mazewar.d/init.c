@@ -4,7 +4,9 @@ static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
 #endif
 
 #include "war.h"
+#ifndef strchr
 extern char *strchr();
+#endif
 
 static	int	checkcount;		/* counter for board checking */
 static	int	didescape;		/* did escape */

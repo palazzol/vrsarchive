@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.5 1987-12-25 21:53:58 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.6 2002-11-25 21:42:35 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/defines.h,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.5 1987-12-25 21:53:58 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.6 2002-11-25 21:42:35 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  1987/12/25 21:53:58  vrs
+ * SYSV -> SYS5 (use CONFIG)
+ *
  * Version 1.4  87/12/25  20:50:46  vrs
  * Check in 4.0 version from the net
  * 
@@ -23,7 +26,10 @@
  */
 
 /* Globals externals */
-extern char *strcpy(), *gets();
+#ifndef strcpy
+extern char *strcpy();
+#endif
+extern char *gets();
 extern char *Gets();
 extern float rectify(), bearing(), round();
 

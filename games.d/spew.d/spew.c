@@ -14,7 +14,9 @@ static char *cpr[]={
 extern char *malloc();
 char *my_alloc();
 extern int atoi();
+#ifndef strchr
 extern char *strchr();
+#endif
 extern char *strrchr();
 char *save();
 #define TRUE 1
