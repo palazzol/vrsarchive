@@ -1,6 +1,7 @@
 /*	main.c		*/
 #include "header.h"
 #include <pwd.h>
+extern char *calloc();
 static char copyright[]="\nLarn is copyrighted 1986 by Noah Morgan.\n";
 int srcount=0;	/* line counter for showstr()	*/
 int dropflag=0; /* if 1 then don't lookforobject() next round */
@@ -84,6 +85,18 @@ main(argc,argv)
 	strcat(playerids, PLAYERIDS);	/* the playerid data file name */
 	strcat(holifile, HOLIFILE);		/* the holiday data file name */
 
+/*
+ *	malloc the memory for the screen -- Note pad of 3 on each side
+ *	which simplifies limit checks on searches.
+*/
+	screen = (char **)malloc((MAXX+6)*sizeof(char *));
+	if (screen == 0) died(-285);	/* malloc() failure */
+	for (i = 0; i < MAXX+6; i++) {
+		screen[i] = calloc(MAXY+6, sizeof(char));
+		if (screen[i] == 0) died(-285);	/* malloc() failure */
+		screen[i] += 3;
+	}
+	screen += 3;
 /*
  *	now malloc the memory for the dungeon 
  */
