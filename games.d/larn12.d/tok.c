@@ -1,11 +1,11 @@
 /* tok.c		Larn is copyrighted 1986 by Noah Morgan. */
 #include <sys/types.h>
-#ifdef SYSV
+#ifdef SYS5
 #include <fcntl.h>
 #include <termio.h>
-#else SYSV
+#else SYS5
 #include <sys/ioctl.h>
-#endif SYSV
+#endif SYS5
 #include "header.h"
 
 static char lastok=0;

@@ -57,7 +57,7 @@
 
 #include "header.h"
 
-#ifdef SYSV	/* system III or system V */
+#ifdef SYS5	/* system III or system V */
 #include <sys/types.h>
 #include <termio.h>
 #ifndef TCGETA
@@ -72,7 +72,7 @@ static char saveeof,saveeol;
     _a.c_cc[VMIN]=1;_a.c_cc[VTIME]=1;_a.c_lflag &= ~(ICANON|ECHO|ECHOE|ECHOK|ECHONL)
 #define unraw(_a) _a.c_cc[VMIN]=saveeof;_a.c_cc[VTIME]=saveeol;_a.c_lflag |= ICANON|ECHO|ECHOE|ECHOK|ECHONL
 
-#else not SYSV
+#else not SYS5
 
 #ifndef BSD
 #define CBREAK RAW		/* V7 has no CBREAK */
@@ -81,7 +81,7 @@ static char saveeof,saveeol;
 #define doraw(_a) (_a.sg_flags |= CBREAK,_a.sg_flags &= ~ECHO)
 #define unraw(_a) (_a.sg_flags &= ~CBREAK,_a.sg_flags |= ECHO)
 #include <sgtty.h>
-#endif not SYSV
+#endif not SYS5
 
 #ifndef NOVARARGS	/* if we have varargs */
 #include <varargs.h>
