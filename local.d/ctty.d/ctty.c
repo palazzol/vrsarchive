@@ -5,17 +5,28 @@
  *		tspeed speed [tty...]
 */
 #include <stdio.h>
+#ifndef M_XENIX
+#include <sys/types.h>
+#include <nlist.h>
+#endif
 #include <sys/param.h>
 #include <sys/dir.h>
 #include <sys/stat.h>
+#include <sys/signal.h>
 #include <sys/user.h>
+
+#ifdef M_XENIX
+#define KERNEL	"/xenix"
+#else
+#define KERNEL	"/unix"
+#endif
 
 char buf[1024];
 
 /*
  *	Routine to return the name of the controlling tty.  This is a lot
  *	of bother because there is no easy way to get this information
- *	from the kernel.  We must nlist /xenix, seek into /dev/kmem for
+ *	from the kernel.  We must nlist KERNEL, seek into /dev/kmem for
  *	_u, Read the U structure, extract u.u_ttyd, and then search for
  *	a node with that major/minor number.  Thank goodness we know _u
  *	is our own u structure and is guaranteed to be incore because
@@ -32,12 +43,12 @@ mytty()
   static struct stat   sbuf;
   static struct user u;
 
-  if (nlist("/xenix", nl) == -1) {
-    fprintf(stderr,"no namelist for /xenix\n");
+  if (nlist(KERNEL, nl) == -1) {
+    fprintf(stderr,"no namelist for %s\n", KERNEL);
     exit(1);
   }
   if (nl[0].n_type == 0) {
-    fprintf(stderr,"no _u in /xenix namelist\n");
+    fprintf(stderr,"no _u in namelist\n");
     exit(1);
   }
   fd = open("/dev/kmem",0);
