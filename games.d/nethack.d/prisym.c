@@ -38,7 +38,7 @@ register x,y;
 	(-2,let)-change let
 */
 
-tmp_at(x,y) schar x,y; {
+tmp_at(x,y) int x,y; {
 static schar prevx, prevy;
 static char let;
 	if((int)x == -2){	/* change let call */
@@ -66,7 +66,7 @@ static char let;
 }
 
 /* like the previous, but the symbols are first erased on completion */
-Tmp_at(x,y) schar x,y; {
+Tmp_at(x,y) int x,y; {
 static char let;
 static xchar cnt;
 static coord tc[COLNO];		/* but watch reflecting beams! */

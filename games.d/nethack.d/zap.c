@@ -672,7 +672,7 @@ boomhit(dx,dy) {
 	return(0);
 }
 
-char
+uchar
 dirlet(dx,dy) register dx,dy; {
 	return
 		(dx == dy) ? '\\' : (dx && dy) ? '/' : dx ? HWALL_SYM : VWALL_SYM;
