@@ -31,6 +31,9 @@
 
 #undef BIG_ENDIAN
 #undef LITTLE_ENDIAN
+#ifndef UNIX
+#define BIG_ENDIAN
+#endif
 
 /* If you haven't selected one of the above options... */
 #if	!defined(BIG_ENDIAN) && !defined(LITTLE_ENDIAN)
