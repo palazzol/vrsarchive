@@ -1,9 +1,12 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/main.c,v 1.1 1987-02-07 19:02:25 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/main.c,v 1.2 1987-12-26 20:57:30 vrs Exp $";
 #endif
 
 /*
  * $Log: not supported by cvs2svn $
+ * Version 1.1  87/02/07  19:02:25  vrs
+ * Initial version
+ * 
  * Revision 1.4  86/10/07  14:50:17  arnold
  * Changed setterm to set_term, to avoid Unix/PC shared library conflict.
  * 
@@ -152,7 +155,7 @@ char *argv[];
 {
 	char *basename ();
 	int int_hdlr (), hup_hdlr ();
-	int (*old_int)(), (*old_quit)();
+	SIG_T (*old_int)(), (*old_quit)();
 #ifdef BSD
 	int stop_hdlr (), (*old_stop)();
 #endif

@@ -1,9 +1,12 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/docmd2.c,v 1.1 1987-02-07 19:01:25 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/docmd2.c,v 1.2 1987-12-26 20:57:26 vrs Exp $";
 #endif
 
 /*
  * $Log: not supported by cvs2svn $
+ * Version 1.1  87/02/07  19:01:25  vrs
+ * Initial version
+ * 
  * Revision 1.3  86/07/17  17:20:29  arnold
  * Some general code cleaning up.
  * 
@@ -752,9 +755,9 @@ char lin[];
 int *pi;
 {
 	int forkstatus, childstatus;
-	int (*save_quit)(), (*save_int)();
+	SIG_T (*save_quit)(), (*save_int)();
+	SIG_T (*signal())();
 	int int_hdlr ();
-	int (*signal())();
 	int i, auto_redraw;
 	char *path, *name, *p, *getenv ();
 	char new_command[MAXLINE];
