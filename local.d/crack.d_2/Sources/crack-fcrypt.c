@@ -1,743 +1,619 @@
 /*
- * This program is copyright (c) Alec Muffett 1991 except for certain
- * portions of code ("crack-fcrypt.c") copyright (c) Robert Baldwin, Icarus
- * Sparry and Alec Muffett.  The author(s) disclaims all responsibility or
- * liability with respect to it's usage or its effect upon hardware or
- * computer systems.  This software is in freely redistributable PROVIDED
- * that this notice remains intact.
+ * UFC: ultra fast crypt(3) implementation
+ *
+ * Copyright (C) 1991, Michael Glad, email: glad@daimi.aau.dk
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ 
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * @(#)crypt.c	2.1 9/27/91, patchlevel 1
+ *
+ * Semiportable C version
+ *
  */
 
-/*
- * Misc defs for the fast password transform optimisations.
- */
+extern void setup_salt(), mk_keytab(), pr_bits();
+extern char *output_conversion();
 
-#include "crack.h"		/* contains switches - AEM */
+extern unsigned long sb0[], sb1[], sb2[], sb3[];
+extern unsigned long keytab[16][2];
 
-/*
- * Rename the types for greater convenience ? - This is from original code.
- */
-#define	reg	register
-#define	uns	unsigned
-#define unsb	uns char
-#define	unsl	uns long
+#define SBA(sb, v) (*(unsigned long*)((char*)(sb)+(v)))
 
-/*
- * Types for the different ways to represent DES bit patterns.  Bits are
- * always right justified within fields.  Bits which have lower indices in
- * the NBS spec are stored in the vax bits with less significance (e.g., Bit
- * 1 of NBS spec is stored in the bit with weight 2 ** 0 to the Vax.
- */
+#define F(I, O1, O2, SBX, SBY)                                        \
+    s = *k++ ^ I;                                                     \
+    O1 ^= SBA(SBX, (s & 0xffff)); O2 ^= SBA(SBX, ((s & 0xffff) + 4)); \
+    O1 ^= SBA(SBY, (s >>= 16));   O2 ^= SBA(SBY, ((s)          + 4));
 
-#define	obpb1	unsb		/* One bit per byte. */
-#define sbpb6	unsb		/* Six bits per byte, 6 held. */
-#define sbpb6R	unsb		/* Six bits per byte Reversed order, 6 held. */
-#define	sbpb24	unsl		/* Six bits per byte, 24 held. */
-#define	ebpb24	unsl		/* Eight bits per bit, 24 held. */
-#define	fbpb4	unsb		/* Four bits per byte, 4 held. */
-#define	fbpb4R	unsb		/* Four bits per byte Reversed order, 4 held. */
+#define G(I1, I2, O1, O2)                                             \
+        F(I1, O1, O2, sb1, sb0) F(I2, O1, O2, sb3, sb2)
 
-/*
- * The operation (6 * x) is often better optimised as this (for really
- * braindead compilers) - AEM
- */
+#define H G(r1, r2, l1, l2) ; G(l1, l2, r1, r2)
 
-#ifdef BRAINDEAD6
-#define SIX_TIMES(exprn)		(((exprn) << 2) + ((exprn) << 1))
-#else
-#define SIX_TIMES(exprn)		(6 * (exprn))
-#endif				/* BRAINDEAD6 */
+char *crypt(key, salt)
+  char *key;
+  char *salt;
+  { unsigned long l1, l2, r1, r2, i, j, s, *k;
 
-/*
- * Data segment gathered into one place - AEM
- */
+    setup_salt(salt);
+    mk_keytab(key);
 
-/* Try to keep this stuff long aligned - AEM */
-static char iobuf[16];
+    l1=l2=r1=r2=0;
 
-static obpb1 crypt_block[72];	/* 72 is next multiple of 8 bytes after 66 */
-static sbpb24 KS[32];
-static sbpb24 S0H[64], S1H[64], S2H[64], S3H[64];
-static sbpb24 S4H[64], S5H[64], S6H[64], S7H[64];
-static sbpb24 S0L[64], S1L[64], S2L[64], S3L[64];
-static sbpb24 S4L[64], S5L[64], S6L[64], S7L[64];
-static sbpb24 out96[4];
-
-/*
- * These used to be rather slow and frequently used functions - AEM
- */
-
-#define TF_TO_SIXBIT(tf) \
-	(sbpb24)((tf & 077L) | \
-		((tf & 07700L) << 2) | \
-		((tf & 0770000L) << 4) | \
-		((tf & 077000000L) << 6))
-
-#define SIXBIT_TO_TF(sb) \
-	(ebpb24)((sb & 0x3fL) | \
-		((sb & 0x3f00L) >> 2) | \
-		((sb & 0x3f0000L) >> 4) | \
-		((sb & 0x3f000000L) >> 6))
-/*
- * Start of the real thing
- */
-
-void
-fsetkey ()
-{
-    /*
-     * This used to be utterly horrendous. It still is, but it's much, much,
-     * smaller... AEM.
-     */
-    static unsb KeyToKS[] =
-    {
-	9, 50, 33, 59, 48, 16, 32, 56, 1, 8, 18, 41, 2, 34, 25, 24,
-	43, 57, 58, 0, 35, 26, 17, 40, 21, 27, 38, 53, 36, 3, 46, 29,
-	4, 52, 22, 28, 60, 20, 37, 62, 14, 19, 44, 13, 12, 61, 54, 30,
-	1, 42, 25, 51, 40, 8, 24, 48, 58, 0, 10, 33, 59, 26, 17, 16,
-	35, 49, 50, 57, 56, 18, 9, 32, 13, 19, 30, 45, 28, 62, 38, 21,
-	27, 44, 14, 20, 52, 12, 29, 54, 6, 11, 36, 5, 4, 53, 46, 22,
-	50, 26, 9, 35, 24, 57, 8, 32, 42, 49, 59, 17, 43, 10, 1, 0,
-	48, 33, 34, 41, 40, 2, 58, 16, 60, 3, 14, 29, 12, 46, 22, 5,
-	11, 28, 61, 4, 36, 27, 13, 38, 53, 62, 20, 52, 19, 37, 30, 6,
-	34, 10, 58, 48, 8, 41, 57, 16, 26, 33, 43, 1, 56, 59, 50, 49,
-	32, 17, 18, 25, 24, 51, 42, 0, 44, 54, 61, 13, 27, 30, 6, 52,
-	62, 12, 45, 19, 20, 11, 60, 22, 37, 46, 4, 36, 3, 21, 14, 53,
-	18, 59, 42, 32, 57, 25, 41, 0, 10, 17, 56, 50, 40, 43, 34, 33,
-	16, 1, 2, 9, 8, 35, 26, 49, 28, 38, 45, 60, 11, 14, 53, 36,
-	46, 27, 29, 3, 4, 62, 44, 6, 21, 30, 19, 20, 54, 5, 61, 37,
-	2, 43, 26, 16, 41, 9, 25, 49, 59, 1, 40, 34, 24, 56, 18, 17,
-	0, 50, 51, 58, 57, 48, 10, 33, 12, 22, 29, 44, 62, 61, 37, 20,
-	30, 11, 13, 54, 19, 46, 28, 53, 5, 14, 3, 4, 38, 52, 45, 21,
-	51, 56, 10, 0, 25, 58, 9, 33, 43, 50, 24, 18, 8, 40, 2, 1,
-	49, 34, 35, 42, 41, 32, 59, 17, 27, 6, 13, 28, 46, 45, 21, 4,
-	14, 62, 60, 38, 3, 30, 12, 37, 52, 61, 54, 19, 22, 36, 29, 5,
-	35, 40, 59, 49, 9, 42, 58, 17, 56, 34, 8, 2, 57, 24, 51, 50,
-	33, 18, 48, 26, 25, 16, 43, 1, 11, 53, 60, 12, 30, 29, 5, 19,
-	61, 46, 44, 22, 54, 14, 27, 21, 36, 45, 38, 3, 6, 20, 13, 52,
-	56, 32, 51, 41, 1, 34, 50, 9, 48, 26, 0, 59, 49, 16, 43, 42,
-	25, 10, 40, 18, 17, 8, 35, 58, 3, 45, 52, 4, 22, 21, 60, 11,
-	53, 38, 36, 14, 46, 6, 19, 13, 28, 37, 30, 62, 61, 12, 5, 44,
-	40, 16, 35, 25, 50, 18, 34, 58, 32, 10, 49, 43, 33, 0, 56, 26,
-	9, 59, 24, 2, 1, 57, 48, 42, 54, 29, 36, 19, 6, 5, 44, 62,
-	37, 22, 20, 61, 30, 53, 3, 60, 12, 21, 14, 46, 45, 27, 52, 28,
-	24, 0, 48, 9, 34, 2, 18, 42, 16, 59, 33, 56, 17, 49, 40, 10,
-	58, 43, 8, 51, 50, 41, 32, 26, 38, 13, 20, 3, 53, 52, 28, 46,
-	21, 6, 4, 45, 14, 37, 54, 44, 27, 5, 61, 30, 29, 11, 36, 12,
-	8, 49, 32, 58, 18, 51, 2, 26, 0, 43, 17, 40, 1, 33, 24, 59,
-	42, 56, 57, 35, 34, 25, 16, 10, 22, 60, 4, 54, 37, 36, 12, 30,
-	5, 53, 19, 29, 61, 21, 38, 28, 11, 52, 45, 14, 13, 62, 20, 27,
-	57, 33, 16, 42, 2, 35, 51, 10, 49, 56, 1, 24, 50, 17, 8, 43,
-	26, 40, 41, 48, 18, 9, 0, 59, 6, 44, 19, 38, 21, 20, 27, 14,
-	52, 37, 3, 13, 45, 5, 22, 12, 62, 36, 29, 61, 60, 46, 4, 11,
-	41, 17, 0, 26, 51, 48, 35, 59, 33, 40, 50, 8, 34, 1, 57, 56,
-	10, 24, 25, 32, 2, 58, 49, 43, 53, 28, 3, 22, 5, 4, 11, 61,
-	36, 21, 54, 60, 29, 52, 6, 27, 46, 20, 13, 45, 44, 30, 19, 62,
-	25, 1, 49, 10, 35, 32, 48, 43, 17, 24, 34, 57, 18, 50, 41, 40,
-	59, 8, 9, 16, 51, 42, 33, 56, 37, 12, 54, 6, 52, 19, 62, 45,
-	20, 5, 38, 44, 13, 36, 53, 11, 30, 4, 60, 29, 28, 14, 3, 46,
-	17, 58, 41, 2, 56, 24, 40, 35, 9, 16, 26, 49, 10, 42, 33, 32,
-	51, 0, 1, 8, 43, 34, 25, 48, 29, 4, 46, 61, 44, 11, 54, 37,
-	12, 60, 30, 36, 5, 28, 45, 3, 22, 27, 52, 21, 20, 6, 62, 38
-    };
-
-    reg int i;
-    reg int j;
-    reg int r;
-    reg unsb *k;
-
-    k = KeyToKS;
-
-    for (i = 0; i < 32; i++)	/* loops cache better ? - AEM */
-    {
-	r = 0;
-	for (j = 0; j < 24; j++)
-	{
-	    r |= crypt_block[*(k++)] << j;
-	}
-	KS[i] = TF_TO_SIXBIT (r);
+    for(j=0; j<25; j++) {
+      k = &keytab[0][0];
+      for(i=8; i--; ) {
+	H;
+      }
+      s=l1; l1=r1; r1=s; s=l2; l2=r2; r2=s;
     }
-}
 
-void
-XForm (saltvalue)
-    sbpb24 saltvalue;
-{
-    union
-    {
-	sbpb24 b[2];
-	sbpb6 c[8];
-    } sdata;
+    return output_conversion(l1, l2, r1, r2, salt);
+  }
 
-    /*
-     * Icarus Sparry, Bath - mod AEM
-     */
+/*
+ * UFC: ultra fast crypt(3) implementation
+ *
+ * Copyright (C) 1991, Michael Glad, email: glad@daimi.aau.dk
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * @(#)crypt_util.c	2.1 9/27/91, patchlevel 1
+ *
+ * Support routines
+ *
+ */
 
-#ifdef BIG_ENDIAN
-#define STEP --
-#define START &sdata.c[7]
-#define Dl sdata.b[1]
-#define Dh sdata.b[0]
-#else				/* LITTLE_ENDIAN */
-#define STEP ++
-#define START &sdata.c[0]
-#define Dl sdata.b[0]
-#define Dh sdata.b[1]
+#ifdef DEBUG
+#include <stdio.h>
 #endif
 
-    /*
-     * Thanks to Matt Bishop for this idea... AEM.
-     */
-
-#ifndef FDES_4BYTE
-#define SIZEFIX		0
-#define INDIRECT(a,b) 	(a)[b]
-#else
-#define SIZEFIX		2	/* "n" where 2^n == sizeof(sbpb24) */
-#define INDIRECT(a,b) 	(*((sbpb24 *)(((unsigned char *) a) + (b))))
+#define SYSV
+#ifdef SYSV
+#define bzero(addr, cnt)     memset(addr, 0, cnt)
+#define bcopy(from, to, len) memcpy(to, from, len)
 #endif
 
-    reg sbpb24 Rl;
-    reg sbpb24 Rh;
-    reg sbpb24 Ll;
-    reg sbpb24 Lh;
-    reg sbpb6 *dp;
+/* Permutation done once on the 56 bit 
+   key derived from the original 8 byte ASCII key.
+*/
+static unsigned long pc1[56] =
+  { 57, 49, 41, 33, 25, 17,  9,  1, 58, 50, 42, 34, 26, 18,
+    10,  2, 59, 51, 43, 35, 27, 19, 11,  3, 60, 52, 44, 36,
+    63, 55, 47, 39, 31, 23, 15,  7, 62, 54, 46, 38, 30, 22,
+    14,  6, 61, 53, 45, 37, 29, 21, 13,  5, 28, 20, 12,  4
+  };
 
-    int loop;
-    reg sbpb24 k;
-    sbpb24 *kp;
-    sbpb24 *kend;
-#ifdef FDES_8BYTE
-    reg sbpb24 tmpi;
-#endif	/* FDES_8BYTE */
+/* How much to rotate each 28 bit half of the pc1 permutated
+   56 bit key before using pc2 to give the i' key
+*/
+static unsigned long totrot[16] =
+  { 1, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 25, 27, 28 };
 
-    Ll = Lh = Rl = Rh = 0;
+/* Permutation giving the key of the i' DES round */
+static unsigned long pc2[48] =
+  { 14, 17, 11, 24,  1,  5,  3, 28, 15,  6, 21, 10,
+    23, 19, 12,  4, 26,  8, 16,  7, 27, 20, 13,  2,
+    41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48,
+    44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32
+  };
 
-    kend = &KS[32];
+/* Reference copy of the expansion table which selects
+   bits from the 32 bit intermediate result.
+*/
+static unsigned long eref[48] =
+  { 32,  1,  2,  3,  4,  5,  4,  5,  6,  7,  8,  9,
+     8,  9, 10, 11, 12, 13, 12, 13, 14, 15, 16, 17,
+    16, 17, 18, 19, 20, 21, 20, 21, 22, 23, 24, 25,
+    24, 25, 26, 27, 28, 29, 28, 29, 30, 31, 32,  1
+  };
+static unsigned long disturbed_e[48];
+static unsigned long e_inverse[64];
 
-    for (loop = 25; loop-- > 0; /* nothing */ )
-    {
-	for (kp = KS; kp < kend; /* nothing */ )
-	{
-	    /*
-	     * Oddly enough, direct addressing of dp slows things down, as
-	     * well as knackering portability - AEM
-	     */
+/* permutation done on the result of sbox lookups */
+static unsigned long perm32[32] = 
+  { 16,  7, 20, 21, 29, 12, 28, 17,  1, 15, 23, 26,  5, 18, 31, 10,
+     2,  8, 24, 14, 32, 27,  3,  9, 19, 13, 30,  6, 22, 11,  4, 25
+  };
 
-	    k = (Rl ^ Rh) & saltvalue;
-#ifndef FDES_8BYTE
-	    Dl = (k ^ Rl ^ *kp++) << SIZEFIX;
-	    Dh = (k ^ Rh ^ *kp++) << SIZEFIX;
-#else
-	    /* hack to make things work better - matthew kaufman */
-	    /* I haven't tried any of this - I don't have a cray... AEM */
-	    tmpi = (k ^ Rl ^ *kp++);
-	    sdata.c[3] = (tmpi >> 24) & 0x00ff;
-	    sdata.c[2] = (tmpi >> 16) & 0x00ff;
-	    sdata.c[1] = (tmpi >> 8) & 0x00ff;
-	    sdata.c[0] = (tmpi) & 0x00ff;
-	    tmpi = (k ^ Rh ^ *kp++);
-	    sdata.c[7] = (tmpi >> 24) & 0x00ff;
-	    sdata.c[6] = (tmpi >> 16) & 0x00ff;
-	    sdata.c[5] = (tmpi >> 8) & 0x00ff;
-	    sdata.c[4] = (tmpi) & 0x00ff;
-#endif	/* FDES_8BYTE */
+static unsigned long sbox[8][4][16]=
+      { { { 14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7 },
+          {  0, 15,  7,  4, 14,  2, 13,  1, 10,  6, 12, 11,  9,  5,  3,  8 },
+          {  4,  1, 14,  8, 13,  6,  2, 11, 15, 12,  9,  7,  3, 10,  5,  0 },
+          { 15, 12,  8,  2,  4,  9,  1,  7,  5, 11,  3, 14, 10,  0,  6, 13 }
+        },
 
-	    dp = START;
-	    Lh ^= INDIRECT (S0H, *dp);
-	    Ll ^= INDIRECT (S0L, *dp STEP);
-	    Lh ^= INDIRECT (S1H, *dp);
-	    Ll ^= INDIRECT (S1L, *dp STEP);
-	    Lh ^= INDIRECT (S2H, *dp);
-	    Ll ^= INDIRECT (S2L, *dp STEP);
-	    Lh ^= INDIRECT (S3H, *dp);
-	    Ll ^= INDIRECT (S3L, *dp STEP);
-	    Lh ^= INDIRECT (S4H, *dp);
-	    Ll ^= INDIRECT (S4L, *dp STEP);
-	    Lh ^= INDIRECT (S5H, *dp);
-	    Ll ^= INDIRECT (S5L, *dp STEP);
-	    Lh ^= INDIRECT (S6H, *dp);
-	    Ll ^= INDIRECT (S6L, *dp STEP);
-	    Lh ^= INDIRECT (S7H, *dp);
-	    Ll ^= INDIRECT (S7L, *dp STEP);
+        { { 15,  1,  8, 14,  6, 11,  3,  4,  9,  7,  2, 13, 12,  0,  5, 10 },
+          {  3, 13,  4,  7, 15,  2,  8, 14, 12,  0,  1, 10,  6,  9, 11,  5 },
+          {  0, 14,  7, 11, 10,  4, 13,  1,  5,  8, 12,  6,  9,  3,  2, 15 },
+          { 13,  8, 10,  1,  3, 15,  4,  2, 11,  6,  7, 12,  0,  5, 14,  9 }
+        },
 
-	    k = (Ll ^ Lh) & saltvalue;
-#ifndef FDES_8BYTE
-	    Dl = (k ^ Ll ^ *kp++) << SIZEFIX;
-	    Dh = (k ^ Lh ^ *kp++) << SIZEFIX;
-#else
-	    tmpi = (k ^ Ll ^ *kp++);
-	    sdata.c[3] = (tmpi >> 24) & 0x00ff;
-	    sdata.c[2] = (tmpi >> 16) & 0x00ff;
-	    sdata.c[1] = (tmpi >> 8) & 0x00ff;
-	    sdata.c[0] = (tmpi) & 0x00ff;
-	    tmpi = (k ^ Lh ^ *kp++);
-	    sdata.c[7] = (tmpi >> 24) & 0x00ff;
-	    sdata.c[6] = (tmpi >> 16) & 0x00ff;
-	    sdata.c[5] = (tmpi >> 8) & 0x00ff;
-	    sdata.c[4] = (tmpi) & 0x00ff;
-#endif	/* FDES_8BYTE */
+        { { 10,  0,  9, 14,  6,  3, 15,  5,  1, 13, 12,  7, 11,  4,  2,  8 },
+          { 13,  7,  0,  9,  3,  4,  6, 10,  2,  8,  5, 14, 12, 11, 15,  1 },
+          { 13,  6,  4,  9,  8, 15,  3,  0, 11,  1,  2, 12,  5, 10, 14,  7 },
+          {  1, 10, 13,  0,  6,  9,  8,  7,  4, 15, 14,  3, 11,  5,  2, 12 }
+        },
 
-	    dp = START;
-	    Rh ^= INDIRECT (S0H, *dp);
-	    Rl ^= INDIRECT (S0L, *dp STEP);
-	    Rh ^= INDIRECT (S1H, *dp);
-	    Rl ^= INDIRECT (S1L, *dp STEP);
-	    Rh ^= INDIRECT (S2H, *dp);
-	    Rl ^= INDIRECT (S2L, *dp STEP);
-	    Rh ^= INDIRECT (S3H, *dp);
-	    Rl ^= INDIRECT (S3L, *dp STEP);
-	    Rh ^= INDIRECT (S4H, *dp);
-	    Rl ^= INDIRECT (S4L, *dp STEP);
-	    Rh ^= INDIRECT (S5H, *dp);
-	    Rl ^= INDIRECT (S5L, *dp STEP);
-	    Rh ^= INDIRECT (S6H, *dp);
-	    Rl ^= INDIRECT (S6L, *dp STEP);
-	    Rh ^= INDIRECT (S7H, *dp);
-	    Rl ^= INDIRECT (S7L, *dp STEP);
-	}
+        { {  7,  13, 14,  3,  0,  6,  9, 10,  1,  2,  8,  5, 11, 12,  4, 15 },
+          { 13,  8,  11,  5,  6, 15,  0,  3,  4,  7,  2, 12,  1, 10, 14,  9 },
+          { 10,  6,   9,  0, 12, 11,  7, 13, 15,  1,  3, 14,  5,  2,  8,  4 },
+          {  3, 15,   0,  6, 10,  1, 13,  8,  9,  4,  5, 11, 12,  7,  2, 14 }
+        },
 
-	Ll ^= Rl;
-	Lh ^= Rh;
-	Rl ^= Ll;
-	Rh ^= Lh;
-	Ll ^= Rl;
-	Lh ^= Rh;
+        { {  2, 12,   4,  1,  7, 10, 11,  6,  8,  5,  3, 15, 13,  0, 14,  9 },
+          { 14, 11,   2, 12,  4,  7, 13,  1,  5,  0, 15, 10,  3,  9,  8,  6 },
+          {  4,  2,   1, 11, 10, 13,  7,  8, 15,  9, 12,  5,  6,  3,  0, 14 },
+          { 11,  8,  12,  7,  1, 14,  2, 13,  6, 15,  0,  9, 10,  4,  5,  3 }
+        },
+
+        { { 12,  1, 10, 15,  9,  2,  6,  8,  0, 13,  3,  4, 14,  7,  5, 11 },
+          { 10, 15,  4,  2,  7, 12,  9,  5,  6,  1, 13, 14,  0, 11,  3,  8 },
+          {  9, 14, 15,  5,  2,  8, 12,  3,  7,  0,  4, 10,  1, 13, 11,  6 },
+          {  4,  3,  2, 12,  9,  5, 15, 10, 11, 14,  1,  7,  6,  0,  8, 13 }
+        },
+
+        { {  4, 11,  2, 14, 15,  0,  8, 13,  3, 12,  9,  7,  5, 10,  6,  1 },
+          { 13,  0, 11,  7,  4,  9,  1, 10, 14,  3,  5, 12,  2, 15,  8,  6 },
+          {  1,  4, 11, 13, 12,  3,  7, 14, 10, 15,  6,  8,  0,  5,  9,  2 },
+          {  6, 11, 13,  8,  1,  4, 10,  7,  9,  5,  0, 15, 14,  2,  3, 12 }
+        },
+
+        { { 13,  2,  8,  4,  6, 15, 11,  1, 10,  9,  3, 14,  5,  0, 12,  7 },
+          {  1, 15, 13,  8, 10,  3,  7,  4, 12,  5,  6, 11,  0, 14,  9,  2 },
+          {  7, 11, 4,   1,  9, 12, 14,  2,  0,  6, 10, 13, 15,  3,  5,  8 },
+          {  2,  1, 14,  7,  4, 10,  8, 13, 15, 12,  9,  0,  3,  5,  6, 11 }
+        }
+      };
+
+#ifdef notdef
+
+/* This is the initial permutation matrix -- we have no
+   use for it, but it is needed if you will develop
+   this module into a general DES package.
+*/
+static unsigned char inital_perm[64] = 
+  { 58, 50, 42, 34, 26, 18, 10,  2, 60, 52, 44, 36, 28, 20, 12, 4,
+    62, 54, 46, 38, 30, 22, 14,  6, 64, 56, 48, 40, 32, 24, 16, 8,
+    57, 49, 41, 33, 25, 17,  9,  1, 59, 51, 43, 35, 27, 19, 11, 3,
+    61, 53, 45, 37, 29, 21, 13,  5, 63, 55, 47, 39, 31, 23, 15, 7
+  };
+
+#endif
+
+/* Final permutation matrix -- not used directly */
+static unsigned char final_perm[64] =
+  { 40,  8, 48, 16, 56, 24, 64, 32, 39,  7, 47, 15, 55, 23, 63, 31,
+    38,  6, 46, 14, 54, 22, 62, 30, 37,  5, 45, 13, 53, 21, 61, 29,
+    36,  4, 44, 12, 52, 20, 60, 28, 35,  3, 43, 11, 51, 19, 59, 27,
+    34,  2, 42, 10, 50, 18, 58, 26, 33,  1, 41,  9, 49, 17, 57, 25
+  };
+
+/* The 16 DES keys in BITMASK format */
+unsigned long keytab[16][2];
+
+#define ascii_to_bin(c) ((c)>='a'?(c-59):(c)>='A'?((c)-53):(c)-'.')
+#define bin_to_ascii(c) ((c)>=38?((c)-38+'a'):(c)>=12?((c)-12+'A'):(c)+'.')
+
+/* Macro to set a bit (0..23) */
+#define BITMASK(i) ( (1<<(11-(i)%12+3)) << ((i)<12?16:0) )
+
+/* sb arrays:
+
+   Workhorses of the inner loop of the DES implementation.
+   They do sbox lookup, shifting of this  value, 32 bit
+   permutation and E permutation for the next round.
+
+   Kept in 'BITMASK' format.
+
+*/
+
+unsigned long sb0[8192],sb1[8192],sb2[8192],sb3[8192];
+static unsigned long *sb[4] = {sb0,sb1,sb2,sb3}; 
+
+/* eperm32tab: do 32 bit permutation and E selection
+
+   The first index is the byte number in the 32 bit value to be permuted
+    -  second  -   is the value of this byte
+    -  third   -   selects the two 32 bit values
+
+    The table is used and generated internally in init_des to speed it up
+
+*/
+static unsigned long eperm32tab[4][256][2];
+
+/* mk_keytab_table: fast way of generating keytab from ASCII key
+
+   The first  index is the byte number in the 8 byte ASCII key
+    -  second   -    -  -  current DES round i.e. the key number
+    -  third    -   distinguishes between the two 24 bit halfs of
+                    the selected key
+    -  fourth   -   selects the 7 bits actually used of each byte
+
+   The table is kept in the format generated by the BITMASK macro
+
+*/
+static unsigned long mk_keytab_table[8][16][2][128];
+
+
+/* efp: undo an extra e selection and do final
+        permutation giving the DES result.
+  
+        Invoked 6 bit a time on two 48 bit values
+        giving two 32 bit longs.
+*/
+static unsigned long efp[16][64][2];
+
+
+static unsigned char bytemask[8]  =
+  { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+
+
+static unsigned long longmask[32] = 
+  { 0x80000000, 0x40000000, 0x20000000, 0x10000000,
+    0x08000000, 0x04000000, 0x02000000, 0x01000000,
+    0x00800000, 0x00400000, 0x00200000, 0x00100000,
+    0x00080000, 0x00040000, 0x00020000, 0x00010000,
+    0x00008000, 0x00004000, 0x00002000, 0x00001000,
+    0x00000800, 0x00000400, 0x00000200, 0x00000100,
+    0x00000080, 0x00000040, 0x00000020, 0x00000010,
+    0x00000008, 0x00000004, 0x00000002, 0x00000001
+  };
+
+#ifdef DEBUG
+
+/* For debugging */
+
+pr_bits(a,n)
+  unsigned long *a;
+  unsigned long n;
+  { unsigned long i,j,t,tmp;
+    n/=8;
+    for(i=0; i<n; i++)
+      { tmp=0;
+	for(j=0; j<8; j++)
+	  { t=8*i+j;
+	    tmp|=(a[t/24] & BITMASK(t % 24))?bytemask[j]:0;
+	  }
+	(void)printf("%02x ",tmp);
+      }
+    printf(" ");
+  }
+
+static set_bits(v,b)
+  unsigned long v;
+  unsigned long *b;
+  { unsigned long i;
+    *b = 0;
+    for(i=0; i<24; i++)
+      if(v & longmask[8+i])
+	*b |= BITMASK(i);
+  }
+
+#endif
+
+static unsigned long initialized = 0;
+
+/* lookup a 6 bit value in sbox */
+
+#define s_lookup(i,s) sbox[(i)][(((s)>>4) & 0x2)|((s) & 0x1)][((s)>>1) & 0xf];
+
+/* Generate the mk_keytab_table once in a program execution */
+
+void init_des()
+  { unsigned long tbl_long,bit_within_long,comes_from_bit;
+    unsigned long bit,sg,j;
+    unsigned long bit_within_byte,key_byte,byte_value;
+    unsigned long round,mask;
+
+    bzero((char*)mk_keytab_table,sizeof mk_keytab_table);
+    
+    for(round=0; round<16; round++)
+      for(bit=0; bit<48; bit++)
+        { tbl_long        = bit / 24;
+          bit_within_long = bit % 24;
+
+          /* from which bit in the key halves does it origin? */
+          comes_from_bit = pc2[bit] - 1;
+
+          /* undo the rotation done before pc2 */
+          if(comes_from_bit>=28)
+            comes_from_bit =  28 + (comes_from_bit + totrot[round]) % 28;
+          else
+            comes_from_bit =       (comes_from_bit + totrot[round]) % 28;
+
+          /* undo the initial key half forming permutation */
+          comes_from_bit = pc1[comes_from_bit] - 1;
+
+          /* Now 'comes_from_bit' is the correct number (0..55) 
+             of the keybit from which the bit being traced
+             in key 'round' comes from
+          */
+ 
+          key_byte        = comes_from_bit  / 8;
+          bit_within_byte = (comes_from_bit % 8)+1;
+
+          mask = bytemask[bit_within_byte];
+
+          for(byte_value=0; byte_value<128; byte_value++)
+            if(byte_value & mask)
+              mk_keytab_table[key_byte][round][tbl_long][byte_value] |= 
+		BITMASK(bit_within_long);
+        }
+
+    /* Now generate the table used to do an combined
+       32 bit permutation and e expansion
+
+       We use it because we have to permute 16384 32 bit
+       longs into 48 bit in order to initialize sb.
+
+       Looping 48 rounds per permutation becomes 
+       just too slow...
+
+    */
+
+    bzero((char*)eperm32tab,sizeof eperm32tab);
+    for(bit=0; bit<48; bit++)
+      { unsigned long mask1,comes_from;
+	
+        comes_from = perm32[eref[bit]-1]-1;
+        mask1      = bytemask[comes_from % 8];
+	
+        for(j=256; j--;)
+          if(j & mask1)
+            eperm32tab[comes_from/8][j][bit/24] |= BITMASK(bit % 24);
+      }
+    
+    /* Create the sb tables:
+
+       For each 12 bit segment of an 48 bit intermediate
+       result, the sb table precomputes the two 4 bit
+       values of the sbox lookups done with the two 6
+       bit halves, shifts them to their proper place,
+       sends them through perm32 and finally E expands
+       them so that they are ready for the next
+       DES round.
+
+       The value looked up is to be xored onto the
+       two 48 bit right halves.
+    */
+
+    for(sg=0; sg<4; sg++)
+      { unsigned long j1,j2;
+        unsigned long s1,s2;
+    
+        for(j1=0; j1<64; j1++)
+          { s1 = s_lookup(2*sg,j1);
+            for(j2=0; j2<64; j2++)
+              { unsigned long to_permute,inx;
+
+                s2         = s_lookup(2*sg+1,j2);
+                to_permute = ((s1<<4) | s2) << (24-8*sg);
+                inx        = ((j1<<6)  | j2) << 1;
+
+                sb[sg][inx  ]  = eperm32tab[0][(to_permute >> 24) & 0xff][0];
+                sb[sg][inx+1]  = eperm32tab[0][(to_permute >> 24) & 0xff][1];
+  
+                sb[sg][inx  ] |= eperm32tab[1][(to_permute >> 16) & 0xff][0];
+                sb[sg][inx+1] |= eperm32tab[1][(to_permute >> 16) & 0xff][1];
+  
+                sb[sg][inx  ] |= eperm32tab[2][(to_permute >>  8) & 0xff][0];
+                sb[sg][inx+1] |= eperm32tab[2][(to_permute >>  8) & 0xff][1];
+                
+                sb[sg][inx  ] |= eperm32tab[3][(to_permute)       & 0xff][0];
+                sb[sg][inx+1] |= eperm32tab[3][(to_permute)       & 0xff][1];
+              }
+          }
+      }  
+    initialized++;
+  }
+
+/* Setup the unit for a new salt
+   Hopefully we'll not see a new salt in each crypt call.
+*/
+
+static unsigned char current_salt[3]="&&"; /* invalid value */
+static unsigned long oldsaltbits = 0;
+
+void shuffle_sb(k, saltbits)
+  unsigned long *k, saltbits;
+  { int j, x;
+    for(j=4096; j--;) {
+      x = (k[0] ^ k[1]) & saltbits;
+      *k++ ^= x;
+      *k++ ^= x;
     }
+  }
 
-    /*
-     * for reasons that I cannot explain, if I insert the contents of the
-     * UnXForm function right HERE, making the tweaks as necessary to avoid
-     * using out96[] to pass data, I LOSE 30% of my speed.  I don't know why.
-     * Hence, I continue to use out96[]...
-     */
-    {
-	reg sbpb24 *qp;
-	qp = out96;
-	*qp++ = Ll;
-	*qp++ = Lh;
-	*qp++ = Rl;
-	*qp++ = Rh;
-    }
-}
+void setup_salt(s)
+  char *s;
+  { unsigned long i,j,saltbits;
 
-void
-UnXForm ()
-{
-    reg obpb1 *ptr;
-    reg sbpb24 Rl;
-    reg sbpb24 Rh;
-    reg sbpb24 Ll;
-    reg sbpb24 Lh;
+    if(!initialized)
+      init_des();
 
-    Ll = SIXBIT_TO_TF (out96[0]);
-    Lh = SIXBIT_TO_TF (out96[1]);
-    Rl = SIXBIT_TO_TF (out96[2]);
-    Rh = SIXBIT_TO_TF (out96[3]);
-    ptr = crypt_block;
+    if(s[0]==current_salt[0] && s[1]==current_salt[1])
+      return;
+    current_salt[0]=s[0]; current_salt[1]=s[1];
 
-    *(ptr++) = Rl & 0x000400L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000400L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x400000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x400000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000400L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000400L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x400000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x400000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000200L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000200L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x200000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x200000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000200L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000200L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x200000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x200000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000100L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000100L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x100000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x100000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000100L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000100L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x100000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x100000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000080L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000080L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x080000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x080000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000080L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000080L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x080000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x080000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000010L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000010L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x010000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x010000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000010L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000010L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x010000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x010000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000008L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000008L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x008000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x008000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000008L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000008L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x008000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x008000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000004L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000004L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x004000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x004000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000004L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000004L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x004000L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x004000L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x000002L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x000002L ? 0x01 : 0;
-    *(ptr++) = Rl & 0x002000L ? 0x01 : 0;
-    *(ptr++) = Ll & 0x002000L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x000002L ? 0x01 : 0;
-    *(ptr++) = Lh & 0x000002L ? 0x01 : 0;
-    *(ptr++) = Rh & 0x002000L ? 0x01 : 0;
-    *ptr = Lh & 0x002000L ? 0x01 : 0;
-}
+    /* This is the only crypt change to DES:
+       entries are swapped in the expansion table
+       according to the bits set in the salt.
+    */
 
-char *
-fcrypt (pw, salt)
-    char *pw;
-    char *salt;
-{
-    /* Table lookups for salts reduce fcrypt() overhead dramatically */
-    static sbpb24 salt0[] =
-    {
-	18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
-	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-	50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 1,
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 5, 6, 7, 8, 9, 10,
-	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 32, 33, 34, 35, 36,
-	37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
-	53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 1, 2, 3, 4,
-	5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-	21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-	37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
-	53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 1, 2, 3, 4,
-	5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-	21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-	37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
-	53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 1, 2, 3, 4
-    };
-    static sbpb24 salt1[] =
-    {
-	1152, 1216, 1280, 1344, 1408, 1472, 1536, 1600,
-	1664, 1728, 1792, 1856, 1920, 1984, 2048, 2112,
-	2176, 2240, 2304, 2368, 2432, 2496, 2560, 2624,
-	2688, 2752, 2816, 2880, 2944, 3008, 3072, 3136,
-	3200, 3264, 3328, 3392, 3456, 3520, 3584, 3648,
-	3712, 3776, 3840, 3904, 3968, 4032, 0, 64,
-	128, 192, 256, 320, 384, 448, 512, 576,
-	640, 704, 320, 384, 448, 512, 576, 640,
-	704, 768, 832, 896, 960, 1024, 1088, 1152,
-	1216, 1280, 1344, 1408, 1472, 1536, 1600, 1664,
-	1728, 1792, 1856, 1920, 1984, 2048, 2112, 2176,
-	2240, 2304, 2368, 2048, 2112, 2176, 2240, 2304,
-	2368, 2432, 2496, 2560, 2624, 2688, 2752, 2816,
-	2880, 2944, 3008, 3072, 3136, 3200, 3264, 3328,
-	3392, 3456, 3520, 3584, 3648, 3712, 3776, 3840,
-	3904, 3968, 4032, 0, 64, 128, 192, 256,
-	320, 384, 448, 512, 576, 640, 704, 768,
-	832, 896, 960, 1024, 1088, 1152, 1216, 1280,
-	1344, 1408, 1472, 1536, 1600, 1664, 1728, 1792,
-	1856, 1920, 1984, 2048, 2112, 2176, 2240, 2304,
-	2368, 2432, 2496, 2560, 2624, 2688, 2752, 2816,
-	2880, 2944, 3008, 3072, 3136, 3200, 3264, 3328,
-	3392, 3456, 3520, 3584, 3648, 3712, 3776, 3840,
-	3904, 3968, 4032, 0, 64, 128, 192, 256,
-	320, 384, 448, 512, 576, 640, 704, 768,
-	832, 896, 960, 1024, 1088, 1152, 1216, 1280,
-	1344, 1408, 1472, 1536, 1600, 1664, 1728, 1792,
-	1856, 1920, 1984, 2048, 2112, 2176, 2240, 2304,
-	2368, 2432, 2496, 2560, 2624, 2688, 2752, 2816,
-	2880, 2944, 3008, 3072, 3136, 3200, 3264, 3328,
-	3392, 3456, 3520, 3584, 3648, 3712, 3776, 3840,
-	3904, 3968, 4032, 0, 64, 128, 192, 256
-    };
+    saltbits=0;
+    bcopy((char*)eref,(char*)disturbed_e,sizeof eref);
+    for(i=0; i<2; i++)
+      { long c=ascii_to_bin(s[i]);
+	if(c<0 || c>63)
+	  c=0;
+        for(j=0; j<6; j++)
+          if((c>>j) & 0x1)
+            { disturbed_e[6*i+j   ]=eref[6*i+j+24];
+              disturbed_e[6*i+j+24]=eref[6*i+j   ];
+	      saltbits |= BITMASK(6*i+j);
+            }
+      }
 
-    /* final perutation desalting */
-    static obpb1 final[] =
-    {
-	46, 47, 48, 49, 50, 51, 52, 53,
-	54, 55, 56, 57, 65, 66, 67, 68,
-	69, 70, 71, 72, 73, 74, 75, 76,
-	77, 78, 79, 80, 81, 82, 83, 84,
-	85, 86, 87, 88, 89, 90, 97, 98,
-	99, 100, 101, 102, 103, 104, 105, 106,
-	107, 108, 109, 110, 111, 112, 113, 114,
-	115, 116, 117, 118, 119, 120, 121, 122,
-	123, 124, 125, 126, 127, 128, 129, 130,
-	131, 132, 133, 134, 135, 136, 137, 138,
-	139, 140, 141, 142, 143, 144, 145, 146,
-	147, 148, 149, 150, 151, 152, 153, 154,
-	155, 156, 157, 158, 159, 160, 161, 162,
-	163, 164, 165, 166, 167, 168, 169, 170,
-	171, 172, 173, 174, 175, 176, 177, 178,
-	179, 180, 181, 182, 183, 184, 185, 186,
-	187, 188, 189, 190, 191, 192, 193, 194,
-	195, 196, 197, 198, 199, 200, 201, 202,
-	203, 204, 205, 206, 207, 208, 209, 210,
-	211, 212, 213, 214, 215, 216, 217, 218,
-	219, 220, 221, 222, 223, 224, 225, 226,
-	227, 228, 229, 230, 231, 232, 233, 234,
-	235, 236, 237, 238, 239, 240, 241, 242,
-	243, 244, 245, 246, 247, 248, 249, 250,
-	251, 252, 253, 254, 255,
-    /* Truncate overflow bits at 256 */
-	0, 1, 2, 3, 4, 5, 6, 7,
-	8, 9, 10, 11, 12, 13, 14, 15,
-	16, 17, 18, 19, 20, 21, 22, 23,
-	24, 25, 26, 27, 28, 29, 30, 31,
-	32, 33, 34, 35, 36, 37, 38, 39,
-	40, 41, 42, 43, 44, 45, 46, 47,
-	48, 49, 50, 51, 52, 53, 54, 55,
-	56, 57, 58
-    };
+    /* Permute the sb table values
+       to reflect the changed e
+       selection table
+    */
 
-    reg int i, j, k;
-    reg long int *lip;
-    sbpb24 saltvalue;
+    shuffle_sb(sb0, oldsaltbits ^ saltbits); 
+    shuffle_sb(sb1, oldsaltbits ^ saltbits);
+    shuffle_sb(sb2, oldsaltbits ^ saltbits);
+    shuffle_sb(sb3, oldsaltbits ^ saltbits);
 
-#ifdef BUILTIN_CLEAR
-    lip = (long int *) crypt_block;
-    for (i = (sizeof (crypt_block) / sizeof (long int)); i > 0; i--)
-    {
-	*(lip++) = 0L;
-    }
-#else				/* BUILTIN_CLEAR */
-#ifdef BZERO
-    bzero (crypt_block, 66);
-#else				/* BZERO */
-    for (i = 0; i < 66; i++)
-    {
-	crypt_block[i] = '\0';
-    }
-#endif				/* BZERO */
-#endif				/* BUILTIN_CLEAR */
+    oldsaltbits = saltbits;
 
-    for (i = 0; (k = *pw) && i < 64; pw++)
-    {
-	crypt_block[i++] = (k >> 6) & 01;
-	crypt_block[i++] = (k >> 5) & 01;
-	crypt_block[i++] = (k >> 4) & 01;
-	crypt_block[i++] = (k >> 3) & 01;
-	crypt_block[i++] = (k >> 2) & 01;
-	crypt_block[i++] = (k >> 1) & 01;
-	crypt_block[i++] = (k >> 0) & 01;
-	i++;			/* have to skip one here (parity bit) */
-    }
+    /* Create an inverse matrix for disturbed_e telling
+       where to plug out bits if undoing disturbed_e
+    */
 
-    fsetkey ( /* crypt_block */ );
+    for(i=48; i--;)
+      { e_inverse[disturbed_e[i]-1   ] = i;
+	e_inverse[disturbed_e[i]-1+32] = i+48;
+      }
 
-#ifdef BUILTIN_CLEAR
-    lip = (long int *) crypt_block;
-    for (i = (sizeof (crypt_block) / sizeof (long int)); i > 0; i--)
-    {
-	*(lip++) = 0L;
-    }
-#else				/* BUILTIN_CLEAR */
-#ifdef BZERO
-    bzero (crypt_block, 66);
-#else				/* BZERO */
-    for (i = 0; i < 66; i++)
-    {
-	crypt_block[i] = '\0';
-    }
-#endif				/* BZERO */
-#endif				/* BUILTIN_CLEAR */
+    /* create efp: the matrix used to
+       undo the E expansion and effect final permutation
+    */
 
-    iobuf[0] = salt[0];
-    iobuf[1] = salt[1];
+    bzero((char*)efp,sizeof efp);
+    for(i=0; i<64; i++)
+      { unsigned long o_bit,o_long;
+        unsigned long word_value,mask1,mask2,comes_from_f_bit,comes_from_e_bit;
+        unsigned long comes_from_word,bit_within_word;
 
-    saltvalue = salt0[iobuf[0]] | salt1[iobuf[1]];
-    saltvalue = TF_TO_SIXBIT (saltvalue);
+	/* See where bit i belongs in the two 32 bit long's */
+	o_long = i / 32; /* 0..1  */
+	o_bit  = i % 32; /* 0..31 */
 
-    XForm (saltvalue);
-    UnXForm ();
+	/* And find a bit in the e permutated value setting this bit.
 
-    for (i = 0; i < 11; i++)
-    {
-	k = 0;
+	   Note: the e selection may have selected the same bit several
+	   times. By the initialization of e_inverse, we only look
+	   for one specific instance.
+	*/
+        comes_from_f_bit = final_perm[i]-1;             /* 0..63 */
+	comes_from_e_bit = e_inverse[comes_from_f_bit]; /* 0..95 */
+        comes_from_word  = comes_from_e_bit / 6;        /* 0..15 */
+        bit_within_word  = comes_from_e_bit % 6;        /* 0..5  */
 
-	for (j = 0; j < 6; j++)
-	{
-	    k = (k << 1) | crypt_block[SIX_TIMES (i) + j];
-	}
-	iobuf[i + 2] = final[k];
-    }
+	mask1 = longmask[bit_within_word+26];
+	mask2 = longmask[o_bit];
 
-    iobuf[i + 2] = 0;
+        for(word_value=64; word_value--;)
+          if(word_value & mask1)
+            efp[comes_from_word][word_value][o_long] |= mask2;
 
-    if (iobuf[1] == 0)
-    {
-	iobuf[1] = iobuf[0];
-    }
-    return (iobuf);
-}
-/********* INITIALISATION ROUTINES *********/
+      }
 
-fbpb4
-lookupS (tableno, t6bits)
-    unsl tableno;
-    sbpb6R t6bits;
-{
-    static fbpb4R S[8][64] =
-    {
-	14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7,
-	0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8,
-	4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0,
-	15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13,
+  }
 
-	15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10,
-	3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5,
-	0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15,
-	13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9,
+void mk_keytab(key)
+  char *key;
+  { unsigned long i,j;
+    unsigned long *k,*mkt;
+    char t;
 
-	10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8,
-	13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1,
-	13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7,
-	1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12,
+    bzero((char*)keytab, sizeof keytab);
+    mkt = &mk_keytab_table[0][0][0][0];
 
-	7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15,
-	13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9,
-	10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4,
-	3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14,
+    for(i=0; (t=(*key++) & 0x7f) && i<8; i++)
+      for(j=0,k = &keytab[0][0]; j<16; j++)
+        { *k++ |= mkt[t]; mkt += 128;
+          *k++ |= mkt[t]; mkt += 128;
+        }
+    for(; i<8; i++)
+      for(j=0,k = &keytab[0][0]; j<16; j++)
+        { *k++ |= mkt[0]; mkt += 128;
+          *k++ |= mkt[0]; mkt += 128;
+        }
+  }
 
-	2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9,
-	14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6,
-	4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14,
-	11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3,
+/* Do final permutations and convert to ASCII */
 
-	12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11,
-	10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8,
-	9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6,
-	4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13,
+char *output_conversion(l1,l2,r1,r2,salt)
+  unsigned long l1,l2,r1,r2;
+  char *salt;
+  { static char outbuf[14];
+    unsigned long i;
+    unsigned long s,v1,v2;
 
-	4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1,
-	13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6,
-	1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2,
-	6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12,
+    /* Unfortunately we've done an extra E
+       expansion -- undo it at the same time.
+    */
 
-	13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7,
-	1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2,
-	7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,
-	2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11,
-    };
-    sbpb6 fixed6bits;
-    fbpb4R r;
-    fbpb4 fixedr;
+    v1=v2=0; l1 >>= 3; l2 >>= 3; r1 >>= 3; r2 >>= 3;
 
-    fixed6bits = (((t6bits >> 0) & 01) << 5) +
-	(((t6bits >> 1) & 01) << 3) +
-	(((t6bits >> 2) & 01) << 2) +
-	(((t6bits >> 3) & 01) << 1) +
-	(((t6bits >> 4) & 01) << 0) +
-	(((t6bits >> 5) & 01) << 4);
+    v1 |= efp[ 3][ l1       & 0x3f][0]; v2 |= efp[ 3][ l1 & 0x3f][1];
+    v1 |= efp[ 2][(l1>>=6)  & 0x3f][0]; v2 |= efp[ 2][ l1 & 0x3f][1];
+    v1 |= efp[ 1][(l1>>=10) & 0x3f][0]; v2 |= efp[ 1][ l1 & 0x3f][1];
+    v1 |= efp[ 0][(l1>>=6)  & 0x3f][0]; v2 |= efp[ 0][ l1 & 0x3f][1];
 
-    r = S[tableno][fixed6bits];
+    v1 |= efp[ 7][ l2       & 0x3f][0]; v2 |= efp[ 7][ l2 & 0x3f][1];
+    v1 |= efp[ 6][(l2>>=6)  & 0x3f][0]; v2 |= efp[ 6][ l2 & 0x3f][1];
+    v1 |= efp[ 5][(l2>>=10) & 0x3f][0]; v2 |= efp[ 5][ l2 & 0x3f][1];
+    v1 |= efp[ 4][(l2>>=6)  & 0x3f][0]; v2 |= efp[ 4][ l2 & 0x3f][1];
 
-    fixedr = (((r >> 3) & 01) << 0) +
-	(((r >> 2) & 01) << 1) +
-	(((r >> 1) & 01) << 2) +
-	(((r >> 0) & 01) << 3);
+    v1 |= efp[11][ r1       & 0x3f][0]; v2 |= efp[11][ r1 & 0x3f][1];
+    v1 |= efp[10][(r1>>=6)  & 0x3f][0]; v2 |= efp[10][ r1 & 0x3f][1];
+    v1 |= efp[ 9][(r1>>=10) & 0x3f][0]; v2 |= efp[ 9][ r1 & 0x3f][1];
+    v1 |= efp[ 8][(r1>>=6)  & 0x3f][0]; v2 |= efp[ 8][ r1 & 0x3f][1];
 
-    return (fixedr);
-}
+    v1 |= efp[15][ r2       & 0x3f][0]; v2 |= efp[15][ r2 & 0x3f][1];
+    v1 |= efp[14][(r2>>=6)  & 0x3f][0]; v2 |= efp[14][ r2 & 0x3f][1];
+    v1 |= efp[13][(r2>>=10) & 0x3f][0]; v2 |= efp[13][ r2 & 0x3f][1];
+    v1 |= efp[12][(r2>>=6)  & 0x3f][0]; v2 |= efp[12][ r2 & 0x3f][1];
+    
+    outbuf[0] = salt[0];
+    outbuf[1] = salt[1] ? salt[1] : salt[0];
 
-void
-init (tableno, lowptr, highptr)
-    unsl tableno;
-    sbpb24 *lowptr, *highptr;
-{
+    for(i=0; i<5; i++)
+      outbuf[i+2] = bin_to_ascii((v1>>(26-6*i)) & 0x3f);
 
-    static unsb P[] =
-    {
-	15, 6, 19, 20,
-	28, 11, 27, 16,
-	0, 14, 22, 25,
-	4, 17, 30, 9,
-	1, 7, 23, 13,
-	31, 26, 2, 8,
-	18, 12, 29, 5,
-	21, 10, 3, 24,
-    };
+    s  = (v2 & 0xf) << 2;             /* Save the rightmost 4 bit a moment */
+    v2 = (v2>>2) | ((v1 & 0x3)<<30);  /* Shift two bits of v1 onto v2      */
 
-    static unsb E[] =
-    {
-	31, 0, 1, 2, 3, 4,
-	3, 4, 5, 6, 7, 8,
-	7, 8, 9, 10, 11, 12,
-	11, 12, 13, 14, 15, 16,
-	15, 16, 17, 18, 19, 20,
-	19, 20, 21, 22, 23, 24,
-	23, 24, 25, 26, 27, 28,
-	27, 28, 29, 30, 31, 0,
-    };
+    for(i=5; i<10; i++)
+      outbuf[i+2] = bin_to_ascii((v2>>(56-6*i)) & 0x3f);
 
-    static obpb1 tmp32[32];
-    static obpb1 tmpP32[32];
-    static obpb1 tmpE[48];
+    outbuf[12] = bin_to_ascii(s);
+    outbuf[13] = 0;
 
-    int j, k, i;
-    int tablenoX4;
-    reg sbpb24 spare24;
+    return outbuf;
+  }
 
-    tablenoX4 = tableno * 4;
+char *crypt();
 
-    for (j = 0; j < 64; j++)
-    {
-	k = lookupS (tableno, j);
+char *fcrypt(key, salt)
+  char *key;
+  char *salt;
+  { return crypt(key, salt);
+  }
 
-	for (i = 0; i < 32; i++)
-	{
-	    tmp32[i] = 0;
-	}
-	for (i = 0; i < 4; i++)
-	{
-	    tmp32[tablenoX4 + i] = (k >> i) & 01;
-	}
-	for (i = 0; i < 32; i++)
-	{
-	    tmpP32[i] = tmp32[P[i]];
-	}
-	for (i = 0; i < 48; i++)
-	{
-	    tmpE[i] = tmpP32[E[i]];
-	}
-
-	lowptr[j] = 0;
-	highptr[j] = 0;
-
-	for (i = 0; i < 24; i++)
-	{
-	    lowptr[j] |= tmpE[i] << i;
-	}
-	for (k = 0, i = 24; i < 48; i++, k++)
-	{
-	    highptr[j] |= tmpE[i] << k;
-	}
-
-	spare24 = lowptr[j];	/* to allow for macro expansion */
-	lowptr[j] = TF_TO_SIXBIT (spare24);
-	spare24 = highptr[j];	/* to allow for macro expansion */
-	highptr[j] = TF_TO_SIXBIT (spare24);
-    }
-}
-init_des ()
-{
-    init (0, S0L, S0H);
-    init (1, S1L, S1H);
-    init (2, S2L, S2H);
-    init (3, S3L, S3H);
-    init (4, S4L, S4H);
-    init (5, S5L, S5H);
-    init (6, S6L, S6H);
-    init (7, S7L, S7H);
-}
