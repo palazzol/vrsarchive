@@ -1,6 +1,7 @@
 /*
  *	xbm2imp.c - convert X11 bitmap into IMPRESS bitmap
 */
+#include <ctype.h>
 #include <stdio.h>
 
 /*
@@ -48,10 +49,36 @@ unsigned char revbyte[] = {
 int
 getbyte(fp)
 FILE *fp;
-{	int val;
+{	int val, c;
 
+#ifdef SLOWWAY
 	if (fscanf(fp, " 0x%x %*[,}]", &val) != 1)
 		return(0x00);	/* Nice and white like the background */
+#else
+	while ((c = getc(fp)) != EOF)
+		if (!isspace(c))
+			break;
+	if (c != '0')
+		return(0x00);
+	if (getc(fp) != 'x')
+		return(0x00);
+	if ((c = getc(fp)) == EOF)
+		return(0x00);
+	if (isdigit(c))
+		val = (c & 0xF) << 4;	/* Assumes ASCII */
+	else
+		val = (9+(c&0xF)) << 4;	/* Assumes ASCII */
+	if ((c = getc(fp)) == EOF)
+		return(0x00);
+	if (isdigit(c))
+		val += (c & 0xF);	/* Assumes ASCII */
+	else
+		val += 9 + (c&0xF);	/* Assumes ASCII */
+	while ((c = getc(fp)) != EOF)
+		if (!isspace(c))
+			break;
+	/* Assume c is either ',' or '}' */
+#endif
 	return(val);
 }
 
