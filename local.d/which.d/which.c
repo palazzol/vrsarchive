@@ -16,12 +16,9 @@ should still work out Ok.
 	..!uw-beaver!teltone!larry
 */
 #include <stdio.h>
-#ifdef M_XENIX
-#define index strchr
-#endif
  
 char *getenv();
-char *index();
+char *strchr();
 
 int
 main(ac,av)
@@ -46,7 +43,7 @@ char **av;
 	cp = path;
 
 	while(1) {
-	    cp = index(path, ':');
+	    cp = strchr(path, ':');
 	    if (cp == NULL) 
 		quit++;
 	    else

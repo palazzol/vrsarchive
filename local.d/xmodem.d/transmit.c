@@ -21,6 +21,12 @@
 int flags;
 char filename[64];
 
+SIG_T
+caught(dummy) {
+	RESET();
+	kill(0,SIGKILL);
+}
+
 main(argc,argv)
 int argc;
 char *argv[]; {
@@ -33,7 +39,6 @@ char *argv[]; {
 	int length, pid;
 	int seq_num, xsum;
 	int retries;
-	int caught();
 
 	setpgrp(getpid());
 	flags = argc;
@@ -145,11 +150,6 @@ RESET() {
 	endwin();
 	if (flags == 3) unlink(filename);
 } /* END */
-
-caught() {
-	RESET();
-	kill(0,SIGKILL);
-}
 
 SET_TIMER() {
 	alarm(60);

@@ -7,7 +7,6 @@
 /*
 **	receive filename
 */
-#
 # include <sys/types.h>
 # include <fcntl.h>
 # include <curses.h>
@@ -23,6 +22,17 @@
 char filename[64];
 int retries;
 int seq_num;
+
+SIG_T
+caught(dummy) {
+	char c;
+
+	c = CANCEL;
+	write(1,&c,1);
+	reset();
+	kill(0,SIGKILL);
+}
+
 main(argc,argv)
 int argc;
 char *argv[]; {
@@ -32,7 +42,6 @@ char *argv[]; {
 	char c;
 	char block[131];
 	int length, pid;
-	int caught();
 
 	setpgrp(getpid());
 	if (!((argc == 2) || (argc == 3))) {
@@ -239,15 +248,6 @@ char *s; {
 	write(debug,buf,strlen(buf));
 }
 */
-
-caught() {
-	char c;
-
-	c = CANCEL;
-	write(1,&c,1);
-	reset();
-	kill(0,SIGKILL);
-}
 
 SET_TIMER() {
 	alarm(0);

@@ -308,14 +308,14 @@ get_qual()
     case 'c':
     case 'j':
     case 'k':
-    case ctl(p):
-    case ctl(n):
+    case ctl('p'):
+    case ctl('n'):
 	return('c');
     case 'r':
     case 'l':
     case 'h':
-    case ctl(f):
-    case ctl(b):
+    case ctl('f'):
+    case ctl('b'):
 	return('r');
     default:
 	return(c);

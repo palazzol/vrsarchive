@@ -59,7 +59,7 @@ int is_range;
 	return;
     }
 
-    if (strlen(name) <= 2) {
+    if (strlen(name) <= (unsigned)2) {
 	error("Invalid range name - too short");
 	xfree(name);
 	return;
