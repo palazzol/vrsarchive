@@ -1,7 +1,7 @@
 #
-#	tttt $Header: /home/Vince/cvs/games.d/tttt.d/Makefile,v 1.6 2002-11-23 04:09:48 Vincent Exp $
+#	tttt $Header: /home/Vince/cvs/games.d/tttt.d/Makefile,v 1.7 2002-11-24 02:57:40 Vincent Exp $
 #
-ALL	= tttt
+ALL	= tttt$(EXE)
 MODEL	= -i -F 2000
 OPTIONS	= -O
 include $(HOME)/CONFIG
