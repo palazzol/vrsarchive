@@ -27,6 +27,9 @@ static char *termtypes[] = { "vt100", "vt101", "vt102", "vt103", "vt125",
 	"vt131", "vt140", "vt180", "vt220", "vt240", "vt241", "vt320", "vt340",
 	"vt341"  };
 #endif VT100
+
+unsigned long readnum();
+
 /*
 	************
 	MAIN PROGRAM
@@ -740,7 +743,7 @@ dropobj()
 	{
 	register int i;
 	register char *p;
-	long amt, tmp;
+	unsigned long amt, tmp;
 	p = &item[playerx][playery];
 	while (1)
 		{
@@ -767,7 +770,7 @@ dropobj()
 				else
 					{ *p=OKGOLD; tmp=32767; amt = 32767000L; }
 				c[GOLD] -= amt; 
-				lprintf("You drop %d gold pieces",(long)amt);
+				lprintf("You drop %d gold pieces", amt);
 				iarg[playerx][playery]=tmp; bottomgold();
 				know[playerx][playery]=0; dropflag=1;  return;
 				}
@@ -870,9 +873,10 @@ whatitem(str)
 	subroutine to get a number from the player
 	and allow * to mean return amt, else return the number entered
  */
-unsigned long readnum(mx)
+unsigned long
+readnum(mx)
 	long mx;
-	{
+{
 	register int i;
 	register unsigned long amt=0;
 	sncbr();
@@ -886,7 +890,7 @@ unsigned long readnum(mx)
 			i = getchar();
 			}
 	scbr();  return(amt);
-	}
+}
 
 #ifdef HIDEBYLINK
 /*

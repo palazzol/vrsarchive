@@ -2,6 +2,8 @@
 #include "header.h"
 static int dndcount=0,dnditm=0;
 
+extern unsigned long readnum();
+
 /*	this is the data for the stuff in the dnd store	*/
 int maxitm=83;	/* number of items in the dnd inventory table	*/
 struct _itm itm[90] = {
@@ -402,7 +404,7 @@ static short gemorder[26];	/* the reference to screen location for each */
 static long gemvalue[26];	/* the appraisal of the gems */
 obanksub()
 	{
-	long amt;
+	unsigned long amt;
 	register int i,k;
 	ointerest();	/* credit any needed interest */
 
@@ -439,15 +441,13 @@ obanksub()
 		switch(i)
 			{
 			case 'd':	lprcat("deposit\nHow much? ");	amt = readnum(c[GOLD]);
-						if (amt<0) { lprcat("\nSorry, but we can't take negative gold!"); nap(2000); amt=0; } else
 						if (amt>c[GOLD])
 						  { lprcat("  You don't have that much.");  nap(2000); }
 						else { c[GOLD] -= amt;  c[BANKACCOUNT] += amt; }
 						break;
 
 			case 'w':	lprcat("withdraw\nHow much? ");	amt = readnum(c[BANKACCOUNT]);
-						if (amt<0) { lprcat("\nSorry, but we don't have any negative gold!");  nap(2000); amt=0; }
-						else if (amt > c[BANKACCOUNT])
+						if (amt > c[BANKACCOUNT])
 						  { lprcat("\nYou don't have that much in the bank!"); nap(2000); }
 						else { c[GOLD] += amt;  c[BANKACCOUNT] -= amt; }		
 						break;
@@ -597,7 +597,7 @@ cnsitm()
 olrs()
 	{
 	register int i,first;
-	long amt;
+	unsigned long amt;
 	first = nosignal = 1; /* disable signals */
 	clear();  resetscroll(); cursor(1,4);
 	lprcat("Welcome to the Larn Revenue Service district office.  How can we help you?");
@@ -614,8 +614,7 @@ olrs()
 		switch(i)
 			{
 			case 'p':	lprcat("pay taxes\nHow much? "); amt = readnum(c[GOLD]);
-						if (amt<0) { lprcat("\nSorry, but we can't take negative gold\n"); amt=0; } else
-						if (amt>c[GOLD])	lprcat("  You don't have that much.\n");
+						if (amt>c[GOLD]) lprcat("  You don't have that much.\n");
 						else  c[GOLD] -= paytaxes(amt);
 						break;
 
