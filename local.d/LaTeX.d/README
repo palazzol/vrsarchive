@@ -1,0 +1,46 @@
+Here is a program (in pascal!!) that can be used for plotting graphs using
+LaTeX. The program is like a preprocessor that generates LaTeX commands
+to plot the graph depending on a variety of options. Right now it can 
+handle graphs of First Quadrant with origin at (0,0), and I'll let it 
+be known if I make any modifications in future and if there is interest,
+although I don't think I'll be able to get to it for atleast another month.
+It is fairly easy to fix the program if you want other quadrants, but not
+so easy to handle all quadrants in one program, & will involve a bit of
+hacking. That is my next indulgence.
+I have not extensively tested the program, but it seems to work fine on
+a few examples that I tried. You are welcome to modify it, use it, claim
+it, sell it, pass it on, or junk it. Let me know if you are plaaning to do
+major modifications so I don't end up duplicating work.
+
+Initially I also thought that one could plot only circles in the pic
+environment of LaTeX, but as I learnt more tricks, I discoverd a variety
+of other characters one could plot & I was quite excited about it; to
+share my excitement with all of you, I've added a LaTeX file at the end.
+I am quite sure many people have discovered it too since the idea is quite
+simple, but in any case I added it for people who might not have.
+
+Before you start passing any judgements on the usefulness, originality,
+quality of programming, etc.  I should say a few things:
+0. We have LaTeX version 2.06a and it is desighed for that; can't say about
+   prior or later versions.
+1. I am not a very good programmer, don't know C yet. The code is rather
+   sloppy , particularly in my handling of strings.
+2. I don't know troff at all, hence the documentation is a plain text file;
+   my apologies for that.
+3. I don't know LaTeX very well yet, so please don't laugh at some of the
+   constructs I've used.
+4. It works; (I don't quite support such attitudes in programming.)
+5. Even after all the above you feel like putting me down, you are welcome
+   but try to be a little constructive; I am very open to comments that will
+   enhance my knowledge.
+6. Its not a great program, and I am sure many of you have written similar
+   ones to suit your own purposes, & that's what I had done. Now I have
+   attempted to make a fairly general utility.
+
+-- 
+Sunil Podar
+SUNY at Stony Brook
+
+	CSNET: podar@sbcs.csnet
+	ARPA: podar%suny-sb.csnet@csnet-relay.arpa
+	UUCP: {allegra, hocsd, philabs, ogcvax} !sbcs!podar
