@@ -1,12 +1,3 @@
-/*
- * Storage allocator
- *
- *	malloc, realloc, free - modified to put each chunk in a seperate
- *	segment.  This means that code that would corrupt the arena of the
- *	regular routines will drop dead at the point of error, not 10 minutes
- *	later.
- *
-*/
 #include <sys/brk.h>
 
 extern	char	*brkctl();
@@ -32,21 +23,24 @@ extern	char	*brkctl();
  *	In all cases, the return value points to the base of the
  *	effected region on success, is (char *) -1 on error.
 */
+
+/*
+ * Storage allocator
+ *
+ *	malloc, realloc, free - modified to put each chunk in a seperate
+ *	segment.  This means that code that would corrupt the arena of the
+ *	regular routines will drop dead at the point of error, not 30 routines
+ *	later.
+ *
+*/
 #define NULL	0
 #define ERROR	((Header *)-1)
-#define	MAGIC_NO 0x5a6b		/*
-				 * Magic number for free blocks that are
-				 * unlinked.  Helps protect from arena
-				 * corruption.
-				*/
 
-typedef int Align;		/* Fudge factor to force alignment	*/
 struct header {	/* free block header */
 	struct {
 		unsigned size;		/* size of this free block	*/
 		struct header *ptr;	/* next free block		*/
 	} s;
-	Align x;		/* Force alignment of blocks		*/
 };
 typedef struct header Header;
 
@@ -62,7 +56,7 @@ unsigned nbytes;
 		return((char *) NULL);
 	p = (Header *)brkctl(BR_NEWSEG,(long)nbytes,p);
 					/* Create segment big enough	*/
-	p->s.ptr = (Header *)MAGIC_NO;
+	p->s.ptr = p;
 	p->s.size = nbytes;
 	return(p == ERROR? NULL : (char *)(p+1));
 }
@@ -79,14 +73,11 @@ char *ap;
 	/*
 	 *	  Sanity check to make sure that we are actually freeing a
 	 *	block that we gave away before.  If not, abort() so the user
-	 *	knows a mistake was made.  This also cehcks for segments whose
-	 *	first few bytes (before those the user was given) have been
-	 *	trashed.
-	*/
-	if (p->s.ptr != (Header *)MAGIC_NO) {
+	 *	knows a mistake was made.
+	 * 
+	 */
+	if (p->s.ptr != p)
 		abort();
-		return;
-	}
 	p = (Header *)brkctl(BR_ARGSEG,(long)-p->s.size,p);
 					/* Make segment empty		*/
 	p = (Header *)brkctl(BR_IMPSEG,(long)0,p);
@@ -105,10 +96,12 @@ unsigned newsize;
 	register Header *p;
 	int oldsize;
 
+	p = ((Header *)oldmem - 1);
+	if (p->s.ptr != p)
+		abort();
 	newsize += sizeof *p;		/* Allocate header + data	*/
 	if ((int)newsize <= 0)
 		return((char *) NULL);
-	p = ((Header *)oldmem - 1);
 	oldsize = p->s.size;
 	p = (Header *)brkctl(BR_ARGSEG,(long)newsize-oldsize,p);
 					/* Adjust segment size		*/
