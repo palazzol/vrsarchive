@@ -175,9 +175,9 @@ print_tomb()
   (void) strcpy(str3, fill_str(py.misc.tclass));
   (void) sprintf(str4, "Level : %d", (int)py.misc.lev);
   (void) strcpy(str4, fill_str(str4));
-  (void) sprintf(str5, "%d Exp", py.misc.exp);
+  (void) sprintf(str5, "%ld Exp", py.misc.exp);
   (void) strcpy(str5, fill_str(str5));
-  (void) sprintf(str6, "%d Au", py.misc.au);
+  (void) sprintf(str6, "%ld Au", py.misc.au);
   (void) strcpy(str6, fill_str(str6));
   (void) sprintf(str7, "Died on Level : %d", dun_level);
   (void) strcpy(str7, fill_str(str7));

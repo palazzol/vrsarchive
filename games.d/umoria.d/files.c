@@ -669,10 +669,10 @@ file_character()
 	  (void) fprintf(file1, "     Level      :%6d", (int)py.misc.lev);
 	  (void) fprintf(file1, "     Max Hit Points :%6d\n", py.misc.mhp);
 	  (void) fprintf(file1, "  + To Damage :%6d", py.misc.dis_td);
-	  (void) fprintf(file1, "     Experience :%6d", py.misc.exp);
+	  (void) fprintf(file1, "     Experience :%6ld", py.misc.exp);
 	  (void) fprintf(file1, "     Cur Hit Points :%6d\n", (int) (py.misc.chp));
 	  (void) fprintf(file1, "  + To AC     :%6d", py.misc.dis_tac);
-	  (void) fprintf(file1, "     Gold       :%6d", py.misc.au);
+	  (void) fprintf(file1, "     Gold       :%6ld", py.misc.au);
 	  (void) fprintf(file1, "     Max Mana       :%6d\n", py.misc.mana);
 	  (void) fprintf(file1, "    Total AC  :%6d", py.misc.dis_ac);
 	  (void) fprintf(file1, "                       ");
