@@ -93,7 +93,7 @@ char	**argv;
 	printf("/*bset    */\t\t0%o,\n", t.bset);
 	printf("/*breset  */\t\t0%o,\n", t.breset);
 #define intshow(memb) \
-		printf("/*%-8s*/\t\t%d,\n", "memb", t.memb)
+		printf("/\*%-8s*/\t\t%d,\n", "memb", t.memb)
 	intshow(Hor);
 	intshow(Vert);
 	intshow(Newline);
@@ -102,7 +102,7 @@ char	**argv;
 	intshow(Halfline);
 	intshow(Adj);
 #define show(memb) \
-		printf("/*%-8s*/\t\t\"", "memb");\
+		printf("/\*%-8s*/\t\t\"", "memb");\
 		vprint(t.memb);\
 		printf("\",\n")
 	show(twinit);
