@@ -1,0 +1,14 @@
+# makefile for lint test
+LARNHOME = /save/noah/miscellany/dnd/.lfiles
+
+OPTIONS = -DEXTRA -DBSD -DVER=12 -DSUBVER=0 -DTIMECHECK -DWIZID=163 -Dlint
+
+FILS= main.c object.c create.c tok.c display.c global.c data.c io.c\
+    monster.c store.c diag.c help.c config.c nap.c bill.c scores.c\
+    signal.c moreobj.c movem.c regen.c fortune.c savelev.c
+
+FLAGS= $(OPTIONS) -DLARNHOME=\"$(LARNHOME)/\"
+
+larn: $(FILS)
+	lint -ub $(FLAGS) $(FILS)
+
