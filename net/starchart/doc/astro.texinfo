@@ -1,0 +1,2225 @@
+\input texinfo    @c -*-texinfo-*-
+@comment %**start of header (This is for running Texinfo on a region.)
+@setfilename astro
+@settitle Astronomy Tools
+@setchapternewpage odd
+@comment %**end of header (This is for running Texinfo on a region.)
+
+@iftex
+@finalout
+@end iftex
+
+@ifinfo
+This file documents the astronomy tools I have developed.
+
+Copyright @copyright{} 1990 Craig Counterman.  All rights reserved.
+
+This software may be redistributed freely, not sold.
+This copyright notice and disclaimer of warranty must remain unchanged. 
+
+No representation is made about the suitability of this
+software for any purpose.  It is provided "as is" without express or
+implied warranty, to the extent permitted by applicable law.
+
+DISCLAIMER OF WARRANTY
+----------------------
+The author  disclaims all warranties  with regard to  this software to
+the   extent  permitted  by applicable   law,  including all   implied
+warranties  of merchantability  and  fitness. In  no event shall   the
+author be liable for any special, indirect or consequential damages or
+any  damages whatsoever resulting from  loss of use, data or  profits,
+whether in an action of contract, negligence or other tortious action,
+arising  out of  or in connection with the  use or performance of this
+software.
+
+@end ifinfo
+
+@titlepage
+@sp 10
+@center @titlefont{Astronomy Tools}
+@sp 2
+@center Craig Counterman
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1990 Craig Counterman.  All rights reserved.
+@end titlepage
+
+@node Top, Introduction, (dir), (dir)    
+@comment  node-name,  next,  previous,  up
+
+@ifinfo
+Several observational astronomy tools are documented here.
+@end ifinfo
+
+@menu
+* Introduction::		Introduction to astronomy and the
+				programs, why and how to use them.
+* Observing::			How to plan for an evening of observing:
+				the ``observe'' program.
+* Charts::			Charts and the starchart programs.
+* Data files::			Data files available, file formats.
+* Support programs::		Additional programs to support observe
+				and starchart.
+* Acknowledgments::		Some of the people who contributed to
+				these programs
+
+Sub subjects:
+* File formats::		Data file formats.
+* Observing session::		Elements of an observing session.
+* Planetary positions::		Finding the locations of the major
+				planets, Sun and Moon.
+* Comets and asteroids::	Finding the locations of the comets
+				and minor planets.
+
+Programs:
+* observe::
+* starX11::
+* starXaw::
+* starpost::
+* startool::
+* dataconv::
+* sif-to-text::
+* tosize::
+@end menu
+
+@node Introduction,	Observing,	Top,		Top
+@comment  node-name,  next,  previous,  up
+@chapter Introduction
+@cindex Introduction
+
+These programs are intended to assist observational astronomers.
+
+Starchart produces astronomical charts from a variety of databases,
+producing output for, in rough order of quality, PostScript, X11,
+sunview, Atari St, IBM PC, X10, tektronix, unix plot, HP laserjet, and
+tty displays, on Unix, vms and other systems.  It is straightforward to
+write drivers for other output devices.  Observe is a multifunction
+program for use in planning an observing session.  It calculates the
+positions of planets and their satellites, asteroids and comets,
+calculates rising and setting times, and much more.
+
+@menu
+* Programs::			What the programs do.
+* The Sky::			What's up.
+* Coordinates::			The celestial coordinate system.
+* Epoch and Equinox::		Epoch, Equinox, Proper motion and Precession.
+* Corrections::			Minor corrections to object coordinates.
+* Magnitudes::			The brightness of objects.
+* Time and Date::		Time and date systems.
+* Atmospheric effects::		What the atmosphere does to your
+				observations.
+* Observing Session::		Elements of an observing session.
+* Hints::			Hints for using these programs
+				in a unix environment.
+@end menu
+
+This software may be redistributed freely, not sold.
+
+No representation is made about the suitability of this
+software for any purpose.  It is provided "as is" without express or
+implied warranty, to the extent permitted by applicable law.
+
+@iftex
+@heading DISCLAIMER OF WARRANTY
+@end iftex
+@ifinfo
+@center DISCLAIMER OF WARRANTY
+@end ifinfo
+
+The author  disclaims all warranties  with regard to  this software to
+the   extent  permitted  by applicable   law,  including all   implied
+warranties  of merchantability  and  fitness. In  no event shall   the
+author be liable for any special, indirect or consequential damages or
+any  damages whatsoever resulting from  loss of use, data or  profits,
+whether in an action of contract, negligence or other tortious action,
+arising  out of  or in connection with the  use or performance of this
+software.
+
+
+
+@node Programs, The Sky, Introduction,  Introduction    
+@comment  node-name,  next,  previous,  up
+@section What the Programs Do
+@cindex program introduction
+
+Several programs are included in this package, all intended to aid
+observational astronomers.  The @code{observe} program calculates positions
+of moving objects and helps in planning an observing session.  There are
+several starchart programs for preparing astronomical charts; there is a
+separate program for each output device.  There are also several support
+programs which operate on data files for these programs.
+
+Starchart programs are quite general star map drawing programs and
+have many potential uses, but their unique utility is in preparing
+custom charts for particular observing projects, finding charts, and a
+pages that can be put in observing notebook and annotated at will.
+
+The @code{observe} program provides many facilities of use in planning
+an observing session.  It can generate ephemerides of planets, minor
+planets, and comets, and puts the coordinates in files to be used with
+starchart programs.  It calculates the approximate altitude and azimuth
+of obects at sun rise and set and morning and evening twilights.  It can
+calculate positions of the major satellites of Jupiter and Saturn.  Of
+importance to observers is the generation of the timetable of events for
+a night.
+
+Other programs are provided to facilitate the use of these programs.
+
+@node The Sky, Coordinates, Programs, Introduction
+@comment  node-name,  next,  previous,  up
+@section The Sky
+
+There is a sky.  There are things in the sky.  The starchart programs
+draw maps of things in the sky.  The @code{observe} program helps you plan
+to look at things in the sky.
+
+The things in the sky include stars, planets, nebulae, clusters of
+stars, and galaxies. For thousands of years, people have grouped the
+stars in the sky into patterns, and constellations.  More recently, the
+sky has been divided into areas based on these constellations.  For
+hundreds of years, astronomers have used a latitude-longitude grid for
+defining the locations of celestial objects.  The longitude is usually
+referred to as right ascension or RA, the latitude is the declination or
+DEC.  Through the year, the sun follows a path in the sky, called the
+Ecliptic, which is the plane of the earth's orbit.  Other planets in the
+solar system are roughly in this plane.
+
+The locations of stars, nebulae, clusters, and galaxies have been
+tabulated for hundreds of years.  These programs use computerized forms
+of such databases.
+
+@node Coordinates, Epoch and Equinox, The Sky, Introduction
+@comment  node-name,  next,  previous,  up
+@section Coordinates
+@cindex coordinate systems
+
+You should be familiar with the method of specifying a location on the
+surface of the earth: two coordinates are used: latitude north of the
+equator and meridian of longitude east of Greenwich.  A similar system
+is used to specify the locations of points in the sky.  the meridians
+are called right ascension, and the latitude is called declination.
+RA is measured from the point at which the sun crosses the equator in
+March.  It is measured in hours, with 15 degrees = 1 hour.
+
+There are two other coordinate systems commonly used in addition to
+RA--dec.  These apply only to a particular observation location and
+time.  The first of these is Hour angle -- declination.  It is similar
+to R.A.--declination, but instead of R.A., the angle is measured west
+from the line from north to south passing directly overhead.  The second
+is altitude -- azimuth (alt--az): altitude in degrees above the horizon
+and azimuth in degrees east from north.
+
+@node Epoch and Equinox, Corrections, Coordinates, Introduction
+@comment  node-name,  next,  previous,  up
+@section Epoch and Equinox
+@cindex epoch
+@cindex equinox
+@cindex precession
+@cindex proper motion
+
+The coordinates of a ``fixed'' object are actually only approximately
+constant.  Two factors change the coordinates in R.A. and declination.
+
+@subsection Proper Motion and Epoch
+
+First, stars (and other galactic objects) are not fixed in space.  The
+sun and stars all move.  Only the closer stars move significantly, but
+closer stars are also brighter, so this is an important effect.  The
+@dfn{epoch} is the time for which the coordinates are valid including
+the effects of this @dfn{proper motion}. 
+
+@subsection Precession and Equinox
+
+The second and more important factor is that the R.A.  and dec. 
+coordinate system changes: the north pole and thus the equator change
+due to @dfn{precession}.  R.A.  changes as the equator moves and changes
+the point at which the sun crosses the equator.  The @dfn{equinox} date,
+or @dfn{equator and equinox} is the time at which the coordinate system
+is valid.  Equinox 2000.0 and 1950.0 are commonly used coordinate
+systems.  The equator and equinox of the date is also occasionally
+important. 
+
+The starchart programs use data in equinox 2000.0 coordinates.
+
+@node Corrections, Magnitudes, Epoch and Equinox, Introduction
+@comment  node-name,  next,  previous,  up
+@section Additional Corrections to Positions
+@cindex minor corrections to positions
+
+Precession and epoch were discussed above.  In addition there are
+smaller effects which must be considered for precise astrometry.  These
+include effects of motion about the earth-moon barycenter, light travel
+time, nutation, and aberration of starlight.
+
+@node Magnitudes, Time and Date, Corrections, Introduction
+@comment  node-name,  next,  previous,  up
+@section Magnitudes
+@cindex magnitude
+
+Magnitudes are defined with respect to standards.
+
+Objects emit photons.  The number of photons per second observed from an
+object under given conditions and equipment is the intensity of light. 
+A brighter object emits more photons.  The difference in magnitudes
+between two objects is -2.5 times the log (base 10) of the ratio of
+intensities, i.e. 
+@tex
+$m = m_{std} - 2.5$\ log$_{10} ({{s} \over {s_{std}}})$
+@end tex
+@ifinfo
+m = m_std - 2.5 log(s/s_std)
+@end ifinfo
+
+Magnitudes are measured in different ways.  The most important are
+visual, photographic, and photometric.  Visual and photographic
+magnitudes are measured using those methods to estimate relative
+magnitudes.  Photometry is the counting of photons received from
+objects.  Standard filters are generally used.  The most common set is
+UBVRI, Ultraviolet to Infrared.  The V filter approximates the response
+of the eye, while the B filter is approximately the response of
+photographic film. 
+
+For a magnitude number to be truely meaningful, the system used must be
+specified.  Generally V or visual may be assumed.
+
+For many objects (V-B), that is the magnitude measured photometrically
+with the V filter minus the B magnitude, indicates the color of the object.
+
+@node Time and Date, Atmospheric effects, Magnitudes, Introduction
+@comment  node-name,  next,  previous,  up
+@section Time and Date
+@cindex time
+@cindex date
+
+Time is a very complex subject.
+
+@subsection Time
+
+Time systems include UT (= UT1), UT0, TA1, and UTC.  These times may
+differ by a second or so.  They are based on the rotation of the earth. 
+As the earth slows, and since the day is not @i{exactly} 86400 seconds
+long, leap seconds are occasionally inserted.  They are all
+approximately the time at 0 degrees longitude.  Most astronomical times
+are quoted in UT (universal time).  The differences are rarely critical
+for amateurs. 
+
+Another significant time system TDT (formerly ET), and TBT.  TDT or
+Terrestrial Dynamical Time is based on the orbits of the planets, as is
+TBT or Terrestrial Barycentric Time (based on the center of motion of
+the earth-moon system).  These times currently differ from UT by about a
+minute.  TDT is the time which should be used for planetary calculations.
+
+Time zones relate local time to the time at 0 longitude.  Be aware that
+there are some fractional time zones in the world.  Daylight savings
+time (or ``summer'' time) is an additional complication.  You should
+learn how your time zone is related to the time at 0 longitude (UT or
+GMT).  EST is 5 hours behind, EDT is 4 hours behind.
+
+These times are all related to the position of the sun: the sun should
+be overhead at about noon local standard time.  A different time is
+@dfn{sidereal} time, based on the positions of the stars overhead.  Two
+important sidereal times are GST or Greenwich Sidereal time, and LST or
+local sidereal time.
+
+@subsection Date
+
+Calendars are confused and confusing.  To avoid confusion between the
+many calendars in use historically, JD @dfn{Julian date} is used.  The
+JD 0 is a day more than 4000 years BC (BCE).
+
+@node     Atmospheric effects, Observing session, Time and Date, Introduction
+@comment  node-name,  next,  previous,  up
+@section Atmospheric Effects
+
+Refraction affects alt-az  coordinates: light from objects are bent
+by the atmosphere, making them appear higher in the sky than they would
+if there were no atmosphere.  The error can reach 34 minutes of arc at the
+horizon.  Extinction, absorption and scattering make objects fainter the
+more atmosphere the light from them must pass through (that is, the
+closer to the horizon they are).  Other effects of the atmosphere are
+seeing (the effect which produces twinkling of stars), scintillation,
+airglow, and of course light pollution.
+
+@node Observing session, Hints, Atmospheric effects, Introduction
+@comment  node-name,  next,  previous,  up
+@section Elements of an Observing Session
+
+To avoid frustration and ensure meeting goals you should plan your
+observing session in advance.  More serious the goal the more carefully
+you should plan.  At least, having a plan may help you avoid wondering
+what to do next on a clear night. 
+
+A timeline of events ensures that an object will be observable, and
+helps schedule a night to observe all objects when they are well placed. 
+The events are sun and moon rise and set, astronomical twilight, and the
+rising, setting and transit times of objects.  In addition, objects
+should be observed when possible when they are above 30 degrees above
+the horizon, or at least above 20 degrees.  These times should also be
+noted in the time line.
+
+Charts are used in identifying planets, asteroids, and comets, and
+finding objects.  For very faint objects, a photographic atlas of the
+area should be xeroxed.
+
+A notebook is an important part of observing.  It can be of scientific
+notebook quality, or a simple note of what objects you observed and how
+they looked.  Starchart programs may be used to produce finder charts
+which you can annotate and keep in a notebook.
+
+@node Hints, Observing, Observing session, Introduction
+@comment  node-name,  next,  previous,  up
+@section Hints
+
+Use grep, awk and shell scripts.  Unix tools can be very helpful in many
+situations.
+
+
+
+@node Observing, Charts,  Introduction, Top
+@comment  node-name,  next,  previous,  up
+@chapter Observing
+@cindex observe
+@pindex observe
+@section The @code{observe} Program
+
+This program is used to prepare for astronomical observations and for
+ephemeris calculation.  It can calculate the position of the major
+planets, the satellites of Jupiter and Saturn, and minor planets and
+comets given either orbital elements or a tabulated ephemeris.
+Coordinates of stationary objects may also be input.  It calculates
+(approximate) rise and set times, and transit times, of all objects to
+be observed.  It calculates the (approximate) altitude and azimuth of
+objects at sun rise and set, and morning and evening twilight.
+
+The information (coordinates, rise and set times) may be prepared for
+either a single time or a sequence of times.
+
+Output includes a file containing the timetable of events for the
+evening or evenings.  The coordinates of the sun and moon, plus any
+planets, minor planets, and comets are placed in a readable text file,
+with other calculated values for solar system objects (e.g. distance to
+earth).  The coordinates of all objects to be observed are placed in
+files in formats to be read by the other programs in this family, namely
+@code{dataconv} and the starchart charting programs.  A file listing the
+(approximate) altitude and azimuth of objects at sun rise and set, and
+morning and evening twilight is output.  If satellite positions are to
+be computed, these coordinates are placed in one file, and a separate
+PostScript file graphically showing their positions relative to the
+primary is also produced.
+
+These output files are optional: any subset of the possible output files
+may be produced.
+
+Parameters set the location of the observer, control what objects are to
+be observed, and designate the time or times of interest.
+
+Currently, there are some limitations to the program:
+@itemize @bullet
+
+@item
+Minor corrections such as parallax and nutation are not made.
+
+@item
+Positions are accurate enough for most applications other than
+occultations.
+
+@item
+Rise and set times may be off by several minutes.
+
+@item
+Positions of Saturn's satellites are approximate, good enough for
+identification of satellites.
+@end itemize
+
+@ifinfo
+However, it already does a lot.  For more information:
+@end ifinfo
+
+@menu
+* Input::			Input data and controls
+* Output::			The output files produced
+* Planetary positions::		Finding the locations of the major
+				planets, Sun and Moon.
+* Comets and asteroids::	Finding the locations of the comets
+				and minor planets.
+* Time line::			Schedule of events for the night.
+* Satellite positions::		for the moons of Jupiter and Saturn.
+@end menu
+
+@node Input, Output, Observing, Observing
+@comment  node-name,  next,  previous,  up
+@section Controls and Input for the @code{observe} program
+@cindex observe input
+@cindex observe controls
+
+Command line options set the location of the observer, control what
+objects are to be observed, control the output files produced, and
+designate the time or times of interest.  The default location of the
+observer is set when the program is compiled.
+
+@table @samp
+@itemx -m
+Meridian of longitude, measured East of Greenwich.  The USA is West of
+Greenwich, and the longitude is negative for all USA locations.  One to
+three numbers can be used: degrees, degrees and minutes, or degrees
+minutes and seconds. @refill
+
+@itemx -l
+Latitude.  One to three numbers can be used: degrees, degrees and
+minutes, or degrees minutes and seconds. @refill
+
+@itemx -a
+Altitude in meters. @refill
+
+@itemx -z
+Time zone in hours East of Greenwich, again, this number is negative
+for USA locations.  This does not include any effects of daylight
+savings. @refill
+
+@itemx -d
+The date or dates of observation in UT are specified with this flag.
+The dates for the @samp{-d} option are each specified as a string
+consisting of month, day, and optional year (use if different from the
+current year).  The month may be encoded as above, e.g. @samp{Aug} for
+august.  Using the first three letters of the English name for the month
+always works, as does the Roman numeral form.  Some other common
+abbreviations also work.  The year may also be specified, the default is
+the current year.  The day may be fractional, e.g. 1.25 is 6 am UT on
+the first.  An optional third parameter is the increment of time to be
+used in stepping between the two dates. @refill
+
+@itemx -o
+This sets names used for the output files and controls which output
+files are produced.  The output file names all have the form
+@file{@var{outfile_root}.XXX}, where @var{outfile_root} is set at
+compile time (usually to @samp{planet}), or is set to the argument for
+this option. The @samp{-o} may be followed with a letter or letters from
+the set "aeios" to select the altaz, eph, sif, obs, and star files,
+respectively.  e.g. @samp{-oae austin} would produce only the output files
+"austin.altaz" and "austin.eph".
+@refill
+
+@itemx -p
+The positions of any or all of the major planets at the time(s) may be
+calculated.  This is specified either as @samp{-p} which causes the
+positions of all planets to be calculated, or individual planets may be
+specified by following the @samp{-p} with a letter or letters from the
+sequence "MVmJsUN".  The positions of the sun and moon are always
+calculated, since they always have some effect on observing conditions.
+@refill
+
+@itemx -s
+The -s option causes the @file{.sat} and @file{.sat_PS} files to be
+produced for the satellites of Jupiter and Saturn.  @samp{-s} implies
+@samp{-p}.  With the @samp{-si} option the drawings in the PS file are
+flipped north to south (if for one time) or east to west (if for
+multiple times) to produce an inverted view. @refill
+
+@itemx -f
+Input object data is contained in files in several formats.  The
+@samp{-f @var{filename} @var{format}} option sets this input file.
+@refill
+
+@itemx -n
+For some input file formats, the name of the object must be specified
+using the @samp{-n} option. @refill
+
+@end table
+
+Sample data files should be used for the file formats used for input
+files.  The format names are @samp{obj} for fixed objects, @samp{ell_e}
+and @samp{par_e} for parabolic orbital elements, and @samp{emp},
+@samp{empb}, @samp{aa}, @samp{st}, and @samp{iau} for tabulated
+ephemerides.  The fixed object format contains the coordinates, name,
+magnitude, type and size of objects to be observed.  The other file
+formats are used for comets and minor planets, and are discussed below.
+
+@node Output, Planetary positions, Input, Observing
+@comment  node-name,  next,  previous,  up
+
+The output files are named @file{@var{outfile_root}.XXX} where XXX is:
+@table @samp
+@itemx altaz
+altitude and azimuth of objects at sun rise and set, and morning and
+evening twilight. @refill
+
+@itemx eph
+ephemeris of sun, moon and objects specified. @refill
+
+@itemx obs
+observability of objects: rise and set times of objects, twilight times,
+etc. @refill
+
+@itemx star
+@samp{lineread} format file containing coordinates (equinox 2000) of the
+object(s), sun, moon. @refill
+
+@itemx sif
+@samp{sif} format file containing the same information as the .star file.
+The separation character is @samp{;}. @refill
+
+@itemx sat
+Locations of the major satellites of Jupiter and Saturn with respect to
+the primary. @refill
+
+@itemx sat_PS
+PostScript file drawing either: one page showing appearance of Jupiter
+and Saturn with satellites, and relative sizes and orientations of
+Mercury, Venus, Mars, Jupiter, and Saturn, and the Moon; or several
+pages showing Jupiter and Saturn with moons on a sequence of times if a
+range of dates was specified. @refill
+
+@end table
+
+@node Planetary positions,  Comets and asteroids, Observing, Observing
+@comment  node-name,  next,  previous,  up
+@section Planetary Positions
+@cindex planetary positions
+
+Planetary positions are calculated with moderate precision.  Formulae
+are largely from @cite{Astronomical Formulae for Calculators} by Jean
+Meesus.  Minor corrections are currently ignored.
+
+@node Comets and asteroids,  Time line, Planetary positions, Observing
+@comment  node-name,  next,  previous,  up
+@section Comets and Minor Planets
+@cindex comets
+@cindex asteroids
+@cindex minor planets
+
+Comets and minor planet positions may be calculated either directly from
+the orbital elements or by interpolating a tabulated ephemeris.  The
+calculation from orbital elements is most convenient, but the tabulated
+ephemeris is likely to be slightly more accurate.
+
+@menu
+* From orbits::			Parabolic or elliptical.
+* From tables::			in several formats.
+@end menu
+
+@node From orbits, From tables, Comets and asteroids, Comets and asteroids
+@comment  node-name,  next,  previous,  up
+@subsection Orbits
+
+The coordinates of objects in elliptical or parabolic orbits may be
+calculated from orbital elements given in files of format @samp{ell_e}
+and @samp{par_e} respectively.
+
+Orbital elements are:
+@table @samp
+@itemx a
+semimajor axis, A.U.
+
+@itemx q
+perihelion distance, A.U.
+
+@itemx e
+eccentricity
+
+@itemx i
+inclination (degrees)
+
+@itemx omega
+argument of perihelion
+
+@itemx Omega
+longitude of ascending node
+
+@itemx n
+mean motion (degrees/day)
+
+@itemx M
+Mean anomaly at epoch
+
+@itemx T
+Time of perihelion.
+
+@end table
+
+For elliptical orbits, @samp{q} and @samp{T} are not needed; for
+parabolic orbits, only @samp{q}, @samp{i}, @samp{omega} and @samp{Omega}
+are needed. @refill
+
+@tex
+In the above, @samp{omega} means $\omega$ and @samp{Omega} means $\Omega$.
+@end tex
+
+Orbital elements are referred to a certain equinox, and apply on a
+certain epoch date.
+
+If @samp{a} is not given, it may be calculated from @samp{a} =
+@samp{q}/(1-@samp{e}). @refill
+
+If @samp{n} is not given, it may be calculated from @samp{n} =
+0.985609/(@samp{a}*sqrt(@samp{a})). @refill
+
+If @samp{M} is not given, use @samp{M} = (@samp{Epoch_date} - @samp{T})
+* @samp{n}. @refill
+
+The magnitude of an asteroid may be calculated from two parameters:
+@samp{G} and @samp{H}.  The magnitude of a comet may be calculated from
+the parameters @samp{g} and @samp{kappa}. @refill
+
+@node From tables, Time line, From orbits, Comets and asteroids
+@comment  node-name,  next,  previous,  up
+@subsection Interpolation of Ephemerides
+
+All ephemeris formats have date, RA, DEC, then other info.  Date is the
+month in characters, then the day of the month.  How the month is
+encoded is format dependent, examples include @samp{IX} @samp{Sept.}
+@samp{Sep} @samp{Sep.} @samp{September}.  Year is current year unless
+specified in command line, and is the year of the first date.  Dates
+must be in increasing order: 3 followed by 4, December followed by
+January.
+
+The formats are:
+@table @samp
+@itemx emp
+Format used in the Russian @cite{Ephemerides of minor planets}.
+
+@itemx empb
+Format used in the Russian @cite{Ephemerides of minor planets} for
+bright and unusual asteroids.
+
+@itemx aa
+Format used by the @cite{Astronomical Almanac}.
+
+@itemx st
+Format commonly used by @cite{Sky and Telescope} magazine.
+
+@itemx iau
+Format commonly used by IAU Circulars.
+@end table
+
+@node Time line, Satellite positions, Comets and asteroids, Observing
+@comment  node-name,  next,  previous,  up
+@section Time Line of Events
+
+The @file{.obs} file contains a timeline of events for the night or nights
+of observation.  Events include sun and moon rise and set, morning and
+evening twilight, and for each object to be observed: the rise and set
+times,  the times when they are 20 degrees and 30 degrees above the
+horizon, and the time of their transit (when they cross the line from
+north to south passing directly overhead, and are at their maximum
+altitude above the horizon).
+
+The times, especially sun and moon rise and set are approximate.
+
+The timeline should help you plan your evening, so you know when to
+begin and end (twilight), and when the moon will interfere.  It helps
+you plan to observe the objects when they are well placed, and ensure
+that you can observe an object before it has fallen too low in the sky.
+
+@node Satellite positions, Charts, Time line, Observing
+@comment  node-name,  next,  previous,  up
+@section Satellites of Jupiter and Saturn
+
+The positions of the major satellites of Jupiter and Saturn are
+calculated for the time or times of interest.  The Saturn satellite
+positions in particular are approximate, but are certainly good enough
+for identification purposes.
+
+The positions are output in the @file{.sat} file, and also illustrated in
+PostScript in the @file{.sat_PS} file.
+
+If more than one time is specified, the PostScript program draws many
+Jupiters and Saturns with their moons on a page (with separate pages for
+Jupiter and Saturn).  If one time is specified, a single page is
+produced containing large drawings of Jupiter and Saturn with their
+moons.  As a bonus, this single page also illustrates the phases and
+orientations of Mercury, Venus, Mars, Jupiter and Saturn (with rings),
+and the moon.
+
+@node Charts, Data files, Observing, Top
+@comment  node-name,  next,  previous,  up
+@chapter Charts
+@cindex starchart
+@cindex charts
+@pindex stardsp
+@pindex starlaser
+@pindex starpost
+@pindex starsunv
+@pindex startek
+@pindex staruplot
+@pindex starX11
+@pindex starXaw
+@section The Starchart Programs 
+
+The starchart programs are variations of a single program, producing
+output for different output devices.  All the programs produce
+astronomical star charts from available databases.
+
+@menu
+* Purpose::			The purpose and motivation for starchart.
+* Features::			Some of what it does.
+* Non- and Mis- Features::	Things it doesn't do or doesn't do well.
+* Objects Drawn::		What astronomical objects it draws, and
+				how it draws them.
+* Projection modes::		The supported map projection transformations.
+* The Chart::			What it contains, how it looks.
+* User controls::		Controls over the chart contents and
+				appearance.
+* Standard data files::		The data files containing various map
+				elements.
+* Particular versions::		Each device has its own version.
+* Writing a new version::	for a new device.
+
+User control methods:
+* Command line::
+* Control and specification files::
+* Interaction::
+@end menu
+
+@node Purpose, Features, Charts, Charts
+@comment  node-name,  next,  previous,  up
+@section Purpose of Starchart
+@cindex purpose of starchart
+
+The starchart programs have many potential uses: in education, preparing
+illustrations, becoming familiar with the constellations and the sky;
+but it is primarily useful for preparing for observing.  It can prepare
+large scale maps, finder charts, variable star charts, and illustrations
+for inclusion in an observing notebook.
+
+A variety of map projections are available for various needs.
+
+@node Features, Non- and Mis- Features, Purpose, Charts
+@comment  node-name,  next,  previous,  up
+@section Features
+
+There are many many features of potential use.  The programs can:
+@itemize @bullet
+
+@item
+Allow for the creation of star charts of medium quality, comparable to
+published works in data content.
+
+@item
+Allow for the creation of custom star charts for use as finder maps for
+specific objects, including the labeling of stars with their magnitudes.
+Inverted maps may also be produced.
+
+@item
+Allow for the creation of figures of the sky overhead at any location
+and time, as in the Sky and Telescope centerfold, or planispheres.
+
+@item
+Optionally include in the above: planets (including the sun, moon,
+asteroids, comets), fixed stars, nebulae, clusters, etc., lines for
+constellation shapes, constellation boundaries, paths of planets, the
+ecliptic, galactic equator, milky way isophots, etc.
+
+@item
+Use color for objects, and stars by spectral type, when available for
+the given device.
+
+@item
+Label stars with their name, number or letter, and/or magnitude.
+
+@item
+Label other objects by name.
+
+@item
+Allow custom star databases to be used to produce maps of the sky in,
+for example, 10,000 B.C.
+
+@item
+Interact on the display to allow for interactive sky exploration, if the
+device supports such interaction.
+@end itemize
+
+Starchart is intended to produce useful displays on any available
+device, and to produce best results on high quality graphics printers,
+especially those using PostScript.  Output may be captured in files to
+be edited for especially customized maps.  Comments are included in the
+output whenever possible to facilitate this editing.  Given a good
+object-oriented editor, professional quality maps may be easily
+produced.
+
+The program has a set of core routines for user interface and data
+input, while a set of specialized driver routines is provided for each
+output device.
+
+@node Non- and Mis- Features, Objects Drawn, Features, Charts
+@comment  node-name,  next,  previous,  up
+@section Non- and Mis- Features
+
+There are some limitations remaining.
+
+The output is limited by the capabilities of the device.  However, even
+the best of the drivers has the following problems: it cannot detect and
+avoid overlapping labels and stars, and it cannot allow the user to
+interact with the display and move the labels.  These limitations are
+what distinguish the output from these programs from a professionally
+prepared map.
+
+The current programs do not have user configurable Legend areas.
+
+@node Objects Drawn, Projection modes, Non- and Mis- Features, Charts
+@comment  node-name,  next,  previous,  up
+@section Objects Drawn
+
+The objects drawn currently include:
+
+@table @samp
+@itemx Stars
+Size represents the magnitude.  For most devices, this is done by
+rounding to the nearest integer magnitude, and drawing the star based on
+this; however, some versions, e.g. @code{starpost} for PostScript, allow
+for continuous scaling of the size.  Color is determined from the star's
+spectral class. @refill
+
+@itemx Planets
+On some devices, separate symbols are drawn for each planet, on others
+they are all represented by the same symbol.  Major planets should be
+distinguished from comets and asteroids.  Color may be assigned in the
+database file. @refill
+
+@itemx Nebulae
+Diffuse, planetary and unspecified nebulae may be
+distinguished.  If the device can support it, size may represent the
+diameter of the nebulae (if provided in the database).  Color may be
+assigned in the database file. @refill
+
+@itemx Galaxies
+Spiral, elliptical and unspecified galaxies may be
+distinguished.  If the device can support it, size may represent the
+diameter of the galaxy (if provided in the database).  Color may be
+assigned in the database file. @refill
+
+@itemx Clusters
+Open, globular and unspecified clusters may be
+distinguished.  If the device can support it, size may represent the
+diameter of the cluster (if provided in the database).  Color may be
+assigned in the database file. @refill
+
+@itemx Other
+Other identified objects.  If the device can support it,
+size may represent the diameter of the object (if provided in the
+database).  Color may be assigned in the database file. @refill
+
+@itemx Unknown
+For objects which haven't been identified.  If the
+device can support it, size may represent the diameter of the object
+(if provided in the database).  Color may be assigned in the database
+file. @refill
+
+@itemx Vectors
+Solid, dashed, or dotted lines may be drawn using commands in a
+database.  Lines are drawn as projected segments of great circles, or by
+linear interpolation in latitude and longitude between endpoints.  Not
+all line styles may be supported on some devices.  Color may be assigned
+in the database file. @refill
+
+@itemx Text
+Invisible objects in a database are used to place text
+labels in the chart. @refill
+
+@itemx Comments
+Lines for comments are allowed in database files.  They have no effect
+on displayed output. @refill
+
+@itemx Filled areas
+Implemented as filled areas when possible for the device, otherwise as
+outlines.  Area boundaries may be segments of great circles or defined
+by linear interpolation in latitude and longitude between endpoints.
+@refill
+@end table
+
+@node Projection modes, The Chart, Objects Drawn, Charts
+@comment  node-name,  next,  previous,  up
+@section Projection Modes
+@cindex projection modes
+
+There are currently five projection modes available for a map.  The
+default is Sanson's sinusoidal projection, which is area-preserving, but
+fails near the poles.  This projection preserves both area and linearity
+in Declination (y axis).  It gives good conformality (angle correctness)
+near the equator, so it is useful along the Ecliptic.  Lines of RA
+converge at the poles (unlike cylindrical projections), though
+Cassiopeia and the Dipper reproduce well.
+
+Stereographic projection keeps circles circles, and can be used near the
+poles.
+
+Orthographic projection is simple but very distorting; it is as if the
+sphere of the sky were finite in size and viewed from infinity.
+
+Gnomonic projection projects great circles as straight lines, and is
+therefore very useful for charts to be used to plot meteor paths.  See
+for example the October 1988 @cite{Sky and Telescope}.
+
+Rectangular projection is the simplest: latitude and longitude are
+translated directly to x and y of the map.  Note that this is neither
+cylindrical nor Mercator projection.
+
+Only the main map projection mode may be changed through the command
+line and @samp{.starrc} format control files; @samp{mapwin} control may change
+the projection mode of the thumbnail map.
+
+@node The Chart, User controls, Projection modes, Charts
+@comment  node-name,  next,  previous,  up
+@section The Chart
+
+A @dfn{chart} is a single page or display region.  Within that region are
+one or more @dfn{map windows}, each of which may have an associated
+@dfn{legend} region.  Each map window is independent of others.  Its
+attributes are defined in a structure which contains its location and
+size, and parameters and flags used in determining what is placed in the
+window.  The detailed appearance of each graphic element to be displayed
+in the window is up to the driver.  The starchart main routines only
+define the location of the element, and report which routine is calling
+the display function.  For each line in every star, planet, vector, or
+other file, the main routines determine only @emph{what} is to be
+drawn, and @emph{where} on the entire device page it appears.  The
+device specific drivers determine exactly how it appears on the
+device. @refill
+
+The page may have a title region, which is drawn once per page.  This
+region is entirely left to the driver.
+
+The initial values of map window structures are set in the device
+driver.  User input from the @samp{.starrc} file and the command line may
+change these values, and then the driver has an opportunity to override
+all settings, possibly through additional user input.  The structure may
+be read and written to @samp{mapwin} files, which may be used for input to
+different drivers and (carefully) editted by the user.
+
+@subsection Layers
+
+A map window consists of several @dfn{layers}.  All layers are optional.
+The order of layers is determined independently for each map window.
+
+A map window has an @samp{outline}, which is determined by the projection
+mode.  For the Sanson's projection, RA and DEC tick axes are drawn.
+
+A grid of arbitrary origin and spacing in RA and DEC may be drawn.
+The RA and DEC lines are in two separate layers, called @samp{ra_grid}
+and @samp{dec_grid}.
+
+The @samp{ecliptic} is a separate layer.
+
+A file defining constellation @samp{boundaries} is provided, in
+@samp{lineread} format.  The file contains vectors which are drawn in a
+separate layer.  Similarly, a @samp{patterns} file contains figures
+for the constellations.  A third file and layer provides names for the
+constellations (@samp{constlnames}).
+
+Finally the set of files defined by the user is plotted.  These
+currently include by default and in order a star file @file{yale.star},
+a file which is an index to files separated by region of sky called
+@file{index.indx}, a nebula database @file{neb.star}, and a planet
+location file @file{planet.star}.  Additional files may be furnished by
+the user.
+
+The default is to treat these as one layer, @samp{allfiles}, and draw
+the objects in each file in order.  Alternatively, for each map window,
+the order may be changed to draw all the symbols in all the files
+followed by all the names in all the files, etc.  The supported elements
+which are controlled by the data files are: glyph (symbol of object),
+name (text to the right of object), magnitude label (text below and to
+the right of object), vectors, and filled areas.  These are layers
+@file{allfiles}, @file{allglyphs}, @file{allnames}, @file{allmaglbls},
+@file{allvectors}, and @file{allareas}.
+
+Each file has its own cutoff magnitudes for visibility of objects symbol
+(@dfn{maglim}) name label (@dfn{lbllim}) and Bayer/Flamsteed label
+(@dfn{gklim}).
+
+Finally, a @samp{legends} layer displays the legends area, if any, for a
+window.
+
+To stress: any layer in any window may be skipped, and they may be drawn
+in any order, independently.
+
+@node User controls, Standard data files, The Chart, Charts
+@comment  node-name,  next,  previous,  up
+@section User Controls
+
+As many chart controls as feasible may be set by various methods of
+user interaction.
+
+@menu
+* Command line::
+* Control and specification files::
+* Interaction::
+@end menu
+
+@node Command line, Control and specification files, User controls, User controls
+@comment  node-name,  next,  previous,  up
+@subsection Command Line Controls
+@cindex starchart command line 
+
+Currently defined command line arguments are described below.
+Additional flag interpretation may be done by the device driver:
+unidentified flags are passed to a driver-specific function which
+attempts to interpret the flag. All others are undefined, and produce a
+usage message and error exit.
+
+@tex
+{
+\settabs 8 \columns
+\+Flag & Additional argument type(s) &&& Mnemonic	 \cr
+\+-r &	float &&& {\bf R}ight ascension \cr
+\+-d &	float &&& {\bf D}eclination \cr
+\+-s &	float &&& {\bf S}cale \cr
+\+-m &	float &&& {\bf M}agnitude limit \cr
+\+-l &	float &&& name {\bf L}abel magnitude limit \cr
+\+-g &	float &&& {\bf G}reek label magnitude limit \cr
+\+-p &	[string] &&& {\bf P}olar, or {\bf P}rojection = string.\cr
+\+&&&&		Possible values ``sansons'', ``stereographic'', \cr
+\+&&&&		``orthographic'', ``gnomonic'', ``rectangular''. \cr
+\+-b &	--none-- &&& 	{\bf B}ig map: full page map\cr
+\+-i &	--none-- &&& 	{\bf I}nvert: flip map top to bottom\cr
+\+-t &	string &&& {\bf T}itle \cr
+\+-y &	string &&& {\bf Y}ale.star: star data file \cr
+\+-h &	string &&& {\bf H}arvard index.indx index file \cr
+\+-n &	string &&& {\bf N}eb.star: nebula data file\cr
+\+-w &	string &&& {\bf W}anderers: planet.star planet data file \cr
+\+-f &	string &&& {\bf F}ile: user file \cr
+\+-c &	string [string]	&&& {\bf C}onstellation: a three or four \cr
+\+&&&&			character mnemonic followed by an optional file name;\cr
+\+&&&&			the file is searched for an entry \cr
+\+&&&&			corresponding to that mnemonic: the entry \cr
+\+&&&&			specifies the RA DEC Scale and Title.\cr
+\+-v &	float float &&&	{\bf V}ariable finder: labels stars with their \cr
+\+&&&&			magnitudes if they are within arg2 mags. of arg1 \cr
+\+-x &	float float [float float] &&&	{\bf X} grid: grid in RA and DEC, \cr
+\+&&&&			spacing arg1 and arg2, origin at arg3 arg4\cr
+\+-e &	string &&& {\bf E}xtra: chart control file.\cr
+\+-u &	--none-- &&&	{\bf U}ser input.  Allow keyboard-based user input\cr
+\+-a &	string &&& {\bf A}dditional {\bf A}rgument string:\cr
+\+&&&&		 passed to driver for additional control.\cr
+}
+@end tex
+@ifinfo
+@comment .nf .br  , .fi
+Flag	Additional argument type(s)   Mnemonic
+-r	float			   Right ascension
+-d	float			   Declination
+-s	float			   Scale
+-m	float			   Magnitude limit
+-l	float			   name Label magnitude limit
+-g	float			   Greek label magnitude limit
+-p	[string]		   Polar,
+				   or Projection = string
+				   Possible values ``sansons'',
+				   ``stereographic'',
+				   ``orthographic'', ``gnomonic'',
+				   ``rectangular''.
+-b	--none--		   Big map: full page map
+-i	--none--		   Invert: flip map top to bottom
+-t	string			   Title
+-y	string			   Yale.star: star data file
+-h	string			   Harvard index.indx index file
+-n	string			   Neb.star: nebula data file
+-w	string			   Wanderers: planet.star planet data file
+-f	string			   File: user file
+-c	string [string]		   Constellation: a three or four character
+				   mnemonic followed by an optional file name;
+				   the file is searched for an entry
+				   corresponding to that mnemonic: the entry
+				   specifies the RA DEC Scale and Title.
+-v	float float		   Variable finder: labels stars with their
+				   magnitudes if they are within
+				   arg2 mags. of arg1
+-x	float float [float float]  X grid: grid in RA and DEC,
+				   spacing arg1 and arg2, origin at arg3 arg4
+-e	string			   Extra: chart control file.
+-u	--none--		   User input.  Allow keyboard-based user input
+-a	string			   Additional Argument string:
+				   passed to driver for additional control.
+@end ifinfo
+
+@node Control and specification files, Interaction, Command line, Charts
+@comment  node-name,  next,  previous,  up
+@subsection Control and Specification Files
+@cindex starrc
+@cindex mapwin
+
+The controlling variables of the chart are set by default at compile
+time, and many may be overridden by command line arguments.  However,
+more control is afforded by @samp{.starrc} and @samp{-e @var{extra}}
+files.  The starchart programs attempt to read an initialization file,
+whose name is set at compile time (default @file{./.starrc}).
+Additional such files may be read through the @samp{-e} commandline
+argument.  The file contains lines of the form @samp{@var{variable}
+@var{value}} or @samp{@var{variable}=@var{value}}, with comments
+beginning with @samp{#} ignored.  The variables and their values are
+given below.  These definitions reset the values of program variables,
+overriding their current value.  These may in turn be overridden by
+later command line arguments or additional @samp{.starrc} files
+specified with @samp{-e}.  Any variables not understood by the main
+program are passed to a driver specific function which may interpret it.
+
+@tex
+{
+\settabs 4 \columns
+\+Variable &	Value type(s) & comment \cr
+\+ra &		float &	\# same as -r \cr
+\+dec &		float &	\# same as -d \cr
+\+scale &	float &	\# same as -s \cr
+\+title &	string &	\# same as -t \cr
+\+findconst &	string &	\# same as first argument of -c \cr
+\+constfile &	string &	\# same as second argument of -c \cr
+\+namelim &	float &	\# same as -l \cr
+\+lbllim &	float &	\# same as -l \cr
+\+maglim &	float &	\# same as -m \cr
+\+gklim &	float &	\# same as -g \cr
+\+starfile &	string &	\# same as -y \cr
+\+indexfile &	string &	\# same as -h \cr
+\+nebfile &	string &	\# same as -n \cr
+\+planetfile &	string &	\# same as -w \cr
+\+userfile &	string &	\# same as -f \cr
+\+mapfile &	string string&	\# set mapfile array in main routines: \cr
+\+& &					\#       sets elements in order \cr
+\+& &					\#       overrides previous settings \cr
+\+& &					\#    overrides default yale.star, etc. \cr
+\+& &					\#    second arg is type of file \cr
+\+& &					\#    as specified in index.indx \cr
+\+boundfile &	string &	\# sets file for ``boundaries'' layer \cr
+\+patternfile &	string &	\# sets file for ``patterns'' layer \cr
+\+constlnamefile &	string &	\# sets file for ``constlnames'' layer \cr
+\+layers &		string &	\# same as all\_layer: \cr
+\+all\_layer &		string &	\# sets array of layers in main routines: \cr
+\+& &					\#     sets elements in order \cr
+\+& &					\#     overrides previous settings \cr
+\+& &					\# possible values : \cr
+\+& &					\# ``outline'' ``ra\_grid'' ``dec\_grid'' \cr
+\+& &					\# ``ecliptic'' ``boundaries'' ``patterns'' \cr
+\+& &					\# ``constlnames'' ``allfiles'' ``allglyphs'' \cr
+\+& &					\# ``allnames'' ``allmaglbls'' ``allvectors'' \cr
+\+& &					\# ``allareas'' ``legends'' \cr
+\+polarmode &		logical &	\# same as -p if logical is nonzero or is TRUE \cr
+\+bigflag &		logical &	\# same as -b if logical is nonzero or is TRUE \cr
+\+projection\_mode &	string &	\# set projection mode:\cr
+\+& &					\# may be ``sansons'', ``stereographic'',\cr
+\+& & 					\# ``orthographic'', ``gnomonic'' \cr
+\+& & 					\# or ``rectangular'' \cr
+\+invert &	logical &	\# same as -i if logical is nonzero or is TRUE \cr
+\+precess\_to &  float	&  	\# Precess to equinox and ecliptic of year.\cr
+\+chart\_type &		string &	\# set chart type: ``fullpage'' or ``threepart'' \cr
+\+& &					\# ``threepart'' is default: Large window, \cr
+\+& &					\# thumbnail, and legend \cr
+\+& &					\# ``fullpage'' is same as -b flag \cr
+\+vrange &	float float &		\# same as -v \cr
+\+vmags &	float float &		\# set magnitude labeling maximum \cr
+\+&	&				\# and minimum magnitudes \cr
+\+grid &	float float [float float] & \# same as -x \cr
+\+nogrid &	logical &	\# turn off display of all grids \cr
+\+nogrid\_ra &	logical &	\# turn off display of RA grid \cr
+\+nogrid\_dec &	logical	&	\# turn off display of DEC grid \cr
+\+nomaglbls &	logical &	\# turn off display of magnitude labels \cr
+\+drivercontrol &	string &	\# same as -a flag \cr
+\+driver\_control &	string &	\# same as -a flag \cr
+\+additional & 		string &	\# same as -a flag \cr
+
+\+For interactive control, the following commands are also active:\cr
+
+\+exit &	    --none-- &	  \# Exit the program\cr
+\+quit &	    --none-- &	  \# Exit the program\cr
+\+end\_input &    --none-- &	  \# End input, display chart\cr
+\+done\_input &    --none-- &	  \# End input, display chart\cr
+\+done &	    --none-- &	  \# End input, display chart\cr
+\+draw &	    --none-- &	  \# End input, display chart\cr
+\+help &	    --none-- &	  \# Give help\cr
+\+? &		    --none-- &	  \# Give help\cr
+\+show &	    --none-- &	  \# Show value of variables\cr
+\+write\_rc\_file &    string &	  \# Write current state to .starrc file\cr
+\+write\_mapwin\_file &  string &	  \# Write detailed specification of\cr
+\+&&				  \# chart to given filename\cr
+\+read\_mapwin\_file &   string &	  \# Read detailed specification of\cr
+\+&&				  \# chart from given filename\cr
+}
+@end tex
+@ifinfo
+@comment .nf .br  , .fi
+Variable	    Value type(s)	 comment
+ra		    float	  # same as -r
+dec		    float	  # same as -d
+scale		    float	  # same as -s
+title		    string	  # same as -t
+findconst	    string	  # same as first argument of -c
+constfile	    string	  # same as second argument of -c
+namelim		    float	  # same as -l
+lbllim		    float	  # same as -l
+maglim		    float	  # same as -m
+gklim		    float	  # same as -g
+starfile	    string	  # same as -y
+indexfile	    string	  # same as -h
+nebfile		    string	  # same as -n
+planetfile	    string	  # same as -w
+userfile	    string	  # same as -f
+mapfile		    string string # set mapfile array in main routines:
+				  #       sets elements in order
+				  #       overrides previous settings
+				  #    overrides default yale.star, etc.
+				  #    second arg is type of file
+				  #    as specified in index.indx
+boundfile	    string	  # sets file for "boundaries" layer
+patternfile	    string	  # sets file for "patterns" layer
+constlnamefile	    string	  # sets file for "constlnames" layer
+layers		    string	  # same as all_layer:
+all_layer	    string	  # sets array of layers in main routines:
+				  #     sets elements in order
+				  #     overrides previous settings
+				  # possible values :
+				  # "outline" "ra_grid" "dec_grid" "ecliptic"
+				  # "boundaries" "patterns" "constlnames"
+				  # "allfiles" "allglyphs" "allnames"
+				  # "allmaglbls" "allvectors" "allareas"
+				  # "legends"
+polarmode	    logical	  # same as -p if logical is nonzero or is TRUE
+bigflag		    logical	  # same as -b if logical is nonzero or is TRUE
+projection_mode	    string	  # set projection mode
+				  # may be "sansons", "stereographic"
+				  # "orthographic", "gnomonic"
+				  # or "rectangular"
+invert		    logical	  # same as -i if logical is nonzero or is TRUE
+precess_to          float	  # Precess to equinox and ecliptic of year.
+chart_type	    string	  # set chart type: "fullpage" or "threepart"
+				  # "threepart" is default: Large window,
+				  # thumbnail, and legend
+				  # "fullpage" is same as -b flag
+vrange		    float float	  # same as -v
+vmags		    float float	  # set magnitude labeling maximum
+				  # and minimum magnitudes
+grid		    float float [float float]
+				  # same as -x
+nogrid		    logical	  # turn off display of all grids
+nogrid_ra	    logical	  # turn off display of RA grid
+nogrid_dec	    logical	  # turn off display of DEC grid
+nomaglbls	    logical	  # turn off display of magnitude labels
+drivercontrol	    string	  # same as -a flag
+driver_control	    string	  # same as -a flag
+additional	    string	  # same as -a flag
+
+For interactive control, the following commands are also active:
+
+exit		    --none--	  # Exit the program
+quit		    --none--	  # Exit the program
+end_input	    --none--	  # End input, display chart
+done_input	    --none--	  # End input, display chart
+done		    --none--	  # End input, display chart
+draw		    --none--	  # End input, display chart
+help		    --none--	  # Give help
+?		    --none--	  # Give help
+show		    --none--	  # Show value of variables
+write_rc_file	    string	  # Write current state to .starrc file
+write_mapwin_file   string	  # Write detailed specification of
+				  # chart to given filename
+read_mapwin_file    string	  # Read detailed specification of
+				  # chart from given filename
+@end ifinfo
+
+@node Interaction, Standard data files, Control and specification files, User controls
+@comment  node-name,  next,  previous,  up
+@subsection Interactive Controls
+@cindex starchart interactive
+@cindex interactive starchart
+
+The @samp{-u} option activates interactive mode, where the same commands
+as in the @samp{.starrc} file may be typed to control the program
+options.  In addition, @samp{end_input} ends interactive input and draws
+the chart.  After the chart is drawn, control returns to the keyboard.
+The @samp{quit} command exits the program.  The command @samp{show}
+shows the current state of the control variables.  The command
+@samp{help} may be used to get a brief description of the commands and
+controls available.
+
+Some, especially window based, versions will allow the user final
+control over each map of the chart.  The chart is specified by an
+array of large @b{C} structures, one for each map on the page.  The
+@samp{mapwin} file contains the values in this structure.  Advanced
+interactive versions of starchart, such as @code{starXaw}, allow the
+components of the structures to be edited individually, providing full
+access to the flexible controls of the program.
+
+The sequence of control of the program is:
+
+1) read the @file{./.starrc} file.
+
+2) process the command line: options are processed in order, later
+arguments may override earlier arguments, additional @samp{.starrc}
+format files are read as they are encountered in @samp{-e} options.
+However, if the file specified in the @samp{-e} option is in @samp{mapwin}
+format, it is read later.  After the command line is processed, if the
+@samp{-u} option is active, keyboard interaction is performed.  Next,
+any @samp{mapwin} format files are read.  If there is more interaction
+available (e.g. as in @code{starXaw}), the details of the chart may now be
+controlled.  If a @samp{mapwin} file is to be written, it is written now.
+Then the chart is drawn to specification.  Finally, after the chart is
+drawn, the program returns to the first interaction (i.e. returns to
+the point after the command line has been processed).
+
+One more form of interaction is available on some systems:  A mouse or
+other pointing device may be used to either select points on a map and
+the coordinates of that point are displayed, or the databases may be
+searched for objects near the selected point and the database entries
+for the objects found are displayed.
+
+@node Standard data files, Particular versions, User controls, Charts
+@comment  node-name,  next,  previous,  up
+@section Standard Data Files
+
+All are in equinox 2000.0 coordinates, and should also be in epoch
+2000.0.
+
+@table @file
+@itemx yale.star
+stellar information (mandatory)
+
+@itemx neb.star
+nebulae (optional)
+
+@itemx planet.star
+planets (optional)
+
+@itemx boundaries.star
+constellation boundaries (optional)
+
+@itemx cnames.star
+constellation names (optional)
+
+@itemx patterns.star
+constellation patterns (optional)
+
+@itemx index.indx
+index file for additional star files (optional)
+
+@itemx con.locs
+default mnemonic locations
+
+@end table
+
+@node Particular versions, Writing a new version, Standard data files, Charts
+@comment  node-name,  next,  previous,  up
+@section Particular Starchart Programs
+
+Some starchart programs have coadditional driver-specific controls
+which are accessed throught the @samp{-a} command line option, or the
+@samp{additional} (= @samp{driver_control}) variable.
+
+These programs and other versions of starchart with special needs are
+documented in this section.
+
+@menu
+* starX11::
+* starXaw::
+* starpost::
+* startool::
+@end menu
+
+@node starX11, starXaw, Particular versions, Particular versions
+@comment  node-name,  next,  previous,  up
+@subsection @code{starX11}
+@pindex starX11
+
+@code{starX11} is the X11 version of starchart.  It has the following
+special arguments which are accessed through @samp{-a}, e.g.@*
+@samp{-a p}.
+
+@table @samp
+@itemx p
+PostScript preview: use screen size and shape to approximate coverage of
+@code{starpost} chart. @refill
+@itemx l
+PostScript landscape preview: use screen size and shape to approximate
+coverage of @code{starpost} landscape format chart. @refill
+@itemx h
+hide: display is generated invisibly, which may save time. @refill
+@itemx b
+backup: use backup pixmap, allows window to be hidden and redrawn. @refill
+@itemx m
+monochrome: prevents use of color on displays otherwise capable of it. @refill
+@end table
+
+Usage example:@*
+@samp{starX11 -c ori -g 5 -a p}.
+
+@node starXaw, starpost, starX11, Particular versions
+@comment  node-name,  next,  previous,  up
+@subsection @code{starXaw}
+@pindex starXaw
+
+@code{starXaw} is the X11 version of starchart with interactive control
+using Athena Widgets.  In addition to the controls for @code{starX11},
+it has the following special arguments which are accessed through
+@samp{-a}, e.g. @*
+@samp{-a "t -geometry -0-0"}.
+
+@table @samp
+@itemx t
+" toolkit_args" for access to the standard X toolkit controls, such as
+for geometry, fonts, etc. @refill
+@end table
+
+Usage example:@*
+@samp{starXaw -c sgr -a p -a "t -geometry -0-0 -bg red"}.
+
+@node starpost, startool, starXaw, Particular versions
+@comment  node-name,  next,  previous,  up
+@subsection @code{starpost}
+@pindex starpost
+@pindex postconv.awk
+
+@code{starpost} is the PostScript version of starchart.  It has the
+following special arguments which are accessed through @samp{-a}, e.g.@*
+@samp{-a "m9 8 7 6 5 4 3.5 2.5 2 1.5 1 0.5"}. @refill
+
+@table @samp
+@itemx n
+notebook: The chart is shifted to the right on the page, and the
+``thumbnail'' map is replaced with prompts and space for recording
+observing conditions.  The rest of the argument string is taken to be a
+list of floating point numbers separated by `:' or ` '.  These are taken
+to be the radii in degrees of fields of view of the instrument or
+finder.  Circles with these radii are drawn, centered on the center of
+the chart. @refill
+@itemx m
+magnitude: 0.1 magnitude quanta are to be used (the default is 1.0
+magnitude, e.g. a 4.6 magnitude star is represented by the same symbol
+as a star of magnitude 5.4).  The rest of the argument string is taken
+to be a list of floating point numbers separated by `:' or ` '.  These
+are taken to be the radii of the symbols for stars of magnitude -1, 0,
+1, 2, 3 etc. The sizes of symbols for stars with magnitudes between
+these magnitudes are determined by linear interpolation.  Note that the
+last value given is the value assigned to all magnitudes fainter than
+that magnitude.  Current default sizes are "9 8 7 6 5 4 3.25 2.5 2 1.5 1
+0.5". @refill 
+@itemx s
+size: this argument provides an alternative way of specifying
+magnitude symbol sizes, using a formula proposed by Andrew Young in
+Sky and Telescope, March 1990, p. 311, D = D0 * 10^(k*(v0 - v)).
+He proposes a k of between 0.07 and 0.16, with 0.11 as probably the
+best.  If @samp{s} uses 0.1 magnitude quanta as does @samp{m}.  The
+default values for @var{D0}, @var{v0}, and @var{k} are 0.5 (points),
+the limiting magnitude of the first main map, and 0.11, respectively.
+These may be altered with the optional arguments to @samp{s}, which set
+@var{D0}, @var{v0} and @var{k} in that order, e.g. @samp{s 0.7 6.6} sets
+@var{D0} to 0.7 point, and @var{v0} to magnitude 6.6 so that a magnitude
+6.6 star will be printed as 0.7 point in diameter, and @var{k} will
+remain 0.11.  @samp{s 0.7 6.6 0.07} will set @var{D0} and @var{v0} as
+above, and also set @var{k} to 0.07. @refill
+@itemx f
+@samp{f @var{file}} may be used to specify an output file, otherwise the
+PostScript produced is sent to the standard output. @refill
+@itemx c
+may be used to produce color postscript output. @refill
+@itemx l
+may be used to specify landscape mode (as opposed to the default
+portrait orientation).  Landscape mode can only used with a
+fullpage map.  @refill
+@end table
+
+Since the resolution of PostScript is much higher than other common
+devices, @samp{mapwin} files must be edited when transferred between
+starpost and other drivers.  The controls for window @samp{width},
+@samp{height}, @samp{x_offset} and @samp{y_offset} must be changed. @refill
+
+The @samp{-a p} or @samp{-a l} option used with @code{starX11} or
+@code{starXaw} can be used to produce a @samp{mapwin} file which can be
+converted for use in @code{starpost} through an @code{awk} script named
+@code{postconv.awk}, provided with the source to this program. @refill
+
+Usage example:@*
+@samp{starpost -a "n 6:1.5:.5" -a "m9 8 7 6 5 4 3.5 2.5 2 1.5 1 0.5" -a "f orion.PS" -c ori -g 5}.
+
+@node startool, Writing a new version, starpost, Particular versions
+@comment  node-name,  next,  previous,  up
+@subsection @code{startool}
+@pindex startool
+@pindex starsunv
+
+@code{startool} uses the @code{tooltool} program, not included in the
+starchart distribution, to provide an interface to @code{starsunv}.
+@code{ttooltool} is available from your local Sun sources archive.
+
+@node Writing a new version, Data files, Particular versions, Charts
+@comment  node-name,  next,  previous,  up
+@section Writing a New Version for a New Device
+@subsection Organization
+
+There are several layers of functions in starchart.  The top level is in
+@file{starmain.c}, @file{starm2.c}, and @file{readfile.c}.  It is (I
+hope) general enough to enable any additions to be made by users in the
+form of modified drivers, leaving these files stable.  @file{starmain.c}
+and @file{starm2.c} are in charge of the user interface and file
+reading, with @file{readfile.c}.  Generally, this top level controls
+@emph{what} is to be drawn, and @emph{where} it appears.  The device
+specific section controls @emph{how} it appears.
+@refill
+
+Information is passed to the drivers via externs and function
+parameters.  The externs are for runtime values, the function parameters
+are for values taken from the data files.  Information is passed from
+the driver to the starchart.c routines via externs.
+
+There are three layers of functions, in several source files.  The top
+level functions are in @file{starmain.c} and @file{starm2.c}.  You
+should not have to change anything in this file, except perhaps #defines
+for default file names and file types, and these may also be set in the
+Makefile.
+
+The @file{starcust.c} file contains customizing functions, including functions
+to define additional command line flags, which may apply to several
+drivers.
+
+The @file{starXXXX.c} or @file{starimages.c} + @file{starXXXX.c} files
+define the more device dependent functions.  There is one function,
+called @samp{drawobj}, which is the interface between the top level
+functions and the device for drawing the stars, planets, and other
+objects read from a database file.  In addition, standard functions to
+open and close the device, draw a line, move without drawing, etc. are
+required.  These may then call the lowest level device dependent
+functions.  The @file{starimages.c} file provides a standard definition
+for @code{drawobj} and supporting functions for bitmapped devices; the
+device dependent code remaining (e.g. line drawing), is in the file
+@file{starXXXX.c}.
+
+User input functions also may be defined in @file{starXXXX.c}.
+
+The layer currently being drawn and/or the subroutine currently active
+is passed to the driver in an extern.  This allows the driver to for
+example draw vectors differently for the constellation boundaries.
+Additionally, each window has a map type field which is for efficiency
+also passed as an extern, which may be used by the driver to for example
+draw certain layers differently in certain windows.
+
+The source to other drivers, especially @code{starXaw} and
+@code{starpost}, should be a valuable reference to developing new
+drivers.
+
+@subsection Customization
+
+For the drivers distributed, there are many @samp{#defines} and global
+variables whose values may be altered to suit your tastes and your
+particular piece of hardware.  Default file names are @samp{#defined} in
+the code, and may also be set in the Makefile.
+
+It is easy to write a driver for other devices, based on the drivers and
+the driver skeleton provided.
+
+More extensive customization is possible through modifying the driver
+functions to take fullest advantage of the device you are using.  It is
+also possible to add controls accessed through the @samp{-a} command
+line option and the @samp{additional} (= @samp{driver_control}) variables.
+
+Please try to send me (ccount) a note before writing any new drivers, so
+I can let you know if a driver for that device is in the works.  Any
+improvements to drivers should be sent to me or the author (if they are
+not the same), when you're sure they work and are happy with the
+changes.
+
+Things you define in @file{starcust.c}, if you think they are generally
+useful, should be sent to me.  If possible, they may be incorporated in
+future releases.
+
+Improvements to top level routines should be made with great caution.
+Such changes will make it harder for you to use future refinements.  If
+you're sure you're change (a) works and (b) is better/stronger/faster,
+please send it to me.
+
+Do report any bugs/problems.
+
+@node Data files, Support programs, Charts, Top
+@comment  node-name,  next,  previous,  up
+@chapter The Data Files and Their Formats
+@cindex Data files
+@cindex starchart data formats
+
+This section discusses file formats used by the programs.
+
+@menu
+* Contents::			The data contained in a data file
+* File formats::		Formats for data files
+@end menu
+
+@node Contents, File formats, Data files, Data files    
+@comment  node-name,  next,  previous,  up
+@section Contents of Data Files
+
+Each line of file contains:
+@table @var
+@itemx ra, dec, mag
+Required.  Right ascension, Declination, and magnitude (V or visual).  6
+chars for RA, one for sign of DEC, 4 for DEC, 3 for mag. @refill
+
+@itemx object type
+Defines what the object is: star, galaxy, cluster, nebula, planet,
+other, unknown, vector, area, comment, or invisible, with subtypes for
+each (Two chars).  Defaults to type star subtype single. @refill
+
+@itemx spectral class or color
+Defines the color of the object, as spectral class for stars or directly
+for other objects (Two chars). @refill
+
+@itemx letter or flamsteed number or size
+Defines either the Bayer letter or Flamsteed number of a star, or the
+size of an extended object encoded in two chars. @refill
+
+@itemx constellation
+The constellation field contains the IAU designation of the
+constellation the object is in (three chars). @refill
+
+@itemx name
+Name or other labeling string.  Terminated by comma. @refill
+
+@itemx comment field
+Remainder of line after the comma which terminates the name.  This
+comment field may be used for special information about the object, e.g.
+the phase of the moon. @refill
+@end table
+
+Magnitude is encoded into three fields as follows: the first character
+may be a @samp{-}, in which case the next two characters are the magnitude
+times 10, e.g. @samp{-16} means @samp{-1.6}.  The first character is a digit,
+the three characters are the magnitude times 100, e.g. @samp{563} means
+@samp{5.63}.  Finally, if the first character is a capital letter, this is
+taken as the base-36 value of the integral part of the magnitude, and
+the remaining two characters are the fractional part times 100, e.g.
+@samp{B34} means @samp{11.34}.
+
+The Bayer letter or Flamsteed numbers are applicable only to stars.  The
+field is two characters wide.  Greek letters are a single lowercase
+letter followed by a space or a number, encoded as in the PostScript
+Symbol font:
+@tex
+{
+\settabs 4 \columns
+\+$\alpha$ - a & $\beta$ - b & $\gamma$ - g & $\delta$ - d \cr
+\+$\varepsilon$ - e & $\zeta$ - z & $\eta$ - h & $\theta$ - q \cr
+\+$\iota$ - i & $\kappa$ - k & $\lambda$ - l & $\mu$ - m \cr
+\+$\nu$ - n & $\xi$ - x & $o$ - o & $\pi$ - p \cr
+\+$\rho$ - r & $\sigma$ - s & $\tau$ - t & $\upsilon$ - u \cr
+\+$\phi$ - f & $\chi$ - c & $\psi$ - y & $\omega$ - w \cr
+}
+@end tex
+@ifinfo
+@comment .nf .br  , .fi
+alpha	- a	beta	- b	gamma	- g	delta	- d
+epsilon	- e	zeta	- z	eta	- h	theta	- q
+iota	- i	kappa	- k	lambda	- l	mu	- m
+nu	- n	xi	- x	omicron - o	pi	- p
+rho	- r	sigma	- s	tau	- t	upsilon	- u
+phi	- f	chi	- c	psi	- y	omega	- w
+@end ifinfo
+
+@iftex
+@tex
+Note that $\theta$, $\xi$, $\phi$, $\chi$, and $\psi$ have changed from
+@end tex
+the original definitions, which were @@, E, 0, x, and % respectively.
+@tex
+Note also that the variant version of phi, $\varphi$, is mapped to j.
+@end tex
+@end iftex
+@ifinfo
+Note that theta, xi, phi, chi, and psi have changed from the original
+definitions, which were @@, E, 0, x, and % respectively.  Note also that
+a variant version of phi is mapped to j. 
+@end ifinfo
+
+An uppercase letter followed by any character or two non-numeric
+characters is the roman letter designation for the star, e.g. @samp{CY}.
+Two numbers or a space and a number is the Flamsteed number of the star.
+
+The size of nonstellar objects is encoded in seconds of arc in the size
+field to two significant digits.  The second character is always a
+decimal digit.  Sizes from 0 to 99 arc seconds are encoded as two
+decimal digits.  For larger objects the first character is a capital
+letter, interpreted as follows, with the second character as the next
+digit:
+@tex
+{
+\settabs 6 \columns
+\+First character && Value \cr
+\+0 - 9 && 00 - 90 \cr
+\+A - I && 100 - 900 \cr
+\+J - R && 1000 - 9000 \cr
+\+S - Z && 10000 - 80000 \cr
+}
+@end tex
+@ifinfo
+First character		Value
+0 - 9			00 - 90
+A - I			100 - 900
+J - R			1000 - 9000
+S - Z			10000 - 80000
+@end ifinfo
+
+Examples:
+@tex
+{
+\settabs 10 \columns
+\+Size field & Value \cr
+\+ 6 & 6 \cr
+\+09 & 9 \cr
+\+73 & 73 \cr
+\+A0 & 100 \cr
+\+C3 & 330 \cr
+\+D5 & 450 \cr
+\+I6 & 960 \cr
+\+J2 & 1200 \cr
+\+R3 & 9300 \cr
+\+S6 & 16000 \cr
+\+Z0 & 80000 \cr
+\+Z9 & 89000 \cr
+}
+@end tex
+@ifinfo
+@comment .nf .br  , .fi
+Size field	Value
+ 6		6
+09		9
+73		73
+A0		100
+C3		330
+D5		450
+I6		960
+J2		1200
+R3		9300
+S6		16000
+Z0		80000
+Z9		89000
+@end ifinfo
+
+The types and subtypes implemented are:
+@tex
+{
+\settabs 4 \columns
+\+Type[0]xxxxx &	Main typexxxxx & Type[1]xxxxx &	Subtype	\cr
+\+Type[0]	&	main type &	type[1] &	subtype	\cr
+\+C	&	cluster \cr
+\+&&				G	&	globular \cr
+\+&&				O	&	open \cr
+\+&&				(other) &	other \cr
+\+G	&	galaxy \cr
+\+&&				a	&	spiral Sa \cr
+\+&&				b	&	spiral Sb \cr
+\+&&				c	&	spiral Sc \cr
+\+&&				d	&	spiral Sd \cr
+\+&&				p	&	spiral Sp \cr
+\+&&				Z	&	spiral S0 \cr
+\+&&				s	&	spiral unspecified \cr
+\+&&				A	&	barred spiral SBa \cr
+\+&&				B	&	barred spiral SBb \cr
+\+&&				C	&	barred spiral SBc \cr
+\+&&				D	&	barred spiral SBd \cr
+\+&&				P	&	barred spiral SBp \cr
+\+&&				S	&	barred spiral unspecified \cr
+\+&&				0-7	&	elliptical E0-E7 \cr
+\+&&				E	&	elliptical \cr
+\+&&				I	&	irregular I \cr
+\+&&				Q	&	quasar \cr
+\+&&				U	&	unknown \cr
+\+&&				!	&	peculiar \cr
+\+&&				 	&	unspecified \cr
+\+&&				(other) &	other \cr
+\+N	&	nebula \cr
+\+&&				D	&	diffuse \cr
+\+&&				P	&	planetary \cr
+\+&&				(other) &	other \cr
+
+\+P	&	planet \cr
+\+&&				M	&	Mercury \cr
+\+&&				V	&	Venus \cr
+\+&&				m	&	Mars \cr
+\+&&				J	&	Jupiter \cr
+\+&&				s	&	Saturn \cr
+\+&&				U	&	Uranus \cr
+\+&&				N	&	Neptune \cr
+\+&&				P	&	Pluto \cr
+\+&&				A	&	Asteroid \cr
+\+&&				C	&	Comet \cr
+\+&&				S	&	Sun (Sol)\cr
+\+&&				L	&	Moon (Luna)\cr
+\+&&				(other) &	other \cr
+
+\+S	&	star \cr
+\+&&				S	&	single \cr
+\+&&				D	&	double \cr
+\+&&				V	&	variable \cr
+
+\+O	&	other \cr
+\+&&				(any)	&	other object \cr
+
+\+U	&	unknown \cr
+\+&&				(any)	&	unknown object \cr
+
+\+V	&	vector \cr
+\+&&				M	&	moveto (begin, no line drawn)\cr
+\+&&				S	&	solid lineto via great circle\cr
+\+&&				D	&	dotted lineto via great circle\cr
+\+&&				H	&	hyphened (dashed) lineto g. c.\cr
+
+\+&&				m	&	moveto linear\cr
+\+&&				s	&	solid lineto linear\cr
+\+&&				d	&	dotted lineto linear\cr
+\+&&				h	&	hyphened lineto linear\cr
+
+\+I	&	invisible \cr
+\+&&				(any)	&	for labels \cr
+
+\+\#	&	data comment \cr
+\+&&				(any)	&	for comment in file \cr
+
+\+A	&	area \cr
+\+&&				M	&	moveto (begin)\cr
+\+&&				A	&	add great circle border segment\cr
+\+&&				F	&	fill region and end region \cr
+\+&&				m	&	moveto (begin) \cr
+\+&&				a	&	add linear border segment \cr
+\+&&				f	&	fill region and end region \cr
+}
+@end tex
+@ifinfo
+@comment .nf .br  , .fi
+Type[0]		main type	type[1]		subtype
+C		cluster
+				G		globular
+				O		open
+				(other) 	other
+
+G		galaxy
+				a		spiral Sa
+				b		spiral Sb
+				c		spiral Sc
+				d		spiral Sd
+				p		spiral Sp
+				Z		spiral S0
+				s		spiral unspecified
+				A		barred spiral SBa
+				B		barred spiral SBb
+				C		barred spiral SBc
+				D		barred spiral SBd
+				P		barred spiral SBp
+				S		barred spiral unspecified
+				0-7		elliptical E0-E7
+				E		elliptical
+				I		irregular I
+				Q		quasar
+				U		unknown
+				!		peculiar
+				 		unspecified
+				(other) 	other
+
+N		nebula
+				D		diffuse
+				P		planetary
+				(other) 	other
+
+P		planet
+				M		Mercury
+				V		Venus
+				m		Mars
+				J		Jupiter
+				s		Saturn
+				U		Uranus
+				N		Neptune
+				P		Pluto
+				A		Asteroid
+				C		Comet
+				S		Sun (Sol)
+				L		Moon (Luna)
+				(other) 	other
+
+S		star
+				S		single
+				D		double
+				V		variable
+
+O		other
+				(any)		other object
+
+U		unknown
+				(any)		unknown object
+
+V		vector
+				M		moveto (begin, no line drawn)
+				S		solid lineto via great circle
+				D		dotted lineto via great circle
+				H		hyphened (dashed) lineto g. c.
+				m		moveto linear
+				s		solid lineto linear
+				d		dotted lineto linear
+				h		hyphened lineto linear
+
+I		invisible
+				(any)		for labels
+
+#		data comment
+				(any)		for comment in file
+
+A		area
+				M		moveto (begin)
+				A		add great circle border segment
+				F		fill region and end region
+				m		moveto (begin)
+				a		add linear border segment
+				f		fill region and end region
+@end ifinfo
+
+The magnitude of an object determines what information is displayed.
+Three magnitude limits are defined for each file in each map window.  If
+the magnitude is greater (dimmer) than the first limit, nothing is
+drawn.  If the object is brighter than a second limit, the label (Bayer
+or Flamsteed) is printed (if present).  If it is brighter than the third
+limit, the name is printed (if present; if not, the label is printed if
+present).  These text strings generally appear to the right of the
+object, but the driver can change this.  Note: the label string only
+applies to stars.
+
+For nonstellar objects, the label field defines the size of the object
+in arc seconds.
+
+For magnitudes within a range defined for the mapwindow, a magnitude
+tag, the magnitude to one decimal place as in variable star and asteroid
+finding charts, may be displayed.  This will generally be below and to
+the right of the object, but this is controlled by the driver.
+
+The symbol drawn for the object is determined by the type field.
+
+For devices supporting color, the spectral class or color field defines
+the color of the object, and perhaps the associated text.  The spectral
+class of stars is mapped to display color, and for other objects, this
+field may contain direct color specifications, e.g. 'r3' for an object
+colored red level 3.  All this is controlled by the device driver.
+Standards for color definitions are yet to be defined.
+
+The constellation field is not currently used in the display.
+
+The comment field is also not generally used, but some drivers may use
+it to contain special information such as the phase of the moon or
+position angle of a comet's tail.
+
+@node File formats, Support programs, Contents, Data files
+@comment  node-name,  next,  previous,  up
+@section Data file formats
+@cindex starchart data file formats
+
+@menu
+* lineread::	yale.star or lineread format
+* sif::		starchart interchange format
+* binary::	binary formats
+* index::	index meta-format
+@end menu
+
+@node lineread, sif, File formats, File formats
+@comment  node-name,  next,  previous,  up
+@subsection @samp{lineread}
+
+This text format, called @dfn{lineread}, is the original data file format.
+Data for each object is on a single line, stored in character fields.
+Currently, an older variant is also supported, one which has 4
+characters for the magnitude and omits the color and letter/number
+fields.  Both of these formats are designated as type @dfn{lineread},
+since each line is read individually and these two types are easily
+distinguished on a line by line basis.  In all formats, if a value is
+unknown, it should be spaces, or a null string in the case of the name
+and comment fields.  The RA, DEC and mag. must always be provided for an
+object.
+
+Since it is a text format, it may be mailed safely and be used on many
+different computer architectures without change.  However, it is slow,
+and uses more file space than it ought.
+
+
+@node sif, binary, lineread, File formats    
+@comment  node-name,  next,  previous,  up
+@subsection @samp{sif}: Starchart Interchange Format
+
+The @dfn{sif} format was introduced to allow data to be exchanged as text,
+with greater precision in the location and magnitude fields, and greater
+readability compared to the @dfn{lineread} format.  The format is too slow
+for use as input to the starchart programs.  A data conversion program
+is provided to convert between formats, and to precess coordinates
+during the conversion.
+
+Each object is represented by a single line in the file.  This line
+contains fields each of which corresponds to a field in the
+@dfn{lineread} format.  The fields are separated by a single character,
+usually @samp{;}.  Fields may be omitted from the end of the line;
+omitted fields are assigned their default values.  Fields may be empty,
+and again are assigned their default values.  As with the other formats,
+the RA, DEC, and mag. must be present.
+
+The RA may be given as a decimal hour, hour and decimal minute, or hour
+minute and decimal second.  The DEC may be given in the same format.
+The magnitude is a floating point number.
+
+The type, and color, fields are empty or one or two characters, as in
+the @dfn{lineread} format.
+
+The label field is also the same as in the @dfn{lineread} format, and
+encodes the size of non-stellar objects in two characters.  There is a
+bit of ``magic'' in this field.  Since @samp{X } or @samp{ X} are both
+valid, and whitespace is normally ignored, iff this field is two
+characters wide, and both characters are printing characters, it is
+taken verbatim as the label field.  That is, @samp{... ; X; ...} is
+@samp{ X}, while @samp{... ; X ; ...} is read as one character and left
+justified to become @samp{X }. @refill
+
+The constellation field is the IAU abbreviation for the constellation
+and is always blank or three characters.
+
+The name and comment are two separate fields.  Commas should not be used
+in the name field, since when this name is placed in the other formats a
+comma is used to separate the name from comments.
+
+@node binary, gsc, sif, File formats    
+@comment  node-name,  next,  previous,  up
+@subsection Binary Formats
+
+Three binary input formats are supported.  These formats provide greater
+position and magnitude accuracy, with faster input, and varying degrees
+of storage space reduction.  The files are inherently unportable,
+however, and should not be exchanged between machines and operating
+systems, or even different compilers.  The @dfn{sif} format, described
+above, provides a general data exchange format.
+
+The three formats provide different storage sizes.  The most general
+format, which contains all the data in the @dfn{lineread} format, is the
+@dfn{binfull} format.  A smaller format, @dfn{binobj} stores only the
+RA, DEC, mag. and object type fields, all other fields become their
+defaults (usually spaces).  The smallest format, @dfn{binstar} stores
+only the RA, DEC and mag., all other fields become their defaults,
+notably the @var{object type} is @samp{SS}.
+
+The binary formats are described as @b{C} structures.  How the data in
+the structure is stored is therefore highly variable between compilers,
+operating systems and machines.  However, most machines should be able
+to take advantage of these formats for local storage.
+
+@node gsc, index, binary, File formats    
+@comment  node-name,  next,  previous,  up
+@subsection The Guide Star Catalog
+
+The Hubble Space Telescope Guide Star Catalog, available on 2 CD-ROMs,
+may be used as a stellar database.  This format may be read by
+@code{dataconv} and the starchart programs, but now written.  An index
+file is used to specify which files on which CD-ROM should be read.
+
+@node index, Support programs, binary, File formats
+@comment  node-name,  next,  previous,  up
+@subsection The Index File index.indx, @samp{indextype}
+
+The @dfn{indextype} file is a special file format added to support larger
+databases of dimmer stars.  It provides an index mapping location to
+filenames of files containing star data as above.  Each indexed file
+covers a rectangle of sky in RA and DEC.  The areas may be different
+sizes for different files.  The area covered is given as the RA and DEC
+of the upper left and lower right corners, followed by the filename and
+a string indicating the type of the file.  This is all on one line in
+the file.  The format is then:
+
+@tex
+{
+\settabs 6 \columns
+\+upper left & upper left & lower right & lower right & filename & filetype \cr
+\+RA & DEC & RA & DEC & filename & filetype \cr
+\+e.g.\cr
+\+02.0 &    -30.0 &    00.0 &    -90.0 &  SAO00-90 & lineread \cr
+\+04.0 &    -30.0 &    02.0 &    -90.0 &  SAO02-90 & lineread \cr
+\+06.0 &    -30.0 &    04.0 &    -90.0 &  SAO04-90 & lineread \cr
+\+08.0 &    -30.0 &    06.0 &    -90.0 &  SAO06-90 & lineread \cr
+\+10.0 &    -30.0 &    08.0 &    -90.0 &  SAO08-90 & lineread \cr
+}
+@end tex
+@ifinfo
+upper left   upper left   lower right   lower right   filename   filetype
+RA	     DEC	  RA		DEC	      filename	 filetype
+
+e.g.
+02.0	     -30.0	   00.0	        -90.0	      SAO00-90	 lineread
+04.0	     -30.0	   02.0	        -90.0	      SAO02-90	 lineread
+06.0	     -30.0	   04.0	        -90.0	      SAO04-90	 lineread
+08.0	     -30.0	   06.0	        -90.0	      SAO06-90	 lineread
+10.0	     -30.0	   08.0	        -90.0	      SAO08-90	 lineread
+@end ifinfo
+
+@node Support programs, Acknowledgments, Data files, Top
+@comment  node-name,  next,  previous,  up
+@chapter The Support Programs
+@cindex Support programs
+
+Several support programs are provided for use with the primary
+@code{observe} and starchart programs.
+
+@menu
+* dataconv::
+* sif-to-text::
+* tosize::
+@end menu
+
+@node dataconv, sif-to-text, Support programs, Support programs
+@comment  node-name,  next,  previous,  up
+@section @code{dataconv}
+@pindex dataconv
+
+This program is used to convert between file formats, especially to
+generate binary format files.  It can precess coordinates as desired.
+Remember, input data files for starchart programs should be in 2000.0
+coordinates.
+
+@node sif-to-text, tosize, dataconv, Support programs
+@comment  node-name,  next,  previous,  up
+@section @code{sif-to-text}
+@pindex sif-to-text
+
+The @code{sif-to-text} or @code{sif_to_text} program converts sif format
+files to more readable text tables.
+
+@node tosize, Acknowledgments, sif-to-text, Support programs
+@comment  node-name,  next,  previous,  up
+@section @code{tosize}
+@pindex tosize
+
+This program is used to encode the size of objects, for development of
+new databases.
+
+@node Acknowledgments, , Support programs, Top    
+@comment  node-name,  next,  previous,  up
+@chapter Acknowledgements
+
+The previous versions of starchart were developed by Alan Paeth.
+
+Steve Kennedy contributed to @file{starimages.c}.
+
+Robert Tidd provided the original @file{yale.star} and the format.
+
+Dave Van't Hof provided most of the other databases (in particular boundaries,
+patterns, and names).
+
+Michael Campanella provided vms support.
+
+The Atari ST version was developed by Holger Zessel and Markus Kempf.
+
+Tom Horsley contributed the ibm PC driver.
+
+Mike Daly helped with the Macintosh version.
+
+Joe Wang helped with the X11 version.
+
+Dean Payne provided the original code for @samp{.starrc} processing.
+
+Other contributions are from Petri Launiainen, Jyrki Yli-Nokari, Sjoerd
+Mullender, David Smith, Tim Pointing, and others.
+
+
+@node     Program Index,     ,  Previous Node,  Top
+@comment  node-name,     next,  previous,      up
+@unnumbered Program Index
+
+@printindex pg
+
+@node     Concept Index,     ,  Previous Node,  Top
+@comment  node-name,     next,  previous,      up
+@unnumbered Concept Index
+
+@printindex cp
+
+@contents
+@bye
+

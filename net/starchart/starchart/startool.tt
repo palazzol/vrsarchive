@@ -1,0 +1,1307 @@
+#define		TRUE		1
+#define		FALSE		0
+
+/* you may deed to add a path, e.g. /usr/local/startool.sh,
+    but everything beyond the icon shouldn't change */
+application "startool.sh"
+   size 24 by 80 characters
+   icon "startool.icon"
+   label "<< StarChart >>"
+   initialize {
+     ra = "0";	ra_set = FALSE;
+     dec = "0";	dec_set = FALSE;
+     scale = "15";	scale_set = FALSE;
+     constellation_name = "";	find_set = FALSE;
+     constfile = "";
+     namelim = "2";     namelim_set = FALSE; /* namelim == lbllim */
+     gklim = "6";     gklim_set = FALSE;
+     maglim = "9";     maglim_set = FALSE;
+     title = "StarChart Sun";
+     title_set = FALSE;
+
+     starfile = "";
+     indexfile = "";
+     nebfile = "";
+     planetfile = "";
+     boundfile = "";
+     patternfile = "";
+     constlnamefile = "";
+
+     write_mapwin_file = "";
+     read_mapwin_file = "";
+     projection_mode = "sansons";
+     invert = FALSE;
+     chart_type = "threepart";
+     vrange_low = "";
+     vrange_high = "";
+     vrange_set = FALSE;
+     vmags_mag = "";
+     vmags_range = "";
+     vmags_set = FALSE;
+     nomaglbls = TRUE;
+     grid_ra = "1";		grid_ra_set = FALSE;
+     grid_dec = "5";		grid_dec_set = FALSE;
+     grid_ra_start = "0";	grid_ra_start_set = FALSE;
+     grid_dec_start = "0";	grid_dec_start_set = FALSE;
+     nogrid_ra = TRUE;
+     nogrid_dec = TRUE;
+     special = "";
+   }
+gadgets
+   right
+   font "/usr/lib/fonts/fixedwidthfonts/screen.b.14"
+   label
+      "Controls:" : "/usr/lib/fonts/fixedwidthfonts/cour.b.14"
+   end_label
+   button
+     normal " Chart "
+	display chart_dialog;
+   end_button
+   button
+     normal " Type "
+	display type_dialog;
+   end_button
+   button
+     normal " Magnitudes "
+	display mag_dialog;
+   end_button
+   button
+     normal " Layers "
+	display layer_dialog;
+   end_button
+   button
+     normal " User Files "
+	display sfiles_dialog;
+   end_button
+   button
+     normal " Map Files "
+	display files_dialog;
+   end_button
+   button
+     normal " Projection mode "
+	display proj_dialog;
+   end_button
+   button
+     normal " Magnitude labels "
+	display var_dialog;
+   end_button
+   button
+     normal " Grid "
+	display grid_dialog;
+   end_button
+   label
+      "Actions:" : "/usr/lib/fonts/fixedwidthfonts/cour.b.14"
+   end_label
+   button
+      normal	" Draw Chart "
+	{
+		if (ra_set) send format("ra = %s\n", ra);
+		if (dec_set) send format("dec = %s\n", dec);
+		if (scale_set) send format("scale = %s\n", scale);
+		if (constfile != "") send format("constfile = %s\n",
+				 constfile);
+		if (find_set) send format("findconst = %s\n",
+				 constellation_name);
+		if (namelim_set) send format("namelim = %s\n", namelim);
+		if (gklim_set) send format("gklim = %s\n", gklim);
+	        if (maglim_set) send format("maglim = %s\n", maglim);
+
+	        if ((grid_ra_set)  ||  (grid_dec_set))
+		    send format("grid = %s %s\n", grid_ra, grid_dec);
+	        if ((grid_ra_start_set) || (grid_dec_start_set))
+		    send format("grid = %s %s %s %s\n",
+			grid_ra, grid_dec,
+			grid_ra_start, grid_dec_start);
+		if (nogrid_ra) send "nogrid_ra=true\n";
+		else send "nogrid_ra=false\n";
+		if (nogrid_dec) send "nogrid_dec=true\n";
+		else send "nogrid_dec=false\n";
+
+                if (title_set) send format("title = %s\n", title);
+		send format("projection_mode = %s\n", projection_mode);
+		send format("chart_type = %s\n", chart_type);
+		if (invert) send "invert=true\n";
+		else send "invert=false\n";
+		if (vrange_set)
+			send format("vrange %s %s\n", vrange_high, vrange_low);
+		for (i = 0; i < 20; i++)
+			if (layer[i] != "")
+                          send format("layers %s\n", layer[i]);
+		for (i = 0; i < 14; i++)
+			if (mapfile[i] != "")
+			 send format("mapfile %s %s\n",
+			    mapfile[i], maptype[i]);
+		if (starfile != "")
+			 send format("starfile %s %s\n", starfile, startype);
+		if (indexfile != "")
+			 send format("indexfile %s %s\n", indexfile, indextype);
+		if (nebfile != "")
+			 send format("nebfile %s %s\n", nebfile, nebtype);
+		if (planetfile != "")
+			 send format("planetfile %s %s\n", planetfile, plantype);
+		if (boundfile != "")
+			 send format("boundfile %s %s\n", boundfile, boundtype);
+		if (patternfile != "")
+			 send format("patternfile %s %s\n", patternfile, patterntype);
+		if (constlnamefile != "")
+			 send format("constlnamefile %s %s\n",
+				constlnamefile, cnametype);
+		for (i = 0; i < 10; i++)
+			if (userfile[i] != "")
+			 send format("userfile %s %s\n",
+			    userfile[i], usertype[i]);
+		if (out_fname != "")
+			send format("write_rc_file %s\n", out_fname);
+		if (write_mapwin_file != "")
+			send format("write_mapwin_file %s\n",
+                                     write_mapwin_file);
+		if (read_mapwin_file != "")
+			send format("read_mapwin_file %s\n",
+                                     read_mapwin_file);
+		send "end_input\n";
+	}
+   end_button
+   button
+      normal	" Save/Load file " display out_file_dialog;
+   end_button
+   button
+      normal	" Close "	close;
+      shift	" Quit "	exit;
+   end_button
+end_gadgets
+
+dialog chart_dialog
+	gadgets
+	   left
+	   label
+	      "Specify Center:" : "/usr/lib/fonts/fixedwidthfonts/cour.b.14"
+	   end_label
+	   text ra
+		label "Right Ascension:"
+		display 20
+		action {
+			constellation_name = "";
+			find_set = FALSE;
+			ra_set = TRUE;
+		}
+	   end_text
+	   text dec
+		label "Dec.:"
+		display 20
+		action {
+			constellation_name = "";
+			find_set = FALSE;
+			dec_set = TRUE;
+		}
+	   end_text
+	   text scale
+		label "Scale:"
+		display 20
+		action {
+			constellation_name = "";
+			find_set = FALSE;
+			scale_set = TRUE;
+		}
+	   end_text
+	   text title
+	      label "Title:"
+	      display 20
+	      action title_set = TRUE;
+	   end_text	
+	   label
+	      "Or specify constellation from file:" : "/usr/lib/fonts/fixedwidthfonts/cour.b.14"
+	   end_label
+	   text constellation_name
+	      label "Constellation:"
+	      display 20
+	      action {
+		ra = "";
+		dec = "";
+		scale = "";
+		ra_set = dec_set = scale_set = FALSE;
+		find_set = TRUE;
+	      }
+	   end_text	
+	   text constfile
+	      label "Constellation lookup file:"
+	      display 20
+	   end_text	
+	   label
+	      ""
+	   end_label
+	   choice invert
+		display cycle
+		label "invert"
+		"Normal"	nothing;	
+		"Inverted"	nothing;	
+	   end_choice
+	   button
+	      normal	"done"	remove chart_dialog;
+	   end_button
+/* would like "apply constellation, cancel and ok buttons */
+	end_gadgets
+end_dialog
+
+dialog type_dialog
+	gadgets
+	   left
+	   ragged
+	   choice
+		display vertical
+	        label "Chart Type"
+		"Main Chart + Thumbnail"	chart_type = "threepart";
+		"Full Page"	chart_type = "fullpage";
+	   end_choice
+	   button
+	      normal	"done"	remove type_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog mag_dialog
+	gadgets
+	   left
+	   ragged
+	   text namelim
+		label "Mag limit for object names:"
+		display 20
+		action {
+			namelim_set = TRUE;
+		}
+	   end_text
+	   text gklim
+		label "Mag limit for bayer labels:"
+		display 20
+		action {
+			gklim_set = TRUE;
+		}
+	   end_text
+	   text maglim
+		label "Mag limit for object visibility:"
+		display 20
+		action {
+			maglim_set = TRUE;
+		}
+	   end_text
+	   button
+	      normal	"done"	remove mag_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog layer_dialog
+	gadgets
+	left
+	ragged
+	choice
+	display cycle
+		"None"		layer[0] = "";
+		"Outline"	layer[0] = "outline";
+		"RA_Grid"	layer[0] = "ra_grid";
+		"Dec_Grid"	layer[0] = "dec_grid";
+		"Ecliptic"	layer[0] = "ecliptic";
+		"Boundaries"	layer[0] = "boundaries";
+		"Patterns"	layer[0] = "patterns";
+		"Constlnames"	layer[0] = "constlnames";
+		"Allfiles"	layer[0] = "allfiles";
+		"Allglyphs"	layer[0] = "allglyphs";
+		"Allnames"	layer[0] = "allnames";
+		"Allmaglbls"	layer[0] = "allmaglbls";
+		"Allvectors"	layer[0] = "allvectors";
+		"Allareas"	layer[0] = "allareas";
+		"Legends"	layer[0] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[1] = "";
+		"Outline"	layer[1] = "outline";
+		"RA_Grid"	layer[1] = "ra_grid";
+		"Dec_Grid"	layer[1] = "dec_grid";
+		"Ecliptic"	layer[1] = "ecliptic";
+		"Boundaries"	layer[1] = "boundaries";
+		"Patterns"	layer[1] = "patterns";
+		"Constlnames"	layer[1] = "constlnames";
+		"Allfiles"	layer[1] = "allfiles";
+		"Allglyphs"	layer[1] = "allglyphs";
+		"Allnames"	layer[1] = "allnames";
+		"Allmaglbls"	layer[1] = "allmaglbls";
+		"Allvectors"	layer[1] = "allvectors";
+		"Allareas"	layer[1] = "allareas";
+		"Legends"	layer[1] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[2] = "";
+		"Outline"	layer[2] = "outline";
+		"RA_Grid"	layer[2] = "ra_grid";
+		"Dec_Grid"	layer[2] = "dec_grid";
+		"Ecliptic"	layer[2] = "ecliptic";
+		"Boundaries"	layer[2] = "boundaries";
+		"Patterns"	layer[2] = "patterns";
+		"Constlnames"	layer[2] = "constlnames";
+		"Allfiles"	layer[2] = "allfiles";
+		"Allglyphs"	layer[2] = "allglyphs";
+		"Allnames"	layer[2] = "allnames";
+		"Allmaglbls"	layer[2] = "allmaglbls";
+		"Allvectors"	layer[2] = "allvectors";
+		"Allareas"	layer[2] = "allareas";
+		"Legends"	layer[2] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[3] = "";
+		"Outline"	layer[3] = "outline";
+		"RA_Grid"	layer[3] = "ra_grid";
+		"Dec_Grid"	layer[3] = "dec_grid";
+		"Ecliptic"	layer[3] = "ecliptic";
+		"Boundaries"	layer[3] = "boundaries";
+		"Patterns"	layer[3] = "patterns";
+		"Constlnames"	layer[3] = "constlnames";
+		"Allfiles"	layer[3] = "allfiles";
+		"Allglyphs"	layer[3] = "allglyphs";
+		"Allnames"	layer[3] = "allnames";
+		"Allmaglbls"	layer[3] = "allmaglbls";
+		"Allvectors"	layer[3] = "allvectors";
+		"Allareas"	layer[3] = "allareas";
+		"Legends"	layer[3] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[4] = "";
+		"Outline"	layer[4] = "outline";
+		"RA_Grid"	layer[4] = "ra_grid";
+		"Dec_Grid"	layer[4] = "dec_grid";
+		"Ecliptic"	layer[4] = "ecliptic";
+		"Boundaries"	layer[4] = "boundaries";
+		"Patterns"	layer[4] = "patterns";
+		"Constlnames"	layer[4] = "constlnames";
+		"Allfiles"	layer[4] = "allfiles";
+		"Allglyphs"	layer[4] = "allglyphs";
+		"Allnames"	layer[4] = "allnames";
+		"Allmaglbls"	layer[4] = "allmaglbls";
+		"Allvectors"	layer[4] = "allvectors";
+		"Allareas"	layer[4] = "allareas";
+		"Legends"	layer[4] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[5] = "";
+		"Outline"	layer[5] = "outline";
+		"RA_Grid"	layer[5] = "ra_grid";
+		"Dec_Grid"	layer[5] = "dec_grid";
+		"Ecliptic"	layer[5] = "ecliptic";
+		"Boundaries"	layer[5] = "boundaries";
+		"Patterns"	layer[5] = "patterns";
+		"Constlnames"	layer[5] = "constlnames";
+		"Allfiles"	layer[5] = "allfiles";
+		"Allglyphs"	layer[5] = "allglyphs";
+		"Allnames"	layer[5] = "allnames";
+		"Allmaglbls"	layer[5] = "allmaglbls";
+		"Allvectors"	layer[5] = "allvectors";
+		"Allareas"	layer[5] = "allareas";
+		"Legends"	layer[5] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[6] = "";
+		"Outline"	layer[6] = "outline";
+		"RA_Grid"	layer[6] = "ra_grid";
+		"Dec_Grid"	layer[6] = "dec_grid";
+		"Ecliptic"	layer[6] = "ecliptic";
+		"Boundaries"	layer[6] = "boundaries";
+		"Patterns"	layer[6] = "patterns";
+		"Constlnames"	layer[6] = "constlnames";
+		"Allfiles"	layer[6] = "allfiles";
+		"Allglyphs"	layer[6] = "allglyphs";
+		"Allnames"	layer[6] = "allnames";
+		"Allmaglbls"	layer[6] = "allmaglbls";
+		"Allvectors"	layer[6] = "allvectors";
+		"Allareas"	layer[6] = "allareas";
+		"Legends"	layer[6] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[7] = "";
+		"Outline"	layer[7] = "outline";
+		"RA_Grid"	layer[7] = "ra_grid";
+		"Dec_Grid"	layer[7] = "dec_grid";
+		"Ecliptic"	layer[7] = "ecliptic";
+		"Boundaries"	layer[7] = "boundaries";
+		"Patterns"	layer[7] = "patterns";
+		"Constlnames"	layer[7] = "constlnames";
+		"Allfiles"	layer[7] = "allfiles";
+		"Allglyphs"	layer[7] = "allglyphs";
+		"Allnames"	layer[7] = "allnames";
+		"Allmaglbls"	layer[7] = "allmaglbls";
+		"Allvectors"	layer[7] = "allvectors";
+		"Allareas"	layer[7] = "allareas";
+		"Legends"	layer[7] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[8] = "";
+		"Outline"	layer[8] = "outline";
+		"RA_Grid"	layer[8] = "ra_grid";
+		"Dec_Grid"	layer[8] = "dec_grid";
+		"Ecliptic"	layer[8] = "ecliptic";
+		"Boundaries"	layer[8] = "boundaries";
+		"Patterns"	layer[8] = "patterns";
+		"Constlnames"	layer[8] = "constlnames";
+		"Allfiles"	layer[8] = "allfiles";
+		"Allglyphs"	layer[8] = "allglyphs";
+		"Allnames"	layer[8] = "allnames";
+		"Allmaglbls"	layer[8] = "allmaglbls";
+		"Allvectors"	layer[8] = "allvectors";
+		"Allareas"	layer[8] = "allareas";
+		"Legends"	layer[8] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[9] = "";
+		"Outline"	layer[9] = "outline";
+		"RA_Grid"	layer[9] = "ra_grid";
+		"Dec_Grid"	layer[9] = "dec_grid";
+		"Ecliptic"	layer[9] = "ecliptic";
+		"Boundaries"	layer[9] = "boundaries";
+		"Patterns"	layer[9] = "patterns";
+		"Constlnames"	layer[9] = "constlnames";
+		"Allfiles"	layer[9] = "allfiles";
+		"Allglyphs"	layer[9] = "allglyphs";
+		"Allnames"	layer[9] = "allnames";
+		"Allmaglbls"	layer[9] = "allmaglbls";
+		"Allvectors"	layer[9] = "allvectors";
+		"Allareas"	layer[9] = "allareas";
+		"Legends"	layer[9] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[10] = "";
+		"Outline"	layer[10] = "outline";
+		"RA_Grid"	layer[10] = "ra_grid";
+		"Dec_Grid"	layer[10] = "dec_grid";
+		"Ecliptic"	layer[10] = "ecliptic";
+		"Boundaries"	layer[10] = "boundaries";
+		"Patterns"	layer[10] = "patterns";
+		"Constlnames"	layer[10] = "constlnames";
+		"Allfiles"	layer[10] = "allfiles";
+		"Allglyphs"	layer[10] = "allglyphs";
+		"Allnames"	layer[10] = "allnames";
+		"Allmaglbls"	layer[10] = "allmaglbls";
+		"Allvectors"	layer[10] = "allvectors";
+		"Allareas"	layer[10] = "allareas";
+		"Legends"	layer[10] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[11] = "";
+		"Outline"	layer[11] = "outline";
+		"RA_Grid"	layer[11] = "ra_grid";
+		"Dec_Grid"	layer[11] = "dec_grid";
+		"Ecliptic"	layer[11] = "ecliptic";
+		"Boundaries"	layer[11] = "boundaries";
+		"Patterns"	layer[11] = "patterns";
+		"Constlnames"	layer[11] = "constlnames";
+		"Allfiles"	layer[11] = "allfiles";
+		"Allglyphs"	layer[11] = "allglyphs";
+		"Allnames"	layer[11] = "allnames";
+		"Allmaglbls"	layer[11] = "allmaglbls";
+		"Allvectors"	layer[11] = "allvectors";
+		"Allareas"	layer[11] = "allareas";
+		"Legends"	layer[11] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[12] = "";
+		"Outline"	layer[12] = "outline";
+		"RA_Grid"	layer[12] = "ra_grid";
+		"Dec_Grid"	layer[12] = "dec_grid";
+		"Ecliptic"	layer[12] = "ecliptic";
+		"Boundaries"	layer[12] = "boundaries";
+		"Patterns"	layer[12] = "patterns";
+		"Constlnames"	layer[12] = "constlnames";
+		"Allfiles"	layer[12] = "allfiles";
+		"Allglyphs"	layer[12] = "allglyphs";
+		"Allnames"	layer[12] = "allnames";
+		"Allmaglbls"	layer[12] = "allmaglbls";
+		"Allvectors"	layer[12] = "allvectors";
+		"Allareas"	layer[12] = "allareas";
+		"Legends"	layer[12] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[13] = "";
+		"Outline"	layer[13] = "outline";
+		"RA_Grid"	layer[13] = "ra_grid";
+		"Dec_Grid"	layer[13] = "dec_grid";
+		"Ecliptic"	layer[13] = "ecliptic";
+		"Boundaries"	layer[13] = "boundaries";
+		"Patterns"	layer[13] = "patterns";
+		"Constlnames"	layer[13] = "constlnames";
+		"Allfiles"	layer[13] = "allfiles";
+		"Allglyphs"	layer[13] = "allglyphs";
+		"Allnames"	layer[13] = "allnames";
+		"Allmaglbls"	layer[13] = "allmaglbls";
+		"Allvectors"	layer[13] = "allvectors";
+		"Allareas"	layer[13] = "allareas";
+		"Legends"	layer[13] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[14] = "";
+		"Outline"	layer[14] = "outline";
+		"RA_Grid"	layer[14] = "ra_grid";
+		"Dec_Grid"	layer[14] = "dec_grid";
+		"Ecliptic"	layer[14] = "ecliptic";
+		"Boundaries"	layer[14] = "boundaries";
+		"Patterns"	layer[14] = "patterns";
+		"Constlnames"	layer[14] = "constlnames";
+		"Allfiles"	layer[14] = "allfiles";
+		"Allglyphs"	layer[14] = "allglyphs";
+		"Allnames"	layer[14] = "allnames";
+		"Allmaglbls"	layer[14] = "allmaglbls";
+		"Allvectors"	layer[14] = "allvectors";
+		"Allareas"	layer[14] = "allareas";
+		"Legends"	layer[14] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[15] = "";
+		"Outline"	layer[15] = "outline";
+		"RA_Grid"	layer[15] = "ra_grid";
+		"Dec_Grid"	layer[15] = "dec_grid";
+		"Ecliptic"	layer[15] = "ecliptic";
+		"Boundaries"	layer[15] = "boundaries";
+		"Patterns"	layer[15] = "patterns";
+		"Constlnames"	layer[15] = "constlnames";
+		"Allfiles"	layer[15] = "allfiles";
+		"Allglyphs"	layer[15] = "allglyphs";
+		"Allnames"	layer[15] = "allnames";
+		"Allmaglbls"	layer[15] = "allmaglbls";
+		"Allvectors"	layer[15] = "allvectors";
+		"Allareas"	layer[15] = "allareas";
+		"Legends"	layer[15] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[16] = "";
+		"Outline"	layer[16] = "outline";
+		"RA_Grid"	layer[16] = "ra_grid";
+		"Dec_Grid"	layer[16] = "dec_grid";
+		"Ecliptic"	layer[16] = "ecliptic";
+		"Boundaries"	layer[16] = "boundaries";
+		"Patterns"	layer[16] = "patterns";
+		"Constlnames"	layer[16] = "constlnames";
+		"Allfiles"	layer[16] = "allfiles";
+		"Allglyphs"	layer[16] = "allglyphs";
+		"Allnames"	layer[16] = "allnames";
+		"Allmaglbls"	layer[16] = "allmaglbls";
+		"Allvectors"	layer[16] = "allvectors";
+		"Allareas"	layer[16] = "allareas";
+		"Legends"	layer[16] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[17] = "";
+		"Outline"	layer[17] = "outline";
+		"RA_Grid"	layer[17] = "ra_grid";
+		"Dec_Grid"	layer[17] = "dec_grid";
+		"Ecliptic"	layer[17] = "ecliptic";
+		"Boundaries"	layer[17] = "boundaries";
+		"Patterns"	layer[17] = "patterns";
+		"Constlnames"	layer[17] = "constlnames";
+		"Allfiles"	layer[17] = "allfiles";
+		"Allglyphs"	layer[17] = "allglyphs";
+		"Allnames"	layer[17] = "allnames";
+		"Allmaglbls"	layer[17] = "allmaglbls";
+		"Allvectors"	layer[17] = "allvectors";
+		"Allareas"	layer[17] = "allareas";
+		"Legends"	layer[17] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[18] = "";
+		"Outline"	layer[18] = "outline";
+		"RA_Grid"	layer[18] = "ra_grid";
+		"Dec_Grid"	layer[18] = "dec_grid";
+		"Ecliptic"	layer[18] = "ecliptic";
+		"Boundaries"	layer[18] = "boundaries";
+		"Patterns"	layer[18] = "patterns";
+		"Constlnames"	layer[18] = "constlnames";
+		"Allfiles"	layer[18] = "allfiles";
+		"Allglyphs"	layer[18] = "allglyphs";
+		"Allnames"	layer[18] = "allnames";
+		"Allmaglbls"	layer[18] = "allmaglbls";
+		"Allvectors"	layer[18] = "allvectors";
+		"Allareas"	layer[18] = "allareas";
+		"Legends"	layer[18] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[19] = "";
+		"Outline"	layer[19] = "outline";
+		"RA_Grid"	layer[19] = "ra_grid";
+		"Dec_Grid"	layer[19] = "dec_grid";
+		"Ecliptic"	layer[19] = "ecliptic";
+		"Boundaries"	layer[19] = "boundaries";
+		"Patterns"	layer[19] = "patterns";
+		"Constlnames"	layer[19] = "constlnames";
+		"Allfiles"	layer[19] = "allfiles";
+		"Allglyphs"	layer[19] = "allglyphs";
+		"Allnames"	layer[19] = "allnames";
+		"Allmaglbls"	layer[19] = "allmaglbls";
+		"Allvectors"	layer[19] = "allvectors";
+		"Allareas"	layer[19] = "allareas";
+		"Legends"	layer[19] = "legends";
+	   end_choice
+	choice
+	display cycle
+		"None"		layer[20] = "";
+		"Outline"	layer[20] = "outline";
+		"RA_Grid"	layer[20] = "ra_grid";
+		"Dec_Grid"	layer[20] = "dec_grid";
+		"Ecliptic"	layer[20] = "ecliptic";
+		"Boundaries"	layer[20] = "boundaries";
+		"Patterns"	layer[20] = "patterns";
+		"Constlnames"	layer[20] = "constlnames";
+		"Allfiles"	layer[20] = "allfiles";
+		"Allglyphs"	layer[20] = "allglyphs";
+		"Allnames"	layer[20] = "allnames";
+		"Allmaglbls"	layer[20] = "allmaglbls";
+		"Allvectors"	layer[20] = "allvectors";
+		"Allareas"	layer[20] = "allareas";
+		"Legends"	layer[20] = "legends";
+	   end_choice
+	   button
+	      normal	"done"	remove layer_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog proj_dialog
+	gadgets
+	   ragged
+	   choice proj_choice
+		display vertical
+		label "Projection Mode"
+		"Sansons"	projection_mode = "sansons";
+		"Stereographic"	projection_mode = "Stereographic";
+		"Orthographic"	projection_mode = "Orthographic";
+		"Gnomonic"	projection_mode = "Gnomonic";
+	   end_choice
+	   button
+	      normal	"done"	remove proj_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog sfiles_dialog
+	size 24 by 90 characters
+	gadgets
+	   align center
+           ragged
+	   text starfile
+		label "Star File:"
+		display 38
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	startype =  "";
+		"Index"		startype =  "INDEXTYPE";
+		"Full Binary format"	startype =  "BINFULL";
+		"Object only Binary format"	startype =  "BINOBJ";
+		"Star only Binary format"	startype =  "BINSTAR";
+		"SAO format"	startype =  "SAOFORMAT";
+	   end_choice		
+	   text indexfile
+		label "Index File:"
+		display 37
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Index"		indextype =  "INDEXTYPE";
+		"Full Binary format"	indextype =  "BINFULL";
+		"Object only Binary format"	indextype =  "BINOBJ";
+		"Star only Binary format"	indextype =  "BINSTAR";
+		"SAO format"	indextype =  "SAOFORMAT";
+		"Default"	indextype =  "";
+	   end_choice		
+	   text nebfile
+		label "Nebula File:"
+		display 36
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	nebtype =  "";
+		"Index"		nebtype =  "INDEXTYPE";
+		"Full Binary format"	nebtype =  "BINFULL";
+		"Object only Binary format"	nebtype =  "BINOBJ";
+		"Star only Binary format"	nebtype =  "BINSTAR";
+		"SAO format"	nebtype =  "SAOFORMAT";
+	   end_choice		
+	   text planetfile
+		label "Planet File:"
+		display 36
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	plantype =  "";
+		"Index"		plantype =  "INDEXTYPE";
+		"Full Binary format"	plantype =  "BINFULL";
+		"Object only Binary format"	plantype =  "BINOBJ";
+		"Star only Binary format"	plantype =  "BINSTAR";
+		"SAO format"	plantype =  "SAOFORMAT";
+	   end_choice		
+	   text boundfile
+		label "Constellation Boundary File:"
+		display 20
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	boundtype =  "";
+		"Index"		boundtype =  "INDEXTYPE";
+		"Full Binary format"	boundtype =  "BINFULL";
+		"Object only Binary format"	boundtype =  "BINOBJ";
+		"Star only Binary format"	boundtype =  "BINSTAR";
+		"SAO format"	boundtype =  "SAOFORMAT";
+	   end_choice		
+	   text patternfile
+		label "Constellation Pattern File:"
+		display 21
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	patterntype =  "";
+		"Index"		patterntype =  "INDEXTYPE";
+		"Full Binary format"	patterntype =  "BINFULL";
+		"Object only Binary format"	patterntype =  "BINOBJ";
+		"Star only Binary format"	patterntype =  "BINSTAR";
+		"SAO format"	patterntype =  "SAOFORMAT";
+	   end_choice		
+	   text constlnamefile
+		label "Constellation Name File:"
+		display 24
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	cnametype =  "";
+		"Index"		cnametype =  "INDEXTYPE";
+		"Full Binary format"	cnametype =  "BINFULL";
+		"Object only Binary format"	cnametype =  "BINOBJ";
+		"Star only Binary format"	cnametype =  "BINSTAR";
+		"SAO format"	cnametype =  "SAOFORMAT";
+	   end_choice		
+	   text userfile0
+		label "User File:"
+		display 38
+		action userfile[0] = userfile0;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[0] =  "";
+		"Index"		usertype[0] =  "INDEXTYPE";
+		"Full Binary format"	usertype[0] =  "BINFULL";
+		"Object only Binary format"	usertype[0] =  "BINOBJ";
+		"Star only Binary format"	usertype[0] =  "BINSTAR";
+		"SAO format"	usertype[0] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile1
+		label "User File:"
+		display 38
+		action userfile[1] = userfile1;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[1] =  "";
+		"Index"		usertype[1] =  "INDEXTYPE";
+		"Full Binary format"	usertype[1] =  "BINFULL";
+		"Object only Binary format"	usertype[1] =  "BINOBJ";
+		"Star only Binary format"	usertype[1] =  "BINSTAR";
+		"SAO format"	usertype[1] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile2
+		label "User File:"
+		display 38
+		action userfile[2] = userfile2;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[2] =  "";
+		"Index"		usertype[2] =  "INDEXTYPE";
+		"Full Binary format"	usertype[2] =  "BINFULL";
+		"Object only Binary format"	usertype[2] =  "BINOBJ";
+		"Star only Binary format"	usertype[2] =  "BINSTAR";
+		"SAO format"	usertype[2] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile3
+		label "User File:"
+		display 38
+		action userfile[3] = userfile3;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[3] =  "";
+		"Index"		usertype[3] =  "INDEXTYPE";
+		"Full Binary format"	usertype[3] =  "BINFULL";
+		"Object only Binary format"	usertype[3] =  "BINOBJ";
+		"Star only Binary format"	usertype[3] =  "BINSTAR";
+		"SAO format"	usertype[3] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile4
+		label "User File:"
+		display 38
+		action userfile[4] = userfile4;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[4] =  "";
+		"Index"		usertype[4] =  "INDEXTYPE";
+		"Full Binary format"	usertype[4] =  "BINFULL";
+		"Object only Binary format"	usertype[4] =  "BINOBJ";
+		"Star only Binary format"	usertype[4] =  "BINSTAR";
+		"SAO format"	usertype[4] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile5
+		label "User File:"
+		display 38
+		action userfile[5] = userfile5;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[5] =  "";
+		"Index"		usertype[5] =  "INDEXTYPE";
+		"Full Binary format"	usertype[5] =  "BINFULL";
+		"Object only Binary format"	usertype[5] =  "BINOBJ";
+		"Star only Binary format"	usertype[5] =  "BINSTAR";
+		"SAO format"	usertype[5] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile6
+		label "User File:"
+		display 38
+		action userfile[6] = userfile6;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[6] =  "";
+		"Index"		usertype[6] =  "INDEXTYPE";
+		"Full Binary format"	usertype[6] =  "BINFULL";
+		"Object only Binary format"	usertype[6] =  "BINOBJ";
+		"Star only Binary format"	usertype[6] =  "BINSTAR";
+		"SAO format"	usertype[6] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile7
+		label "User File:"
+		display 38
+		action userfile[7] = userfile7;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[7] =  "";
+		"Index"		usertype[7] =  "INDEXTYPE";
+		"Full Binary format"	usertype[7] =  "BINFULL";
+		"Object only Binary format"	usertype[7] =  "BINOBJ";
+		"Star only Binary format"	usertype[7] =  "BINSTAR";
+		"SAO format"	usertype[7] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile8
+		label "User File:"
+		display 38
+		action userfile[8] = userfile8;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[8] =  "";
+		"Index"		usertype[8] =  "INDEXTYPE";
+		"Full Binary format"	usertype[8] =  "BINFULL";
+		"Object only Binary format"	usertype[8] =  "BINOBJ";
+		"Star only Binary format"	usertype[8] =  "BINSTAR";
+		"SAO format"	usertype[8] =  "SAOFORMAT";
+	   end_choice		
+	   text userfile9
+		label "User File:"
+		display 38
+		action userfile[9] = userfile9;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	usertype[9] =  "";
+		"Index"		usertype[9] =  "INDEXTYPE";
+		"Full Binary format"	usertype[9] =  "BINFULL";
+		"Object only Binary format"	usertype[9] =  "BINOBJ";
+		"Star only Binary format"	usertype[9] =  "BINSTAR";
+		"SAO format"	usertype[9] =  "SAOFORMAT";
+	   end_choice		
+	   button
+	      normal	"done"	remove sfiles_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog files_dialog
+	gadgets
+	   ragged
+	   text mapfile0
+		label "File:"
+		display 20
+		action mapfile[0] = mapfile0;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[0] =  "";
+		"Index"		maptype[0] =  "INDEXTYPE";
+		"Full Binary format"	maptype[0] =  "BINFULL";
+		"Object only Binary format"	maptype[0] =  "BINOBJ";
+		"Star only Binary format"	maptype[0] =  "BINSTAR";
+		"SAO format"	maptype[0] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile1
+		label "File:"
+		display 20
+		action mapfile[1] = mapfile1;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[1] =  "";
+		"Index"		maptype[1] =  "INDEXTYPE";
+		"Full Binary format"	maptype[1] =  "BINFULL";
+		"Object only Binary format"	maptype[1] =  "BINOBJ";
+		"Star only Binary format"	maptype[1] =  "BINSTAR";
+		"SAO format"	maptype[1] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile2
+		label "File:"
+		display 20
+		action mapfile[2] = mapfile2;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[2] =  "";
+		"Index"		maptype[2] =  "INDEXTYPE";
+		"Full Binary format"	maptype[2] =  "BINFULL";
+		"Object only Binary format"	maptype[2] =  "BINOBJ";
+		"Star only Binary format"	maptype[2] =  "BINSTAR";
+		"SAO format"	maptype[2] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile3
+		label "File:"
+		display 20
+		action mapfile[3] = mapfile3;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[3] =  "";
+		"Index"		maptype[3] =  "INDEXTYPE";
+		"Full Binary format"	maptype[3] =  "BINFULL";
+		"Object only Binary format"	maptype[3] =  "BINOBJ";
+		"Star only Binary format"	maptype[3] =  "BINSTAR";
+		"SAO format"	maptype[3] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile4
+		label "File:"
+		display 20
+		action mapfile[4] = mapfile4;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[4] =  "";
+		"Index"		maptype[4] =  "INDEXTYPE";
+		"Full Binary format"	maptype[4] =  "BINFULL";
+		"Object only Binary format"	maptype[4] =  "BINOBJ";
+		"Star only Binary format"	maptype[4] =  "BINSTAR";
+		"SAO format"	maptype[4] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile5
+		label "File:"
+		display 20
+		action mapfile[5] = mapfile5;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[5] =  "";
+		"Index"		maptype[5] =  "INDEXTYPE";
+		"Full Binary format"	maptype[5] =  "BINFULL";
+		"Object only Binary format"	maptype[5] =  "BINOBJ";
+		"Star only Binary format"	maptype[5] =  "BINSTAR";
+		"SAO format"	maptype[5] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile6
+		label "File:"
+		display 20
+		action mapfile[6] = mapfile6;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[6] =  "";
+		"Index"		maptype[6] =  "INDEXTYPE";
+		"Full Binary format"	maptype[6] =  "BINFULL";
+		"Object only Binary format"	maptype[6] =  "BINOBJ";
+		"Star only Binary format"	maptype[6] =  "BINSTAR";
+		"SAO format"	maptype[6] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile7
+		label "File:"
+		display 20
+		action mapfile[7] = mapfile7;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[7] =  "";
+		"Index"		maptype[7] =  "INDEXTYPE";
+		"Full Binary format"	maptype[7] =  "BINFULL";
+		"Object only Binary format"	maptype[7] =  "BINOBJ";
+		"Star only Binary format"	maptype[7] =  "BINSTAR";
+		"SAO format"	maptype[7] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile8
+		label "File:"
+		display 20
+		action mapfile[8] = mapfile8;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[8] =  "";
+		"Index"		maptype[8] =  "INDEXTYPE";
+		"Full Binary format"	maptype[8] =  "BINFULL";
+		"Object only Binary format"	maptype[8] =  "BINOBJ";
+		"Star only Binary format"	maptype[8] =  "BINSTAR";
+		"SAO format"	maptype[8] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile9
+		label "File:"
+		display 20
+		action mapfile[9] = mapfile9;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[9] =  "";
+		"Index"		maptype[9] =  "INDEXTYPE";
+		"Full Binary format"	maptype[9] =  "BINFULL";
+		"Object only Binary format"	maptype[9] =  "BINOBJ";
+		"Star only Binary format"	maptype[9] =  "BINSTAR";
+		"SAO format"	maptype[9] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile10
+		label "File:"
+		display 20
+		action mapfile[10] = mapfile10;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[10] =  "";
+		"Index"		maptype[10] =  "INDEXTYPE";
+		"Full Binary format"	maptype[10] =  "BINFULL";
+		"Object only Binary format"	maptype[10] =  "BINOBJ";
+		"Star only Binary format"	maptype[10] =  "BINSTAR";
+		"SAO format"	maptype[10] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile11
+		label "File:"
+		display 20
+		action mapfile[11] = mapfile11;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[11] =  "";
+		"Index"		maptype[11] =  "INDEXTYPE";
+		"Full Binary format"	maptype[11] =  "BINFULL";
+		"Object only Binary format"	maptype[11] =  "BINOBJ";
+		"Star only Binary format"	maptype[11] =  "BINSTAR";
+		"SAO format"	maptype[11] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile12
+		label "File:"
+		display 20
+		action mapfile[12] = mapfile12;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[12] =  "";
+		"Index"		maptype[12] =  "INDEXTYPE";
+		"Full Binary format"	maptype[12] =  "BINFULL";
+		"Object only Binary format"	maptype[12] =  "BINOBJ";
+		"Star only Binary format"	maptype[12] =  "BINSTAR";
+		"SAO format"	maptype[12] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile13
+		label "File:"
+		display 20
+		action mapfile[13] = mapfile13;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[13] =  "";
+		"Index"		maptype[13] =  "INDEXTYPE";
+		"Full Binary format"	maptype[13] =  "BINFULL";
+		"Object only Binary format"	maptype[13] =  "BINOBJ";
+		"Star only Binary format"	maptype[13] =  "BINSTAR";
+		"SAO format"	maptype[13] =  "SAOFORMAT";
+	   end_choice		
+	   text mapfile14
+		label "File:"
+		display 20
+		action mapfile[14] = mapfile14;
+	   end_text
+	   choice
+		display cycle
+		label "Type"
+		"Default"	maptype[14] =  "";
+		"Index"		maptype[14] =  "INDEXTYPE";
+		"Full Binary format"	maptype[14] =  "BINFULL";
+		"Object only Binary format"	maptype[14] =  "BINOBJ";
+		"Star only Binary format"	maptype[14] =  "BINSTAR";
+		"SAO format"	maptype[14] =  "SAOFORMAT";
+	   end_choice		
+	   button
+	      normal	"done"	remove files_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog var_dialog
+	gadgets
+	   text vrange_high
+		label "Higher (brighter) Magnitude lable limit:"
+		display 20
+		action {
+			vrange_set = TRUE;
+			if (vrange_low == "") vrange_low = vrange_high;
+			vmag_mag = (vrange_low + vrange_high) / 2;
+			vmag_range = vrange_high - vmag_mag;
+		}
+	   end_text
+	   text vrange_low
+		label "Lower (fainter) Magnitude lable limit:"
+		display 20
+		action {
+			vrange_set = TRUE;
+			if (vrange_high == "") vrange_high = vrange_low;
+			vmag_mag = (vrange_low + vrange_high) / 2;
+			vmag_range = vrange_low - vmag_mag;
+		}
+	   end_text
+	   text vmag_mag
+		label "Center magnitude:"
+		display 20
+		action {
+			vrange_set = TRUE;
+			if (vmag_range == "") vmag_range = 0;
+			vrange_low = vmag_mag + vmag_range;
+			vrange_high = vmag_mag - vmag_range;
+		}
+	   end_text
+	   text vmag_range
+		label "Magnitude range:"
+		display 20
+		action {
+			vrange_set = TRUE;
+			if (vmag_mag == "") vmag_mag = 0;
+			vrange_low = vmag_mag + vmag_range;
+			vrange_high = vmag_mag - vmag_range;
+		}
+	   end_text
+	   button
+	      normal	"done"	remove var_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog grid_dialog
+	gadgets
+	   left
+	   align left
+	   text grid_ra
+		label "R.A. grid step:"
+		display 20
+		action {
+			grid_ra_set = TRUE;
+		}
+	   end_text
+	   text grid_dec
+		label "Dec. grid step:"
+		display 20
+		action {
+			grid_dec_set = TRUE;
+		}
+	   end_text
+	   text grid_ra_start
+		label "R.A. grid start:"
+		display 20
+		action {
+			grid_ra_start_set = TRUE;
+		}
+	   end_text
+	   text grid_dec_start
+		label "Dec. grid start:"
+		display 20
+		action {
+			grid_dec_start_set = TRUE;
+		}
+	   end_text
+	   choice
+		display cycle
+	        label "RA"
+		"invisible"	nogrid_ra = TRUE;
+		"visible"	nogrid_ra = FALSE;
+	   end_choice
+	   choice
+		display cycle
+	        label "Dec"
+		"invisible"	nogrid_dec = TRUE;
+		"visible"	nogrid_dec = FALSE;
+	   end_choice
+	   button
+	      normal	"done"	remove grid_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+
+dialog out_file_dialog
+	gadgets
+	text out_fname
+		label "write .starrc file: "
+		display 20
+	end_text
+	text write_mapwin_file
+		label "write mapwin file: "
+		display 20
+	end_text
+	text read_mapwin_file
+		label "read mapwin file: "
+		display 20
+	end_text
+	   button
+	      normal	"done"	remove out_file_dialog;
+	   end_button
+	end_gadgets
+end_dialog
+	
