@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 #ifndef lint
-static char *rcsid = "$Header: /home/Vince/cvs/local.d/cops.d/src/pass.c,v 1.1 1990-04-20 16:30:23 vrs Exp $";
+static char *rcsid = "$Header: /home/Vince/cvs/local.d/cops.d/src/pass.c,v 1.2 1990-04-20 17:05:30 vrs Exp $";
 #endif
 
 /*
@@ -185,13 +185,13 @@ char **argv;
 	    clearerr(stdin);
 	    }
 	else {
-	    if (setpwent(argv[i])) {
+	    if (csetpwent(argv[i])) {
 		perror(argv[i]);
 		continue;
 		}
 	    Curpw = argv[i];
 	    chkpw();
-	    endpwent();
+	    cendpwent();
 	    }
 	}
     if (!onedone) {
@@ -458,7 +458,7 @@ register struct passwd *pwd;
  * Add a parameter to "setpwent" so I can override the file name.
  */
 
-setpwent(file)
+csetpwent(file)
 char *file;
 {
 	if ((pwf = fopen(file,"r")) == NULL)
@@ -466,8 +466,7 @@ char *file;
 	return(0);
 }
 
-endpwent()
-
+cendpwent()
 {
     fclose(pwf);
     pwf = NULL;
@@ -493,7 +492,7 @@ getpwent()
 	long	x;
 
 	if(pwf == NULL)
-	    if (setpwent(PASSWD)) {
+	    if (csetpwent(PASSWD)) {
 		perror(PASSWD);
 		return(NULL);
 		}
