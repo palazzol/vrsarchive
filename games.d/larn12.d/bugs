@@ -1,0 +1,264 @@
+From fred%omssw2!vrs Sat Aug 30 18:03:11 1986
+Date: Sat, 30 Aug 86 17:54:28 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310054.AA03585@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA03585; Sat, 30 Aug 86 17:54:28 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!tikal!teldata!transys!baron
+From: baron@transys.UUCP (Joe Portman)
+Newsgroups: net.sources.games
+Subject: Re: Larn ports ?
+Message-ID: <258@transys.UUCP>
+Date: 26 Aug 86 16:44:26 GMT
+Date-Received: 27 Aug 86 13:30:57 GMT
+References: <157@gouldsd.UUCP>
+Organization: TransSystems Inc. Bellevue, WA
+Lines: 25
+
+> 
+> 
+> 	Anyone out there porting LARN to IBM/clones ??
+> 
+
+Here at transys I have successfully ported larn 12.0 to An IBM-AT running
+SCO Xenix V Release 2.1. No major surgery, just a lot of little fixes.
+
+One major problem though, in main.c there is a call to malloc when you
+create the dungeon. The call asks for about 150k of memory. Unfortunately,
+Xenix on an AT can only ask for an amount of memory up to an unsigned
+integers largest value (65k). This problem is not apparent until you
+reach the sixth level, at which point you will get a SIGSEGV segment
+violation. The fixes were simple.
+
+Write me for the diffs, as they are all #ifdef'd with M_XENIX
+
+-- 
+These are my own opinions, not those of my employer (self), 
+or any one connected with the company (mine) 
+Joe Portman (SA)                                USPS: TransSystems Incorporated
+AT&T: 1-206-453-5560                                  1280 116th Avenue NE
+              /-- uw-beaver!\         /-- camco!  \   Bellevue WA 98009
+... ihnp4! --<               >-tikal!<             >-- transys!root
+              \-- microsoft!/         \-- teldata!/
+
+From fred%omssw2!vrs Sat Aug 30 18:02:06 1986
+Date: Sat, 30 Aug 86 17:49:05 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310049.AA03550@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA03550; Sat, 30 Aug 86 17:49:05 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!cornell!rochester!rocksanne!sunybcs!colonel
+From: colonel@sunybcs.UUCP (Col. G. L. Sicherman)
+Newsgroups: net.sources.games
+Subject: Re: Bug in Larn 12.0
+Message-ID: <669@sunybcs.UUCP>
+Date: 15 Aug 86 16:58:31 GMT
+Date-Received: 22 Aug 86 15:37:04 GMT
+References: <9@megatest.UUCP> <15262@ucbvax.BERKELEY.EDU>
+Organization: Save the Dodoes Foundation
+Lines: 18
+
+> Fix?  Well, I haven't seen the source code, but I imagine
+> the letters are read in either from an external file or
+> some big string array.  Just find the right files and
+> delete the offending characters.
+
+And clean up the spelling and grammar!
+  "You owe %d gold pieces as of this notice, and is due within 5 days."
+  "With several attempts I have yet to endure the caves, and you, a
+   nobody, makes the journey!"
+  "From this time onward, bewarned ..."
+  "Methinks Count Endelford this day of right breath'eth fire ..."
+  "I yearn to behold his anger and jealously."
+  "Should ye choose to unleash some of thy wealth ..."
+-- 
+Col. G. L. Sicherman
+UU: ...{rocksvax|decvax}!sunybcs!colonel
+CS: colonel@buffalo-cs
+BI: colonel@sunybcs, csdsicher@sunyabva
+
+From fred%omssw2!vrs Sat Aug 30 18:02:21 1986
+Date: Sat, 30 Aug 86 17:49:49 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310049.AA03558@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA03558; Sat, 30 Aug 86 17:49:49 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!cornell!rochester!seismo!columbia!topaz!ll-xn!cit-vax!nike!ucbcad!ucbvax!jade!violet.berkeley.edu!shipley
+From: shipley@violet.berkeley.edu (Peter)
+Newsgroups: net.games,net.sources.games
+Subject: larn 12.0 bug
+Message-ID: <1100@jade.BERKELEY.EDU>
+Date: 15 Aug 86 22:29:41 GMT
+Date-Received: 23 Aug 86 00:57:13 GMT
+Sender: usenet@jade.BERKELEY.EDU
+Reply-To: shipley@violet.berkeley.edu (Peter)
+Organization: University of California, Berkeley
+Lines: 33
+Xref: reed net.games:2252 net.sources.games:776
+
+
+Read a scroll of "pulveriation" and shoot it off the 
+screen of the Home Level!
+
+It will reapper of the other side of the screen and leave
+alot of bats behind.
+
+--> I am have problems sending email to the author
+	Noah Morgan (noah@condor) & Jim McNamara (Price of Jems)
+	if you are reading this please reply email so I
+	can get a address.
+
+
+
+
+
+
+I use to be shipley@pavepaws.Berkeley.EDU but pavepaws
+kicked the bucket... R.I.P (Sigh)
+
+
+              +---------------------------------------+
+              |         Pete Shipley:                 |
+              |                                       |
+              |email:   shipley@violet.berkeley.edu   |
+              |         ucbvax!violet!shipley         |
+              |                                       |
+              |Flames:  cc-26@cory.berkeley.edu       |
+              |         ucbvax!cory!cc-26             |
+              |                                       |
+              |Spelling                               |
+              |corections: /dev/null                  |
+              +---------------------------------------+
+
+From fred%omssw2!vrs Sat Aug 30 18:02:37 1986
+Date: Sat, 30 Aug 86 17:52:00 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310052.AA03569@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA03569; Sat, 30 Aug 86 17:52:00 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!psu-cs!omepd!mipos3!intelca!qantel!ihnp4!cuae2!heiby
+From: heiby@cuae2.UUCP (Ron Heiby)
+Newsgroups: net.sources.games
+Subject: Re: Larn compiling ERROR
+Message-ID: <2306@cuae2.UUCP>
+Date: 21 Aug 86 16:22:28 GMT
+Date-Received: 26 Aug 86 00:28:13 GMT
+References: <636@hropus.UUCP>
+Reply-To: heiby@cuae2.UUCP (-Ron Heiby)
+Organization: AT&T - /app/eng, Lisle, IL
+Lines: 52
+
+Here are the changes I made to my SVR2.1 system to tok.c to get things to
+appear to work.  I've included just a few lines near the two ioctls that
+use FIONREAD.  I've played very little, so don't know if my changes have
+fixed all cases.
+
+Also, the problem with the initializers in signal.c is because the
+definition of signame[] includes signame[NSIG], which is 20 on SVR2
+machines, but there are more than 20 initializers.  The approach I
+took was to change the definition to "static char *signame[] = ..."
+to allow the compiler to figure out how much space to allocate.
+
+------ from tok.c ------
+#ifndef SYSV
+		do		/* if keyboard input buffer is too big, flush some of it */
+			{
+			ioctl(0,FIONREAD,&ic);
+			if (ic>flushno)   read(0,&cc,1);
+			}
+		while (ic>flushno);
+#endif
+
+		if (read(0,&cc,1) != 1) return(lastok = -1);
+
+		if (cc == 'Y'-64)	/* control Y -- shell escape */
+			{
+
+	..................
+
+/*
+ *	flushall()		Function to flush all type-ahead in the input buffer
+ */
+flushall()
+	{
+	char cc;
+	int ic;
+	for (;;)		/* if keyboard input buffer is too big, flush some of it */
+		{
+#ifdef SYSV
+		ioctl(0,TCFLSH,0);
+		return;
+#else
+		ioctl(0,FIONREAD,&ic);
+		if (ic<=0) return;
+		while (ic>0)   { read(0,&cc,1); --ic; } /* gobble up the byte */
+#endif
+		}
+	}
+
+-- 
+Ron Heiby {NAC|ihnp4}!cuae2!heiby   Moderator: mod.newprod & mod.os.unix
+AT&T-IS, /app/eng, Lisle, IL	(312) 810-6109
+"'Cause there's lots of things in this world that need to BE turned around."
+
+From fred%omssw2!vrs Sat Aug 30 18:02:53 1986
+Date: Sat, 30 Aug 86 17:53:50 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310053.AA03577@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA03577; Sat, 30 Aug 86 17:53:50 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!cornell!rochester!seismo!think!nike!ucbcad!ucbvax!brahms!desj
+From: desj@brahms.BERKELEY.EDU (David desJardins)
+Newsgroups: net.sources.games
+Subject: Larn scoreboard bug
+Message-ID: <15371@ucbvax.BERKELEY.EDU>
+Date: 22 Aug 86 02:53:38 GMT
+Date-Received: 26 Aug 86 03:58:21 GMT
+References: <636@hropus.UUCP>
+Sender: usenet@ucbvax.BERKELEY.EDU
+Reply-To: desj@brahms.UUCP (David desJardins)
+Organization: University of California, Berkeley
+Lines: 29
+
+
+   There definitely appears to be some sort of bug in Larn 12.0 that causes
+it occasionally to scribble over the scoreboard.  Here is what our scoreboard
+looked like after the last time it happened (I have converted control char-
+acters to ^x form to avoid munging terminals):
+
+^O^A^X
+
+Do you re^H^@ly want to quit?
+^AYes^B or ^ANo^B please?   Do you want to quit? 
+^AYes^B or ^ANo^B please?   Do you want to quit^E^@
+^AYes^B or ^ANo^B please?   Do you want to quit? 
+^AYes^B or ^ANo^B please?   Do you want to quit? 
+^AYes^B or ^ANo^B^D^@lease?   Do you want to quit? 
+   [ ... 20 similar lines deleted ... ]
+^AYes^B or ^ANo^B please?   Do you want to quit? 
+^AYe^@^@ or ^ANo^B please?   Do you want to quit? ^[[;H^[[2J^@^@^@^@^@^@^@^@^@^@^B^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^I^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^
+@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^H^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^G^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@
+^
+
+
+
+
+
+@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^F^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^E^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@
+
+   Obviously the bug is in the quit routine, but before I go digging into the
+code I thought I would ask if anyone else has seen and/or solved this problem.
+
+   BTW, we are running larn suid, so the program must in fact have done this.
+And it has happened at least twice now.  It is also annoying because when the
+program tries to read this munged scorefile the result is a seg fault.  It
+would obviously be better if the program detected that the scorefile was not
+readable and created a new one.
+
+   -- David desJardins
+

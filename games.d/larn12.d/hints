@@ -1,0 +1,104 @@
+From fred%omssw2!vrs Sat Aug 30 22:56:36 1986
+Date: Sat, 30 Aug 86 21:56:51 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310456.AA04170@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA04170; Sat, 30 Aug 86 21:56:51 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!cornell!rochester!rocksanne!sunybcs!colonel
+From: colonel@sunybcs.UUCP (Col. G. L. Sicherman)
+Newsgroups: net.games
+Subject: Re: larn questions
+Message-ID: <661@sunybcs.UUCP>
+Date: 14 Aug 86 17:52:09 GMT
+Date-Received: 16 Aug 86 13:28:14 GMT
+References: <358@infinet.UUCP>
+Distribution: net
+Organization: Save the Dodoes Foundation
+Lines: 41
+
+> 3.  What about altars?
+
+Well, what about them?  Here's what happens when you visit one:
+
+1. Pray, give a decent sum of money:
+	1/2	extra protection +3
+	1/2	thank you
+	1/86	enchant armor
+	1/86	enchant weapon
+2. Pray, give an insulting sum of money (less than 1/11, sometimes < 50 gp):
+		monster from level+1, aggravated +200
+3. Pray, ESCAPE or try to give more money than you have:
+		nothing happens
+4. Just pray:
+	3/4	nothing happens
+	1/6	monster from level+1
+	1/13	extra protection +3
+	1/250	enchant armor
+	1/250	enchant weapon
+5. Desecrate:
+	3/5	monster from level+2 or +3, aggravated +2500
+	7/25	nothing happens
+	3/25	altar crumbles
+6. Ignore:
+	7/10	nothing happens
+	3/10	monster from level+1, aggravated +450
+
+As for mirrors ... there's a hint in a fortune cookie!
+
+--
+	B	Flitter flutter in the air,
+		How I wonder why you're there!
+		Chasing BATS is not much fun--
+		The worst is when you're killed by one.
+
+				--The Roguelet's ABC
+-- 
+Col. G. L. Sicherman
+UU: ...{rocksvax|decvax}!sunybcs!colonel
+CS: colonel@buffalo-cs
+BI: colonel@sunybcs, csdsicher@sunyabva
+
+From fred%omssw2!vrs Sat Aug 30 22:56:45 1986
+Date: Sat, 30 Aug 86 22:03:58 pdt
+From: omssw2!omssw2!vrs (Vincent R. Slyngstad)
+Message-Id: <8608310503.AA04199@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA04199; Sat, 30 Aug 86 22:03:58 pdt
+Relay-Version: version B 2.10.2 9/5/84; site omssw2.UUCP
+Path: omssw2!reed!tektronix!uw-beaver!cornell!rochester!seismo!think!caip!lll-crg!lll-lcc!well!amulet
+From: amulet@well.UUCP (amulet sysop)
+Newsgroups: net.games
+Subject: Re: Larn Question -- "orb of dragon slaying"
+Message-ID: <1645@well.UUCP>
+Date: 18 Aug 86 00:57:56 GMT
+Date-Received: 23 Aug 86 03:27:08 GMT
+References: <859@drutx.UUCP> <15311@ucbvax.BERKELEY.EDU>
+Reply-To: amulet@well.UUCP (amulet sysop)
+Organization: Whole Earth Lectronic Link, Sausalito CA
+Lines: 22
+Keywords: <<SPOILER!!>>
+
+In article <15311@ucbvax.BERKELEY.EDU> desj@brahms.UUCP (David desJardins) wri
+tes:
+>I give up -- what does an "orb of dragon slaying" do for me?  I went all
+>the way through the game without ever seeing one -- now I find it on level 1!
+
+>What is it?
+>
+>   -- David desJardins
+
+
+The orb of dragon slaying is one of the four special items in larn.
+List as following:
+           Item.            Char.                  Rem.
+  -------------------------------------------------------------------------
+  Theft prevent device.      (.)         Stop the Leppies and Nymies
+                                         stealing your stuff.
+  Undead control             (@)         Stop the Vamp. and Wraith
+                                         attacking you.
+  Scarab of negate spirit.   (:)         Same as undead control except
+                                         this work on the n & x.
+  Orb of dragon slaying.     (o)         Killing dragons efficiently.
+  --------------------------------------------------------------------------
+
