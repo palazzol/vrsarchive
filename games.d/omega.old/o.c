@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <signal.h>
-#include <strings.h>
 #include "odefs.h"
 
 /* from ofile */
@@ -138,7 +137,7 @@ int game_restore(),signalexit(),main();
 /* This may be implementation dependent */
 void initrand()
 {
-  srandom(time()+Seed);
+  srand((unsigned)time((long *)0)+Seed);
 }
 
 
