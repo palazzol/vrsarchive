@@ -613,7 +613,7 @@ register n;
 				return;
 			}
 		}
-		if (p[-3] == 'I') {
+		if (p[-3] == 'I'  &&  !vowel (p[-4])) {
 			p[-3] = 'Y';
 			if (cflag)
 				flagpr (w, 'S', p - 3);

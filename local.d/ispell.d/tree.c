@@ -242,6 +242,7 @@ char *word;
 	struct dent *oldhtab;
 	int oldhsize;
 	char nword[BUFSIZ];
+	int len;
 #ifdef CAPITALIZE
 	register char *cp;
 	char *saveword;
@@ -250,7 +251,8 @@ char *word;
 
 	strcpy (nword, word);
 	upcase (nword);
-	if ((dp = lookup (nword, strlen (nword), 0)) != NULL)
+	len = strlen (nword);
+	if ((dp = lookup (nword, len, 0)) != NULL)
 		dp->keep = keep;
 	/*
 	 * Expand hash table when it is MAXPCT % full.
@@ -286,25 +288,27 @@ char *word;
 			newwords = 1;		/* And pretend it worked */
 			return tinsert (nword, (struct dent *) NULL, keep);
 		}
-		/*
-		 * Re-insert old entries into new table
-		 */
-		for (i = 0;  i < oldhsize;  i++) {
-			dp = &oldhtab[i];
-			if (oldhtab[i].used) {
-				tinsert ((char *) NULL, dp, 0);
-				dp = dp->next;
-				while (dp != NULL) {
+		else {
+			/*
+			 * Re-insert old entries into new table
+			 */
+			for (i = 0;  i < oldhsize;  i++) {
+				dp = &oldhtab[i];
+				if (oldhtab[i].used) {
 					tinsert ((char *) NULL, dp, 0);
-					olddp = dp;
 					dp = dp->next;
-					free ((char *) olddp);
+					while (dp != NULL) {
+						tinsert ((char *) NULL, dp, 0);
+						olddp = dp;
+						dp = dp->next;
+						free ((char *) olddp);
+					}
 				}
 			}
+			if (oldhtab != NULL)
+				free ((char *) oldhtab);
+			dp = NULL;	/* This will force the insert below */
 		}
-		if (oldhtab != NULL)
-			free ((char *) oldhtab);
-		dp = NULL;		/* This will force the insert below */
 	}
 	newwords |= keep;
 	if (dp == NULL)
@@ -372,7 +376,7 @@ char *word;
 					dp->followcase = 1;
 					if (keep)
 						dp->k_followcase = 1;
-					capspace = 2 * (strlen (dp->word) + 2);
+					capspace = 2 * len + 4;
 					if (dp->word >= hashstrings
 					  &&  dp->word <=
 					    hashstrings
@@ -390,7 +394,7 @@ char *word;
 						  "Ran out of space for personal dictionary\n");
 						exit (1);
 					}
-					cp = dp->word + strlen (dp->word) + 1;
+					cp = dp->word + len + 1;
 					if (dp->capitalize  ||  dp->allcaps)
 						*cp++ = 0;
 					else {
@@ -403,34 +407,50 @@ char *word;
 				dp->allcaps = 0;
 				if (keep)
 					dp->k_allcaps = 0;
-				cp = dp->word + strlen (dp->word) + 1;
-				/* Add a new capitalization */
-				(*cp)++;
-				capspace = (cp - dp->word + 1)
-					    * ((*cp & 0xFF) + 1);
-				if (dp->word >= hashstrings
-				  &&  dp->word <=
-				    hashstrings + hashheader.stringsize) {
-					saveword = dp->word;
-					dp->word = malloc (capspace);
-					if (dp->word) {
-						cp = dp->word;
-						while (--capspace >= 0)
-							*cp++ = *saveword++;
+				cp = dp->word + len + 1;
+				/* See if the capitalization is already there */
+				for (i = 0, saveword = cp + 1;
+				    i < (*cp & 0xFF);
+				    i++) {
+					if (strcmp (saveword + 1, word) == 0)
+						break;
+					saveword += len + 2;
+				}
+				if (i != (*cp & 0xFF)) {
+					if (keep)
+						*saveword = '+';
+				}
+				else {
+					/* Add a new capitalization */
+					(*cp)++;
+					capspace = (cp - dp->word + 1)
+						    * ((*cp & 0xFF) + 1);
+					if (dp->word >= hashstrings
+					  &&  dp->word <=
+					    hashstrings + hashheader.stringsize) {
+						saveword = dp->word;
+						dp->word = malloc (capspace);
+						if (dp->word) {
+							cp = dp->word;
+							while (--capspace >= 0)
+								*cp++ =
+								  *saveword++;
+						}
 					}
+					else
+						dp->word =
+						  realloc (dp->word, capspace);
+					if (dp->word == NULL) {
+						fprintf (stderr,
+						  "Ran out of space for personal dictionary\n");
+						exit (1);
+					}
+					cp = dp->word + len + 1;
+					cp += ((*cp & 0xFF) - 1)
+						  * (cp - dp->word + 1) + 1;
+					*cp++ = keep ? '+' : '-';
+					strcpy (cp, word);
 				}
-				else
-					dp->word = realloc (dp->word, capspace);
-				if (dp->word == NULL) {
-					fprintf (stderr,
-					  "Ran out of space for personal dictionary\n");
-					exit (1);
-				}
-				cp = dp->word + strlen (dp->word) + 1;
-				cp +=
-				  ((*cp & 0xFF) - 1) * (cp - dp->word + 1) + 1;
-				*cp++ = keep ? '+' : '-';
-				strcpy (cp, word);
 			}
 		}
 	}
@@ -541,14 +561,32 @@ char *word;
 		return NULL;
 }
 
+#if SORTPERSONAL != 0
+/* Comparison routine for sorting the personal dictionary with qsort */
+pdictcmp (enta, entb)
+struct dent **enta;
+struct dent **entb;
+{
+	/* The parentheses around *enta/*entb below are NECESSARY!
+	** Otherwise the compiler reads it as *(enta->word), or
+	** enta->word[0], which is illegal (but pcc takes it and
+	** produces wrong code).
+	**/
+	return casecmp ((*enta)->word, (*entb)->word);
+}
+#endif
+
 treeoutput ()
 {
 	register struct dent *cent;	/* Current entry */
 	register struct dent *lent;	/* Linked entry */
-#ifdef SORTPERSONAL
-	register struct dent *lowent;	/* Alphabetically lowest entry */
-	struct dent *firstent;		/* First entry to be kept */
+#if SORTPERSONAL != 0
+	int pdictsize;			/* Number of entries to write */
+	struct dent **sortlist;		/* List of entries to be sorted */
+	register struct dent **sortptr;	/* Handy pointer into sortlist */
 #endif
+	register struct dent *ehtab;	/* End of htab, for quick looping */
+
 	if (newwords == 0)
 		return;
 
@@ -557,68 +595,77 @@ treeoutput ()
 		return;
 	}
 
-#ifdef SORTPERSONAL
-	if (hcount >= SORTPERSONAL) {
+#if SORTPERSONAL != 0
+	/*
+	** If we are going to sort the personal dictionary, we must know
+	** how many items are going to be sorted.
+	*/
+	if (hcount >= SORTPERSONAL)
+		sortlist = NULL;
+	else {
+		pdictsize = 0;
+		for (cent = htab, ehtab = htab + hsize;
+		    cent < ehtab;
+		    cent++) {
+			for (lent = cent;  lent != NULL;  lent = lent->next) {
+				if (lent->used  &&  lent->keep)
+					pdictsize++;
+			}
+		}
+		for (cent = hashtbl, ehtab = hashtbl + hashsize;
+		    cent < ehtab;
+		    cent++) {
+			if (cent->keep  &&  cent->used)
+				pdictsize++;
+		}
+		sortlist = (struct dent **)
+		    malloc (pdictsize * sizeof (struct dent));
+	}
+	if (sortlist == NULL) {
 #endif
-		for (cent = htab;  cent - htab < hsize;  cent++) {
+		for (cent = htab, ehtab = htab + hsize;
+		    cent < ehtab;
+		    cent++) {
 			for (lent = cent;  lent != NULL;  lent = lent->next) {
 				if (lent->used  &&  lent->keep)
 					toutent (lent);
 			}
 		}
-		for (cent = hashtbl, lent = hashtbl + hashsize;
-		    cent < lent;
+		for (cent = hashtbl, ehtab = hashtbl + hashsize;
+		    cent < ehtab;
 		    cent++) {
 			if (cent->used  &&  cent->keep)
 				toutent (cent);
 		}
-#ifdef SORTPERSONAL
+#if SORTPERSONAL != 0
 		return;
 	}
 	/*
-	** Produce dictionary in sorted order.  We use a selection sort,
-	** which is moderately inefficient, but easy to do in our hash table.
-	** We start by linking all "keep" entries together to save time.
+	** Produce dictionary in sorted order.  We used to do this
+	** destructively, but that turns out to fail because in some modes
+	** the dictionary is written more than once.  So we build an
+	** auxiliary pointer table (in sortlist) and sort that.  This
+	** is faster anyway, though it uses more memory. 
 	*/
-	for (lowent = NULL, cent = hashtbl, lent = hashtbl + hashsize;
-	    cent < lent;
+	sortptr = sortlist;
+	for (cent = htab, ehtab = htab + hsize;  cent < ehtab;  cent++) {
+		for (lent = cent;  lent != NULL;  lent = lent->next) {
+			if (lent->used  &&  lent->keep)
+				*sortptr++ = lent;
+		}
+	}
+	for (cent = hashtbl, ehtab = hashtbl + hashsize;
+	    cent < ehtab;
 	    cent++) {
-		if (cent->keep  &&  cent->used) {
-			cent->next = lowent;
-			lowent = cent;
-		}
+		if (cent->used  &&  cent->keep)
+			*sortptr++ = cent;
 	}
-	firstent = lowent;
-	for (cent = htab;  cent - htab < hsize;  cent++) {
-		for (lent = cent;  lent != NULL;  lent = lowent) {
-			lowent = lent->next;
-			if (lent->keep  &&  lent->used) {
-				lent->next = firstent;
-				firstent = lent;
-			}
-		}
-	}
-	/* Now do the sort. */
-	while (1) {
-		lowent = NULL;
-		for (cent = firstent;  cent != NULL;  cent = cent->next) {
-			if (cent->used  &&  cent->keep) {
-				if (lowent != NULL) {
-					if (casecmp (cent->word,
-						    lowent->word) < 0)
-						lowent = cent;
-				}
-				else
-					lowent = cent;
-			}
-		}
-		if (lowent == NULL)
-			break;
-		else {
-			toutent (lowent);
-			lowent->used = 0;
-		}
-	}
+	/* Sort the list */
+	qsort ((char *) sortlist, pdictsize, sizeof (sortlist[0]), pdictcmp);
+	/* Write it out */
+	for (sortptr = sortlist;  --pdictsize >= 0;  )
+		toutent (*sortptr++);
+	free ((char *) sortlist);
 #endif
 
 	newwords = 0;
@@ -636,15 +683,17 @@ register struct dent *cent;
 	register char *cp;
 	int len;
 	register int wcount;
+	char wbuf[WORDLEN + 1];
 
+	strcpy (wbuf, cent->word);
 	if (cent->k_followcase) {
 		if (cent->k_capitalize) {
-			lowcase (cent->word);
-			if (mylower (cent->word[0]))
-				cent->word[0] = toupper (cent->word[0]);
-			toutword (cent->word, cent);
+			lowcase (wbuf);
+			if (mylower (wbuf[0]))
+				wbuf[0] = toupper (wbuf[0]);
+			toutword (wbuf, cent);
 		}
-		len = strlen (cent->word) + 1;
+		len = strlen (wbuf) + 1;
 		cp = cent->word + len;
 		wcount = *cp++ & 0xFF;
 		while (--wcount >= 0) {
@@ -655,10 +704,10 @@ register struct dent *cent;
 	}
 	else {
 		if (!cent->k_allcaps)
-			lowcase (cent->word);
-		if (cent->k_capitalize  &&  mylower (cent->word[0]))
-			cent->word[0] = toupper (cent->word[0]);
-		toutword (cent->word, cent);
+			lowcase (wbuf);
+		if (cent->k_capitalize  &&  mylower (wbuf[0]))
+			wbuf[0] = toupper (wbuf[0]);
+		toutword (wbuf, cent);
 	}
 #else
 	toutword (cent->word, cent);
