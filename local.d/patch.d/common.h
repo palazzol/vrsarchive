@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/local.d/patch.d/common.h,v 1.1 1986-12-23 13:49:07 vrs Exp $
+/* $Header: /home/Vince/cvs/local.d/patch.d/common.h,v 1.2 1987-12-26 20:17:14 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.1  86/12/23  13:49:07  vrs
+ * Initial version
+ * 
  * Revision 2.0  86/09/17  15:36:39  lwall
  * Baseline for netwide release.
  * 
@@ -134,7 +137,6 @@ char *malloc();
 char *realloc();
 char *strcpy();
 char *strcat();
-char *sprintf();		/* usually */
 long atol();
 long lseek();
 char *mktemp();
