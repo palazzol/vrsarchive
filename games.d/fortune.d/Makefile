@@ -1,5 +1,5 @@
 #
-# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.4 2002-11-23 04:09:39 Vincent Exp $
+# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.5 2002-11-24 00:20:02 Vincent Exp $
 #
 # Makefile for "fortune" program.  See READ_ME for details.
 #
@@ -13,10 +13,10 @@ CFILES	= $(OFILES:.o=.c) strfile.h
 fortune$(EXE): fortune.o rnd.o
 	$(CC) $(CFLAGS) -o $@ fortune.o rnd.o $(LIBS)
 
-fortunes.dat: strfile fortunes
-	./strfile -r fortunes
+fortunes.dat: strfile$(EXE) fortunes
+	./strfile$(EXE) -r fortunes
 
-strfile: strfile.o rnd.o
+strfile$(EXE): strfile.o rnd.o
 	$(CC) $(CFLAGS) -o $@ strfile.o rnd.o
 
 fortune.o strfile.o: strfile.h
@@ -40,7 +40,7 @@ install: $(ALL) fortunes.dat $(GAMDIR) $(GAMLIB)
 
 clean:
 	rm -f $(ALL) fortunes strfile unstr core $(OFILES)
-	rm -f Spell.hlist *.sp
+	rm -f Spell.hlist *.sp strfile$(EXE)
 	rm -f Oscene Oobscene scene.dat obscene.dat
 
 lint:
