@@ -3,6 +3,12 @@ static char *sccsid = "@(#)cmd.c	1.2	4/5/85";
 static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
 #endif
 
+#ifdef SYS5
+#define BSD_COMP
+#include <sys/ioctl.h>
+#define bcopy(f, t, n)	memcpy(t, f, n)
+#define random()		rand()
+#endif
 #include "war.h"
 
 int	testblast();		/* routine to test is blasting is ok */
@@ -57,10 +63,11 @@ ttychar()
 	unsigned char	ch;		/* char to return */
 
 #ifdef FIONREAD
-	if (playing && (ioctl(STDIN, FIONREAD, &n) == 0) && (n <= 0)) {
+	if (playing && (ioctl(STDIN, FIONREAD, &n) == 0) && (n <= 0))
 #else
-	if (playing && !rdchk(STDIN)) {
+	if (playing && !rdchk(STDIN))
 #endif
+	{
 		scaneof();		/* no char available now */
 	}
 	do {

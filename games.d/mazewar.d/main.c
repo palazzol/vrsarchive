@@ -13,8 +13,19 @@ static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
  */
 
 #include "war.h"
+#ifdef SYS5
+#define random()	rand()
+#endif
 
-int	sigint();		/* interrupt signal catcher */
+/*
+ * Here on an interrupt to quit.
+ */
+SIG_T
+sigint(dummy)
+{
+	dpyclose();
+	exit(0);
+}
 
 main(argc, argv)
 	register int	argc;		/* argument count */
@@ -347,14 +358,4 @@ quit(status)
 {
 	dpyclose();
 	exit(status);
-}
-
-
-/*
- * Here on an interrupt to quit.
- */
-sigint()
-{
-	dpyclose();
-	exit(0);
 }
