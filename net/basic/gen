@@ -1,0 +1,24 @@
+case $1 in
+	vax)
+		make -f vax/Makefile ;;
+	pdp11)
+		echo "Please specify pdp11fp or pdp11nofp" ;;
+
+	pdp11fp)
+		make -f pdp11/Makefile.fp ;;
+
+	pdp11nofp)
+		make -f pdp11/Makefile.nofp ;;
+
+	m68000)
+		make -f m68000/Makefile ;;
+
+	pyramid)
+		make -f pyramid/Makefile ;;
+
+	clean)
+		rm -f *.o cursor.c term.c core basic ;;
+
+	*)
+	  echo "please specify one of vax pdp11fp pdp11nofp m68000 pyramid" ;;
+esac

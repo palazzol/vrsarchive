@@ -1,0 +1,84 @@
+/*
+	To configure the editor to your system is relatively simple.
+	The input character is used as an index into this table with the
+	exception of character '\177' which is mapped through
+	location 33 of the table.
+	Assign to the character which is to do the relavent
+	function the code which is specified below.
+	E.g.
+		Backspace = '\010' ->   _in_char[010] = i_LEFT
+		Cursor Up = '\013' ->   _in_char[013] = i_UP
+
+*/
+
+#define i_CLEAR         01      /* redraw line */
+#define i_DELLINE       02      /* delete full line */
+#define i_DELCHAR       03      /* delete character under cursor */
+#define i_RUBOUT        04      /* delete the character to left */
+#define i_UP            05      /* move up a line */
+#define i_DOWN1         06      /* move down one line */
+#define i_CNTRLD        07      /* the eof character ( can't be '\177' ) */
+#define i_INSCHAR       010     /* toggle inset / overwrite switch */
+#define i_RIGHT         011     /* move 1 character right */
+#define i_LLEFT         012     /* move left to the last tab position */
+#define i_RRIGHT        013     /* move right to next tab position */
+#define i_DELSOL        014     /* delete to start of line */
+#define i_DELWORD       015     /* delete word to left */
+#define i_BACKWORD      016     /* move to previous word */
+#define i_NEXTWORD      017     /* go to start of next word */
+#define i_DEOL          020     /* delete to end of line */
+#define i_DOWN2         021     /* line feed */
+#define i_RETURN        022     /* return */
+#define i_ESCAPE        023     /* escape - used in other places */
+#define i_LEFT          024     /* Move left / backspace */
+
+#ifdef  COMPILE
+extern  char    _in_char[];
+#else
+char    _in_char[] = {
+	0,              0,              i_DELLINE,      0,
+	i_CNTRLD,       i_DELSOL,       0,              0,
+	i_LEFT,         0,              i_DOWN1,        i_UP,
+	i_CLEAR,        i_RETURN,       i_DELCHAR,      i_INSCHAR,
+	i_RRIGHT,       0,              0,              0,
+	i_NEXTWORD,     i_BACKWORD,     i_DOWN1,        i_DELWORD,
+	i_RIGHT,        i_DEOL,         i_LLEFT,        i_ESCAPE,
+	0,              0,              0,              0,
+	i_RUBOUT,
+	};
+#endif
+
+#define LEFT            '\010'  /* move left ( backspace ) */
+#define UP              '\013'  /* move up a line */
+#define DELCHAR         '\016'  /* delete a character from current pos. */
+#define INSCHAR         '\017'  /* insert space at cursor posn. */
+#define DEOL            '\031'  /* delete from cursor to eol */
+#define DOWN2           '\012'  /* line feed */
+#define PING            '\007'  /* bell */
+#define RETURN          '\015'  /* carriage return */
+
+#ifdef  COMPILE
+extern  char   _out_char[8][10];
+
+#define o_LEFT          (_out_char[0])
+#define o_UP            (_out_char[1])
+#define o_DELCHAR       (_out_char[2])
+#define o_INSCHAR       (_out_char[3])
+#define o_DEOL          (_out_char[4])
+#define o_RETURN        (_out_char[5])
+#define o_DOWN2         (_out_char[6])
+#define o_PING          (_out_char[7])
+
+#else
+
+char    _out_char[8][10]= {
+	LEFT,   0,0,0,0,0,0,0,0,0,
+	UP,     0,0,0,0,0,0,0,0,0,
+	DELCHAR,0,0,0,0,0,0,0,0,0,
+	INSCHAR,0,0,0,0,0,0,0,0,0,
+	DEOL,   0,0,0,0,0,0,0,0,0,
+	RETURN, 0,0,0,0,0,0,0,0,0,
+	DOWN2,  0,0,0,0,0,0,0,0,0,
+	PING,   0,0,0,0,0,0,0,0,0,
+	};
+#endif
