@@ -1,0 +1,21 @@
+# From: Jeffrey C Honig <jch@risci.TN.CORNELL.EDU>
+#
+# IBM-PC/RT running IBM/4.3 (Dec 88 release) with HighC 2.1y.
+#
+bin		/usr/local/bin
+bboards		off
+ccoptions	
+chown		/etc/chown
+editor		prompter
+etc		/usr/local/lib/mh
+mail		/usr/spool/mail
+mandir		/usr/local/man
+manuals		standard
+mts		sendmail/smtp
+mf		off
+options		BSD42 BSD43 BIND NTOHLSWAP DBM
+options 	UCI
+options		MHE MHRC
+options 	SBACKUP='"\\043"'
+pop		off
+remove		mv -f

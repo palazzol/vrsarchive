@@ -1,0 +1,29 @@
+# Sun OS 4.0.3c, YP, BIND, Shared Libraries, BBOARDS, RPOP, NNTP
+# mts: mmdf2 with smtp
+#
+bin	/usr/local
+bboards	nntp
+bbdelivery off
+bbhome	/usr/bboards
+etc	/usr/local/lib/mh
+mail	/usr/spool/mail
+mailgroup	off
+mandir	/usr/man
+manuals	local
+chown	/etc/chown
+editor	prompter
+remove	mv -f
+mf	off
+mts	mmdf2/smtp
+options	BSD42 BSD43 BIND RPATHS
+options	SUN40 NFS DBM
+options	MHE OVERHEAD WHATNOW MHRC 
+options UCI ISI
+pop	on
+options	RPOP
+ldoptions -s
+ldoptlibs -ldbm
+curses -lcurses -ltermcap
+ranlib  on
+sharedlib on
+slibdir	/usr/local/lib
