@@ -947,7 +947,7 @@ register const char *knam;
 		u.uhpmax = u.uhp;	/* perhaps n was negative */
 	flags.botl = 1;
 	if(u.uhp < 1) {
-		killer = knam;	/* the thing that killed you */
+		killer = (char *)knam;	/* the thing that killed you */
 		You("die...");
 		done("died");
 	} else if(u.uhp*10 < u.uhpmax && moves-wailmsg > 50 && n > 0){
