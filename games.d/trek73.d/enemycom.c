@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/enemycom.c,v 1.3 1987-12-25 20:50:50 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/enemycom.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/enemycom.c,v 1.3 1987-12-25 20:50:50 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:05:38  11:05:38  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: enemycom.c
  *
@@ -16,7 +27,8 @@
 /*
  * This routine turns the ship at speed towards its target
  */
-int e_attack(sp, fed)
+int
+e_attack(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -38,7 +50,8 @@ struct ship *fed;
 /*
  * Returns the number of currently loaded, undamaged weapons
  */
-int e_checkarms(sp)
+int
+e_checkarms(sp)
 struct ship *sp;
 {
 	register int i;
@@ -64,7 +77,8 @@ struct ship *sp;
 /*
  * returns 1 if evasive action being taken (to avoid probe)
  */
-int e_checkprobe(sp)
+int
+e_checkprobe(sp)
 struct ship *sp;
 {
 	register struct list *lp;
@@ -98,7 +112,8 @@ struct ship *sp;
 /*
  * Returns 1 if cloaking device was turned off
  */
-int e_cloak_off(sp, fed)
+int
+e_cloak_off(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -120,7 +135,8 @@ struct ship *fed;
 /*
  * Returns 1 if cloaking device was turned on
  */
-int e_cloak_on(sp, fed)
+int
+e_cloak_on(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -142,7 +158,8 @@ struct ship *fed;
 /*
  * Returns 1 if firing phasers at or evading nearby torpedoes
  */
-int e_closetorps(sp, fed)
+int
+e_closetorps(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -198,7 +215,8 @@ struct ship *fed;
 /*
  * goodbye, cruel world (Returns 1 if self-destruct was initiated)
  */
-int e_destruct(sp, fed)
+int
+e_destruct(sp, fed)
 struct ship *sp, *fed;
 {
 	if (sp->delay < 5.0)
@@ -219,7 +237,8 @@ struct ship *sp, *fed;
 /*
  * Advance to the rear! (Always returns 1)
  */
-int e_evade(sp, x, y, type)
+int
+e_evade(sp, x, y, type)
 struct ship *sp;
 int x;
 int y;
@@ -264,7 +283,8 @@ int type;		/* Currently unused */
 /*
  * Returns 1 if engineering was jettisoned
  */
-int e_jettison(sp, fed)
+int
+e_jettison(sp, fed)
 struct ship *sp, *fed;
 {
 	register struct list *lp;
@@ -317,7 +337,8 @@ struct ship *sp, *fed;
 /*
  * Returns 1 if a probe was launched
  */
-int e_launchprobe(sp, fed)
+int
+e_launchprobe(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -363,7 +384,8 @@ struct ship *fed;
 /*
  * Returns the number of tubes that were loaded
  */
-int e_loadtubes(sp)
+int
+e_loadtubes(sp)
 struct ship *sp;
 {
 	register int i;
@@ -397,7 +419,8 @@ struct ship *sp;
 /*
  * Returns the number of phasers that were locked
  */
-int e_lockphasers(sp, fed)
+int
+e_lockphasers(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -424,7 +447,8 @@ struct ship *fed;
 /*
  * Returns number of tubes locked
  */
-int e_locktubes(sp, fed)
+int
+e_locktubes(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -450,9 +474,10 @@ struct ship *fed;
 
 /*
  * returns the number of banks we're going to fire
- * it also sets them up.
+ * it also sets them up to fire.
  */
-int e_phasers(sp, fed)
+int
+e_phasers(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -487,10 +512,11 @@ struct ship *fed;
 
 
 /*
- * This routine will turn the ship, slowing down if necessary to facilitate
- * the turn.  (Always returns 1)
+ * This routine will turn the ship, slowing down if necessary to
+ * facilitate the turn.  (Always returns 1)
  */
-int e_pursue(sp, fed, speed)
+int
+e_pursue(sp, fed, speed)
 struct ship *sp;
 struct ship *fed;
 float speed;
@@ -526,9 +552,11 @@ float speed;
 
 /*
  * This routine has the enemy ship turn its strongest shield towards
- * the enemy and then accelerate to 2/3 maximum speed.  (Always returns 1)
+ * the enemy and then accelerate to 2/3 maximum speed.  (Always
+ * returns 1)
  */
-int e_runaway(sp, fed)
+int
+e_runaway(sp, fed)
 struct ship *sp;
 struct ship *fed;
 {
@@ -589,7 +617,8 @@ struct ship *fed;
  * Returns the number of tubes we're going to fire
  * Also sets them up to fire
  */
-int e_torpedo(sp)
+int
+e_torpedo(sp)
 struct ship *sp;
 {
 	register int i;

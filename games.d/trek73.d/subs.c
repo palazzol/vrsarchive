@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/subs.c,v 1.3 1987-12-25 20:51:25 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/subs.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/subs.c,v 1.3 1987-12-25 20:51:25 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:13:01  11:13:01  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: subs.c
  *
@@ -11,7 +22,8 @@
 #include <ctype.h>
 
 
-struct ship *ship_name(name)
+struct ship *
+ship_name(name)
 char *name;
 {
 	register int i;
@@ -33,7 +45,8 @@ char *name;
 }
 
 
-struct list *newitem(item)
+struct list *
+newitem(item)
 int item;
 {
 	register struct	list *new;
@@ -77,7 +90,8 @@ int item;
 }
 
 
-int delitem(item)
+int
+delitem(item)
 struct list *item;
 {
 	register struct list *bp;
@@ -102,7 +116,8 @@ struct list *item;
 	free((char *) item);
 }
 
-int rangefind(xfrom, xto, yfrom, yto)
+int
+rangefind(xfrom, xto, yfrom, yto)
 int xfrom;
 int xto;
 int yfrom;
@@ -121,7 +136,8 @@ int yto;
 /*
  * This routine finds the bearing of (xto,yto) from (xfrom,yfrom)
  */
-float bearing(xfrom, xto, yfrom, yto)
+float
+bearing(xfrom, xto, yfrom, yto)
 int xfrom;
 int xto;
 int yfrom;
@@ -140,7 +156,8 @@ int yto;
 	return bear;
 }
 
-int phaser_hit(sp, x, y, bank, true_bear)
+int
+phaser_hit(sp, x, y, bank, true_bear)
 struct ship *sp;
 int x;
 int y;
@@ -177,7 +194,8 @@ float true_bear;
 	return hit;
 }
 
-int torpedo_hit(fuel, x, y, tx, ty)
+int
+torpedo_hit(fuel, x, y, tx, ty)
 int fuel;
 int x;
 int y;
@@ -204,6 +222,7 @@ int ty;
 }
 
 
+int
 antimatter_hit(ptr, x, y, fuel)
 char *ptr;
 int x;
@@ -276,13 +295,15 @@ int fuel;
 	}
 }
 
-float round(x)
+float
+round(x)
 float x;
 {
 	return(floor(x + 0.5));
 }
 
-float rectify(x)
+float
+rectify(x)
 float x;
 {
 	while (x < 0.0) {

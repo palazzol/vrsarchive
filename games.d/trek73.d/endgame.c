@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/endgame.c,v 1.3 1987-12-25 20:50:49 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/endgame.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/endgame.c,v 1.3 1987-12-25 20:50:49 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:05:18  11:05:18  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: endgame.c
  *
@@ -74,7 +85,7 @@ int mesg;
 			    foerace);
 			printf("   Do you wish to re-engage?\n");
 			printf("%s: [y or n] ", captain);
-			gets(buf);
+			(void) Gets(buf, sizeof(buf));
 			if ((*buf == NULL) || (*buf == 'y') || (*buf == 'Y')) {
 				reengaged = 1;
 				return;

@@ -1,3 +1,17 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.4 1987-12-25 20:50:39 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds2.c,v 1.4 1987-12-25 20:50:39 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/10/13  16:00:46  16:00:46  okamoto (Jeff Okamoto)
+ * Fixed calls to Gets
+ * 
+ * Revision 1.1  87/10/09  11:01:38  11:01:38  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: cmds2.c
  *
@@ -12,8 +26,7 @@
 #include "externs.h"
 #include <ctype.h>
 
-extern float round();
-
+int
 pos_report(sp)
 struct ship *sp;
 {
@@ -37,7 +50,8 @@ struct ship *sp;
 #ifdef SHOWTORP
 	printf("%s:  Include torpedoes?\n", science);
 	printf("%s:  [yes or no] ", captain);
-	if (Gets(buf, sizeof buf) != NULL && (buf[0] == 'y' || buf[0] == 'Y'))
+	(void) Gets(buf, sizeof buf);
+	if (buf[0] == 'y' || buf[0] == 'Y')
 		incltorp = 1;
 #endif
 	/*
@@ -169,6 +183,7 @@ struct ship *sp;
 }
 
 
+int
 pos_display(sp)
 struct ship *sp;
 {
@@ -280,6 +295,7 @@ struct ship *sp;
 }
 
 
+int
 pursue(sp)
 struct ship *sp;
 {
@@ -332,6 +348,7 @@ struct ship *sp;
 }
 
 
+int
 elude(sp)
 struct ship *sp;
 {
@@ -387,6 +404,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 helm(sp)
 struct ship *sp;
 {
@@ -424,6 +442,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 self_scan(sp)
 struct ship *sp;
 {
@@ -431,6 +450,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 scan(sp)
 struct ship *sp;
 {
@@ -522,6 +542,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 print_damage(ep)
 struct ship *ep;
 {	
@@ -607,6 +628,7 @@ struct ship *ep;
 	return 1;
 }
 
+int
 scan_torpedo(pp)
 struct torpedo *pp;
 {

@@ -1,3 +1,17 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/moveships.c,v 1.3 1987-12-25 20:51:13 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/moveships.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/moveships.c,v 1.3 1987-12-25 20:51:13 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/10/09  14:02:09  14:02:09  okamoto (Jeff Okamoto)
+ * Fix bug in self-destruct code.
+ * 
+ * Revision 1.1  87/10/09  11:09:00  11:09:00  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: moveships.c
  *
@@ -71,7 +85,7 @@ move_ships()
 				}
 			} else {
 				sp->delay -= segment;
-				if (sp->delay <= 0.) {
+				if (sp->delay < segment / 2) {
 					ship_detonate(sp, lp);
 					continue;
 				}
@@ -322,7 +336,7 @@ misc_timers()
 	 * self-destruct warning
 	 */
 	fed = shiplist[0];
-	if ((fed->delay < 1000.) && (fed->delay > 0.)) {
+	if ((fed->delay < 1000.) && (fed->delay > segment / 2)) {
 		if (is_dead(fed, S_COMP)) {
 			printf("%s:  Self-destruct has been aborted due to computer damage\n",
 			    science);

@@ -1,3 +1,17 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/parseopts.c,v 1.4 1987-12-25 20:51:16 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/parseopts.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/parseopts.c,v 1.4 1987-12-25 20:51:16 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/11/23  09:19:40  09:19:40  okamoto (Jeff Okamoto)
+ * Removed include to options.h since they are now in defines.h.
+ * 
+ * Revision 1.1  87/10/09  11:09:49  11:09:49  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: parseopts.c
  *
@@ -9,7 +23,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include "externs.h"
-#include "options.h"
 
 #define	EQSTR(a, b, c)	(strncmp(a, b, c) == 0)
 

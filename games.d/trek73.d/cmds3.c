@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v 1.3 1987-12-25 20:50:42 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds3.c,v 1.3 1987-12-25 20:50:42 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:02:23  11:02:23  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: cmds3.c
  *
@@ -14,6 +25,7 @@
 #include <ctype.h>
 
 
+int
 jettison_engineering(sp)
 struct ship *sp;
 {
@@ -29,6 +41,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 do_jettison(sp)
 struct ship *sp;
 {
@@ -65,6 +78,7 @@ struct ship *sp;
 	    sp->p_blind_left = sp->p_blind_right = 180;
 }
 
+int
 detonate_engineering(sp)
 struct ship *sp;
 {
@@ -104,6 +118,7 @@ struct ship *sp;
 }
 
 
+int
 phaser_status(sp)
 struct ship *sp;
 {
@@ -152,6 +167,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 tube_status(sp)
 struct ship *sp;
 {
@@ -194,6 +210,7 @@ struct ship *sp;
 	return 1;
 }
 
+int
 survivors(sp)
 struct ship *sp;
 {
@@ -213,6 +230,7 @@ struct ship *sp;
 	sp = sp;		/* LINT */
 }
 
+int
 alter_power()
 {
 	register int i;

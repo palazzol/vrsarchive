@@ -1,48 +1,63 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/bpv.c,v 1.2 1987-12-25 20:51:57 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/bpv.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/bpv.c,v 1.2 1987-12-25 20:51:57 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/10/09  15:48:35  15:48:35  okamoto (Jeff Okamoto)
+ * Added declaration of round as a function returning a double.
+ * 
+ * Revision 1.1  87/10/09  11:00:29  11:00:29  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: bpv.c
  *
- * Calculate Basic Point Values for all ships.
+ * Calculate the Basic Point Value of a ships
  *
  */
 
-#include <stdio.h>
-#include "externs.h"
-
-main()
+void
+calculate(regen, pods, p_div, t_div, weapons, crew, bpv, eff, turn, max)
+double regen;	/* Regeneration */
+float pods;	/* Number of antimatter pods */
+float p_div;	/* Shield divisor for phasers */
+float t_div;	/* Shield divisor for torps */
+int weapons;	/* Number of weapons */
+int crew;	/* Number of crew */
+double *bpv;	/* Return for BPV */
+double *eff;	/* Return for efficiency */
+int *turn;	/* Turn per segment */
+int *max;	/* Maximum speed */
 {
-	double crew, pods, regen, num_weapons, phaser, torp;
-	double bpv;
-	double atof();
-	int i;
-	char buf[20];
+	double floor(), round();
 
-	printf("Regeneration multiplier :");
-	gets(buf);
-	regen = atof(buf);
-	printf("Pods divisor            :");
-	gets(buf);
-	pods = atof(buf);
-	printf("Phaser multiplier       :");
-	gets(buf);
-	phaser = atof(buf);
-	printf("Torpedo multiplier      :");
-	gets(buf);
-	torp = atof(buf);
-	printf("Weapons multiplier      :");
-	gets(buf);
-	num_weapons = atof(buf);
-	printf("Crew divisor            :");
-	gets(buf);
-	crew = atof(buf);
+	*bpv = 0.;
+	*bpv += regen * 12;
+	*bpv += pods / 2;
+	*bpv += p_div * 30;
+	*bpv += t_div * 40;
+	*bpv += weapons * 10;
+	*bpv += crew / 15;
 
-	for(i=0; i<MAXSHIPCLASS; i++) {
-		bpv = 0.;
-		bpv += stats[i].regen * regen;
-		bpv += stats[i].pods / pods;
-		bpv += stats[i].ph_shield * phaser;
-		bpv += stats[i].tp_shield * torp;
-		bpv += (stats[i].num_phaser + stats[i].num_torp) * num_weapons;
-		bpv += stats[i].o_crew / crew;
-		printf("%s: BPV = %.2f\n", stats[i].abbr, bpv);
-	}
+	*eff = round(4 * (0.0034 * *bpv - 0.78)) / 4.0;
+	if (*eff< 0.25)
+		*eff= 0.25;
+	*turn = (int) (10 - floor(*bpv / 100.0));
+	if (*turn < 1)
+		*turn = 1;
+	*max= (int) round(-0.004 * *bpv + 11.0);
+	if (*max < 1)
+		*max = 1;
+}
+
+double
+round(x)
+double x;
+{
+	double floor();
+
+	return(floor(x + 0.5));
 }

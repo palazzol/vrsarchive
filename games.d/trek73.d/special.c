@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/special.c,v 1.2 1987-12-25 20:52:10 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/special.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/special.c,v 1.2 1987-12-25 20:52:10 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:11:39  11:11:39  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: special.c
  *

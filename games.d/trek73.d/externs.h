@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.3 1987-12-25 20:52:02 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/externs.h,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/externs.h,v 1.3 1987-12-25 20:52:02 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:06:05  11:06:05  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: externs.h
  *
@@ -7,12 +18,12 @@
 
 /* UNIX include files needed for most (if not all) of the C files */
 #include <stdio.h>
-#ifdef SYS5
+#ifdef SYSV
 #include <string.h>
-#endif
+#endif SYSV
 #ifdef BSD
 #include <strings.h>
-#endif
+#endif BSD
 #include <math.h>
 
 /* UNIX extern declarations of functions used which do not
@@ -21,9 +32,9 @@ extern char	*getenv(), *malloc();
 extern long	time();
 extern unsigned	sleep(), alarm();
 extern void	exit(), free(), perror();
-#ifdef SYS5
+#ifdef SYSV
 extern void	srand();
-#endif
+#endif SYSV
 extern char	*optarg;
 
 /*
@@ -41,7 +52,7 @@ extern char	*options;
 extern float	init_p_turn[MAXPHASERS][MAXPHASERS];
 extern float	init_t_turn[MAXTUBES][MAXTUBES];
 extern float	segment, timeperturn;
-extern float	rectify(), bearing();
+extern float	rectify(), bearing(), round();
 
 extern char	home[256];
 extern char	savefile[256];
@@ -66,6 +77,7 @@ extern char	shutup[HIGHSHUTUP];
 extern char	slots[HIGHSLOT];
 extern char	title[9];
 
+extern int	parsit();
 extern int	cmdarraysize;
 extern int	corbomite;
 extern int	defenseless;
@@ -83,8 +95,11 @@ extern int	terse;
 extern int	time_delay;
 extern int	trace;
 extern char	can_cloak;
-extern double	o_bpv;
 extern double	e_bpv;
+
+extern char	Input[BUFSIZ];
+extern char	*Inptr;
+extern char	parsed[BUFSIZ];
 
 extern struct ship_stat	us;
 extern struct ship_stat	them;

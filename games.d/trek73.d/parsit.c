@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/parsit.c,v 1.4 1987-12-25 20:51:18 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/parsit.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/parsit.c,v 1.4 1987-12-25 20:51:18 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:10:13  11:10:13  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: parsit.c
  *
@@ -7,7 +18,7 @@
  *
  */
 
-#ifdef SYS5
+#ifdef SYSV
 #define index strchr
 #endif
 
@@ -25,14 +36,14 @@ int len;
 {
 	register char *tmp;
 
-	if (argv[gindx] == NULL) {
+	if ((argv == NULL) || (argv[gindx] == NULL)) {
 		(void) fgets(buf, len, stdin);
 		if (tmp = index(buf, '\n'))
 			*tmp = '\0';
 		return(buf);
 	}
 	++gindx;
-	if (argv[gindx] == NULL) {
+	if ((argv == NULL) || (argv[gindx] == NULL)) {
 		(void) fgets(buf, len, stdin);
 		if (tmp = index(buf, '\n'))
 			*tmp = '\0';

@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/firing.c,v 1.3 1987-12-25 20:50:53 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/firing.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/firing.c,v 1.3 1987-12-25 20:50:53 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:06:25  11:06:25  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: firing.c
  *
@@ -56,7 +67,7 @@ struct ship *sp;
 		return 0;
 	}
 	if (cantsee(sp))
-		e_cloak_off(sp, fed);
+		(void) e_cloak_off(sp, fed);
 	printf(" <%s frng phasers>\n", sp->name);
 	for (lp = &head; lp != tail; lp = lp->fwd) {
 		if (lp->type == 0)
@@ -189,7 +200,7 @@ struct ship *sp;
 	if (teletype)
 		printf("\007");
 	if (cantsee(sp))
-		e_cloak_off(sp, fed);
+		(void) e_cloak_off(sp, fed);
 	printf(" <<%s frng torpedo %d>>", sp->name, tp->id);
 	if (teletype)
 		printf("\007");
@@ -197,7 +208,8 @@ struct ship *sp;
 	return 1;
 }
 
-int ship_detonate(sp, lp)
+int
+ship_detonate(sp, lp)
 struct ship *sp;
 struct list *lp;
 {
@@ -222,7 +234,8 @@ struct list *lp;
 }
 
 
-int torp_detonate(tp, lp)
+int
+torp_detonate(tp, lp)
 struct torpedo *tp;
 struct list *lp;
 {

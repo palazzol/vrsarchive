@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/structs.h,v 1.3 1987-12-25 20:51:21 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/structs.h,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/structs.h,v 1.3 1987-12-25 20:51:21 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:12:49  11:12:49  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: structs.h
  *
@@ -32,56 +43,56 @@ struct shield {
 #define SHIELDS 4
 
 struct ship {
-	char name[30];		/* name of ship */
-	char class[3];		/* Type of ship */
-	int x, y;		/* location */
-	float warp;		/* warp speed */
-	float newwarp;		/* for speed changes */
-	float course;		/* 0-360 */
-	float newcourse;	/* for course changes */
-	struct ship *target;	/* who we're pursuing */
-	float relbear;		/* Relative bearing to keep */
+	char name[30];			/* name of ship */
+	char class[3];			/* Type of ship */
+	int x, y;			/* location */
+	float warp;			/* warp speed */
+	float newwarp;			/* for speed changes */
+	float course;			/* 0-360 */
+	float newcourse;		/* for course changes */
+	struct ship *target;		/* who we're pursuing */
+	float relbear;			/* Relative bearing to keep */
 	struct phaser phasers[MAXWEAPONS];	/* phaser banks */
-	int p_spread;		/* phaser spread */
-	int p_percent;		/* phaser firing percentage */
-	int p_blind_left;	/* phaser blind area, left side angle */
-	int p_blind_right;	/* phaser blind area, right side angle */
+	int p_spread;			/* phaser spread */
+	int p_percent;			/* phaser firing percentage */
+	int p_blind_left;		/* phaser blind angle, left side */
+	int p_blind_right;		/* phaser blind angle, right side */
 	struct tube tubes[MAXWEAPONS];		/* torpedo tubes */
-	int t_prox;		/* proximity delay */
-	int t_delay;		/* time delay to detonation */
-	int t_lspeed;		/* launch speed */
-	int t_blind_left;	/* tube blind area, left side angle */
-	int t_blind_right;	/* tube blind area, right side angle */
+	int t_prox;			/* proximity delay */
+	int t_delay;			/* time delay to detonation */
+	int t_lspeed;			/* launch speed */
+	int t_blind_left;		/* tube blind angle, left side */
+	int t_blind_right;		/* tube blind angle, right side */
 	struct shield shields[SHIELDS]; /* shields */
-	int probe_status;	/* Probe launcher status */
-	float eff;		/* efficiency */
-	float regen;		/* regeneration (energy per turn) */
-	float energy;		/* amount of effective energy */
-	float pods;		/* max energy level */
-	int complement;		/* crew left alive */
-	int status[MAXSYSTEMS];	/* Holds damage percentage of these systems */
-	float delay;		/* how long 'till we blow up? */
-	int id;			/* Unique identifier */
-	int num_phasers;	/* Number of phasers */
-	int num_tubes;		/* Number of tubes */
-	float orig_max;		/* Maximum original warp */
-	float max_speed;	/* Maximum warp */
-	float deg_turn;		/* Degrees per warp turn */
-	float ph_damage;	/* Damage divisor from phasers */
-	float tu_damage;	/* Damage divisor from tubes */
-	int cloaking;		/* Cloaking device status */
-	int cloak_energy;	/* Energy needed to run cloak per segment */
-	int cloak_delay;	/* Time until a cloak may be restarted */
-	int (*strategy)();	/* Which strategy to use */
-	struct pos {	/* Last known position (before a cloak) */
-		int x,y;	/* Coordinates */
-		float warp;	/* Warp speed */
-		int range;	/* Distance to ship */
-		float bearing;	/* Bearing */
-		float course;	/* Course */
+	int probe_status;		/* Probe launcher status */
+	float eff;			/* efficiency */
+	float regen;			/* regeneration (energy per turn) */
+	float energy;			/* amount of effective energy */
+	float pods;			/* max energy level */
+	int complement;			/* crew left alive */
+	int status[MAXSYSTEMS];		/* damage percentage of these systems */
+	float delay;			/* how long 'till we blow up? */
+	int id;				/* Unique identifier */
+	int num_phasers;		/* Number of phasers */
+	int num_tubes;			/* Number of tubes */
+	float orig_max;			/* Maximum original warp */
+	float max_speed;		/* Maximum warp */
+	float deg_turn;			/* Degrees per warp turn */
+	float ph_damage;		/* Damage divisor from phasers */
+	float tu_damage;		/* Damage divisor from tubes */
+	int cloaking;			/* Cloaking device status */
+	int cloak_energy;		/* Energy needed to run cloak */
+	int cloak_delay;		/* Time until you can recloak */
+	int (*strategy)();		/* Which strategy to use */
+	struct pos {			/* Last known position (before cloak) */
+		int x,y;		/* Coordinates */
+		float warp;		/* Warp speed */
+		int range;		/* Distance to ship */
+		float bearing;		/* Bearing */
+		float course;		/* Course */
 	} position ;
-	int p_firing_delay;	/* Delay in segments for firing phasers */
-	int t_firing_delay;	/* Delay in segments for firing torpedoes */
+	int p_firing_delay;		/* Delay in segments to fire phasers */
+	int t_firing_delay;		/* Delay in segments to fire torpedos */
 } ;
 
 /*
@@ -109,49 +120,51 @@ struct torpedo {
  * list of all the stuff in space.
  */
 struct list {
-	int type;
-	struct list *back, *fwd;
+	int type;			/* Type of pointer kept */
+	struct list *back, *fwd;	/* Pointers fore and aft */
 	union {
-		struct torpedo *tp;
-		struct ship *sp;
+		struct torpedo *tp;	/* Hold a ptr to a torpedo */
+		struct ship *sp;	/* ...or to a ship */
 	} data;
 } ;
 
 struct cmd {
-	int (*routine)();
-	char *word1;
-	char *word2;
-	int turns;
+	int (*routine)();		/* Routine to call */
+	char *code_num;			/* Code number of command */
+	char *explanation;		/* Explanation of command */
+	int turns;			/* Does it take a turn? */
 } ;
 
 /*
  * for the phaser and anti-matter damage lists
  */
 
+/*
+ * When you are hit, for each system, you roll a roll-sided die.
+ * If this number is less than the actual hit you took, then the
+ * system has been damaged.  Historically, this system would be
+ * completely damaged, but here we simply add more damage to that
+ * system.  See damage.c for more details
+ */
 struct dam {
-	int roll;
-	char *mesg;
+	int roll;		/* How many sides on the die */
+	char *mesg;		/* Message to print out */
 };
 
+/*
+ * How to allocate damage.
+ * For all but crew, the amount of a hit that gets through is divided
+ * by the field and that amount is added or subtracted from the
+ * relevant stat.  The number for weapon is the number of weapons that
+ * have been damaged.
+ */
 struct damage {
-	float eff;
-	float fuel;
-	float regen;
-	float crew;
-	float weapon;
-	struct dam stats[S_NUMSYSTEMS];
-};
-
-struct score {
-	int score;
-	int ships;
-	char captain[30];
-	char username[10];
-}; 
-
-struct rates {
-	char *rate;
-	int points;
+	float eff;			/* Damage to efficiency */
+	float fuel;			/* Loss of fuel capacity */
+	float regen;			/* Loss of regeneration */
+	float crew;			/* Crew casualties */
+	float weapon;			/* Chance of weapons damage */
+	struct dam stats[S_NUMSYSTEMS];	/* For each system */
 };
 
 struct ship_stat {
@@ -177,8 +190,8 @@ struct ship_stat {
 	int p_blind_left;	/* Start of phaser blind area left */
 	int p_blind_right;	/* Start of phaser blind area right */
 	/* Must change to absolute time */
-	int p_firing_delay;	/* Delay in segments for firing phasers */
-	int t_firing_delay;	/* Delay in segments for firing torpedoes */
+	int p_firing_delay;	/* Delay in segments to fire phasers */
+	int t_firing_delay;	/* Delay in segments to fire torpedos */
 };
 
 struct race_info {
@@ -193,21 +206,4 @@ struct race_info {
 	char *ship_names[MAXESHIPS];	/* Ship names */
 	char *ship_types[MAXSHIPCLASS];	/* Ship types */
 	char *captains[MAXECAPS];	/* Some exemplary captains */
-	/*
-	 * For the strategic game that is to come.  -Deep Thought
-	 */
-	int relation;		/* Diplomatic relation with other races */
-};
-
-struct planet {
-	char name[30];		/* Planetary name */
-	int id;			/* Unique identifier number */
-	int x;			/* Location in the X plane */
-	int y;			/* Location in the Y plane */
-	int radius;		/* Planetary radius */
-	int mass;		/* Planetary mass */
-	int race;		/* Owner's race */
-	/*
-	 * planetary weaponry goes here
-	 */
 };

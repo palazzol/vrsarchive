@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.4 1987-12-25 20:50:57 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/main.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.4 1987-12-25 20:50:57 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:08:01  11:08:01  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: main.c
  *
@@ -12,19 +23,18 @@
  *			     (williams@merlin.berkeley.edu)
  *
  * Corrected, Completed, and Enhanced by
- *	Jeff Okamoto	(ucbvax!okamoto)
- *			(okamoto@cory.berkeley.edu)
+ *	Jeff Okamoto	(hpccc!okamoto)
+ *			(hpccc!okamoto@hplabs.hp.com)
  *	Peter Yee	(ucbvax!yee)
  *			(yee@ucbarpa.berkeley.edu)
  *	Matt Dillon	(ucbvax!dillon)
- *			(dillon@berkeley.edu)
+ *			(dillon@ucbvax.berkeley.edu)
  *	Dave Sharnoff	(ucbvax!ucbcory!muir)
  *			(muir@cogsci.berkeley.edu)
- *	Joel Duisman	(ucbvax!duisman)
- *			(duisman@miro.berkeley.edu)
+ *	Joel Duisman
  *	    and
- *	Roger J. Noe    (riccb!rjnoe)
- *			(ihnp4!riccb!rjnoe@berkeley.edu)
+ *	Roger J. Noe    (uniq!rjnoe)
+ *			(ihnp4!uniq!rjnoe@berkeley.edu)
  *
  * Main Loop
  *
@@ -35,6 +45,7 @@
 #include "externs.h"
 #include <signal.h>
 #include <setjmp.h>
+#include <ctype.h>
 
 static jmp_buf	jumpbuf;
 
@@ -44,7 +55,6 @@ int argc;
 char *argv[];
 char *envp[];
 {
-	register char		*env;
 	int			alarmtrap();
 	int			quitgame();
 
@@ -53,13 +63,8 @@ char *envp[];
 	(void) signal(SIGALRM, alarmtrap);
 	(void) signal(SIGINT, quitgame);
 	srandom(time(0));
-	time_delay = 30;
+	time_delay = DEFAULT_TIME;
 	set_save();
-	if (argc > 1)
-		if (argv[1][0] != '-') {
-			restore(argv[1], envp);	/* Will not return */
-			exit(1);
-		}
 	options = getenv("TREK73OPTS");
 	if (options != NULL)
 		parse_opts(options);
@@ -73,19 +78,24 @@ char *envp[];
 	(void) mission();
 	(void) alert();
 	playit();
+	/*NOTREACHED*/
 }
-	/*
-	 * Main loop
-	 */
+
+/*
+ * Main loop
+ */
 playit()
 {
 	struct cmd		*scancmd();
 	int			alarmtrap();
 	int			quitgame();
 	register struct ship	*sp;
+#ifndef PARSER
 	char			buf1[30];
+#endif PARSER
 	struct cmd		*cp;
 	int			loop;
+	char			*ch;
 
 	(void) setjmp(jumpbuf);
 	sp = shiplist[0];
@@ -97,9 +107,30 @@ next:
 		printf("\n%s: Code [1-%d] ", captain, high_command);
 		fflush(stdout);
 		(void) alarm((unsigned) time_delay);
-		if (gets(buf1) != NULL) {
+#ifdef PARSER
+		(void) Gets(Input, sizeof(Input));
+		if (Input[0] != NULL) {
+#else
+		(void) Gets(buf1, sizeof(buf1));
+		if (buf1[0] != NULL) {
+#endif PARSER
 			(void) alarm(0);
+#ifdef PARSER
+			Inptr = Input;
+			parsed[0] = '\0';
+			ch = Inptr;
+			while (isspace(*ch))
+				ch++;
+			if (isalpha(*ch))
+				yyparse();
+			else
+				strcpy(parsed, Input);
+#endif PARSER
+#ifdef PARSER
+			cp = scancmd(parsed);
+#else
 			cp = scancmd(buf1);
+#endif PARSER
 			if (cp != NULL) {
 				(*cp->routine)(sp);
 				if (cp->turns == FREE)
@@ -109,6 +140,7 @@ next:
 		} else
 			(void) alarm(0);
 	}
+	ch = ch;		/* LINT */
 	alarmtrap(0);
 	/* This point is never reached since alarmtrap() always concludes
 	   with a longjmp() back to the setjmp() above the next: label */
@@ -126,7 +158,7 @@ int sig;
 		stdin->_cnt = 0;
 	}
 	for (i = 1; i <= shipnum; i++)
-		(*(shiplist[i]->strategy))(shiplist[i]);
+		shiplist[i]->strategy(shiplist[i]);
 	if (!(is_dead(shiplist[0], S_DEAD)))
 		printf("\n");
 	(void) move_ships();
@@ -145,7 +177,8 @@ quitgame()
 	timeleft = alarm(0);
 	(void) signal(SIGINT, SIG_IGN);
 	puts("\n\nDo you really wish to stop now?  Answer yes or no:");
-	if(gets(answer) == NULL || answer[0] == 'y' || answer[0] == 'Y')
+	(void) Gets(answer, sizeof(answer));
+	if(answer[0] == NULL || answer[0] == 'y' || answer[0] == 'Y')
 		exit(0);
 	(void) signal(SIGINT, quitgame);
 	if(timeleft)
@@ -154,26 +187,29 @@ quitgame()
 }
 
 
-/* buffering: Determine whether or not stream is to be buffered.  If it's a
-   character-special device, any buffering in effect will remain.  If it's not
-   a character-special device, then stream will be unbuffered.  There are many
-   ways to decide what to do here.  One would have been to make it unbuffered
-   if and only if !isatty(fileno(stream)).  This is usually implemented as a
-   single ioctl() system call which returns true if the ioctl() succeeds,
-   false if it fails.  But there are ways it could fail and still be a tty.
-   Then there's also examination of stream->_flag.  UNIX is supposed to make
-   any stream attached to a terminal line-buffered and all others fully buf-
-   fered by default.  But sometimes even when isatty() succeeds, stream->_flag
-   indicates _IOFBF, not _IOLBF.  And even if it is determined that the stream
-   should be line buffered, setvbuf(3S) doesn't work right (in UNIX 5.2) to
-   make it _IOLBF.  So about the only choice is to do a straightforward
-   fstat() and ascertain definitely to what the stream is attached.  Then go
-   with old reliable setbuf(stream, NULL) to make it _IONBF.  The whole reason
-   this is being done is because the user may be using a pipefitting program
-   to collect a "transcript" of a session (e.g. tee(1)), or redirecting to a
-   regular file and then keeping a tail(1) going forever to actually play the
-   game.  This assures that the output will keep pace with the execution with
-   no sacrifice in efficiency for normal execution.	[RJN]		*****/
+/* buffering: Determine whether or not stream is to be buffered.  If
+   it's a character-special device, any buffering in effect will remain.
+   If it's not a character-special device, then stream will be
+   unbuffered.  There are many ways to decide what to do here.  One
+   would have been to make it unbuffered if and only if
+   !isatty(fileno(stream)).  This is usually implemented as a single
+   ioctl() system call which returns true if the ioctl() succeeds, false
+   if it fails.  But there are ways it could fail and still be a tty.
+   Then there's also examination of stream->_flag.  UNIX is supposed to
+   make any stream attached to a terminal line-buffered and all others
+   fully buffered by default.  But sometimes even when isatty()
+   succeeds, stream->_flag indicates _IOFBF, not _IOLBF.  And even if it
+   is determined that the stream should be line buffered, setvbuf(3S)
+   doesn't work right (in UNIX 5.2) to make it _IOLBF.  So about the
+   only choice is to do a straightforward fstat() and ascertain
+   definitely to what the stream is attached.  Then go with old reliable
+   setbuf(stream, NULL) to make it _IONBF.  The whole reason this is
+   being done is because the user may be using a pipefitting program to
+   collect a "transcript" of a session (e.g. tee(1)), or redirecting to
+   a regular file and then keeping a tail(1) going forever to actually
+   play the game.  This assures that the output will keep pace with the
+   execution with no sacrifice in efficiency for normal execution. [RJN]
+*/
 
 #include <sys/types.h>
 #include <sys/stat.h>

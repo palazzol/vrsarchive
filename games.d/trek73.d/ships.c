@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/ships.c,v 1.2 1987-12-25 20:52:07 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/ships.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/ships.c,v 1.2 1987-12-25 20:52:07 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  15:55:36  15:55:36  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: ships.c
  *

@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/mission.c,v 1.4 1987-12-25 20:51:11 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/mission.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/mission.c,v 1.4 1987-12-25 20:51:11 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:08:31  11:08:31  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: mission.c
  *
@@ -9,7 +20,7 @@
 #ifdef BSD
 #include <sys/time.h>
 #endif
-#ifdef SYS5
+#ifdef SYSV
 #include <time.h>
 #endif
 

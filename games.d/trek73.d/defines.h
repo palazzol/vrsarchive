@@ -1,3 +1,17 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.4 1987-12-25 20:50:46 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/defines.h,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/defines.h,v 1.4 1987-12-25 20:50:46 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/11/23  09:19:04  09:19:04  okamoto (Jeff Okamoto)
+ * Moved parse_opts flags here and removed parseopts.h
+ * 
+ * Revision 1.1  87/10/09  11:04:17  11:04:17  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: defines.h
  *
@@ -8,13 +22,13 @@
 /* Globals externals */
 extern char *strcpy(), *gets();
 extern char *Gets();
-extern float rectify(), bearing();
+extern float rectify(), bearing(), round();
 
 
 #ifdef BSD
 extern long random();
 #endif
-#ifdef SYS5
+#ifdef SYSV
 #define random()	((long)(rand()))
 #define srandom(seed)	(srand((unsigned)(seed)))
 #endif
@@ -64,16 +78,16 @@ extern long random();
 /*
  * for the status message turn off array (shutup[])
  */
-#define DISENGAGE	1			/* Autopilot disengaging */
-#define SHIELDSF	2			/* Shields fluctuating */
+#define DISENGAGE	1		/* Autopilot disengaging */
+#define SHIELDSF	2		/* Shields fluctuating */
 #define PHASERS		3		/* Phasers disengaging */
 #define TUBES		(PHASERS + MAXPHASERS)	/* Tubes disengaging */
 #define SURRENDER	(TUBES + MAXTUBES)	/* Flag for enemy surrender */
-#define SURRENDERP	20			/* Flag for our surrender */
-#define PLAYDEAD	21			/* Flag for playing dead */
-#define CORBOMITE	22			/* Flag for corbomite bluff */
-#define BURNOUT		23			/* Flag for warp burnout */
-#define HIGHSHUTUP	(BURNOUT + 10)		/* Burnout + 10 */
+#define SURRENDERP	20		/* Flag for our surrender */
+#define PLAYDEAD	21		/* Flag for playing dead */
+#define CORBOMITE	22		/* Flag for corbomite bluff */
+#define BURNOUT		23		/* Flag for warp burnout */
+#define HIGHSHUTUP	(BURNOUT + 10)	/* Burnout + 10 */
 
 /*
  * Multiplier for shield 1
@@ -188,6 +202,12 @@ extern long random();
 #define TR_ON		1
 
 /*
+ * Flags for parse_opts
+ */
+#define	BOOLEAN	0
+#define STRING 1
+
+/*
  * Some hard constants
  */
 #define MIN_PHASER_SPREAD	10
@@ -214,3 +234,5 @@ extern long random();
 #define INIT_T_PROX		200
 #define INIT_T_TIME		MAX_TUBE_TIME
 #define INIT_T_SPEED		MAX_TUBE_SPEED
+
+#define DEFAULT_TIME		30

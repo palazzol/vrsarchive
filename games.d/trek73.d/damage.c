@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/damage.c,v 1.2 1987-12-25 20:51:59 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/damage.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/damage.c,v 1.2 1987-12-25 20:51:59 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:03:30  11:03:30  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: damage.c
  *
@@ -112,44 +123,34 @@ int flag;
 		if (randm(dam->stats[i].roll) < f1) {
 			/* A better method should be found */
 			percent = (int) randm((int) f1);
-			/* The expected value for the percent damage
-			   to each system is roughly equal to:
-			      f1 * f1 / (2 * dam->stats[i].roll)
-			   Only these damages are proportional to hit
-			   squared.  All others are linearly
-			   proportional.  This includes shield damage,
-			   ship's fuel supply, consumption and
-			   regeneration rates, casualties, and weapons.
-			   (When weapons are damaged, they are 100%
-			   damaged - the number of weapons damaged is
-			   proportional to hit.)
-			   I think the old way decided whether or not to
-			   completely damage a system based on the
-			   comparison "randm(dam->stats[i].roll) < f1".
-			   This is almost like the weapons are still
-			   handled.  Another possibility is to always
-			   damage each system by:
-			      100 * randm((int)f1) / dam->stats[i].roll
-			   percent.  This adds some randomness and makes
-			   the approx. expected value of the damage to
-			   each system:
-			      100 * f1 / (2 * dam->stats[i].roll)
-			   percent.  Perhaps this isn't such a good
-			   idea after all; this is 100/f1 times the
-			   current expected value, often > 2.  And it is
-			   actually somewhat less random since each
-			   system gets damaged each time.  I had thought
-			   that the damage should be directly
-			   proportional to f1, not to its square.
-			   But perhaps it makes sense that a hit twice
-			   as big has an expected value of damage four
-			   times as big as that from a smaller hit.
-			   The actual damage any given time is still
-			   proportional to the hit, but the probability
-			   that any damage will be done at all is also
-			   directly proportional to the hit.  This is
-			   a pretty good system after all.	[RJN]
-			*/
+/*
+ * The expected value for the percent damage to each system is roughly
+ * equal to:
+ *	f1 * f1 / (2 * dam->stats[i].roll)
+ * Only these damages are proportional to hit squared.  All others are
+ * linearly proportional.  This includes shield damage, ship's fuel
+ * supply, consumption and regeneration rates, casualties, and weapons.
+ * (When weapons are damaged, they are 100% damaged - the number of
+ * weapons damaged is proportional to hit).  I think the old way
+ * decided whether or not to completely damage a system based on the
+ * comparison "randm(dam->stats[i].roll) < f1".  This is almost like
+ * the weapons are still handled.  Another possibility is to always
+ * damage each system by:
+ *	100 * randm((int)f1) / dam->stats[i].roll
+ * percent.  This adds some randomness and makes the approx. expected
+ * value of the damage to each system:
+ *	100 * f1 / (2 * dam->stats[i].roll)
+ * percent.  Perhaps this isn't such a good idea after all; this is
+ * 100/f1 times the current expected value, often > 2.  And it is
+ * actually somewhat less random since each system gets damaged each
+ * time.  I had thought that the damage should be directly proportional
+ * to f1, not to its square.  But perhaps it makes sense that a hit
+ * twice as big has an expected value of damage four times as big as
+ * that from a smaller hit.  The actual damage any given time is still
+ * proportional to the hit, but the probability that any damage will be
+ * done at all is also directly proportional to the hit.  This is a
+ * pretty good system after all. [RJN]
+ */
 			ep->status[i] += percent;
 			if (ep->status[i] > 100)
 				ep->status[i] = 100;

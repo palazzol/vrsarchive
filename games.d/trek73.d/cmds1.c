@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v 1.3 1987-12-25 20:50:35 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/cmds1.c,v 1.3 1987-12-25 20:50:35 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:00:47  11:00:47  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: cmds1.c
  *
@@ -11,6 +22,7 @@
 
 #include "externs.h"
 
+int
 fire_phasers(sp) 
 struct ship *sp;
 {
@@ -21,7 +33,7 @@ struct ship *sp;
 	register int i;
 	register int k;
 
-	for (i=0; i<MAXPHASERS; i++)
+	for (i=0; i < MAXPHASERS; i++)
 		typed[i] = 0;
 	printf("   fire phasers [1-%d] ", sp->num_phasers);
 	(void) Gets(buf1, sizeof(buf1));
@@ -29,14 +41,15 @@ struct ship *sp;
 		printf("%s:  Belay that order!\n", captain);
 		return 0;
 	}
-	printf("   spread [10-45] ");
+	printf("   spread [%d-%d] ", MIN_PHASER_SPREAD,
+	    MAX_PHASER_SPREAD);
 	(void) Gets(buf2, sizeof(buf2));
 	if (buf2[0] == NULL) {
 		printf("%s:  Belay that order!\n", captain);
 		return 0;
 	}
 	i = atoi(buf2);
-	if (i < 10 || i > 45)
+	if (i < MIN_PHASER_SPREAD || i > MAX_PHASER_SPREAD)
 		return 0;
 	sp->p_spread = i;
 	if (strcmp(buf1, "all") && strcmp(buf1, "ALL"))
@@ -56,12 +69,13 @@ struct ship *sp;
 				continue;
 			sp->phasers[i].status |= P_FIRING;
 		}
-	check_p_damage(typed, sp, "fire");	/* Type out if damaged */
+	check_p_damage(typed, sp, "fire");	/* Type if damaged */
 	check_p_turn(typed, sp, 1);
 	return 1;
 }
 
 
+int
 fire_tubes(sp)
 struct ship *sp;
 {
@@ -72,7 +86,7 @@ struct ship *sp;
 	register int j;
 	register int k;
 
-	for (i=0; i<MAXTUBES; i++)
+	for (i=0; i < MAXTUBES; i++)
 		typed[i] = 0;
 	printf("   fire tubes [1-%d] ", sp->num_tubes);
 	(void) Gets(buf1, sizeof(buf1));
@@ -91,7 +105,7 @@ struct ship *sp;
 			sp->tubes[k].status |= T_FIRING;
 		}
 	else
-		for (i=0; i<sp->num_tubes; i++) {
+		for (i=0; i < sp->num_tubes; i++) {
 			typed[i]++;
 			if (sp->tubes[i].status & (T_DAMAGED | T_FIRING))
 				continue;
@@ -119,6 +133,7 @@ struct ship *sp;
 }
 
 
+int
 lock_phasers(sp)
 struct ship *sp;
 {
@@ -130,14 +145,16 @@ struct ship *sp;
 	register int i;
 	register int k;
 
-	for (i=0; i<MAXPHASERS; i++)
+	for (i=0; i < MAXPHASERS; i++)
 		typed[i] = 0;
 	if (is_dead(sp, S_COMP)) {
-		printf("%s:  Impossible %s, our computer is dead.\n", science, title);
+		printf("%s:  Impossible %s, our computer is dead.\n",
+		    science, title);
 		return 0;
 	}
 	if (!syswork(sp, S_COMP)) {
-		printf("%s:  Our computer is temporarily buggy", science);
+		printf("%s:  Our computer is temporarily buggy",
+		    science);
 		return 0;
 	}
 	printf("   lock phasers [1-%d] ", sp->num_phasers);
@@ -167,7 +184,7 @@ struct ship *sp;
 			sp->phasers[k].target = ep;
 		}
 	else
-		for (i=0; i<sp->num_phasers; i++) {
+		for (i=0; i < sp->num_phasers; i++) {
 			typed[i]++;
 			if (sp->phasers[i].status & P_DAMAGED)
 				continue;
@@ -179,6 +196,7 @@ struct ship *sp;
 }
 
 
+int
 lock_tubes(sp)
 struct ship *sp;
 {
@@ -190,7 +208,7 @@ struct ship *sp;
 	register int i;
 	register int k;
 
-	for (i=0; i<sp->num_tubes; i++)
+	for (i=0; i < sp->num_tubes; i++)
 		typed[i] = 0;
 	if (is_dead(sp, S_COMP)) {
 		printf("%s:  Impossible %s, our computer is dead.\n", science, title);
@@ -227,7 +245,7 @@ struct ship *sp;
 			sp->tubes[k].target = ep;
 		}
 	else
-		for (i=0; i<sp->num_tubes; i++) {
+		for (i=0; i < sp->num_tubes; i++) {
 			typed[i]++;
 			if (sp->tubes[i].status & T_DAMAGED)
 				continue;
@@ -239,6 +257,7 @@ struct ship *sp;
 }
 
 
+int
 turn_phasers(sp)
 struct ship *sp;
 {
@@ -250,7 +269,7 @@ struct ship *sp;
 	register float j;
 	register int k;
 
-	for (i=0; i<MAXPHASERS; i++)
+	for (i=0; i < MAXPHASERS; i++)
 		typed[i] = 0;
 	printf("   turn phasers [1-%d] ", sp->num_phasers);
 	(void) Gets(buf1, sizeof(buf1));
@@ -275,7 +294,7 @@ struct ship *sp;
 			sp->phasers[k].bearing = j;
 		}
 	else
-		for (i=0; i<sp->num_phasers; i++) {
+		for (i=0; i < sp->num_phasers; i++) {
 			typed[i]++;
 			if (sp->phasers[i].status & P_DAMAGED)
 				continue;
@@ -288,6 +307,7 @@ struct ship *sp;
 }
 
 
+int
 turn_tubes(sp)
 struct ship *sp;
 {
@@ -299,7 +319,7 @@ struct ship *sp;
 	register float j;
 	register int k;
 
-	for (i=0; i<MAXTUBES; i++)
+	for (i=0; i < MAXTUBES; i++)
 		typed[i] = 0;
 	printf("   turn tubes [1-%d] ", sp->num_tubes);
 	(void) Gets(buf1, sizeof(buf1));
@@ -324,7 +344,7 @@ struct ship *sp;
 			sp->tubes[k].bearing = j;
 		}
 	else
-		for (i=0; i<sp->num_tubes; i++) {
+		for (i=0; i < sp->num_tubes; i++) {
 			typed[i]++;
 			if (sp->tubes[i].status & T_DAMAGED)
 				continue;
@@ -337,6 +357,7 @@ struct ship *sp;
 }
 
 
+int
 load_tubes(sp)
 struct ship *sp;
 {
@@ -373,7 +394,7 @@ struct ship *sp;
 			typed[k]++;
 		}
 	else
-		for (i=0; i<sp->num_tubes; i++)
+		for (i=0; i < sp->num_tubes; i++)
 			typed[i]++;
 	for (i = 0; i < sp->num_tubes; i++) {
 		tp = &sp->tubes[i];
@@ -396,7 +417,7 @@ struct ship *sp;
 		}
 	}
 	printf("%s: Tubes now ", engineer);
-	for (i=0; i<sp->num_tubes; i++) {
+	for (i=0; i < sp->num_tubes; i++) {
 		if (sp->tubes[i].status & T_DAMAGED)
 			printf(" -- ");
 		else
@@ -407,6 +428,7 @@ struct ship *sp;
 }
 
 
+int
 launch_probe(sp)
 struct ship *sp;
 {
@@ -456,7 +478,7 @@ struct ship *sp;
 	if (prox < MIN_PROBE_PROX)
 		goto bad_param;
 	printf("   launch towards [whom, if anyone] ");
-	Gets(buf1, sizeof(buf1));
+	(void) Gets(buf1, sizeof(buf1));
 	if (*buf1) {
 		target = ship_name(buf1);
 		if (target == NULL)
@@ -468,7 +490,8 @@ struct ship *sp;
 		}
 	} else {
 		printf("   course [0-360] ");
-		if (gets(buf1) == NULL)
+		(void) Gets(buf1, sizeof(buf1));
+		if (buf1[0] == NULL)
 			goto bad_param;
 		course = atof(buf1);
 		if (course < 0.0 || course > 360.0)
@@ -511,6 +534,7 @@ bad_param:
 }
 
 
+int
 probe_control(sp)
 struct ship *sp;
 {
@@ -535,7 +559,7 @@ struct ship *sp;
 		if (pp->from != sp)
 			continue;
 		if (!pnum)
-			printf("\nprobe bearng range course time  prox units target\n");
+	printf("\nprobe bearng range course time  prox units target\n");
 		if (pnum >= sizeof probes / sizeof probes[0]) {
 			printf("\n%s:  There are other probes out but\n",
 			    nav);
@@ -572,7 +596,7 @@ struct ship *sp;
 	if (buf1[0] == NULL)
 		return 0;
 	probenum = atoi(buf1);
-	for (i=0; i<pnum; i++)
+	for (i=0; i < pnum; i++)
 		if (probes[i]->id == probenum)
 			break;
 	if (i == pnum)

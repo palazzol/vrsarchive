@@ -1,3 +1,17 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/strat1.c,v 1.3 1987-12-25 20:51:19 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/strat1.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/strat1.c,v 1.3 1987-12-25 20:51:19 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  87/11/23  09:19:23  09:19:23  okamoto (Jeff Okamoto)
+ * Fixed bug in behaviour after you successfully corbomite bluff.
+ * 
+ * Revision 1.1  87/10/09  11:12:21  11:12:21  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: strat1.c
  *
@@ -73,7 +87,8 @@ struct ship *sp;
 			return;
 		if (e_phasers(sp, fed))
 			return;
-		if (betw(bear, 90.0, 270.0)) {
+		if ((betw(bear, 90.0, 270.0)) &&
+		    !betw(corbomite, 1, 6)) {
 			(void) e_pursue(sp, fed, 1.0);
 			return;
 		}
@@ -85,7 +100,8 @@ struct ship *sp;
 		 * set course?
 		 */
 		tmpf = fabs(fed->warp);
-		if (sp->target != fed || fabs(sp->warp) + tmpf > 2.0) {
+		if (((sp->target != fed || fabs(sp->warp) + tmpf > 2.0))
+		    && (!betw(corbomite, 1, 6))) {
 			(void) e_pursue(sp, fed, tmpf);
 			return;
 		}
@@ -139,7 +155,8 @@ struct ship *sp;
 	/* XXXX  Should we check for blind spots?
 	 * or should we check for forward/aft
 	 */
-	if (betw(bear, sp->t_blind_left, sp->t_blind_right)) {
+	if ((betw(bear, sp->t_blind_left, sp->t_blind_right))
+	    && (!betw(corbomite, 1, 6))) {
 		(void) e_pursue(sp, fed, 1.0);
 		return;
 	}
@@ -152,7 +169,8 @@ struct ship *sp;
 	 */
 	/*
 	tmpf = fabs(fed->warp);
-	if (sp->target != fed || sp->warp + tmpf > 2.0) {
+	if (((sp->target != fed || sp->warp + tmpf > 2.0)) &&
+	    (!betw(corbomite, 1, 6))) {
 		(void) e_pursue(sp, fed, (int)tmpf + 2.0 + randm(2));
 		return;
 	}

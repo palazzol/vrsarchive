@@ -1,85 +1,194 @@
 #
 # Makefile for TREK73
 #
-ALL	= trek73 bpv shipyard
-OPTIONS	= -O #-DTRACE
-MODEL	= -i
-include ../../CONFIG
+
 #
-# Select method of installing the binaries into the system
-# NOTE: UNIX System V Release 2.0 does not have install
-# and should therefore use either mv or cp.
+# Select which operating system you are using.
+# Acceptable flags are BSD and SYSV.
+#OS =	-DBSD
+OS =	-DSYSV
+
 #
-INSTALL = : install
+# Select whether you wish to use symbolic debugger or not.
+# NOTE: UNIX System V Release 2.0 cannot do profiling on programs
+# compiled with -g.  Also, sdb will not be very useful if the
+# symbols are stripped from the load module. (See STRIP)
+#SDB =	-g
+SDB =
+
+#
+# Select whether code optimization is to be done.
+OPT =	-O
+#OPT =
+
+#
+# Select whether profiling is to be done.
+# NOTE: In System V Relase 2.0, this is incompatible with
+# both SDB and STRIP.
+# PROF =	-p
+PROF =
+
+#
+# Select whether or not the load module is to be stripped.
+# This is incompatible with both SDB and PROF.
+# Note: In BSD Unix, this option should always be blank
+# STRIP =	-s
+STRIP =
+
+#
+# Select the method by which the binaries are to be installed.
+# Install is better if you have it.
+# INSTALL = install
+INSTALL = cp
+
+#
+# Select whether or not tracing mode is to be turned on.
+# This is useful when testing new strategies.
+#TRACE =	-DTRACE
+
+#
+# Select whether or not you want the command line parser.
+# This may slow the game down, since lex/yacc is inefficient.
+PARSER = -DPARSER
+
+#
+# Select whether or not to include the getopt.o module.
+# Generally, AT&T-derived systems will have getopt.o already
+# included in libc.  This may not be true of BSD UNIX.
+#GETOPT = getopt.o
+
+#
+# Select the destination directory for the game.
+DESTDIR = /usr/local/bin
+
+#
+# Select flags for shar
+SHARFL = -c
+
+#
+# Options that you should think about setting
+#
+# SHOWTORP: When set, the player decides whether or not photon
+#     torpedos should show up on a position display (command 13)
+#     If not set, torpedos will automatically be displayed.
+#
+# PARANOID: If you want ALL the checking of a save file that rogue
+#     provides, set this.  If you want to be cool, don't set it.
+#
+# NOTDEF: This option only makes sense if you have also set PARANOID.
+#     This option defeats making a link to a save file and then
+#     restarting the game from the link.
+#
+# HISTORICAL: If this option is set, then any ship which takes more
+#     than 43 points of actual damage would explode.  This led to
+#     much abuse of high-pod probes.  For more details, cf damage.c
+#
+OPTIONS =
+
+DEFINES = $(OS) $(PARSER) $(TRACE)
+CFLAGS = $(DEFINES) $(SDB) $(OPT) $(PROF) $(STRIP) $(OPTIONS)
 
 T73OBJECTS = cmds1.o cmds2.o cmds3.o cmds4.o damage.o dist.o endgame.o\
 	enemycom.o firing.o globals.o init.o main.o misc.o mission.o\
-	moveships.o parseopts.o parsit.o save.o ships.o special.o\
-	strat1.o subs.o vers.o
+	moveships.o parseopts.o save.o ships.o special.o strat1.o\
+	subs.o vers.o $(GETOPT)
 
 T73CFILES = cmds1.c cmds2.c cmds3.c cmds4.c damage.c dist.c endgame.c\
 	enemycom.c firing.c globals.c init.c main.c misc.c mission.c\
-	moveships.c parseopts.c pXrsit.c save.c ships.c special.c\
-	strat1.c subs.c vers.c
+	moveships.c parseopts.c save.c ships.c special.c strat1.c\
+	subs.c vers.c
 
-BPVOBJECTS = bpv.o ships.o
+PARSEFILES = command.l grammar.y
 
-BPVFILES = bpv.c ships.c
+PRTOBJECTS = bpv.o ships.o printships.o
 
-DYOOBJECTS = shipyard.o
+PRTFILES = bpv.c ships.c printships.c
 
-DYOFILES = shipyard.c
+DYOOBJECTS = shipyard.o bpv.o
 
-HEADS= structs.h defines.h externs.h
+DYOFILES = shipyard.c bpv.c
 
-RDIST = ${T73CFILES} ${BPVFILES} ${DYOFILES} ${HEADS}
+HEADS= defines.h externs.h structs.h union.h
 
-LIBS= -lm
+RDIST = $(T73CFILES) $(PARSEFILES) $(PRTFILES) $(DYOFILES) $(HEADS)
 
-FLUFF = parsit.o make.out errs core lint.errs a.out tags\
-	shar.1 shar.2 shar.3 shar.4
+#
+# If you are not using the parser, you do not need the lex and yacc libs
+#
+# Note: Some systems have all the lex and yacc modules in either libl
+# or liby.  If your linker complains, try removing one or the other
+LIBS= -lm -ll -ly
 
-trek73:	${T73OBJECTS}
-	$(CC) -o $@ ${CFLAGS} ${T73OBJECTS} ${LIBS}
+FLUFF = parsit.o lex.yy.c y.tab.c grammar.c grammar.o\
+	make.out errs core lint.errs a.out tags\
+	shar.1 shar.2 shar.3 shar.4 shar.5 shar.6
 
-bpv:	${BPVOBJECTS}
-	$(CC) -o $@ ${CFLAGS} ${BPVOBJECTS}
+SHAR1 = Makefile defines.h externs.h structs.h cmds1.c
+SHAR2 = cmds2.c cmds3.c cmds4.c damage.c
+SHAR3 = dist.c endgame.c enemycom.c firing.c globals.c
+SHAR4 = init.c main.c misc.c mission.c moveships.c
+SHAR5 =	parseopts.c parsit.c save.c ships.c special.c strat1.c subs.c vers.c 
+SHAR6 = bpv.c printships.c shipyard.c command.l grammar.y union.h getopt.c
 
-shipyard:	${DYOOBJECTS}
-	cc -o $@ ${CFLAGS} ${DYOOBJECTS} -lm
+BINS = trek73 printships shipyard
 
-install: ${ALL} ${GAMDIR}
-	cp ${ALL} ${GAMDIR}
-	cd ${GAMDIR}; chmod 711 ${ALL}
+all:	trek73 printships shipyard
 
-${T73OBJECTS}: ${HEADS}
+trek73:	$(T73OBJECTS) grammar.o parsit.o
+	cc $(CFLAGS) -o $@ $(T73OBJECTS) grammar.o parsit.o $(LIBS)
 
-${BPVOBJECTS}: ${HEADS}
+printships:	$(PRTOBJECTS)
+	cc $(CFLAGS) -o $@ $(PRTOBJECTS) -lm
 
-${DYOOBJECTS}: ${HEADS}
+shipyard:	$(DYOOBJECTS)
+	cc $(CFLAGS) -o $@ $(DYOOBJECTS) -lm
 
-tags: ${T73CFILES}
-	ctags ${T73CFILES} ${HEADS}
+install: trek73 printships shipyard
+	$(INSTALL) trek73 $(DESTDIR)
+	$(INSTALL) printships $(DESTDIR)
+	$(INSTALL) shipyard $(DESTDIR)
+
+$(T73OBJECTS): $(HEADS)
+
+$(PRTOBJECTS): $(HEADS)
+
+$(DYOOBJECTS): $(HEADS)
+
+grammar.o: grammar.y union.h command.l
+	lex command.l
+	yacc grammar.y
+	mv y.tab.c grammar.c
+	cc -c $(CFLAGS) grammar.c
+
+parsit.o: parsit.c
+	cc -c $(CFLAGS) parsit.c
+
+tags: $(T73CFILES)
+	ctags $(T73CFILES) $(HEADS)
 
 count:
-	wc ${T73CFILES} ${HEADS}
+	wc $(T73CFILES) $(HEADS)
 
+#
+# Flags for your lint may need to be changed
+#
 lint:
-	lint -abchx ${CFLAGS} ${T73CFILES} > lint.errs
+	lint -bx $(DEFINES) $(T73CFILES) > lint.errs
 
 clean:
-	rm -f ${ALL} ${T73OBJECTS} ${DYOOBJECTS} ${BPVOBJECTS} ${FLUFF}
+	\rm -f $(BINS) $(T73OBJECTS) $(DYOOBJECTS) $(PRTOBJECTS) $(FLUFF)
 
-shar: shar.1 shar.2 shar.3 shar.4
+shar: shar1 shar2 shar3 shar4 shar5 shar6
 
-shar.1: Makefile defines.h externs.h options.h structs.h cmds1.c cmds2.c
-	shar Makefile defines.h externs.h options.h structs.h cmds1.c cmds2.c >$@
-
-shar.2: cmds3.c cmds4.c damage.c dist.c endgame.c enemycom.c
-	shar cmds3.c cmds4.c damage.c dist.c endgame.c enemycom.c >$@
-
-shar.3: firing.c globals.c init.c main.c misc.c mission.c bpv.c shipyard.c
-	shar firing.c globals.c init.c main.c misc.c mission.c bpv.c shipyard.c >$@
-
-shar.4: moveships.c parseopts.c parsit.c save.c ships.c special.c strat1.c subs.c vers.c 
-	shar moveships.c parseopts.c parsit.c save.c ships.c special.c strat1.c subs.c vers.c >$@ 
+shar1:
+	shar $(SHARFL) $(SHAR1) > shar.1
+shar2:
+	shar $(SHARFL) $(SHAR2) > shar.2
+shar3:
+	shar $(SHARFL) $(SHAR3) > shar.3
+shar4:
+	shar $(SHARFL) $(SHAR4) > shar.4
+shar5:
+	shar $(SHARFL) $(SHAR5) > shar.5
+shar6:
+	shar $(SHARFL) $(SHAR6) > shar.6

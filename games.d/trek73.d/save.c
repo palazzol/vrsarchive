@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.4 1987-12-25 20:52:06 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/save.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.4 1987-12-25 20:52:06 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:10:52  11:10:52  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: save.c
  *
@@ -7,13 +18,16 @@
  */
 
 #include <stdio.h>
+#ifdef BSD
+#include <strings.h>
+#endif
+#ifdef SYSV
+#include <string.h>
+#endif
 #include <pwd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
-#include <stdio.h>
-
-extern struct passwd *getpwuid();
 
 #define MAXSTR	256
 
@@ -26,18 +40,23 @@ char *sbrk();
 
 STAT sbuf;
 
+extern void exit();
+
 set_save()
 {
 	register char		*env;
 	register struct passwd	*pw;
+	struct passwd		*getpwuid();
 	char			*getpass();
+	unsigned short		getuid();
 	extern char		home[];
 	extern char		savefile[];
 	char			*getenv();
 
 	if ((env = getenv("HOME")) != NULL)
 		strcpy(home, env);
-	else if ((pw = (struct passwd *)getpwuid(getuid())) != NULL)
+	else if ((pw = (struct passwd *)getpwuid((int)getuid()))
+	    != NULL)
 		strcpy(home, pw->pw_dir);
 	else
 		home[0] = '\0';
@@ -57,6 +76,7 @@ save_game()
     register int c;
     char buf[MAXSTR];
     extern char savefile[];
+    void perror();
 
     /*
      * get file name
@@ -126,9 +146,9 @@ save_file(savef)
 register FILE *savef;
 {
     /*
-     * close any open score file
+     * close any open save file
      */
-    fstat(fileno(savef), &sbuf);
+    (void) fstat(fileno(savef), &sbuf);
     /*
      * DO NOT DELETE.  This forces stdio to allocate the output buffer
      * so that malloc doesn't get confused on restart
@@ -136,7 +156,7 @@ register FILE *savef;
     fwrite("junk", 1, 5, savef);
 
     fseek(savef, 0L, 0);
-    encwrite(version, sbrk(0) - version, savef);
+    encwrite(version, (unsigned int) (sbrk(0) - version), savef);
     fclose(savef);
     exit(0);
 }
@@ -147,20 +167,24 @@ register FILE *savef;
  *	integrity from cheaters
  */
 restore(file, envp)
-register char *file;
+char *file;
 char **envp;
 {
     register int inf;
-    void (*func)();
+#ifdef PARANOID
+    register char syml;
+#endif PARANOID
     extern char **environ;
     char buf[MAXSTR];
+    long lseek();
     STAT sbuf2;
+    void perror();
 
-#ifdef SIGTSTP
-    func = signal(SIGTSTP, SIG_IGN);
+#ifdef BSD
+    (void) signal(SIGTSTP, SIG_IGN);
 #endif
-#ifdef SYS5
-    func = signal(SIGQUIT, SIG_IGN);
+#ifdef SYSV
+    (void) signal(SIGQUIT, SIG_IGN);
 #endif
 
     if ((inf = open(file, 0)) < 0)
@@ -168,12 +192,20 @@ char **envp;
 	perror(file);
 	return 0;
     }
-    fstat(inf, &sbuf2);
+    (void) fstat(inf, &sbuf2);
+#ifdef PARANOID
+#ifdef BSD
+    syml = symlink(file);
+#endif
+#ifdef SYSV
+    syml = link(file);
+#endif
     if (unlink(file) < 0)
     {
 	printf("Cannot unlink file\n");
 	return 0;
     }
+#endif PARANOID
 
     fflush(stdout);
     encread(buf, (unsigned int) (strlen(version) + 1), inf);
@@ -187,6 +219,7 @@ char **envp;
     brk(version + sbuf2.st_size);
     lseek(inf, 0L, 0);
     encread(version, (unsigned int) sbuf2.st_size, inf);
+#ifdef PARANOID
     /*
      * we do not close the file so that we will have a hold of the
      * inode for as long as possible
@@ -196,12 +229,30 @@ char **envp;
 	    printf("Sorry, saved game is not in the same file.\n");
 	    return 0;
 	}
-#ifdef SIGTSTP
-    signal(SIGTSTP, SIG_DFL);
+#ifdef NOTDEF
+    /*
+     * defeat multiple restarting from the same place
+     */
+	if (sbuf2.st_nlink != 1 || syml)
+	{
+	    printf("Cannot restore from a linked file %d %d\n", sbuf2.st_nlink, syml);
+	    exit(1);
+	}
 #endif
+#endif PARANOID
+#ifdef BSD
+    (void) signal(SIGTSTP, SIG_DFL);
+#endif
+#ifdef SYSV
+    (void) signal(SIGQUIT, SIG_DFL);
+#endif
+
     environ = envp;
     stdin->_cnt = 0;
     playit();
+#ifdef PARANOID
+    syml = syml;		/* LINT */
+#endif PARANOID
     /*NOTREACHED*/
 }
 

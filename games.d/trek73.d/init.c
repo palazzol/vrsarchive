@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/init.c,v 1.2 1987-12-25 20:52:03 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/init.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/init.c,v 1.2 1987-12-25 20:52:03 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:07:33  11:07:33  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: init.c
  *
@@ -30,7 +41,8 @@ name_crew()
 		(void) strcpy(helmsman, "Sulu");
 	if (captain[0] == '\0') {
 		printf("\n\nCaptain: my last name is ");
-		if (gets(buf1) == NULL || *buf1 == '\0')
+		(void) Gets(buf1, sizeof(buf1));
+		if (buf1[0] == '\0')
 			exit(1);
 		(void) strncpy (captain, buf1, sizeof captain);
 		captain[sizeof captain - 1] = '\0';
@@ -46,7 +58,8 @@ name_crew()
 		sex[sizeof sex - 1] = '\0';
 	} else {
 		printf("%s: My sex is: ",captain);
-		if (gets(buf1) == NULL || *buf1 == '\0')
+		(void) Gets(buf1, sizeof(buf1));
+		if (buf1[0] == '\0')
 			exit(1);
 	}
 	switch(*buf1) {
@@ -86,7 +99,7 @@ name_crew()
 init_ships()
 {
 	struct ship_stat *my_class, *his_class, *ship_class(), *read_class();
-	int myread, hisread;	/* Did we read from file? */
+	int hisread;	/* Did we read from file? */
 	register int i;
 	register int j;
 	register struct ship *sp;
@@ -101,7 +114,8 @@ init_ships()
 
 getships:
 	printf("   I'm expecting [1-9] enemy vessels ");
-	if (gets(buf1) == NULL || *buf1 == NULL) {
+	(void) Gets(buf1, sizeof(buf1));
+	if (buf1[0] == NULL) {
 		printf("%s:  %s, Starfleet Command reports that you have been\n",
 		    com, title);
 		puts("   relieved of command for dereliction of duty.");
@@ -140,13 +154,10 @@ getships:
 		(void) strcpy(class, "CA");
 	if (foeclass[0] == '\0')
 		(void) strcpy(foeclass, "CA");
-	myread = 0;
 	hisread = 0;
 	if ((my_class = ship_class(class)) == NULL)
 		if ((my_class = read_class(class, 0)) == NULL)
 			my_class = ship_class("CA");
-		else
-			myread = 1;
 	if ((his_class = ship_class(foeclass)) == NULL)
 		if ((his_class = read_class(foeclass, 1)) == NULL)
 			his_class = ship_class("CA");
@@ -312,7 +323,8 @@ getships:
 		slots[loop] = ' ';
 }
 
-struct ship_stat *read_class(str, flag)
+struct ship_stat *
+read_class(str, flag)
 char *str;
 int flag;
 {
@@ -346,11 +358,13 @@ int flag;
 			return(NULL);
 		if ((bytes = read(fd, &can_cloak, 1)) < 0)
 			return(NULL);
-		if ((bytes = read(fd, &e_bpv, sizeof(int))) < 0)
+		if ((bytes = read(fd, (char *)&e_bpv, sizeof(int))) < 0)
 			return(NULL);
 
 		return(&them);
 		break;
 		
 	}
+	bytes = bytes;		/* LINT */
+	/*NOTREACHED*/
 }

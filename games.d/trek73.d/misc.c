@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/misc.c,v 1.3 1987-12-25 20:51:09 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/misc.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/misc.c,v 1.3 1987-12-25 20:51:09 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:08:09  11:08:09  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  * TREK73: misc.c
  *
@@ -11,32 +22,37 @@
 
 #include "externs.h"
 
-int help(dummy)
+int
+help(dummy)
 struct ship *dummy;
 {
 	struct cmd	*cpbegin, *cpmiddle;
 
 	puts("\nTrek73 Commands:");
-	puts("Code		Command			Code		Command");
+	puts(
+"Code		Command			Code		Command");
 	putchar('\n');
 	cpbegin = &cmds[0];
 	cpmiddle = &cmds[(cmdarraysize + 1) >> 1];
 	while (cpmiddle->routine != NULL) {
 		printf("%3s:  %c %-31s:%3s:  %c %-31s\n",
-		    cpbegin->word1, ((cpbegin->turns) ? ' ' : '*'),
-		    cpbegin->word2, cpmiddle->word1,
-		    ((cpmiddle->turns) ? ' ' : '*'), cpmiddle->word2);
+		    cpbegin->code_num, ((cpbegin->turns) ? ' ' : '*'),
+		    cpbegin->explanation, cpmiddle->code_num,
+		    ((cpmiddle->turns) ? ' ' : '*'),
+		    cpmiddle->explanation);
 		cpbegin++;
 		cpmiddle++;
 	}
 	if (cmdarraysize & 1)
-		printf("%3s:  %c %-31s", cpbegin->word1,
-		    ((cpbegin->turns) ? ' ' : '*'), cpbegin->word2);
+		printf("%3s:  %c %-31s", cpbegin->code_num,
+		    ((cpbegin->turns) ? ' ' : '*'),
+		    cpbegin->explanation);
 	puts("\n\n * does not use a turn");
 	dummy = dummy;				/* LINT */
 }
 
-struct cmd *scancmd(buf)
+struct cmd *
+scancmd(buf)
 char *buf;
 {
 	static char **argp = NULL;
@@ -48,7 +64,7 @@ char *buf;
 	first = strlen(argp[0]);
 	if (argnum && first)
 		for (cp = &cmds[0]; cp->routine != NULL; cp++)
-			if (!strncmp(argp[0], cp->word1, first))
+			if (!strncmp(argp[0], cp->code_num, first))
 				return (cp);
 	return (NULL);
 }
@@ -57,6 +73,7 @@ char *buf;
  * This routine handles getting unique identifier numbers for
  * all objects.
  */
+int
 new_slot()
 {
 	/*
@@ -80,6 +97,7 @@ new_slot()
 /* 
  * This routine handles returning identifiers
  */
+int
 return_slot(i)
 int i;
 {
@@ -89,7 +107,8 @@ int i;
 }
 
 
-char *vowelstr(str)
+char *
+vowelstr(str)
 char *str;
 {
 	switch(*str) {
@@ -110,6 +129,7 @@ char *str;
  * to print out a list of those phasers damaged and unable to
  * either fire, lock, or turn.
  */
+int
 check_p_damage(array, sp, string)
 int array[];
 struct ship *sp;
@@ -138,6 +158,7 @@ char *string;
  * to print out a list of those tubes damaged and unable to either
  * fire, lock, or turn.
  */
+int
 check_t_damage(array, sp, string)
 int array[];
 struct ship *sp;
@@ -165,6 +186,7 @@ char *string;
  * This routine checks to see if a phaser is pointing into our
  * blind side
  */
+int
 check_p_turn(array, sp, flag)
 int array[];
 struct ship *sp;
@@ -216,6 +238,7 @@ int flag;			/* If 1, came from fire_phasers */
  * This routine checks to see if a tube is turned into
  * our blind side.
  */
+int
 check_t_turn(array, sp, flag)
 int array[];
 struct ship *sp;
@@ -261,7 +284,8 @@ int flag;			/* If 1, came from fire_tubes */
 		printf(" is pointing into our blind side.\n");
 }
 
-struct ship_stat *ship_class(s)
+struct ship_stat *
+ship_class(s)
 char *s;
 {
 	int i;

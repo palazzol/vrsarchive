@@ -21,9 +21,11 @@ Star Trek is a registered trademark of Paramount Pictures.
 Star Fleet Battles is a trademark held jointly by Task Force Games
 and Amarillo Design Bureau.
 .FE
-.ce
+.ce 3
 T R E K   7 3
-.ce
+.sp
+Version 4.0
+.sp
 A Star Trek Battle Simulation
 .sp
 .PP
@@ -66,7 +68,7 @@ reading a protractor.
 Only two dimensions are used.\**
 .FS
 This saves the player from having to work out problems in
-spherical geometry.
+spherical trigonometry.
 .FE
 .sp
 .PP
@@ -114,39 +116,41 @@ Appendix 5 contains the designer's notes.
 CODE	     COMMAND
 ====	     =======
 .sp
-1	Fire Phasers
-2	Fire Photon Torpedos
-3	Lock Phasers Onto Target
-4	Lock Tubes Onto Target
-5	Manually Rotate Phasers
-6 	Manually Rotate Tubes
-7	*Phaser Status
-8	*Tube Status
-9	Load/Unload Torpedo Tubes
-10	Launch Antimatter Probe
+1	     Fire Phasers
+2	     Fire Photon Torpedos
+3	     Lock Phasers Onto Target
+4	     Lock Tubes Onto Target
+5	     Manually Rotate Phasers
+6 	     Manually Rotate Tubes
+7	     *Phaser Status
+8	     *Tube Status
+9	     Load/Unload Torpedo Tubes
+10	     Launch Antimatter Probe
 .sp
-11	Probe Control (Detonate, Redirect, Lock)
-12	*Position Report
-13	*Position Display
-14	Pursue An Enemy Vessel
-15	Run From An Enemy Vessel
-16	Manually Change Course And Speed
-17	*Damage Report
-18	Scan Enemy (Damage Report Of Enemy)
-19	Alter Power Distribution
-20	Jettison Engineering
+11	     Probe Control (Detonate, Redirect, Lock)
+12	     *Position Report
+13	     *Position Display
+14	     Pursue An Enemy Vessel
+15	     Run From An Enemy Vessel
+16	     Manually Change Course And Speed
+17	     *Damage Report
+18	     Scan Enemy (Damage Report Of Enemy)
+19	     Alter Power Distribution
+20	     Jettison Engineering
 .sp
-21	Detonate Engineering
-22	Alter Torpedo And Phaser Firing Parameters
-23	Attempt Defenseless Ruse
-24	Attempt Corbomite Bluff(s)
-25	Surrender
-26	Ask Enemy to Surrender
-27	Initiate Self-Destruct Sequence
-28	Abort Self-Destruct
-29	*Survivors Report
-30	*Print Version Number
-31	*Reprints Above List
+21	     Detonate Engineering
+22	     Alter Torpedo And Phaser Firing Parameters
+23	     Attempt Defenseless Ruse
+24	     Attempt Corbomite Bluff(s)
+25	     Surrender
+26	     Ask Enemy to Surrender
+27	     Initiate Self-Destruct Sequence
+28	     Abort Self-Destruct
+29	     *Survivors Report
+30	     *Print Version Number
+.sp
+31	     *Save Game
+32	     *Reprints Above List
 .sp
 *Does Not Use A Turn
 .in 0
@@ -237,7 +241,7 @@ manually rotated.
 Unless engineering is jettisoned, tubes only fire from
 0-135 and 225-360 degrees.
 Each tube fires all its antimatter pods, which are
-temporarily held suspended in a magno-photon force field.
+held suspended in a magnetic force field.
 Photon torpedos can be fired directly at an enemy, laid out
 as a mine field, or scattered in an attacker's path as
 depth charges.
@@ -256,7 +260,7 @@ It is suggested that you not fire more than four torpedos at
 any one time, since a certain number of them do miss, or are
 destroyed by the enemy firing phasers at them.
 It is also suggested that you fire them at distant targets,
-beyond 1100M, to avoid the explosion radii of your own
+beyond 1100M, to avoid the explosion radius of your own
 weapons.
 Hit factors resulting from antimatter explosions are
 calculated as follows:
@@ -300,10 +304,9 @@ zero degrees relative), relocked, manually overridden, or
 damaged.
 .sp
 .PP
-Phasers can not be locked onto cloaked enemy ships as they
-can not find the target.
+Phasers can not be locked onto cloaked enemy ships.
 Phasers that were previously locked onto a non-cloaked ship
-will track the enemy's last known course and position when
+will track the enemy's last known course and speed when
 that ship cloaks.
 .sp
 .LP
@@ -312,8 +315,6 @@ that ship cloaks.
 [Tubes | all] [Target Name]
 .PP
 Tubes lock and unlock in the same manner that phasers do.
-Tubes suffer the same locking limitations that phasers do in
-reference to cloaked ships.
 .sp
 .LP
 5.  Manually Rotate Phasers.
@@ -403,7 +404,7 @@ on those ships.
 If no position report has been performed prior to the enemy ship
 engages a cloaking device, no information will be available on 
 that ship.
-This order does not use a turn.
+This command does not use a turn.
 .sp
 .LP
 13.  Position Display.
@@ -415,8 +416,8 @@ which surround your vessel.
 The Enterprise is indicated by a `+', jettisoned engineering
 sections by a `#', probes by a `*', torpedos by a `:', and
 enemy vessels by the first letter of their names.
-Enemy vessels that are cloaked appear as lower case letters
-and remain in their last noted absolute position.
+Enemy vessels that are cloaked appear as lower case letters.
+This command does not use a turn.
 .sp
 .LP
 14.  Pursue An Enemy Vessel.
@@ -454,28 +455,29 @@ degrees per sec = 5 * (11 - current warp speed)
 .PP
 Accordingly, you can turn 55 degrees at warp one, 50 at
 warp two, and so on down to 10 degrees at warp nine.
-In other words, the faster your speed, the less
+In other words, the faster you travel, the less
 maneuverable you are.
 You are also less maneuverable if your warp drive is damaged
 or destroyed.
-Your maximum speed is warp nine, the enemy's is warp eleven.
+Your maximum speed is warp nine,
+the enemy's is warp eleven.
 .sp
 .LP
 17.  Damage Report.
 .PP
-This report informs you of certain equipment status.
-A destroyed computer make orders 3 (lock
+This report informs you of the status of your ship.
+A destroyed computer make commands 3 (lock
 phasers), 4 (lock torpedos), 14 (pursue), 15 (run), 27
 (initiate self-destruct), and 28 (abort self-destruct)
 impossible to execute.
 You will be required to manually rotate phasers and
 torpedos, and manually change course and speed.
-Destroyed sensors makes orders 13 (position display) and
+Destroyed sensors makes commands 13 (position display) and
 18 (scan) impossible.
 A destroyed probe launcher prevents you from
-launching probes.
+launching probes (command 10).
 A destroyed warp drive slows your maximum speed to warp 0.99 and
-severly limits your maneuverability.
+severely limits your maneuverability.
 See order 20 about jettisoned engineering section.
 When your crew of 450 dies, your vessel is as good as dead.
 There are 350 men aboard each enemy vessel.
@@ -501,7 +503,7 @@ Shield one is 1.5 times as strong as the other three shields.
 .sp
 .PP
 `Efficiency' indicates the number of energy units being
-burned per warp-second.
+burned per warp factor per second.
 This number is initially one (.75 for enemy) and increases
 per hit.
 .sp
@@ -527,13 +529,13 @@ speeds or firing phasers.
 .PP
 [Ship Name | Probe id | #Ship Name]
 .PP
-An enemy damage report is essentially the same as the
-Enterprise's.
-Sensor reports can not be had for cloaked vessels.
+This command gives a damage report of an enemy ship in
+the same format as command 17.
+You cannot scan an enemy who is cloaked.
 .PP
 By giving the id number of a probe, information about it can
 be gathered.
-The same information can be gathered about a ship's (jettisoned)
+The same information can be gathered about a ship's jettisoned
 engineering by prepending a '#' before the ship's name.
 .sp
 .LP
@@ -577,8 +579,8 @@ shield percentage = (energy in)(effective %)
 Notice that dropping power to a shield has the same effect
 as having it hit.
 Notice also that if your regeneration drops below four,
-you may have to discharge your phaser banks to maintain full
-shield power.
+you may have to discharge your phaser banks if you wish to maintain
+full shield power.
 .sp
 .PP
 Phaser banks, similar to batteries, not only discharge (when
@@ -608,7 +610,7 @@ Huge power losses cannot be made up in battle.
 20.  Jettison Engineering.
 .PP
 Although this order was never executed in the television
-series, it is quite possible according to its producer.
+series, it is quite possible.
 Jettisoning engineering has serious consequences, but it may
 be your only course of action.
 .sp
@@ -618,14 +620,16 @@ probes or torpedos, or as a suicidal gesture.
 .sp
 .PP
 The following things happen when engineering is jettisoned:
-A: You lose all your fuel and reserve capacity; B: you lose
-your regeneration; C: you lose your warp drive; D: your lose
-your probe launcher; E: you lose your shields until you
-designate phasers to discharge; F: the engineering section
-itself decelerates to a stop; G: a ten second time delay on
-it is set (hopefully, when it does explode, you are far
-from its effects); H: you lose your cloaking device;
-I: your phasers and torpedos are now free to fire in any direction.
+You lose all your fuel and reserve capacity;
+you lose your regeneration;
+you lose your warp drive;
+your lose your probe launcher;
+you lose your shields until you designate phasers to discharge;
+the engineering section itself decelerates to a stop;
+a ten second time delay on it is set (hopefully,
+when it does explode, you are far from its effects);
+you lose your cloaking device;
+your phasers and torpedos are now free to fire in any direction.
 .sp
 .LP
 21.  Detonate Engineering.
@@ -635,7 +639,7 @@ I: your phasers and torpedos are now free to fire in any direction.
 This order, issued after the previous one, manually detonates
 your engineering section.
 It may also be issued without the previous order, in
-which case you will be asked to confirm your (crazy) order.
+which case you will be asked to confirm your (suicidal) order.
 .sp
 .LP
 22.  Alter Torpedo And Phaser Firing Parameters.
@@ -644,7 +648,7 @@ which case you will be asked to confirm your (crazy) order.
 [[y [Firing Percentage]] | n]
 .PP
 This option allows you to change the launch speeds, time and
-proximity delays of all torpedos.
+proximity delays of your torpedos.
 At the beginning of play, torpedos are launched at warp
 twelve, have ten second time fuses, and 200M proximity
 fuses.
@@ -672,13 +676,13 @@ direction.
 24.  Attempt Corbomite Bluff(s).
 .PP
 There were two corbomite bluffs in the television series;
-one was against a midget operating a huge space vessel the
+one was against an alien operating a huge space vessel the
 other was against Romulan attackers.
 Both have been incorporated into this game.
 Whichever bluff issued is selected randomly.
 .sp
 .LP
-25.  Surrender, If Possible.
+25.  Surrender.
 .PP
 This order sends a message to the enemy, saying that you
 wish to surrender.
@@ -699,7 +703,7 @@ Please bear in mind that Romulans and Orions are the most suicidal.
 This order activates a twenty-second self-destruct sequence.
 Because final destruct does not occur until ten turns after
 initialization, it is best to start it early, if at all.
-When you do explode, you hope that you explosive force will
+When you do explode, hopefully the force of your explosion will
 also destroy your attackers.
 .sp
 .LP
@@ -707,11 +711,11 @@ also destroy your attackers.
 .PP
 This order, issued after the previous one, halts the
 destruct sequence.
-Self-destruct cannot be aborted withing five seconds to
+Self-destruct cannot be aborted within five seconds to
 detonation.
 .sp
 .LP
-29.  Survivors Report
+29.  Survivors Report.
 .PP
 This order prints out the number of survivors on board all the ships.
 This order does not use a turn.
@@ -727,7 +731,7 @@ of TREK73.
 31.  Save game
 .PP
 This command saves the current game into a file.
-It can be restarted later by using the command line option `-r'.
+It can be restarted later by using the command line option `-R'.
 .sp
 .LP
 32.  Reprint Above List.
@@ -775,45 +779,61 @@ and an explanation of what they mean.
 The default for the option is in square brackets following
 the option.
 .sp
-.IP "terse BOOLEAN [noterse]"
+.LP
+terse BOOLEAN [noterse]
+.XP
 This option, when set, turns off the information regarding the
 ship's purpose in the area.
 It thus reduces the amount of drek on the screen.
 If you are on a slow terminal, this is a nice option to have set.
 .sp
-.IP "shipname STRING [Enterprise]"
+.LP
+shipname STRING [Enterprise]
+.XP
 This option names your ship.
 .sp
-.IP "name STRING"
+.LP
+name STRING
+.XP
 This option names the captain of the ship.
 If this option is not set, then the program will ask for a name.
 The captain is the one who must make all the decisions of strategy
 and tactics for the ship.
 .sp
-.IP "sex STRING"
+.LP
+sex STRING
+.XP
 This option gives the captain a gender.
 If this option is not set, the program will ask for it's value.
 If you respond with something that starts with other than "m" or "f",
 beware!
 .sp
-.IP "science STRING [Spock]"
+.LP
+science STRING [Spock]
+.XP
 This option names the science officer, who is responsible
 for checking the parameters of the captain's commands.
 It is also this officer's duty to report damage to the ship
 as well as scan for enemy damage.
 .sp
-.IP "engineer STRING [Scott]"
+.LP
+engineer STRING [Scott]
+.XP
 This option names the chief engineer of the ship.
 It is this officer's duty to report on the status of the ship,
 especially its energy supply and distribution of the same.
 The officer also controls the launching of anti-matter probes.
 .sp
-.IP "helmsman STRING [Sulu]"
+.LP
+helmsman STRING [Sulu]
+.XP
 This option names the ship's helmsman.
 This officer's duty is to control the speed of the ship
 and also controls the firing of the ship's weapons.
 .sp
-.IP "nav STRING [Chekov]"
+.LP
+nav STRING [Chekov]
+.XP
 This option names the ship's navigator, who is responsible
 for the navigation of the ship.
 This officer makes changes to the ship's course as directed
@@ -821,52 +841,71 @@ by the captain.
 This officer also controls any anti-matter probes after they
 have been launched.
 .sp
-.IP "com STRING [Uhura]"
+.LP
+com STRING [Uhura]
+.XP
 This option names the ship's communications officer.
 It is the duty of this officer to handle all communications between
 the ship and the rest of the universe.
 .sp
-.IP "enemy STRING [random]"
+.LP
+enemy STRING [random]
+.XP
 If this option is set, it tells the program which race you wish
 to fight.
 The available races are:
 Klingon, Romulan, Kzinti, Gorn, Orion, Hydran, Lyran, or Tholian.
 If the option is not set, the race you will fight is chosen at random.
 .sp
-.IP "foename STRING [random]"
+.LP
+foename STRING [random]
+.XP
 If this option is set, it specifies the name of the commander
 of the enemy ship(s).
 If this option is not specified, the name is chosen at random.
 .sp
-.IP "class STRING [CA]"
+.LP
+class STRING [CA]
+.XP
 This option specifies the kind of ship you are commanding.
 Allowable classes are: DN, CA, CL, and DD, standing for
 dreadnought, heavy cruiser, light cruiser, and destroyer.
 In general, the larger the ship, the more weapons and stronger
 shields you have, at the cost of less speed and maneuverability.
 .sp
-.IP "foeclass STRING [CA]"
+.LP
+foeclass STRING [CA]
+.XP
 This option specifies the kind of ship that you are fighting.
 The different classes are explained above.
 .sp
-.IP "silly BOOLEAN [nosilly]"
+.LP
+silly BOOLEAN [nosilly]
+.XP
 If this option is set, an additional race is added to the list of
 possible races to fight.
 This race is the Monty Pythons.
 Note that if you wish to always fight the Monty Python's, you merely
 have to set the enemy option above.
 .sp
-.IP "time STRING [30]"
+.LP
+time STRING [30]
+.XP
 Time is used to specify the time between commands.
 The longer this value, the more time may be used in issuing a command.
 .sp
-.IP "teletype BOOLEAN [noteletype]"
+.LP
+teletype BOOLEAN [noteletype]
+.XP
 The teletype option causes some of the output to come out as it did
 in the original teletype version.
 .sp
-.IP "savefile STRING [$HOME/trek73.save]"
-The savefile option specifies where the data image is to be stored if the
-game is saved during play.  ``~'' is not expanded, so the path should be
+.LP
+savefile STRING [$HOME/trek73.save]
+.XP
+The savefile option specifies where the data image is to be stored
+if the game is saved during play.
+``~'' is not expanded, so the path should be
 explicit and fully expanded.
 .sp 3
 .ce
@@ -961,35 +1000,65 @@ Designer Ships
 .PP
 A feature of TREK73 allows you to have more than just the standard
 four ship types.
-The program
+The programs
+.I bpv
+(6) and
 .I shipyard
 (6) allows new ship types to be created.
 .I Shipyard
 in conjunction with the -F and/or -l command line option allows
 battle between, say, the Enterprise and the Death Star.
 .PP
-See the manual page for
+See the manual pages for
+.I bpv
+and
 .I shipyard
 for more information about designer ships.
+.sp
+.ce
+English Parser
+.PP
+The latest feature of TREK73 Version 4.0 is the addition of
+a rudimentary English parser.
+No longer does the player have to remember what code number
+corresponds to what command.
+.PP
+A full list of allowable commands would nearly double
+the length of this document.
+Suffice it to say that it was the designers' desire
+to allow commands to be typed in just as if they would be spoken.
+An example of a legitimate command would be:
+"Pursue the Albatross at warp 6.5".
+Another would be:
+"Lock all tubes onto the Devastator".
+.PP
+If a given phrase does not work, try modifying the words or the
+order of the words.
+Some words, especially if they are long, may be abbreviated.
+.PP
+If all else fails, then bite the bullet and memorize
+the command numbers.
+.sp
 .ce
 Simple Strategy
 .sp
 .PP
-If you are a beginner, a simple strategy to follow is A:
-fight only one attacker; B: pursue him (code 14) at warp
-factor one; C: lock on all phasers (code 3); D: continuously
-take position reports (code 12) and watch his range; E:
+If you are a beginner, a simple strategy to follow is:
+fight only one attacker;
+pursue him (code 14) at warp factor one;
+lock on all phasers (code 3);
+continuously take position reports (code 12) and watch his range;
 when he gets within 1000M, fire all phasers (code 1) and
-keep on firing when he is in range; F: When the enemy is out
-of range, take damage reports and scans of the enemy (codes
-17 and 18).
+keep on firing when he is in range;
+When the enemy is out of range, take damage reports and scans
+of the enemy (codes 17 and 18).
 .sp
 .PP
 After a few trial games using the above strategy, you will
 want to become as efficient as the enemy at firing photon
 torpedos.
 Finally, when you master launching antimatter probes, you
-can designate more that one attacker.
+can designate more than one attacker.
 .sp 3
 .ce
 Trek73's History
@@ -997,7 +1066,7 @@ Trek73's History
 .PP
 Trek73 was programmed on a Hewlett-Packard 2000C system by
 William K. Char, Perry Lee, and Dan Gee.
-In January, 1973, Mr. Char started with a few ideas and five
+In January 1973, Mr. Char started with a few ideas and five
 months later, in May, introduced $SPACE, his first version.
 .sp
 .PP
@@ -1009,9 +1078,9 @@ reconstruct dialogue and vessels.
 On October 8, 1973, Trek73 was introduced.
 .sp
 .PP
-In 1984, Dave Pare at Univeristy of California at San Diego and Chris Williams
-at the University of California at Berkeley independently translated
-the BASIC code into C to run under BSD UNIX.\**
+In 1984, Dave Pare at University of California at San Diego and Chris
+Williams at the University of California at Berkeley independently
+translated the BASIC code into C to run under BSD UNIX.\**
 .FS
 UNIX is a registered trademark of Bell Laboratories.
 .FE
@@ -1024,9 +1093,9 @@ versions into one, fixing bugs and adding new commands and concepts.
 .PP
 Ideas and bug reports should be sent to:
 .br
-ARPA: okamoto@ucbvax.berkeley.edu and yee@ucbvaxberkeley.edu
+ARPA: hpccc!okamoto@hplabs.hp.com and yee@ames-orion.arpa
 .br
-UUCP: ..!ucbvax!okamoto and ..!ucbvax!yee
+UUCP: ..!hplabs!hpccc!okamoto and ..!ames-orion!yee
 .bp
 .ce
 APPENDIX 1
@@ -1036,7 +1105,7 @@ APPENDIX 1
               (engineering)
                                               -------
 :-----------------------------------------\\   | .5  |      . . . .
-::           N C C - 1 7 0 1              |}  |0 / 1|---< . . . . .
+::           N C C - 1 7 0 1 A            |}  |0 / 1|---< . . . . .
 ::________________________________________/   |     |      . . . .
             warp engines     ^                | .5  |      . . . .
                             +++               |0 / 1|---< . . . . .
@@ -1082,13 +1151,13 @@ Heavy Cruiser
                      ,'     \\ \\125              gles`,/
                    ,'        \\. . Torpedo.          . `,
    :------------------------\\ \\135_-----_ Fir        .  ,
-   :________________________/   _-     1 -_ ing       .  `
+   :________________________/   _-   A 1 -_ ing       .  `
                  |    ||       /        0  \\ Angles   .  |
           Shield |  ,_^^_____/|      _   7  | .       .  | Shield
              -180| [          {     (o)   1 } .       .  |0-
-            3    |  `-vv-----\\|      -   C  | .       .  |   1
+            3    |  `-vv-----\\|      -   -  | .       .  |   1
                  |    ||       \\        C  /  .       .  |
-   :-----------------------\\    -_     N _-  .        .  ,
+   :-----------------------\\    -_   N C _-  .        .  ,
    :_______________________/      -_____-   .       .   '
                    `,       /225. . . . . .       .   ,'
                      `,    /                    .   ,' \\
@@ -1461,15 +1530,17 @@ Designer's Notes
 When I was about 10 or 11, I would go to the Lawrence Hall of Science
 quite frequently.
 There, on their time-sharing system, I would sit at a Teletype Model 33
-and play trek.
+and play $TREK.
+(Does anyone out there remember XEQ-$TREK?)
 .PP
-Sadly, LHS replaced their system and trek went away.
+Sadly, LHS replaced their system and $TREK went away.
 It was my intention that it should not be forgotten.
-I had had a copy of a slightly different version of trek written in BASIC,
-but it was sadly unimplementable on my Apple computer.
+I had had a copy of a slightly different version of $TREK written in
+BASIC, but it was sadly unimplementable on my Apple ][+ computer.
 .PP
-When I learned of an implementation of trek written in C, I jumped at
-the chance to bring it to the systems here at UC Berkeley.
+When I learned of an implementation of $TREK called trek73 that was
+written in C, I jumped at the chance to bring it to the systems
+at UC Berkeley.
 At that time, the game was mostly a direct translation of the original
 BASIC source.
 Many of the commands and routines were either missing or faulty.
@@ -1480,36 +1551,38 @@ Once it was running, the time came for improvements.
 I admit to pulling many concepts from the game Star Fleet Battles, most
 notably the different races (Hydrans, Lyrans, etc.) and the ship names.
 .PP
-This version of the game represents many hours of thinking and debugging.
+This version of the game represents many hours of thinking
+and debugging.
 I hope you enjoy playing it as much as I did coding it.
 .sp
 .IP " " 30
 -Jeff Okamoto
 .sp 2
 .PP
-My first experience with TREK73 was also at the Lawrence Hall of Science.
+My first experience with TREK73 was also at the Lawrence Hall
+of Science.
 I had been taking classes in Time-Sharing Basic and noticed that other
 people always talked about a game called $TREK that was a real CPU hog
 and was usually turned off.
 Naturally I was intrigued.
 Soon I was paying $2.00 an hour for the chance to play that game.
 Many long hours and quite a few dollars went into playing $TREK,
-so it was with a certain sadness that I learned that the DG Ecllipse on
+so it was with a certain sadness that I learned that the DG Eclipse on
 which $TREK ran was being phased out.
 I made several attempts to obtain the source before it went away, but
 I was unable to get it.
 .PP
-Fortunately for me, Dave Pare at UC San Diego was also a fan of the game,
-and more importantly, he had an outdated copy of the source from an
-HP 2000.
+Fortunately for me, Dave Pare at UC San Diego was also a fan
+of the game, and more importantly, he had an outdated copy
+of the source from an HP 2000.
 Dave had started to implement the game in C to run under 4.2 BSD UNIX.
 Expressing my interest to Dave, I was able to get a copy of Dave's code
 and thus the TREK Project at Berkeley was started.
 I spent endless hours tweaking with Dave's code, implementing some of
 the fifteen or so commands that he had not yet translated.
 .PP
-At about this time, I learned that Christopher Williams, here at Berkeley,
-had also tried to implement the game in C.
+At about this time, I learned that Christopher Williams, here at
+Berkeley, had also tried to implement the game in C.
 What is more, he had a copy of the source (in BASIC) from Berkeley
 High School, and had implemented most of the commands.
 Merging the work that Chris had done into my copy of Dave's work led
@@ -1525,8 +1598,7 @@ Thus our partnership was formed and the current version of the game
 represents several hundred hours of our joint work (and play).
 Also represented are the suggestions, modifications and bug fixes
 we received from numerous people, including (to name a few)
-Matt Dillon, David Sharnoff, Joel Duisman, all at Berkeley, and
-Roger Noe at Rockwell International.
+Matt Dillon, David Sharnoff, Joel Duisman, and Roger Noe.
 .PP
 It is hoped that this implementation of a classic game will bring joy
 (and perhaps fond remembrances) to all who play.

@@ -1,3 +1,14 @@
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/globals.c,v 1.3 1987-12-25 20:50:55 vrs Exp $"
+/*
+ * $Source: /home/Vince/cvs/games.d/trek73.d/globals.c,v $
+ *
+ * $Header: /home/Vince/cvs/games.d/trek73.d/globals.c,v 1.3 1987-12-25 20:50:55 vrs Exp $
+ *
+ * $Log: not supported by cvs2svn $
+ * Revision 1.1  87/10/09  11:07:25  11:07:25  okamoto (Jeff Okamoto)
+ * Initial revision
+ * 
+ */
 /*
  *
  * TREK73: globals.c
@@ -21,7 +32,7 @@ extern 	int standard_strategy();
 
 char encstr[] = "\211g\321_-\251b\324\237;\255\263\214g\"\327\224.,\252|9\265=\357+\343;\311]\341`\251\b\231)\266Y\325\251";
 
-char version[] = "TREK73 Version 3.2 08/17/86";
+char version[] = "TREK73 Version 4.0 04/15/87";
 
 char *sysname[] = {
 	"Computer",		/* S_COMP */
@@ -71,7 +82,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Koloth", "Kang", "Kor", "Krulix", "Korax", "Karg",
 		  "Kron", "Kumerian",
-		}, 0,
+		},
 	},
 	{
 		"Romulan", "Star Empire", 0, 5, 5, 80, 50, 0,
@@ -83,7 +94,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Tal", "Tiercellus", "Diana", "Tama", "Subeus", "Turm",
 		  "Strell", "Scipio",
-		}, 0,
+		},
 	},
 	{
 		"Kzinti", "Hegemony", 0, 50, 50, 50, 50, 0,
@@ -95,7 +106,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Hunter", "\"Cat Who Sleeps With Dogs\"", "Fellus", "Corda",
 		  "\"Cat Who Fought Fuzzy Bear\"", "", "", "",
-		}, 0,
+		},
 	},
 	{
 		"Gorn", "Confederation", 0, 80, 50, 50, 50, 0,
@@ -108,7 +119,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Sslith", "Dardiss", "Ssor", "Sslitz", "S'Arnath",
 		  "Zor", "", "",
-		}, 0,
+		},
 	},
 	{
 		"Orion", "Pirates", 0, 95, 5, 50, 60, 0,
@@ -122,7 +133,7 @@ struct race_info aliens[MAXFOERACES] = {
 		{ "Daniel \"Deth\" O'Kay", "Neil Ricca", "Delilah Smith",
 		  "Hamilcar", "Pharoah", "Felna Greymane", "Hacker", 
 		  "Credenza",
-		}, 0,
+		},
 	},
 	{
 		"Hydran", "Monarchy", 0, 50, 50, 50, 50, 0,
@@ -134,7 +145,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Hypantspts", "S'Lenthna", "Hydraxan", "", "", "",
 		  "", "",
-		}, 0,
+		},
 	},
 	{
 		"Lyran", "Empire", 0, 50, 50, 50, 50, 0,
@@ -146,7 +157,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Kleave", "Leyraf", "Kuhla", "Nashar",
 		  "Prekor", "Ffarric", "Rippke", "Larkahn",
-		}, 0,
+		},
 	},
 	{
 		"Tholian", "Holdfast", 0, 75, 25, 50, 50, 0,
@@ -156,9 +167,9 @@ struct race_info aliens[MAXFOERACES] = {
 		{ "Tarantula Dreadnought", "Cruiser", "Improved Patrol Cruiser",
 		  "Patrol Cruiser",
 		},
-		{ "Secthane", "Kotheme", "Sectin", "Brezgonne", "", "",
-		  "", "",
-		}, 0,
+		{ "Secthane", "Kotheme", "Sectin", "Brezgonne", 
+		  "Loskene", "", "", "",
+		},
 	},
 	{
 		"Monty Python", "Flying Circus", 0, -1, -1, -1, -1, 0,
@@ -170,7 +181,7 @@ struct race_info aliens[MAXFOERACES] = {
 		},
 		{ "Cleese", "Chapman", "Idle", "Jones", "Gilliam", "Bruce",
 		  "Throatwobblermangrove", "Arthur \"Two Sheds\" Jackson",
-		}, 0,
+		},
 	}
 };
 
@@ -254,8 +265,13 @@ int	teletype = 0;		/* Flag for special teletype options */
 int	time_delay = 30;	/* Time to enter command */
 int	trace = TR_OFF;		/* Trace flag for debugging and records */
 char	can_cloak = 0;		/* Can enemy ship cloak? */
-double	o_bpv;			/* BPV of us */
 double	e_bpv;			/* BPV of enemy */
+
+#ifdef PARSER
+char Input[BUFSIZ];		/* Input from user */
+char *Inptr;			/* Pointer into Input */
+char parsed[BUFSIZ];		/* Returned command from yylex */
+#endif PARSER
 
 struct ship_stat	us;	/* Our ship definition */
 struct ship_stat	them;	/* Their ship definition */
@@ -296,7 +312,7 @@ struct  cmd cmds[] = {
 	{ NULL,			NULL,	NULL,				TURN },
 } ;
 
-int	high_command = 32;	/* XXX */
+int	high_command = 32;	/* Highest command in table */
 
 	/* used to print cmd list */
 int	cmdarraysize = sizeof(cmds) / sizeof (struct cmd) -1; 
