@@ -46,7 +46,7 @@ napms(time)
 		return;	/* error, or BSD style times() */
 	matchclock += (time / MS);		/* MS mlliseconds per tic */
 
-	while(matchclock < times(&stats))
+	while(matchclock > times(&stats))
 		;
 	}
 
