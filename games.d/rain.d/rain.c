@@ -1,14 +1,14 @@
 #include <stdio.h>
+#ifdef USG
+#include <termio.h>
+#else
 #include <sgtty.h>
+#endif
 #include <signal.h>
 /* rain 11/3/1980 EPS/CITHEP */
 /* cc rain.c -o rain -O -ltermlib */
-#define cursor(col,row) tputs(tgoto(CM,col,row),1,outc)
+#define cursor(col,row) tputs(tgoto(CM,col,row),1,fputchar)
 #define MAXINT (((unsigned)-1)>>1)
-outc(c)
-{
-        putchar(c);
-}
 extern char *UP;
 extern short ospeed;
 struct sgttyb old_tty;
@@ -59,7 +59,7 @@ char *argv[];
     gtty(1, &sg);
     sg.sg_flags&=~(CRMOD|ECHO);
     stty(1, &sg);
-    if (TI) fputs(TI,stdout);
+    if (TI) tputs(TI,stdout);
     tputs(tgetstr("cl",&tcp),1,fputchar);
     fflush(stdout);
     for (j=5;--j>=0;) {
@@ -76,30 +76,30 @@ char *argv[];
         if (j==0) j=4; else --j;
         cursor(xpos[j],ypos[j]-1);
         fputchar('-');
-        fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
-        fputs("|.|",stdout);
-        fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+        tputs(DN,stdout); tputs(BC,stdout); tputs(BC,stdout);
+        tputs("|.|",stdout);
+        tputs(DN,stdout); tputs(BC,stdout); tputs(BC,stdout);
         fputchar('-');
         if (j==0) j=4; else --j;
         cursor(xpos[j],ypos[j]-2); fputchar('-');
-        fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
-        fputs("/ \\",stdout);
+        tputs(DN,stdout); tputs(BC,stdout); tputs(BC,stdout);
+        tputs("/ \\",stdout);
         cursor(xpos[j]-2,ypos[j]);
-        fputs("| O |",stdout);
+        tputs("| O |",stdout);
         cursor(xpos[j]-1,ypos[j]+1);
-        fputs("\\ /",stdout);
-        fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+        tputs("\\ /",stdout);
+        tputs(DN,stdout); tputs(BC,stdout); tputs(BC,stdout);
         fputchar('-');
         if (j==0) j=4; else --j;
         cursor(xpos[j],ypos[j]-2); fputchar(' ');
-        fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
-        fputchar(' '); fputs(ND,stdout); fputchar(' ');
+        tputs(DN,stdout); tputs(BC,stdout); tputs(BC,stdout);
+        fputchar(' '); tputs(ND,stdout); fputchar(' ');
         cursor(xpos[j]-2,ypos[j]);
-        fputchar(' '); fputs(ND,stdout); fputchar(' ');
-        fputs(ND,stdout); fputchar(' ');
+        fputchar(' '); tputs(ND,stdout); fputchar(' ');
+        tputs(ND,stdout); fputchar(' ');
         cursor(xpos[j]-1,ypos[j]+1);
-        fputchar(' '); fputs(ND,stdout); fputchar(' ');
-        fputs(DN,stdout); fputs(BC,stdout); fputs(BC,stdout);
+        fputchar(' '); tputs(ND,stdout); fputchar(' ');
+        tputs(DN,stdout); tputs(BC,stdout); tputs(BC,stdout);
         fputchar(' ');
         xpos[j]=x; ypos[j]=y;
         fflush(stdout);
@@ -109,8 +109,8 @@ onsig(n)
 int n;
 {
     struct sgttyb sg;
-    fputs(LL, stdout);
-    if (TE) fputs(TE, stdout);
+    tputs(LL, stdout);
+    if (TE) tputs(TE, stdout);
     fflush(stdout);
     stty(1, &old_tty);
     kill(getpid(),n);
