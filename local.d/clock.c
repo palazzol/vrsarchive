@@ -344,6 +344,6 @@ char *argv [];
   wstandend (scr);
   echo ();
   nocrmode ();
-  endwin (scr);
+  endwin ();
   resetty ();
 }
