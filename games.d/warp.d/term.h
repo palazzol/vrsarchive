@@ -1,6 +1,9 @@
-/* $Header: /home/Vince/cvs/games.d/warp.d/term.h,v 1.3 2002-11-22 22:10:27 Vincent Exp $ */
+/* $Header: /home/Vince/cvs/games.d/warp.d/term.h,v 1.4 2002-11-25 21:42:41 vrs Exp $ */
 
 /* $Log: not supported by cvs2svn $
+/* Revision 1.3  2002/11/22 22:10:27  Vincent
+/* Compiles on CYGWIN.
+/*
 /* Revision 1.2  1990/04/04 21:31:41  vrs
 /* Changes for V.4 and ANSI C
 /*
@@ -22,6 +25,10 @@
 #ifdef TIOCOUTQ		/* chars left in output queue */
 EXT long iocount INIT(0);
 #define output_pending() (ioctl(1, TIOCOUTQ, &iocount),iocount)
+#else
+#ifdef FIONREAD
+EXT long iocount INIT(0);
+#endif
 #endif
 
 /* If some of the following look something like curses calls, it is because
@@ -100,7 +107,6 @@ EXT char INTRCH INIT('\03');
     EXT int nextout INIT(0);
 #   ifdef PENDING
 #	ifdef FIONREAD
-	    EXT long iocount INIT(0);
 #	    ifndef lint
 #		define input_pending() (nextin!=nextout || \
 (ioctl(0, FIONREAD, &iocount),(int)iocount))
