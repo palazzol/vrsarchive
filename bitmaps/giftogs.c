@@ -187,7 +187,8 @@ unsigned width,height;
             }
         }
 exitloop:
-        if (fill != raster + width*height) fatal("raster has the wrong size");
+        if (fill != raster + width*height)
+			fprintf(stderr,"giftogs: raster has the wrong size\n");
         free(codetable);
 }
 
@@ -223,6 +224,7 @@ void readimage()
         fread(buf,1,9,infile);
         left = buf[0] + (buf[1] << 8);
         top = buf[2] + (buf[3] << 8);
+		left = top = 0;	/* Don't worry about the screen offset */
         width = buf[4] + (buf[5] << 8);
         height = buf[6] + (buf[7] << 8);
         local = buf[8] & 0x80;
