@@ -1,10 +1,10 @@
 #define USG
-/* #define BSD4.x */
+/* #define BSD4_x */
 
 /*				NOTE
    Need to define the system being used.  Currently defined for Bell (USG).  To
    use on BSD remove the "#define USG" and the comment delimiters for 
-   "define BSD4.x".
+   "define BSD4_x".
 */
 
 
@@ -70,7 +70,7 @@ x ...\n device control functions:
 #include <setjmp.h>
 #include <sys/types.h>
 
-#ifdef BSD4.x
+#ifdef BSD4_x
 #include <sgtty.h>
 struct sgttyb ottyb, nttyb;
 #endif
@@ -79,7 +79,7 @@ struct sgttyb ottyb, nttyb;
 #include <sys/termio.h>
 #ifndef TCGETA
 #include <sys/ioctl.h>
-#endif !TCGETA
+#endif /*!TCGETA*/
 struct  termio old;
 struct  termio noret;
 #endif
@@ -166,7 +166,7 @@ char *argv[];
         /* set the graphtext precision to stroke */
         tx_prec(2);
 
-#ifdef BSD4.x
+#ifdef BSD4_x
         ioctl(0,TIOCGETP,(char *) &ottyb);
         nttyb = ottyb;
         nttyb.sg_flags |= CBREAK;
@@ -516,7 +516,7 @@ char *argv[];
         dialog_visib(1);        /* turn the dialog area on*/
         clear_dialog();
         select_code(1);         /* put in ansi mode */
-#ifdef BSD4.x
+#ifdef BSD4_x
         ioctl(0,TIOCSETP,(char *) &ottyb);
 #endif
 #ifdef USG
