@@ -22,7 +22,11 @@
 #include <sys/types.h>
 #include <sys/file.h>
 #ifndef TIOCGLTC
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sys/ttold.h>
+#endif
 #endif
 #ifdef M_XENIX
 #  include <sys/locking.h>
@@ -160,6 +164,8 @@ main(argc,argv)
 	char *argv[];
 {
 	register char *x, **xx;
+
+	setbuf(stdout, 0);
 	(void) initscr();
 	(void) crmode();
 	(void) noecho();
