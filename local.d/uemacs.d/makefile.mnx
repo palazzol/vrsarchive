@@ -1,0 +1,59 @@
+#
+# Makefile for Manx/Aztec C, version 3.40a (or greater) although, I
+# can't think of anything offhand which would not make it work with
+# previous versions.  Remember to set MSDOS and AZTEC in estruct.h
+# This generates a large model version, which is capable of reading
+# in a file thats approximately 90% of main memory size.  The flags
+# in FLAGS field (in case you need to know):
+#
+#  +l - large model
+#  +f - generate fast code
+#  -n - don't gather extra symbol info
+#  +s - put strings in the code segment
+#  +b - put in code for stack checking
+#
+# To generate MicroEMACS 3.9e, just take the distribution from the net,
+#  unshar it, move it to a PC, copy this file to "makefile", and
+#  type "make".  Manx make will take over and do the job.  You will
+#  get several pointer warnings, but that appears normal, and doesn't
+#  seem to effect the code.  Its setup for a PC, but you can change that
+#  some by changing all the ibmpc.[oc]'s with whatever (like hp150, etc.)
+#
+# ----- From: -----
+# {ucbvax,hoptoad}!\                      ~~~~~~~\~~~   That's spelled
+# {lll-lcc,hplabs}!well!unicom!physh       Jon  }()      "physh" and 
+#         {ptsfa,dual}!/                        /     pronounced "fish".
+#
+FLAGS=	+l +f -n +s +b
+OBJS=	basic.o bind.o buffer.o crypt.o display.o eval.o exec.o file.o\
+	fileio.o input.o isearch.o line.o main.o random.o region.o search.o\
+	spawn.o ibmpc.o termio.o word.o window.o
+.c.o:
+	cc $(FLAGS) $*.c -o $*.o
+
+emacs.exe:	$(OBJS)
+		ln -t -q $(OBJS) -o emacs.exe -lcl
+
+basic.o: basic.c ebind.h epath.h efunc.h edef.h estruct.h
+bind.o: bind.c ebind.h epath.h efunc.h edef.h estruct.h
+buffer.o: buffer.c ebind.h epath.h efunc.h edef.h estruct.h
+crypt.o: crypt.c ebind.h epath.h efunc.h edef.h estruct.h
+display.o: display.c ebind.h epath.h efunc.h edef.h estruct.h
+eval.o: eval.c ebind.h epath.h efunc.h edef.h estruct.h evar.h
+exec.o: exec.c ebind.h epath.h efunc.h edef.h estruct.h
+file.o: file.c ebind.h epath.h efunc.h edef.h estruct.h
+fileio.o: fileio.c ebind.h epath.h efunc.h edef.h estruct.h
+input.o: input.c ebind.h epath.h efunc.h edef.h estruct.h
+isearch.o: isearch.c ebind.h epath.h efunc.h edef.h estruct.h
+line.o: line.c ebind.h epath.h efunc.h edef.h estruct.h
+main.o: main.c ebind.h efunc.h edef.h estruct.h
+	cc $(FLAGS) -Z8000 $*.c -o $*.o
+random.o: random.c ebind.h epath.h efunc.h edef.h estruct.h
+region.o: region.c ebind.h epath.h efunc.h edef.h estruct.h
+search.o: search.c ebind.h epath.h efunc.h edef.h estruct.h
+spawn.o: spawn.c ebind.h epath.h efunc.h edef.h estruct.h
+ibmpc.o: ibmpc.c ebind.h epath.h efunc.h edef.h estruct.h
+termio.o: termio.c ebind.h epath.h efunc.h edef.h estruct.h
+word.o: word.c ebind.h epath.h efunc.h edef.h estruct.h
+window.o: window.c ebind.h epath.h efunc.h edef.h estruct.h
+	cc $(FLAGS) -E200 $*.c -o $*.o
