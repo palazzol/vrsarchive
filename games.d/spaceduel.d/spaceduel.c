@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-#define rnd(x)          (rand() % (x))
+#define rnd(x)          ((rand()>>3) % (x))
 #define abs(a)  ((a) < 0 ? -(a) : (a))
 #define MIDR  (LINES/2 - 1)
 #define MIDC  (COLS/2 - 1)
@@ -18,7 +18,7 @@
 
 static char *logfile = GAMLIB/sd.logfile"; 
 unsigned seed;
-int clock, fuel=TANKFULL, torps=TORPEDOES;
+int fuel=TANKFULL, torps=TORPEDOES;
 int kills=0;
 int row, column;
 int dr = 0, dc = 0;
@@ -51,39 +51,34 @@ static char *ranks[] = {
 	"space-legend",
 	"GOD",
 	"WIZARD" };
-int clock = MAXTIME;            /* time for all the flights in the game */
+int Clock = MAXTIME;            /* time for all the flights in the game */
 char cross = 1;
-int (*oldsig)();
+void (*oldsig)();
 
+void
 succumb()
 {
-        switch (oldsig) {
-        case SIG_DFL:
+        if (oldsig == SIG_DFL) {
                 endfly();
-                exit(1);
-        case SIG_IGN:
-                break;
-        default:
-                endfly();
+	}
+        if (oldsig != SIG_IGN) {
                 (*oldsig)();
+                endfly();
         }
+	exit(1);
 }
 
 main()
 {
-        int moveenemy();
+        void moveenemy();
 	int x;
 	extern time_t time();
 
-        seed = (unsigned)time((int *)0);
+        seed = (unsigned)time((time_t *)0);
 	srand(seed); 
+        (void) initscr();
         while (1) {
         destroyed = 0;
-        savetty();
-        if(initscr() == ERR){
-                puts("Whoops!  No more memory...");
-                return(0);
-        }
         oldsig = signal(SIGINT, succumb);
         crmode();
         noecho();
@@ -199,10 +194,9 @@ main()
                                 break;
                 }
                 if (destroyed){
-                        endfly();
                         ++kills;
                         if (kills % 5 == 0) {
-                           clock+=60;
+                           Clock+=60;
                            fuel+=75;
                            torps+=16;
                         }
@@ -210,9 +204,8 @@ main()
                         break;
                         /* return(1);  */
                 }
-                if (clock <= 0){
+                if (Clock <= 0){
                         endfly();
-                        die();
                 }
         }
         }
@@ -279,9 +272,10 @@ blast()
         alarm(1);
 }
 
+void
 moveenemy()
 {
-        double d;
+        int d;
         int oldr, oldc;
 
         oldr = row;
@@ -295,12 +289,12 @@ moveenemy()
                 fuel = 0;
                 mvaddstr(0,60,"*** Out of fuel ***");
         }
-        d = (double) ((row - MIDR)*(row - MIDR) + (column - MIDC)*(column - MIDC));
+        d = ((row - MIDR)*(row - MIDR) + (column - MIDC)*(column - MIDC));
         if (d < 16){
                 row += (rnd(9) - 4) % (4 - abs(row - MIDR));
                 column += (rnd(9) - 4) % (4 - abs(column - MIDC));
         }
-        clock--;
+        Clock--;
         mvaddstr(oldr, oldc - 1, "   ");
         if (cross)
                 target();
@@ -312,7 +306,7 @@ moveenemy()
         move(LINES-1, 42);
         printw("%3d", fuel);
         move(LINES-1, 57);
-        printw("%3d", clock);
+        printw("%3d", Clock);
         refresh();
         if (oldr == MIDR && oldc - MIDC < 2 && MIDC - oldc < 2) {
 	    move(0,0);
@@ -357,28 +351,27 @@ endfly()
         alarm(0);
         signal(SIGALRM, SIG_DFL);
         mvcur(0,COLS-1,LINES-1,0);
-        endwin();
 #ifdef SIGTSTP
         signal(SIGTSTP, SIG_DFL);
 #endif
         signal(SIGINT, oldsig);
-}
-die() 
-{
-    post_score();
-    exit(0);
+	die();
 }
 
-post_score()
+die() 
 {
         FILE *fp;
 	int rank();
-        char buf[128];
         char bf[12];
         long tv;
         char *date, *ctime();
-        int (*s)() = signal(SIGINT,SIG_IGN);
+        void (*s)() = signal(SIGINT,SIG_IGN);
 
+	raw();	/* Flush pending input...GROT */
+	noraw();
+	clear();
+	refresh();
+	endwin();
         time(&tv);
         date = ctime(&tv);
         date[10] = '\0';
@@ -389,19 +382,20 @@ post_score()
         }
         else
             fp = fopen(logfile,"a");
+	if (fp == NULL)
+		exit(0);
 #ifdef WIZARD
         fprintf(fp, "%-6s %-23s with %-2d kills on  %-10s %16s\n",cuserid(bf),
-	clock == 0 ? reasons[0] : reasons[rnd(sizeof(reasons)/sizeof(char *)-1)+1] , kills, date, ranks[9]);
+	Clock == 0 ? reasons[0] : reasons[rnd(sizeof(reasons)/sizeof(char *)-1)+1] , kills, date, ranks[9]);
 #else
         fprintf(fp, "%-6s %-23s with %-2d kills on  %-10s %16s\n",cuserid(bf),
-	clock == 0 ? reasons[0] : reasons[rnd(sizeof(reasons)/sizeof(char *)-1)+1] , kills, date, ranks[rank(kills)]);
+	Clock == 0 ? reasons[0] : reasons[rnd(sizeof(reasons)/sizeof(char *)-1)+1] , kills, date, ranks[rank(kills)]);
 #endif
         fclose(fp);
 	chmod(logfile,0644);
-	chown(logfile,1,0);
         signal(SIGINT,s);
-        sprintf(buf,"clear; more %s", logfile);
-        system(buf);
+        execlp(PAGER, PAGER, logfile, (char *)0);
+	exit(1);
 }
 space_death() {
     clear();
@@ -409,9 +403,8 @@ space_death() {
     mvaddstr(MIDR+1, 18,"as he breaks off in a victory roll.");
     mvaddstr(MIDR+3, 18,"You are consumed by the nuclear blast and die....");
     refresh();
-    mvcur(0,COLS-1,LINES-1,0);
-    endwin();
     sleep(4);
+    mvcur(0,COLS-1,LINES-1,0);
     die();
 }
 rank(x)
