@@ -13,7 +13,7 @@
 
 void	lexerror();
 %}
-
+%option lex-compat
 WSP	[ \t\n]
 SPACE	{WSP}+
 COMMENT	\#.*\n
