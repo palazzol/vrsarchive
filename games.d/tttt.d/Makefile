@@ -19,9 +19,10 @@ tttt: tttt.c
 
 install: tttt tttt.man
 	cp tttt $(BINDIR)/tttt
+	strip $(BINDIR)/tttt
 	chmod 711 $(BINDIR)/tttt
-	cp tttt.man $(MANDIR)/tttt.6
-	chmod 644 $(MANDIR)/tttt.6
+	cp tttt.man $(MANDIR)/tttt.doc
+	chmod 644 $(MANDIR)/tttt.doc
 
 tttt.man: tttt.6
 	nroff -man tttt.6 > tttt.man

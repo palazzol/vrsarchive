@@ -1,5 +1,9 @@
-This is a 4 by 4 version of tic-tac-toe with "wraparound
-edges" (so you can have off-center diagonal wins).
+This is version 2 of my 4 by 4 version of tic-tac-toe with
+"wraparound edges" (so you can have off-center diagonal wins).
+
+It has an ever-so-slightly improved computer player, and a vastly
+improved user interface, including online help,  being able to
+change who moves first, and change the number of players (0, 1, or 2).
 
 I've compiled it under 4.3 BSD Unix, but it should compile
 ok just about everywhere that has a curses package.
@@ -11,5 +15,5 @@ in seeing any changes to it.
 
 This program is public domain.
 
--Eric Lechner,  6 March 1990
+-Eric Lechner,  25 March 1990
 lechner@ucscb.ucsc.edu         ...!ucbvax!ucscc!ucscb!lechner

@@ -1,9 +1,9 @@
-.TH TTTT 6 "6 March 1990"
+.TH TTTT 6 "25 March 1990"
 .SH NAME
 tttt
 \- tic-tac-toc-toe with wraparound edges
 .SH SYNOPSIS
-.B /usr/games/tttt
+.B /usr/games/tttt [ options ]
 .SH DESCRIPTION
 Tic-Tac-Toc-Toe is a 4 by 4 version of Tic-Tac-Toe
 with wraparound edges.  The goal of the game is to
@@ -16,12 +16,18 @@ To play, simply press the letter and number corresponding
 to select the appropriate square, and the computer will then
 take its turn.
 .PP
-The first player to connect four squares in a row wins.  If
-the board becomes filled without a winner, it is a tie game.
+The first player to connect four squares in a row wins.
+.PP
+If the board becomes filled without a winner, it is a tie game.
+.PP
+If there are no possible wins on the board before the board
+is entirely filled, the game ends as a tie game.
 .SH COMMANDS
 .RS
 .IP "a-d, 0-4"
 Select the row and column for your move.
+.IP ?
+Display the help screen.
 .IP h
 Scroll the board left.
 .IP l
@@ -35,11 +41,30 @@ Redraw the screen.
 .IP q
 Quit the game.
 .RE
+.SH OPTIONS
+.RS
+.IP -o
+Have player `O' move first.
+.IP -2
+Play with two human players, instead of against the computer.
+.IP -0
+Have the computer play against itself.
+.IP -h
+Print the list of command line flags.
+.IP -r
+Disable all randomness in the computer player.
+.RE
 .SH HISTORY
 This program was originally written for an Advanced Logic
 Design class, as a high level version of the program to
-later be implemented in hardware.  It was converted to run
-with curses in an attempt to procrastinate working on the
-hardware implementation.
+later be implemented in hardware.
+.PP
+It was converted to run with curses in an attempt to procrastinate
+working on the hardware implementation.
+.PP
+As people requested them, additional features were added, even
+some that people didn't want (like a slightly better computer player).
+.SH BUGS
+You can still beat the computer player.
 .SH AUTHOR
 Eric Lechner, lechner@ucscb.ucsc.edu
