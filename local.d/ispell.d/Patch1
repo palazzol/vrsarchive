@@ -1,0 +1,65 @@
+
+This is patch number 1 for the version of ispell I posted recently.  My
+thanks to the many people (listed in the man page) who submitted changes,
+fixes, and improvements, and my apologies to Walt Buehring, whom I
+inadvertently failed to credit fully in my previous posting.
+
+This patch consists of three parts:  this file (Patch1), a new program named
+icombine.c (thanks to Gary Puckering), and a replacement for the
+"munchlist.sh" shell script (now called "munchlist.X" thanks to Rich Salz's
+configurability improvements).
+
+To apply this patch:
+
+    (1) Unshar this file by piping it through /bin/sh
+    (2) Remove "munchlist.sh"
+    (3) Type "patch < Patch1" in the ispell directory.
+    (4) Move all ispell.words files to ".ispell_words" after rebuilding.
+
+Improvements added in this patch:
+
+    (1) Configuration is simpler.  You still must edit both the Makefile
+	and config.h, but each variable is defined in only one place, so
+	there are no consistency worries.  There are also a few
+	explanatory comments.  (Rich Salz)
+    (2) The LOOK command is now configurable.  If LOOK is defined, it is
+	the command to use for lookup.
+    (2) The install dependency now installs the manual.  (Rich Salz)
+    (3) Buildhash is a hair faster.  (Rich Salz)
+    (4) The dictionary file does not require slashes separating each flag.
+	Thus, "PLOT/G/S" can now be written "PLOT/GS".  This saves a bit
+	of dictionary space.  This format is not required, but is generated
+	by ispell (for the personal dictionary), icombine, and munchlist.
+	(Rich Salz)
+    (5) The default personal dictionary is now a dot file, ".ispell_words".
+    (6) Ispell will now offer up to 100 possible corrections, instead of
+	only 10.  Most corrections still require only a single keystroke.
+    (7) Ispell now makes use of the extra lines on tall terminals.
+    (8) Perry Smith's region support for ispell.el has been reintegrated.
+    (9) Ispell now sorts the list of possible corrections.
+   (10) The -t switch selects TeX mode, wherein TeX-style constructs are
+	skipped.  (Don Kark, Greg Schaffer)
+   (11) The troff processing has been improved somewhat so that string
+	and number defines are ignored.  (Gary Puckering)
+
+Problems fixed by this patch:
+
+    (1) The Makefile wouldn't find buildhash if "." wasn't in the path.
+	(Rich Salz)
+    (2) On BSD systems, param.h gets types.h, so buildhash.c can't
+	include both.  (Jim Knutson)
+    (3) Buildhash was neglecting to initialize the "keep" flag.  (Don Kark)
+    (4) In config.h (now config.X), there was an ifdef that used SYSV
+	instead of USG.  (Dave Mason)
+    (5) Ispell's temp file was named "spell*" and was in /usr/tmp, not /tmp.
+	(Rich Salz)
+    (6) The s_ending routine in good.c had an unintended, but harmless,
+	fallthrough in one of the case statements.  (Greg Schaffer)
+    (7) If the dictionary has more than 32K words, the hash routine could
+	generate a negative hash code.
+    (8) Ispell no longer generates a spurious CR on every line in -l mode.
+        (Gary Puckering)
+    (9) A missing type declaration in lookup.c could cause bugs on
+	pointer != int machines.  (Jim Knutson, Rich Salz, Bill Randle)
+   (10)	The startup code didn't set ospeed, so padding didn't work.
+	(Perry Smith)
