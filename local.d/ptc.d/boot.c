@@ -7496,9 +7496,11 @@ eprogram(tp)
 		(void)fprintf(output.fp, "*/\n"), Putl(output, 1);
 		(void)fprintf(output.fp, "%s%s%cexit();\n", xtern, voidtyp, tab1), Putl(output, 1);
 	}
-	if (usecase || usesets || use(dinput) || use(doutput) || use(dwrite) || use(dwriteln) || use(dmessage) || use(deof) || use(deoln) || use(dflush) || use(dpage) || use(dread) || use(dreadln) || use(dclose) || use(dreset) || use(drewrite) || use(dget) || us
-
-e(dput)) {
+	if (usecase || usesets || use(dinput) || use(doutput) || use(dwrite)
+	|| use(dwriteln) || use(dmessage) || use(deof) || use(deoln)
+	|| use(dflush) || use(dpage) || use(dread) || use(dreadln)
+	|| use(dclose) || use(dreset) || use(drewrite) || use(dget)
+	|| use(dput)) {
 		(void)fprintf(output.fp, "/*\n"), Putl(output, 1);
 		(void)fprintf(output.fp, "**	Definitions for i/o\n"), Putl(output, 1);
 		(void)fprintf(output.fp, "*/\n"), Putl(output, 1);
