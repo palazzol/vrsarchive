@@ -153,7 +153,7 @@ char *argv[];
 	else
 		printf("     %3d File(s)     %6ld bytes free\n", files, blocks);
 	close(fd);
-	exit(0);
+	return(0);
 }
 
 /*
