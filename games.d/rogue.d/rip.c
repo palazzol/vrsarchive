@@ -54,7 +54,6 @@ char monst;
 		"quit",
 		"A total winner",
 	};
-	int	endit();
 
 	start_score();
 
@@ -103,7 +102,7 @@ char monst;
 	{
 		uid = getuid();
 		for (scp = top_ten; scp < &top_ten[10]; scp++)
-			if (amount > scp->sc_score)
+			if ((unsigned)amount > scp->sc_score)
 				break;
 			else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
 				scp = &top_ten[10];	/* only one score per nowin uid */
@@ -213,7 +212,6 @@ register char monst;
 	register struct tm *lt;
 	time_t date;
 	char buf[MAXSTR];
-	int leave();
 	struct tm *localtime();
 
 	signal(SIGINT, SIG_IGN);
