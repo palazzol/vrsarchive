@@ -202,6 +202,7 @@ register char c;
 		 *	ESC '[' 'D'			{ cursor_left(); }
 		 *	ESC '[' number ';' number 'H'	{ move ($1, $2); }
 		 *	ESC '[' number 'J'		{ clear_screen($1); }
+		 *	ESC '[' number 'H'		{ move($1, 0); }
 		 *	ESC '[' 'K'			{ clear_to_eol(); }
 		 *	ESC '[' number 'g'		{ clear_tab_stops(); }
 		 *	ESC '[' number 'm'		{ set_attributes($1); }
@@ -257,6 +258,12 @@ register char c;
 			else
 			    wclrtobot(vd);
 			wmove_xn(y, x);
+			break;
+		    case 'H':
+			if (screen[vdisp].cm_col)
+			    screen[vdisp].cm_col--;
+			y = screen[vdisp].cm_col;
+			x = 0;
 			break;
 		    case 'K':
 			wclrtoeol(vd);
