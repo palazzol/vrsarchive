@@ -68,10 +68,15 @@ const struct icp hellprobs[] = {
 
 static int mksx=0, mksy=0;
 
+#ifdef __STDC__
+struct obj *
+mkobj_at(char let,int x,int y)
+#else
 struct obj *
 mkobj_at(let,x,y)
 char let;
 int x,y;
+#endif
 {
 	register struct obj *otmp;
 
@@ -106,15 +111,20 @@ int otyp,x,y;
 	return((fobj = otmp));
 }
 
+#ifdef __STDC__
+struct obj *
+mkobj(char let,boolean artif)
+#else
 struct obj *
 mkobj(let, artif)
 char let;
 boolean artif;
+#endif
 {
 	register int tprob, i, prob = rnd(1000);
 
 	if(let == RANDOM_SYM) {
-		struct icp *iprobs =
+		const struct icp *iprobs =
 #ifdef REINCARNATION
 				    (dlevel == rogue_level) ? rogueprobs :
 #endif
@@ -163,7 +173,7 @@ struct obj *box;
 		otmp->age = moves;
 	    } else {
 		register int tprob;
-		struct icp *iprobs = boxiprobs;
+		const struct icp *iprobs = boxiprobs;
 
 		for(tprob = rnd(100);
 		    (tprob -= iprobs->iprob) > 0;
@@ -205,10 +215,15 @@ SPBOOK_SYM,
 WEAPON_SYM, 0};
 
 /*ARGSUSED*/
+#ifdef __STDC__
+struct obj *
+mksobj(int otyp,boolean artif)
+#else
 struct obj *
 mksobj(otyp, artif)
 int otyp;
 boolean artif;
+#endif
 {
 	int tryct;
 	struct obj *otmp;
@@ -612,9 +627,14 @@ register struct obj *otmp;
 	return(objects[otmp->otyp].oc_material == METAL);
 }
 
+#ifdef __STDC__
+void
+set_omask(xchar x,xchar y)
+#else
 void
 set_omask(x, y)
 register xchar x, y;
+#endif
 {
 	levl[x][y].gmask = (g_at(x, y) != (struct gold *)0);
 	levl[x][y].omask = (o_at(x, y) != (struct obj *)0);
