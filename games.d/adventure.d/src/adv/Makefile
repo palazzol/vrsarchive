@@ -2,6 +2,7 @@
 # Makefile for the Adventure interpreter.
 # 	(c) Ken Wellsch 1985
 #
+ALL	= adv$(EXE)
 OPTIONS	= -O -DADV=\"$(GAMLIB)/adv\"
 MODEL	= -i
 include $(HOME)/CONFIG
@@ -42,7 +43,7 @@ alib.a:	$(OBJ) $(ALIB)
 	$(RANLIB) $@
 
 clean:
-	rm -f *.o adv alib.a
+	rm -f *.o alib.a $(ALL)
 
 backup:
 	cp Makefile $(HEADER) $(SRC) $(MAIN) bkup

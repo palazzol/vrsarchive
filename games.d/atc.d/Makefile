@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/atc.d/Makefile,v 1.6 2002-11-23 04:09:35 Vincent Exp $
+#	$Header: /home/Vince/cvs/games.d/atc.d/Makefile,v 1.7 2002-11-23 23:59:34 Vincent Exp $
 #
 ALL	= makesrc distrib
 include $(HOME)/CONFIG
@@ -51,4 +51,4 @@ archive:
 
 clean:
 	cd src; make clean
-	rm -f dist/*
+	rm -rf dist

@@ -72,7 +72,7 @@ lint		:
 	lint ${LFLAGS} *.c ${UTL}*.c
 
 clean		:
-	rm -f ${OBJS} core adlrun1.shar adlrun2.shar adlrun
+	rm -f ${OBJS} core adlrun1.shar adlrun2.shar adlrun$(EXE)
 
 adlrun		: ${OBJS} ${UTIL}
 	$(CC) $(CFLAGS) -o $@ ${OBJS} ${UTIL} ${LIBS}

@@ -30,7 +30,7 @@ install		:	adldebug$(EXE) adltouch$(EXE)
 shar		:	misc.shar
 
 clean		:
-	rm -f misc.shar adldebug.o adltouch.o adldebug adltouch
+	rm -f misc.shar adldebug.o adltouch.o $(ALL)
 
 misc.shar	:	README Makefile *.c
 	( cd ${B} ; ${AR}	\
