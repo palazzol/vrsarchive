@@ -310,14 +310,14 @@ int info[9];
 			    moves + obj->quan * objects[obj->otyp].oc_delay;
 			if(edog->hungrytime < moves)
 			    edog->hungrytime = moves;
-			edog->hungrytime +=
-			    5*obj->quan * objects[obj->otyp].nutrition;
+			edog->hungrytime = edog->hungrytime +
+			    (5*obj->quan * objects[obj->otyp].nutrition);
 			mtmp->mconf = 0;
 			if(cansee(nix,niy))
 			    pline("%s ate %s.", Monnam(mtmp), doname(obj));
 			/* perhaps this was a reward */
 			if(otyp != CADAVER)
-			edog->apport += 200/(edog->dropdist+moves-edog->droptime);
+			edog->apport = edog->apport + (200/(edog->dropdist+moves-edog->droptime));
 			delobj(obj);
 			goto newdogpos;
 		    }

@@ -122,7 +122,7 @@ register ct = ESHK(shopkeeper)->billct;
 register struct bill_x *bp = bill;
 	total = 0;
 	while(ct--){
-		total += bp->price * bp->bquan;
+		total = total + bp->price*bp->bquan;
 		bp++;
 	}
 }
@@ -277,7 +277,7 @@ register struct bill_x *bpm;
 			return;
 		} else {
 			/* this was a merger */
-			bpm->bquan += bp->bquan;
+			bpm->bquan = bpm->bquan + bp->bquan;
 			ESHK(shopkeeper)->billct--;
 			*bp = bill[ESHK(shopkeeper)->billct];
 		}
@@ -541,7 +541,7 @@ register int tmp;
 	if(bp->bquan == otmp->quan) {
 		impossible("Zero quantity on bill??");
 	}
-	bp->bquan -= otmp->quan;
+	bp->bquan = bp->bquan - otmp->quan;
 
 	/* addtobill(otmp); */
 	if(ESHK(shopkeeper)->billct == BILLSZ) otmp->unpaid = 0;
@@ -570,7 +570,7 @@ register struct bill_x *bp;
 			otmp = newobj(0);
 			*otmp = *obj;
 			bp->bo_id = otmp->o_id = flags.ident++;
-			otmp->quan = (bp->bquan -= obj->quan);
+			otmp->quan = bp->bquan = (bp->bquan - obj->quan);
 			otmp->owt = 0;	/* superfluous */
 			otmp->onamelth = 0;
 			bp->useup = 1;

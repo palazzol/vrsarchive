@@ -151,8 +151,8 @@ register char *cmd;
 #ifdef QUEST
 	if(*cmd == cmd[1] && (*cmd == 'f' || *cmd == 'F')) {
 		flags.run = 4;
-		if(*cmd == 'F') flags.run += 2;
-		if(cmd[2] == '-') flags.run += 1;
+		if(*cmd == 'F') flags.run = flags.run + 2;
+		if(cmd[2] == '-') flags.run = flags.run + 1;
 		goto rush;
 	}
 #endif QUEST

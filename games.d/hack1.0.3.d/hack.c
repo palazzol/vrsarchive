@@ -140,10 +140,10 @@ domove()
 	if(u.utrap) {
 		if(u.utraptype == TT_PIT) {
 			pline("You are still in a pit.");
-			u.utrap--;
+			u.utrap = u.utrap - 1;
 		} else {
 			pline("You are caught in a beartrap.");
-			if((u.dx && u.dy) || !rn2(5)) u.utrap--;
+			if((u.dx && u.dy) || !rn2(5)) u.utrap = u.utrap - 1;
 		}
 		return;
 	}
@@ -751,9 +751,10 @@ losexp()	/* hit by V or W */
 	register num;
 	extern long newuexp();
 
-	if(u.ulevel > 1)
-		pline("Goodbye level %u.", u.ulevel--);
-	else
+	if(u.ulevel > 1) {
+		pline("Goodbye level %u.", u.ulevel);
+		u.ulevel = u.ulevel - 1;
+	} else
 		u.uhp = -1;
 	num = rnd(10);
 	u.uhp -= num;

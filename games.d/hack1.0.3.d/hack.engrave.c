@@ -204,7 +204,7 @@ register struct obj *otmp;
 	while(*sp == ' ') spct++, sp++;
 	len = strlen(sp);
 	if(!len || *buf == '\033') {
-		if(type == BURN) otmp->spe++;
+		if(type == BURN) otmp->spe = otmp->spe + 1;
 		return(0);
 	}
 	

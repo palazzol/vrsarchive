@@ -13,6 +13,8 @@
 
 extern char *getlogin(), *getenv();
 extern char plname[PL_NSIZ], pl_character[PL_CSIZ];
+extern struct permonst mons[CMNUM+2];
+extern char genocided[], fut_geno[];
 
 int (*afternmv)();
 int (*occupation)();
@@ -32,6 +34,7 @@ char obuf[BUFSIZ];	/* BUFSIZ is defined in stdio.h */
 
 extern char *nomovemsg;
 extern long wailmsg;
+extern struct monst *makemon();
 
 main(argc,argv)
 int argc;
@@ -216,8 +219,6 @@ char *argv[];
 			}
 		if(sfoo = getenv("GENOCIDED")){
 			if(*sfoo == '!'){
-				extern struct permonst mons[CMNUM+2];
-				extern char genocided[], fut_geno[];
 				register struct permonst *pm = mons;
 				register char *gp = genocided;
 
@@ -298,7 +299,6 @@ not_recovered:
 
 			if(moves%2 == 0 ||
 			  (!(Fast & ~INTRINSIC) && (!Fast || rn2(3)))) {
-				extern struct monst *makemon();
 				movemon();
 				if(!rn2(70))
 				    (void) makemon((struct permonst *)0, 0, 0);
@@ -322,7 +322,7 @@ not_recovered:
 				if(u.ulevel > 9) {
 					if(Regeneration || !(moves%3)) {
 					    flags.botl = 1;
-					    u.uhp += rnd((int) u.ulevel-9);
+					    u.uhp = u.uhp+rnd((int)u.ulevel-9);
 					    if(u.uhp > u.uhpmax)
 						u.uhp = u.uhpmax;
 					}
