@@ -22,7 +22,11 @@
  *  Bill Randle (billr@tekred.TEK.COM)
  *  22 April 1987
  */
+#ifdef __STDC__
+#include <curses.h>
+#else
 #include <termcap.h>
+#endif
 #include <stdio.h>
 #include "patchlvl.h"
 
