@@ -20,8 +20,8 @@ $(OFILES): reversi.h
 
 edges.o: edges.c edges.out
 	$(CC) $(CFLAGS) -c edges.c
-edges.out: makeedge genedge
-	./genedge | ./makeedge > edges.out
+edges.out: makeedge genedge$(EXE)
+	./genedge$(EXE) | ./makeedge$(EXE) > edges.out
 
 makeedge.c: makeedge.y
 	$(YACC) makeedge.y
@@ -32,5 +32,6 @@ install: $(ALL) $(GAMDIR)
 	cd $(GAMDIR); chmod 711 $(ALL)
 
 clean:
-	rm -f *.o makeedge.c ulex.c user.c makeedge.c genedge makeedge reversi
+	rm -f *.o makeedge.c ulex.c user.c makeedge.c
+	rm -f genedge$(EXE) makeedge$(EXE) reversi$(EXE)
 	rm -f core make.out reversi.shar edges.out y.output y.tab.h
