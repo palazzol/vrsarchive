@@ -14,11 +14,7 @@
 
 # include "install.h"
 
-# ifdef BSD41
-#     include <time.h>
-# else
-#     include <sys/time.h>
-# endif
+# include <time.h>
 
 # define TRUE 1
 # define FALSE 0
@@ -286,7 +282,7 @@ int filelength (f)
  * critical: Disable interrupts
  */
 
-static int   (*hstat)(), (*istat)(), (*qstat)();
+static void   (*hstat)(), (*istat)(), (*qstat)();
 
 critical ()
 {
