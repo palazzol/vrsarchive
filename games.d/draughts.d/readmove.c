@@ -1,5 +1,6 @@
 #include        <stdio.h>
 #include        "damdefs.h"
+#include	<curses.h>
 
 /* read move; the intended format is
         nn-mm
@@ -9,13 +10,13 @@
         nnxmm(q1,...,qt)
  */
 
-extern int      dirt,prall,possct,captmax,captct,timew,timeb,timemax;
+extern int      possct,captmax,captct,timew,timeb,timemax;
 extern long     lseek();
-extern int      optp,rdif,disp,playw,playb,me,optg,optu,optf;
+extern int      optp,rdif,playw,playb,me,optg,optu,optf;
 extern unsigned prbwait;
 extern int      rdifmin,altermv,fplevel,rdmin;
 extern int      *mp,*mpf,conv[],bord[],moves[],mvnr,*findmove();
-extern char     *dsparr[],*emparr[],*fularr[],prtarr[];
+extern char     *dsparr[],*emparr[],*fularr[];
 
 int valstone[5] = {
         EMPTY,WHITE,BLACK,WHITE|DAM,BLACK|DAM
@@ -28,19 +29,8 @@ char ch, *ach;
 #define ERRCHAR '\177'
 
 rdlin(){
-        register char *lp;
-        register int c;
-
-        lp = line;
-        while((c = getchar()) != '\n'){
-                if(c == EOF) error("end of input");
-                if(lp == line+LINSIZ-1){
-                        lp--;
-                        c = ERRCHAR;
-                }
-                *lp++ = c;
-        }
-        *lp = 0;
+	refresh();
+	wgetstr(stdscr,line);
         ach = line;
 }
 
@@ -61,13 +51,13 @@ ask:
         case 'n':
                 return(0);
         default:
-                pmesg("answer 'y' or 'n'\n");
+                mvprintw(ROW0,0,"Answer 'y' or 'n'\n");
                 goto ask;
         }
 }
 
 skipspaces(){
-        while((ch == ' ') || (ch == '\t')) newchar();
+        while((ch == ' ') || (ch == '\t')) (void) newchar();
 }
 
 rnum(){
@@ -76,7 +66,7 @@ int num;
         skipspaces();
         while(digit()) {
                 num = 10*num + (ch - '0');
-                newchar();
+                (void) newchar();
         }
         return(num);
 }
@@ -101,19 +91,19 @@ int     num;
 
 check(cc) char cc; {
         if(ch != cc){
-                putcr('\'');
+                addch('\'');
                 putsym(ch);
-                pmesg("' where '");
+                mvprintw(ROW0,0,"' where '");
                 putsym(cc);
-                pmesg("' expected\n");
+                mvprintw(ROW0,0,"' expected\n");
                 ch = ERRCHAR;           /* some error occurred */
-        } else if(ch) newchar();
+        } else if(ch) (void) newchar();
 }
 
 putsym(cc) char cc; {
-        if(!cc) pmesg("\\n");
-        else if(cc < ' ') pmesg("\\0%o",cc);
-        else putcr(cc);
+        if(!cc) mvprintw(ROW0,0,"\\n");
+        else if(cc < ' ') mvprintw(ROW0,0,"\\0%o",cc);
+        else addch(cc);
 }
 
 /*
@@ -146,7 +136,7 @@ int ct;
                 playb = PDP;
                 break;
         case 'I':
-                newchar();
+                (void) newchar();
                 if(ch == 'w') playw = USER;
                 else if(ch == 'b' || ch == 'z') playb = USER;
                 else playw = playb = USER;
@@ -162,60 +152,59 @@ int ct;
                 }
                 break;
         case 'p':
-                newchar();
+                (void) newchar();
                 if(ch == 'b'){
                         pbundef();
-                        newchar();
-                } else  prall++;
+                        (void) newchar();
+                }
                 if(digit()) optp = rnum();
                 prbord();
                 break;
         case 'm':
-                newchar();
+                (void) newchar();
                 if(i = readcol()){
                         me = i;
                         mpf = 0;
                         break;
                 }
                 if(ch == '-'){
-                        newchar();
+                        (void) newchar();
                         i = mvnr-rnum()-2;
                 } else  i = rnum();
                 check(0);
                 if(ch == ERRCHAR) goto ask;
                 if(i<0 || i+2>mvnr){
-                        pmesg("impossible\n");
+                        mvprintw(ROW0,0,"Impossible\n");
                         goto ask;
                 }
                 backup(i);
                 prbord();
                 break;
         case 'n':
-                if(disp) home();
-                disp = 0;
+                home();
                 break;
         case 'a':
                 /*
                  * awk<nr>: alter field <nr> into white king
                  * a<nr>: make the nonempty field <nr> empty
                  */
-                newchar();
+                (void) newchar();
                 ct = readstone();
         alp:
                 i = readnum();
                 if(!i){
-                        pmesg("bad field\n");
+                        mvprintw(ROW0,0,"Bad field\n");
                         goto ask;
                 }
                 if((!ct) && (bord[i] == EMPTY)){
-                        pmesg("empty already\n");
+                        mvprintw(ROW0,0,"Empty already\n");
                         goto ask;
                 }
                 bord[i] = valstone[ct];
                 altermv = mvnr;
                 mpf = 0;
                 if(ch == ','){
-                        newchar();
+                        (void) newchar();
                         goto alp;
                 }
                 check(0);
@@ -224,41 +213,41 @@ int ct;
         case 'f':
                 if(newchar() == 'p'){
                         if(!newchar()){
-                                pmesg("freepath values:\n");
-                                pmesg("w: %d\n",freepath(WHITE));
-                                pmesg("z: %d\n",freepath(BLACK));
+                                mvprintw(ROW0,0,"Freepath values:\n");
+                                mvprintw(ROW0,0,"w: %d\n",freepath(WHITE));
+                                mvprintw(ROW0,0,"z: %d\n",freepath(BLACK));
                                 break;
                         }
                         fplevel = rnum()-1;
                         break;
                 }
                 if(letter()){
-                        pmesg("What?\n");
+                        mvprintw(ROW0,0,"What?\n");
                         goto ask;
                 }
                 skipspaces();
                 sp = ofile;
                 while(*sp++ = ch){
                         if(sp > ofile+LINSIZ) goto ask;
-                        newchar();
+                        (void) newchar();
                 }
                 if(optf >= 0) (void) close(optf);
                 optf = open(ofile,1);
                 if(optf < 0) optf=creat(ofile,0666);
                 else (void) lseek(optf, 0L, 2);
-                if(optf < 0) pmesg("cannot create %s\n",ofile);
+                if(optf < 0) mvprintw(ROW0,0,"Cannot create %s\n",ofile);
                 break;
         case 'o':
                 if(newchar() == 'g') outgame();
                 else if(ch == 'b') outboard();
                 else if(ch == 'p') outposit();
                 else {
-                        pmesg("what?");
+                        mvprintw(ROW0,0,"What?");
                         goto ask;
                 }
                 break;
         case 'r':
-                newchar();
+                (void) newchar();
                 /*
                  * r: set rdif
                  * rm: set rdmin
@@ -268,33 +257,33 @@ int ct;
                 if(ch == 'f') readfile();
                 else if(ch == 't') readpos();
                 else if(ch == 'm') {
-                        newchar();
+                        (void) newchar();
                         rdmin = rnum();
-                        pmesg("rdmin = %d\n",rdmin);
+                        mvprintw(ROW0,0,"Rdmin = %d\n",rdmin);
                 }
                 else {
                         rdif = rnum();
-                        pmesg("rdif = %d\n",rdif);
+                        mvprintw(ROW0,0,"Rdif = %d\n",rdif);
                         if(mvnr == 1)rdifmin = rdif;
                         else if(rdif<rdifmin)rdifmin = rdif;
                 }
                 break;
         case 's':
-                newchar();
+                (void) newchar();
                 prbwait = rnum();
                 if(prbwait>30) prbwait = 30;
-                pmesg("sleep after prbord for %d seconds\n",
+                mvprintw(ROW0,0,"Sleep after prbord for %d seconds\n",
                         prbwait);
                 break;
         case 't':
-                newchar();
+                (void) newchar();
                 if(digit()){
                         timemax = rnum();
-                        pmesg("allowed time per move: %d sec\n",timemax);
+                        mvprintw(ROW0,0,"Allowed time per move: %d sec\n",timemax);
                 }
-                pmesg("time used:\n");
-                pmesg("  W %4d sec\n",timew);
-                pmesg("  B %4d sec\n",timeb);
+                mvprintw(ROW0,0,"Time used:\n");
+                mvprintw(ROW0,0,"  W %4d sec\n",timew);
+                mvprintw(ROW0,0,"  B %4d sec\n",timeb);
                 break;
         case 'c':
                 /* this does not count for a move */
@@ -302,12 +291,10 @@ int ct;
                 break;
         case 'd':
                 pbundef();      /* force printing new stones */
-                newchar();
+                (void) newchar();
                 skipspaces();
-                if(!ch){
-                        disp = 1;
+                if(!ch)
                         break;
-                }
                 if((i = readstone()) || (ch == '"')){
                         skipspaces();
                         check('"');
@@ -316,25 +303,25 @@ int ct;
                         while(ch != '"'){
                                 if(sp - dsparr[i] < 12) *sp++ = ch;
                                 else {
-                                        pmesg("string too long\n");
+                                        mvprintw(ROW0,0,"String too long\n");
                                         goto fins;
                                 }
                                 if(!ch){
-                                        pmesg("bad string\n");
+                                        mvprintw(ROW0,0,"Bad string\n");
                                         goto fins;
                                 }
-                                newchar();
+                                (void) newchar();
                         }
-                        newchar();
+                        (void) newchar();
                         check(0);
                 fins:
                         *sp++ = 0;
                         break;
                 } else if(ch == 'e'){
-                        newchar();
+                        (void) newchar();
                         i = rnum();
                         for(ct=0; ct++!=i; ) if(!emparr[ct]){
-                                pmesg("we dont have such empty fields\n");
+                                mvprintw(ROW0,0,"We dont have such empty fields\n");
                                 goto ask;
                         }
                         sp = dsparr[0];
@@ -343,7 +330,7 @@ int ct;
                 } else {
                         i = 4*rnum();
                         for(ct=0; ct++!=i; ) if(!fularr[ct]){
-                                pmesg("this set of stones is not available\n");
+                                mvprintw(ROW0,0,"This set of stones is not available\n");
                                 goto ask;
                         }
                         for(ct=0; ct<4; ct++){
@@ -358,7 +345,7 @@ int ct;
                 else optu = rnum();
                 break;
         case 'v':
-                newchar();
+                (void) newchar();
                 i = rnum();
                 check(',');
                 if(ch != ERRCHAR){
@@ -369,18 +356,17 @@ int ct;
                 setstrat(i,ct);
                 break;
         case 'e':
-                pmesg("I win\n");
+                mvprintw(ROW0,0,"I win\n");
                 reset();
         case '=':
                 remise();
                 break;
         case 'i':
-                if(disp) home();
+                home();
                 prinfo();
-                prall++;
                 break;
         case 'x':
-                error("the game is over");
+                error("The game is over");
         case '?':
                 switch(newchar()){
                 case 'f':
@@ -395,13 +381,13 @@ int ct;
                         break;
                 deflt:
                 default:
-                        pmesg("unknown param\n");
+                        mvprintw(ROW0,0,"Unknown param\n");
                         goto ask;
                 }
-                pmesg("%c: %d\n",ch,i);
+                mvprintw(ROW0,0,"%c: %d\n",ch,i);
                 break;
         default:
-                if(ch)pmesg("unknown command\n");
+                if(ch)mvprintw(ROW0,0,"Unknown command\n");
                 goto ask;
         }
         return;
@@ -410,27 +396,26 @@ ask:
 }
 
 int *
-readmove(color) int color; {
+readmove() {
         register int *mp1;      /* essential ! */
         register int *mp2,*ump,*ump0,ct,f1,f2;
         int umove[22];
 
 listmoves:
         mpf = moves;
-        move(me);
+        Move(me);
         if(possct == 0){
-                pmesg("you lose\n");
+                mvprintw(ROW0,0,"You lose\n");
                 reset();
         } else if(possct == 1 && !optg){
-                pmesg(" forced:\n");
+                mvprintw(ROW0,0," forced:\n");
                 prmove(mpf);
                 /*  return(mpf);  */
         }
 ask:
-        if(!optg) pmesg("?");
+        if(!optg) mvprintw(ROW0,0,"?");
         rdlin();
-        dirt++;
-        newchar();
+        (void) newchar();
         skipspaces();
         /* read options */
         if(ch == '!'){
@@ -450,13 +435,13 @@ ask:
                 if(ump-ump0 >= 22) ump--;
                 if((*ump++ = readnum()) == 0) {
                         if(optg) goto ask; /* ignore bad lines */
-                        pmesg("bad field\n");
+                        mvprintw(ROW0,0,"Bad field\n");
                         goto ask;
                 }
                 switch(ump - ump0){
                 case 1:
                         if(ch == '.') {
-                                do newchar();
+                                do (void) newchar();
                                 while(ch == '.' || ch == ' ' || ch == '\t');
                                 ump--;
                         }
@@ -469,7 +454,7 @@ ask:
                         break;
                 default:
                         if(ch == ',') {
-                                newchar();
+                                (void) newchar();
                                 break;
                         }
                         check(')');
@@ -485,7 +470,7 @@ ask:
         captct = (ump - ump0) - 2;
         if(captct > 0){
                 if(captct != captmax){
-                        pmesg("incorrect number of captured stones\n");
+                        mvprintw(ROW0,0,"Incorrect number of captured stones\n");
                         goto ask;
                 }
         } else if(captct == -1) {
@@ -511,12 +496,12 @@ ask:
                 if(captct) while(ct--)
                         if((*mp1++ & 0177) != *ump0++) continue;
                 if(ump){
-                        pmesg("ambiguous move\n");
+                        mvprintw(ROW0,0,"Ambiguous move\n");
                         goto ask;
                 } else ump = mp2;
         }
         if(!ump) {
-                pmesg("illegal move\n");
+                mvprintw(ROW0,0,"Illegal move\n");
                 goto ask;
         }
         if(!optg) prmove(ump);
@@ -538,11 +523,11 @@ int c;
                 return(0);
         }
         if(ch & 040){
-                newchar();
+                (void) newchar();
                 if(ch == 'd' || ch == 'k') goto dam;
         } else {
         dam:
-                newchar();
+                (void) newchar();
                 c += 2;
         }
         return(c);
@@ -551,11 +536,11 @@ int c;
 readcol(){
         switch(ch){
         case 'w':
-                newchar();
+                (void) newchar();
                 return(WHITE);
         case 'z':
         case 'b':
-                newchar();
+                (void) newchar();
                 return(BLACK);
         default:
                 return(0);
@@ -574,11 +559,11 @@ register int i,j;
 int c;
         rdbord[0] = -1; /* remember that readpos was executed */
         for(i=1; i<66; i++) rdbord[i] = EMPTY;
-        do {
+        while (1) {
                 rdlin();
                 if(newchar() == '.') break;
                 if(!(i = readstone())){
-                        pmesg("bad colour, ");
+                        mvprintw(ROW0,0,"Bad colour, ");
                         goto bad;
                 }
                 c = valstone[i];
@@ -586,13 +571,13 @@ int c;
                 if(ch == ERRCHAR) goto bad;
         nxt:
                 if(!(i = readnum())){
-                        pmesg("bad field, ");
+                        mvprintw(ROW0,0,"Bad field, ");
                         goto bad;
                 }
                 if(ch == '-'){
-                        newchar();
+                        (void) newchar();
                         if(!(j = readnum())){
-                                pmesg("bad 2nd field, ");
+                                mvprintw(ROW0,0,"Bad 2nd field, ");
                                 goto bad;
                         }
                 } else j = i;
@@ -601,37 +586,37 @@ int c;
                         if(ch == '.') break;
                         check(',');
                         if(ch == ERRCHAR){
-                                pmesg("bad separator, ");
+                                mvprintw(ROW0,0,"Bad separator, ");
                                 goto bad;
                         }
                         goto nxt;
                 }
-        } while(1);
+        }
         for(i=6; i<60; i++)
                 if(bord[i] != EDGE) bord[i] = rdbord[i];
         mpf = 0;
         prbord();
         return;
 bad:
-        pmesg("old board retained\n");
+        mvprintw(ROW0,0,"Old board retained\n");
         return;
 }
 
 readfile(){
 int f,f0;
         /* ach points to the f of 'rf' */
-        newchar();
+        (void) newchar();
         skipspaces();
         ach--;
         f0 = dup(0);
         (void) close(0);
         f = open(ach,0);
-        if(f < 0) pmesg("cannot open %s\n",ach);
-        else if(f) error("f nonzero");
+        if(f < 0) mvprintw(ROW0,0,"Cannot open %s\n",ach);
+        else if(f) error("F nonzero");
         else {
                 readpos();
                 (void) close(f);
         }
-        if(f = dup(f0)) error("df nonzero");
+        if(f = dup(f0)) error("Df nonzero");
         (void) close(f0);
 }

@@ -8,6 +8,7 @@
 #include        <setjmp.h>
 #include        <signal.h>
 #include        "damdefs.h"
+#include	<curses.h>
 
 #define MSIZE   3000
 #define GSIZE   1000
@@ -91,6 +92,7 @@ int fplevel = 1;        /* level of search for free paths */
 int captct,captmax, *mpf,*mp0,*mp,possct;
 extern int *findmove(), *readmove();
 extern long lseek();
+extern unsigned sleep();
 int debug,crownmv,altermv;
 int rescct;
 int wpct,bpct,wkct,bkct;        /* global */
@@ -102,7 +104,6 @@ int (*avalue)() = value;
 int (*stratw)(),(*stratb)();
 int (*(strategies[]))() = { value, value2, evalue };
 
-extern int pb,disp,dirt,prall,prbwait;
 extern char line[];
 extern int rdbord[];
 
@@ -110,23 +111,22 @@ setstrat(w,b) int w,b; {
 register int i;
         i = sizeof(strategies)/2;
         if(w >= i || b >= i){
-                pmesg("no such strategies\n");
+                mvprintw(ROW0,0,"No such strategies\n");
                 return;
         }
         stratw = strategies[w];
         stratb = strategies[b];
-        pmesg("strategies %d(w),%d(b)\n",w,b);
+        mvprintw(ROW0,0,"Strategies %d(w),%d(b)\n",w,b);
 }
 
 intrup(){
         (void) signal(SIGINT,SIG_IGN);          /* no more interrupts */
-        if(disp) delay();
-        pmesg("?");
+        mvprintw(ROW0,0,"?");
         rdlin();
         rdcomd(line);
         (void) signal(SIGINT,intrup);
         if(!mpf){
-                pmesg("you cannot change the board during an interrupt\n");
+                mvprintw(ROW0,0,"You cannot change the board during an interrupt\n");
                 reset();
         }
 }
@@ -148,7 +148,7 @@ char **argv;
         char *ac;
 
         initterm();
-        printf("dam %s version %s\n",VERSION,DATE);
+        printw("Dam %s Version %s\n",VERSION,DATE);
 
         optf = open(".outdam",1);       /* use it if it exists */
         if(optf >= 0) (void) lseek(optf, 0L, 2);        /* seek eof */
@@ -156,7 +156,7 @@ char **argv;
         setstrat(0,1);
 
         if(argc == 1){
-                printf("do you want info? (y/n)\n");
+                printw("Do you want info(y/n)? ");
                 if(answer()) prinfo();
         }
         if(signal(SIGINT, SIG_IGN) != SIG_IGN)
@@ -166,8 +166,11 @@ char **argv;
                 prbord();
                 rdcomd("t");    /* report time used */
                 if(optf > 0) outgame();
-                printf("another game?\n");
-                if(!answer()) exit(0);
+                printw("Another game? ");
+                if(!answer()) {
+			endwin();
+			exit(0);
+		}
         }
         sleep(2);
         init();
@@ -188,7 +191,7 @@ char **argv;
                 case '\0':
                         /* do not use random generator */
                         userand = 0;
-                        printf("no random generator used\n");
+                        printw("No random generator used\n");
                         break;
                 default:
                         rdcomd(ac);
@@ -202,7 +205,7 @@ char **argv;
                 timebeg();
 
                 p = ((me == WHITE) ? playw : playb);
-                if(p == USER) domove(readmove(me));
+                if(p == USER) domove(readmove());
                 else domove(findmove(me));
 
                 if(me == WHITE) timew += timedif();
@@ -242,16 +245,14 @@ register int i;
         crownmv = altermv = 0;
         mpf = &moves[0];
         gp = &game[0];
-        prall++;
 }
 
 init2(){
         if(!playb && !playw){
-                printf("do you want me to play black? (y/n)\n");
+                printw("Do you want me to play black? ");
                 playb = answer()+1;
-                printf("do you want me to play white? (y/n)\n");
+                printw("Do you want me to play white? ");
                 playw = answer()+1;
-                dirt++;
         } else {
                 if(!playb) playb = USER;
                 if(!playw) playw = USER;
@@ -263,13 +264,14 @@ init2(){
 
 /* fatal error routine */
 error(s) char *s; {
-        printf("%s\n",s);
+        printw("%s\n",s);
+	endwin();
         exit(0);
 }
 
 /* create list of all possible moves */
 
-move(c) int c; {
+Move(c) int c; {
 register int i;
 int c0;
 
@@ -447,12 +449,11 @@ int difflist[66];
                         if(!ct) cte++;
                 }
                 if(cte == 2){
-                        pmesg("\nDraw by repetition of moves\n");
+                        mvprintw(ROW0,0,"\nDraw by repetition of moves\n");
                         reset();
                 } else if(cte == 1) {
-                        pmesg("\nThis is the 2nd occurrence\
+                        mvprintw(ROW0,0,"\nThis is the 2nd occurrence\
  of this position\n");
-                        pb = 1;
                 }
         }
         /* check for three kings against one */
@@ -468,7 +469,7 @@ int difflist[66];
                         }
         }
         if(mvnr-lasthap > drawdel*2){
-                pmesg("\nDraw since nothing happened for %d moves\n",
+                mvprintw(ROW0,0,"\nDraw since nothing happened for %d moves\n",
                         drawdel);
                 reset();
         }
@@ -485,10 +486,10 @@ int difflist[66];
 /* very stupid algorithm %% */
 remise(){
         if(mvnr-lasthap > drawdel*2){
-                pmesg("I accept\n");
+                mvprintw(ROW0,0,"I accept\n");
                 reset();
         } else {
-                pmesg("I reject\n");
+                mvprintw(ROW0,0,"I reject\n");
         }
 }
 
@@ -532,15 +533,15 @@ int pct,kct,kseen,save_i[2],sk;
         if((kct + pct == 3) && pct){
                 drawdel = ((sk/5)*5 == sk ? 3 : 10);
                 lasthap = crownmv = mvnr;
-                pmesg("%d pieces crowned to king\n",pct);
-                pmesg("it will be a draw in %d moves\n",drawdel);
+                mvprintw(ROW0,0,"%d pieces crowned to king\n",pct);
+                mvprintw(ROW0,0,"It will be a draw in %d moves\n",drawdel);
                 while(pct--){
                         bord[conv[save_i[pct]]] |= DAM;
                 }
         } else {
         err:
-                pmesg("crowning my pieces to a king is allowed only\n");
-                pmesg("if I have 3 pieces among which 1 or 2 kings\n");
+                mvprintw(ROW0,0,"Crowning my pieces to a king is allowed only\n");
+                mvprintw(ROW0,0,"if I have 3 pieces among which 1 or 2 kings\n");
         }
 }
 
@@ -560,9 +561,9 @@ register struct mvv *mvvp;
 register int *mp1;
 
         rescct = 0;
-        move(c);
+        Move(c);
         if(!possct){
-                pmesg("I lost\n");
+                mvprintw(ROW0,0,"I lost\n");
                 reset();
         }
         if(possct == 1){
@@ -584,7 +585,7 @@ register int *mp1;
                 mvvp->mvp = mp1;
                 mvvp++->val0 = r;
                 if(mvvp >= mvvals+MVMAX-1){
-                        pmesg("error in findmove: MVMAX too small\n");
+                        mvprintw(ROW0,0,"Error in findmove: MVMAX too small\n");
                         break;
                 }
                 mp1 += 2;
@@ -655,16 +656,15 @@ register int *mp1;
         }
 ret:
         if(optu&8){
-                disp = 0;
                 /* print value of each move */
                 mvvp = mvvals;
                 while(mp1 = mvvp->mvp){
                         prmove(mp1);
-                        printf(mvvp == mvg ? "####" : "****");
-                        printf(" %d %d\n",mvvp->val0,mvvp->val1);
+                        printw(mvvp == mvg ? "####" : "****");
+                        printw(" %d %d\n",mvvp->val0,mvvp->val1);
                         mvvp++;
                 }
-                putchar('\n');
+                addch('\n');
         }
         prmove(mvg->mvp);
         if(optu&4) preval(mvg->val1);
@@ -672,9 +672,9 @@ ret:
 }
 
 preval(r) int r; {
-        pmesg("value: %d\n",r);
-        pmesg("res[i]: %d %d %d\n",res0,res1,res2);
-        pmesg("#calls: %d\n",rescct);
+        mvprintw(ROW0,0,"value: %d\n",r);
+        mvprintw(ROW0,0,"res[i]: %d %d %d\n",res0,res1,res2);
+        mvprintw(ROW0,0,"#calls: %d\n",rescct);
 }
 
 /* deliver either evaluation or answer '<a' or '>b' */
@@ -707,7 +707,7 @@ eval:
 go_on:
         mpf0 = mpf;
         mpf = mp;
-        move(COL-c);
+        Move(COL-c);
         res = b+1;
         for(mp1=mpf; mp1<mp; ){
                 r = -result(mp1,-res,-a);
@@ -910,26 +910,25 @@ register int d,*bp,*ip;
 prsteval(){
 int rdmax0,rdmin0;
 register int *mp1;
-        if(optu&1) printf("static eval: %d\n",value2(me));
+        if(optu&1) printw("Static eval: %d\n",value2(me));
         if(optu&2){
                 rdmax0 = rdmax;
                 rdmin0 = rdmin;
                 rdmax = rdmin = 1;
                 rdepth = 0;
-                disp = 0;
                 avalue = value2;
-                move(me);
+                Move(me);
                 for(mp1=mpf; mp1<mp; ){
-                        printf("%4d  ", result(mp1,-GIANT,GIANT));
-                        printf("(%2d %2d %2d / %2d %2d %2d)     ",
+                        printw("%4d  ", result(mp1,-GIANT,GIANT));
+                        printw("(%2d %2d %2d / %2d %2d %2d)     ",
                                 vtempw-vtempb,vcentrw,vequidw,
                                 vtempb-vtempw,vcentrb,vequidb   );
                         prmove(mp1);
-                        if((mvnr&1)==0) putchar('\n');  /* %% */
+                        if((mvnr&1)==0) addch('\n');  /* %% */
                         mp1 += 2;
                         mp1 += (*mp1++);
                 }
-                printf("\n");
+                printw("\n");
                 rdmax = rdmax0;
                 rdmin = rdmin0;
         }
@@ -1053,7 +1052,7 @@ int nbord[66],oc;
                         reach(oc,nbp,5);
 
         if(debug){              /* %% */
-                pmesg("fct: %d, fct2: %d, fl: %d, fl2: %d,\
+                mvprintw(ROW0,0,"fct: %d, fct2: %d, fl: %d, fl2: %d,\
 flth: %d=0, fbcct: %d=0\n",
                         freect,freect2,frlngt,frlngt2,flth,fbcct);
         }

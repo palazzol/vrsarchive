@@ -1,13 +1,26 @@
 /* information about dam */
+#include	<curses.h>
 prinfo(){
-int f;
-char c;
-        f = open("prinfo.x",0);
-        if(f < 0) f = open("/usr/games/lib/dam/prinfo.x",0);
+	int f;
+	char c;
+	int y, x;
+
+        f = open("dam.help",0);
+        if(f < 0) f = open(HELPFIL,0);
         if(f < 0){
-                printf("sorry, cannot find it\n");
+                printw("Sorry, cannot find it\n");
                 return;
         }
-        while(read(f,&c,1) == 1) putchar(c);
+	clear();
+        while(read(f,&c,1) == 1) {
+		addch(c);
+		getyx(stdscr,y,x);
+		if (y >= 23) {
+			printw("-- More? --");
+			if (!answer())
+				break;
+			clear();
+		}
+	}
         (void) close(f);
 }

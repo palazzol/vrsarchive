@@ -28,3 +28,5 @@
 
 #define GIANT   10000
 #define MVMAX   50
+
+#define ROW0	16	/* Row where messages appear */
