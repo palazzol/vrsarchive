@@ -1,25 +1,17 @@
 #
 # plane %W%	%G%
 #
-#
-GAMEDIR	= /usr/games
-SHELL	= /bin/sh
-LFLAGS	= -F 2000	# XENIX only
-OBJS	= plane.o
-
-plane: $(OBJS)
-	cc $(LFLAGS) -o plane $(OBJS) -lcurses -ltermlib
+ALL	= plane
+MODEL	= -i -F 2000	# XENIX only
+OPTIONS	= -O
+include ../../CONFIG
 
 lint:
 	lint -lcurses -ltermlib $(OBJS:.o=.c) | tee lint.out
 
 clean:
-	rm -f core *.o plane a.out
+	rm -f $(ALL)
 
-$(GAMEDIR):
-	mkdir $@
-	chmod 755 $@
-
-install: plane $(GAMEDIR)
-	cp plane $(GAMEDIR)
-	chmod 711 $(GAMEDIR)/plane
+install: $(ALL) $(GAMDIR)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
