@@ -1,0 +1,275 @@
+                           WELCOME TO CONQUEST
+
+CONQUEST is a multi player computer game designed to run under the UNIX 
+operating system.  In CONQUEST,  each player is the leader of a nation, 
+composed of people (humans, orcs, elves, dwarves), recourses, and land.  
+Each ruler can customize the nation at creation, by chosing their race and
+by giving their nation powers (magic, combat factor, location, speed...)
+and resources (civilians, troops, iron, gold...). Play involves building, 
+moving, and controlling armies and navies, diplomacy with other players, 
+and adjusting economic activity, which is primarily geared to the production 
+of gold for your treasury.  Iron is needed, however to build ships & armies, 
+and food is needed to prevent revolts and keep people alive.  
+
+Command line format: conquest [-maxhp]	-m   make a world
+					-a   add new player
+            				-x   execute program
+            				-h   print this help text
+            				-p   print a map to stdout
+END
+ 			CONQUEST COMMAND HELP SCREEN
+
+    MOVEMENT 	       		COMMANDS 		   ADMINISTRATION
+'h': move west 		    'a': army report		'p': pick item 
+'y': move north-west 	    'r': redesignate		'd': change display 
+'k': move north 	    'ctrl-L': redraw screen	'c': administration
+'u': move north-east	    'm': move selected unit 	'?': help screen
+'l': move east 		    'A': adjust army 		's': score
+'n': move south-east 	    'f': fleet report		'B': budget status 
+'j': move south		    'Z': move people 2 Sectors 	'P': production stats
+'b': move south west 	    'S': diplomacy status  	'N': read newspaper
+'J': scroll south 	    'Q': quit			'W': write message
+'K': scroll north 	    'M': magic   		'R': read messages
+'L': scroll east 	    'C': construct
+'H': scroll west 	    'D': draft
+	
+END
+				THE WORLD
+
+The Conquest world is very bloody, and a player needs skills at war gaming,
+diplomacy, and building an economy to succeed.  Rival races are constantly 
+at war, and the world starts filled with player nations, random peoples
+(lizard men in their cities of gold, barbarians, nomads, pirates, brigands),
+and both hostile and friendly computer controlled non player countries.
+Conquest can be played solitaire.  The computer uses an highly intelligent
+movement algorithm to run the armies and navies of these non player
+nations, and has intelligent algorithms built in that control these nations
+diplomacy, construction, and economies.  You can find NPCs allied with 
+you against a common enemy,  but can also suddenly be stabbed in the 
+back and find hostile NPC armies at your doorstep.
+
+END
+                     WHAT IS WHAT IN THE WORLD
+
+The world is composed of a 2 dimensional map of sectors, created by the 
+computer at the beginning of the game.  Each sector has about 10 unique 
+characteristics (altitude, gold, vegitation...).   For example;
+
+SECTOR ELEVATIONS include:	WATER    '~'   	PEAK     '#' 
+		MOUNTAIN '^'	HILL     '%'	CLEAR    '-' 
+
+SECTOR VEGETATION
+Uninhabitable Areas (do not produce food and people simply do not like)
+     VOLCANO   'V'	DESERT 'D'     JUNGLE  'J'
+     WASTE     'W'	ICE 'I'        SWAMP  'S'
+
+Inhabitable (people like, number is relative value of food production)
+     LIGHT VEGETATION 	'6'         GOOD   '9'     FOREST   '3'
+     WOOD      		'7'         BARREN '4'
+
+CONQUEST is designed so each race likes their appropriate terrain.  Elves 
+like woods & forests,  Humans like good & light vegitation, and Orcs and 
+Dwarves like hills and mountains.
+END
+                     	RACES OF THE WORLD
+
+ORC	'O'  	Poor at combat but they reproduce like mad.  Orcs reproduce
+		like mad, and can go over 10% reproduction ceiling. 
+		They are lousy fighters and are led by a minor monster, which 
+		means their army #0 is very potent.
+ELF	'E'	Great at defense and quick, but few in numbers.  They start 
+		with VOID power, which is perhaps the most potent power in the 
+		game, but which costs them an extra distribution point.  
+DWARF	'D'	Dwarves are good at combat, but slow and few in numbers.  They 
+		start with MINER power, which allows them to quickly mine 
+		iron/jewels, and thus build up their combat skills and powers.
+HUMAN	'H'	The Flexible race, above average at everything.  Humans start
+		with reasonable numbers of people, and WARRIOR power, which
+		gives them +10% in all combats.  They have OK reproduction
+		and good movement.
+LIZARD 'L'	(NPC only)  An ancient race bound to their cities of gold 
+PIRATE 'P'	(NPC only)  Wandering pirates/brigands intent on plunder
+NOMAD  'N'	(NPC only)  Wandering Nomads Tribes.  Will they leave you alone?
+BARBARIAN  'B' 	(NPC only)  Indigenous natives
+END
+			POSSIBLE SECTOR DESIGNATIONS
+
+    MINE       'm'   Produces 100*Iron*People Talons + Produces Iron Ores
+    FARM       'f'   Produces 100*Vegetation*People Talons + Produces Food 
+    GOLD MINE  '$'   Produces 100*Gold*People Talons + Produces Jewels 
+    CASTLE     '!'   Fortified Cities of the Lizards (only)
+    DEVASTATED 'x'   devastated sector
+
+    CITY       'c'   Cities and Capitols are the bases of your power.  They
+    CAPITOL    'C'   are the only places you can draft armies or construct 
+		     ships. Drafting only works if the sectors people is
+		     greater than your total civilians divided by the quantity
+		     16+(number of sectors)/2.  Cities give 750 talons per
+		     person and Capitols give 1000 talons per person. Cities and
+		     Capitols cost more to redesignate.
+END
+			 COSTS
+
+Costs are as follows:
+
+		Ship Maintenance:	$1000/turn
+		Soldier Maintenance:	$25/turn
+		Designation Costs:	$300
+		Fortification:		$1000 * (2**Fort Level)
+		Build Warship:		$3000
+		Build Merchant:		$2000
+		Bribe Nation:		$100000 per level diplomacy
+		Move Civilians:		$50 per civilian
+END
+                          SCORING & CHARACTER CLASSES
+
+THIS STUFF IS NOT IMPLEMENTED IN THIS VERSION!!!!
+Victory points are based on your nations class and the following table.
+For example, an empire gains points by controlling sectors, people, gold, and
+soldiers. Some of these types also have magic powers.  
+
+                     Per    1000    1000      100K 100K   100K   Magic  10
+             Races   Sector People  Soldiers  Gold Jewels Iron   Power Ship
+"kingdom"    EDHO    1        1        2       3    0      0      0     0
+"empire"     H       1.5      0        0       0    0      0      0     0
+"wizard"     EH      0        2        1       0    3      5      20    0
+"theocracy"  HO      1        1        0       0    3      0      7     0
+"pirate"     HO      0        0        5       0    10     10     1     5
+"miner"      D       0        0        5       0    10     10     1     5
+"trader"     EHO     1        1        0       0    1      1      1     8
+"tyranny"    DHO     1        1        2       0    1      1      1     0
+"demon"      DHO     1        0        1       0    1      0      10    0
+"dragon"     HO      0        0        0       10   20     0      0     0
+"shadow"     O       1        0        0       0    0      5      0     0
+"NPC"        EDHO    1        1        0       0    1      1      1     0
+END
+			POSSIBLE ARMY STATUS
+
+MARCH   :Marching doubles army movement at the expense of combat strength.
+SCOUT   :Scouts avoid any enemy, if possible, and can move through hostile
+        :   armies, but must have less than 25 men per army and can not take
+	:   even unowned land.  They are useful to check out the  map and
+        :   to determine the enemy combat strength.
+ATTACK  :Armies in this mode can take owned sectors, initiate
+        :   combat, and have they reasonable movement rates.
+DEFEND  :In this mode, can take owned sectors and have good defense 
+        :   and movement, but can not initiate combat.
+GARRISON:This mode offers the strongest defense but is used only in cities
+	:   and castles.  Garrisons may not move.
+
+Note: It takes 75 men to take a sector.  Your attack bonus increases by 
+	5% if you take over a non player country. Fortresses can be built 
+	in cities/capitols at a cost of 1000*(2**fort level) gold pieces.
+END
+			NON PLAYER NATIONS 
+
+Diplomacy with non player nations is important in this game.  This determines
+if you get attacked or not.  
+
+hint;  use your gold talons to bribe non player countries that are at war with
+	you.  It may not work, but may allow you some breathing room and 
+	at some point the gold becomes irrelevant anyway.
+hint;  you had best not be at war with NPCs when you bribe them.  If you are,
+	you have just wasted your money.
+hint;  if you are in a mutual confederacy with a non player nation of the
+	same race there is a % chance that they come over to your side!!!
+END
+			ADDITIONAL NOTES ON COMBAT
+
+Losses per unit are scaled by (1.2 / 1 + combat plus) so if you have a high
+	combat plus your losses will be less.
+You can expect to take several turns to reduce a large army, especially
+	on a City or Capitol, as the defenders will draft new troops each turn
+Ships (believe it or not) are more powerful than you might expect.  They
+	permit you to rapidly relocate large armies or large numbers of
+	civilians to strategic points.  Their movement is 3x that of
+	a land army and they pay 1 move point per sector.  I will warn
+	you, however, that naval combat has not been play tested.
+
+THE NEXT PAGE IS THE COMBAT RESULTS TABLE			
+	basically the attacker wants a high roll and the defender wants
+	a low roll.
+
+END
+               6-1 5-1 4-1 3-1 2-1 3-2 5-4 1-1 4-5 2-3 1-2 1-3 1-4 1-5 1-6
+    <--010     30% 40% 40% 55% 60% 65% 65% 85% 100%100%110%110%110%120%130%
+   010-020     20% 30% 35% 45% 50% 55% 55% 65% 75% 85% 100%100%110%110%120%
+   020-030     15% 20% 30% 35% 35% 35% 45% 55% 65% 75% 95% 100%100%110%110%
+   030-040     15% 20% 25% 30% 35% 35% 45% 55% 65% 75% 90% 100%100%110%110%
+   040-050     15% 20% 25% 25% 35% 35% 45% 55% 65% 65% 80% 90% 90% 100%100%
+D  050-060     15% 20% 20% 25% 35% 35% 45% 55% 65% 65% 80% 90% 90% 90% 100%
+I  060-070     15% 15% 20% 20% 25% 30% 35% 45% 55% 55% 75% 85% 90% 90% 100%
+E  070-080     15% 15% 15% 20% 25% 30% 35% 45% 55% 55% 75% 85% 85% 90% 90%
+   080-090     15% 15% 15% 20% 20% 25% 30% 35% 45% 45% 65% 80% 80% 80% 90%
+R  090-100     10% 10% 15% 15% 20% 25% 30% 35% 45% 45% 60% 80% 80% 80% 90%
+O  100-110     10% 10% 10% 15% 15% 20% 30% 35% 45% 45% 60% 70% 70% 70% 80%
+L  110-120     10% 10% 10% 10% 15% 20% 30% 35% 45% 45% 60% 70% 70% 70% 80%
+L  120-130     5%  5%  10% 10% 10% 15% 25% 25% 35% 40% 45% 65% 65% 65% 80%
+   130-140     5%  5%  5%  10% 10% 15% 25% 25% 35% 40% 50% 65% 65% 65% 70%
+   140-150     5%  5%  5%  5%  10% 15% 25% 25% 35% 35% 45% 55% 55% 55% 65%
+   150-160     0%  0%  5%  5%  10% 15% 25% 25% 35% 35% 45% 50% 50% 50% 50%
+   160-170     0%  0%  0%  5%  10% 15% 25% 25% 35% 35% 45% 45% 45% 45% 45%
+   170-180     0%  0%  0%  0%  5%  10% 15% 15% 25% 35% 35% 40% 40% 40% 40%
+   180-190     0%  0%  0%  0%  5%  10% 10% 10% 20% 25% 30% 30% 30% 30% 30%
+   190+++      0%  0%  0%  0%  5%  10% 10% 10% 15% 20% 25% 25% 25% 25% 25%
+END
+  	                RULES ON IRON, FOOD, AND GOLD
+
+FOOD:      You MUST have enough food to feed your people... One civilian eats 
+	one unit of food, and one soldier eats two units.  If you run out of 
+	food, half the difference of people in cities die.  Your Granary
+	will store 3x your civilian population in food.  The remainder 
+	is converted to gold talons at a rate of 1 per food point.
+IRON:      You need to have iron to draft new military.  Ten iron units
+	will suffice to equip one soldier.  You also need 200 gold talons to 
+	train a soldier. One person produces one iron per point of mineral in 
+	the sector per turn.  An ammount of Iron (based on the number of troops 
+	you have) can be used to buy +1% in attack or defense.
+JEWELS:    You can have a maximum of 10 talons debt for every jewel
+	point that you mined.  After that point, you undergo a TAX REVOLT,
+	which has not yet been implemented. Thus gold can be negative to 
+	a certain level.  Jewels are also used in magic, and 100000 Jewels
+	will buy you one random new power (command M).  You can have 10
+	talons in the treasury for each jewel (gold based economy).  After
+	that, your gold talons will be converted to jewels at a 10:1 ratio.
+END
+				MAGIC POWERS   
+
+WARRIOR/CAPTAIN/WARLORD: +10% each in combat, 1/2 Enlistment cost
+(MINOR/AVERAGE/MAJOR) MONSTER: (ORCS) Army 0 fights at +20% per level. 
+		Takeover ORC NPC 1%/3%/5% / 20K jewels.  
+SPY        	All enemy troop/civilian strength is shown exactly (even voids)
+KNOWALL		Know all troop strengths and see the whole map (except voids)
+DERVISH    	Desert/ICE sectors => 1 move point, vegitation 6, +30% combat in
+DESTROYER	Vegetation in 3 sectors of capital = Desert.  Act as Dervish. 
+HIDDEN		Nobody can count troops in your armies on map. 
+THE_VOID	Nobody can see your sectors/armies (appear blank) 
+ARCHITECT	Double strength fortresses, Double city revenue.
+VAMPIRE    	50% troops killed become yours, -35% in combat, -2 Move, 0 maint
+HEALER     	+2 repro to 10% limit.  excess repro adds to defense
+MINER      	(DWARVES) 2x iron and jewel production
+BREEDER:        +3% Birth Rate (ORCS ONLY) (beyond 10% limit).  -10% combat.
+URBAN:          +3% Birth Rate to 12% limit.  remainder gives + to move (roads)
+STEEL:          Additional 2x Iron Production for MINERS.
+ARCHER:	        +10% on defense, +30% for garrisons
+CAVALRY:        +10% to attacking combat skill, +6 movement.
+END
+			FINAL HINTS
+
+You would be a fool not to buy a reproduction rate of 9-10% percent.
+Extra movement is very useful (especially if your movement is 6)
+Buy civilians instead of military (who dont reproduce).  This assumes
+	that you have a military of about 1500 men for taking land.
+Take as much land as possible in the beginning.
+
+ONE NOTE ON HOW THE GAME WORKS>> you will find that when you do something
+that effects another country and then logoff/logon, that change will not
+be displayed (ie. if you bribe them or overrun one of their armies).  There
+is no easy fix for this.  The changes occurred!!! the computer knows about
+them, and if you logged in as their nation you would see the army gone or
+the diplomatic status changed, but you can not see them because only
+a selected part of the turns total moves are updated when you log in.
+
+<To be added to later>
+END
+DONE
