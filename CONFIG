@@ -1,0 +1,136 @@
+#
+#	This file is used to configure the binaries for the local system and
+#	is sourced by all the Makefiles.
+#
+#	Edit History:
+#	09/09/86 vrs
+#		Created the thing.
+#
+#	Defines the site will probably need to set.
+#
+#	SYSNAME is the name of the local system.  Set it to the name of the
+#	server for networked binaries, or `uuname -l` for local binaries.
+#	ROOT is the root directory of the local system.  It is used to create
+#	networked versions of the binaries.  For non-networked binaries, use /.
+#
+#SYSNAME	= `uuname -l`
+SYSNAME	= `hostname`
+DOMAIN	= .msn.com
+ROOT	= $(HOME)
+#
+#	SAFEUID is the login name of a relatively safe login.
+#	SAFEGRP is the group name of a relatively safe group.
+#
+SAFEUID	= Vincent
+SAFEGRP	= unknown
+#
+#	XENIX often needs setuid to root because of limited setuid() semantics.
+#	On other systems this should be $(SAFEUID).
+#
+SETUID	= $(SAFEUID)
+#
+#	These vary by UNIX version, and shouldn't need fiddling for like
+#	systems:
+#	CFLAGS can be $(CBSD), $(CCYGWIN), $(CXENIX), or $(CSYS5).
+#	LIBS   can be $(LBSD), $(LCYGWIN), $(LXENIX), or $(LSYS5).
+#	If you don't have readdir(), set DIRLIB = -ldir else DIRLIB =
+#	If you don't need ranlib, set RANLIB = :, else RANLIB = ranlib
+#
+CFLAGS	= $(CCYGWIN)
+LIBS	= $(LCYGWIN)
+BERKLIB	= #-lberkeley
+DIRLIB	= #-ldir
+DPYLIB	= -ldpy
+#LEXLIB	= -ll
+LEXLIB	= -lfl
+PAGER	= less
+#RANLIB	= :
+RANLIB	= ranlib
+NROFF	= :
+TROFF	= :
+#DEFEXE	= a.out
+DEFEXE	= a.exe
+#EXE	=
+EXE	= .exe
+LINT	= gcc -Wall -W -fsyntax-only
+FC	= g77 -ff77 -fugly-assumed -fugly-logint
+#
+#	This keeps USG make from trying to use the user's shell.  We want to
+#	always use the Bourne Shell.
+#
+SHELL	= /bin/sh
+#
+#	Set up directories and names.
+#	CCLIB must be a directory searched (for libraries) by the C compiler.
+#	Note that it is Host relative, not target relative.
+#	NET must be /bin or /usr/bin for UUCP.  It is used for binaries which
+#	may need to be remotely executed.
+#
+CCLIB	= /usr/lib
+NET	= $(ROOT)/usr/bin
+ETC	= $(ROOT)/etc
+LOCAL	= $(ROOT)/usr/local
+BINDIR	= $(LOCAL)/bin
+LIBDIR	= $(LOCAL)/lib
+INCDIR	= $(LOCAL)/include
+LIBUUCP	= $(ROOT)/usr/lib/uucp
+LIBMAIL	= $(ROOT)/usr/lib/mail
+LIBNEWS	= $(ROOT)/usr/lib/news
+LIBTMAC	= $(ROOT)/usr/lib/tmac
+GAMDIR	= $(ROOT)/usr/games
+GAMLIB	= $(ROOT)/usr/games/lib
+SPOOLN	= $(ROOT)/usr/spool/news
+USRMAN	= $(ROOT)/usr/man
+MAN1	= $(USRMAN)/man1
+MAN2	= $(USRMAN)/man2
+MAN3	= $(USRMAN)/man3
+MAN4	= $(USRMAN)/man4
+MAN5	= $(USRMAN)/man5
+MAN6	= $(USRMAN)/man6
+MAN7	= $(USRMAN)/man7
+MAN8	= $(USRMAN)/man8
+#
+#	The following probably won't need to be modified.
+#
+# BSD	- Berkeley Unix
+# SYS5	- System 3/5 with System 3/5 tty drivers (NOT BRL)
+# XENIX	- XENIX 286, System 3/5, Large Model, Big Stack.
+#
+CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
+CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) #-fwritable-strings
+CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
+CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
+LBSD	= -lcurses -ltermcap -lm
+LCYGWIN	= -lcurses $(DIRLIB) -lm -lcrypt
+LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW
+LXENIX	= -lcurses -ltermcap $(DIRLIB) -lm
+#
+#	Default to make $(ALL)
+#
+all:	$(ALL)
+#
+#	Directory rules
+#
+DIR1	= $(ROOT) $(NET) $(ETC) $(LOCAL) $(BINDIR) $(INCDIR) \
+		  $(LIBDIR) $(LIBUUCP) $(LIBMAIL) $(LIBTMAC) \
+		  $(GAMDIR) $(GAMLIB) $(SPOOLN) $(USRMAN)
+MDIRS	= $(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8)
+DIRS	= $(DIR1) $(MDIRS)
+$(DIR1):
+	if test ! -d $@; then mkdir -p $@; fi
+	chmod 755 $@
+$(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8): $(USRMAN)
+	if test ! -d $@; then mkdir -p $@; fi
+	chmod 755 $@
+#
+#	Fix the default rule to link against libraries
+#
+.c$(EXE):
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LIBS) -o $@
+	-rm -f $*.o
+#
+#	Do the recursion rule
+#
+.SUFFIXES: .d $(EXE)
+.d:
+	@cd $?; make
