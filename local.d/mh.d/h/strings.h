@@ -1,5 +1,5 @@
 /* strings.h - define standard string functions */
-/* @(#)$Id: strings.h,v 1.1 1990-04-12 13:27:30 vrs Exp $ */
+/* @(#)$Id: strings.h,v 1.2 1990-05-06 21:57:57 vrs Exp $ */
 
 #ifndef	_STRINGS		/* once-only... */
 #define	_STRINGS
@@ -12,10 +12,12 @@
 char   *index ();
 char   *mktemp ();
 char   *rindex ();
+#if !defined(__STDC__)
 #ifndef	SPRINTFTYPE
 char   *sprintf ();		/* I guess this is the new standard */
 #else
 SPRINTFTYPE sprintf ();
+#endif
 #endif
 char   *strcat ();
 int     strcmp ();
