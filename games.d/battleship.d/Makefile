@@ -3,7 +3,7 @@
 #
 ALL	= battleship
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 install:	$(ALL) $(GAMDIR)
 		cp $(ALL) $(GAMDIR)

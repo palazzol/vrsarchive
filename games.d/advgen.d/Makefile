@@ -1,11 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.3 1987-12-26 16:53:57 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.4 1990-03-27 17:24:23 vrs Exp $
 #
 ALL	= advgen
 MODEL	= -i
 OPTIONS	= -DDEFINTERPRETER=\"$(INTERP)\" -DMAXCODE=$(MAXCODE) \
 	  -DMAXVOCAB=$(MAXVOCAB) -O
-include ../../CONFIG
+include /etc/CONFIG
 INTERP	= #$(GAMLIB)/adv
 MAXCODE	= 10000
 MAXVOCAB= 1000

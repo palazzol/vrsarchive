@@ -2,7 +2,7 @@ MODEL	= -i -F 2000
 OPTIONS	= -Dsrandom=srand -Drandom=rand
 CURSESLIBR= libatc.a
 ALL	= $(XLIBR) $(CURSESLIBR)
-include ../../../CONFIG
+include /etc/CONFIG
 DEST	      = .
 EXTHDRS	      = /usr/include/ctype.h \
 		/usr/include/curses.h \

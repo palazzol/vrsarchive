@@ -1,4 +1,4 @@
-# Recompile config.c when ../../CONFIG changes.
+#/etc/CONFIG changes.
 ALL	= larn12.0
 MODEL	= -M2l -K -F 2000
 #
@@ -52,7 +52,7 @@ LARNHOME= $(GAMLIB)/larn12
 #
 OPTIONS	= -DEXTRA -DVER=12 -DSUBVER=0 -DWIZID=-1 -DSAVEINHOME \
 	  -DLARNHOME=\"$(LARNHOME)/\"
-include ../../CONFIG
+include /etc/CONFIG
 # End of configurable make options
 ########################################################################
 #
@@ -84,4 +84,4 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(LARNHOME)
 clean:
 	rm -f $(OBJS) $(ALL)
 
-config.o: config.c ../../CONFIG
+config.o:/etc/CONFIG

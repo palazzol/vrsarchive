@@ -4,7 +4,7 @@
 #
 OPTIONS	= -O
 MODEL	= -i
-include ../../../../CONFIG
+include /etc/CONFIG
 KLIB	= klib.a(GetBlk.o) \
 	  klib.a(GetRec.o) \
 	  klib.a(MakBlk.o) \

@@ -5,7 +5,7 @@
 ALL	= cent
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)/cent
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 OBJECTS	= cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
 		save.o shoot.o la.o extern.o options.o sys_dep.o
 

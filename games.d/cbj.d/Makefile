@@ -1,10 +1,10 @@
 #
-#	Blackjack $Header: /home/Vince/cvs/games.d/cbj.d/Makefile,v 1.2 1987-06-08 21:24:56 vrs Exp $
+#	Blackjack $Header: /home/Vince/cvs/games.d/cbj.d/Makefile,v 1.3 1990-03-27 17:24:51 vrs Exp $
 #
 ALL	= cbj
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(GAMDIR) $(MAN6)
 	cp $(ALL) $(GAMDIR)

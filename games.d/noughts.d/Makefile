@@ -1,10 +1,10 @@
 #
-#	noughts $Header: /home/Vince/cvs/games.d/noughts.d/Makefile,v 1.2 1987-06-08 21:27:07 vrs Exp $
+#	noughts $Header: /home/Vince/cvs/games.d/noughts.d/Makefile,v 1.3 1990-03-27 17:26:28 vrs Exp $
 #
 ALL	= noughts
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 SOURCES	= adm.c automat.c autom.c chose.c inmove.c\
 	  terminal.c upd.c catch.c  updtht.c utboard.c save.c
 OBJECTS	= adm.o automat.o autom.o chose.o inmove.o\

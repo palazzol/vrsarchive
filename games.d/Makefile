@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/Makefile,v 1.7 1988-02-01 15:58:41 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/Makefile,v 1.8 1990-03-27 17:23:57 vrs Exp $
 #
 TODO	= phantasia rain reversi robomatic robots rogue sail smut \
 	  snake sniglets solve spaceduel tko trek73 vtrek worms
@@ -11,7 +11,7 @@ ALL	= adv adventure advgen aliens atc battleship battlestar blackbox \
 	  nethack ncode noughts ogre pdrogue plane pm rain reversi rgm \
 	  robomatic robots rogue rot sail smut snake sniglets solve spaceduel \
 	  spew tko trek73 valspeak vtrek warp wator worms
-include ../CONFIG
+include /etc/CONFIG
 
 install:
 	@for i in $(ALL); do cd $$i.d; make install; cd ..; done

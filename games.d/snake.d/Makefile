@@ -5,7 +5,7 @@
 ALL	= snake snake2
 OPTIONS	= -O
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 snake:	snake.c
 	$(CC) $(CFLAGS) -o $@ snake.c $(LIBS)

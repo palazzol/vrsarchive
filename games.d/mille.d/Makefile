@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/mille.d/Makefile,v 1.2 1987-06-08 21:26:50 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/mille.d/Makefile,v 1.3 1990-03-27 17:26:20 vrs Exp $
 #
 ALL	= mille
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 HEADERS	= mille.h
 CFILES	= comp.c end.c extern.c init.c mille.c misc.c move.c print.c \
 	  roll.c save.c types.c varpush.c

@@ -1,11 +1,11 @@
 #
-#	flibs $Header: /home/Vince/cvs/games.d/flibs.d/Makefile,v 1.2 1987-06-08 21:25:45 vrs Exp $
+#	flibs $Header: /home/Vince/cvs/games.d/flibs.d/Makefile,v 1.3 1990-03-27 17:25:27 vrs Exp $
 #
 ALL	= flibs
 MODEL	= -i
 OPTIONS	= -O
 OBJS	= flibs.o fopsys.o fterminal.o
-include ../../CONFIG
+include /etc/CONFIG
 
 flibs:	$(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)

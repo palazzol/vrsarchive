@@ -1,11 +1,11 @@
 #
-#	Midway $Header: /home/Vince/cvs/games.d/midway.d/Makefile,v 1.2 1987-06-08 21:26:39 vrs Exp $
+#	Midway $Header: /home/Vince/cvs/games.d/midway.d/Makefile,v 1.3 1990-03-27 17:26:16 vrs Exp $
 #
 # Leave in the -O blast you!
 ALL	= Midway
 MODEL	= -Mm
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
-include ../../CONFIG
+include /etc/CONFIG
 FILES	= airstrike.c etc.c midway.c movebombs.c moveships.c screen.c
 OBJS	= airstrike.o etc.o midway.o movebombs.o moveships.o screen.o
 OTHERF	= makefile externs.h globals.h Midway.doc

@@ -2,7 +2,7 @@
 ALL	= moria
 OPTIONS	= -DUSG -DKEY_BINDINGS=ROGUE_LIKE -DLIBDIR=\"$(LIBDIR)
 MODEL	= -M2lt20 -F 8000
-include ../../CONFIG
+include /etc/CONFIG
 LIBDIR = $(GAMLIB)/moriadir
 
 SRCS	= main.c misc1.c misc2.c store1.c files.c io.c create.c desc.c\

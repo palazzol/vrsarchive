@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.4 1987-12-26 16:53:59 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.5 1990-03-27 17:25:43 vrs Exp $
 #
 ALL	= hangman
 MODEL	= -i -F 2000
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
-include ../../CONFIG
+include /etc/CONFIG
 OBJS	= endgame.o extern.o getguess.o getword.o main.o playgame.o \
 	  prdata.o prman.o prword.o setup.o
 CFILES	= endgame.c extern.c getguess.c getword.c main.c playgame.c \

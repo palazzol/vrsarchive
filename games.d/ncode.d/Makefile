@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/ncode.d/Makefile,v 1.1 1987-06-28 19:32:21 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/ncode.d/Makefile,v 1.2 1990-03-27 17:26:24 vrs Exp $
 #
 ALL	= ncode headline nonsense
 OPTIONS = -O
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 NCOLIB	= $(GAMLIB)/ncode
 
 clean:

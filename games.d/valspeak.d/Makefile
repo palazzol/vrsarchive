@@ -4,7 +4,7 @@
 ALL	= jive valspeak
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 .l:
 	lex $?

@@ -3,7 +3,7 @@
 #
 #
 ALL	= sniglets
-include ../../CONFIG
+include /etc/CONFIG
 
 lint:
 	lint sniglets.c | tee lint.out

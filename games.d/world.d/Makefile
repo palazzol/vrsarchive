@@ -22,7 +22,7 @@
 ALL	= world
 OPTIONS	= -O -DQ1TEXT=\"$(GAMLIB)/q1text.dat\"
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 WHEADERS= arrays.h variab.h
 WOBJS	= demons.o helper.o motion.o parser.o verbs1.o verbs2.o world.o
 

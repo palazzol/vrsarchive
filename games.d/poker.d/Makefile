@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.5 1987-06-08 22:03:37 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.6 1990-03-27 17:26:57 vrs Exp $
 #
 ALL	= poker pokerd
 #
@@ -7,7 +7,7 @@ ALL	= poker pokerd
 #
 MODEL	= -M2l -F 2000
 OPTIONS	= -UINET -I$(INCDIR) -DGAMLIB=\"$(GAMLIB) -DPORT=\"/tmp/pokerd\"
-include ../../CONFIG
+include /etc/CONFIG
 MYLIBS	= $(BERKLIB) $(LIBS)
 
 SRCS	= main.c players.c cards.c util.c showcards.c whowon.c poker.c \

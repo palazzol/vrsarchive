@@ -4,7 +4,7 @@
 #
 OPTIONS	= -O -DADV=\"$(GAMLIB)/adv\"
 MODEL	= -i
-include ../../../../CONFIG
+include /etc/CONFIG
 KLIB	= ../kio/klib.a
 ALIB	= alib.a(advglob.o) \
 	  alib.a(cache.o) \

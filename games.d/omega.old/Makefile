@@ -4,7 +4,7 @@
 ALL	= omega
 OMEGALIB= $(GAMLIB)/omega
 OPTIONS	= -O -DOMEGALIB=\"$(OMEGALIB)/\" -DWIZARD=\"root\"
-include ../../CONFIG
+include /etc/CONFIG
 OBJ	= o.o oaux1.o oaux2.o ochar.o ocity.o ocom.o odepths.o oeffect1.o \
 	  oeffect2.o oetc.o ofile.o ogen.o oguild.o oinititem1.o oinititem2.o \
 	  oinimon0to3.o oinimon4to7.o oinimon8to10.o oinv.o oitem.o oitemf.o \

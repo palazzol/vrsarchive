@@ -3,7 +3,7 @@
 OPTIONS	= -DDATA=\"$(DATA)
 MODEL	= -M2l
 ALL	= conquest
-include ../../CONFIG
+include /etc/CONFIG
 #GETOPT	= getopt.o	# define this if you don't have it in your library
 RM	= /bin/rm -f
 DATA	= $(GAMLIB)/conquest

@@ -1,12 +1,12 @@
 #
-# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.2 1987-06-17 19:04:21 vrs Exp $
+# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.3 1990-03-27 17:25:31 vrs Exp $
 #
 # Makefile for "fortune" program.  See READ_ME for details.
 #
 ALL	= fortune fortunes.dat
 OPTIONS	= -O -DNO_RANDOM -DFORTFILE=\"$(GAMLIB)/fortunes.dat\"
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 OFILES	= fortune.o strfile.o rnd.o unstr.o
 CFILES	= $(OFILES:.o=.c) strfile.h
 

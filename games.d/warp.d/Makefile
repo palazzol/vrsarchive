@@ -1,7 +1,10 @@
 #
-# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.2 1987-07-26 15:04:43 vrs Exp $
+# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.3 1990-03-27 17:28:26 vrs Exp $
 #
 # $Log: not supported by cvs2svn $
+# Version 1.2  87/07/26  15:04:43  vrs
+# Use CONFIG
+# 
 # Version 1.1  87/07/26  11:29:19  vrs
 # Initial version
 # 
@@ -17,7 +20,7 @@ private = smap.0 smap.1 smap.2 smap.3 smap.4 smap.5 smap.6 smap.7
 ALL	= $(public) $(private)
 OPTIONS	= -O -DPRIVLIB=\"$(privlib)\"
 MODEL	= -M2m
-include ../../CONFIG
+include /etc/CONFIG
 bin	= $(GAMDIR)
 mansrc	= $(MAN6)
 CHOWNER = $(SAFEUID)

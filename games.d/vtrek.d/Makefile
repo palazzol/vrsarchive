@@ -5,7 +5,7 @@ OBJS	= main.o plot.o sub1.o sub2.o termio.o
 OPTIONS	= -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\"
 MODEL	= -i -F 2000
 ALL	= vtrek
-include ../../CONFIG
+include /etc/CONFIG
 
 vtrek:	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@

@@ -1,10 +1,10 @@
 #
-#	Ogre $Header: /home/Vince/cvs/games.d/ogre.d/Makefile,v 1.2 1987-06-08 21:27:18 vrs Exp $
+#	Ogre $Header: /home/Vince/cvs/games.d/ogre.d/Makefile,v 1.3 1990-03-27 17:26:32 vrs Exp $
 #
 ALL	= ogre
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 OBJ	= init.o termcap.o map.o main.o move.o initround.o ogrecom.o \
 	  ogrestat.o attack.o resolve.o
 

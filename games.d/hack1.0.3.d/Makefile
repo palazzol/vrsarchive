@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.4 1987-06-08 21:22:39 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.5 1990-03-27 17:25:39 vrs Exp $
 #
 ALL	= hack hack1.0.3
 MODEL	= -M2l -F 2000
@@ -9,7 +9,7 @@ SAVDIR	= $(HACKDIR)/save
 # If you define HACKDIR, then this will be the default playground;
 # otherwise it will be the current directory.
 OPTIONS	= -DHACKDIR=\"$(HACKDIR)\" # -O
-include ../../CONFIG
+include /etc/CONFIG
 HACKCSRC= hack.Decl.c\
 	  hack.apply.c hack.bones.c hack.c hack.cmd.c hack.do.c\
 	  hack.do_name.c hack.do_wear.c hack.dog.c hack.eat.c hack.end.c\

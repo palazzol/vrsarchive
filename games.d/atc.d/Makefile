@@ -1,8 +1,8 @@
 #
-#	$Header: /home/Vince/cvs/games.d/atc.d/Makefile,v 1.4 1987-06-14 21:44:33 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/atc.d/Makefile,v 1.5 1990-03-27 17:24:31 vrs Exp $
 #
 ALL	= makesrc distrib
-include ../../CONFIG
+include /etc/CONFIG
 GAME	= atc
 SRC	= src
 DIST	= dist

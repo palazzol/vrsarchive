@@ -4,7 +4,7 @@
 ALL	= rot
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL)
 	cp $(ALL) $(GAMDIR)

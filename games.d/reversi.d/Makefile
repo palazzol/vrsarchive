@@ -3,7 +3,7 @@
 #
 MODEL	= -i -F 2000
 ALL	= reversi
-include ../../CONFIG
+include /etc/CONFIG
 YFLAGS	= -dv
 OFILES	= user.o ulex.o move.o display.o hasmove.o fini.o \
 	  minmax.o score.o edges.o corners.o count.o

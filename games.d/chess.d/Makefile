@@ -4,7 +4,7 @@
 ALL	= chess
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 
 clean:
 	rm -f $(ALL)

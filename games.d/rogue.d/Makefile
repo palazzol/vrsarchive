@@ -9,7 +9,7 @@
 ALL	= rogue scedit
 OPTIONS	= -UWIZARD -UDUMP -O
 MODEL	= -M2m -F 1800 $(STRIP)
-include ../../CONFIG
+include /etc/CONFIG
 #
 #	Where the scoreboard should be kept.
 #

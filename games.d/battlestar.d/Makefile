@@ -4,7 +4,7 @@
 ALL	= battlestar
 MODEL	= -M2l
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB)
-include ../../CONFIG
+include /etc/CONFIG
 LOGFILE	= $(GAMLIB)/battlestar.log
 DAYF	= $(GAMLIB)/dayfile
 NIGHTF	= $(GAMLIB)/nightfile

@@ -1,11 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/games.d/mazewar.d/Makefile,v 1.4 1987-06-08 22:03:15 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/mazewar.d/Makefile,v 1.5 1990-03-27 17:26:12 vrs Exp $
 #
 ALL	= war
 MODEL	= -M2l -F 3000
 OPTIONS	= -DLIBDIR=\"$(GAMLIB)\" -DOBJECTFILE=\"$(GAMLIB)/objects.war\" \
 	  -I$(INCDIR) -O
-include ../../CONFIG
+include /etc/CONFIG
 MYLIBS	= $(DPYLIB) $(BERKLIB) $(LIBS)
 CFILES	= main.c talk.c cmd.c view.c init.c scan.c
 OFILES	= main.o talk.o cmd.o view.o init.o scan.o

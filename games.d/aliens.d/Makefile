@@ -1,11 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/games.d/aliens.d/Makefile,v 1.3 1987-06-25 18:33:14 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/aliens.d/Makefile,v 1.4 1990-03-27 17:24:27 vrs Exp $
 #	Aliens -- A satire of human conflict with the invaders
 #
 ALL	= aliens
 OPTIONS	= -O
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(GAMDIR)
 	cp $(ALL) $(GAMDIR)

@@ -5,7 +5,7 @@
 OPTIONS	= -O
 MODEL	= -i
 ALL	= letter ret
-include ../../CONFIG
+include /etc/CONFIG
 OBJS	= ret.o
 SRCS	= $(OBJS:.o=.c) $(SOBJS:.o=.c)
 

@@ -1,7 +1,7 @@
 ALL	= tko
 OPTIONS	= -O -Drindex=strrchr
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 OBJS	= tko.o names.o subs1.o subs2.o tables.o
 
 tko:	$(OBJS)

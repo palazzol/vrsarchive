@@ -1,10 +1,10 @@
 #
-#	corewar $Header: /home/Vince/cvs/games.d/corewar.d/Makefile,v 1.2 1987-06-08 21:25:07 vrs Exp $
+#	corewar $Header: /home/Vince/cvs/games.d/corewar.d/Makefile,v 1.3 1990-03-27 17:25:11 vrs Exp $
 #
 ALL	= corewar
 MODEL	= -i
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 CORLIB	= $(GAMLIB)/corewar
 XMPLES	= backz bigfoot duh dwarf dwarf1 dwarf2 fork_imp \
 	  gemini gemini2 imp juggernaut

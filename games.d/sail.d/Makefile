@@ -7,7 +7,7 @@ DRIVER	= $(GAMLIB)/saildriver
 LOGFILE	= $(GAMLIB)/saillog
 MODEL	= -i -F 2000
 OPTIONS	= -O -DGAMDIR=\"$(GAMDIR) -DGAMLIB=\"$(GAMLIB)
-include ../../CONFIG
+include /etc/CONFIG
 
 CTAGS	= ctags -w
 DFILES	= driver1.c driver2.c driver3.c grap.c boarders.c

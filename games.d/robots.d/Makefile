@@ -4,7 +4,7 @@
 ALL	= robots
 OPTIONS	= -DALLSCORES -DOLDSCORES -DGAMLIB=\"$(GAMLIB)
 MODEL	= -i -F 2000	# Required for XENIX only
-include ../../CONFIG
+include /etc/CONFIG
 
 install:	$(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
 		cp $(ALL) $(GAMDIR)

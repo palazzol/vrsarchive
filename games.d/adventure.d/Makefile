@@ -1,7 +1,7 @@
 #
 # Something quick and dirty... you must put things where you want...
 #
-include ../../CONFIG
+include /etc/CONFIG
 
 all:	src/munge/munge src/adv/adv
 

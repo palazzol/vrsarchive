@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/spaceduel.d/Makefile,v 1.2 1987-06-14 18:54:21 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/spaceduel.d/Makefile,v 1.3 1990-03-27 17:27:55 vrs Exp $
 #
 ALL	= spaceduel
 OPTIONS	= -O -DGAMLIB=\"$(GAMLIB) -DPAGER=\"$(PAGER)\" #-DWIZARD
 MODEL	= -i 
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(GAMDIR)
 	cp $(ALL) $(GAMDIR)/spaceduel

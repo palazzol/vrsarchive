@@ -22,7 +22,7 @@ ALL	= trek73 printships shipyard
 #
 OPTIONS	= -O -DPARSER #-DTRACE
 MODEL	= -i
-include ../../CONFIG
+include /etc/CONFIG
 #
 # Select whether or not to include the getopt.o module.
 # Generally, AT&T-derived systems will have getopt.o already

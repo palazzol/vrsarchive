@@ -4,7 +4,7 @@
 #
 OPTIONS	= -O
 MODEL	= -i
-include ../../../../CONFIG
+include /etc/CONFIG
 KLIB	= ../kio/klib.a
 MAIN	= munge.c
 MLIB	= mlib.a(buffers.o) \

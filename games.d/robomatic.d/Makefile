@@ -4,7 +4,7 @@
 ALL	= robomatic
 OPTIONS	= -O -DGAMDIR=\"$(GAMDIR) -DGAMLIB=\"$(GAMLIB)
 MODEL	= -i -F 2000
-include ../../CONFIG
+include /etc/CONFIG
 
 install: $(ALL) $(GAMDIR) $(MAN6)
 	cp $(ALL) $(GAMDIR)

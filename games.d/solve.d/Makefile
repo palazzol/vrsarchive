@@ -4,7 +4,7 @@
 OPTIONS	= -O
 MODEL	= -i
 ALL	= solve
-include ../../CONFIG
+include /etc/CONFIG
 OBJS	= solve.o
 CFILES	= solve.c
 

@@ -4,7 +4,7 @@
 ALL	= plane
 MODEL	= -i -F 2000	# XENIX only
 OPTIONS	= -O
-include ../../CONFIG
+include /etc/CONFIG
 
 lint:
 	lint -lcurses -ltermlib $(OBJS:.o=.c) | tee lint.out
