@@ -1,7 +1,10 @@
 #
-# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.5 2002-11-22 22:10:26 Vincent Exp $
+# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.6 2002-11-22 22:15:17 Vincent Exp $
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2002/11/22 22:10:26  Vincent
+# Compiles on CYGWIN.
+#
 # Revision 1.4  1990/04/04 21:31:38  vrs
 # Changes for V.4 and ANSI C
 #
@@ -21,7 +24,7 @@
 # Split into separate files.  Added amoebas and pirates.
 # 
 #
-public	= warp
+public	= warp$(EXE)
 private = smap.0 smap.1 smap.2 smap.3 smap.4 smap.5 smap.6 smap.7
 ALL	= $(public) $(private)
 OPTIONS	= -O -DPRIVLIB=\"$(privlib)\" -DMYDOMAIN=\"$(DOMAIN)\"
@@ -87,7 +90,7 @@ $(h):
 install: $(ALL) $(bin)
 	if test `pwd` != $(bin); then cp $(public) $(bin); fi
 	cd $(bin); chmod 755 $(public); chown '$(CHOWNER)' $(public)
-	chmod 4711 $(bin)/warp
+	chmod 4711 $(bin)/warp$(EXE)
 	chmod 555 makedir
 	./makedir `./filexp $(privlib)`
 	-if test `pwd` != `./filexp $(privlib)`; then \
@@ -135,7 +138,7 @@ smap.6: smp.6 sm
 smap.7: smp.7 sm
 	./sm <smp.7 >smap.7
 sm: sm.c
-	cc sm.c -o $@
+	$(CC) sm.c -o $@
 
 depend: makedepend
 	makedepend

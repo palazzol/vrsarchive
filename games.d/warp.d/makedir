@@ -1,7 +1,10 @@
-: use /bin/sh
-# $Header: /home/Vince/cvs/games.d/warp.d/makedir,v 1.2 1987-07-26 14:33:04 vrs Exp $
+#!/bin/sh
+# $Header: /home/Vince/cvs/games.d/warp.d/makedir,v 1.3 2002-11-22 22:15:17 Vincent Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Revision 1.2  1987/07/26 14:33:04  vrs
+# Kludge to allow names with double slash in front
+#
 # Version 1.1  87/07/26  11:30:28  vrs
 # Initial version
 # 
