@@ -433,7 +433,7 @@ register char *let,*word;
 			pline("You don't have that object.");
 			continue;
 		}
-		if(cnt < 0 || otmp->quan < cnt) {
+		if(cnt < 0 || (int)otmp->quan < cnt) {
 			pline("You don't have that many! [You have %u]"
 			, otmp->quan);
 			continue;

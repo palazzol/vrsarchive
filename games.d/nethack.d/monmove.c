@@ -4,7 +4,6 @@
 
 #include "hack.h"
 #include "mfndpos.h"
-#define	NULL	(char *) 0
 
 extern int warnlevel;	/* defined in mon.c */
 
@@ -262,12 +261,12 @@ not_special:
 
 	/* look for gold or jewels nearby */
 #ifdef ROCKMOLE
-	likegold = (index("LODr", msym) != NULL);
-	likegems = (index("ODu", msym) != NULL);
+	likegold = (index("LODr", msym) != 0);
+	likegems = (index("ODu", msym) != 0);
 	likeobjs = (mtmp->mhide || msym == 'r');
 #else
-	likegold = (index("LOD", msym) != NULL);
-	likegems = (index("ODu", msym) != NULL);
+	likegold = (index("LOD", msym) != 0);
+	likegems = (index("ODu", msym) != 0);
 	likeobjs = mtmp->mhide;
 #endif
 #ifdef KAA

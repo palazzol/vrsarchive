@@ -242,7 +242,7 @@ boolean from_env;
  * You could have problems here if you configure FOUNTAINS, SPIDERS or NEWCLASS
  * in or out and forget to change the tail entries in your graphics string.
  */
-#define SETPCHAR(f, n)	showsyms.f = (strlen(opts) > n) ? opts[n] : defsyms.f
+#define SETPCHAR(f, n)	showsyms.f = (strlen(opts) > (unsigned)n) ? opts[n] : defsyms.f
 		SETPCHAR(stone, 0);
 		SETPCHAR(vwall, 1);
 		SETPCHAR(hwall, 2);

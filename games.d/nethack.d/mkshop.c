@@ -16,6 +16,7 @@ schar shprobs[] = { 3,3,3,5,5,10,10,14,47 };	/* their probabilities */
 #else
 schar shprobs[] = { 3,3,5,5,10,10,14,50 };	/* their probabilities */
 #endif
+extern char *getenv();
 
 mkshop(){
 register struct mkroom *sroom;
@@ -26,7 +27,6 @@ register struct monst *shk;
 #ifdef WIZARD
 	/* first determine shoptype */
 	if(wizard){
-		extern char *getenv();
 		register char *ep = getenv("SHOPTYPE");
 		if(ep){
 			if(*ep == 'z' || *ep == 'Z'){

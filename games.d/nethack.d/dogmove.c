@@ -79,7 +79,7 @@ long info[9];
 			niy = omy;
 			goto eatobj;
 		    }
-		    if(obj->owt < 10*mtmp->data->mlevel)
+		    if(obj->owt < (unsigned)10*mtmp->data->mlevel)
 		    if(rn2(20) < edog->apport+3)
 		    if(rn2(udist) || !rn2((int) edog->apport)){
 			freeobj(obj);

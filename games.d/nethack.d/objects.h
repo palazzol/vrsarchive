@@ -5,16 +5,15 @@
 /* objects have letter " % ) ( 0 _ ` [ ! ? / = * + */
 #include "config.h"
 #include "objclass.h"
-#define	NULL	(char *)0
 
 struct objclass objects[] = {
 
-	{ "strange object", NULL, NULL, 1, 0,
+	{ "strange object", (char *)0, (char *)0, 1, 0,
 		ILLOBJ_SYM, 0, 0, 0, 0, 0, 0 },
-	{ "amulet of Yendor", NULL, NULL, 1, 0,
+	{ "amulet of Yendor", (char *)0, (char *)0, 1, 0,
 		AMULET_SYM, 100, 0, 2, 0, 0, 0 },
 
-#define	FOOD(name,prob,delay,weight,nutrition)	{ name, NULL, NULL, 1, 1,\
+#define	FOOD(name,prob,delay,weight,nutrition)	{ name, (char *)0, (char *)0, 1, 1,\
 		FOOD_SYM, prob, delay, weight, 0, 0, nutrition }
 
 /* dog eats foods 0-4 but prefers 1 above 0,2,3,4 */
@@ -103,7 +102,7 @@ struct objclass objects[] = {
 /* weapons ... - (DART-1) are shot using idem+(BOW-ARROW) */
 /* weapons AXE, SWORD, KATANA, THSWORD are good for worm-cutting */
 /* weapons (PICK-)AXE, DAGGER, CRYSKNIFE are good for tin-opening */
-#define WEAPON(name,prob,wt,sdam,ldam)	{ name, NULL, NULL, 1, 0 /*%%*/,\
+#define WEAPON(name,prob,wt,sdam,ldam)	{ name, (char *)0, (char *)0, 1, 0 /*%%*/,\
 		WEAPON_SYM, prob, 0, wt, sdam, ldam, 0 }
 
 /* Note: for weapons that don't do an even die of damage (i.e. 2-7 or 3-18)
@@ -152,50 +151,50 @@ struct objclass objects[] = {
 	WEAPON("crossbow",	5, 3, 4, 6),
 
 #ifdef WALKIES
-	{ "whistle", "whistle", NULL, 0, 0, TOOL_SYM, 70, 0, 2, 0, 0, 0 },
-	{ "leash", NULL, NULL, 1, 0, TOOL_SYM, 20, 0, 20, 0, 0, 0 },
+	{ "whistle", "whistle", (char *)0, 0, 0, TOOL_SYM, 70, 0, 2, 0, 0, 0 },
+	{ "leash", (char *)0, (char *)0, 1, 0, TOOL_SYM, 20, 0, 20, 0, 0, 0 },
 #else
-	{ "whistle", "whistle", NULL, 0, 0, TOOL_SYM, 90, 0, 2, 0, 0, 0 },
-	{ "leash", NULL, NULL, 1, 0, TOOL_SYM, 0, 0, 20, 0, 0, 0 },
+	{ "whistle", "whistle", (char *)0, 0, 0, TOOL_SYM, 90, 0, 2, 0, 0, 0 },
+	{ "leash", (char *)0, (char *)0, 1, 0, TOOL_SYM, 0, 0, 20, 0, 0, 0 },
 #endif
-	{ "magic whistle", "whistle", NULL, 0, 0,
+	{ "magic whistle", "whistle", (char *)0, 0, 0,
 		TOOL_SYM, 10, 0, 2, 0, 0, 0 },
-	{ "expensive camera", NULL, NULL, 1, 1,
+	{ "expensive camera", (char *)0, (char *)0, 1, 1,
 		TOOL_SYM, 0, 0, 3, 0, 0, 0 },
-	{ "ice box", "large box", NULL, 0, 0,
+	{ "ice box", "large box", (char *)0, 0, 0,
 		TOOL_SYM, 0, 0, 40, 0, 0, 0 },
-	{ "pick-axe", NULL, NULL, 1, 1,
+	{ "pick-axe", (char *)0, (char *)0, 1, 1,
 		TOOL_SYM, 0, 0, 5, 6, 3, 0 },
-	{ "magic marker", NULL, NULL, 1, 0,
+	{ "magic marker", (char *)0, (char *)0, 1, 0,
 		TOOL_SYM, 0, 0, 1, 0, 0, 0 },
-	{ "stethoscope", NULL, NULL, 1, 0,
+	{ "stethoscope", (char *)0, (char *)0, 1, 0,
 		TOOL_SYM, 0, 0, 3, 0, 0, 0 },
-	{ "can opener", NULL, NULL, 1, 1,
+	{ "can opener", (char *)0, (char *)0, 1, 1,
 		TOOL_SYM, 0, 0, 1, 0, 0, 0 },
-	{ "heavy iron ball", NULL, NULL, 1, 0,
+	{ "heavy iron ball", (char *)0, (char *)0, 1, 0,
 		BALL_SYM, 100, 0, 20, 0, 0, 0 },
-	{ "iron chain", NULL, NULL, 1, 0,
+	{ "iron chain", (char *)0, (char *)0, 1, 0,
 		CHAIN_SYM, 100, 0, 20, 0, 0, 0 },
 	/* Because giants can throw rocks */
 #ifdef HARD
 # ifdef KAA
-	{ "enormous rock", NULL, NULL, 1, 0,
+	{ "enormous rock", (char *)0, (char *)0, 1, 0,
 		ROCK_SYM, 100, 0, 200 /* > MAX_CARR_CAP */, 0, 20, 20 },
 # else
-	{ "enormous rock", NULL, NULL, 1, 0,
+	{ "enormous rock", (char *)0, (char *)0, 1, 0,
 		ROCK_SYM, 100, 0, 250 /* > MAX_CARR_CAP */, 0, 0, 0 },
 # endif
 #else
 # ifdef KAA
-	{ "enormous rock", NULL, NULL, 1, 0,
+	{ "enormous rock", (char *)0, (char *)0, 1, 0,
 		ROCK_SYM, 100, 0, 400 /* > MAX_CARR_CAP */, 0, 20, 20 },
 # else
-	{ "enormous rock", NULL, NULL, 1, 0,
+	{ "enormous rock", (char *)0, (char *)0, 1, 0,
 		ROCK_SYM, 100, 0, 550 /* > MAX_CARR_CAP */, 0, 0, 0 },
 # endif
 #endif
 
-#define ARMOR(name,prob,delay,weight,ac,can)	{ name, NULL, NULL, 1, 0,\
+#define ARMOR(name,prob,delay,weight,ac,can)	{ name, (char *)0, (char *)0, 1, 0,\
 		ARMOR_SYM, prob, delay, weight, ac, can, 0 }
 /* Originally, weight was always 8, which is ridiculous.  (Plate mail weighs
    the same as a pair of gloves?) */
@@ -216,7 +215,7 @@ struct objclass objects[] = {
 	ARMOR("shield",			 3, 0, 2, 9, 0),
 	ARMOR("pair of gloves",		 1, 1, 2, 9, 0),
 
-#define POTION(name,color)	{ name, color, NULL, 0, 1,\
+#define POTION(name,color)	{ name, color, (char *)0, 0, 1,\
 		POTION_SYM, 0, 0, 2, 0, 0, 0 }
 
 	POTION("restore strength",	"orange"),
@@ -238,10 +237,10 @@ struct objclass objects[] = {
 	POTION("levitation",	"brown"),
 	POTION("hallucination",	"brilliant blue"),
 	POTION("holy water",	"clear"),
-	POTION(NULL,	"magenta"),
-	POTION(NULL,	"ebony"),
+	POTION((char *)0,	"magenta"),
+	POTION((char *)0,	"ebony"),
 
-#define SCROLL(name,text,prob) { name, text, NULL, 0, 1,\
+#define SCROLL(name,text,prob) { name, text, (char *)0, 0, 1,\
 		SCROLL_SYM, prob, 0, 3, 0, 0, 0 }
 	SCROLL("mail",	"KIRJE", 0),
 	SCROLL("enchant armor", "ZELGO MER", 6),
@@ -264,12 +263,12 @@ struct objclass objects[] = {
 	SCROLL("amnesia", "DUAM XNAHT", 3),
 	SCROLL("fire", "ANDOVA BEGARIN", 5),
 	SCROLL("punishment", "VE FORBRYDERNE", 1),
-	SCROLL(NULL, "VELOX NEB", 0),
-	SCROLL(NULL, "FOOBIE BLETCH", 0),
-	SCROLL(NULL, "TEMOV", 0),
-	SCROLL(NULL, "GARVEN DEH", 0),
+	SCROLL((char *)0, "VELOX NEB", 0),
+	SCROLL((char *)0, "FOOBIE BLETCH", 0),
+	SCROLL((char *)0, "TEMOV", 0),
+	SCROLL((char *)0, "GARVEN DEH", 0),
 
-#define	WAND(name,metal,prob,flags)	{ name, metal, NULL, 0, 0,\
+#define	WAND(name,metal,prob,flags)	{ name, metal, (char *)0, 0, 0,\
 		WAND_SYM, prob, 0, 3, flags, 0, 0 }
 
 	WAND("light",	"iridium",		10,	NODIR),
@@ -302,12 +301,12 @@ struct objclass objects[] = {
 	WAND("sleep",		"curved",	5,	RAY),
 	WAND("cold",		"short",	5,	RAY),
 	WAND("death",		"long",		1,	RAY),
-	WAND(NULL,		"ebony",	0,	0),
-	WAND(NULL,		"runed",	0,	0),
+	WAND((char *)0,		"ebony",	0,	0),
+	WAND((char *)0,		"runed",	0,	0),
 
 #ifdef SPELLS
 /* books */
-#define SPELL(name,desc,prob,delay,flags,level)	{ name, desc, NULL, 0, 0, SPBOOK_SYM, prob, delay, 5, flags, 0, level }
+#define SPELL(name,desc,prob,delay,flags,level)	{ name, desc, (char *)0, 0, 0, SPBOOK_SYM, prob, delay, 5, flags, 0, level }
 	SPELL("magic missile", "parchment", 4, 3, RAY, 2),
 	SPELL("fireball", "shining", 2, 6, RAY, 4),
 	SPELL("sleep", "glowing", 6, 1, RAY, 1),
@@ -344,13 +343,13 @@ struct objclass objects[] = {
 	SPELL("cancellation", "leather", 1, 8, IMMEDIATE, 7),
 	SPELL("genocide", "gold", 1, 10, NODIR, 7),
 /* randomization */
-	SPELL(NULL, "dog eared", 0, 0, 0, 0),
-	SPELL(NULL, "thick", 0, 0, 0, 0),
-	SPELL(NULL, "thin", 0, 0, 0, 0),
-	SPELL(NULL, "stained", 0, 0, 0, 0),
+	SPELL((char *)0, "dog eared", 0, 0, 0, 0),
+	SPELL((char *)0, "thick", 0, 0, 0, 0),
+	SPELL((char *)0, "thin", 0, 0, 0, 0),
+	SPELL((char *)0, "stained", 0, 0, 0, 0),
 #endif /* SPELLS /**/
 
-#define	RING(name,stone,spec)	{ name, stone, NULL, 0, 0,\
+#define	RING(name,stone,spec)	{ name, stone, (char *)0, 0, 0,\
 		RING_SYM, 0, 0, 1, spec, 0, 0 }
 
 	RING("adornment",	"engagement",	0),
@@ -372,11 +371,11 @@ struct objclass objects[] = {
 	RING("protection",	"granite",	SPEC),
 	RING("warning",		"wire",		0),
 	RING("teleport control", "iron",	0),
-	RING(NULL,		"ivory",	0),
-	RING(NULL,		"blackened",	0),
+	RING((char *)0,		"ivory",	0),
+	RING((char *)0,		"blackened",	0),
 
 /* gems ************************************************************/
-#define	GEM(name,color,prob,gval)	{ name, color, NULL, 0, 1,\
+#define	GEM(name,color,prob,gval)	{ name, color, (char *)0, 0, 1,\
 		GEM_SYM, prob, 0, 1, 0, 0, gval }
 	GEM("dilithium crystal", "lavender", 1, 4500),
 	GEM("diamond", "blue", 1, 4000),
@@ -398,7 +397,7 @@ struct objclass objects[] = {
 	GEM("worthless piece of red glass", "red", 20, 0),
 	GEM("worthless piece of yellow glass", "yellow", 20, 0),
 	GEM("worthless piece of green glass", "green", 20, 0),
-	{ NULL, NULL, NULL, 0, 0, ILLOBJ_SYM, 0, 0, 0, 0, 0, 0 }
+	{ (char *)0, (char *)0, (char *)0, 0, 0, ILLOBJ_SYM, 0, 0, 0, 0, 0, 0 }
 };
 
 char obj_symbols[] = {

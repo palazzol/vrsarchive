@@ -208,7 +208,7 @@ in_ice_box(obj) register struct obj *obj; {
 		pline("You cannot refrigerate something you are wearing.");
 		return(0);
 	}
-	if(obj->owt + current_ice_box->owt > 70) {
+	if(obj->owt + current_ice_box->owt > (unsigned)70) {
 		pline("It won't fit.");
 		return(1);	/* be careful! */
 	}
