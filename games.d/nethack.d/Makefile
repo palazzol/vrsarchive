@@ -1,5 +1,5 @@
 #	Hack or Quest Makefile.
-#	SCCS Id: @(#)Makefile.xenix	1.3	87/07/14
+#	SCCS Id: @(#)Makefile.xenix	1.4	87/08/08
 
 # if you are cross-compiling (eg. from Xenix into a Dos enviornment)
 # you will have to redefine these filenames.
@@ -9,11 +9,8 @@ UNIX = unixunix.c
 
 # on some systems the termcap library is in -ltermcap
 TERMLIB = -ltermlib
-# TERMLIB = /lib/Llibtermlib.a
-# CRT0   = /lib/crt0.o
 CRT0   =
-LIBS = ${TERMLIB} -lc
-# LIBS = ${TERMLIB} /lib/Llibc.a
+LIBS =  
 
 # make NetHack
 GAME = nethack
@@ -88,8 +85,13 @@ onames.h:	makedefs objects.h
 
 specifics:	main.o tty.o unix.o
 
+main.o: main.c
+
 main.c:	unixmain.c hack.h
 	cp ${MAIN} main.c
+
+tty.o:	tty.c
+	cc  -c tty.c
 
 tty.c:	unixtty.c extern.h
 	cp ${TTY} tty.c
@@ -149,7 +151,6 @@ spotless: clean
 	rm -f a.out core $(GAME) makedefs
 	rm -f Makefile $(VARAUX) main.c tty.c unix.c
 
-alloc.o:
 bones.o:  hack.h
 decl.o:  hack.h mkroom.h
 end.o:  hack.h
@@ -157,7 +158,6 @@ hack.o:  hack.h
 ioctl.o:  config.h
 o_init.o:  config.h objects.h onames.h
 objnam.o:  hack.h
-rnd.o:
 u_init.o:  hack.h
 version.o:  hack.h date.h
 apply.o:  hack.h edog.h mkroom.h
