@@ -1,0 +1,53 @@
+Ergonomics:
+  Grey and white vs Black and Biege
+  Quieter - no fan noise vs Load fan noise
+  Display scrolls poorly, is white on grey.
+  Keyboard has poor feel
+
+General:
+  Bad Wini
+    Very unreliable
+    Automatic scan for bad blocks on wini
+  Two floppy drives
+    High density floppy
+  We have tape, retension command.
+  Color Monitor, currently not accessible
+  MS-DOS
+    They have the ms-dos linker.
+    They have Large Model ms-dos library.
+  They have old printer software, vs our new (lpq, lprm, printcaps).
+  They have lockf syscall, sys/lock.h and unlstd.h.
+  OpenNet
+  We have UDI and overlays.
+  They have man command, no pages.
+  We have Ongoing update service
+  nroff and troff?
+
+OEM Specific:
+  They use the arrangement of files from binary adaptation kit.
+  We currently have more drivers
+  We have configurable drivers
+  We have wini config ability.  At has only partitioning.
+  /dev/cmos to store configuration information
+  sd.h vs sys/sd.h
+  They have better adb.
+  They have /etc/default/login.
+  They have stackuse.
+  We have vi for large files.
+
+End User Specific:
+  Comes with keyboard and display (no termcap hassles)
+    Key switch locks keyboard vs User supplied keyboard
+    setkey utility for keyboard
+  Quick installation - 6 diskettes
+  They have simple ICU - not many choices.
+  Battery powered clock - no need to set time every bootup
+  They have checkcw checkeq, checkmm (S5 links to cwcheck, eqncheck, mmcheck).
+  They have configurable uux.
+  They have program to deliver messages.
+  backup vs dump, restore ve restor
+  format in /bin - accessible to users
+  We have edit, view (vi links)
+  We have fixbin, fixhdr
+  We have l, lf - links to lc.
+  We have printenv - link to env.

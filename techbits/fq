@@ -1,0 +1,418 @@
+.NH 1
+MARKETING
+.NH 2
+Are there any plans to develop a high quality presentation on XENIX suitable
+for new prospects?
+.IP
+.NH 2
+Is there any way we can get a marketing presentation on how to identify the
+Commercial OEM prospect?  We are still too driven by what works/doesn't and
+other post-sales concerns.  Show us how to recognize and close XENIX OEMs and
+their applications.
+.IP
+.NH 2
+The Unix users group /usr/group has published a proposal for a system call
+standard.  Do we have any plans relative to this standard?
+.IP
+The current Release 3 system calls follow the System III standard and
+Release 5 (the next release) will follow the System V standard.
+As the UNIX/XENIX community standardizes more and more of the system call
+interface we will continue to use the standards in the marketplace.
+.NH 2
+A great deal of useful information appears in publications and Unix/XENIX user
+groups such as USENIX and /usr/group.  Is there any way we could get the
+relevant material from such publications distributed to the Intel field force?
+.IP
+We are unable to distribute articles that appear in publications because
+of copyright problems.  However, we will point you to these articles
+as best we can with tech-bits, FAE training material, etc.
+.NH 2
+When can we expect to see job control in XENIX?
+.IP
+There are no plans to implement job control for XENIX at this time.
+.NH 2
+When can I expect to see XENIX capable of doing real time?  I hear over and
+over from customers who seem to want a real time XENIX.
+.IP
+Rather than attempt to make XENIX do real time, a better approach would be
+to develop XENIX as a front end for development of real time applications
+which run on a real time system (RMX).  This is the basic architecture for
+RMX 386.
+.NH 2
+Will we ever own C Compiler source in the future?  As long as we don't have
+that source, we seem to be at the mercy of Microsoft schedules (which will
+probably favor IBM) for bug fixes.
+.IP
+We do not currently have plans to acquire C compiler source for XENIX-286.
+However, Microsoft is steadily improving the C compiler, and we will 
+continue to fold the latest compiler technology from Microsoft into our product.
+We will own source to the 386 C compiler.
+.NH 2
+Where can I get a new list of available ISV software?  The last one I got is
+rather old.
+.IP
+Maurice Voce (ISO, Deer Valley) is the product manager for ISV software.  
+He should be able to get you a current list.
+.NH 2
+My customers have trouble getting a hold of ISV software (even the GOLD
+packages).  How can they get this software?
+.IP
+Availability issues should also be directed to Maurice Voce.
+.NH 2
+It seems like an electronic bulletin board or similar communication mechanism
+could ultimately mean more system sales.  Would this be possible?
+.IP
+There is general agreement that such a mechanism would be a great help.
+Unfortunately, we are still researching technology to do this.  The crucial
+problem is the security of such a system, since the information exchanged
+would tend to be extremely sensitive.
+.NH 1
+COMPILERS AND UDI
+.NH 2
+Where can I get details about new language features in the Release 3 C
+compiler?
+.IP
+The new features are fully described in a Tech-Bit entitled "New
+Features of the Release 3 C Compiler" that published in the 3/15
+edition of Tech-Bits.
+.NH 2
+When should we expect Huge Model C?
+.IP
+Huge Model will be included in Release 5.  If available sooner, it
+will be released in an Update 3 or 4.
+.NH 2
+How many text segments are allowed in Middle/Large/Huge Model?  How many data
+segments are allowed in Large/Huge Model?
+.IP
+In Release 3 of Xenix, a program must load with 147 total segments or less.
+At least one of these must be a data segment.  Therefore, the total
+number of text segments in Middle, Large and Huge model is 146.  With
+Update 1 of Release 3 the LDT can dynamically expand.  This means that
+once running, a program can dynamically ask for more memory and the
+number of data segments can increase.  Programs cannot dynamically ask
+for more text space, so 146 text segments (9 megabytes) is the limit.
+.NH 2
+How are UDI languages for XENIX being packaged?
+.IP
+DSO will release four products for XENIX in late May.  They will
+be an ASM product, including the assembler, and R & L tools, a PLM
+product, including the PLM compiler and libraries, a Fortran product,
+including the Fortran compiler and libraries and a PSCOPE product.
+.NH 2
+Does XENIX PSCOPE-286 work with the Microsoft Compilers, and if so how well
+does it handle the Microsoft symbol table format?
+.IP
+.NH 2
+Is it possible for multiple users to run XENIX PSCOPE-286 simultaneously
+on different programs?  I had heard that this was not possible.
+.IP
+It is possible for multiple users to run PSCOPE.  The only
+restriction is that you may not run PSCOPE on a program which is already
+being debugged or currently executing.  This is also a restriction of `adb',
+the debugger that is supplied with XENIX.
+.NH 2
+Does AEDIT run under XENIX and if so, how do we get it?
+.IP
+AEDIT has been completed for XENIX.  However, DSO has no
+plans to productize it at this time.
+.NH 1
+DRIVERS
+.NH 2
+Does the new 544 driver do block input transfers for higher performance with
+UUCP or MICNET?
+.IP
+The 544 device driver is written so that all available characters are read from
+the board when an input interrupt is acknowledged.  The 544 board will generate
+input interrupts for every character, but if more characters become available
+before the interrupt is acknowledged the additional characters are read as
+well.
+.NH 2
+Does the new 544 driver know about 19.2K baud?  Is there a getty option to
+enable a line at 19.2K baud?
+.IP
+Yes, the driver supports 19.2k baud.  Use getty option 8.  You should be
+aware that some terminals have been seen which advertise 19.2K baud but
+which drop characters at that speed.
+.NH 2
+In Release 1 there was a problem with running the console port at a speed
+other than 9600 baud.  At boot time the monitor initializes the console port
+to the correct rate.  Xenix should use this rate until the system goes
+multi-user and getty is run.  Was this fixed in Release 3?
+.IP
+The baud rate is initialized in a kernel routine which is shared among all
+terminal devices.  Simply removing this initialization would cause other
+terminal ports to fail to initialize baud rates.  A solution that would work
+for other terminals as well as for the special case of the console is not
+currently planned.
+.NH 1
+KERNEL AND FILE-SYSTEM
+.NH 2
+Will there be a `scrunch' type utility to compress the free space in the
+bit map to be contiguous?
+.IP
+There are no plans for such a utility.  The performance gains from such a
+utilty are not expected to be signifigant, and such a utility places the
+integrity of files whose data is being moved at risk due to bad blocks,
+crashes while the utility is running, etc.
+.NH 2
+Since the new file system now relies for consistency on a number of Cylinder
+Group Blocks as well as the Super Block, does this pose a greater problem
+with file-system inconsistency after crashes?
+.IP
+No.  The primary function of the Cylinder Group Blocks is to hold the
+bitmap which contains the free list.  The free list was held before in
+the superblock.  The superblock is the block of the filesystem most likely
+to be out of date.  The free list is thus no more likely to be invalid
+than it was in the old file system.  The free list is also no more difficult
+to rebuild, so everything is as reliable as before with better performance.
+.NH 2
+There exists a problem installing XENIX on systems with more than 1 MB
+of memory.  When will this be cleaned up?
+.IP
+This limit will be increased to 2MB in Update 3 and fixed entirely in
+the next release (release 5).  As a current workaround on systems
+with winchesters greater than 20MB, boot the
+system with less than 1MB of memory, modify the `swap' variable
+in /sys/conf/xenixconf to be 4104 and generate a new kernel. Systems
+with disks less than 20MB should not use more than 1MB of memory.
+To do so requires reformatting the disk.
+.NH 2
+When will XENIX 286 have virtual memory?
+.IP
+XENIX 286 will do swapping a segment at a time in Release 5.  XENIX 386 will
+be based on a paging scheme.
+.NH 1
+CONFIGURATION AND INSTALLATION
+.NH 2
+The 215 driver will support multiple drives.  Will there be a c215g.c for
+P-box configurations?  How will multi-winchester configurations be handled
+during installation?
+.IP
+Installation is the same as for systems with one winchester.  After XENIX
+is installed a configuration utility which ships with the P-box is used to
+configure in any additional drives.  This configuration utility understands
+the configurations possible with the 215 board and will be enhanced
+and included in Release 5.
+.NH 2
+The format command in Release 1 would not write bad block information to
+create the bad block table on the disk when it was missing.  Will the format
+command in Release 3 do this?
+.IP
+The format command does not currently do this.  Since winchesters on Intel
+systems ship with the bad block information already on the winchester, this
+fell below the ZBB for Release 3.  The SDT utilities shipped with every
+system will place bad block information on the winchester if necessary.
+A utility will be provided in Release 5 which will provide a graceful
+method of dealing with defective areas of a disk.
+.NH 2
+Some of our customers will want to partition their disks and run both XENIX
+and MS-DOS.  How will they get a new c215g.c and installation software for
+their changed disk configuration?
+.IP
+Update 3 will include the changes to XENIX to allow configuration of an
+MS-DOS partition at installation time.  Temporary solutions have appeared
+in TECHBITS for the 310-17 and 310-40/41.  These solutions are available
+from ISO.
+.NH 2
+Is there any way to set up a system with the winchester split between RMX and
+XENIX using a scheme like the one for MS-DOS?
+.IP
+Such a split is certainly possible.  To set up such a system, the RMX boot
+loader would need to be modified to allow booting RMX from the winchester.
+Unfortunately, such a boot loader is not available.
+MS-DOS is used in split winchester configurations because it provides
+compatibility with personal computers and their software.
+Since only one of XENIX or RMX could be active at a time and cross development
+software is not available, such a system does not appear to be an attractive
+solution at this time.
+.NH 2
+There are no hub rings on the release diskettes.  This makes them suceptible
+to damage by careless insertion in the floppy drive.  Would it be possible
+to use hub rings on these diskettes?
+.IP
+We are always looking for ways to improve the quality of our product.
+Currently we have a large inventory of diskettes in manufacturing without
+hub rings.  If we sell out of these, and software bookings indicate that
+a high volume diskette purchase is in order, we may be able to order
+diskettes with hub rings without additional expense.
+.NH 2
+Floppy read errors were not recovered from well in the Release 1 
+installation process. Often the effect of the error was not known, 
+causing users to restart the installation (to be safe).  
+Does the installation procedure in Release 3
+cope more gracefully with I/O errors during installation?
+.IP
+Yes.  The Release 3 installation procedure is not concerned 
+about which particular diskette is currently being read.  Rather it
+prompts for a new disk and reads it, and continues to prompt until
+the user tells it to stop.  If an error is encountered on a particular
+diskette, another attempt can be made to read that diskette before
+continuing on.  Errors are often a result of an alignment problem so
+removing and reinserting the diskette will probably allow it to
+be re-read.
+.NH 2
+Will there be any way to configure uux in Release 3?  Customers expect this
+and it dents the credibility of the Open Systems message to be unable to
+configure uux.
+.IP
+.NH 2
+Would it be possible to derive a document describing the questions to ask
+regarding configuration of XENIX for specific applications?
+.IP
+.NH 1
+MANUALS AND DOCUMENTATION
+.NH 2
+Is there any way to get on-line manuals into Release 3?  They are a demo tool
+that is responded to well by potential customers.
+.IP
+Not in the near future.  On-line manuals were not included in Release 3
+for two reasons.  One, the format of the manuals was changed to put
+commands that perform similar functions into manuals describing that
+function, rather than including all commands in one manual section.
+The on-line manuals expected the previous manual format.  Second,
+substantial changes and improvements have been made to the manual pages.
+The time and manpower required to make these changes to existing software
+would have pushed the release date of the operating system out to an 
+unacceptable level.
+.NH 2
+Could the manuals be made to highligt in grey (or by some such technique)
+differences between Intel XENIX and Microsoft Xenix?
+.IP
+We have suggested this to the Technical Publications people.
+.NH 2
+Will there be documentation available in the manual or elsewhere to clarify
+how to develop code wich is compatible with System 5 (i.e., will be compatible
+with Release 5)?
+.IP
+There was a tech-bit entitled "Intel Release 3 and Unix System 5:
+Competitive Analysis" published in the 7/13/84 issue of Tech-Bits which
+described the differences between the two operating systems.  If
+functionality which is only supplied in Xenix is not used, most
+compatability problems will be solved.
+.NH 2
+Where can I find more information about the Visual Shell?
+.IP
+The new documentation contains a manual entitled "Xenix-286
+Visual Shell User's Guide" which describes the visual shell
+in detail.
+.NH 2
+Is there any way to get the learn scripts on Release 3?  They make an effective
+demonstration tool to customers.
+.IP
+Currently there are no plans to provide the learn scripts.  They
+require a large amount of disk space and have become somewhat
+outdated.
+.NH 2
+Will the `dial' program for UUCP be adequately documented?  Customers may need
+to write one to work on another type of modem.
+.IP
+The new documentation provides a manual entitled "XENIX-286 Communications
+Guide".  This provides a description of how dial is used as well as
+providing complete source of the current dial program.
+.NH 1
+PRINTERS
+.IP
+.NH 2
+I understand that our line printer software is much better than the Microsoft
+software.  What is better?
+.IP
+XENIX from Microsoft provides the same line printer support as our 
+Release 1 did.  Either
+a single parallel or serial printer can be used.  Setting up a serial printer 
+required a special program and some understanding of terminal devices.
+Release 3  is based on the Berkeley line printer software.  This allows
+multiple printers and print queues.  It also provides the capability
+of running both parallel and serial printers and has an easy mechanism
+for configuring the printer ports as well as determining which printer
+to send output to.
+.NH 2
+There is currently no nroff description table for the Intel printer.  Will this
+be fixed in Release 3?
+.IP
+Not in the near future.
+.NH 2
+There is currently no way to generate nroff description tables for new
+printers.  Will such a facility be available in Release 3?
+.IP
+Not in the near future.
+.NH 2
+Will typesetters really be supported in Release 3 and if so, how?
+.IP
+Release 3 contains the software necessary to generate output that
+will be recognized by a C.A.T. phototypesetter.  It does not contain
+a C.A.T. phototypsetter device driver.  A Multibus board and driver
+would be required to actually generate phototypsetter output.  If
+another type of phototypsetter is desired, software which converts
+C.A.T. output to a form recognized by the new typesetter is also 
+required.
+.NH 1
+GENERAL
+.NH 2
+I see the 50K file size limit on vi as a serious limitation.  Is there any
+hope of having the 50K limit removed?  Why does the limit exist in the first
+place?
+.IP
+This has been fixed in Update 2.  The file size limit is now approximately
+250K.  The fix is to change the stack size to allow more room for line
+buffers.  If you do not have Update 2 yet, you can fix vi by using the 
+command fixhdr as follows: fixhdr -F 2000 /bin/vi.
+.NH 2
+Will uuencode and uudecode (or the equivalent) be provided in Release 3?  There
+is currently no way to transfer non-ASCII data by electronic mail.
+.IP
+Uuencode and uudecode will not be part of Release 3.  Non-ASCII data
+can be sent using the uuto and uupick commands of the uucp software.
+See the XENIX Communications Guide for more details.
+.NH 2
+System 5 packages the public domain news software with the product.  Any hope
+of getting this software into an update?
+.IP
+There are no plans to include this software in the XENIX product.  However,
+since it is public domain software, you should be able to get a copy
+from any site currently running the `news' software.
+.NH 2
+System 5 has a set of fast memory manipulation routines.  These routines are
+easy to implement on the 286.  Any hope of getting them into an update?
+.IP
+.NH 2
+I seem to be able to manipulate existing MS-DOS media in Release 3, but not
+to be able to create them.  How would I go about creating an MS-DOS diskette
+on a XENIX system?
+.IP
+Currently, this is not possible.  You must format your diskettes using
+an MS-DOS system before it can be used by XENIX systems.
+.NH 2
+Will I be able to read diskettes created on an IBM system on my XENIX system?
+.IP
+Yes, diskettes can be created on IBM systems using the double sided,
+double density, 48tpi, 9 sectors/track device, that are
+readable on Intel 310's.  Diskettes created on 310's can be read
+onto an IBM system using this same device.  The only restriction is that
+the diskettes must not contain file-systems (i.e. be mountable diskettes).
+Other types of file creation utilities for diskettes like `tar' and `dd'
+work fine.
+.NH 2
+The processing of phone and room numbers by the finger utility was specific
+to Berkeley sites in Release 1.  Has this been fixed in Release 3?
+.IP
+Yes, this has been fixed.
+.NH 2
+What priority does the MICNET networking software run at, and can I change
+this priority?
+.IP
+The MICNET software runs at the same default priority as other processes
+on the system.  The initial priority can be changed using the `nice'
+command.
+.bp
+.NH 1
+SPECIALIST TRAINING
+.NH 2
+Where can we get documents about kernel routines like copyin?  We know the
+basic requirements for a driver, but we often can't figure out how to use
+the kernel routines involved.
+.IP
+.NH 2
+We know of an ISV which writes custom drivers to implement X.25.  This ISV
+will need to rewrite the driver for Release 3.  Will they also have to rewrite
+it for Release 5, and if so how much?
+.IP

@@ -1,0 +1,181 @@
+\"
+\"    FULL PAGE SLIDE MACRO FILE
+\"
+\"    u = basic unit = 1/432 inch
+\"    p = point = 1/72 inch = 6 basic units
+\"
+\"
+.de SL
+.ll 8.0i
+.ds s \\$1
+.cs R
+.ft B
+.po 0
+.ps 10
+.vs 12
+.ls 1
+.sp |1.25i
+\\h'1i+2u'\\c
+'TL 0.75i
+\\h'.1i+1u'\\s22\\v'40u'i\\h'-.05m'n\\h'-.05m't\\h'-.14m'\\v'.24m'e\\v'-.24m'\\h'-.1m'l\\c
+\\v'-40u'\\s0\\h'.1i+1u'\\c
+'TL (5.5i-\\\\w'\\\\s22\\\\*i\\\\s0'u-.2i)
+\\h'-1u'\\v'-11u'\\c
+'TV 8i
+\\h'-6.10i+18u'\\v'-8i-6u'\\c
+'TV 8i
+\\v'+10u'\\c
+'TL (5.85i-\\\\w'\\\\s16\\\\*t\\\\s0'u-.2i)
+\\h'.1i'\\s16\\v'35u'\\*t\\v'-35u'\\s0\\h'.1i'\\c
+'TL .20i
+\\h'-5.55i'\\c
+.po 0
+.sp |1.50i
+\\h'1.70i'\\c
+
+.ps 18
+.vs 22
+.ft R
+.di XX
+..
+.de ES
+.tm Processing slide: \\*s
+.in 0
+.di
+.ll \\n(dlu
+.nr y ((7.8i-\\n(dn)/2u)
+.nr w ((\\nyu*100)/1i)
+.if !(\\nyu-.4i) .tm Vertical overflow slide: \\*s (\\nw/100th border)
+.sp \\nyu
+.nr z ((6.5i-\\n(dl)/2u)
+.nr w (((\\nzu-.75i)*100)/1i)
+.if !(\\nzu-0.55i) .tm Horizontal overflow slide: \\*s (\\nw/100ths border)
+.po \\nzu+0.75i 
+.XX
+.po 0
+.sp |9.60i
+.ft R
+.ps 8
+.vs 10
+.ls 0
+.\" THIS IS AN INCREDIBLE KLUDGE - I HOPE YOU DONT KEEP IN PN
+.pc $
+'di PN
+'tl \\\\.nr % $
+'di
+.pc %
+.PN
+.\" THIS IS AN INCREDIBLE KLUDGE - I HOPE YOU DONT KEEP IN PN
+.if !'\\*q'' \\h'1.1i'\\*q: \\*s\\h'|0'\c
+\\h'(6.75i-\\w'\\*b'u)'\\*b
+.ft B
+.ls 1
+.bp
+..
+.de ST
+.lg 0
+.ds t \\$1
+.ds b \\$2
+.ds q \\$3
+.nr % 1
+.nf
+.ds i intel 
+.ll 6.5i
+.pl 11.0i
+.\" fp 1 R
+.\" fp 2 I
+.\" fp 3 B
+.\" fp 4 S
+.ft B
+..
+.de TL
+.ps 28
+\\v'-1u'\\
+\\l'\\$1'\\v'-1u'\\
+..
+.de TV
+.ps 28
+\\L'\\$1'\\h'-1u'\\
+..
+.ds bu \\kl\\(bu\\h'|\\nl'\\0\\0
+.ds ar \\kl\\(->\\h'|\\nl'\\0\\0
+.ds bl \\0\\0
+.de SM
+.ps 12p
+.vs 16p
+..
+.de ME
+.ps 14p
+.vs 18p
+..
+.de LG
+.ps 18p
+.vs 24p
+..
+.de [
+.in +.33i
+..
+.de ]
+.in -.33i
+..
+.de (
+.ME
+.in +.33i
+..
+.de )
+.in -.33i
+.LG
+..
+.de (t
+..
+.de )t
+..
+.de SN
+.nr SL \\$1-1
+..
+.nr SL 0
+.de (S
+.nr SL \\n(SL+1
+.LG
+.SL "\\n(SL"
+..
+.de )S
+.br
+.ES
+..
+.ST "XENIX Technical Marketing" "VRS 9/3/85" "Weekly Status"
+.(S
+.(
+\(bu Benchmark Activities
+.[
+- uVax P.O. Finalized.  Should Ship by 10/1
+- uVax Intitial Planning, Benchmark acquisition
+- uVax VMS Benchmarks being run in N.Y.
+- PC/AT From Phoenix Falls Through - Looking Elsewhere
+- Mini/Micro Show - Equipment Assembled and Shipped
+- Mini/Micro Show - All This Week
+.]
+\(bu ICP Distributed
+.[
+- Co-Resident MS-DOS Still not Robust
+- Shipping Phoenix Bug Fixes
+.]
+\(bu 386 Training
+.[
+- Outline Favorably Reviewed by Field
+.]
+\(bu Trade Show Registration System
+.[
+- Optical Reader Fell Through
+- Will be Entirely Terminal Oriented
+.]
+\(bu Zymacom PM Silver Bullet
+.[
+- Building and Shipping U3 Kernel w/ Profiling
+.]
+\(bu Multibus II Demo System
+.[
+- Feasibility Studied
+.]
+.)
+.)S

@@ -1,0 +1,204 @@
+.AB
+This paper compares the IBM PC/AT and the Intel 286/310 supermicro
+running XENIX.  The PC/AT is running Microsoft XENIX Release 3 and
+the 310 is running Intel XENIX Release 3, which is derived from the
+Microsoft Version.  Since the machines were designed
+separately and for different market segments, there are a number of minor
+differences despite the derivation of the software from the same source.
+These differences strengthen and clarify the positioning of the two
+machines for its particular market segment.
+.AE
+.SH
+Ergonomics
+.PP
+The IBM PC/AT was introduced as a high-end single user machine.  As such, it is
+tailored for the end user.  The 286/310 is tuned to be a box capable of
+8-12 user operation and is aimed at the OEM market.  We begin to see the
+difference immediately in the design of the external aesthetics of the
+hardware and manuals.  The PC/AT has an attractive grey and white exterior
+with less imposing visual contrasts than the 310's yellow and black exterior.
+It is a quiet box, without the 310's fan noise, and the manuals are
+attractively packaged and down-sized to look less formidable.
+.PP
+On the other hand, the keyboard and display which come with the PC/AT are
+less well done.  Although the display is capable of color, the text is
+displayed as bluish-white characters on a grey background, which results in
+poor contrast.  The keyboard's tactile feedback feels like the keys are
+crumbling when struck.  Tastes in displays and keyboards vary widely,
+and since the 310 does not come with keyboard or display, one can pick
+one with the right appeal.
+.SH
+General Issues
+.PP
+Let's begin to look at hardware and software issues which might affect
+both OEM customers and end users.
+.PP
+First off, the winchester on the PC/AT I was using is extremely unreliable.
+After running comprehensive diagnostic and repair software the disk finally
+appeared free of bad blocks, only to have a few more appear a few hours later.
+It appears to be somewhat normal for marginal blocks to test OK during
+diagnostics, then fail when the user puts data on them.  The PC/AT does not
+cope with this well.  The approach is to scan the disk during installation
+and use every block that appears good during that scan.  The Intel practice
+of placing a list of marginal or bad sectors on the drive itself seems much
+better at avoiding problems with bad blocks.
+.PP
+The PC/AT has two 5.256" floppy disk drives.  These floppy drives are capable
+of operating in 48tpi or 96tpi mode and have a very high density format which
+allows them to store as much information as an 8" drive on an Intel machine.
+The purchase of a 311 with Archive tape for the 310 system gives more
+removable storage capacity, but at increased cost.
+.PP
+One hardware feature of the PC/AT does not seem to be used with PC/AT XENIX
+software.  The color monitor is used only in the black and white mode, and I
+could not get it to operate in color, even using the special device nodes
+provided for this.
+.PP
+There are a number of software features of interest when comparing the two
+systems.  These features are available or more fully developed on only one
+of the two systems.
+.PP
+Intel XENIX supports OpenNet, a separately purchased
+set of networking software, which supports transparent file access between
+XENIX systems and access to files on systems running MS-DOS and Intel's RMX
+operating system.
+.PP
+Intel XENIX also supports a set of interface routines (UDI) which allow
+applications to be developed to run under both XENIX and RMX.  These routines
+also support the implementation of overlays, allowing large tasks to reduce
+their run-time memory demands.
+.PP
+Intel has replaced Microsoft's printer spooling software with a more
+sophisticated facility similar to the software supplied with Berkeley
+4.2 UNIX.  This software supports multiple printers, improved configurability,
+and the ability to cancel print jobs.
+.PP
+Intel also provides software warranty service, which entitles the customer to
+regular (quarterly) update service and consultation with the Intel Customer
+Service Organization.
+.PP
+On the PC/AT side, IBM provides a `lockf' system call which Intel XENIX does
+not currently provide.  This system call provides a mechanism for file locking,
+which is also provided by the `locking' system call present on both systems.
+.PP
+The PC/AT provides a command to provide on-line reference material to XENIX
+users, which is not currently available with Intel XENIX.  They do not,
+however, provide any such reference materials, which limits the command's
+usefulness.
+.PP
+Both Intel and PC/AT XENIX provide support for MS-DOS file transfer.  In
+addition, the PC/AT provides cross development in the form of compiler,
+linker, and library options to generate MS-DOS executables.  Intel XENIX
+currently does not provide the large model library or the MS-DOS cross
+development linker.
+.PP
+I need to verify whether nroff and troff are improved on the PC/AT.
+.SH
+OEM Specific Issues
+.PP
+OEM users will look at two major issues more carefully then the end user.
+The first issue is the adaptability of the software to different hardware, to
+allow flexibility for different peripherals as well as to allow component
+and board designs.  Intel XENIX comes out ahead in I/O flexibility by providing
+more drivers with the XENIX product, and providing a great deal of flexibility
+within each driver.  For example, the disk driver supplied with PC/AT XENIX
+allows for various partitioning schemes on the 20 megabyte hard disk.  The
+Intel driver not only allows configuration of partitioning, but also drive
+characteristics, allowing the OEM to configure a number of drives of various
+types.
+.PP
+What should I say about the binary adaptation kit?  They arrange sys/conf to
+match the kit.
+.PP
+The PC/AT uses a CMOS memory to store a feature bitmap, allowing software to
+check for the existance of various IBM peripheral cards.
+.PP
+Another class of OEM customers look at issues relaing to the ease of software
+development.  There are a number of details which differentiate the 310 and
+the PC/AT.
+.PP
+First, the Intel version of the `vi' text editor has been modified to allow
+editing of files up to 200K bytes, as compared to approximately 45K bytes
+for `vi' on the PC/AT.  This affects the editing of source files, which often
+exceed 45K.
+.PP
+Another issue is the shared data system calls.  Intel has done significant
+work to make the shared data system calls much more reliable.  A compatibility
+nit crops up in the shared data area.  Microsoft engineering specs show the
+file sd.h in /usr/include/sys, and Intel complies with these specs.  However,
+the manuals refer to this file in the directory /usr/inclde, and the PC/AT 
+places it there.
+.PP
+The version of the `adb' debugger supplied with the PC/AT has improved single
+stepping and tracing capabilities.
+.PP
+The PC/AT also provides a utility to examine C source code and determine the
+amount of stack usage for each subroutine.  However, it is not possible to
+analyze the calling sequences which will occur when the program is run in
+order to use this information to advantage.
+.SH
+End User Features
+.PP
+Since IBM emphasises the end user, at look at end-user features should
+naturally be somewhat biased toward the PA/AT, and this is indeed the
+case.
+.PP
+The PC/AT comes with a keyboard and a display.  As a result, the user does
+not have to configure the system for a new terminal type -- the PC/AT comes
+configured for the monitor that comes with it.  The PC/AT also supplies a
+`setkey' utility which configures the function keys on the keyboard and an
+keyswitch which diables the keyboard.  Again, this is possible for them,
+since the `terminal type' is fixed.
+.PP
+One nice feature of the PC/AT is the relatively quick installation.  The PC/AT
+XENIX software comes in three sets of diskettes -- the basic system, text
+processing software, and the development software.  Because of the large
+capacity of each floppy, the total number of diskettes is 8, as opposed to
+our 24 diskettes, and each diskette reads in approximately the same time
+as for the 310 system.
+.PP
+Since the PC/AT hardware configuration is fairly well determined, a very
+simple Interactive Configuration Utility suffices to configure the disk,
+line printer, and timezone for the PC/AT.  The 310 supports much more
+sophisticated variations in the hardware, and the greater complexity of
+the configuration task has delayed the introduction of an ICU for Intel
+XENIX.
+.PP
+The PC/AT has a battery powered real time clock, allowing it to keep track
+of the time even when powered down.  This removes the need to tell the system
+the time when the sytem is brought up.
+.PP
+The next release of XENIX will rename the `cwcheck', `eqncheck', and `mmcheck'
+utilities to `checkcw', `checkeq', and `mmcheck', respectively.  This will
+call the utilities by the System 5 names and is a small part of System 5
+compatibility.  The PC/AT currently allows these utilities to be used by either
+name.
+.PP
+The PC/AT allows the user to control the set of programs which can be executed
+over the UUCP network.  Intel XENIX currently limits the set of commands to
+a small set of commands known not to be a security problem when executed
+remotely.  The PC/AT allows the flexibility of the network to be expanded,
+leaving it to the user to control the security risks. 
+.PP
+The PC/AT provides a `news' utility which displays messages from the system
+administrator to users of the system.  The usefulness of this on a single user
+system seems limited.
+.PP
+Both PC/AT XENIX and Intel XENIX allow users to format diskettes.  The PC/AT
+places the format utility in the /bin directory, making it availiable
+transparently to all users.  Intel XENIX requires the user to invoke the
+formatting utility explicitly from the directory /etc.
+.PP
+Intel XENIX does provide some end user features not provided by the PC/AT.
+Intel XENIX provides the `edit' and `view' utilities, which edit and view
+files and complement the other utilities for this purpose.
+.PP
+Intel XENIX provides the `l' and `lf' commands, which provide directory
+listings which contain more information than the default.  The `ls' and `lc'
+commands present on both systems will provide this information, but the
+user must request it as an option.
+.PP
+Intel XENIX provides two utilities which allow a program developer to
+manipulate executable files.  The `fixbin' utility allows certain conversions
+from one executable format to another, and the `fixhdr' utility allows
+parameters such as the size of the stack to be altered without recompilation.
