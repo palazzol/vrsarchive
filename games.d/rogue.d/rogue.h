@@ -145,7 +145,7 @@
 #define ISHUH	0001000		/* creature is confused */
 #define ISINVIS	0002000		/* creature is invisible */
 #define ISMEAN	0004000		/* creature can wake when player enters room */
-#define ISTRIP	0004000		/* hero is on acid trip */
+#define ISTRIPY	0004000		/* hero is on acid trip */
 #define ISREGEN	0010000		/* creature can regenerate */
 #define ISRUN	0020000		/* creature is running at the player */
 #define SEEMONST 040000		/* hero can detect unseen monsters */
@@ -447,13 +447,6 @@ THING	*find_mons(), *find_obj(), *get_item(), *new_item(),
 struct room	*roomin();
 
 #include "extern.h"
-
-#ifdef SYSIII
-#define USG
-#endif
-#ifdef SYS5
-#define USG
-#endif
 
 static DISTANCE(y1, x1, y2, x2)
 { return((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
