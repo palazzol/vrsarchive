@@ -2,6 +2,7 @@
  * %W% %G%
  * Display state of coremap area in kernel.
 */
+#ifdef M_XENIX
 #include <sys/param.h>
 #include <sys/var.h>
 #include <sys/map.h>
@@ -153,3 +154,8 @@ char *argv[];
   }
   exit(status);
 }
+#else /*M_XENIX*/
+main()
+{ printf("Not ported yet\n");
+}
+#endif /*M_XENIX*/
