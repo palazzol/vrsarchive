@@ -1,0 +1,6 @@
+.so /usr/lib/tmac/tmac.s
+.if n .nr PO 1i
+.nr LL 5.5i
+.nr HM 2i
+.nr PS 12
+.ps 12
