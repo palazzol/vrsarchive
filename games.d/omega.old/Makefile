@@ -23,11 +23,15 @@ $(OMEGALIB):
 	chmod 755 $@
 
 install: $(ALL) $(AUXFILES) $(GAMDIR) $(GAMLIB) $(OMEGALIB)
-	cp $(ALL) $(BINDIR)
-	cd $(BINDIR); chmod 711 $(ALL)
-	cp $(AUXFILES) $(GAMLIB)
-	cp /dev/null $(GAMLIB)/omega.saves
-	chmod 666 $(WRITEABLEFILES)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
+	cp $(AUXFILES) $(OMEGALIB)
+	touch $(OMEGALIB)/omega.saves
+	chmod 666 $(RW)
+
+deinstall: $(GAMDIR) $(GAMLIB) $(OMEGALIB)
+	cd $(GAMDIR); rm -f $(ALL)
+	cd $(OMEGALIB); rm -f $(AUXFILES) omega.saves
 
 clean:
 	rm -f $(OBJ) $(ALL)
