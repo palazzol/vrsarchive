@@ -88,7 +88,7 @@ void
 mkartifact(otmp1)
 struct obj **otmp1;
 {
-	register struct artifact *artif;
+	register const struct artifact *artif;
 	register struct obj *otmp = *otmp1;
 	register int n = 0;
 
@@ -106,11 +106,11 @@ struct obj **otmp1;
 	}
 }
 
-static struct artifact *
+static const struct artifact *
 get_artifact(otmp)
 struct obj *otmp;
 {
-	register struct artifact *artif;
+	register const struct artifact *artif;
 
 	if(otmp)
 	    if(strlen(ONAME(otmp)))
@@ -132,7 +132,7 @@ spec_ability(otmp, abil)
 struct obj *otmp;
 unsigned abil;
 {
-	struct artifact *arti = get_artifact(otmp);
+	const struct artifact *arti = get_artifact(otmp);
 	
 	return(arti && (arti->spfx & abil));
 }
@@ -142,7 +142,7 @@ restr_name(otmp, name)	/* returns 1 if name is restricted for otmp->otyp */
 register struct obj *otmp;
 register char	*name;
 {
-	register struct artifact *artif;
+	register const struct artifact *artif;
 
 	if(!strlen(name)) return(0);
 
@@ -159,7 +159,7 @@ struct obj *
 mk_aligned_artifact(align)
 int align;
 {
-	register struct artifact *artif;
+	register const struct artifact *artif;
 	register struct obj *otmp;
 	register int n = 0;
 
@@ -187,7 +187,7 @@ defends(adtyp, otmp)
 register int adtyp;
 register struct obj *otmp;
 {
-	register struct artifact *weap;
+	register const struct artifact *weap;
 
 	if(weap = get_artifact(otmp))
 		return(weap->defn.adtyp == adtyp);
@@ -239,7 +239,7 @@ spec_abon(otmp, ptr)
 struct obj *otmp;
 struct permonst *ptr;
 {
-	register struct artifact *weap;
+	register const struct artifact *weap;
 
 	if((weap = get_artifact(otmp)))
 		if(spec_applies(weap, ptr))
@@ -253,7 +253,7 @@ register struct obj *otmp;
 register struct permonst *ptr;
 register int	tmp;
 {
-	register struct artifact *weap;
+	register const struct artifact *weap;
 
 	if((weap = get_artifact(otmp)))
 		if(spec_applies(weap, ptr))
