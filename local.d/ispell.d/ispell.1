@@ -1,0 +1,280 @@
+.\" -*- Mode:Text -*-
+.\"
+.TH ISPELL local MIT
+.SH NAME
+ispell \- Correct spelling for a file
+.br
+munchlist \- Combine suffixes in a spelling list
+.SH SYNOPSIS
+.B ispell
+[
+.B \-x
+|
+.B \-d
+file |
+.B \-p
+file |
+.B \-w
+chars ] file .....
+.br
+.B ispell
+[
+.B \-d
+file |
+.B \-p
+file |
+.B \-w
+chars ]
+.B \-l
+.br
+.B ispell
+[
+.B \-d
+file |
+.B \-p
+file
+]
+.B \-a
+.br
+.B ispell
+[
+.B \-d
+file |
+.B \-p
+file |
+.B \-w
+chars ]
+.B \-c
+.br
+.B munchlist
+[
+.B \-d
+file |
+.B \-e
+|
+.B \-w
+chars ]
+[ files ]
+.SH DESCRIPTION
+.PP
+.I Ispell
+is fashioned after the
+.I spell
+program from ITS (called
+.I ispell
+on Twenex systems.)  The most common usage is "ispell filename".  In this
+case,
+.I ispell
+will display each word which does not appear in the dictionary, and
+allow you to change it.  If there are "near misses" in the dictionary
+(words which differ by only a single letter, a missing or extra letter,
+or a pair of transposed letters), then they are also displayed.  If you
+think the word is correct as it stands, you can type either "Space" to
+accept it this one time, or "I" to accept it and put it in your private
+dictionary.  If one of the near misses is the word you want, type the
+corresponding number.  Finally, if none of these choices is right, you
+can type "R" and you will be prompted for a replacement word.
+If you want to see a list of words that might be close using wildcard
+characters, type "L" to lookup a word in the system dictionary.
+.PP
+When a misspelled word is found, it is printed at the top of the screen.
+Any near misses will be printed on the following lines, and finally, two
+lines containing the word are printed at the bottom of the screen.  If
+your terminal can type in reverse video, the word itself is highlighted.
+.PP
+The
+.B \-l
+or "list" option to
+.I ispell
+is used to produce a list of misspelled words from the standard input.
+.PP
+The
+.B \-a
+is intended to be used from other programs through a pipe.  In this
+mode,
+.I ispell
+expects the standard input to consist of single words.  Each word is
+read, and a single line is written to the standard output.  If the word
+was found in the main dictionary, or your personal dictionary, then the
+line contains only a '*'.  If the word was found through suffix removal,
+then the line contains a '+', a space, and the root word.  If the word
+is not in the dictionary, but there are near misses, then the line
+contains an '&', a space, and a list of the near misses separated by
+spaces.  Also, each near miss is capitalized the same as the input
+words.  Finally, if the word neither appears in the dictionary, and
+there are no near misses, then the line contains only a '#'.  This mode
+is also suitable for interactive use when you want to figure out the
+spelling of a single word.  (These characters are the same as the codes
+that the real spell program uses.)
+.PP
+The
+.B \-x
+option causes
+.I ispell
+to remove the .bak file that it normally leaves.  The .bak file contains
+the pre-corrected text.  If there are file opening / writing errors,
+the .bak file may be left for recovery purposes even with the -x option.
+.PP
+The
+.B \-d
+option is used to specify an alternate hashed dictionary file,
+other than the default.  If the filename does not begin with a "/",
+the library directory for the default dictionary file is prefixed.
+This is useful to allow dictionaries which prefer alternate british
+spellings ("centre", "tyre", etc), or add lists of special-purpose
+jargon and acronyms for subclasses of documents.  There are some shortcomings
+in attempting to provide foreign-language dictionaries, but something
+like "-dfrench" could be made to work somewhat.
+The
+.B \-d
+option may specify
+.IR /dev/null ,
+in which case the dictionary is limited to the personal one.
+This may be useful for certain private dictionaries.
+.PP
+The
+.B \-p
+option is used to specify an alternate personal dictionary file.
+If the file name does not begin with "/", $HOME is prefixed.  Also, the
+shell variable WORDLIST may be set, which renames the personal dictionary
+in the same manner.  The command line overrides WORDLIST setting.  If
+neither is present "ispell.words" is used.
+.PP
+The
+.B \-w
+option may be used to specify characters other than alphabetics
+which may also appear in words.  For instance,
+.B \-w
+"&" will allow "AT&T"
+to be picked up.  Underscores are useful in many technical documents.
+There is an admittedly crude provision in this option for 8-bit international
+characters.  If "n" appears in the character string, the three characters
+following are a DECIMAL code 0 - 255, for the character.  There must be
+three decimal characters in all cases, so you have to prepend with 0's,
+for instance, to include bells and formfeeds in your words (an admittedly
+silly thing to do, but aren't most pedagogical examples):
+.PP
+n007n012
+.PP
+Numeric digits other than the three following "n" are simply numeric
+characters.  Use of "n" does not conflict with anything because actual
+alphabetics have no meaning - alphabetics are already accepted.
+.I Ispell
+will typically be used with input from a file, meaning that preserving
+parity for possible 8 bit characters from the input text is OK.  If you
+specify the -l option, and actually type text from the terminal, this may
+create problems if your stty settings preserve parity.
+.PP
+The
+.B \-c
+option is primarily intended for use by the
+.I munchlist
+shell script.
+In this mode, a list of words is read from the standard input.
+For each word, a list of possible root words and suffixes will be
+written to the standard output.
+Some of the root words will be illegal and must be filtered from the
+output by other means;
+the
+.I munchlist
+script does this.
+As an example, the command "echo BOTHER | ispell -c" produces:
+.PP
+.RS
+.nf
+BOTH
+BOTHE/R
+BOTH/R
+.fi
+.RE
+.PP
+The
+.I munchlist
+shell script is used to reduce the size of dictionary files,
+primarily personal dictionary files.
+It is also capable of combining dictionaries from various sources.
+The given
+.I files
+are read (standard input if no arguments are given),
+reduced to a minimal set of roots and suffixes that will match the
+same list of words, and written to standard output.
+.PP
+Normally, words that are in the default dictionary are removed by
+.I munchlist
+during processing.
+If the list is to be used with a different dictionary, the
+.B \-d
+option can be used to specify an alternate (hashed) dictionary file
+containing words to be removed from the output list.
+If a dictionary file of
+.I /dev/null
+is specified, no words will be removed from the output;
+this is useful when munching the primary dictionary file.
+.PP
+The
+.B \-w
+option is passed on to
+.IR ispell .
+The
+.B \-e
+("efficient") option causes the script to use a slower algorithm that uses
+somewhat less space in TMPDIR (normally
+.IR /usr/tmp ")."
+.PP
+It is possible to install
+.I ispell
+in such a way as to only support ASCII range text if desired.
+.SH DEFAULT FILES
+/usr/public/lib/ispell.hash
+.br
+/usr/dict/web2		for the Lookup function
+.br
+$HOME/ispell.words	user's private dictionary
+.br
+/usr/public/lib/expand[12].sed		sed scripts for expanding suffixes
+.SH SEE ALSO
+spell(1), egrep(1), look(1)
+.SH BUGS
+It takes about five seconds for
+.I ispell
+to read in the hash table.
+.sp
+Perhaps more than ten choices should be allowed for near misses.
+.sp
+The hash table is stored as a quarter-megabyte array, so a PDP-11
+version does not seem likely.
+.sp
+.I Ispell
+should understand more
+.I troff
+syntax, and deal more intelligently with contractions.
+.sp
+While alternate dictionaries for foreign languages could be defined, and
+the international characters included in words, rules concerning
+word endings / pluralization accommodate english only.
+.sp
+.I Munchlist
+is very slow, and requires tremendous amounts of temporary file space for
+large dictionaries.
+It does respect the TMPDIR environment variable, so this space can be
+redirected.
+However, a lot of the temporary space it needs is for sorting, so TMPDIR
+is only a partial help on systems with an uncooperative
+.IR sort (1).
+As a benchmark, the 15000-word
+.I dict.191
+takes about 1200 blocks in TMPDIR, and 2000 in
+.IR sort "'s"
+temporary directories.
+On a 68000 workstation, it runs for the better part of an hour.
+Munching
+.I dict.191
+with
+.I /usr/dict/words
+(28000 words output)
+took another 1500 blocks or so, and ran for about three hours.
+.SH AUTHOR
+Pace Willisson (pace@mit-vax)
+.br
+Enhanced by James Woods, Bob McQueer, Bill Randle, Marc Ries, Rob McMahon,
+and Geoff Kuenning.

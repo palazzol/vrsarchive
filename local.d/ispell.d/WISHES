@@ -1,0 +1,22 @@
+Things remaining to be done to ispell:
+
+	- The single biggest remaining deficiency (in my opinion) is the
+	  extensive misuse of 'strlen'.  Strlen is often called repeatedly
+	  on the same string within a few lines of code.  Worse, many
+	  routines accept a "length" parameter (which is usually passed
+	  by running 'strlen' within the arglist) but ignore it and
+	  actually require the string to be null-terminated.  Somebody
+	  should do a systematic edit and clean this up.  I wouldn't
+	  be surprised to learn that ispell spends 50% of its time in
+	  strlen.
+	- The "munchlist" script can actually increase the size of a
+	  dictionary.  For example, munching dict.191 (after my bugfixes
+	  to it) reduced the number of words by about 40, but increased
+	  the number of characters by a small percentage.  This is
+	  because munchlist doesn't recognize duplicate suffixes that
+	  generate the same result, except for the three special
+	  "s-ending" suffixes J, Z, and X.  For example, right now
+	  munchlist will make BATHER by adding the R suffix to both
+	  BATH and BATHE.  It would be nice if munchlist could recognize
+	  the redundancy and reduce its output so that each word was made
+	  in only one way.
