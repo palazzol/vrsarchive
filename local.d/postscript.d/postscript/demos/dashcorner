@@ -1,0 +1,3 @@
+[10 90] 5 setdash 30 setlinewidth
+newpath 0 0 moveto 100 0 lineto 100 100 lineto 0 100 lineto closepath stroke
+showpage

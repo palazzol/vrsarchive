@@ -1,0 +1,48 @@
+%!
+70 9.3 72 mul translate
+
+/basic 18 def
+
+/large /Times-Roman findfont basic 2 mul scalefont def
+/normal /Times-Roman findfont basic scalefont def
+/italic /Times-Italic findfont basic scalefont def
+
+/down { 0 basic neg rmoveto } def
+
+/p { normal setfont show } def
+/i { italic setfont show } def
+/d { italic setfont 72 0 rmoveto (Death.) show } def
+/n { currentpoint exch pop 0 exch moveto down } def
+
+0 0 moveto
+down down down
+
+(Examination at the Womb-Door) large setfont show down n
+
+(Who owns these scrawny little feet?) p d n
+(Who owns this bristly scorched-looking face?) p d n
+(Who owns these still-working lungs?) p d n
+(Who owns this utility coat of muscles?) p d n
+(Who owns these unspeakable guts?) p d n
+(Who owns these questionable brains?) p d n
+(All this messy blood?) p d n
+(These minimum-efficiency eyes?) p d n
+(This wicked little tongue?) p d n
+(This occasional wakefulness?) p d n
+ n
+(Given, stolen or held pending trial?) p n
+(Held.) i n
+ n
+(Who owns the whole rainy, stony earth?) p d n
+(Who owns all of space?) p d n
+n
+(Who is stronger than hope?) p d n
+(Who is stronger than the will?) p d n
+(Stronger than love?) p d n
+(Stronger than life?) p d n
+n
+/but (But who is stronger than death?) def but p n
+but stringwidth rmoveto (Me, evidently.) i n
+n
+(Pass, Crow.) p n
+showpage

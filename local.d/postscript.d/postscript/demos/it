@@ -1,0 +1,13 @@
+%!
+300 300 translate 0 setgray
+12 {
+	0 0 moveto 200 0 rlineto 0 200 rlineto -200 0 rlineto closepath
+	25 25 moveto 0 150 rlineto 150 0 rlineto 0 -150 rlineto closepath
+	125 100 moveto 100 100 25 0 360 arc closepath
+	gsave fill grestore
+	currentgray
+		0 setgray stroke
+	1 12 div add setgray
+	30 rotate
+} repeat
+showpage

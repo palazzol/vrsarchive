@@ -1,0 +1,32 @@
+%!
+save
+100 setflat
+/Courier findfont 400 scalefont setfont
+
+300 0 translate 90 rotate
+
+/track { dup
+	0 0 moveto false charpath 30 setlinewidth strokepath
+	0 setgray 5 setlinewidth stroke
+	0 0 moveto false charpath 30 setlinewidth strokepath
+	.3 setgray 2.5 setlinewidth stroke
+} def
+
+6 array currentmatrix
+
+(G) track (G) stringwidth translate
+(K) track (K) stringwidth translate
+(S) track (S) stringwidth translate
+
+setmatrix
+
+/rude (Eat your heart out!) def
+
+/Times-Roman findfont 100 scalefont setfont
+
+.3 setgray
+
+clippath pathbbox pop exch pop exch sub rude stringwidth pop sub 2 div -150 moveto rude show
+
+showpage
+restore

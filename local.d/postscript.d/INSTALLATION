@@ -1,0 +1,51 @@
+
+Note that is necessary to run a shell with job-control (e.g. csh) on
+the sun3 version when using PS, because of process-group problems with
+suntools. It is also difficult to alter the window shape when PS is
+doing output on suns. If the postscript/viewer pair are used, these
+problems are not encountered, but it runs more slowly.
+
+To try it out, type the following:
+	$ POSTSCRIPTLIB=<where ever the postscript directory is>/postscript
+	$ export POSTSCRIPTLIB
+	$ PS -c 'A4 (demos/wow) lib run'
+	$ 
+
+The "showpage" operator expects a carriage return before it erases the
+page and allows output to continue (or in this case for PS to
+terminate).  More generally, use:
+
+	$ PS -c A4 [ files .... ]
+	$ 
+
+The A4 command is shorthand for a framedevice command (see the
+postscript reference manual) to create an A4 sized window. It is
+supposed to be actual size, except on suns, where the screen is not big
+enough (!)
+
+It also works on the perq, but much more slowly.
+
+If PostScript is not to be fully installed, the environment variable
+POSTSCRIPTLIB may be set to the pathname of /usr/lib/postscript.
+Alternatively, config.c has a variable called default_library[], which
+may be changed to point somewhere else.
+	
+The tape contains:
+
+INSTALLATION	 which you are reading
+
+source		- complete sources
+
+postscript	- various files the interpreter needs to run.
+	  /font		- font descriptors
+	  /fonts	- font data
+		  hershey fonts (yuk) all we have available at present,
+		  however there are instructions on how to add fonts in
+		  the file "adding-fonts".
+	  /psrc		- initialisation file ('rc' file).
+	  /cache	- disk cache of popular font sizes
+	  /font-map	- mapping from postscript names to names in font
+	  /demos - demos programs other than those in the cookbook
+
+doc   - documents of interest to people installing postscript, particularly
+	postscript.1	- manual entry for postscript

@@ -1,0 +1,21 @@
+This is a virtually complete implementation of PostScript.  Just type
+make and it should produce a version for suns.  Since the only complete
+driver is for suns and since some driver writing will be necessary on
+any other machine, I have not packaged everything up in an idiot-proof
+box.  I am not aware of any Gotchas in building this source.  The X
+driver used to work on X10 - It will need work for X11.  The pixrect
+driver is very new, and should be regarded as didactic, as it scribbles
+straight onto the display.  Persuading suntools to look after the bits
+would have taken too long.
+
+Writing your own driver involves merely hacking pixrect.c until it will
+drive your display.  There are only 11 routines to write, and they're
+all quite short.
+
+Have fun!
+
+- Crispin Goswell
+
+caag@uk.ac.rl.vd
+caag@vd.rl.ac.uk
+...!mcvax!ukc!rlvd!caag

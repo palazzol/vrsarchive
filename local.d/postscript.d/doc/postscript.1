@@ -1,0 +1,228 @@
+.na
+.TH POSTSCRIPT 1 Rutherford
+.SH NAME
+postscript \- PostScript interpreter
+.SH SYNOPSIS
+.B
+PS [ -isc - ] files . . .
+.br
+postscript [ -isc - ] files . . .
+.br
+viewer
+.SH DESCRIPTION
+.I PS
+is an interpreter for the PostScript language.
+The language is intended for driving laser printers, but this
+implementation is for previewing graphics on a suitable device or
+for more general programming.
+.PP
+The implementation conforms to the PostScript Language Manual as
+closely as possible.
+.PP
+.I Postscript
+is a version of the interpreter which will talk through a pair of pipes to
+a viewer program, possibly running on a different machine.
+.PP
+.I Postscript looks for the environment variable POSTSCRIPTDEVICE, which may contain
+the name of
+a two-way device or a command with a vertical bar at the front.
+This is ``|viewer'' by default, and may be something like ``|rsh workstation viewer''.
+.I Postscript
+may be run on a compute server with no display, and
+.I viewer
+on a workstation.
+.PP
+To create a window of A4 size, the A4 command may be used.
+If this is specified on the command line (e.g. ``PS -c A4''), postscript will not bother to
+read its standard input unless told to do so with ``-''.
+.SH INVOCATION
+When
+.I postscript
+starts up it performs the following actions:
+.PP
+It reads a number of definitions from a standard library file.
+This file is
+.I psrc
+in the directory given as the environment variable
+.I POSTSCRIPTLIB
+(defaults to
+.IR /usr/lib/postscript ).
+This contains definitions which are part of the PostScript language
+and can be defined in PostScript.
+In particular, it reads a procedure called
+.B executive
+which is the top level interpreter used when
+.I postscript
+is running interactively.
+.PP
+Next it reads a file called
+.I .postscript
+from the users HOME directory.
+This may contain any useful startup routines that are always wanted.
+.PP
+Next any arguments are processed off the command line.
+These can be a mixture of options and files, and are executed in order.
+The options are as follows:
+.IP -c
+Causes the next argument to be treated as an executable postscript string.
+.IP -i
+Causes postscript to behave as if its standard input is a terminal,
+even if it isn't.
+This involves executing the
+.B executive
+definition from the library.
+If this is absent and the standard input is not a terminal and there are
+no files or
+-c options on the command line, the standard input will be treated as an
+ordinary file.
+.IP -s
+Causes the standard input to be read, even if there are files or commands
+on the command line.
+.IP -
+Same as -s.
+.SH CACHING
+.PP
+This implementation does caching of fonts to disk.
+Once a font has been selected and used,
+.B savecurrentfont
+may be used (without any arguments) to save the current font into the
+disk cache.
+It saves only those glyphs which have been cached so far, and will fail
+if the
+.I cache
+directory does not contain sub-directories matching the relevant
+files in the
+.I font
+directory.
+.PP
+Loading from the disk cache is automatic - the system is tolerant about
+absent cached fonts, and simply reads the whole font specification instead.
+The intention is that the system should be lazy, so that it doesn't do work
+unnecessarily.
+.SH FONT MAPPING
+.PP
+Most installations will have a number of fonts which they may wish to use.
+Most
+.Ps
+files will contain font names such as ``Times-Roman'' which are
+inconvenient to change.
+.Ps
+thus contains a dictionary in which name pairs can be placed.
+This dictionary called
+.B FontMap
+is searched when a font is chosen and the font name is replaced by the value
+associated with its dictionary entry if one is present;
+otherwise the name is not changed.
+The reason for this is that a previewer gives only an approximation, so it is sometimes useful
+to use differing fonts, even if the widths are slightly wrong.
+.PP
+Also, during startup, a file called
+.B font-map
+in the
+.Ps
+library gets
+.B run.
+This is assumed to contain default mappings, and may typically be empty.
+.SH NEW OPERATORS
+.PP
+A number of non-standard operators have been added to this version of
+the interpreter.
+.PP
+.B savecurrentfont
+has been described already.
+.PP
+.B setstrokemethod
+and
+.B currentstrokemethod
+allow thin strokes to be done with line drawing rather than the area fill used for
+other lines.
+The option is an integer.
+.B 0
+turns off this feature,
+.B 1
+turns it on and is the default.
+.PP
+.B A4
+and
+.B A5
+generate new windows of the suggested sizes.
+The old window is deleted unless it is being held in a gsave context.
+.SH ASSUMPTIONS
+There are a number of Assumptions that have been made in the
+absence of more specific documentation.
+.IP
+That Integer and Real values are only equivalent mathematically,
+and are normally
+distinct except where specified in the manual.
+The manual requires equivalence in the following places:
+.RS
+.IP
+The arguments of the arithmetic and mathematical operators.
+.IP
+The arguments of the relational operators (including
+.B eq
+and
+.BR ne ).
+.RE
+.IP	
+In particular integers and reals are distinguished as dictionary keys.
+.IP
+That
+.B cvrs
+is not expected to convert reals to any base.
+.IP
+That the output from
+.B ==
+and
+.B pstack
+can look however we want them to.
+.IP
+That %stdout and %stderr should not ever be closed - the manual is specific
+about %stdin, but not the other two.
+.IP
+That
+.B stop
+can exit a
+.B run
+context.
+.IP
+That 
+.B flushfile
+should close an input stream.
+.B Read
+will close its file if it reads nothing,
+but the manual doesn't say whether other operators should.
+It is assumed so.
+.IP
+That access restrictions on files are implemented using the
+access restrictions on objects.
+.SH FILES
+\&~/.postscript \- profile command source
+.br
+$POSTSCRIPTLIB/psrc \- library of postscript material.
+$POSTSCRIPTLIB/font-map \- library of postscript material.
+.PP
+The
+.I POSTSCRIPTLIB
+directory may contain:
+.IP psrc
+The POSTSCRIPT initialisation library.
+.IP font
+a directory containing font headers, which are executable POSTSCRIPT describing how to load
+fonts.
+.IP fonts
+a directory containing font information.
+.IP font-map
+a file containing default font name mappings.
+.IP cache
+a directory containing a corresponding set of cached fonts.
+.SH SEE ALSO
+.I The PostScript Language Manual,
+.I Adobe Systems Incorporated, 1984.
+.SH AUTHOR
+Crispin Goswell.
+Tony Williams provided important guidance.
+.SH BUGS
+No ``virtual memory'' \- dummy operators which do a gsave and grestore and provided.
+.PP
+No access protection, the operators are there, but they don't protect anything.

@@ -1,0 +1,485 @@
+/executive {
+	{
+		{ (\n) print
+			prompt flush (%statementedit) (r) file
+			dup status not {(\n) print quit} if
+			cvx exec } stopped
+		{ (stopped\n) print } if
+	} loop
+ } def
+
+/bind {} def
+
+/save { gsave /save } def
+/restore { grestore pop } def
+/raise { errordict exch get exec } def
+
+/beep ( ) dup 0 7 put def
+/stdin (%stdin) (r) file def
+
+/imagedict 11 dict def
+
+/imagemask { % width height invert matrix proc
+	imagedict begin
+		/p exch def /m exch def /i exch def /h exch def /w exch def
+		
+		/offset 0 def
+		/l1 h w 7 add 8 idiv mul offset add def
+		/s1 l1 string def
+		{
+			/s2 p def
+			/l2 s2 length def
+			l2 0 eq { exit } if
+			s1 offset s2 putinterval
+			/offset offset l2 add def
+			offset l1 gt { end rangecheck raise } if
+			offset l1 eq { exit } if
+		} loop
+		w h i m s1
+	end
+	realimagemask
+} def
+
+/image { % width height depth matrix proc
+	imagedict begin
+		/p exch def /m exch def /d exch def /h exch def /w exch def
+		
+		/offset 0 def
+		/l1 h w d mul 7 add 8 idiv mul offset add def
+		/s1 l1 string def
+		{
+			/s2 p def
+			/l2 s2 length def
+			l2 0 eq { exit } if
+			s1 offset s2 putinterval
+			/offset offset l2 add def
+			offset l1 gt { end rangecheck raise } if
+			offset l1 eq { exit } if
+		} loop
+		w h d m s1
+	end
+	realimage
+} def
+
+/tty (%terminal) (r) file def
+%/tty (|cat -u </dev/tty) (r) file def
+
+/showpage {
+	copypage initgraphics
+	beep print flush
+	false echo
+	{ tty read { pop } if } stopped
+	true echo
+	not {
+		erasepage
+	} if
+} def
+
+/run { { (r) file } stopped { pop stop } if cvx exec } def
+/prompt { (PS>) print } def
+
+/= {
+	dup type /stringtype ne { 30 string cvs } if
+	print (\n) print
+} def
+
+/stack {
+	count dup
+	1 add copy
+	{=} repeat pop
+} def
+
+/pstack {
+	count dup
+	1 add copy array astore
+	{== ( ) print} forall
+	pop
+} def
+
+/showdict 10 dict def
+
+/.show {
+	showdict begin gsave
+	currentpoint translate
+	currentfont dup /FontMatrix get concat
+		dup /BuildChar get	% string font buildchar
+		1 index /FontBBox get	% string font buildchar bbox
+		aload pop	% string font buildchar lx ly hx hy
+		3 -1 roll sub /height exch def
+			% string font buildchar lx hx
+		exch sub /width exch def
+	3 -1 roll % font buildchar string
+	{
+		{ % font buildchar char
+			width 0 setcharwidth
+			3 copy exch exec
+			.adjust
+		} forall
+	} stopped
+	0 0 transform grestore itransform moveto end
+	{ stop } if
+} def
+
+/kshow {
+	showdict begin /p exch def
+		dup length 0 ne {
+			dup 0 get /last exch def
+			dup 0 1 getinterval show
+			dup length 1 sub 1 exch getinterval {
+				last exch dup /last exch def
+				/p load exec
+			} forall
+		} if
+	end
+} def
+
+/stringwidth {
+	gsave
+		matrix currentmatrix nulldevice setmatrix
+		0 0 moveto
+		show
+		currentpoint
+	grestore
+} def
+
+/FontMap 20 dict def
+
+/lib { % name
+	dup length Library length add 1 add string % name s
+	dup 0 Library putinterval % name s
+	dup Library length (/) putinterval % name s
+	exch 1 index exch % s s name
+	Library length 1 add exch % s s l name
+	putinterval
+} def
+
+/findfontdict 10 dict def
+
+findfontdict /FFName 256 string put
+findfontdict /FFBuf 256 string put
+/font-library (font/) lib def
+
+/oldfindfont /findfont load def
+
+/findfont {
+	dup FontMap exch known {
+		FontMap exch get
+	} if
+	dup FontDirectory exch known
+	{
+		oldfindfont
+	} {
+		dup
+		findfontdict begin
+			FFBuf cvs /FFN exch def
+			FFName 0 font-library putinterval
+			FFName font-library length FFN putinterval
+			FFName 0 FFN length font-library length add getinterval
+				{ run } stopped { pop pop /Times-Roman } if
+		end
+		findfont
+	} ifelse
+} def
+
+
+/StandardEncoding
+[	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+	/numbersign /dollar /percent /ampersand /quoteright /parenleft
+	/parenright /asterisk /plus /comma /hyphen /period /slash /zero
+	/one /two /three /four /five /six /seven /eight /nine /colon
+	/semicolon /less /equal /greater /question /at /A /B /C /D /E /F
+	/G /H /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z
+	/bracketleft /backslash /bracketright /asciicircum /underscore
+	/quoteleft /a /b /c /d /e /f
+	/g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z
+	/braceleft /bar /braceright /asciitilde /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /exclamdown /cent /sterling /fraction
+	/yen /florin /section /currency /quotesingle /quotedblleft
+	/guillemotleft /guilsinglleft /guilsinglright /fi /fl /.notdef
+	/endash /dagger /daggerdbl /periodcentered /.notdef /paragraph
+	/bullet /quotesinglbase /quotedblbase /quotedblright
+	/guillemotright /ellipsis /perthousand /.notdef /questiondown
+	/.notdef /grave /acute /circumflex /tilde /macron /breve
+	/dotaccent /dieresis /.notdef /ring /cedilla /.notdef
+	/hungarumlaut /ogonek /caron /emdash /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /AE /.notdef /ordfeminine /.notdef /.notdef /.notdef
+	/.notdef /Lslash /Oslash /OE /ordmasculine /.notdef /.notdef
+	/.notdef /.notdef /.notdef /ae /.notdef /.notdef /.notdef
+	/dotlessi /.notdef /.notdef /lslash /oslash /oe /germandbls
+	/.notdef /.notdef /.notdef /.notdef
+ ] def
+
+/AsciiEncoding
+[	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+	/numbersign /dollar /percent /ampersand /quoteright /parenleft
+	/parenright /asterisk /plus /comma /hyphen /period /slash /zero
+	/one /two /three /four /five /six /seven /eight /nine /colon
+	/semicolon /less /equal /greater /question /at /A /B /C /D /E /F
+	/G /H /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z
+	/bracketleft /backslash /bracketright /asciicircum /underscore
+	/quoteleft /a /b /c /d /e /f
+	/g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z
+	/braceleft /bar /braceright /asciitilde /.notdef 
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+	/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+	/numbersign /dollar /percent /ampersand /quoteright /parenleft
+	/parenright /asterisk /plus /comma /hyphen /period /slash /zero
+	/one /two /three /four /five /six /seven /eight /nine /colon
+	/semicolon /less /equal /greater /question /at /A /B /C /D /E /F
+	/G /H /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z
+	/bracketleft /backslash /bracketright /asciicircum /underscore
+	/quoteleft /a /b /c /d /e /f
+	/g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z
+	/braceleft /bar /braceright /asciitilde /.notdef 
+ ] def
+
+{
+/$pathprocdict 10 dict def
+/pathproc { % make proc from current path
+	$pathprocdict begin
+	/a 0 { pop pop 3 add } { pop pop 3 add } { 6 { pop } repeat 7 add } { 1 add } pathforall
+	array def
+	/n 0 def
+	{ exch a exch n exch put a exch n 1 add exch put a n 2 add /moveto load put /n n 3 add def }
+	{ exch a exch n exch put a exch n 1 add exch put a n 2 add /lineto load put /n n 3 add def }
+	{ /n n 6 add def
+		6 { /n n 1 sub def a exch n exch put } repeat
+		/n n 6 add def
+		a n /curveto load put % was cvx rather than load
+		/n n 1 add def
+	}
+	{ a n /closepath load put /n n 1 add def }
+	pathforall
+	a cvx
+	end
+} def
+} pop
+/charpath {
+	temp-dict begin
+	charpathdict exch /stroking exch put
+	/met currentfont /Metrics get def
+	/enc currentfont /Encoding get def
+	{
+		dup /ch exch def
+		gsave
+			matrix currentmatrix dup
+			nulldevice setmatrix exch
+			currentpoint translate
+			currentfont /FontMatrix get concat
+%			met enc ch get get 1 get 0 charpathdict /setcharwidth get exec
+			currentfont exch currentfont /BuildChar get
+			end
+			charpathdict begin exec end
+			temp-dict begin
+			.currentcharwidth matrix currentmatrix dup 4 0 put dup 5 0 put
+			transform /y exch def /x exch def
+			setmatrix
+			pathproc
+		grestore
+		currentpoint 3 -1 roll
+		exec
+		moveto x y matrix currentmatrix dup 4 0 put dup 5 0 put itransform  rmoveto
+	} forall
+	end
+} def
+
+/charpathdict 10 dict def
+/temp-dict 10 dict def
+
+/settransfer {
+	temp-dict begin
+		dup /fn exch def
+		/n transfersize def
+		0.0 1 n 1 sub div 1.0 { fn cvr } for n array astore
+		setrealtransfer
+	end
+} def
+
+/setscreen {
+	temp-dict begin
+		/spot exch def
+		2 copy screensize /size exch def
+		2 copy buildscreen /y exch def /x exch def
+		size array dup
+		0 1 size 1 sub {
+			dup dup x exch get exch y exch get /spot load end exec temp-dict begin cvr put dup
+		} for
+		pop
+		/spot load exch setrealscreen
+	end
+} def
+
+/userdict 200 dict def
+
+userdict begin % second dictionary to be opened, so cannot be closed by end
+
+charpathdict begin
+	/stroke { charpathdict /stroking get { strokepath } if } def
+	/setcharwidth { temp-dict exch /y exch put temp-dict exch /x exch put } def
+	/.currentcharwidth { temp-dict /x get temp-dict /y get } def
+	/setcachedevice { pop pop pop pop setcharwidth } def
+	/fill {} def
+	/eofill {} def
+end
+
+marktype begin
+	/type /marktype def
+	/== { pop (MARK) print } def
+end
+
+arraytype begin
+	/type /arraytype def
+	/== {
+		dup xcheck dup {({ )} {([ )} ifelse print exch
+		{ == ( ) print } forall
+		{(})} {(])} ifelse print
+	} def
+end
+
+booleantype begin
+	/type /booleantype def
+	/== { 5 string cvs print } def
+end
+
+conditiontype begin
+	/type /conditiontype def
+	/== { pop (CONDITION type - you should never see this!) print } def
+end
+
+dicttype begin
+	/type /dicttype def
+	/== {
+		(< ) print
+		{ exch == (,) print == ( ) print } forall
+		(>) print
+	} def
+end
+
+filetype begin
+	/type /filetype def
+	/== { pop (FILE) print } def
+end
+
+integertype begin
+	/type /integertype def
+end
+
+nametype begin
+	/type /nametype def
+end
+
+nulltype begin
+	/type /nulltype def
+	/== { pop (NULL) print } def
+	/cvs { exch pop (NULL) exch cvs } def
+end
+
+operatortype begin
+	/type /operatortype def
+end
+
+realtype begin
+	/type /realtype def
+end
+
+stringtype begin
+	/type /stringtype def
+end
+
+fonttype begin
+	/type /fonttype def
+	/== { pop (FONTID) print } def
+end
+
+/A4-300 {
+	5 dict begin
+	/sf 1.13889 300 82 div mul def
+	/m [sf 0 0 sf neg 0 0] def
+	/f m 0 get def
+	/h 11 72 mul f mul cvi def
+	/w 8.25 72 mul f mul 8 div cvi def
+	m 5 h put
+	m w h [] framedevice
+	end
+} def
+
+/A4 {
+	5 dict begin
+	/sf 1.13889 def
+	/m [sf 0 0 sf neg 0 0] def
+	/f m 0 get def
+	/h 11 72 mul f mul cvi def
+	/w 8.25 72 mul f mul 8 div cvi def
+	m 5 h put
+	m w h [] framedevice
+	end
+} def
+
+/A4-x {
+	5 dict begin
+	/m [1.13889 .75 mul 0 0 -1.13889 .75 mul 0 0] def
+	/f m 0 get def
+	/h 11 72 mul f mul cvi def
+	/w 8.25 72 mul f mul 8 div cvi def
+	m 5 h put
+	m w h [] framedevice
+	end
+} def
+
+/A5 {
+	5 dict begin
+	/m [1.13889 0 0 -1.13889 0 0] def
+	/f m 0 get def
+	/h 8.25 72 mul f mul cvi def
+	/w 11.75 2 div 72 mul f mul 8 div cvi def
+	m 5 h put
+	m w h [] framedevice
+	end
+} def
+
+/L4 {
+	5 dict begin
+	/m [1.13889 0 0 -1.13889 0 0] def
+	/f m 0 get def
+	/h 8.25 72 mul f mul cvi def
+	/w 11.75 72 mul f mul 8 div cvi def
+	[ 0 f f 0 0 0] w h [] framedevice
+	end
+} def
+
+/ascii-set ( !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~) def
+
+% end of definitions
+{} settransfer
+20 0.0 { dup mul exch dup mul add 1 sub } setscreen
+
+0 setgray
+
+1 setflat
+
+1 setstrokemethod
+
+(font-map) lib run
+
+150000 100 2000 setcache 2000 setcachelimit
+
+/Times-Roman findfont 10 scalefont setfont
+
+enableinterrupts

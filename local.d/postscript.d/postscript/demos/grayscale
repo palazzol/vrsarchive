@@ -1,0 +1,11 @@
+initgraphics
+clippath pathbbox pop exch pop 2 copy exch sub /range exch def
+/step range 50.0 div def
+0 200 translate
+newpath
+step exch {
+	dup range div setgray
+	0 0 moveto step 0 lineto step 100 lineto 0 100 lineto closepath
+	fill
+	step 0 translate
+} for

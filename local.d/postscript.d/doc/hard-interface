@@ -1,0 +1,239 @@
+#include "main.h"
+#include "graphics.h"
+
+struct hardware
+ {
+ };
+
+/*
+ *	This file describes the interface that PostScript requires to the
+ *	graphics system at Version 1.4.
+ *	
+ *	''Hardware'' in this context refers to a pointer to windows and/or
+ *	bitmaps and is the lowest level
+ *	of access that PostScript is interested in. Any Hardware parameter
+ *	may be expected to be NULL.
+ */
+
+/************************* CREATION OF WINDOWS AND BITMAPS *******************/
+
+struct hardware *InitHardware () {}
+/*
+ *	InitHardware () returns a default device which PostScript may use
+ *	immediately (or NULL if not appropriate).
+ *	Its size and shape are not defined. Most typically the user will want
+ *	to start up another device
+ *	before it is used anyway. No attempt will be made by PostScript to
+ *	Destroy the resulting
+ *	device.
+ */
+
+struct hardware *NewBitmapHardware (width, height) int width, height; {}
+
+struct hardware *NewWindowHardware (width, height) int width, height; {}
+/*
+ *	NewBitmapHardware () is expected to create a new bitmap. Only one plane will be needed.
+ *	
+ *	NewWindowHardware () is expected to create a window on the screen.
+ *	On a colour system this will
+ *	be expected to support full colour.
+ */
+
+int IsWindowHardware (h) struct hardware *h; {}
+/*
+ *	IsWindowHardware () should return TRUE if the hardware is a window,
+ *	FALSE otherwise.
+ *	NULL is a window.
+ */
+
+void DestroyHardware (h) struct hardware *h; {}
+/*	
+ *	DestroyHardware () should release the resources required by the
+ *	hardware, bitmap or window.
+ *	This should cause a window device to vanish.
+ *	NULL is not an error (does nothing).
+ */
+
+
+Matrix DeviceMatrix (width, height) int width, height; {}
+
+DevicePoint HardwareExtent (h) struct hardware *h; {}
+/*
+ *
+ *	DeviceMatrix () should return a matrix appropriate to a device of the
+ *	given height and width.
+ *	For a typical display with a graphics origin at the top left of a
+ *	window,
+ *	an appropriate definition would be:
+ *	
+ *	Matrix DeviceMatrix (width, height) int width, height;
+ *	 {
+ *	 	return NewMatrix (PIXELS_PER_INCH / 72.0, 0.0, 0.0,
+ *			-PIXELS_PER_INCH / 72.0, 0.0, (float) height);
+ *	 }
+ *
+ *	HardwareExtent () returns a DevicePoint describing the width and
+ *	height of the argument.
+ *	NULL has extent NewDevicePoint (0, 0).
+ */
+
+/*********************** OUTPUT PRIMITIVES ******************************/	
+
+void BitBlt (from, to, fromPoint, toPoint, extent, rop)
+	struct hardware *from, *to;
+	DevicePoint toPoint, fromPoint, extent;
+	int rop;
+ {}
+
+void Paint (from, to, fromPoint, toPoint, extent, colour)
+	struct hardware *from, *to;
+	DevicePoint toPoint, fromPoint, extent;
+	Colour colour;
+ {}
+
+/*	
+ *	BitBlt () is a full function RasterOp will the ability to mask the
+ *	source with a colour. The 'rop' argument
+ *	will have values as described in the header file hard.h.
+ *	If the from argument is NULL it is taken to be
+ *	a bitmap full of ones the shape of the fromPoint and extent.
+ *	If the to argument is NULL, this is a no-op.
+ *	
+ *	Paint () is an addition to BitBlt. Bits that are set in the source
+ *	are Painted into the destination
+ *	in the given colour with a copying rasterop so that they replace
+ *	pixels previously there. If the
+ *	machine does not support colour windows, half-toning should be
+ *	performed. 
+ *	Colour values have hue, saturation and brightness components.
+ *	on a black and white or greyscale
+ *	system the brightness value will be a FP value between 0.0 (black)
+ *	and 1.1 (white), which can be
+ *	used as a grey level.
+ */
+
+void BitBltTrapezoid (to, lefttop, leftbottom, righttop, rightbottom, top,
+	bottom, rop)
+	struct hardware *to;
+	DevicePoint lefttop, leftbottom, righttop, rightbottom;
+	int top, bottom, rop;
+ {}
+
+void PaintTrapezoid (to, lefttop, leftbottom, righttop, rightbottom, top,
+	bottom, colour)
+	struct hardware *to;
+	DevicePoint lefttop, leftbottom, righttop, rightbottom;
+	int top, bottom;
+	Colour colour;
+ {}
+
+/*
+ * 	BitBltTrapezoid () and PaintTrapezoid () render a complete
+ *	trapezoidal shape.
+ *	The corners of the trapezoid may lie far outside the range of
+ *	interesting scan-lines, but the slope
+ *	of the line should be clipped by the top and bottom. The coordinates
+ *	are half-open.
+ */
+
+void Line (h, fromPoint, toPoint, rop)
+	struct hardware *h;
+	DevicePoint fromPoint, toPoint;
+	int rop;
+ {}
+
+void PaintLine (h, fromPoint, toPoint, colour)
+	struct hardware *h;
+	DevicePoint fromPoint, toPoint;
+	Colour colour;
+ {}
+
+/*	
+ *	Line () is expected to draw a line between the given points (the last pixel is expected to be drawn)
+ *	with the given RasterOp and colour masking. The line should be one pixel wide and half-open. [Thicker lines are
+ *	done with BitBlt.]
+ *	
+ *	PaintLine () is expected to Paint a line by analogy with Paint and BitBlt.
+ */
+
+int TransferSize () {}
+
+void SetTransfer (vec) float *vec; {}
+/*	
+ *	TransferSize () and SetTransfer () control the mapping function
+ *	between user brightnesses
+ *	and device brightnesses. The interface is expected to perform this
+ *	mapping of brightnesses
+ *	to a sufficient resolution. SetTransfer takes a table of floating
+ *	point numbers between
+ *	0 and 1. User brightnesses are scaled to the size of this table and
+ *	mapped through it.
+ *	The argument table given to SetTransfer () will be deleted after use.
+ *	TransferSize () simply
+ *	enquires the required size of the table.
+ *	
+ *	It may be appropriate to half-tone on a grayscale or colour device to
+ *	improve rendering if it is not too
+ *	expensive. TransferSize () returns the size of the pattern table.
+ */
+
+char *StringFromHardware (h) struct hardware *h; {}
+
+struct hardware *HardwareFromString (s, width, height)
+char *s; int width, height; {}
+/*	
+ *	StringFromHardware () produces a string from its argument which
+ *	describes the bitmap.
+ *	The bitmap is returned in row-major order with the leftmost bit of
+ *	each byte in the most significant
+ *	position. Rows are padded to byte boundaries. Only single plane
+ *	bitmaps are used.
+ *	
+ *	HardwareFromString () performs the inverse mapping, generating a
+ *	bitmap from a set of bits, given
+ *	a width and height. Only single plane bitmaps are used.
+ */
+
+int ScreenSize (freq, rotation) float freq, rotation; {}
+
+void BuildScreen (freq, rotation, x, y) float freq, rotation, *x, *y; {}
+
+void SetScreen (freq, rotation, thresh) float freq, rotation, *thresh; {}
+/*
+ *	ScreenSize () allows PostScript to determine how large an array of
+ *	sample points to expect.
+ *	It should return the length of the side of the sample square.
+ *	
+ *	BuildScreen () returns a set of sampling coordinates to PostScript to
+ *	hand to the users spot-function
+ *	
+ *	SetScreen () allows PostScript to set the thresholds for each sample
+ *	point so that half-tone bitmaps
+ *	can be made.
+ */
+
+void SetClipHardware (h, clip) struct hardware *h, *clip; {}
+/*	
+ *	SetClipHardware sets hardware which is a clip mask for BitBlt.
+ *	This mask should be ANDed with any output
+ *	operation. If clip is NULL, masking will not be needed.
+ */
+
+void HardUpdate () {}
+/*
+ *	HardUpdate is a hook to allow devices which do output buffering to
+ *	flush that buffering when appropriate.
+ *	This allows an interactive user to see completed graphics between
+ *	prompts (it is called as a side-effect
+ *	of the PostScript flush operator). Typically is is a no-op.
+ */
+
+void UpdateControl ()
+ {}
+/*
+ * 	This call can be used to enable batching of output operations.
+ *	UpdateControl (FALSE) means ``start of
+ *	batching'' UpdateControl (TRUE) means ``end of batching''.
+ *	It is used to improve performance on machines
+ *	where screen updates have a high locking overhead. It may be a no-op.
+ */

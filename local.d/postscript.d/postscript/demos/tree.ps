@@ -1,0 +1,33 @@
+%!
+
+/Times-Roman findfont setfont
+
+%/go { translate 0 0 moveto } def
+/size 0 4 dtransform dup mul exch dup mul add def
+
+/tree {
+     0 0 moveto (T) show
+     0 1 dtransform
+      dup mul exch dup mul add
+      size gt
+         {
+          currentpoint translate
+          0 .1 translate 0.6 0.6 scale
+          0 0 moveto (R) show
+          currentpoint translate
+          .75 0 translate
+	  gsave
+	    90 rotate tree
+	  grestore
+	  .75 0 translate
+	  90 rotate -1 1 scale
+	  (T) stringwidth neg exch neg exch translate
+	  tree
+	  } if
+  } def
+
+100 400 translate 200 200 scale
+
+tree
+showpage
+

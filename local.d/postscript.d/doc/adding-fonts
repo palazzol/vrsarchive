@@ -1,0 +1,36 @@
+Fonts may be added to this postscript system by placing a piece of
+PostScript source in the directory $POSTSCRIPTLIB/font.  This is where
+postscript looks when findfont is called. File names in this directory
+may be mapped from font names by placing entries of the form:
+	FontMap /postscript-name /base-file-name. put
+in the font-map file in $POSTSCRIPTLIB.
+
+If postscript-name is not found there, an identity mapping is assumed.
+
+The existing fonts are similarly structured, so most of the work is
+done by executing a common proforma file in that directory. This sets
+up the appropriate font information.  A version of BuildChar is
+installed which will read in the bulk of the font infromation when it
+is first executed. It will then replace itself with the normal
+BuildChar.
+
+NOTE the metrics are currently loaded with the rest of the font
+information on demand, so programs which attempt to read metric
+infromation before using a font will fail. This is a bug, but can be
+fixed in PostScript.
+
+There is a parallel cache directory, $POSTSCRIPTLIB/cache. This
+contains a directory corresponding to each file in $POSTSCRIPT/font,
+into which cached versions of fonts may be placed. The operator
+savecurrentfont may be called after imaging some characters from a
+font, whereupon a diskcache will be made of the characters imaged so
+far. Caches loaded may be subsequently modified and saved, thus built
+incrementally.  There should be an operator to save all modified caches
+into the disk cache. This could be built into PostScript, but might
+cause problems.  There is a program called buildcache in the demos
+directory which will build a cache of the standard fonts in a variety
+of useful sizes.
+
+PostScript searches the disk cache automatically, and will not call BuildChar if it find a cache.
+This version of the cache stores metrics for the font.
+
