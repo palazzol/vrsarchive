@@ -1,8 +1,8 @@
-.TH DITK 1
+.TH DITHDS 1
 .SH NAME
-ditk \- ditroff previewer for tektronix 41xx terminals
+dithds \- ditroff previewer for HDS200 graphics terminals
 .SH SYNOPSIS
-.B ditk
+.B dithds
 [
 .BI \-p n
 ]
@@ -10,10 +10,10 @@ ditk \- ditroff previewer for tektronix 41xx terminals
 file
 }
 .SH DESCRIPTION
-.I Ditk
+.I Dithds
 allows previewing of
 .IR ditroff (1)
-output on the Tektronix 41xx series graphic display terminals.
+output on the HDS200 graphics series graphic display terminals.
 .PP
 Commands:
 .PP
@@ -32,7 +32,7 @@ To review all possible commands type '?'.
 Specifying the
 .BI \-p n
 option will cause
-.I ditk
+.I dithds
 to start on page number
 .IR n .
 The default is 1.
@@ -43,38 +43,9 @@ If you make changes please ship a copy off to me,
 ihnp4!uiucdcs!uiucme!slaney (slaney%uiucme@a.cs.uiuc.edu (ARPAnet)).
 .SH NOTES
 .I Ditroff
-can be output to any of the following Tektronix terminals:  
+can be output to any of the following HDS200 graphics terminals:  
 .IP
-4107, 4109, 4113.
-.PP
-The following terminals will work but for hardware reasons lose certain
-features:
-.IN 5
-.sp
-.nf
-4105 - no retained segments, 8 colors
-4112 - black and white
-.IN -5
-.fi
-.PP
-This program should work on the 4111 and the 4115, however ....
-(no guarantees.  See BUGS section above.)
-I have made what I believe is the only change necessary to get
-.I ditk
-to run on a 4115.
-It sets the coordinate mode to a 12 bit address instead of the 32 bit
-addressing.
-It causes an error of level 0 on all other Tek devices.
-It most likely won't be apparent. 
-The warning begins "Terminal issues message ..." if it appears.
-Call it what you want.
-.PP
-The program sets the fixup level of the Tektronix terminal to level 2.
-This allows rapid deletion of the retained page of text.
-At the end of 
-.I ditk
-the fixup level is set back to the default value of
-6.
+200, 201.
 .PP
 The features of this program are:
 .IP
@@ -88,10 +59,9 @@ Only to give a good indication of correct form.
 It provides a very convenient method of checking for orphans
 and widows (lines).  
 .IP
-Complete character point size mapping.
+Character point size mapping.
 .IP
-Font changes are enabled by changing the color and displaying the ASCII
-equivalent.
+Italic font is emulated using the terminals slanted character mode.
 .IP
 Currently only straight line drawing.
 The routine for arcs/circles is in the library included but
@@ -101,7 +71,7 @@ likes it from the left.
 It may take some playing with.
 .IP
 Character slant is also possible.
-The slant routine is included in ditk.lib.c.
+The slant routine is included in dithds.lib.c.
 Needs to be played with (see again the BUGS section).
 .IP
 Complete forward and backward paging.
@@ -116,4 +86,5 @@ spline fits
 .sp
 some special characters
 .SH AUTHOR
-Jeff Slaney November 1985, helped by Philip Gross.
+Jeff Slaney November 1985, helped by Philip Gross -- Tek41xx version.
+Vincent R. Slyngstad June 1987 -- Mods for HDS terminals.

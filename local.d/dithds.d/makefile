@@ -1,14 +1,21 @@
-SHELL	= /bin/sh
-SRCS	= ditk.c ditk.lib.c
+ALL	= dithds
+OPTIONS	= -O
+MODEL	= -i
+include ../../CONFIG
+SRCS	= dithds.c dithds.lib.c
 OBJS	= $(SRCS:.c=.o)
-CFLAGS	= -Mm -O
-LIBS	= -lm
 
-ditk:	$(OBJS)
+dithds:	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 lint:	$(SRCS)
 	lint $(SRCS) | tee $@
 
+install: $(ALL) $(BINDIR) $(MAN1)
+	cp $(ALL) $(BINDIR)
+	cd $(BINDIR); chmod 711 $(ALL)
+	cp dithds.1 $(MAN1)
+	cd $(MAN1); chmod 644 dithds.1
+
 clean:
-	rm -f lint ditk $(OBJS)
+	rm -f lint $(ALL) $(OBJS)
