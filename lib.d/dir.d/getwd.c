@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <ndir.h>
+#include <dir.h>
 #include <sys/stat.h>
 
 /*
