@@ -32,7 +32,16 @@ static SIG_T tstop(dummy) /* control Y	*/
 	lcreat((char*)0);  clearvt100();	lflush();	  signal(SIGTSTP,SIG_DFL);
 #ifdef SIGVTALRM
 #ifdef SYS5
+#ifdef __STDC__
+	{
+	sigset_t sig;
+	sigemptyset(&sig);
+	sigaddset(&sig, SIGTSTP);
+	sigprocmask(SIG_UNBLOCK, &sig, NULL);
+	}
+#else
 	sigrelse(SIGTSTP);
+#endif
 #else
 	/* looks like BSD4.2 or higher - must clr mask for signal to take effect*/
 	sigsetmask(sigblock(0)& ~BIT(SIGTSTP));
@@ -49,9 +58,15 @@ static SIG_T tstop(dummy) /* control Y	*/
 /*
  *	subroutine to issue the needed signal traps  called from main()
  */
+static sigpanic();
 static SIG_T sigill(dummy)  { sigpanic(SIGILL); }
 static SIG_T sigtrap(dummy) { sigpanic(SIGTRAP); }
+#ifdef SIGIOT
 static SIG_T sigiot(dummy)  { sigpanic(SIGIOT); }
+#endif
+#ifdef SIGABRT
+static SIG_T sigabrt(dummy) { sigpanic(SIGABRT); }
+#endif
 static SIG_T sigemt(dummy)  { sigpanic(SIGEMT); }
 static SIG_T sigfpe(dummy)  { sigpanic(SIGFPE); }
 static SIG_T sigbus(dummy)  { sigpanic(SIGBUS); }
@@ -64,7 +79,13 @@ sigsetup()
 	signal(SIGQUIT, cntlc); 		signal(SIGINT,  cntlc); 
 	signal(SIGKILL, SIG_IGN);		signal(SIGHUP,  sgam);
 	signal(SIGILL,  sigill);		signal(SIGTRAP, sigtrap);
-	signal(SIGIOT,  sigiot);		signal(SIGEMT,  sigemt);
+#ifdef SIGIOT
+	signal(SIGIOT,  sigiot);
+#endif
+#ifdef SIGABRT
+	signal(SIGABRT, sigabrt);
+#endif
+	signal(SIGEMT,  sigemt);
 	signal(SIGFPE,  sigfpe);		signal(SIGBUS,  sigbus);
 	signal(SIGSEGV, sigsegv);		signal(SIGSYS,  sigsys);
 	signal(SIGPIPE, sigpipe);		signal(SIGTERM, sigterm);
