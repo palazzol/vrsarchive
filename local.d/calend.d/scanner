@@ -4,14 +4,16 @@
 
 #include "y.tab.h"
 
+#define allprint(c) (putchar(c))
+#define sprint(str) (printf("%s",str))
+#if 0
 #undef  input
 #undef  output
 #undef  unput
-#define allprint(c) (putchar(c))
-#define sprint(str) (printf("%s",str))
 #define output(c) (putchar(c))
 #define input() (yytchar=yysptr>yysbuf?U(*--yysptr):getnextchar())
 #define unput(c) (*yysptr++=(c))
+#endif
 #define yywrap() 1
 
 %}
