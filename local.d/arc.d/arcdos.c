@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 /*
  *	arcdos.c	1.2
  *
@@ -30,9 +31,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
-
-extern struct tm *localtime();
-extern long timezone;
 
 INT getstamp(f,date,time)              /* get a file's date/time stamp */
 FILE *f;                               /* file to get stamp from */
@@ -133,11 +131,15 @@ unsigned INT date, time;               /* desired date, time */
 
     m_time += tz.tz_minuteswest * 60;  /* account for timezone differences */
 #else
+    {
+    extern long timezone;
+
     tmbuf = localtime(&m_time);        /* check for Daylight Savings Time */
     if (tmbuf->tm_isdst != 0)
         m_time -= 3600;
 
     m_time += timezone;                /* account for timezone differences */
+    }
 #endif
 
     times.actime = m_time;             /* set the stamp on the file */
