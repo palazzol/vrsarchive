@@ -22,85 +22,85 @@ OTHERS	= setup.c findscore.c datesub.l histplot.c rgmplot.c gene.c\
 # General makefile stuff:
 #
 arms.o: types.h globals.h
-	cc -c $(CFLAGS) arms.c
+	$(CC) -c $(CFLAGS) arms.c
 command.o: types.h globals.h
-	cc -c $(CFLAGS) command.c
+	$(CC) -c $(CFLAGS) command.c
 database.o: types.h globals.h
-	cc -c $(CFLAGS) database.c
+	$(CC) -c $(CFLAGS) database.c
 datesub.c: datesub.l
 	lex datesub.l
 	mv lex.yy.c datesub.c
 datesub.o: datesub.c
-	cc -c $(CFLAGS) datesub.c
+	$(CC) -c $(CFLAGS) datesub.c
 datesub: datesub.o
-	cc $(CFLAGS) -o datesub datesub.o
+	$(CC) $(CFLAGS) -o datesub datesub.o
 debug.o: types.h globals.h install.h
-	cc -c $(CFLAGS) debug.c
+	$(CC) -c $(CFLAGS) debug.c
 explore.o: types.h globals.h
-	cc -c $(CFLAGS) explore.c
+	$(CC) -c $(CFLAGS) explore.c
 findscore.o: install.h
-	cc -c $(CFLAGS) findscore.c
+	$(CC) -c $(CFLAGS) findscore.c
 gene: gene.c rand.o learn.o stats.o utility.o types.h install.h
-	cc $(CFLAGS) $(CFLAGS) -o gene gene.c \
+	$(CC) $(CFLAGS) $(CFLAGS) -o gene gene.c \
 		rand.o learn.o stats.o utility.o -lm
 histplot: histplot.o utility.o
-	cc $(CFLAGS) -o histplot histplot.o utility.o
+	$(CC) $(CFLAGS) -o histplot histplot.o utility.o
 io.o: types.h globals.h termtokens.h install.h
-	cc -c $(CFLAGS) io.c
+	$(CC) -c $(CFLAGS) io.c
 mess.o: types.h globals.h
-	cc -c $(CFLAGS) mess.c
+	$(CC) -c $(CFLAGS) mess.c
 learn.o: types.h
-	cc -c $(CFLAGS) learn.c
+	$(CC) -c $(CFLAGS) learn.c
 ltm.o: types.h globals.h install.h
-	cc -c $(CFLAGS) ltm.c
+	$(CC) -c $(CFLAGS) ltm.c
 main.o: install.h termtokens.h types.h globals.h
-	cc -c $(CFLAGS) main.c
+	$(CC) -c $(CFLAGS) main.c
 monsters.o: types.h globals.h
-	cc -c $(CFLAGS) monsters.c
+	$(CC) -c $(CFLAGS) monsters.c
 pack.o: types.h globals.h
-	cc -c $(CFLAGS) pack.c
+	$(CC) -c $(CFLAGS) pack.c
 player: $(OBJS)
-	cc $(CFLAGS) -o player $(OBJS) -lm -lcurses -ltermcap
+	$(CC) $(CFLAGS) -o player $(OBJS) -lm -lcurses -ltermcap
 	size player
 rand.o: rand.c
-	cc -c $(CFLAGS) rand.c
+	$(CC) -c $(CFLAGS) rand.c
 replay.o: types.h globals.h
-	cc -c $(CFLAGS) replay.c
+	$(CC) -c $(CFLAGS) replay.c
 rgmplot.o: rgmplot.c
-	cc -c $(CFLAGS) rgmplot.c
+	$(CC) -c $(CFLAGS) rgmplot.c
 rgmplot: rgmplot.o utility.o
-	cc $(CFLAGS) -o rgmplot rgmplot.o utility.o
+	$(CC) $(CFLAGS) -o rgmplot rgmplot.o utility.o
 rogomatic: setup.o findscore.o scorefile.o utility.o
-	cc $(CFLAGS) -o rogomatic setup.o findscore.o scorefile.o utility.o
+	$(CC) $(CFLAGS) -o rogomatic setup.o findscore.o scorefile.o utility.o
 	size rogomatic
 rooms.o: types.h globals.h
-	cc -c $(CFLAGS) rooms.c
+	$(CC) -c $(CFLAGS) rooms.c
 scorefile.o: types.h globals.h install.h
-	cc -c $(CFLAGS) scorefile.c
+	$(CC) -c $(CFLAGS) scorefile.c
 search.o: types.h globals.h
-	cc -c $(CFLAGS) search.c
+	$(CC) -c $(CFLAGS) search.c
 setup.o: install.h termtokens.h
-	cc -c $(CFLAGS) setup.c
+	$(CC) -c $(CFLAGS) setup.c
 stats.o: types.h
-	cc -c $(CFLAGS) stats.c
+	$(CC) -c $(CFLAGS) stats.c
 strategy.o: types.h globals.h install.h
-	cc -c $(CFLAGS) strategy.c
+	$(CC) -c $(CFLAGS) strategy.c
 survival.o: types.h globals.h
-	cc -c $(CFLAGS) survival.c
+	$(CC) -c $(CFLAGS) survival.c
 tactics.o: types.h globals.h install.h
-	cc -c $(CFLAGS) tactics.c
+	$(CC) -c $(CFLAGS) tactics.c
 testfind: testfind.o findscore.o utility.o
-	cc $(CFLAGS) -o testfind testfind.o findscore.o utility.o
+	$(CC) $(CFLAGS) -o testfind testfind.o findscore.o utility.o
 things.o: types.h globals.h
-	cc -c $(CFLAGS) things.c
+	$(CC) -c $(CFLAGS) things.c
 titlepage.o: titlepage.c
-	cc -c $(CFLAGS) titlepage.c
+	$(CC) -c $(CFLAGS) titlepage.c
 titler.o: titler.c
-	cc -c titler.c
+	$(CC) -c titler.c
 utility.o: install.h
-	cc -c $(CFLAGS) utility.c
+	$(CC) -c $(CFLAGS) utility.c
 worth.o: types.h globals.h
-	cc -c $(CFLAGS) worth.c
+	$(CC) -c $(CFLAGS) worth.c
 #
 # Miscellaneous useful pseduo-makes
 #
@@ -122,9 +122,9 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(PUBDIR)
 	cd $(PUBDIR); chmod 711 player rgmplot datesub histplot gene
 
 titler: titler.c
-	cc -o titler titler.c -lcurses -ltermcap
+	$(CC) -o titler titler.c -lcurses -ltermcap
 anim: anim.c utility.o
-	cc -o anim anim.c utility.o -lcurses -ltermcap
+	$(CC) -o anim anim.c utility.o -lcurses -ltermcap
 index: $(SRCS)
 	ctags -x $(SRCS) > index
 fluff: $(SRCS)
@@ -144,7 +144,7 @@ dist: $(SRCS) $(HDRS) $(OTHERS) makefile rogomatic.6 README
 	du $(PUBDIR)
 
 genetest: genetest.o learn.o rand.o stats.o utility.o types.h
-	cc -g -o genetest genetest.o learn.o rand.o stats.o utility.o -lm
+	$(CC) -g -o genetest genetest.o learn.o rand.o stats.o utility.o -lm
 
 gplot: gplot.c
-	cc -g -o gplot gplot.c -lm
+	$(CC) -g -o gplot gplot.c -lm
