@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 #include <signal.h>
 #include <pwd.h>
 #include <ctype.h>
@@ -10,12 +11,12 @@
 #  define LOCK_EX		LK_LOCK
 #  define LOCK_UN		LK_UNLCK
 #else
-#  ifndef LOCK_EX
 #    include <unistd.h>
 #    define flock(fd,flag)	lockf(fd,flag,0L)
+#    undef  LOCK_EX
 #    define LOCK_EX		F_LOCK
+#    undef  LOCK_UN
 #    define LOCK_UN		F_ULOCK
-#  endif
 #endif
 
 #define MIN_ROBOTS	10
@@ -26,8 +27,16 @@
 #define MSGPOS		39
 #define RVPOS		51
 
-#define HOF_FILE	GAMLIB/robots_hof"
-#define TMP_FILE	GAMLIB/robots_tmp"
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+#define HOF_FILE	FILENM(robots_hof)
+#define TMP_FILE	FILENM(robots_tmp)
 
 #define NUMSCORES	20
 #define NUMNAME		"Twenty"
