@@ -1,8 +1,21 @@
 #ifndef lint
-static char rcsid[]="$Header: /home/Vince/cvs/local.d/ofiles.d/ofiles.c,v 1.1 1987-02-07 18:15:52 vrs Exp $";
+static char rcsid[]="$Header: /home/Vince/cvs/local.d/ofiles.d/ofiles.c,v 1.2 1987-12-26 20:19:38 vrs Exp $";
 static char sccsid[]="%W% %G% cspencer";
-#endif lint
+#endif /*lint*/
 
+#ifdef M_XENIX
+#define KERNEL	"/xenix"
+#else
+#define KERNEL	"/unix"
+#include <sys/types.h>
+#include <sys/signal.h>
+#include <sys/immu.h>
+#include <sys/region.h>
+#include <sys/sysmacros.h>
+#include <malloc.h>
+#include <nlist.h>
+#define ROOTINO S5ROOTINO
+#endif
 #include <sys/param.h>
 #include <sys/dir.h>
 #include <sys/file.h>
@@ -14,8 +27,6 @@ static char sccsid[]="%W% %G% cspencer";
 #include <pwd.h>
 #include <stdio.h>
 #include "fstab.h"
-
-#define KERNEL	"/xenix"
 
 #define CDIR	01
 #define OFILE	02
@@ -34,6 +45,7 @@ struct var v;		/* Kernel configuartion parameters		*/
 int pids_only = 0;	/* If non-zero, only output process ids		*/
 char *progname;		/* Name of this program (for messages)		*/
 
+#ifdef M_XENIX
 struct nlist nl[] = {
 #define X_PROC		0
 	{"_proc"},
@@ -43,6 +55,17 @@ struct nlist nl[] = {
 	{"_rootdev"},
 	{ 0 }
 };
+#else
+struct nlist nl[] = {
+#define X_PROC		0
+	{"proc"},
+#define X_V		1
+	{"v"},
+#define X_ROOTDEV	2
+	{"rootdev"},
+	{ 0 }
+};
+#endif
 
 
 main(argc, argv)
@@ -223,6 +246,7 @@ char *s;
 struct user *getuser(p)
 struct proc *p;
 {
+#ifdef M_XENIX
 	int fd;			/* File to read			*/
 	long addr;		/* Where to read		*/
 	static struct user user;/* Local buffer			*/
@@ -239,7 +263,45 @@ struct proc *p;
 		fprintf(stderr, "error: can't get u structure\n");
 		return (struct user *)NULL;
 	}
-	return &user;
+	return(&user);
+#else
+	/* declaration of space for reading in the ubptbl */
+	union {
+		char	cbuf[NBPPT];
+		pde_t	ptbl[NBPPT/sizeof(pde_t)];
+	} upt;
+	static char *user = 0;
+	static int usize;
+	char *cp, *cp1;
+	int i;
+
+	if (user == 0) {
+		usize = sizeof(struct user)
+			+ (v.v_nofiles-1)*sizeof(struct file *);
+		user = malloc(usize);
+	}
+	if (p->p_flag & SLOAD) {
+		lseek(kmem, ubptbl((p)), 0);
+		read(kmem, upt.cbuf, NBPPT); /* read in the U block pt */
+		/* Now read in each page of the U area */
+		cp1 = user + usize;
+		i = 0;
+		for(cp = user; cp < cp1; i++, cp += NBPP) {
+			lseek(mem, ctob(upt.ptbl[i].pgm.pg_pfn), 0);
+			if (read(mem, cp, cp1-cp > NBPP ? NBPP : cp1-cp) < 0) {
+			    fprintf(stderr, "error: can't get u structure\n");
+			    return((struct user *)0);
+			}
+		}
+	} else {
+		lseek(swap, dtob(((dbd_t *)(&p->p_ubptbl))->dbd_blkno), 0);
+		if (read (swap, user, usize) != usize) {
+			fprintf(stderr, "error: can't get u structure\n");
+			return((struct user *)0);
+		}
+	}
+	return((struct user *)user);
+#endif
 }
 
 /*
@@ -304,7 +366,7 @@ getsyms()
 	for(i = 0; i < (sizeof(nl)/sizeof(nl[0]))-1; i++)
 		if(nl[i].n_value == 0) {
 			fprintf(stderr,"%s: can't nlist for %s.\n",
-				nl[i].n_value);
+				KERNEL, nl[i].n_name);
 			exit(1);
 		}
 	procbase = nl[X_PROC].n_value;
