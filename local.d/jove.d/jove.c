@@ -70,6 +70,8 @@ struct ltchars	ls1,
 #ifdef TIOCGETC
 struct tchars	tc1,
 		tc2;
+#else
+struct termios	tc1;
 #endif
 
 #ifdef LPASS8			/* use pass8 instead of raw for meta-key */
