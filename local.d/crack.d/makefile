@@ -1,6 +1,9 @@
-SHELL	= /bin/sh
-CFLAGS	= -i -O -K
-USRLCL	= $(ROOT)/usr/local
+#
+#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.2 1987-02-08 23:26:46 vrs Exp $
+#
+ALL	= crack
+OPTIONS	= -i -O -K
+include ../../CONFIG
 
 crack:	crack.o
 	cc $(CFLAGS) -o $@ crack.o
@@ -8,12 +11,8 @@ crack:	crack.o
 clean:
 	rm -f crack crack.o
 
-$(USRLCL):
-	mkdir $@
-	chmod 755 $@
-
-install: $(USRLCL)
-	mv crack $(USRLCL)
-	chmod 711 $(USRLCL)/crack
+install: $(ALL) $(BINDIR)
+	mv crack $(BINDIR)
+	chmod 711 $(BINDIR)/crack
 
 crack.o: crack.c crack.h
