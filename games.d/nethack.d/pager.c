@@ -13,7 +13,7 @@ extern int CO, LI;	/* usually COLNO and ROWNO+2 */
 extern char *CD;
 extern char quitchars[];
 extern char *getenv(), *getlogin();
-int done1();
+SIG_T done1();
 
 dowhatis()
 {
@@ -101,8 +101,9 @@ dowhatis()
 
 /* make the paging of a file interruptible */
 static int got_intrup;
-
-intruph(){
+/* ARGSUSED */
+SIG_T
+intruph(dummy){
 	got_intrup++;
 }
 
@@ -136,7 +137,7 @@ int strip;	/* nr of chars to be stripped from each line (0 or 1) */
 		}
 		*bufrp = '\0';
 #else
-	int (*prevsig)() = signal(SIGINT, intruph);
+	SIG_T (*prevsig)() = signal(SIGINT, intruph);
 
 	set_pager(0);
 	bufr = (char *) alloc((unsigned) CO);
