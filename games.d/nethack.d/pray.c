@@ -34,7 +34,7 @@ dopray() {		/* M. Stephenson (1.0.3b) */
 angrygods() {
 	register int	tmp;
 
-	pline ("You get the felling the gods are angry...");
+	pline ("You get the feeling the gods are angry...");
 	tmp = u.ugangr + (u.uluck > 0) ? u.uluck : -u.uluck;
 	switch (tmp ? rn2(tmp): 0) {
 
