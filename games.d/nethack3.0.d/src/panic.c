@@ -16,6 +16,26 @@ extern void exit P((int));
 /*VARARGS1*/
 boolean panicking;
 
+#ifdef __STDC__
+#include	<stdarg.h>
+void
+panic(char *str, ...)
+{	va_list ap;
+
+	if(panicking++)
+	    (void) abort();    /* avoid loops - this should never happen*/
+
+	va_start(ap, str);
+	(void) fputs(" ERROR:  ", stderr);
+	va_arg(ap, char *);
+	(void) vfprintf(stderr, str, ap);
+	(void) fflush(stderr);
+	va_end(ap);
+	(void) abort();	/* generate core dump */
+	exit(1);		/* redundant */
+	return;
+}
+#else
 void
 panic(str,a1,a2,a3,a4,a5,a6)
 char *str;
@@ -38,4 +58,4 @@ char *str;
 	exit(1);		/* redundant */
 	return;
 }
-
+#endif
