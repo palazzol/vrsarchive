@@ -121,6 +121,7 @@ readchar()
  * unctrl:
  *	Print a readable version of a certain character
  */
+#ifndef __STDC__
 #ifndef unctrl
 char *
 unctrl(ch)
@@ -135,6 +136,7 @@ char ch;
   s[1] += '@';
   return(s);
 }
+#endif
 #endif
 
 /*

@@ -136,6 +136,12 @@ unsigned nsiz;		/* Desired new size				*/
   char *np;		/* Pointer to new memory			*/
   int i, osiz;
 
+  if (op == 0)
+    return(malloc(nsiz));
+  if (nsiz == 0) {
+    free(op);
+    return 0;
+  }
   osiz = ((struct m_chunk *)(op-OVERHEAD))->size;
   free((p = op));	/* Free old memory (contents unchanged)		*/
   q = np = malloc(nsiz);/* Get some new memory				*/
