@@ -95,7 +95,7 @@ const struct clattr {
  * a minimum strength of 6 since without one you can't teleport or cast
  * spells. --KAA
  */
-	struct	innate *abil;
+	const struct	innate *abil;
 }	a_attr = { {	 6,  9,  9,  6,  6,  6 },  /* Archeologist */
 		   {	20, 20, 20, 10, 20, 10 },
 		    10,  1, 13, 10, 14,  2, a_abil },
@@ -151,11 +151,15 @@ const struct clattr {
 		   {	20, 15, 15, 15, 20, 15 },
 		     0,  0, 12, 10, 14,  1,  0 };
 
+#ifdef __STDC__
+void
+adjattrib(int ndx,int incr,boolean silent)
+#else
 void
 adjattrib(ndx, incr, silent)
-
 	int	ndx, incr;
 	boolean	silent;
+#endif
 {
 	if(!incr) return;
 
@@ -233,18 +237,28 @@ losestr(num)	/* may kill you; cause may be poison or monster like 'a' */
 	adjattrib(A_STR, -num, TRUE);
 }
 
+#ifdef __STDC__
+void
+change_luck(schar n)
+#else
 void
 change_luck(n)
-	register schar n;
+register schar n;
+#endif
 {
 	u.uluck += n;
 	if (u.uluck < 0 && u.uluck < LUCKMIN)	u.uluck = LUCKMIN;
 	if (u.uluck > 0 && u.uluck > LUCKMAX)	u.uluck = LUCKMAX;
 }
 
+#ifdef __STDC__
+int
+stone_luck(boolean parameter)
+#else
 int
 stone_luck(parameter)
 boolean parameter; /* So I can't think up of a good name.  So sue me. --KAA */
+#endif
 {
 	register struct obj *otmp;
 	register int bonchance = 0;
@@ -277,10 +291,10 @@ restore_attrib() {
 	}
 }
 
-static struct	clattr *
+static const struct	clattr *
 clx()  {
 
-	register struct	clattr	*attr;
+	register const struct	clattr	*attr;
 
 	switch	(pl_character[0]) {
 
@@ -318,7 +332,7 @@ clx()  {
 static void
 init_align() {	/* called from newhp if u.ulevel is 0 */
 
-	register struct	clattr	*attr = clx();
+	register const struct	clattr	*attr = clx();
 
 	u.ualign = (int)attr->align;
 	u.ualigntyp = attr->aligntyp;
@@ -329,7 +343,7 @@ init_attr(np)
 	register int	np;
 {
 	register int	i, x, tryct;
-	register struct	clattr	*attr = clx();
+	register const struct	clattr	*attr = clx();
 
 	for(i = 0; i < A_MAX; i++) {
 
@@ -400,8 +414,8 @@ adjabil(flag)
 
 	int	flag;		/* +ve/-ve  = gain/lose */
 {
-	register struct	clattr	*attr = clx();
-	register struct innate	*abil = attr->abil;
+	register const struct	clattr	*attr = clx();
+	register const struct innate	*abil = attr->abil;
 
 	if(abil) {
 
@@ -430,7 +444,7 @@ adjabil(flag)
 
 int
 newhp() {
-	register struct	clattr	*attr = clx();
+	register const struct	clattr	*attr = clx();
 	int	hp, conplus;
 
 	if(u.ulevel == 0) {
