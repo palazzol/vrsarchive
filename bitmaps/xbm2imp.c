@@ -47,34 +47,33 @@ unsigned char revbyte[] = {
  *	Get a byte from the input file
 */
 int
-getbyte(fp)
-FILE *fp;
+getbyte()
 {	int val, c;
 
 #ifdef SLOWWAY
-	if (fscanf(fp, " 0x%x %*[,}]", &val) != 1)
+	if (scanf(" 0x%x %*[,}]", &val) != 1)
 		return(0x00);	/* Nice and white like the background */
 #else
-	while ((c = getc(fp)) != EOF)
+	while ((c = getchar()) != EOF)
 		if (!isspace(c))
 			break;
 	if (c != '0')
 		return(0x00);
-	if (getc(fp) != 'x')
+	if (getchar() != 'x')
 		return(0x00);
-	if ((c = getc(fp)) == EOF)
+	if ((c = getchar()) == EOF)
 		return(0x00);
 	if (isdigit(c))
 		val = (c & 0xF) << 4;	/* Assumes ASCII */
 	else
 		val = (9+(c&0xF)) << 4;	/* Assumes ASCII */
-	if ((c = getc(fp)) == EOF)
+	if ((c = getchar()) == EOF)
 		return(0x00);
 	if (isdigit(c))
 		val += (c & 0xF);	/* Assumes ASCII */
 	else
 		val += 9 + (c&0xF);	/* Assumes ASCII */
-	while ((c = getc(fp)) != EOF)
+	while ((c = getchar()) != EOF)
 		if (!isspace(c))
 			break;
 	/* Assume c is either ',' or '}' */
@@ -91,17 +90,11 @@ char **argv;
 	int height, width, wremainder;
 	int wpatches, hpatches, pwidth;
 	register int x, y, y1, x1;
-	FILE *fopen(), *fp;
 
-	/* open the input file */
-	if ((fp = fopen(argv[1], "r")) == NULL) {
-			perror("on file open");
-			exit(1);
-	}
 	/* Get dimensions */
-	fscanf(fp, "#define %*s %d\n", &width);
-	fscanf(fp, "#define %*s %d\n", &height);
-	fscanf(fp, "static char %*s = {\n");	/* } */
+	scanf("#define %*s %d\n", &width);
+	scanf("#define %*s %d\n", &height);
+	scanf("static char %*s = {\n");	/* } */
 	width = (width+7)/8;	/* convert to bytes */
 	width *= 8;				/* convert back to bits */
 	wremainder = width & 31;
@@ -128,8 +121,8 @@ char **argv;
 		/* Read in a swath */
 		for (y1 = 0; y1 < 32; y1++) {
 			for (x = 0; x < pwidth/8; x++)
-				swath[y1][x] = getbyte(fp);
-			for (x = 0; x < wremainder/8; x++) getbyte(fp);
+				swath[y1][x] = getbyte();
+			for (x = 0; x < wremainder/8; x++) getbyte();
 		}
 		/* output the swath */
 		for (x1 = 0; x1 < wpatches; x1++) {
