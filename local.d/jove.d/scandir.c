@@ -29,6 +29,10 @@
 
 #ifdef UNIX
 
+#ifdef  _DIRENT_H
+#define _DIRENT_H_
+#endif
+
 #ifndef _DIRENT_H_
 
 #if defined(BSD4_2) || defined(M_XENIX)
