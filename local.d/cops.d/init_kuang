@@ -30,4 +30,5 @@ END
 # Setup the primary goal(s).
 #
 $ECHO Setting up goal						#>/dev/tty
-./addto uids root DO ANYTHING
+./addto uids root sroot build bin daemon sys adm uucp lp nuucp DO ANYTHING
+./addto uids listen install sysadm vmsys oasys sigma swcad DO ANYTHING
