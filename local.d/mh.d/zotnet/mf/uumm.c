@@ -216,7 +216,7 @@ FILE * in;
     strcpy (fromwhom, pp);
     while (isspace (*cp))
 	cp++;
-    sprintf (date, "%.24s", cp);
+    sprintf (date, "%.25s", cp);
 
     for (;;) {
 	if ((cp = index (cp + 1, 'r')) == NULL) {
