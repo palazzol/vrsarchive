@@ -1,5 +1,5 @@
 #
-#	Dam (draghts) $Header: /home/Vince/cvs/games.d/draughts.d/Makefile,v 1.5 2002-11-23 04:09:38 Vincent Exp $
+#	Dam (draghts) $Header: /home/Vince/cvs/games.d/draughts.d/Makefile,v 1.6 2002-11-24 19:37:06 vrs Exp $
 #
 ALL	= dam$(EXE)
 MODEL	= -i -F 2000
@@ -7,7 +7,7 @@ OPTIONS	= -DHELPFIL=\"$(GAMLIB)/dam.help\"
 include $(HOME)/CONFIG
 OBJECT	= dam.o prbord.o prinfo.o readmove.o timeac.o
 
-dam:	$(OBJECT)
+dam$(EXE):	$(OBJECT)
 	$(CC) $(OBJECT) -o $@ $(LIBS)
 
 lint:
