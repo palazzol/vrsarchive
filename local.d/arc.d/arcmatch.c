@@ -22,7 +22,11 @@
 
 #include "arc.h"
 #include <sys/types.h>
+#ifdef SYS5
+#include <dirent.h>
+#else
 #include <sys/dir.h>
+#endif
 
 #define ASTERISK '*'		/* The '*' metacharacter */
 #define QUESTION '?'		/* The '?' metacharacter */
