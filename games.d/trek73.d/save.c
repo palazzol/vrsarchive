@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.6 2002-11-22 04:12:23 Vincent Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.7 2002-11-25 21:42:37 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/save.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.6 2002-11-22 04:12:23 Vincent Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/save.c,v 1.7 2002-11-25 21:42:37 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2002/11/22 04:12:23  Vincent
+ * Working on CYGWIN.
+ *
  * Revision 1.5  1987/12/25 21:54:04  vrs
  * SYSV -> SYS5 (use CONFIG)
  *
@@ -42,7 +45,10 @@
 
 typedef struct stat STAT;
 
-extern char *sys_errlist[], version[], encstr[];
+#ifndef __STDC__
+extern char *sys_errlist[];
+#endif
+extern char version[], encstr[];
 extern int errno;
 
 char *sbrk();
