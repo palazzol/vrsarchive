@@ -6,6 +6,9 @@ static char sccsid[] = "%W% %G%";
 #include <sys/types.h>
 #include <mnttab.h>
 #include "fstab.h"
+#ifndef PNMNTTAB
+#define PNMNTTAB "/etc/mnttab"
+#endif
 
 static struct fstab fs;
 static struct mnttab mnt;
@@ -39,15 +42,15 @@ getfsent()
     nbytes = fread((char *)&mnt, sizeof mnt, 1, fd);
     if (nbytes != 1)
       return ((struct fstab *)0);
-    if (ISMNTFREE(&mnt))
+    if (mnt.mt_dev[0] == 0)
       continue;
     fs.fs_spec = mnt.mt_filsys;
     fs.fs_file = mnt.mt_dev;
     fs.fs_type = mnt.mt_ro_flg? "r" : "rw";
     fs.fs_freq = 1;
     fs.fs_passno = 1;
+    return (&fs);
   }
-  return (&fs);
 }
 
 struct fstab *
