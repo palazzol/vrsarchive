@@ -54,8 +54,8 @@ main(argc, argv)
 int		argc;
 char	*argv[];
 {
-	extern	stop_handler();
-	extern	kill_handler();
+	extern	SIG_T stop_handler();
+	extern	SIG_T kill_handler();
 	char	*q, *pp, *pc;
 
 	if (argc < 2)  {
@@ -83,7 +83,7 @@ char	*argv[];
 
 	load_tables();
 
-	set_term();
+	Set_term();
 #ifdef SIGTSTP
 	signal(SIGTSTP, stop_handler);
 #endif
@@ -107,17 +107,18 @@ char	*argv[];
  * Restore screen and exit.
  * On restart, setup screen, redraw screen, and abort to top loop.
  */
-stop_handler()
+SIG_T
+stop_handler(dummy)
 {
 	setcursor(MAXHEIGHT, 1);
 	fflush(stdout);
-	unset_term();
+	unSet_term();
 	
 	kill(getpid(), SIGSTOP);
 
 	/* Return here when/if program restarted. */
 	/* Note that the signal mask is restored by longjmp. */
-	set_term();
+	Set_term();
 	longjmp(saved_stack, 0);
 }
 #endif /*SIGTSTP*/
@@ -126,12 +127,13 @@ stop_handler()
 /* Handle C-C signal (kill program).
  * Restore screen and exit.
  */
-kill_handler()
+SIG_T
+kill_handler(dummy)
 {
 	setcursor(MAXHEIGHT, 1);
 	printf("\n");
 	fflush(stdout);
-	unset_term();
+	unSet_term();
 	
 	kill(getpid(), SIGKILL);
 }
@@ -195,7 +197,7 @@ char	*arg;
 done(status)
 int	status;
 {
-	unset_term();
+	unSet_term();
 	printf("\n");
 	exit(status);
 }
