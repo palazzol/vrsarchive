@@ -1,0 +1,34 @@
+These files make up a YACC grammar for parsing RFC822 addresses which
+I received a long time ago from
+
+	From: Daniel Karrenberg <dfk@unido.uucp>
+
+They kind of hung around a long time gathering mold until someone posted
+a request for a LEX parser for RFC822.  Well, I mentioned this thing
+and the responses just took off.  Rich Salz contributed a few changes.
+(mainly, it seems, improving portability).  For my part, I've gone
+over the grammar with a fine-tooth comb to check if it matches the spec.
+The results of that are in NOTES.
+
+	Date: Tue, 13 Oct 87 14:22:11 edt
+	From: Rich Salz <rsalz@PINEAPPLE.BBN.COM>
+	To: david%ms.uky.edu@HARVARD.HARVARD.EDU
+	Subject: rfc822 parser
+
+	Here's my changes, basically, a rewrite.  Do what you will -- I suppose my
+	name should go in there, in case I put in any bugs...
+
+One thing this stuff doesn't do is parse a whole message. (or even
+just the headers).  It only parses addresses.  It should be simple
+enough to wrap a header-parser around this address-parser, probably
+in the same grammar.
+
+I personally am slightly displeased that it will group all the comment
+text into one thing.  That's not a very nice thing to do, and shouldn't
+really be necessary ...  But it's sat here long enough without my doing
+anything with it ... :-)
+
+
+
+	-- David Herron <david@ms.uky.edu>
+	   Tue Oct 27 17:49:58 EST 1987

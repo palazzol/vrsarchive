@@ -1,0 +1,19 @@
+Observations while going over this grammar.
+
+1. An embedded '\n' will muck things up.  In yylex(), an embedded '\n'
+   will bring you through the default: of the second switch(), and
+   since isspace('\n') fails we'll continue picking up characters
+   for the current ATOM.  But an eol is supposed to end the current 
+   token.
+2. An address like "a@b.[1.2.3.4].c" is allowed, and looking in the
+   actual spec, it's supposed to be allowed.  This is moderately
+   strange ...
+3. A not-very major no-no ... In this grammar, a "mailbox" can be
+   an "addr_spec", a "route_addr", or a "phrase route_addr".  Strict
+   interpretation of the spec says that it can't be just a "route_addr".
+4. At first glance, the code for addr_lel would allow '\n' to
+   seperate addresses, which is plain wrong.  Fortunately, EOL really
+   just means the end of the buffer ...
+
+
+-- David Herron <david@ms.uky.edu>

@@ -1,0 +1,91 @@
+[ This is the original information I received along with these
+  files ... David ]
+
+
+Received: from  by .ukma.UUCP id a028381; 1 Apr 86 10:23 EST
+Received: From UKMA.BITNET By UKMA.BITNET ; 01 Apr 86 15:22:19 GMT
+Message-Id: <8604010817.AA27744@unido.uucp>
+Received: by unido.uucp; Tue, 1 Apr 86 10:17:13 -0200
+To: david@UKMA
+Subject: Re: BSMTP & sendmail
+In-Reply-To: Your message of Thu, 27 Mar 86 11:46:58 EST.
+             <8603271918.AA28476@unido.uucp>
+Date: 01 Apr 86 10:17:09 N (Tue)
+From: Daniel Karrenberg <dfk@unido.uucp>
+
+
+  > I assume you've tried to use simple and found it disgusting?
+
+I tried to fully understand it, but .......
+
+  > I used simple and friends with sendmail for quite awhile and could never
+  > get it to work well.  I wasn't using it for sending BSMTP tho, but I
+  > assume that it was just a matter of saying the right incantations into
+  > the configuration.  (Currently I'm using it with mmdf -- it works a
+  > little better with mmdf).
+
+Sending BSMTP is not the problem. Receiving is the dificult part.
+
+  > I've been considering doing up a set of programs for sending and
+  > recieving BSMTP but not using simple.  But I've got too many other
+  > pressing matters.
+
+Very similar to my situation !
+
+  > I would like to have the RFC-822 grammer you mentioned (please?).
+
+Sure, see below. Please feel invited to send comments and suggestions.
+If you go ahead with a BSMTP server please let me know. If there are
+code conversion problems I could send it in tarmail format.
+
+
+Regards
+
+-Daniel  <dfk@unido.uucp> , <dfk@unido.bitnet>
+
+
+
+--------------  Original README
+
+
+                                       Tue Apr  1 09:52:46 MET DST 1986
+
+This is an RFC822 addressparser. The grammer and scanner are based on work
+done by Bill Nesheim of Cornell:
+
+  > -------
+  > Date:     Thu, 13 Feb 86 16:31:51 EST
+  > From:     <bill%bullwinkle@crnlcs.bitnet>
+  > To:       dfk@unido.uucp
+  > Subject:  Re:  damail.c
+  > -------
+  >
+  > I've spooled a tar file of damail to you via bitnet.
+  >                 Bill
+  >
+  > (ps: go ahead and give it to whoever wants it.  It's not great, but it
+  > works well enough.)
+
+I have generalized it to accept -hopefully- full RFC822 syntax and store
+the pieces in a reasonable datastructure for processing. The rationale for
+this is not to do any string shoving in the mailer proper. I have had to
+understand too much Mail software that munged address strings in too many
+places.
+
+However I haven't written a program using this parser yet because I have
+little time for this 'hobby'.
+
+One thing it doesn't handle very well are ()-comments. Since they are
+essentially white space, they are skipped by the scanner. If there is
+more than one of this kind in any given address, they will be concatenated
+in the adderss structure. This makes it impossible to reconstruct a
+commented address string from the parsed version exactly.
+
+There is a program to test the parser: tparse.c
+
+It has been run on VAX, NS32016 and 68000 CPUs.
+
+Pleas feel invited to send comments, suggestions and fixes!
+
+
+- Daniel  <dfk@unido.bitnet>, <dfk@unido.uucp>
