@@ -632,6 +632,7 @@ static
 toutent (cent)
 register struct dent *cent;
 {
+#ifdef CAPITALIZE
 	register char *cp;
 	int len;
 	register int wcount;
@@ -659,6 +660,9 @@ register struct dent *cent;
 			cent->word[0] = toupper (cent->word[0]);
 		toutword (cent->word, cent);
 	}
+#else
+	toutword (cent->word, cent);
+#endif
 }
 		
 static

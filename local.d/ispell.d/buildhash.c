@@ -240,6 +240,8 @@ readdict ()
 			d.word = malloc (2 * len + 4);
 		else
 			d.word = malloc (len + 1);
+#else
+		d.word = malloc (len + 1);
 #endif
 		if (d.word == NULL) {
 			fprintf (stderr, "couldn't allocate space for word %s\n", lbuf);
@@ -339,7 +341,9 @@ readdict ()
 			    hashtbl[h].next = dp;
 			}
 		}
+#ifdef CAPITALIZE
 	}
+#endif
 	printf ("\n");
 }
 

@@ -22,7 +22,7 @@ char *
 xgets (str)
 char str [];
 {
-#if MAXINCLUDFILES == 0
+#if MAXINCLUDEFILES == 0
     return gets (str);
 #else
     static char * Include_File = DEFINCSTR;
@@ -35,7 +35,7 @@ char str [];
     if (Include_Len == 0) {
 	char * env_variable, * getenv ();
 
-	if ((env_variable = getenv (INCSTRVAR) != NULL)
+	if ((env_variable = getenv (INCSTRVAR)) != NULL)
 	    Include_File = env_variable;
 	Include_Len = strlen (Include_File);
 
@@ -59,7 +59,7 @@ char str [];
 
 	if (incfileflag != 0 && strncmp (str, Include_File, Include_Len) == 0) {
 	    char * file_name = str + Include_Len;
-	    if (current_F - F < MAX_FILES && strlen (file_name) > 0) {
+	    if (current_F - F < MAXINCLUDEFILES && strlen (file_name) > 0) {
 		FILE * f;
 		if (f = fopen (file_name, "r"))
 		    *(++current_F) = f;

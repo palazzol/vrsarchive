@@ -37,6 +37,11 @@
 #include "ispell.h"
 #include "version.h"
 
+#define ISTEXTERM(c)   (((c) == '{') || \
+			((c) == '}') || \
+			((c) == '[') || \
+			((c) == ']'))
+
 FILE *infile;
 FILE *outfile;
 
@@ -437,27 +442,29 @@ checkfile ()
 		
 		len = strlen (secondbuf) - 1;
 
-		/* skip over .if */
-		if (strncmp(currentchar,".if t",5) == 0 
-		||  strncmp(currentchar,".if n",5) == 0) {
-			copyout(&currentchar,5);
-			while (*currentchar && isspace(*currentchar)) 
-				copyout(&currentchar, 1);
-		}
+		if(!tflag) {
+		    /* skip over .if */
+		    if (strncmp(currentchar,".if t",5) == 0 
+		    ||  strncmp(currentchar,".if n",5) == 0) {
+			    copyout(&currentchar,5);
+			    while (*currentchar && isspace(*currentchar)) 
+				    copyout(&currentchar, 1);
+		    }
 
-		/* skip over .ds XX or .nr XX */
-		if (strncmp(currentchar,".ds ",4) == 0 
-		||  strncmp(currentchar,".de ",4) == 0
-		||  strncmp(currentchar,".nr ",4) == 0) {
-			copyout(&currentchar, 3);
-			while (*currentchar && isspace(*currentchar)) 
-				copyout(&currentchar, 1);
-			while (*currentchar && !isspace(*currentchar))
-				copyout(&currentchar, 1);
-			if (*currentchar == 0) {
-				if (!lflag) putc ('\n', outfile);
-				continue;
-			}
+		    /* skip over .ds XX or .nr XX */
+		    if (strncmp(currentchar,".ds ",4) == 0 
+		    ||  strncmp(currentchar,".de ",4) == 0
+		    ||  strncmp(currentchar,".nr ",4) == 0) {
+			    copyout(&currentchar, 3);
+			    while (*currentchar && isspace(*currentchar)) 
+				    copyout(&currentchar, 1);
+			    while (*currentchar && !isspace(*currentchar))
+				    copyout(&currentchar, 1);
+			    if (*currentchar == 0) {
+				    if (!lflag) putc ('\n', outfile);
+				    continue;
+			    }
+		    }
 		}
 
 		if (secondbuf [ len ] == '\n')
@@ -484,7 +491,8 @@ checkfile ()
 				if (*currentchar == '\\') {
 				    /* skip till whitespace */
 				    while (*currentchar && 
-					!isspace(*currentchar)) {
+					(!isspace(*currentchar) &&
+					 !ISTEXTERM(*currentchar))) {
 					    if (!lflag)
 						putc(*currentchar, outfile);
 					    currentchar++;
@@ -960,7 +968,15 @@ register char *word;
 					return;
 			}
 		}
+#ifdef CAPITALIZE
+		c = word[i];
+		if (islower (c))
+		    newword[i] = toupper (c);
+		else
+		    newword[i] = c;
+#else
 		newword[i] = word[i];
+#endif
 	}
 }
 

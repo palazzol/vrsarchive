@@ -68,6 +68,11 @@ struct ltchars ltc, oltc;
 static termchanged = 0;
 static int (*oldint) ();
 static int (*oldterm) ();
+#ifdef SIGTTIN
+static int (*oldttin) ();
+static int (*oldttou) ();
+static int (*oldtstp) ();
+#endif
 
 terminit ()
 {
@@ -228,9 +233,9 @@ char *buf;
 	signal (SIGINT, oldint);
 	signal (SIGTERM, oldterm);
 #ifdef SIGTTIN
-	signal(SIGTTIN, SIG_DFL);
-	signal(SIGTTOU, SIG_DFL);
-	signal(SIGTSTP, SIG_DFL);
+	oldttin = signal(SIGTTIN, SIG_DFL);
+	oldttou = signal(SIGTTOU, SIG_DFL);
+	oldtstp = signal(SIGTSTP, SIG_DFL);
 #endif
 
 	system (buf);
