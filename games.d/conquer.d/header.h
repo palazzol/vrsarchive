@@ -28,14 +28,20 @@
 /*--------------PLEASE MODIFY DATA FILE NAMES IN misc.c--------------------*/
 
 /*-------MODIFICATION IS REQUIRED OF THE FOLLOWING 3 DEFINE STATEMENTS-----*/
+#ifdef LOGIN
+#define OWNER	LOGIN		/*administrators name*/
+#else
 #define OWNER	"Ed Barlow"	/*administrators name*/
 #define LOGIN	"smile"		/*administrators login id !!!IMPORTANT!!!*/
                                 /*only the administrative UID may update...*/
+#endif
 #define VERSION "version 2.0"     /*version number of the game*/
 
 /* directory where default data files will be stored */
 /* SO ONE GAME CAN EXIST IN DEFAULTDIR, OTHER GAMES IN OTHER DIRECTORIES */
+#ifndef DEFAULTDIR
 #define DEFAULTDIR "/d7/c7913/smile/oldgame"
+#endif
 
 /*-------------------MODIFICATION IS OPTIONAL ON THE FOLLOWING-------------*/
 #define SYSV 		/*comment this line out if on a BSD machine*/
@@ -56,7 +62,9 @@
                           Player nations if they forget to move*/
 #define BEEP		/*defined if you wish terminal to beep*/
 #define HILIGHT		/*defined if your terminal supports inverse video*/
+#if 0
 #define SYS5 		/*defined if SYS V. comment out if on a BSD system*/
+#endif
 /*#define SRANDOM*/	/*defined if srandom()/random() functions are
  			   resident on your system */
 #define RANEVENT	/*defined if random events possible (not fully tested)*/
