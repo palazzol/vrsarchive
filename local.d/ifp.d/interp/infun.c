@@ -255,7 +255,7 @@ boolean InSimple (F,InOut,Env)
 	 ,'\0'
       };
       register FormEntry *K;
-      extern char *index ();
+      extern char *strchr ();
 
       if (Debug & DebugParse) {
 	 printf ("InSimple: Env = "); OutList (Env); 
@@ -266,10 +266,10 @@ boolean InSimple (F,InOut,Env)
       if (IsTok (F,"!")) return InObject (F,InOut);
 #endif
       /* 
-       * The "index" lookup below quickly rejects strings which
+       * The "strchr" lookup below quickly rejects strings which
        * cannot be key words.
        */
-      if (NULL != index (InFirst,*F->InPtr)) {
+      if (NULL != strchr (InFirst,*F->InPtr)) {
 	 for (K=FormTable; K < ArrayEnd(FormTable); K++) 
 	    if (*K->FormInPrefix != '\0' && IsTok (F,K->FormInPrefix))
 	       return InPFO (F,InOut,K,Env);

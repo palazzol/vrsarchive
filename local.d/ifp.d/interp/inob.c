@@ -128,9 +128,9 @@ StrPtr InString (F,X,Delim,Quoted)
       X->String = NULL;
       CPInit (&U,&X->String);
       do {
-         extern char *index ();
+         extern char *strchr ();
 	 C = *F->InPtr++;
-	 if (!isalnum (C) && NULL != index (Delim,C)) C = '\0';
+	 if (!isalnum (C) && NULL != strchr (Delim,C)) C = '\0';
 	 CPAppend (&U,C);
 	 if (SysError) {RepTag (X,BOTTOM); return NULL;}
       } while (C);
