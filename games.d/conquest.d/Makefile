@@ -14,7 +14,7 @@ HEADERS=header.h
 SUPT1=.nations Makefile .help README run
 SUPT2=.execute .messages .news
 
-conquest: $(OBJ)
+conquest$(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
 lint:	$(OBJ:.o=.c)
