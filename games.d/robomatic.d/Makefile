@@ -1,14 +1,15 @@
 #
-#	robomatic @(#)Makefile	1.5 10/18/85
+#	robomatic @(#)Makefile	1.6 10/19/85
 #
 SHELL	= /bin/sh
+CFLAGS	= -O -i -F 2000 # -p
 LIBS	= -lcurses -ltermcap -lx
 GAMDIR	= $(DESTDIR)/usr/games
 USRMAN	= $(DESTDIR)/usr/man
 MANDIR	= $(USRMAN)/man6
 
 robomatic: robomatic.o
-	cc -o $@ robomatic.o $(LIBS)
+	cc $(CFLAGS) -o $@ robomatic.o $(LIBS)
 
 $(GAMDIR) $(USRMAN) $(MANDIR):
 	mkdir $@
