@@ -13,6 +13,8 @@
 #include <signal.h>
 #include <stdio.h>
 
+extern struct passwd *getpwuid();
+
 #define MAXSTR	256
 
 typedef struct stat STAT;
@@ -35,7 +37,7 @@ set_save()
 
 	if ((env = getenv("HOME")) != NULL)
 		strcpy(home, env);
-	else if ((pw = (struct password *)getpwuid(getuid())) != NULL)
+	else if ((pw = (struct passwd *)getpwuid(getuid())) != NULL)
 		strcpy(home, pw->pw_dir);
 	else
 		home[0] = '\0';
@@ -149,12 +151,11 @@ register char *file;
 char **envp;
 {
     register int inf, (*func)();
-    register char syml;
     extern char **environ;
     char buf[MAXSTR];
     STAT sbuf2;
 
-#ifdef BSD
+#ifdef SIGTSTP
     func = signal(SIGTSTP, SIG_IGN);
 #endif
 #ifdef SYSV
@@ -167,12 +168,6 @@ char **envp;
 	return 0;
     }
     fstat(inf, &sbuf2);
-#ifdef BSD
-    syml = symlink(file);
-#endif
-#ifdef SYSV
-    syml = link(file);
-#endif
     if (unlink(file) < 0)
     {
 	printf("Cannot unlink file\n");
@@ -200,18 +195,9 @@ char **envp;
 	    printf("Sorry, saved game is not in the same file.\n");
 	    return 0;
 	}
-#ifdef NOTDEF
-    /*
-     * defeat multiple restarting from the same place
-     */
-	if (sbuf2.st_nlink != 1 || syml)
-	{
-	    printf("Cannot restore from a linked file %d %d\n", sbuf2.st_nlink, syml);
-	    """"""Cb""""b#pP"BqC"p""""""""2 """""""""""""""b"""""""""""""""""""""""""""""""""bu""""""""""""""""BP """"Q"Q#a""0
-	}
-#endif
+#ifdef SIGTSTP
     signal(SIGTSTP, SIG_DFL);
-
+#endif
     environ = envp;
     stdin->_cnt = 0;
     playit();
