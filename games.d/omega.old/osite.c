@@ -686,7 +686,7 @@ void l_tavern()
 	if (Player.cash < 1)
 	  mprint("Aw hell, have one on me.");
 	else {
-	  hinthour == hour();
+	  hinthour = hour();
 	  Player.cash -= 1;
 	  dataprint();
 	  if (hinthour!=hour()) {

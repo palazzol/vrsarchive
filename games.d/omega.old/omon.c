@@ -136,11 +136,11 @@ int x,y,canopen;
       (Dungeon[Dlevel][x][y].locchar==CLOSED_DOOR) &&
       (! Dungeon[Dlevel][x][y].secret)) {
 	if (Dungeon[Dlevel][x][y].aux != LOCKED) 
-	  Dungeon[Dlevel][x][y].locchar==OPEN_DOOR;
+	  Dungeon[Dlevel][x][y].locchar=OPEN_DOOR;
 	else {
 	  if (((20*(random_range(10)+1)) < m->dmg)) {
 	    mprint("You hear a door splintering!");
-	    Dungeon[Dlevel][x][y].locchar==FLOOR;
+	    Dungeon[Dlevel][x][y].locchar=FLOOR;
 	  }
 	}
       }
