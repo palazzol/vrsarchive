@@ -1,12 +1,22 @@
 #
-#	SCCS Id: @(#)Makefile.pc	1.3	87/07/14
+#	SCCS Id: @(#)Makefile.pc	1.4	87/08/08
 # 	Makefile for NetHack (PC) version 1.0 written using
 #	Microsoft(tm) "C" v3.0 or better.
 # 
 # Large memory model, register bug, remove stack probes:
 WIZARD=
 V = 35
-CFLAGS = -AL -DREGBUG -DLINT_ARGS -DVER=$V $(WIZARD) -Ot -Gs
+CFLAGS = -A$(MODEL) -DREGBUG -DLINT_ARGS -DVER= $(WIZARD) -Ot -Gs -Gt100
+LIBS =
+LFLAGS =
+MODEL = L
+SETARGV = $(LIB)$(MODEL)SETARGV
+.SUFFIXES: .exe .obj .c
+.c.obj:; cl $(CFLAGS) -c .c
+.c.exe:;
+    cl $(CFLAGS) -c .c
+    link .obj $(SETARGV), ,, $(LIBS) $(LFLAGS);
+
 
 # The game name
 GAME = hack.exe
@@ -15,7 +25,7 @@ GAME = hack.exe
 GAMEDIR = \h
 
 # All object modules
-OBJS = decl.obj apply.obj bones.obj cmd.obj do.obj dothrow.obj \
+OBJS =  decl.obj apply.obj bones.obj cmd.obj do.obj dothrow.obj \
 	do_name.obj do_wear.obj dog.obj dogmove.obj eat.obj end.obj \
 	engrave.obj fight.obj fountain.obj hack.obj invent.obj \
 	lev.obj main.obj makemon.obj mhitu.obj mklev.obj \
@@ -67,40 +77,47 @@ srcs :
 
 #	Other dependencies
 #
-RUMORFILES= rumors.base rumors.kaa rumors.mrx
+RUMORFILES= rumors.bas rumors.kaa rumors.mrx
 
-rumors :  config.h $(RUMORFILES) makedefs
-	./makedefs -r
+makedefs.exe:	makedefs.c alloc.obj config.h
+	cl -AL makedefs.c alloc.obj
 
-data :  config.h data.base makedefs
-	./makedefs -d
 
-onames.h :  config.h objects.h makedefs
-	./makedefs -o
+rumors :  config.h $(RUMORFILES) makedefs.exe
+	makedefs.exe -r
+
+data :  config.h data.bas makedefs.exe
+	makedefs.exe -d
+
+onames.h :  config.h objects.h makedefs.exe
+	makedefs.exe -o
 
 #	Below is a kluge.  date.h should actually depend on any source
 #	module being changed. (but hack.h is close enough for most).
 #
-date.h :  hack.h makedefs
-	./makedefs -D
+date.h :  hack.h makedefs.exe
+	makedefs.exe -D
 
-trap.h :  config.h makedefs
-	./makedefs -t
+trap.h :  config.h makedefs.exe
+	makedefs.exe -t
 
-main.obj :
+main.obj : main.c
 
 main.c :  pcmain.c hack.h
 	copy pcmain.c main.c
+	touch main.c
 
-tty.obj :
+tty.obj : tty.c
 
 tty.c :  pctty.c hack.h msdos.h
 	copy pctty.c tty.c
+	touch tty.c
 
-unix.obj :
+unix.obj : unix.c
 
 unix.c :  pcunix.c hack.h mkroom.h
 	copy pcunix.c unix.c
+	touch unix.c
 
 decl.obj :  hack.h mkroom.h
 apply.obj :  hack.h edog.h mkroom.h
@@ -112,6 +129,7 @@ do_name.obj :  hack.h
 do_wear.obj :  hack.h
 dog.obj :  hack.h edog.h mkroom.h
 dogmove.obj :  hack.h mfndpos.h
+dothrow.obj :  hack.h
 eat.obj :  hack.h
 end.obj :  hack.h
 engrave.obj :  hack.h
