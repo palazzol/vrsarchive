@@ -1,0 +1,11 @@
+ This is a public domain version of the command "strings" available
+in the Berkeley distributions. It is slightly more intellgent than
+the aforementioned version. It was written for a friend on a Plexus
+P-40 running V7. It works on his machine, but how well does Plexus
+conform to V7? I dunno, that is the only example I have. In the 4.2 man
+page it says that strings reports addresses in octal. The standard command
+does not, so this version does not either. Simple change if you want it to
+though...
+
+			--Lee (Ward)
+		{ucbvax,gatech,convex}!unmvax!lee
