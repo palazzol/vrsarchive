@@ -9,8 +9,7 @@
 #  define EQUALS(x)
 #endif
 
-#define MAXVDISP	4
-
-EXTERN int cmdchar EQUALS('_'&037);
-EXTERN int curvdsp EQUALS(0);
-EXTERN int trace EQUALS(0);
+EXTERN int cmdchar	EQUALS('_'&037);
+EXTERN int curvdsp	EQUALS(0);
+EXTERN int displays	EQUALS(2);
+EXTERN int trace	EQUALS(0);

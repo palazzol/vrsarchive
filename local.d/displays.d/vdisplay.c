@@ -17,7 +17,7 @@ struct screen {
 	short cm_row;			/* Row for incomplete cursor mv	*/
 	char vstate;			/* State of the virtual display	*/
 	char xn_flag;			/* True if xn wrap in progress	*/
-} screen[MAXVDISP];
+} *screen;
 
 #define V_NORM		0		/* Normal state			*/
 #define V_ESC		1		/* Just got an escape		*/
@@ -25,26 +25,21 @@ struct screen {
 #define V_CM		3		/* Expecting column		*/
 #define V_FLAG		4		/* Expecting flag value		*/
 
-char *tracefile[] = {
-	"win0",
-	"win1",
-	"win2",
-	"win3",
-	"win4",
-	"win5",
-	"win6",
-	"win7"
-};
-
 /*
  *	Loop over all virtual screens, allocating and initializing
  *	resources.  Initialize the physical display.
 */
 vdisp_init()
 {	int i;
+	char buf[40];
 
 	pdisp_init();
-	for (curvdsp = 0; curvdsp < MAXVDISP; curvdsp++) {
+	screen = (struct screen *)malloc(displays*sizeof(*screen)); 
+	if (screen == NULL) {
+		perror("vdisp_init malloc");
+		done(1);
+	}
+	for (curvdsp = 0; curvdsp < displays; curvdsp++) {
 		screen[curvdsp].vstate = V_NORM;
 		screen[curvdsp].display = newwin(LINES, COLS, 0, 0);
 		if (screen[curvdsp].display == NULL) {
@@ -61,7 +56,8 @@ vdisp_init()
 		for (i = 0; i < COLS; i++)
 			screen[curvdsp].tstop[i] = (i%8 == 0);
 		if (trace) {
-			screen[curvdsp].trace_fd=fopen(tracefile[curvdsp],"w");
+			sprintf(buf, "screen%d", curvdsp);
+			screen[curvdsp].trace_fd = fopen(buf, "w");
 			if (screen[curvdsp].trace_fd == NULL) {
 				perror("vdisp_init trace fopen");
 				done(1);
@@ -77,7 +73,7 @@ vdisp_init()
 next_vdisp()
 {
 	curvdsp++;
-	if (curvdsp >= MAXVDISP)
+	if (curvdsp >= displays)
 		curvdsp = 0;
 	touchwin(screen[curvdsp].display);
 	wrefresh(screen[curvdsp].display);
@@ -202,7 +198,6 @@ register char c;
 		 *	ESC '[' 'D'			{ cursor_left(); }
 		 *	ESC '[' number ';' number 'H'	{ move ($1, $2); }
 		 *	ESC '[' number 'J'		{ clear_screen($1); }
-		 *	ESC '[' number 'H'		{ move($1, 0); }
 		 *	ESC '[' 'K'			{ clear_to_eol(); }
 		 *	ESC '[' number 'g'		{ clear_tab_stops(); }
 		 *	ESC '[' number 'm'		{ set_attributes($1); }
@@ -258,12 +253,6 @@ register char c;
 			else
 			    wclrtobot(vd);
 			wmove_xn(y, x);
-			break;
-		    case 'H':
-			if (screen[vdisp].cm_col)
-			    screen[vdisp].cm_col--;
-			y = screen[vdisp].cm_col;
-			x = 0;
 			break;
 		    case 'K':
 			wclrtoeol(vd);
@@ -350,7 +339,7 @@ vdisp_wrapup()
 {	int i;
 
 	if (trace) {
-		for (i = 0; i < MAXVDISP; i++)
+		for (i = 0; i < displays; i++)
 			fclose(screen[i].trace_fd);
 	}
 }

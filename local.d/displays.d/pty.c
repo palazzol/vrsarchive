@@ -3,14 +3,15 @@
 */
 #include <errno.h>
 #include <signal.h>
+#include <stdio.h>
 #include "globals.h"
 #include "pipe.h"
 
 extern int errno;
 extern void done();
 
-int pty_fd[MAXVDISP];
-int pty_pid[MAXVDISP];
+int *pty_fd;
+int *pty_pid;
 
 char *ptynames[] = {
 	"/dev/ptyv0",
@@ -62,7 +63,17 @@ pty_init(pipe_fd)
 int pipe_fd;		/* pipe fd */
 {	int i;
 
-	for (i = 0; i < MAXVDISP; i++)
+	pty_fd = (int *)malloc(displays*sizeof(*pty_fd));
+	if (pty_fd == NULL) {
+		fprintf(stderr, "Cannot allocate pty_fd\n");
+		exit(1);
+	}
+	pty_pid = (int *)malloc(displays*sizeof(*pty_pid));
+	if (pty_pid == NULL) {
+		fprintf(stderr, "Cannot allocate pty_pid\n");
+		exit(1);
+	}
+	for (i = 0; i < displays; i++)
 		open_pty(pipe_fd, i);
 	vdisp_init();
 }
@@ -90,7 +101,7 @@ int status;
 	keybd_wrapup();
 	vdisp_wrapup();
 	pdisp_wrapup();
-	for (i = 0; i < MAXVDISP; i++) {
+	for (i = 0; i < displays; i++) {
 		kill(pty_pid[i], SIGTERM);
 		wait((int *)0);
 	}
