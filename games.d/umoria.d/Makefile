@@ -31,7 +31,10 @@ $(LIBDIR):
 	chown $(SAFEUID) $@
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(LIBDIR)
+	cd $(GAMDIR); rm -f moria$(EXE)
 	cp moria$(EXE) $(GAMDIR)
+	chmod u+w $(LIBDIR)
+	cd $(LIBDIR); rm -f Moria_hours Moria_news Highscores
 	cp Moria_hours $(LIBDIR)
 	cp Moria_news $(LIBDIR)
 	cp Highscores $(LIBDIR)
