@@ -100,7 +100,7 @@ pob o;
   pol tmp;
   pob cpy; 
   
-  if (Current_Environment != E_COUNTRYSIDE) 
+  if (Current_Environment != E_COUNTRYSIDE) {
     if ((Level->site[x][y].locchar != ' ') &&
 	(Level->site[x][y].locchar != '0')) {
       cpy = ((pob) malloc(sizeof(objtype)));
@@ -111,7 +111,7 @@ pob o;
       tmp->next = Level->site[x][y].things;
       Level->site[x][y].things = tmp;
     }
-  else if (Level->site[x][y].p_locf == L_VOID_STATION)
+  } else if (Level->site[x][y].p_locf == L_VOID_STATION)
     setgamestatus(PREPARED_VOID);
 }  
 
