@@ -1,5 +1,5 @@
 # 
-# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.3 1987-02-15 15:59:08 vrs Exp $
+# $Header: /home/Vince/cvs/local.d/se.d/makefile,v 1.4 1987-02-15 20:38:29 vrs Exp $
 # 
 DOCS= Makefile README
 MANS= scriptse.1 se.1
@@ -10,6 +10,9 @@ OPTIONS	= -O `cat flags`
 include ../../CONFIG
 #
 # $Log: not supported by cvs2svn $
+# Version 1.3  87/02/15  15:59:08  vrs
+# Use CONFIG
+# 
 # Version 1.2  87/02/07  20:42:33  vrs
 # Need flags when linking
 # 
@@ -114,12 +117,6 @@ printall: printman print
 	cd se_h; make print
 
 clean:
-	rm -f *.o print2
+	rm -f $(OBJS) flags se.1 $(BINS)
 	cd pat; make clean
 	cd libchangetty; make clean
-
-clobber: clean
-	rm -f se scriptse flags se.1
-	cd pat; make clobber
-	cd libchangetty; make clobber
-	cd se_h; make clobber
