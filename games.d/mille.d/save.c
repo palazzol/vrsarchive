@@ -13,8 +13,12 @@ int	read(), write();
 /*
  *	This routine saves the current game for use at a later date
  */
+#ifdef __STDC__
+#include <errno.h>
+#else
 extern int	errno;
 extern char	*sys_errlist[];
+#endif
 
 save() {
 
