@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/mille.d/Makefile,v 1.3 1990-03-27 17:26:20 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/mille.d/Makefile,v 1.4 2002-11-23 04:09:41 Vincent Exp $
 #
-ALL	= mille
+ALL	= mille$(EXE)
 MODEL	= -i
-OPTIONS	= -O
-include /etc/CONFIG
+OPTIONS	= -O -Dvax
+include $(HOME)/CONFIG
 HEADERS	= mille.h
 CFILES	= comp.c end.c extern.c init.c mille.c misc.c move.c print.c \
 	  roll.c save.c types.c varpush.c
@@ -23,7 +23,7 @@ POBJS	= comp.po end.po extern.po init.po mille.po misc.po move.po \
 .c.i:
 	$(CC) $(CFLAGS) -P $*.c
 
-mille: $(OBJS) 
+mille$(EXE): $(OBJS) 
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 install: $(ALL) $(GAMDIR)

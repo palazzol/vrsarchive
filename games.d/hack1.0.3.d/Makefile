@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.6 1990-04-04 21:18:08 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hack1.0.3.d/Makefile,v 1.7 2002-11-23 04:09:39 Vincent Exp $
 #
-ALL	= hack hack1.0.3
+ALL	= hack$(EXE) hack1.0.3
 MODEL	= -M2l -F 2000
 HACKDIR	= $(GAMLIB)/hack1.0.3
 SAVDIR	= $(HACKDIR)/save
@@ -9,7 +9,7 @@ SAVDIR	= $(HACKDIR)/save
 # If you define HACKDIR, then this will be the default playground;
 # otherwise it will be the current directory.
 OPTIONS	= -DHACKDIR=\"$(HACKDIR)\" # -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 HACKCSRC= hack.Decl.c\
 	  hack.apply.c hack.bones.c hack.c hack.cmd.c hack.do.c\
 	  hack.do_name.c hack.do_wear.c hack.dog.c hack.eat.c hack.end.c\
@@ -49,7 +49,7 @@ HOBJ	= hack.Decl.o hack.apply.o hack.bones.o hack.o hack.cmd.o hack.do.o\
 	  hack.wizard.o hack.worm.o hack.worn.o hack.zap.o\
 	  hack.version.o rnd.o alloc.o
 
-hack:	$(HOBJ)
+hack$(EXE):	$(HOBJ)
 	$(CC) $(CFLAGS) -o $@ $(HOBJ) $(LIBS)
 
 hack1.0.3: hack.sh
@@ -89,10 +89,10 @@ $(HACKDIR) $(SAVDIR):
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVDIR) $(MAN6)
 	rm -f $(HACKDIR)/bones*
-	cp hack $(HACKDIR)/hack
-	chown $(SAFEUID) $(HACKDIR)/hack
-	chgrp $(SAFEGRP) $(HACKDIR)/hack
-	chmod 6711 $(HACKDIR)/hack
+	cp hack$(EXE) $(HACKDIR)/hack$(EXE)
+	chown $(SAFEUID) $(HACKDIR)/hack$(EXE)
+	chgrp $(SAFEGRP) $(HACKDIR)/hack$(EXE)
+	chmod 6711 $(HACKDIR)/hack$(EXE)
 	cd $(HACKDIR); touch perm record
 	cp data help hh news rumors $(HACKDIR)
 	cd $(HACKDIR); chown $(SAFEUID) perm record data help hh news rumors

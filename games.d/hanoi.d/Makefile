@@ -1,11 +1,11 @@
 #
-#	hanoi $Header: /home/Vince/cvs/games.d/hanoi.d/Makefile,v 1.3 1990-03-27 17:25:51 vrs Exp $
+#	hanoi $Header: /home/Vince/cvs/games.d/hanoi.d/Makefile,v 1.4 2002-11-23 04:09:40 Vincent Exp $
 #
 #
-ALL	= hanoi
+ALL	= hanoi$(EXE)
 MODEL	= -i -F 2000	# XENIX only
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 lint:
 	lint -lcurses -ltermlib hanoi.c

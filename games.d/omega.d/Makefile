@@ -1,4 +1,4 @@
-ALL		= omega
+ALL		= omega$(EXE)
 MODEL	= -M2lt20
 OPTIONS	= -DEXCESSIVE_REDRAW -DOMEGALIB=\"$(OMEGALIB)/\"
 include $(HOME)/CONFIG
@@ -18,19 +18,19 @@ OBJS	= o.o oabyss.o oaux1.o oaux2.o oaux3.o ochar.o ocity.o ocom1.o \
 		  opriest.o osave.o oscr.o osite1.o osite2.o ospell.o otime.o otrap.o \
 		  outil.o ovillage.o
 
-omega: $(OBJS)
+omega$(EXE): $(OBJS)
 	$(CC) -o $@ $(CFLAGS) $(OBJS) $(LIBS)
 
 clean:
-	rm -rf *.o omega
+	rm -rf *.o $(ALL)
 
 $(OMEGALIB): $(GAMLIB)
 	mkdir $@
 	chmod 755 $@
 
-install: omega $(OMEGALIB)
-	cp omega $(GAMDIR)
-	cd $(GAMDIR); chmod 711 omega
+install: $(ALL) $(OMEGALIB)
+	cp $(ALL) $(GAMDIR)
+	cd $(GAMDIR); chmod 711 $(ALL)
 	cp $(SUPPORT) $(OMEGALIB)
 	cd $(OMEGALIB); chmod a=r,u+w $(SUPPORT)
 	cd $(OMEGALIB); chmod a+rw $(WENABLE)

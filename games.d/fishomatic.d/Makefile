@@ -1,11 +1,13 @@
 #
-#	$Header: /home/Vince/cvs/games.d/fishomatic.d/Makefile,v 1.3 1990-03-27 17:25:23 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/fishomatic.d/Makefile,v 1.4 2002-11-23 04:09:38 Vincent Exp $
 #
-ALL	= fishomatic
+ALL	= fishomatic$(EXE)
 MODEL	= -i
 OPTIONS	= -DFISH=\"$(GAMDIR)/fish\"
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
+fishomatic$(EXE): fishomatic.c
+	$(CC) $(CFLAGS) -o $@ $<
 lint:
 	lint $(OBJS:.o=.c) | tee lint.out
 

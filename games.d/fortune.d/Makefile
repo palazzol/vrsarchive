@@ -1,16 +1,16 @@
 #
-# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.3 1990-03-27 17:25:31 vrs Exp $
+# $Header: /home/Vince/cvs/games.d/fortune.d/Makefile,v 1.4 2002-11-23 04:09:39 Vincent Exp $
 #
 # Makefile for "fortune" program.  See READ_ME for details.
 #
-ALL	= fortune fortunes.dat
+ALL	= fortune$(EXE) fortunes.dat
 OPTIONS	= -O -DNO_RANDOM -DFORTFILE=\"$(GAMLIB)/fortunes.dat\"
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OFILES	= fortune.o strfile.o rnd.o unstr.o
 CFILES	= $(OFILES:.o=.c) strfile.h
 
-fortune: fortune.o rnd.o
+fortune$(EXE): fortune.o rnd.o
 	$(CC) $(CFLAGS) -o $@ fortune.o rnd.o $(LIBS)
 
 fortunes.dat: strfile fortunes
@@ -33,8 +33,8 @@ untsr: untsr.o
 unstr.o: unstr.c strfile.h
 
 install: $(ALL) fortunes.dat $(GAMDIR) $(GAMLIB)
-	cp fortune $(GAMDIR)/
-	cd $(GAMDIR); chown $(SAFEUID) fortune; chmod 4711 fortune
+	cp fortune$(EXE) $(GAMDIR)/
+	cd $(GAMDIR); chown $(SAFEUID) fortune$(EXE); chmod 4711 fortune$(EXE)
 	cp fortunes.dat $(GAMLIB)/
 	cd $(GAMLIB); chown $(SAFEUID) fortunes.dat; chmod 600 fortunes.dat
 

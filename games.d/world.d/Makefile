@@ -19,10 +19,10 @@
 # NOTE: Edit helper.c to adjust the pathname for q1text.dat for
 # your particular system.
 #
-ALL	= world
+ALL	= world$(EXE)
 OPTIONS	= -O -DQ1TEXT=\"$(GAMLIB)/q1text.dat\"
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 WHEADERS= arrays.h variab.h
 WOBJS	= demons.o helper.o motion.o parser.o verbs1.o verbs2.o world.o
 
@@ -38,15 +38,15 @@ convert:	vcnvrt vtxtcn vtext.dat
 	./vcnvrt
 	touch convert
 
-vcnvrt:	vcnvrt.c
+vcnvrt$(EXE):	vcnvrt.c
 	$(CC) $(CFLAGS) -o $@ vcnvrt.c
 	rm -f vcnvrt.o
 
-vtxtcn:	vtxtcn.c
+vtxtcn$(EXE):	vtxtcn.c
 	$(CC) $(CFLAGS) -o $@ vtxtcn.c
 	rm -f vtxtcn.o
 
-world:	convert $(WOBJS) $(WHEADERS) 
+world$(EXE):	convert $(WOBJS) $(WHEADERS) 
 	$(CC) $(CFLAGS) -o $@ $(WOBJS)
 
 clean:

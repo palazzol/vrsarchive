@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/blackbox.d/Makefile,v 1.3 1990-03-27 17:24:47 vrs Exp $ for the black box game
+#	$Header: /home/Vince/cvs/games.d/blackbox.d/Makefile,v 1.4 2002-11-23 04:09:36 Vincent Exp $ for the black box game
 #
-ALL	= blackbox
+ALL	= blackbox$(EXE)
 MODEL	= -i -F 2000	# XENIX only
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= blackbox.o drawbox.o
 
 blackbox: $(OBJS)

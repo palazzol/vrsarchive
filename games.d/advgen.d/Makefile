@@ -1,11 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.4 1990-03-27 17:24:23 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/advgen.d/Makefile,v 1.5 2002-11-23 04:09:35 Vincent Exp $
 #
-ALL	= advgen
+ALL	= advgen$(EXE)
 MODEL	= -i
 OPTIONS	= -DDEFINTERPRETER=\"$(INTERP)\" -DMAXCODE=$(MAXCODE) \
-	  -DMAXVOCAB=$(MAXVOCAB) -O
-include /etc/CONFIG
+	  -DMAXVOCAB=$(MAXVOCAB) -O -DNO_PRETTY_ERRORS
+include $(HOME)/CONFIG
 INTERP	= #$(GAMLIB)/adv
 MAXCODE	= 10000
 MAXVOCAB= 1000
@@ -21,7 +21,7 @@ DIST	= READ_ME TO_DO advgen.6 advgen.c advgram.y advlex.l lookup.c \
 	  msgs.c code.c advgen.h extfuncs.h code.h Makefile Pirate.adv \
 	  Dist.hdr
 
-advgen: $(OBJS)
+advgen$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 lint:	$(SRCS) tokens.h
@@ -40,7 +40,7 @@ tokens.h: y.tab.h
 
 clean:
 	rm -f *.o advgram.c advlex.c y.output y.tab.h tokens.h \
-		core Advdist* adv.out advgen
+		core Advdist* adv.out $(ALL)
 
 dist:
 	rm -f Advdist*

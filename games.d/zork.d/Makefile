@@ -1,8 +1,8 @@
 #
-#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.5 1990-04-04 21:31:48 vrs Exp $
+#	zork $Header: /home/Vince/cvs/games.d/zork.d/Makefile,v 1.6 2002-11-23 04:09:49 Vincent Exp $
 #
 ALL = zork dindx.dat dtext.dat dng
-include /etc/CONFIG
+include $(HOME)/CONFIG
 LIBZORK	= DUNGEON.DOC dindx.dat dtext.dat dng
 
 install: $(ALL) $(GAMDIR) $(GAMLIB)
@@ -21,7 +21,7 @@ dtext.dat: dtext.dat.uu
 dng:	dng.uu
 	uudecode $?
 
-zork:	zork.sh /etc/CONFIG
+zork:	zork.sh $(HOME)/CONFIG
 	sed '/^DNGLIB/c\
 DNGLIB=$(GAMLIB)' zork.sh > $@
 

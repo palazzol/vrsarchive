@@ -2,16 +2,16 @@
 #	reversi @(#)Makefile	1.3 4/8/86
 #
 MODEL	= -i -F 2000
-ALL	= reversi
-include /etc/CONFIG
+ALL	= reversi$(EXE)
+include $(HOME)/CONFIG
 YFLAGS	= -dv
 OFILES	= user.o ulex.o move.o display.o hasmove.o fini.o \
 	  minmax.o score.o edges.o corners.o count.o
 SOURCE	= Makefile corners.c count.c display.c edges.c fini.c genedge.c \
 	  hasmove.c makeedge.y minmax.c move.c reversi.h score.c ulex.l user.y
 
-reversi: $(OFILES)
-	cc $(CFLAGS) -o $@ $(OFILES) $(LIBS)
+reversi$(EXE): $(OFILES)
+	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LIBS)
 
 reversi.shar: $(SOURCE)
 	shar -c $(SOURCE) > reversi.shar
@@ -24,7 +24,7 @@ edges.out: makeedge genedge
 	./genedge | ./makeedge > edges.out
 
 makeedge.c: makeedge.y
-	yacc makeedge.y
+	$(YACC) makeedge.y
 	mv y.tab.c makeedge.c
 
 install: $(ALL) $(GAMDIR)

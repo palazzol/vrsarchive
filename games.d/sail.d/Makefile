@@ -2,12 +2,12 @@
 #	Sail - Wooden Ships And Iron Men
 #	%W% %G%
 #
-ALL	= sail driver sail.log
-DRIVER	= $(GAMLIB)/saildriver
+ALL	= sail$(EXE) driver$(EXE) sail.log
+DRIVER	= $(GAMLIB)/saildriver$(EXE)
 LOGFILE	= $(GAMLIB)/saillog
 MODEL	= -i -F 2000
 OPTIONS	= -O -DGAMDIR=$(GAMDIR) -DGAMLIB=$(GAMLIB)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 CTAGS	= ctags -w
 DFILES	= driver1.c driver2.c driver3.c grap.c boarders.c
@@ -25,10 +25,10 @@ OTHERFILES= Makefile sail.6
 CTAGFILES= ${DFILES} ${PFILES} ${LFILES} ${COMFILES}
 JUNKFILES= make.out core sail driver sail.log tags
 
-sail: ${POBJS} ${COMOBJS}
+sail$(EXE): ${POBJS} ${COMOBJS}
 	${CC} $(CFLAGS) ${COMOBJS} ${POBJS} ${LIBS} -o $@
 
-driver: ${DOBJS} ${COMOBJS}
+driver$(EXE): ${DOBJS} ${COMOBJS}
 	${CC} $(CFLAGS) ${COMOBJS} ${DOBJS} ${LIBS} -o $@
 
 sail.log: ${LOBJS} globals.o
@@ -47,16 +47,16 @@ ${HDRS} ${CTAGFILES}:
 clean: 
 	rm -f ${DOBJS} ${POBJS} ${LOBJS} ${COMOBJS} ${JUNKFILES}
 
-install: sail driver sail.log $(GAMDIR) $(GAMLIB) $(LOGFILE) $(MAN6)
-	cp sail sail.log $(GAMDIR)
-	cp driver $(DRIVER)
-	chown $(SAFEUID) $(GAMDIR)/sail $(GAMDIR)/sail.log
+install: $(ALL) $(GAMDIR) $(GAMLIB) $(LOGFILE) $(MAN6)
+	cp sail$(EXE) sail.log $(GAMDIR)
+	cp driver$(EXE) $(DRIVER)
+	chown $(SAFEUID) $(GAMDIR)/sail$(EXE) $(GAMDIR)/sail.log
 	chown $(SAFEUID) $(DRIVER)
-	chmod 4755 $(GAMDIR)/sail $(DRIVER)
+	chmod 4755 $(GAMDIR)/sail$(EXE) $(DRIVER)
 	chmod  755 $(GAMDIR)/sail.log
 	cp sail.6 $(MAN6)
-	chgrp root $(MAN6)/sail.6
-	chown root $(MAN6)/sail.6
+	chgrp $(SAFEGRP) $(MAN6)/sail.6
+	chown $(SAFEUID) $(MAN6)/sail.6
 	chmod  644 $(MAN6)/sail.6
 
 $(LOGFILE):

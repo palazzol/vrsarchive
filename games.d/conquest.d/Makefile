@@ -2,8 +2,8 @@
 #	THE LIMITED USE CONTRACT CONTAINED IN THE FILE "header.h"
 OPTIONS	= -DDATA=$(DATA)
 MODEL	= -M2l
-ALL	= conquest
-include /etc/CONFIG
+ALL	= conquest$(EXE)
+include $(HOME)/CONFIG
 #GETOPT	= getopt.o	# define this if you don't have it in your library
 RM	= /bin/rm -f
 DATA	= $(GAMLIB)/conquest
@@ -15,7 +15,7 @@ SUPT1=.nations Makefile .help README run
 SUPT2=.execute .messages .news
 
 conquest: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ) -lcurses -ltermcap
+	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
 lint:	$(OBJ:.o=.c)
 	lint $(OPTIONS) -lcurses -ltermcap $(OBJ:.o=.c) >$@

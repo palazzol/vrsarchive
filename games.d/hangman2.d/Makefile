@@ -1,14 +1,14 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hangman2.d/Makefile,v 1.4 1990-04-04 21:18:58 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hangman2.d/Makefile,v 1.5 2002-11-23 04:09:40 Vincent Exp $
 #
-ALL	= addword hangman2
+ALL	= addword$(EXE) hangman2$(EXE)
 MODEL	= -i
 OPTIONS	= -DGAMLIB=$(GAMLIB) -DRAWMODE -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= hangman.o curses.o doprnt.o
 GAME	= hangman2
 
-hangman2: $(OBJS)
+hangman2$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)

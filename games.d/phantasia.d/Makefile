@@ -1,12 +1,12 @@
 #
-# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.7 1990-04-13 15:02:35 vrs Exp $
+# Phantasia 3.3.2 $Header: /home/Vince/cvs/games.d/phantasia.d/Makefile,v 1.8 2002-11-23 04:09:43 Vincent Exp $
 #
 OPTIONS	= -DDEST=$(LIBGAM) -DWIZARDA=\"root\" -DWIZARDB=\"$(SAFEUID)\" \
-	  -DUIDA=0 -DUIDB=244 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
+	  -DUIDA=0 -DUIDB=500 -DSHELL=\"/bin/sh\" -DENEMY -DOK_TO_PLAY
 MODEL	= -M2m
-GAME	= phantasia
+GAME	= phantasia$(EXE)
 ALL	= $(GAME) setup phant.help
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # To create the game:
 #
 # 1)  Set up a directory where the game and its support files will live.
@@ -88,9 +88,9 @@ $(LIBGAM):
 # Install game and documentation.  Initialize.
 install:	$(ALL) $(GAMDIR) $(GAMLIB) $(LIBGAM)
 		cp phant.help $(LIBGAM)
-		cp $(GAME) $(LIBGAM)/phantasia
+		cp $(GAME) $(LIBGAM)
 		cp $(GAME) $(GAMDIR)
-		chmod 4711 $(LIBGAM)/phantasia $(GAMDIR)/$(GAME)
+		chmod 4711 $(LIBGAM)/$(GAME) $(GAMDIR)/$(GAME)
 		chmod 644 $(LIBGAM)/phant.help
 		echo Phantasia 3.3.2 | ./setup > /dev/null
 

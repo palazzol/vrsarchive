@@ -1,10 +1,11 @@
 #
-#	$Header: /home/Vince/cvs/games.d/adv.d/Makefile,v 1.4 1990-04-04 21:16:47 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/adv.d/Makefile,v 1.5 2002-11-23 04:09:34 Vincent Exp $
 #
 MODEL	= -i -F 2000
-OPTIONS	= -O -DCURSED # Use -DCURSED to get the "curses" version
-ALL	= adv aland pirate
-CONFIG	= /etc/CONFIG
+# Use -DCURSED to get the "curses" version
+OPTIONS	= -O -DCURSED
+ALL	= adv$(EXE) aland pirate
+CONFIG	= $(HOME)/CONFIG
 include $(CONFIG)
 OBJS	= main.o alc.o str.o readin.o nxtwrd.o rdr.o init.o\
 	  play.o misc.o prt.o file.o disply.o
@@ -13,7 +14,7 @@ SRCS	= main.c alc.c str.c readin.c nxtwrd.c rdr.c init.c\
 
 $(OBJS): adv.h
 
-adv:	$(OBJS)
+adv$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 aland:	$(CONFIG)
@@ -32,8 +33,8 @@ clean:
 	rm -f $(OBJS) $(ALL)
 
 install: $(ALL) $(GAMDIR) $(GAMLIB)
-	cp adv al p $(GAMLIB)
-	cd $(GAMLIB); chmod 711 adv
+	cp adv$(EXE) al p $(GAMLIB)
+	cd $(GAMLIB); chmod 711 adv$(EXE)
 	cd $(GAMLIB); chmod 644 al p
 	cp aland pirate $(GAMDIR)
 	cd $(GAMDIR); chmod 755 aland pirate

@@ -1,8 +1,8 @@
 # BINDIR is the directory where the moria binary while be put
-ALL	= moria
+ALL	= moria$(EXE)
 OPTIONS	= -DUSG -DKEY_BINDINGS=ROGUE_LIKE -DLIBDIR=$(LIBDIR)
 MODEL	= -M2lt20 -F 8000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 LIBDIR = $(GAMLIB)/moriadir
 
 SRCS	= main.c misc1.c misc2.c store1.c files.c io.c create.c desc.c\
@@ -13,7 +13,7 @@ SRCS	= main.c misc1.c misc2.c store1.c files.c io.c create.c desc.c\
 
 OBJS	= $(SRCS:.c=.o)
 
-moria : $(OBJS)
+moria$(EXE) : $(OBJS)
 	$(CC) -o $@ $(CFLAGS) $(OBJS) $(LIBS)
 
 clean:
@@ -31,12 +31,12 @@ $(LIBDIR):
 	chown $(SAFEUID) $@
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(LIBDIR)
-	cp moria $(GAMDIR)
+	cp moria$(EXE) $(GAMDIR)
 	cp Moria_hours $(LIBDIR)
 	cp Moria_news $(LIBDIR)
 	cp Highscores $(LIBDIR)
-	chown $(SAFEUID) $(GAMDIR)/moria
-	chmod 4511 $(GAMDIR)/moria
+	chown $(SAFEUID) $(GAMDIR)/moria$(EXE)
+	chmod 4511 $(GAMDIR)/moria$(EXE)
 	chmod 644 $(LIBDIR)/Highscores
 	chmod 444 $(LIBDIR)/Moria_news
 	chmod 444 $(LIBDIR)/Moria_hours

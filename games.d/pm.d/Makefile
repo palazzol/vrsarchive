@@ -1,5 +1,5 @@
 #
-#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.5 1990-04-04 21:28:55 vrs Exp $
+#  pm $Header: /home/Vince/cvs/games.d/pm.d/Makefile,v 1.6 2002-11-23 04:09:44 Vincent Exp $
 #
 #	Tunables:
 #		PM_ROLL -	pathname of score file
@@ -12,14 +12,14 @@
 #
 # Configuration section
 #
-ALL	= pm
+ALL	= pm$(EXE)
 PM_ROLL	= $(GAMLIB)/pm_roll
 PM_USER	= $(GAMLIB)/pm_user
 MODEL	= -i -F 2000
 OPTIONS	= -DPM_ROLL=\"$(PM_ROLL)\" -DPM_USER=\"$(PM_USER)\" \
-		  -DWIZARD_UID=0 -O
+		  -DWIZARD_UID=0 -O -Dreg=register
 LINTARGS= -ahxc $(DEFS) -DLINT
-include /etc/CONFIG
+include $(HOME)/CONFIG
 #
 # Files
 #
@@ -39,7 +39,7 @@ REST	= READ_ME Makefile Makefile.b TODO $(HDRS) $(PMDOC) shar
 EX1	= $(REST) $(SRCS2)
 EX2	= $(SRCS1)
 
-pm:		$(OBJS)
+pm$(EXE):	$(OBJS)
 		$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 install:	$(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)

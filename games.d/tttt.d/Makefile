@@ -1,10 +1,10 @@
 #
-#	tttt $Header: /home/Vince/cvs/games.d/tttt.d/Makefile,v 1.5 1990-05-21 14:28:42 vrs Exp $
+#	tttt $Header: /home/Vince/cvs/games.d/tttt.d/Makefile,v 1.6 2002-11-23 04:09:48 Vincent Exp $
 #
 ALL	= tttt
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 CFILES	= rain.c
 
 lint: $(CFILES) 

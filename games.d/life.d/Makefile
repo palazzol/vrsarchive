@@ -1,9 +1,10 @@
 #
-#	life $Header: /home/Vince/cvs/games.d/life.d/Makefile,v 1.3 1990-03-27 17:26:06 vrs Exp $
+#	life $Header: /home/Vince/cvs/games.d/life.d/Makefile,v 1.4 2002-11-23 04:09:40 Vincent Exp $
 #
-ALL	= life
+OPTIONS	= -Dreg=register
+ALL	= life$(EXE)
 MODEL	= -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL) $(GAMDIR)
 	cp $(ALL) $(GAMDIR)

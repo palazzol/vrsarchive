@@ -4,11 +4,10 @@
 #  Copyright 1984 obo Systems, Inc.
 #  Copyright 1984 Dan Rosenblatt
 #
-CC=bsdcc
-ALL		= sw psw rsw dmpdbm upddbm tstsz
+ALL	= sw$(EXE) psw$(EXE) rsw$(EXE) dmpdbm$(EXE) upddbm$(EXE) tstsz$(EXE)
 GAMEDIR	= $(GAMLIB)/spacewar
-OPTIONS	= -I$(INCDIR) -O -DVOID=void -DGAMEDIR=\"$(GAMEDIR) # -DBSD -DNEEDFMOD
-DBM		= dbm.o
+OPTIONS	= -I$(INCDIR) -O -DVOID=void -DGAMEDIR=\"$(GAMEDIR)\" # -DBSD -DNEEDFMOD
+DBM	= dbm.o
 include $(HOME)/CONFIG
 SOURCES	= sw.c globals.c lckmsg.c proctrap.c shutdown.c alninit.c objinit.c \
 		  crftupdate.c objupdate.c logon.c logoff.c cmd.c prvcmd.c build.c \
@@ -21,24 +20,24 @@ OBJECTS	= $(SOURCES:.c=.o)
 #$(DBM):
 #	@cd dbm.d; make
 
-sw: $(OBJECTS) $(DBM)
+sw$(EXE): $(OBJECTS) $(DBM)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(DBM) $(LIBS)
 
-psw: psw.c spacewar.h uio2.h
+psw$(EXE): psw.c spacewar.h uio2.h
 	$(CC) $(CFLAGS) psw.c -o $@ $(LIBS)
 
-rsw: rsw.c login.h uio.h universe.h spacewar.h
+rsw$(EXE): rsw.c login.h uio.h universe.h spacewar.h
 	$(CC) $(CFLAGS) rsw.c -o $@ $(LIBS)
 
-dmpdbm: dmpdbm.c spacewar.h universe.h login.h sys.h crft.h mlbx.h \
+dmpdbm$(EXE): dmpdbm.c spacewar.h universe.h login.h sys.h crft.h mlbx.h \
 	plyr.h ucmd.h bfuncs.o $(DBM)
 	$(CC) $(CFLAGS) dmpdbm.c bfuncs.o -o $@ $(DBM) $(LIBS)
 
-upddbm: upddbm.c spacewar.h universe.h login.h sys.h crft.h mlbx.h \
+upddbm$(EXE): upddbm.c spacewar.h universe.h login.h sys.h crft.h mlbx.h \
 	plyr.h ucmd.h bfuncs.o $(DBM)
 	$(CC) $(CFLAGS) upddbm.c bfuncs.o -o $@ $(DBM) $(LIBS)
 
-tstsz: tstsz.c uio.h uio2.h spacewar.h
+tstsz$(EXE): tstsz.c uio.h uio2.h spacewar.h
 	$(CC) $(CFLAGS) tstsz.c -o $@ $(LIBS)
 	./$@
 

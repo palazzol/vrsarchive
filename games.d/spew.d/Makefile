@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/spew.d/Makefile,v 1.3 1990-03-27 17:27:59 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/spew.d/Makefile,v 1.4 2002-11-23 04:09:47 Vincent Exp $
 #
-ALL	= spew
+ALL	= spew$(EXE)
 OPTIONS = -O -DDEFFILE=\"$(GAMLIB)/headline\"
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 clean:
 	rm -f $(ALL)

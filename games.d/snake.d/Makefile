@@ -2,15 +2,15 @@
 #	snake %W% %G%
 #
 #
-ALL	= snake snake2
+ALL	= snake$(EXE) snake2$(EXE)
 OPTIONS	= -O
 MODEL	= -i -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
-snake:	snake.c
+snake$(EXE):	snake.c
 	$(CC) $(CFLAGS) -o $@ snake.c $(LIBS)
 
-snake2: snake2.c
+snake2$(EXE): snake2.c
 	$(CC) $(CFLAGS) -o $@ snake2.c $(LIBS)
 
 lint:
@@ -19,8 +19,8 @@ lint:
 clean:
 	rm -f $(ALL) core
 
-install: snake snake2 $(GAMDIR)
-	cp snake $(GAMDIR)
-	chmod 711 $(GAMDIR)/snake
-	cp snake2 $(GAMDIR)
-	chmod 711 $(GAMDIR)/snake2
+install: snake$(EXE) snake2$(EXE) $(GAMDIR)
+	cp snake$(EXE) $(GAMDIR)
+	chmod 711 $(GAMDIR)/snake$(EXE)
+	cp snake2$(EXE) $(GAMDIR)
+	chmod 711 $(GAMDIR)/snake2$(EXE)

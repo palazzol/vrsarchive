@@ -1,10 +1,10 @@
-ALL	= tko
+ALL	= tko$(EXE)
 OPTIONS	= -O -Drindex=strrchr
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= tko.o names.o subs1.o subs2.o tables.o
 
-tko:	$(OBJS)
+tko$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
 
 install: $(ALL) $(GAMDIR)

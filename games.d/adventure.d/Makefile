@@ -1,7 +1,7 @@
 #
 # Something quick and dirty... you must put things where you want...
 #
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 all:	src/munge/munge src/adv/adv
 
@@ -31,6 +31,6 @@ install: adv.key adv.rec src/adv/adv
 	cp adv.key adv.rec $(GAMLIB)
 	cd $(GAMLIB); chmod 644 adv.key adv.rec
 	cp src/adv/adv $(GAMDIR)/adventure
-	cd $(GAMDIR); chmod 711 adventure
+	cd $(GAMDIR); chmod 711 adventure$(EXE)
 
 force: ;

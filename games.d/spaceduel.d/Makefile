@@ -1,13 +1,13 @@
 #
-#	$Header: /home/Vince/cvs/games.d/spaceduel.d/Makefile,v 1.4 1990-04-04 21:31:19 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/spaceduel.d/Makefile,v 1.5 2002-11-23 04:09:47 Vincent Exp $
 #
-ALL	= spaceduel
+ALL	= spaceduel$(EXE)
 OPTIONS	= -O -DGAMLIB=$(GAMLIB) -DPAGER=\"$(PAGER)\" #-DWIZARD
 MODEL	= -i 
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL) $(GAMDIR)
-	cp $(ALL) $(GAMDIR)/spaceduel
+	cp $(ALL) $(GAMDIR)
 	cd $(GAMDIR); chown $(SAFEUID) $(ALL)
 	cd $(GAMDIR); chmod 4711 $(ALL)
 	cd $(GAMLIB); touch sd.logfile

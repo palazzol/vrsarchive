@@ -2,10 +2,10 @@
 # makefile for centipede
 # edit sys_dep.c to adjust pathnames for your system
 #
-ALL	= cent
+ALL	= cent$(EXE)
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)/cent
 MODEL	= -i -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJECTS	= cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
 		save.o shoot.o la.o extern.o options.o sys_dep.o
 

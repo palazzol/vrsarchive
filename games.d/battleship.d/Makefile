@@ -1,9 +1,9 @@
 #
 #	%W% %G%
 #
-ALL	= battleship
+ALL	= battleship$(EXE)
 MODEL	= -i -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install:	$(ALL) $(GAMDIR)
 		cp $(ALL) $(GAMDIR)

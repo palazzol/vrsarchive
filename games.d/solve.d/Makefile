@@ -3,8 +3,8 @@
 #
 OPTIONS	= -O
 MODEL	= -i
-ALL	= solve
-include /etc/CONFIG
+ALL	= solve$(EXE)
+include $(HOME)/CONFIG
 OBJS	= solve.o
 CFILES	= solve.c
 

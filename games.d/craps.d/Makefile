@@ -1,15 +1,15 @@
 #
-#	$Header: /home/Vince/cvs/games.d/craps.d/Makefile,v 1.4 1990-04-04 21:17:50 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/craps.d/Makefile,v 1.5 2002-11-23 04:09:37 Vincent Exp $
 #
 # Use the following defines:
 #
 #	-DBSD42		for Berkeley Unix 4.2
 #	-DBSD29		for Berkeley Unix 2.9
 #
-ALL	= craps
+ALL	= craps$(EXE)
 MODEL	= -i -F 3000
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 SOURCES = main.c dont.c etc.c help.c makeb.c pass.c pay.c prints.c \
 	  props.c subs.c final.c random.c
 OBJECTS = main.o dont.o etc.o help.o makeb.o pass.o pay.o prints.o \

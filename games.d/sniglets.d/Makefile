@@ -2,8 +2,8 @@
 # sniglets %W%	%G%
 #
 #
-ALL	= sniglets
-include /etc/CONFIG
+ALL	= sniglets$(EXE)
+include $(HOME)/CONFIG
 
 lint:
 	lint sniglets.c | tee lint.out

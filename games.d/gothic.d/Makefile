@@ -1,10 +1,10 @@
 #
 #	Makefile for gothic banner print program.
-ALL	= gothic
-include /etc/CONFIG
+ALL	= gothic$(EXE)
+include $(HOME)/CONFIG
 OBJ =		gothic0.o gothic1.o
 
-gothic:	$(OBJ)
+gothic$(EXE):	$(OBJ)
 		$(CC) $(CFLAGS) -o $@ $(OBJ)
 
 clean:

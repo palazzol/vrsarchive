@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/ncode.d/Makefile,v 1.2 1990-03-27 17:26:24 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/ncode.d/Makefile,v 1.3 2002-11-23 04:09:41 Vincent Exp $
 #
-ALL	= ncode headline nonsense
+ALL	= ncode$(EXE) headline nonsense
 OPTIONS = -O
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 NCOLIB	= $(GAMLIB)/ncode
 
 clean:
@@ -15,8 +15,8 @@ $(NCOLIB):
 	chmod 755 $@
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(NCOLIB)
-	cp ncode $(NCOLIB)/
-	cd $(NCOLIB); chmod 711 ncode
+	cp ncode$(EXE) $(NCOLIB)/
+	cd $(NCOLIB); chmod 711 ncode$(EXE)
 	cp head.nc nonsense.nc $(NCOLIB)/
 	cd $(NCOLIB); chmod 644 head.nc nonsense.nc
 	cp headline nonsense $(GAMDIR)/

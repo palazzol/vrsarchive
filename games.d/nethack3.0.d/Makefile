@@ -4,7 +4,7 @@
 # make NetHack
 GAME	= nethack3.0
 ALL		= $(GAME) data rumors spec_levs
-include /etc/CONFIG
+include $(HOME)/CONFIG
 GAMEUID	= $(SAFEUID)
 GAMEGRP	= $(SAFEGRP)
 

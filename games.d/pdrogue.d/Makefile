@@ -1,17 +1,17 @@
 #
-#	$Header: /home/Vince/cvs/games.d/pdrogue.d/Makefile,v 1.7 1990-03-27 17:26:40 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/pdrogue.d/Makefile,v 1.8 2002-11-23 04:09:43 Vincent Exp $
 #
-ALL	= pdrogue
+ALL	= pdrogue$(EXE)
 SCOREF	= $(GAMLIB)/pdrogue_roll
 MODEL	= -M2m -F 2000
 OPTIONS	= -DUNIX -DSCORE=\"$(SCOREF)\" -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= curses.o hit.o init.o inventory.o level.o machdep.o main.o \
 	  message.o monster.o move.o object.o pack.o play.o random.o ring.o \
 	  room.o save.o score.o spec_hit.o throw.o trap.o use.o zap.o
 SRCS	= $(OBJS:.o=.c)
 
-pdrogue: $(OBJS)
+pdrogue$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 install: $(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)

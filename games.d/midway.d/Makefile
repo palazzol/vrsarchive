@@ -1,17 +1,17 @@
 #
-#	Midway $Header: /home/Vince/cvs/games.d/midway.d/Makefile,v 1.4 1990-04-04 21:19:22 vrs Exp $
+#	Midway $Header: /home/Vince/cvs/games.d/midway.d/Makefile,v 1.5 2002-11-23 04:09:41 Vincent Exp $
 #
 # Leave in the -O blast you!
-ALL	= Midway
+ALL	= Midway$(EXE)
 MODEL	= -Mm
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 FILES	= airstrike.c etc.c midway.c movebombs.c moveships.c screen.c
 OBJS	= airstrike.o etc.o midway.o movebombs.o moveships.o screen.o
 OTHERF	= makefile externs.h globals.h Midway.doc
 JUNKF	= fluff junk arch tags
 
-Midway: $(OBJS)
+Midway$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 arch:

@@ -4,16 +4,16 @@
 ALL	= battlestar
 MODEL	= -M2l
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 LOGFILE	= $(GAMLIB)/battlestar.log
 DAYF	= $(GAMLIB)/dayfile
 NIGHTF	= $(GAMLIB)/nightfile
 MAN	= $(MAN6)/battlestar.6
-OBJS	= battlestar.o com1.o com2.o com3.o com4.o com5.o com6.o \
-	  com7.o init.o cypher.o getcom.o parse.o room.o save.o fly.o \
+OBJS	= battlestar.o _com1.o _com2.o _com3.o _com4.o _com5.o _com6.o \
+	  _com7.o init.o cypher.o getcom.o parse.o room.o save.o fly.o \
 	  misc.o globals.o wlist.o dayobjs.o nightobjs.o initrms.o
-CFILES	= battlestar.c com1.c com2.c com3.c com4.c com5.c com6.c \
-	  com7.c init.c cypher.c getcom.c parse.c room.c save.c fly.c \
+CFILES	= battlestar.c _com1.c _com2.c _com3.c _com4.c _com5.c _com6.c \
+	  _com7.c init.c cypher.c getcom.c parse.c room.c save.c fly.c \
 	  misc.c globals.c initrms.c
 LFLAGS	= -h
 JUNKF	= $(ALL) tags mkfile mkwlist mkobjs \

@@ -10,7 +10,7 @@ HACKDIR	= $(GAMLIB)/$(GAME)dir
 SAVEDIR	= $(HACKDIR)/save
 OPTIONS	= -DHACKDIR=\"$(HACKDIR)\"
 MODEL	= -M2lt50 -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 # if you are cross-compiling (eg. from Xenix into a Dos environment)
 # you will have to redefine these filenames.
@@ -53,12 +53,12 @@ HOBJ = apply.o bones.o decl.o cmd.o do.o dothrow.o do_name.o do_wear.o dog.o\
 	trap.o tty.o unix.o u_init.o vault.o wield.o wizard.o worm.o worn.o\
 	write.o zap.o version.o rnd.o alloc.o
 
-$(GAME): main.o tty.o unix.o $(HOBJ)
+$(GAME)$(EXE): main.o tty.o unix.o $(HOBJ)
 	@echo "Loading ..."
-	@cc $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(TERMLIB) $(LIBS)
+	@$(CC) $(LFLAGS) -o $(GAME) $(CRT0) $(HOBJ) $(TERMLIB) $(LIBS)
 
 makedefs:	makedefs.c alloc.o config.h
-	cc ${CFLAGS} -o makedefs alloc.o makedefs.c
+	$(CC) ${CFLAGS} -o makedefs alloc.o makedefs.c
 
 RUMORFILES= rumors.base rumors.kaa rumors.mrx
 
@@ -128,10 +128,10 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(HACKDIR) $(SAVEDIR)
 	cd $(HACKDIR); chmod 644 help hh rumors data
 	sed -e 's/#!/: /' -e 's:^HACKDIR=.*:HACKDIR=$(HACKDIR):' $(GAME).sh >$(GAMDIR)/$(GAME)
 	chmod 755 $(GAMDIR)/$(GAME)
-	cp $(GAME) $(HACKDIR)/$(GAME)
+	cp $(GAME)$(EXE) $(HACKDIR)
 	chown $(GAMEUID) $(GAMDIR)/$(GAME) $(HACKDIR)/*
 	chgrp $(GAMEGRP) $(GAMDIR)/$(GAME) $(HACKDIR)/*
-	chmod 04755 $(HACKDIR)/$(GAME)
+	chmod 04755 $(HACKDIR)/$(GAME)$(EXE)
 	cp nethack.6 $(MAN6)
 	cd $(MAN6); chmod 644 nethack.6
 

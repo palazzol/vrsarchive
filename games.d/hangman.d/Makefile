@@ -1,10 +1,10 @@
 #
-#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.6 1990-04-04 21:18:52 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/hangman.d/Makefile,v 1.7 2002-11-23 04:09:39 Vincent Exp $
 #
-ALL	= hangman
+ALL	= hangman$(EXE)
 MODEL	= -i -F 2000
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= endgame.o extern.o getguess.o getword.o main.o playgame.o \
 	  prdata.o prman.o prword.o setup.o
 CFILES	= endgame.c extern.c getguess.c getword.c main.c playgame.c \
@@ -22,7 +22,7 @@ install: $(ALL) $(GAMDIR) $(GAMLIB) $(MAN6)
 	cp hangman.6 $(MAN6)
 	cd $(MAN6); chmod 644 hangman.6
 	
-hangman: $(OBJS)
+hangman$(EXE): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 clean:

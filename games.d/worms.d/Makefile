@@ -1,11 +1,11 @@
 #
 #	Worms %W% %G%
 #
-ALL	= worms
+ALL	= worms$(EXE)
 OPTIONS	= -O
 MODEL	= -i -F 2000
 LFLAGS	= -h
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 
 lint: ${CFILES} 
@@ -16,4 +16,4 @@ install: $(ALL) $(GAMDIR)
 	cd $(GAMDIR); chmod 711 $(ALL)
 
 clean:
-	rm -f ${OBJS} make.out core worms
+	rm -f ${OBJS} make.out core $(ALL)

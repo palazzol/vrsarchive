@@ -1,14 +1,14 @@
 #
-#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.8 1990-04-12 13:19:06 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/poker.d/Makefile,v 1.9 2002-11-23 04:09:44 Vincent Exp $
 #
-ALL	= poker pokerd
+ALL	= poker$(EXE) pokerd$(EXE)
 #
 #	Define the type of system programs are being made on.
 #
 MODEL	= -M2l -F 2000
 #OPTIONS = -UINET -I$(INCDIR) -DGAMLIB=$(GAMLIB) -DPORT=\"/tmp/pokerd\"
 OPTIONS	= -DINET -I$(INCDIR) -DGAMLIB=$(GAMLIB) -DHOST=\"$(SYSNAME)\"
-include /etc/CONFIG
+include $(HOME)/CONFIG
 MYLIBS	= $(BERKLIB) $(LIBS)
 
 SRCS	= main.c players.c cards.c util.c showcards.c whowon.c poker.c \
@@ -17,10 +17,10 @@ OBJS	= main.o players.o cards.o util.o showcards.o whowon.o tellall.o \
 	  payoff.o betting.o computer.o draw.o scores.o
 OBJS2	= poker.o util.o
 
-pokerd:		$(OBJS)
+pokerd$(EXE):	$(OBJS)
 		$(CC) $(CFLAGS) $(OBJS) $(MYLIBS) -o $@
 
-poker:		$(OBJS2)
+poker$(EXE):	$(OBJS2)
 		$(CC) $(CFLAGS) $(OBJS2) $(MYLIBS) -o $@ 
 
 lintd:		$(OBJS:.o=.c)
@@ -32,12 +32,12 @@ lint:		$(OBJS2:.o=.c)
 clean:
 		rm -f $(OBJS) $(OBJS2) $(ALL) make.out lint.out core
 
-install:	$(GAMDIR) $(GAMLIB) poker pokerd
-		cp poker $(GAMDIR)
-		chmod 711 $(GAMDIR)/poker
-		cp pokerd $(GAMLIB)
-		chown $(SAFEUID) $(GAMLIB)/pokerd
-		chmod 4711 $(GAMLIB)/pokerd
+install:	$(GAMDIR) $(GAMLIB) $(ALL)
+		cp poker$(EXE) $(GAMDIR)
+		chmod 711 $(GAMDIR)/poker$(EXE)
+		cp pokerd$(EXE) $(GAMLIB)
+		chown $(SAFEUID) $(GAMLIB)/pokerd$(EXE)
+		chmod 4711 $(GAMLIB)/pokerd$(EXE)
 		touch $(GAMLIB)/pokerscores
 		chown $(SAFEUID) $(GAMLIB)/pokerscores
 		chmod 644 $(GAMLIB)/pokerscores

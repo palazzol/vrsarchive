@@ -6,7 +6,7 @@ ALL	= rogomatic player rgmplot datesub histplot gene
 PUBDIR	= $(GAMLIB)/rgm14
 OPTIONS	= -O -DGAMDIR=$(GAMDIR) -DGAMLIB=$(PUBDIR)
 MODEL	= -M2l -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= arms.o command.o database.o debug.o explore.o io.o learn.o\
 	  ltm.o main.o mess.o monsters.o pack.o rand.o replay.o rooms.o\
 	  scorefile.o search.o stats.o strategy.o survival.o tactics.o\

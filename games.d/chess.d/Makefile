@@ -1,10 +1,10 @@
 #
 # Makefile for chess program
 #
-ALL	= chess
+ALL	= chess$(EXE)
 OPTIONS	= -O -DGAMLIB=$(GAMLIB)
 MODEL	= -i
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 clean:
 	rm -f $(ALL)

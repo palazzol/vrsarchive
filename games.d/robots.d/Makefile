@@ -1,8 +1,7 @@
 #
 #	Robots %W%
 #
-CC = xlc
-ALL	= robots
+ALL	= robots$(EXE)
 OPTIONS	= -DALLSCORES -DOLDSCORES -DGAMLIB=$(GAMLIB)
 MODEL	= -i -F 2000	# Required for XENIX only
 include $(HOME)/CONFIG

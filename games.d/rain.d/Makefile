@@ -1,10 +1,10 @@
 #
-#	Rain $Header: /home/Vince/cvs/games.d/rain.d/Makefile,v 1.3 1990-03-27 17:27:02 vrs Exp $
+#	Rain $Header: /home/Vince/cvs/games.d/rain.d/Makefile,v 1.4 2002-11-23 04:09:44 Vincent Exp $
 #
-ALL	= rain
+ALL	= rain$(EXE)
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 CFILES	= rain.c
 
 lint: $(CFILES) 

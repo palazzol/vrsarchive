@@ -1,7 +1,7 @@
 #GAMDIR	= /usr/games
 #GAMLIB	= $(GAMDIR)/lib
 #LIBS	= -lcurses -ltermcap
-include /etc/CONFIG
+include $(HOME)/CONFIG
 BIN	= $(GAMLIB)/adl
 DIST	= ../adl.dist/SHAR
 # AR	= shar -c -v -d

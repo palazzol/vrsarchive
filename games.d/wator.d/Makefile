@@ -1,14 +1,14 @@
 #
-#	$Header: /home/Vince/cvs/games.d/wator.d/Makefile,v 1.3 1990-03-27 17:28:30 vrs Exp $
+#	$Header: /home/Vince/cvs/games.d/wator.d/Makefile,v 1.4 2002-11-23 04:09:49 Vincent Exp $
 #
-ALL	= wator
+ALL	= wator$(EXE)
 OPTIONS	= -O
 MODEL	= -i -F 2000
-include /etc/CONFIG
+include $(HOME)/CONFIG
 OBJS	= wator.o screen_ctl.o item_control.o init.o parse_args.o \
 	  fish_cycle.o shark_cycle.o
 
-wator:	$(OBJS)
+wator$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 
 wator.o: wator.h
