@@ -6,7 +6,7 @@
 
 #ifdef	BSD
 #include <sys/ioctl.h>
-#endif	BSD
+#endif /*BSD*/
 
 #ifdef	USG
 #ifdef  M_XENIX
@@ -28,7 +28,7 @@
 #ifndef M_XENIX
 #define	bcopy(from,to,size)	memcpy(to,from,size)
 #endif
-#endif	USG
+#endif /*USG*/
 
 #define	STDIN	0		/* standard descriptors */
 #define	STDOUT	1
@@ -94,13 +94,13 @@ struct	window	{
 	struct	sgttyb	new0ttyblk;	/* new terminal parameters for stdin */
 	struct	sgttyb	old1ttyblk;	/* original tty parameters for stdout */
 	struct	sgttyb	new1ttyblk;	/* new terminal parameters for stdout */
-#endif	BSD
+#endif /*BSD*/
 #ifdef	USG
 	struct	termio	old0ttyblk;	/* original tty parameters for stdin */
 	struct	termio	new0ttyblk;	/* new terminal parameters for stdin */
 	struct	termio	old1ttyblk;	/* original tty parameters for stdout */
 	struct	termio	new1ttyblk;	/* new terminal parameters for stdout */
-#endif	USG
+#endif /*USG*/
 	char	tdata[1024];		/* buffer for termcap data */
 	char	tbuf[200];		/* strings for termcap */
 };
