@@ -1,12 +1,12 @@
 /*
- $	3/10/85	@(#)mdemo.c	1.2
+ $	3/16/85	@(#)mdemo.c	1.3
  *	Display a constantly updated map of main memory.
  *
 */
 #ifdef lint
 #  define far				/* Lint chokes on far ptrs	*/
 #else
-static char *sccsid = "3/10/85 @(#)mdemo.c	1.2";
+static char *sccsid = "3/16/85 @(#)mdemo.c	1.3";
 					/* Suppress unref message	*/
 #endif
 
@@ -32,7 +32,7 @@ int         mem;			/* Physical memory		*/
 float	    packing;			/* Scaling factor for display	*/
 struct proc *p, *pp;
 int         fupage;
-int         maxmem;
+long         maxmem;
 struct var  v;
 
 struct desctab ldt[NUSEGS];		/* The ldt for a process	*/
@@ -41,8 +41,8 @@ struct user u;				/* The u structure for a proc	*/
 struct nlist nl[] = {
   { "_v" },
 #define NL_V		0
-  { "_maxmem" },
-#define NL_MAXMEM	1
+  { "_maxaddr" },
+#define NL_MAXADDR	1
   { "_fupage" },
 #define NL_FUPAGE	2
   { "_proc" },
@@ -148,8 +148,9 @@ main()
   (void) lseek(kmem,(long)nl[NL_V].n_value,0);
   (void) read(kmem,(char *)&v,sizeof v);
   p = (struct proc *)malloc((unsigned)(sizeof(*p)*v.v_proc));
-  (void) lseek(kmem,(long)nl[NL_MAXMEM].n_value,0);
+  (void) lseek(kmem,(long)nl[NL_MAXADDR].n_value,0);
   (void) read(kmem,(char *)&maxmem,sizeof maxmem);
+  maxmem = (maxmem+1023) / 1024;	/* Convert to Kbytes		*/
   (void) lseek(kmem,(long)nl[NL_FUPAGE].n_value,0);
   (void) read(kmem,(char *)&fupage,sizeof fupage);
   /*

@@ -1,5 +1,5 @@
 #
-#	@(#)Makefile	1.2	3/10/85
+#	@(#)Makefile	1.3	3/16/85
 #
 BIN	= /usr/local
 CFLAGS	= -M2e
