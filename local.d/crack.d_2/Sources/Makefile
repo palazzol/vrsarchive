@@ -8,7 +8,7 @@
 
 CC= 		cc
 CFLAGS= 	-O
-LIBS=		-lnsl
+LIBS=		# -lnsl
 SHELL=		/bin/sh
 
 ###
