@@ -1,9 +1,11 @@
 #
-#	ngstats %W% %G%
+#	$Header: /home/Vince/cvs/local.d/news.misc.d/ngstats.d/Makefile,v 1.2 1987-02-15 16:26:18 vrs Exp $
 #
-SHELL	= /bin/sh
+ALL	= ngstats
+MODEL	= -i
+OPTIONS	= -O -I. -DSPOOLDIR=\"$(SPOOLN)\" -DACTIVE=\"$(LIBNEWS)/active\"
+include ../../../CONFIG
 DIROBJ	= closedir.o opendir.o readdir.o seekdir.o telldir.o
-CFLAGS	= -O -I. -i -Dindex=strchr
 
 ngstats:	ngstats.o sysname.o libdir.a
 		cc -o $@ $(CFLAGS) ngstats.o sysname.o libdir.a
@@ -13,4 +15,4 @@ libdir.a:	$(DIROBJ)
 		ranlib $@
 
 clean:
-	rm -f ngstats libdir.a *.o make.out core
+		rm -f $(ALL) $(DIROBJ) libdir.a
