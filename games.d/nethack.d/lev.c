@@ -91,10 +91,15 @@ xchar lev;
 	bwrite(fd,(char *) rooms,sizeof(rooms));
 	bwrite(fd,(char *) doors,sizeof(doors));
 #endif
+#ifdef DGK
+	if (!count_only)
+#endif
+	{
 	fgold = 0;
 	ftrap = 0;
 	fmon = 0;
 	fobj = 0;
+	}
 #ifndef NOWORM
 	bwrite(fd,(char *) wsegs,sizeof(wsegs));
 	for(tmp=1; tmp<32; tmp++){
