@@ -13,7 +13,7 @@
 
 int pcol[11] = {0,0,0,0,C+11,C+19,C+27,0,C+35,C+43,C+51};
 
-char *keys="pcdDofblhsa23yuCq?!r",line[81];
+char *keys="pcdDofblhsa23yuCq?!r",line[81];
 char *nums[] = {
 	"","","Two","Three","Four","Five","Six","Seven","Eight","Nine",
 	"Ten","Eleven","Twelve"
@@ -72,8 +72,10 @@ main()
 	}
 }
 
+/* ARGUSED */
 SIG_T
-stop()
+stop(dummy)
+int dummy;
 {
 	final();
 	move(23,0); clrtoeol(); refresh();
