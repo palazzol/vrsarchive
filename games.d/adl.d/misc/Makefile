@@ -37,7 +37,7 @@ misc.shar	:	README Makefile *.c
 		${D}README	${D}COPYRIGHT	${D}Makefile	${D}*.c \
 	> ${D}misc.shar )
 
-adldebug	:	adldebug.o	${UTIL}
+adldebug$(EXE)	:	adldebug.o	${UTIL}
 	$(CC) $(CFLAGS) -o $@ adldebug.o ${UTIL}
 
 adldebug.o	:	adldebug.c \
@@ -45,7 +45,7 @@ adldebug.o	:	adldebug.c \
 			${INC}/adldef.h		${INC}/vstring.h \
 			${INC}/virtmem.h
 
-adltouch	:	adltouch.o
+adltouch$(EXE)	:	adltouch.o
 	$(CC) $(CFLAGS) -o $@ adltouch.o
 
 adltouch.o	:	adltouch.c
