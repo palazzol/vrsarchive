@@ -47,11 +47,13 @@
 #define private	static
 
 #ifndef BSD4_2
+#  ifndef CYGWIN
 #   ifdef MENLO_JCL
 #	ifndef EUNICE
 #		define signal	sigset
 #	endif
 #   endif /* MENLO_JCL */
+#  endif
 #endif
 
 #define EOF	-1
@@ -64,7 +66,9 @@
 #		define NULL 0L
 #		define NIL 0L
 #	else
+#	    ifndef NULL
 #		define NULL 0
+#	    endif
 #		define NIL 0
 #	endif /* MAC */
 #endif /* MSDOS */
