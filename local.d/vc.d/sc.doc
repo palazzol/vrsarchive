@@ -1,0 +1,795 @@
+.TH PNAME 1
+.SH NAME
+pname \- spread sheet calculator
+.SH SYNOPSIS
+.B pname
+[
+.I -x
+]
+[
+.I -n
+]
+[
+.I file
+]
+
+.SH DESCRIPTION
+The spread sheet calculator
+.I pname
+is based on rectangular tables much like a financial spread sheet.
+When it is invoked it presents you with an empty
+table organized as rows and columns of cells.  Each cell may have a label
+string associated with it and an expression.  The expression may be a
+constant or it may compute something based on other entries.
+
+The
+.I -x
+option causes the 
+.I put
+and
+.I get
+commands to encrypt and decrypt the data files.
+The 
+.I -n
+option starts the program in quick numeric entry mode.
+Both of these options can be changed while the program is running
+with the ^T command.
+
+When 
+.I pname
+is running, the screen is divided into four regions. The top
+line is for entering commands. The second line is for messages from
+.I pname.
+The third line and the first four columns show the row and column numbers.
+The rest of the screen forms a window looking at the table.
+The screen has two
+cursors: a cell cursor (indicated by a reverse video cell and a '<' on
+the screen) and a character cursor (indicated by the terminal's
+hardware cursor).  The cell and character cursors are often the same.
+They will differ when the user is typing a command on the top line.
+
+The cursor control commands and the row, column commands can be 
+prefixed by a numeric argument indicating how many times the command
+is to be executed.  "^U" can be used before the number if
+the number is to be entered while a command is being typed
+into the command line or if quick entry mode is in effect.
+
+Commands which use the terminal's control key such as ^N will work both
+when a command is being typed and when in normal mode.
+
+Cursor control commands:
+
+.IP \fB^N\fP
+Move the cell cursor to the next row.
+
+.IP \fB^P\fP
+Move the cell cursor to the previous row.
+
+.IP \fB^F\fP
+Move the cell cursor forward one column.
+
+.IP \fB^B\fP
+Move the cell cursor backward one column.
+
+.IP \fB^H\fP
+Backspace one character.
+
+.IP "\fBh, j, k, l\fP"
+Alternate cursor controls (left, down, up, right).  The space bar
+is also defined to be right one cell.
+
+.IP "\fBArrow Keys\fP"
+The terminal's arrow keys provide another alternate set of cell
+cursor controls if they exist and are supported in the
+.I termcap
+entry.
+Some terminals have arrow keys which conflict
+with other control key codes.  For example, a terminal could send ^H when the
+back arrow key is depressed.  In these cases, the conflicting arrow key
+performs the same function as the key combination it mimics.
+
+.IP \fB0\fP
+Move the cell cursor to column 0 of the current row. 
+This command must be prefixed with ^U if quick numeric entry mode
+is enabled.
+
+.IP \fB$\fP
+Move the cell cursor to the last valid column in the current row.
+
+.IP \fB^\fP
+Move the cell cursor to row 0 of the current column.
+
+.IP \fB#\fP
+Move the cell cursor to the last valid row in the current column.
+
+.IP \fBg\fP
+Go to a cell.  The program will prompt for the name of a cell.
+Enter a cell number such as 
+.I a0
+or 
+.I ae122.
+
+.IP \fBw\fP
+Scan forward (right and down)  to the next valid cell.
+
+.IP \fBb\fP
+Scan backwards (left and up) to the next valid cell.
+
+.IP \fB^E<d>\fP
+Go to end of range.  The 
+.I ^E
+is followed by a direction indication.
+This can be any of h, j, k, l, ^N, ^P, ^F, ^B or the arrow
+keys.  If the cell cursor starts on a non-blank cell, it will go in the
+indicated direction until it hits the last non-blank adjacent cell.  If
+the cell cursor starts on a blank cell, it go in the indicated
+direction until it hits the first non-blank cell.  This command is
+useful when specifying ranges of adjacent cells, especially when the
+range is bigger than the visible window.
+
+.PP
+Cell entry and editing commands:
+
+.IP \fB=\fP
+Enter a numeric expression into the current cell.  The program will
+prompt for the expression on the top line.  The usual way to enter a
+number into a cell is to type 
+.I =
+then enter the number in response to
+the prompt on the top line.  The quick numeric entry option (selected
+through the ^T command) shows the prompt when the first digit of a
+number is entered.
+
+.IP \fB"\fP
+Enter a string into the current cell.  The string entered must be surrounded
+by quotation characters.  A string expression can also be entered by
+backspacing over the quotation mark in the prompt.
+
+.IP \fB<\fP
+Enter a string that will be flushed left against the
+left edge of the cell.  The string entered must be surrounded
+by quotation characters.
+A string expression can also be entered by back spacing over the 
+quotation mark in the prompt.
+
+.IP \fB>\fP
+Enter a label that will be flushed right against the
+right edge of the cell.  The string entered must be surrounded
+by quotation characters.
+A string expression can also be entered by back spacing over the 
+quotation mark in the prompt.
+
+.IP \fBx\fP
+Clears the current cell.  You may prefix this command with a count of
+the number of cells on the current row to clear.  Cells cleared with
+this command may be recalled with any of the variations of the pull
+command.
+
+.IP \fBe\fP
+Edit the value associated with the current cell.  This is identical to '='
+except that the command line starts out containing the old value or
+expression associated with the cell.
+
+.IP \fBE\fP
+Edit the string associated with the current cell.  This is the same as
+one of <, >,
+and ", with the additional
+fact that the command line starts out with the old string.
+
+.IP \fBm\fP
+Mark a cell to be used as the source for the copy command.
+
+.IP \fBc\fP
+Copy the last marked cell to the current cell, updating the row and
+column references.
+
+.IP \fB^T\fP
+Toggle options.  This command allows the user to switch the state
+of the encryption, quick numeric entry and top line display options.
+The user should follow the ^T character with one of "x", "n", or
+"t" to pick the intended option.  A small menu lists the choices
+when ^T is typed.
+
+.PP
+Cells can contain both a number and a string.  To enter and edit the
+number, use 
+.I = 
+and 
+.I e.
+To enter and edit the string, use quote, 
+.I <, >
+and
+.I E.
+Either the string or the number (but not both at the same
+time) can be the result of evaluating an expression.  See the sections below
+on numeric and string expressions for more details.
+
+.PP
+File operations
+
+.IP \fBG\fP
+Get a new database from a file.  If the encryption option
+is enabled,
+the file is decrypted before it is loaded into the
+spread sheet.
+
+.IP \fBP\fP
+Put the current database into a file.  If the encryption option
+is enabled, the file is encrypted before it is saved.
+The optional range argument saves a subset of the spreadsheet to
+the output file.
+
+.IP \fBW\fP
+Write a listing of the current database in a form that matches its
+appearance on the screen.  This differs from the 
+.I put 
+command in that
+put's files are intended to be reloaded with 
+.I get,
+while 
+.I write
+produces
+a file for people to look at.
+The optional range argument writes a subset of the spreadsheet to
+the output file.
+If you try to write to the last file used with the
+.I put
+or 
+.I get
+commands, or the file specified on the command line when the
+program is invoked, you will be asked to confirm that the (potentially)
+dangerous operation is really what you wanted.
+
+.IP \fBT\fP
+Write a listing of the current database to a file, but put ":"s between
+each field.  This  is useful for tables that will be further formatted
+by the
+.I tbl
+preprocessor of
+.I nroff.
+The optional range argument writes a subset of the spreadsheet to
+the output file.
+If you try to write to the last file used with the
+.I put
+or 
+.I get
+commands, or the file specified on the command line when the
+program is invoked, you will be asked to confirm that the (potentially)
+dangerous operation is really what you wanted.
+
+.IP \fBM\fP
+Merges the database from the named file into the current database.  Values,
+expressions and names defined in the named file are written into the current
+file, overwriting the existing entries at those locations.
+
+.IP \fBR\fP
+Run macros.  Since 
+.I pname
+files are saved as ascii files, it is possible to use them as primitive
+macro definition files.  The
+.I R 
+command makes this easier by giving a saved a path name as the start of
+the file name in the merge command.  The string to use is defined by
+the 
+.I D
+command below.  To use write macros, you must be familier with
+the save file formats.  This facility is still primitive and could be
+much improved.
+
+.IP \fBD\fP
+Define a path for the 
+.I R
+command to use.
+
+.PP 
+The three output operators, 
+.I put, write
+and
+.I tbl
+can pipe their (unencrypted only) output to a program.  To use
+this option, enter "| program" to
+the prompt asking for a file name.  For example, to redirect the output
+of the write command to the printer, you could enter "| lpr -p".
+
+All file operations take a file name as the first argument to the
+prompt on the top line.  The prompt supplies a quotation mark to aid in
+typing in the file name.   The file name can also be obtained from a
+cell from a label field or a string expression.  In this case, the
+leading quote should be deleted with the back space key and a cell name
+such as 
+.I a22
+entered instead.  If the string in the cell starts with
+"|", the rest of the string is interpeted as a unix command, as above.
+
+.PP
+Row and Column operations.  Members of this class of commands can be used
+on either rows or columns.  The second letter of the command is either
+a column designator (one of the characters c, j, k, ^N, ^p) or a 
+row designator (one of r, l, h, ^B, ^F).
+Commands which move or copy cells also modify the variable references 
+in affected cell expressions.
+Variable references may be frozen by using the 
+.I fixed
+operator or using the "$" character in the reference to the cell.
+
+.IP "\fBar, ac\fP"
+Creates a new row (column) immediately following the current row (column).
+It is initialized
+to be a copy of the current one.
+
+.IP "\fBdr, dc\fP"
+Delete this row (column).
+
+.IP "\fBpr, pc, pm\fP"
+Pull deleted rows (columns) back into the spread sheet.  The last deleted
+set of cells is put back into the spread sheet at the current location.
+.I Pr
+inserts enough rows to hold the data.
+.I Pc
+inserts enough columns to hold the data.
+.I Pm
+(merge) does not insert rows or columns. It overwrites the cells
+beginning at the current cursor location.
+
+.IP "\fBir, ic\fP"
+Insert a new row (column) by moving the row (column) containing the cell
+cursor, and all
+following, down (right) one.  The new position will be empty.
+
+.IP "\fBzr, zc\fP"
+Hide ("zap") the current row (column).  This keeps a row or column from being
+displayed but keeps it in the data base.
+
+.IP "\fBvr, vc\fP"
+Removes expressions from the affected rows (columns), leaving only
+the values which were in the cells before the command
+was executed.
+
+.IP "\fBsr, sc\fP"
+Show hidden rows (columns).  Type in a range of rows or columns
+to be revealed.  The command default is the first range of rows or
+columns currently hidden.
+
+.IP \fBf\fP
+Sets the output format to be used for printing the numbers in each cell in
+the current column.  Type in two numbers which will be the width in
+characters of a column and the number of digits which will follow the
+decimal point.  Note that this command has only a column version and
+does not have a second letter.  A preceeding count can be used to
+specify that more than one column be formatted.
+
+.PP
+Range Operations:
+Range operations
+affect a rectangular region on the screen.  
+All of the commands in this class start with a slash; the second
+letter of the command indicates which command.
+The program will prompt for needed parameters.  Phrases surrounded by
+square brackets in the prompt are informational only and may be erased with
+the backspace key.
+
+Prompts requesting variable names
+may be satisfied with either an explicit variable name, such as 
+.I A10
+or with a variable name previously defined in a 
+.I /d
+command.  Range name prompts require either an explicit range such
+as 
+.I A10:B20
+or a range name previously defined with a 
+.I /d
+command.  A default range shown in line 2 is used if the range is
+omitted from the command.  The default range can be changed by moving
+the cell cursor via the control commands (^N, ^F, ^N, ^P) or the arrow
+keys.  The default range will be highlighted in standout mode on the
+terminal.
+
+.IP "/\fBx\fP"
+Clear a range.  Cells cleared with this command may be recalled
+via any of the pull row or column commands.
+
+.IP "/\fBc\fP"
+Copy a source range to a destination range. 
+The source and destination may be different sizes.  The result is
+always one or more full copies of the source.  Copying a row to a row
+yields a row.  Copying a column to a column yields a column.  Copying a
+range to anything yields a range.  Copying a row to a column or a
+column to a row yields a range with as many copies of the source as
+there are cells in the destination.  This command can be used to dup a
+cell though an arbitrary range by making the source a single cell
+range such as
+.I b20:b20.
+
+.IP "/\fBf\fP"
+Fill a range with constant values.  The start and increment numbers
+may be positive or negative.
+
+.IP "/\fBv\fP"
+Values only.  This command removes the formulas from a range of
+cells, leaving just the values of the expressions.
+
+.IP "/\fBd\fP"
+This command is used to assign a symbolic name to a single cell or 
+a rectangular range of cells on the screen.  The parameters are the
+name, surrounded by quotation marks, and either a single cell name
+such as 
+.I A10 
+or a range such as 
+.I A10:B20.
+Names defined in this
+fashion will be used by the program in future prompts, may be
+entered in response to prompts requesting a cell or range name,
+and will be saved when the spread sheet is saved with a
+.I Put
+command.  Names defined must be more than two alpha
+characters long to differentiate them from a column names, and must not have
+embedded special characters.  Names may include the character "_" or numerals
+as long as they occur after the first three alpha characters.
+
+.IP "/\fBs\fP"
+This command will list (show) the defined range names.
+
+.IP "/\fBu\fP"
+This command is used to undefine a range name.  The range must have
+been previously defined.
+
+.PP
+Miscellaneous commands:
+
+.IP \fBq\fP
+Exit from
+.IR pname.
+If you were editing a file, and you modified
+it, then
+.I pname
+will ask about saving before exiting. 
+If you aren't editing a file and haven't saved the data you
+entered, you will get a chance to save the data
+before you exit.
+
+.IP \fB^C\fP
+Alternate exit command.
+
+.IP \fB?\fP
+Types a brief helpful message.
+
+.IP "^\fBG or ESC\fP"
+Abort entry of the current command.
+
+.IP "^\fBR or ^L\fP"
+Redraw the screen.
+
+.IP \fB^V\fP
+Types, in the command line, the name of the cell referenced by
+the cell cursor.  This is used when typing in expressions which refer to
+entries in the table.
+
+.IP \fB^W\fP
+Types, in the command line, the expression of the cell referenced
+by the cell cursor.
+
+.IP \fB^A\fP
+Types, in the command line, the value of the cell referenced
+by the cell cursor.
+
+.IP \fB!\fP
+Shell escape. 
+The program prompts for a shell command to run.  
+The user should terminate the command with a <return> key.
+No command will start the shell in interactive mode.
+A second "!" will repeat the last command.
+If the environment varible "SHELL" is defined, that shell is
+run.  If not, /bin/sh is used.
+
+.IP <\fBTAB\fP>
+Starts highlight mode.  This allows the user to highlight a range of
+cells via the cursor control codes or the arrow keys.  The highlighted
+range starts at the cell where the user typed tab and continues through
+the current cell cursor.  Hitting tab again causes the highlighted
+range to be entered into the command line and the highlighting to be
+turned off.  This is most useful for defining ranges to functions such
+as @sum().  Hitting ')' acts just like typing the tab key the second
+time and adds the closing ')'.
+
+.PP
+Expressions that are used with the '=' and 'e' commands have a fairly
+conventional syntax.  Terms may be variable names,
+parenthesised expressions, negated terms, and constants. 
+Ranges may be operated upon with '@' functions
+such as sum (@sum) and average (@avg).
+Terms may be combined using many binary
+operators.  Their precedences (from highest to lowest) are: ^; *,/; +,-;
+<,=,>,<=,>=; &; |; ?.
+
+.TP 15
+e+e
+Addition.
+
+.TP 15
+e-e
+Subtraction.
+
+.TP 15
+e*e
+Multiplication.
+
+.TP 15
+e/e
+Division.
+
+.TP 15
+e^e
+Exponentiation.
+
+.TP 15
+Variable Names
+Normally, a variable name is just the name of a cell, such as 
+.I K20.
+The value is the contents of the cell.  When the formula is copied to
+another location via copy or range copy, variable refernces are offset
+by the amount the formula moved.  This allows the new formula to work on
+new data.  If the cell reference is not to change, the user can either
+use the 
+.I fixed 
+operator below, or can use one of the following
+variations on the cell name:  
+.I K20
+references cell K20; the reference
+changes when the formula is copied.  
+.I $K$20
+always refers to K20; the
+reference stays fixed when the formula is copied.  
+.I $K20
+keeps the
+column fixed at column K, the row is free to vary.  Similarly, 
+.I K$20
+fixes the row and allows the column to vary.
+
+These conventions also hold on defined ranges.  Range references
+vary when formulas containing them are copied.  If the range is defined
+with fixed variable references, the references do not change.
+
+.TP 15
+@sum(range)
+Sum all valid (nonblank) entries in the region whose two corners are defined
+by the two variable (cell) names or the range name given.
+
+.TP 15
+@avg(range)
+Average all valid (nonblank) entries in the region whose two corners are defined
+by the two variable (cell) names or the range name given.
+
+.TP 15
+@prod(range)
+Multiply together all valid (nonblank) entries in the region whose two
+corners are defined by the two variable (cell) names or the range name given.
+
+.TP 15
+@max(range)
+Return the maximum value in specified region.
+
+.TP 15
+@min(range)
+Return the minimum value in the specified region.
+
+.TP 15
+@stddev(range)
+Return the sample standard deviation of the specified region.
+
+.TP 15
+e?e:e
+Conditional: If the first expression is true then the value of the second is
+returned, otherwise the value of the third is.
+
+.TP 15
+<,=,>,<=,>=
+Relationals: true iff the indicated relation holds.
+
+.TP 15
+&,|
+Boolean connectives.
+
+.TP 15
+fixed
+To make a variable not change automatically when a cell moves,
+put the word \*(lqfixed\*(rq in front of the reference.  I.e.
+B1*fixed C3.
+
+.PP
+Assorted math functions.  Most of these are standard system functions
+more fully described in
+.I math(3).
+
+All of them operate on floating point numbers (doubles);
+the trig functions operate with angles in radians.
+
+.TP 15
+@exp(expr)
+Returns exponential function of <expr>.
+
+.TP 15
+@ln(expr)
+Returns the natural logarithm of <expr>.
+
+.TP 15
+@log(expr)
+Returns the base 10 logarithm of <expr>.
+
+.TP 15
+@pow(expr1,expr2)
+Returns <expr1> raised to the power of <expr2>.
+
+.TP 15
+@floor(expr)
+Returns returns the largest integer not greater than <expr>.
+
+.TP 15
+@ceil(expr)
+Returns the smallest integer not less than <expr>.
+
+.TP 15
+@rnd(expr)
+Rounds <expr> to the nearest integer.
+
+.TP 15
+@hypot(x,y)
+Returns SQRT(x*x+y*y), taking precautions against unwarranted overflows.
+
+.TP 15
+@fabs(expr)
+Returns the absolute value |expr|.
+
+.TP 15
+@sin(expr), @cos(expr), @tan(expr)
+Return trigonometric functions of radian arguments. The magnitude of the
+arguments are not checked to assure meaningful results.
+
+.TP 15
+@asin(expr)
+Returns the arc sin in the range -pi/2 to pi/2
+
+.TP 15
+@acos(expr)
+Returns the arc cosine in the range 0 to pi.
+}i(<|J
+.TP 15
+@atan(expr)
+Returns the arc tangent of <expr> in the range -pi/2 to pi/2.
+
+.TP 15
+@dtr(expr)
+Converts <expr> in degrees to radians.
+
+.TP 15
+@rtd(expr)
+Converts <expr> in radians to degrees.
+
+.TP 15
+pi
+A constant quite close to pi.
+
+.TP 15
+@gamma(expr1)
+Returns the natural log of the gamma function.
+
+.TP 15
+@ston(se)
+Converts se from a string expression to a number.
+
+.TP 15
+@eqs(se1, se2)
+Returns a one if se1 is the same string as se2.
+
+.PP
+Time and date functions:
+
+Time for 
+.I pname
+follows the system standard: the number of seconds since 1970.
+The following functions take the time in seconds as an argument and
+return the specified value.  The current time is available through
+.I @now,
+below.  The functions all convert from GMT to local time.
+
+.TP 15
+@month(seconds)
+Returns the month, encoded from 1 (January) to 12 (December).
+
+.TP 15
+@day(seconds)
+Returns the day, encoded from 1 to 31.
+
+.TP 15
+@year(seconds)
+Returns the year.  Valid years begin with 1970.  The last legal year
+is system dependent.
+
+.TP 15
+@hour(seconds)
+Returns the number of hours since midnight.  Encoded as 0 to 23.
+
+.TP 15
+@minute(seconds)
+Returns the number of minutes since the last full hour.  Encoded as
+0 to 59.
+
+.TP 15
+@second(seconds)
+Returns the number of seconds since the last full minute, encoded
+from 0 to 59.
+
+.TP 15
+@now
+Returns the current time encoded as the number of seconds since December
+31, 1969, Midnight, GMT.
+
+.PP 
+String expressions are made up of constant strings (characters surrounded
+with double quotation marks), and string functions.  The most useful operator
+is the concatenation operator, "#".  For example, the string expression
+"the"#" dog"
+displays the string "the dog" in the cell.  Other string operators 
+extract substrings and give the date in system standard
+format.  A cell name such as "A5" in a string expression will return
+the string associated with that cell.
+
+Valid string operators include:
+
+.TP 15
+"characters"
+Constant strings are characters surrounded by double quotation marks.
+
+.TP 15
+@substr(se, i1, i2)
+Extract the substring indexed by character number
+.I i1
+through character
+number 
+.I i2 
+from the string expression
+.I se.
+As an example,
+@substr("Nice jacket", 4, 7)
+returns the string "e jac".
+.I Se
+can be any string expression.  
+.I I1
+and
+.I i2
+can be any numeric expressions.
+
+.TP 15
+@fmt(se, e)
+Fmt converts a number to a string.  The argument
+.I se
+should be a valid 
+.I printf(3)
+format string.  
+.I e
+is converted according to the standard rules.  As an example,
+.I @fmt("**%6.3f**", 10.5)
+will yield the string
+.I **10.500**.
+The second argument,
+.I e,
+is a double, so applicable formats are e, E, f, g, and G.
+Try "%g" as a starting point.
+
+.TP 15
+@date(e)
+Date converts the time in seconds to a date string 24 characters
+long in the following form:
+
+.I Sun Sep 16 01:03:52 1973
+
+.SH SEE ALSO
+bc(1), dc(1), crypt(1), ppname(1)
+
+.SH BUGS
+
+Expression reevaluation is done in the same top-to-bottom, left-to-right
+manner as is done in other spread sheet calculators.  This is silly.  A
+proper following of the dependency graph with (perhaps) recourse to
+relaxation should be implemented.
+
+At most 200 rows and 40 columns.
