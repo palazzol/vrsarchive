@@ -14,7 +14,11 @@
 #ifdef BSD4_2
 #   include <sys/wait.h>
 #else
+#  ifdef CYGWIN
+#   include <sys/wait.h>
+#  else
 #   include <wait.h>
+#  endif
 #endif
 
 SIG_T	proc_child();
