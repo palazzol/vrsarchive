@@ -102,6 +102,9 @@ extern  int
 #endif
 	mac_getc(void),
 	match(char * *choices,char *what),
+#ifndef MAC
+	main(int argc,char * *argv),
+#endif
 	max(int a,int b),
 	min(int a,int b),
 	numcomp(char *s1,char *s2),
@@ -491,9 +494,6 @@ extern  void
 	lsave(void),
 	mac_init(void),
 	mac_putc(int c),
-#ifndef MAC
-	main(int argc,char * *argv),
-#endif
 	make_argv(char * *argv,char *ap),
 	make_scr(void),
 	message(char *str),
@@ -709,6 +709,7 @@ extern  int
 #endif	
 	mac_getc(),
 	match(),
+	main(),
 	max(),
 	min(),
 	numcomp(),
@@ -1099,7 +1100,6 @@ extern  void
 	lsave(),
 	mac_init(),
 	mac_putc(),
-	main(),
 	make_argv(),
 	make_scr(),
 	message(),

@@ -113,6 +113,7 @@ DIR	*dp;
 /* Get a line at `tl' in the tmp file into `buf' which should be LBSIZE
    long. */
 
+void
 getline(tl, buf)
 disk_line	tl;
 char	*buf;
@@ -367,7 +368,8 @@ char	*quest,
 
 jmp_buf	int_env;
 
-catch()
+SIG_T
+catch(dummy)
 {
 	longjmp(int_env, 1);
 }

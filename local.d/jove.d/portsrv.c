@@ -9,14 +9,14 @@
    signals jove when there is some output ready to send to jove. By the
    time we get here, out standard output goes to jove's process input. */
 
+#include <signal.h>
+#include <sys/ioctl.h>
+
 #include "tune.h"
 
 #ifdef PIPEPROCS	/* the whole file! */
-
 #include "jove.h"
 
-#include <signal.h>
-#include <sys/ioctl.h>
 #ifdef BSD4_2
 #   include <sys/wait.h>
 #else
@@ -31,6 +31,7 @@ struct header {
 
 #define HEADSIZE	((sizeof header.pid) + sizeof (header.nbytes))
 
+void
 error(str)
 char	*str;
 {
