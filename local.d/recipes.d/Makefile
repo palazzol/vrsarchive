@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/recipes.d/Makefile,v 1.2 1987-02-15 15:58:42 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/recipes.d/Makefile,v 1.3 1987-02-15 18:21:05 vrs Exp $
 #
 ALL	= configure
 include ../../CONFIG
@@ -62,7 +62,7 @@ $(DEFDIR):
 	chmod 755 $@
 
 clean:
-	rm -f $(OBJECTS) *.n.X rcnroff.X *.tmp
+	rm -f $(OBJECTS) *.1 *.5 *.n.X rcnroff.X *.tmp
 
 install: configure $(OBJDIR) $(MAN1DIR) $(MAN5DIR) $(DEFDIR)
 	cp $(OBJECTS) $(OBJDIR)
