@@ -20,6 +20,7 @@
 #define min(n) ((n+30)/60)              /* Internal time to minutes     */
 #define TOOLONG sys(60)                 /* Idle until job is killed     */
 #define WARNING TOOLONG-sys(5)          /* Idle until warning message   */
+#define IGNORE(n) (!strcmp(n,"backup"))	/* Don't kill this user		*/
 
 int kmem;                               /* Used to open kernel memory   */
 int mem;                                /* Used to open physical memory */
@@ -77,12 +78,15 @@ killit()
   static struct proc p;			/* Copy of kernel proc entry    */
   static struct var v;			/* Copy of kernel parameters    */
 
-  tty = fopen(device,"w");              /* Open terminal for writing    */
-  if (tty < 0)
-    fprintf(stderr,"%s: Can't warn %s\n",argv[0],device);
-  else
-    fprintf(tty,"\n\7Your job will be killed IMMEDIATELY.\7\n");
-  fclose(tty);                          /* Close login info file        */
+  if (fork() > 0) {			/* Notification may block	*/
+    tty = fopen(device,"w");		/* Open terminal for writing    */
+    if (tty < 0)
+      fprintf(stderr,"%s: Can't warn %s\n",argv[0],device);
+    else
+      fprintf(tty,"\n\7Your job will be killed IMMEDIATELY.\7\n");
+    fclose(tty);			/* Close login info file        */
+    exit(0);				/* Done, give child to init	*/
+  }					/* Child lives on to kill again	*/
   lseek(kmem, (long)nl[X_V].n_value, 0);
   read(kmem, (char *) &v, sizeof v);	/* Read kernel parameters	*/
   nproc = v.v_proc;			/* Get proc table size		*/
@@ -125,7 +129,7 @@ time_t t;                               /* Minutes to go                */
 check()
 { static time_t t;                      /* Holds time since tty touched */
 
-  if (ut.ut_name[1])                    /* Got user logged in           */
+  if (ut.ut_name[1] && !IGNORE(ut.ut_name))/* Got user logged in	*/
     { sprintf(device,"/dev/%s",ut.ut_line);/* Format device name        */
       stat(device,&sbuf);               /* Stat user's terminal         */
       t = time((time_t *)0) - sbuf.st_atime;
