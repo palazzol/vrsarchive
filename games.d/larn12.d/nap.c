@@ -9,6 +9,11 @@
 #endif BSD
 #endif SYSV
 
+#ifndef KERNELHZ
+#define KERNELHZ 60
+#endif !KERNELHZ
+#define MS	(1000/KERNELHZ)	/* Milliseconds per clock tick	*/
+
 /*
  *	routine to take a nap for n milliseconds
  */
@@ -39,7 +44,7 @@ napms(time)
 	if (time<=0) time=1; /* eliminate chance for infinite loop */
 	if ((matchclock = times(&stats)) == -1 || matchclock == 0)
 		return;	/* error, or BSD style times() */
-	matchclock += (time / 17);		/*17 ms/tic is 1000 ms/sec / 60 tics/sec */
+	matchclock += (time / MS);		/* MS mlliseconds per tic */
 
 	while(matchclock < times(&stats))
 		;
