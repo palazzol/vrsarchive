@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.6 2002-11-24 06:08:07 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/pathalias.d/makefile,v 1.7 2002-11-24 17:40:37 vrs Exp $
 #
 XENIX	= makedb$(EXE)
 ALL	= pathalias$(EXE)
@@ -20,7 +20,7 @@ SRC	= addlink.c addnode.c extern.c local.c main.c mapit.c mapaux.c mem.c \
 CSRC	= addlink.c addnode.c extern.c local.c main.c mapit.c mapaux.c mem.c \
 	  parse.c yylex.c
 
-pathalias: $(OBJ)
+pathalias$(EXE): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBE) -o $@
 
 install: $(ALL) $(BINDIR) $(MAN1)
