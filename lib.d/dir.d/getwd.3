@@ -1,0 +1,39 @@
+.TH GETWD 3 local
+.DA 4 July 1984
+.SH NAME
+getwd \- get current working directory pathname
+.SH SYNOPSIS
+.B char *getwd(pathname)
+.br
+.B char *pathname;
+.SH DESCRIPTION
+.I Getwd
+copies the absolute pathname of the current working directory to
+.I pathname
+and returns a pointer to the result.
+.I Getwd
+uses the directory-scanning routines of
+.IR directory (3)
+and hence requires the
+.B \-lndir
+loader option.
+.PP
+.I Getwd
+will try to traverse the directory tree itself first;
+failing this, it will use
+.IR popen (3)
+to invoke
+.IR pwd (1),
+which runs setuid-root and can get past some permission problems
+that a C function can't.
+.SH SEE ALSO
+pwd(1)
+.SH DIAGNOSTICS
+.I Getwd
+returns NULL and places a message in
+.I pathname
+if an error occurs.
+.SH HISTORY
+Local product, written to match 4.2BSD semantics.
+.SH BUGS
+Pathnames longer than 1023 bytes will cause trouble.
