@@ -14,10 +14,10 @@
 int MakNam (name)
   char *name ;
 {
-	(void) strncpy (knam,name,10) ;
-	(void) strncpy (rnam,name,10) ;
-	(void) strncat (knam,".key",20) ;
-	(void) strncat (rnam,".rec",20) ;
+	(void) strncpy (knam,name,sizeof(knam)) ;
+	(void) strncpy (rnam,name,sizeof(rnam)) ;
+	(void) strncat (knam,".key",sizeof(knam)) ;
+	(void) strncat (rnam,".rec",sizeof(rnam)) ;
 
 	return ;
 }
