@@ -1,14 +1,18 @@
 # Hack or Quest Makefile.
-
+SHELL	= /bin/sh
 # on some systems the termcap library is in -ltermcap
 TERMLIB = -ltermlib
-
-
 # make hack
-GAME = hack
-GAMEDIR = /usr/games/lib/hackdir
-CFLAGS = -O
-HACKCSRC = hack.Decl.c\
+GAME	= hack
+GAMDIR	= $(DESTDIR)/usr/games
+GAMLIB	= $(GAMDIR)/lib
+LIBDIR	= $(GAMLIB)/hack1.0.3
+SAVDIR	= $(LIBDIR)/save
+#
+# If you define HACKDIR, then this will be the default playground;
+# otherwise it will be the current directory.
+CFLAGS	= -F 2000 -M2l -DHACKDIR=\"$(LIBDIR)\" -UBSD # -O
+HACKCSRC= hack.Decl.c\
 	hack.apply.c hack.bones.c hack.c hack.cmd.c hack.do.c\
 	hack.do_name.c hack.do_wear.c hack.dog.c hack.eat.c hack.end.c\
 	hack.engrave.c hack.fight.c hack.invent.c hack.ioctl.c\
@@ -24,21 +28,21 @@ HACKCSRC = hack.Decl.c\
 	hack.wield.c hack.wizard.c hack.worm.c hack.worn.c hack.zap.c\
 	hack.version.c rnd.c alloc.c
 
-CSOURCES = $(HACKCSRC) makedefs.c
+CSOURCES= $(HACKCSRC) makedefs.c
 
-HSOURCES = hack.h hack.mfndpos.h config.h\
+HSOURCES= hack.h hack.mfndpos.h config.h\
 	def.edog.h def.eshk.h def.flag.h def.func_tab.h def.gold.h\
 	def.mkroom.h\
 	def.monst.h def.obj.h def.objclass.h def.objects.h\
 	def.permonst.h def.rm.h def.trap.h def.wseg.h
 
-SOURCES = $(CSOURCES) $(HSOURCES)
+SOURCES	= $(CSOURCES) $(HSOURCES)
 
-AUX = data help hh rumors hack.6 hack.sh
+AUX	= data help hh rumors hack.6 hack.sh
 
-DISTR = $(SOURCES) $(AUX) READ_ME Makefile date.h hack.onames.h
+DISTR	= $(SOURCES) $(AUX) READ_ME Makefile date.h hack.onames.h
 
-HOBJ = hack.Decl.o hack.apply.o hack.bones.o hack.o hack.cmd.o hack.do.o\
+HOBJ	= hack.Decl.o hack.apply.o hack.bones.o hack.o hack.cmd.o hack.do.o\
 	hack.do_name.o hack.do_wear.o hack.dog.o hack.eat.o hack.end.o\
 	hack.engrave.o hack.fight.o hack.invent.o hack.ioctl.o\
 	hack.lev.o hack.main.o hack.makemon.o hack.mhitu.o hack.mklev.o\
@@ -53,9 +57,9 @@ HOBJ = hack.Decl.o hack.apply.o hack.bones.o hack.o hack.cmd.o hack.do.o\
 	hack.wizard.o hack.worm.o hack.worn.o hack.zap.o\
 	hack.version.o rnd.o alloc.o
 
-$(GAME):	$(HOBJ) Makefile
+$(GAME): $(HOBJ) # Makefile
 	@echo "Loading ..."
-	@ld -X -o $(GAME) /lib/crt0.o $(HOBJ) $(TERMLIB) -lc
+	$(CC) $(CFLAGS) -o $@ $(HOBJ) $(TERMLIB) -lc
 
 all:	$(GAME) lint
 	@echo "Done."
@@ -88,32 +92,48 @@ distribution: Makefile
 		( echo cp $$i $D ; cp $$i $D ) ; done
 # the distribution directory also contains the empty files perm and record.
 
+$(GAMDIR) $(GAMLIB) $(LIBDIR):
+	mkdir $@
+	chmod 755 $@
 
-install:
-	rm -f $(GAMEDIR)/$(GAME)
-	cp $(GAME) $(GAMEDIR)/$(GAME)
-	chmod 04511 $(GAMEDIR)/$(GAME)
-	rm -f $(GAMEDIR)/bones*
+install: $(GAME) $(GAMDIR) $(GAMLIB) $(LIBDIR) $(SAVDIR)
+	chown cron $(GAMDIR) $(GAMLIB) $(LIBDIR) $(SAVDIR)
+	chgrp cron $(GAMDIR) $(GAMLIB) $(LIBDIR) $(SAVDIR)
+	rm -f $(LIBDIR)/bones*
+	cp $(GAME) $(LIBDIR)/$(GAME)
+	chown cron $(LIBDIR)/$(GAME)
+	chgrp cron $(LIBDIR)/$(GAME)
+	chmod 6711 $(LIBDIR)/$(GAME)
+	cd $(LIBDIR); touch perm record
+	cd $(LIBDIR); chown cron perm record
+	cd $(LIBDIR); chgrp cron perm record
+	cd $(LIBDIR); chmod 644 perm record
+	cp data help hh news rumors $(LIBDIR)
+	cd $(LIBDIR); chown cron data help hh news rumors
+	cd $(LIBDIR); chgrp cron data help hh news rumors
+	cd $(LIBDIR); chmod  644 data help hh news rumors
+	cp    hack.sh $(GAMDIR)/$(GAME)
+	chmod 755     $(GAMDIR)/$(GAME)
 #	cp hack.6 /usr/man/man6
 
 clean:
-	rm -f *.o
+	rm -f *.o makedefs $(GAME)
 
 
 depend:
 # For the moment we are lazy and disregard /usr/include files because
 # the sources contain them conditionally. Perhaps we should use cpp.
-#		( /bin/grep '^#[ 	]*include' $$i | sed -n \
+#		( grep '^#[ 	]*include' $$i | sed -n \
 #			-e 's,<\(.*\)>,"/usr/include/\1",' \
 #
 	for i in ${CSOURCES}; do \
-		( /bin/grep '^#[ 	]*include[ 	]*"' $$i | sed -n \
+		( grep '^#[ 	]*include[ 	]*"' $$i | sed -n \
 			-e 's/[^"]*"\([^"]*\)".*/\1/' \
 			-e H -e '$$g' -e '$$s/\n/ /g' \
 			-e '$$s/.*/'$$i': &/' -e '$$s/\.c:/.o:/p' \
 			>> makedep); done
 	for i in ${HSOURCES}; do \
-		( /bin/grep '^#[ 	]*include[ 	]*"' $$i | sed -n \
+		( grep '^#[ 	]*include[ 	]*"' $$i | sed -n \
 			-e 's/[^"]*"\([^"]*\)".*/\1/' \
 			-e H -e '$$g' -e '$$s/\n/ /g' \
 			-e '$$s/.*/'$$i': &\
