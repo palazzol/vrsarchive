@@ -10,7 +10,11 @@
 #include	<sgtty.h>
 struct ltchars ltchars, ltchars0;
 #else
+#include	<sys/types.h>
 #include	<termio.h>	/* also includes part of <sgtty.h> */
+#ifndef TCGETA
+#include	<sys/ioctl.h>
+#endif !TCGETA
 struct termio termio;
 #endif BSD
 
