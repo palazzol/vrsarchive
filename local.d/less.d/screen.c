@@ -6,7 +6,9 @@
  */
 
 #include "less.h"
+#ifdef M_XENIX
 #include <sys/types.h>
+#endif
 #ifdef SYS5
 #define TERMIO
 #endif
