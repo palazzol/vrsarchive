@@ -132,7 +132,7 @@ unsigned INT date, time;               /* desired date, time */
     m_time += tz.tz_minuteswest * 60;  /* account for timezone differences */
 #else
     {
-#ifndef __STDC__
+#ifndef timezone
     extern long timezone;
 #endif
     tmbuf = localtime(&m_time);        /* check for Daylight Savings Time */
