@@ -1,17 +1,29 @@
-char *copyright = "Copyright (c) 1984, William LeFebvre";
+char *copyright = "Top, version 1.6, copyright (c) 1984, William LeFebvre";
 
 /*
  *  Top users display for Berkeley Unix
- *  Version 1.4
+ *  Version 1.6
  *
  *  This program may be freely redistributed to other Unix sites, but this
- *  comment MUST remain intact.
+ *  entire comment MUST remain intact.
  *
  *  Copyright (c) 1984, William LeFebvre, Rice University
  *
  *  This program is designed to run on either Berkeley 4.1 or 4.2 Unix.
  *  Compile with the preprocessor variable "FOUR_TWO" set to get an
  *  executable that will run on Berkeley 4.2 Unix.
+ *
+ *  The Sun kernel uses scaled integers instead of floating point so compile
+ *  with the preprocessor variable "SUN" to get an executable that will run
+ *  on Sun Unix version 1.1 or later.
+ *
+ *  Fixes and enhancements since version 1.5:
+ *
+ *  Jonathon Feiber at sun:
+ *	added "#ifdef SUN" code to make top work on a Sun,
+ *	fixed race bug in getkval for getting user structure,
+ *	efficiency improvements:  added register variables and
+ *		removed the function hashit
  */
 
 #include <curses.h>
@@ -98,15 +110,18 @@ long cp_time_offset;
 long mpid_offset;
 long avenrun_offset;
 
+#ifdef SUN
+long ccpu;
+long avenrun[3];
+#else
 double ccpu;
-double logcpu;
 double avenrun[3];
+#endif
+double logcpu;
 
 struct proc *proc;
 struct proc *pbase;
-struct proc *pp;
-struct proc **pref;
-struct proc **prefp;
+int bytes;
 
 struct user u;
 
@@ -145,19 +160,23 @@ int  argc;
 char *argv[];
 
 {
-    int i;
+    register struct proc *pp;
+    register struct proc **prefp;
+    register int i;
+    register int active_procs;
+    register int change;
+    register long cputime;
+
+    struct proc **pref;
     int total_procs;
-    int active_procs;
     int proc_brkdn[7];
-    int bytes;
     int topn = Default_TOPN;
     int delay = Default_DELAY;
-    int change;
-    long cputime;
     long curr_time;
     long time();
     char do_cpu = 0;
     char *myname = "top";
+    double pctcpu;
 
     /* get our name */
     if (argc > 0)
@@ -225,7 +244,11 @@ char *argv[];
     avenrun_offset = nlst[X_AVENRUN].n_value;
 
     /* this is used in calculating WCPU -- calculate it ahead of time */
+#ifdef SUN
+    logcpu = log((double)ccpu / FSCALE);
+#else
     logcpu = log(ccpu);
+#endif
 
     /* allocate space for proc structure array and array of pointers */
     bytes = nproc * sizeof(struct proc);
@@ -236,6 +259,7 @@ char *argv[];
     if (pbase == (struct proc *)NULL || pref == (struct proc **)NULL)
     {
 	fprintf(stderr, "%s: can't allocate sufficient memory\n", myname);
+	exit(1);
     }
 
     /* initialize the hashing stuff */
@@ -282,6 +306,7 @@ char *argv[];
 	total_procs = 0;
 	active_procs = 0;
 	bzero(proc_brkdn, sizeof(proc_brkdn));
+	prefp = pref;
 	for (pp = pbase, i = 0; i < nproc; pp++, i++)
 	{
 	    /* place pointers to each valid proc structure in pref[] */
@@ -292,7 +317,8 @@ char *argv[];
 		proc_brkdn[pp->p_stat]++;
 		if (pp->p_stat != SZOMB)
 		{
-		    pref[active_procs++] = pp;
+		    *prefp++ = pp;
+		    active_procs++;
 		}
 	    }
 	}
@@ -304,7 +330,11 @@ char *argv[];
 	    {
 		printw("%c %4.2f",
 		    i == 0 ? ':' : ',',
+#ifdef SUN
+		    (double)avenrun[i] / FSCALE);
+#else
 		    avenrun[i]);
+#endif
 	    }
 	}
 
@@ -386,15 +416,15 @@ char *argv[];
 	    qsort(pref, active_procs, sizeof(struct proc *), proc_compar);
     
 	    /* now, show the top whatever */
-	    for (prefp = pref, i = 0; i < topn; prefp++, i++)
+	    if (active_procs > topn)
 	    {
-		register struct proc *p = *prefp;
-    
-		if (p->p_time == 0)
-		{
-		    fprintf(stderr, "assumption failed!\n");
-		}
-		if (getu(p) == -1)
+		/* adjust for a lack of processes */
+		active_procs = topn;
+	    }
+	    for (prefp = pref, i = 0; i < active_procs; prefp++, i++)
+	    {
+		pp = *prefp;
+		if (getu(pp) == -1)
 		{
 		    strcpy(u.u_comm, "<swapped>");
 		    cputime = 0;
@@ -408,18 +438,28 @@ char *argv[];
 			(int)((float)(u.u_vm.vm_utime + u.u_vm.vm_stime)/hz);
 #endif
 		}
+#ifdef SUN
+		pctcpu = (double)pp->p_pctcpu / FSCALE;
+#else
+		pctcpu = pp->p_pctcpu;
+#endif
 		printw("%5d %-8.8s %3d %4d%6dK %4dK %-5s%4d:%02d %5.2f%% %5.2f%% %-14.14s\n",
-		    p->p_pid,
-		    username(p->p_uid),
-		    p->p_pri - PZERO,
-		    p->p_nice - NZERO,
-		    (p->p_tsize + p->p_dsize + p->p_ssize) >> 1,
-		    p->p_rssize >> 1,
-		    state_abbrev[p->p_stat],
+		    pp->p_pid,
+		    username(pp->p_uid),
+		    pp->p_pri - PZERO,
+		    pp->p_nice - NZERO,
+		    (pp->p_tsize + pp->p_dsize + pp->p_ssize) >> 1,
+		    pp->p_rssize >> 1,
+		    state_abbrev[pp->p_stat],
 		    cputime / 60l,
 		    cputime % 60l,
-		    (100.0 * p->p_pctcpu / (1.0 - exp(p->p_time * logcpu))),
-		    (100.0 * p->p_pctcpu),
+#ifdef SUN
+		    (100.0 * pctcpu / (1.0 - exp(pp->p_time * logcpu))),
+		    (100.0 * pctcpu),
+#else
+		    (100.0 * pctcpu / (1.0 - exp(pp->p_time * logcpu))),
+		    (100.0 * pctcpu),
+#endif
 		    u.u_comm);
 	    }
 	}
@@ -495,6 +535,9 @@ struct hash_el {
 
 #define    H_empty	-1
 
+/* simple minded hashing function */
+#define    hashit(i)	((i) % Table_size)
+
 struct hash_el hash_table[Table_size];
 
 init_hash()
@@ -513,12 +556,12 @@ init_hash()
 
 char *username(uid)
 
-int uid;
+register int uid;
 
 {
-    int index;
+    register int index;
     register int found;
-    char *name;
+    register char *name;
 
     /* This is incredibly naive, but it'll probably get changed anyway */
     index = hashit(uid);
@@ -537,13 +580,13 @@ int uid;
 
 enter_user(uid, name)
 
-int  uid;
-char *name;
+register int  uid;
+register char *name;
 
 {
-    int length;
-    int index;
-    int try;
+    register int length;
+    register int index;
+    register int try;
     static int uid_count = 0;
 
     /* avoid table overflow -- insure at least one empty slot */
@@ -569,12 +612,12 @@ char *name;
 
 get_user(uid)
 
-int uid;
+register int uid;
 
 {
     struct passwd *pwd;
     static char buff[20];
-    int last_index;
+    register int last_index;
 
     while ((pwd = getpwent()) != NULL)
     {
@@ -588,14 +631,6 @@ int uid;
     return(enter_user(uid, buff));
 }
 
-hashit(i)
-
-int i;
-
-{
-    return(i % Table_size);
-}
-
 /*
  *  All of this stuff gets things out of the memory files.
  */
@@ -606,7 +641,7 @@ int i;
  */
 getu(p)
 
-struct proc *p;
+register struct proc *p;
 
 {
     struct pte uptes[UPAGES];
@@ -627,7 +662,11 @@ struct proc *p;
     /*
      *  Process is currently in memory, we hope!
      */
-    getkval(p->p_addr, uptes, sizeof(uptes), "p->p_addr");
+    if (!getkval(p->p_addr, uptes, sizeof(uptes), "p->p_addr"))
+    {
+	/* we can't seem to get to it, so pretend it's swapped out */
+	return(-1);
+    } 
     upage = (caddr_t)&u;
     pte = uptes;
     for (nbytes = sizeof(u); nbytes > 0; nbytes -= NBPG)
@@ -664,10 +703,19 @@ char *refstr;
     }
     if (read(kmem, ptr, size) == -1)
     {
-	fprintf(stderr, "%s: reading %s: %s\n",
-	    KMEM, refstr, sys_errlist[errno]);
-	quit(1);
+	if (strcmp(refstr, "p->p_addr") == 0) 
+	{
+	    /* we lost the race with the kernel, process isn't in memory */
+	    return(0);
+	} 
+	else 
+	{
+	    fprintf(stderr, "%s: reading %s: %s\n",
+		KMEM, refstr, sys_errlist[errno]);
+	    quit(1);
+	}
     }
+    return(1);
 }
 
 /*
@@ -676,7 +724,7 @@ char *refstr;
 
 outc(ch)
 
-char ch;
+register char ch;
 
 {
     putchar(ch);
