@@ -23,7 +23,7 @@
 
 #define CTL(x) (('x') & 0x1f)	/* for control chars					*/
 #define ERROR(e) longjmp(xxx, (e))
-#define BLOCKSIZE ((int)(0x1000 - 8))	/* size of memory block to allocate		*/
+#define BLOCKSIZE ((int)(0x4000 - 8))	/* size of memory block to allocate		*/
 #define CELLSIZE 256			/* number of characters per cell		*/
 #define CSTACKSIZE 64			/* size of command stack				*/
 #define MSTACKSIZE 64			/* size of macro stack					*/
