@@ -46,7 +46,7 @@
 %token K_FIXED
 %token K_SUM
 %token K_PROD
-%token K_AVE
+%token K_AVG
 
 %left '?' ':'
 %left '|'
@@ -86,7 +86,7 @@ term: 		var		{ $$ = new ('v', $1); }
 				{ $$ = new (O_REDUCE('+'), $4, $6); }
 	|       '@' K_PROD '(' var ':' var ')' 
 				{ $$ = new (O_REDUCE('*'), $4, $6); }
-	|       '@' K_AVE '(' var ':' var ')' 
+	|       '@' K_AVG '(' var ':' var ')' 
 				{ $$ = new (O_REDUCE('a'), $4, $6); }
 	|	'(' e ')'	{ $$ = $2; }
 	|	'+' term	{ $$ = $2; }

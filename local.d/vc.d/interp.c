@@ -60,7 +60,10 @@ int minr, minc, maxr, maxc;
 		count++;
 	    }
 
-    return (v / (double)count);
+    if(count == 0)
+	return 0.0;
+    else
+	return (v / (double)count);
 }
 
 double eval(e)
