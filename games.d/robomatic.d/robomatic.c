@@ -146,6 +146,7 @@ robomatic ()
 
   /* Initialize the Curses package */
   initscr (); crmode (); noecho (); clear (); refresh ();
+  savetty();
 
   /* Clear the screen array */
   blankscreen ();
@@ -373,12 +374,16 @@ drawscreen ()
  * 2. Can you hide behind a scrap heap and cause him to crash?
  * 3. Can you find another robot close to the first and move in.
  *    such a way so as to cause them to collide?
- * 4. Can you make any safe move?  Choose randomly.
+ * 4. Can you make any move toward center?
  * 5. Teleport.
  ****************************************************************/
 
 /* keymap[dy+1][dx+1] == character to get you there */
-char keymap[3][3] = { 'y', 'k', 'u', 'h', '.', 'l', 'b', 'j', 'n'};
+char keymap[3][3] = {
+  'y', 'k', 'u',
+  'h', '.', 'l',
+  'b', 'j', 'n'
+};
 char *keydir = "ykuh.lbjn";
 
 strategy ()
@@ -387,56 +392,14 @@ strategy ()
 
   /* Find closest robot and find a heap to block him with */
   if (closest (&tr, &tc, '=') )
-  { if (findheap (tr, tc, &hr, &hc) || findcollide (tr, tc, &hr, &hc))
-    { if (cmd = makemove (hr, hc)) return (cmd); }  
-  }
+    if (!findheap (tr, tc, &hr, &hc) && !findcollide (tr, tc, &hr, &hc)) {
+      /* None found, try to go toward the center of the screen */
+      hr = ROWS/2;
+      hc = COLS/2;
+    }
+  if (cmd = makemove (hr, hc)) return (cmd);
 
-/*
- * No good offense known.  Make a safe move toward the center.  The 'toward
- * the center' rule is a weak heuristic to maximize collisions among robots
- * not an immediate threat to us.  Better heuristics would take advantage
- * of existing heaps.
-*/
-  /* Find the direction toward the center. */
-  r = ROWS/2 - atrow;
-  if (r < 0)
-    r = -1;
-  else
-    r =  1;
-  c = COLS/2 - atcol;
-  if (c < 0)
-    c = -1;
-  else
-    c =  1;
-  /*
-   * Evaluation function (normalized view):
-   *  (C)			<- Center of screen
-   *     123
-   *     467			<- 6 is (atrow, atcol)
-   *     589
-  */
-  if (safe(atrow+r, atcol+c))		/* Try to go that way. */
-    cmd = keymap[1+r][1+c];
-  else if (safe(atrow+r, atcol))	/* Prefer vertical progress */
-    cmd = keymap[1+r][1];
-  else if (safe(atrow+r, atcol-c))	/* even for horizontal losses */
-    cmd = keymap[1+r][1-c];
-  else if (safe(atrow, atcol+c))	/* then horizontal progress */
-    cmd = keymap[1][1+c];
-  else if (safe(atrow-r, atcol+c))	/* of any kind */
-    cmd = keymap[1-r][1+c];
-  else if (safe(atrow, atcol))		/* then staying put */
-    cmd = keymap[1][1];
-  else if (safe(atrow, atcol-c))	/* compromise horizontal first */
-    cmd = keymap[1][1-c];
-  else if (safe(atrow-r, atcol))	/* then compromise vertical */
-    cmd = keymap[1-r][1];
-  else if (safe(atrow-r, atcol-c))	/* then compromise both */
-    cmd = keymap[1-r][1-c];
-  else					/* PUNT! */
-    cmd = 't';
-
-  return (cmd);
+  return ('t');
 }
 
 /****************************************************************
@@ -459,7 +422,7 @@ register int r, c;
 
 closest (rp, cp, type)
 int *rp, *cp, type;
-{ register int dist=999, newdist, tr=0, tc=0, r, c;
+{ register int r, c, dist=999, newdist, tr=0, tc=0;
 
   /* Find closest robot */
   for (r=1; r<ROWS-1; r++)
@@ -614,34 +577,99 @@ int tr, tc, *pr, *pc;
 }
 
 /****************************************************************
- * makemove: Return the direction to move toward a given square.  This
- * routine checks to make sure the move is a safe one.  Returns 0 if no
- * move is safe, and the character if one is found.
+ * makemove: Return the direction to move toward a given square.
+ * If not possible to move straight toward given square, try to
+ * get as close as possible, or at least make a legal move. This
+ * routine checks to make sure the move returned is a safe one.
+ * Returns 0 if no move is safe, and the command if one is found.
  ****************************************************************/
 
-makemove (r, c)
-{ int dr, dc;
+typedef struct {
+  int h[9][2];
+} heur;
+/*
+ * Evaluation function when goal is on the diagonal.
+ *  G			<- Goal
+ *   123
+ *   467		<- 6 is (atrow, atcol)
+ *   589
+*/
+heur diag = {{
+  {  1,  1 },			/* Prefer straight to goal	*/
+  {  1,  0 },			/* Then toward goal on Y axis	*/
+  {  1, -1 },			/* even if compromises X	*/
+  {  0,  1 },			/* Then toward goal on X axis	*/
+  { -1,  1 },			/* even if compromises Y	*/
+  {  0,  0 },			/* Then staying put		*/
+  {  0, -1 },			/* Then compromise X axis	*/
+  { -1,  0 },			/* Then compromise Y axis	*/
+  { -1, -1 }			/* Then compromise both		*/
+}};
+/*
+ * Evaluation function when goal on same Y
+ *   258
+ *  G147			Rotate 90 degrees for view 3
+ *   369
+ *
+ * Note that the Y delta cannot be zero, it need not be signed
+ * relative to the direction to G.  In fact, the center heuristic
+ * suggests that we pick the sign for the Y delta such that it
+ * would move us toward the center.  Be careful that, if we are 
+ * already centered in Y, we consider moving off center.
+*/
+heur samey = {{
+  {  0,  1 },			/* Prefer straight to goal	*/
+  {  1,  1 },			/* then toward goal X, +center	*/
+  { -1,  1 },			/* then toward goal X, -center	*/
+  {  0,  0 },			/* Prefer staying put		*/
+  {  1,  0 },			/* then compromize Y, +center	*/
+  { -1,  0 },			/* then compromise Y, -center	*/
+  {  0, -1 },			/* then compromise X		*/
+  {  1, -1 },			/* then compromise both, +center*/
+  { -1, -1 },			/* then compromise both, -center*/
+}};
+/*
+ * Evaluation function when goal on same X
+ *   This is just like samey with X and Y deltas swapped.
+*/
+heur samex = {{
+  {  1,  0 },			/* Prefer straight to goal	*/
+  {  1,  1 },			/* then toward goal Y, +center	*/
+  {  1, -1 },			/* then toward goal Y, -center	*/
+  {  0,  0 },			/* Prefer staying put		*/
+  {  0,  1 },			/* then compromize X, +center	*/
+  {  0, -1 },			/* then compromise X, -center	*/
+  { -1,  0 },			/* then compromise Y		*/
+  { -1,  1 },			/* then compromise both, +center*/
+  { -1, -1 },			/* then compromise both, -center*/
+}};
 
-  dr = sgn (r-atrow);  dc = sgn (c-atcol);
+makemove(gy, gx)
+int gy, gx;
+{ register int r, c;
+  int dr, dc, i;
+  heur *h;
 
-  if (dr && dc)
-  { if (safe (atrow+dr, atcol+dc)) return (keydir[3*dr + dc + 4]);
-    if (safe (atrow,    atcol+dc)) return (keydir[   0 + dc + 4]);
-    if (safe (atrow+dr, atcol   )) return (keydir[3*dr +  0 + 4]);
+  h = &diag;
+  r = sgn(gy-atrow);
+  c = sgn(gx-atcol);
+  if (c && !r) {
+    h = &samey;
+    r = sgn(ROWS/2 - atrow);
+    if (r == 0)
+      r = -1;
+  } else if (r && !c) {
+    h = &samex;
+    c = sgn(COLS/2 - atcol);
+    if (c == 0)
+      c = -1;
   }
-  else if (dr == 0)
-  { if (safe (atrow,    atcol+dc)) return (keydir[ 0 + dc + 4]);
-    if (safe (atrow+1,  atcol+dc)) return (keydir[ 3 + dc + 4]);
-    if (safe (atrow-1,  atcol   )) return (keydir[-3 +  0 + 4]);
+  for (i = 0; i < 9; i++) {
+    dr = r*h->h[i][0];
+    dc = c*h->h[i][1];
+    if (safe(atrow+dr, atcol+dc))
+      return(keymap[1+dr][1+dc]);
   }
-  else if (dc == 0)
-  { if (safe (atrow+dr,  atcol  )) return (keydir[3*dr + 0 + 4]);
-    if (safe (atrow,     atcol+1)) return (keydir[3*dr + 1 + 4]);
-    if (safe (atrow+dr,  atcol-1)) return (keydir[3*dr - 1 + 4]);
-  }
-
-  dwait ("makemove: cannot move to (%d,%d) safely.", r, c);
-  return (0);
 }
 
 /*****************************************************************
