@@ -17,7 +17,9 @@ char *ckxv = "Unix tty I/O, 4E+(047), 27 Sep 87";
 #include "ckcker.h"
 #include <sys/types.h>			/* Types */
 
+#ifndef __STDC__
 #include <sys/dir.h>			/* Directory */
+#endif
 #include <ctype.h>			/* Character types */
 #ifdef NULL
 #undef NULL
@@ -1812,7 +1814,12 @@ ttsndb() {
     return(0);
 #else
 #ifdef UXIII
-    if (ioctl(ttyfd,TCSBRK,(char *)0) < 0) {	/* Send a BREAK */
+#ifdef CYGWIN
+    if (tcsendbreak(ttyfd, 0) < 0)	/* Send a BREAK */
+#else
+    if (ioctl(ttyfd,TCSBRK,(char *)0) < 0)	/* Send a BREAK */
+#endif
+    {
     	perror("Can't send BREAK");
 	return(-1);
     }
