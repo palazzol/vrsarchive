@@ -22,7 +22,7 @@ addword(sym, incr)
     int		incr;
 {
     void	toomanywords();
-    int		i;
+    unsigned		i;
     bool	dup = FALSE;
     int		val = cur_table->wt_value + incr;
     char	*s = sym->s_sym;
@@ -146,7 +146,8 @@ printtable(f, table)
     wordtable	*table;
 {
     char	*upcase();
-    int		i, count = 10, val = 0;
+    int		count = 10, val = 0;
+    unsigned		i;
     
     fprintf(f, "%d", table->wt_wcount);
     for (i = 0; i < table->wt_size; i++)

@@ -627,7 +627,7 @@ long n;
 	akill = 0;
 	hwound = dice(range(humans / 2));
 	if(hwound > humans) hwound = humans;
-	printf("Many of your men \(understandably\) cannot ");
+	printf("Many of your men (understandably) cannot ");
 	printf("stand the loud punk rock.\n");
 	printf("They get mad and destroy the large speaker systems ");
 	printf("playing the music.\n");
