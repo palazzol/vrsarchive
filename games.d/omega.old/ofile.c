@@ -4,8 +4,7 @@
    curses functions */
 
 #include <curses.h>
-#include <strings.h>
-#include <sys/file.h>
+#include <unistd.h>
 #include "oglob.h"
 
 /* from ocom */
