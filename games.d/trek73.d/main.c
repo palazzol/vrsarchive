@@ -126,7 +126,7 @@ int sig;
 		stdin->_cnt = 0;
 	}
 	for (i = 1; i <= shipnum; i++)
-		shiplist[i]->strategy(shiplist[i]);
+		(*(shiplist[i]->strategy))(shiplist[i]);
 	if (!(is_dead(shiplist[0], S_DEAD)))
 		printf("\n");
 	(void) move_ships();
