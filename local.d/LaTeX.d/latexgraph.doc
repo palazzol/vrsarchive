@@ -1,0 +1,423 @@
+			PLOTTING GRAPHS WITH LaTeX
+			--------------------------
+			 sunil podar (podar@sbcs.csnet)
+
+last update: Apr 14 1985
+
+This program provides an integrated (somewhat) system to plot graphs. Latex
+has a fairly powerful pic environment but it lacks any direct graph
+environment, and this program attempts to simulate one.
+
+You must have some knowledge of LaTeX, and in particular the pic environment
+if there is any need to change the output of this program. Actually if you
+know only the pic environment, you should be able to manage.
+
+The program can produce the graph as a complete document if you desire. The
+idea is that even non-LaTeX users can plot graphs and only graphs and it
+doesn't have to be part of regular text. 
+
+The program, using the options given in the parameter list, produces a LaTeX
+file using all known-to-work and regular LaTeX commands and the file can
+easily be edited if needed. So, the moral is that one can plot graphs with
+being quite oblivious to the fact that LaTeX is being used to plot it; of
+course, you have to run LaTeX on the graph to print it.
+
+Please feel free to contact me (podar@sbcs) if there are any bugs, if it
+doesn't do what you want and can't figure out how to do it, or would like
+some other features in the program. I have not tested the program extensively
+so I can't promise it will work if you try to stretch it to its limits. I do
+not have complicated error-checking or error-recovery. If you make any
+modifications to this program, please let me know.
+
+The program generates LaTeX commands to do the following:
+
+1. print the X-axis vector.
+2. print the Y-axis vector.
+3. put little vertical bars on the X-axis at regular intervals.
+4. put little horizontal bars on the Y-axis at regular intervals.
+5. put numbers along those bars on both axes.
+6. prints a  string like "X ------>" underneath the X-axis, if you desire
+   and a similar one along the Y-axis.
+7. sets up a legend box with info about X-axis, Y-axis and the various
+   characters plotted on the graph; controlled by a variety of options.
+8. reads input data in 3-tuples (character# X-coordinate Y-coordinate),
+   scales the data according to given scale and generates commands to plot
+   it. If there is no data, then it simply produces the skeleton graph.
+
+
+some quirks, limitations, suggestions, ideas regarding the program
+------------------------------------------------------------------
+The program is not a very powerful program and the code is rather sloppy,
+but I attempt to do things right as far as possible
+and if not then I give pointers to how one might have to edit the output
+file. Some of the commands that I generate are highly dependent on the font
+being used, the unitlength etc., so I can only make a reasonable attempt to
+get things right. In order to use this program , I suggest that
+you print out the file produced by the program and then see what needs
+fixing; in most cases the fixing will be limited to changing a few
+coordinates of some commands.
+
+You can of course use the program to generate a dummy skeleton graph even if
+all you need is a few things out of the 8 steps listed above and extract
+out of the file the desired portion.
+
+There are some limitations in the program as of now but there are ways of
+still exploiting it if what you need is not what it can handle.
+
+1. I can only handle the first quadrant, meaning everything is positive.
+   Moreover, the origin is always (0,0). I can't handle shifted origins.
+   If you need other quadrants, you can still get a skeleton, change the
+   coordinates of the commands that plot numbers and vertical bars and make
+   arrows. The constructs remain valid and only where they are put would need
+   to be changed.
+2. I try to act smart when printing numbers along the axes. If I figure that
+   the numbers are whole numbers (xx.00) then I print integers, otherwise I
+   print real numbers with two significant digits. You can easily edit the
+   file if you want more or less significant digits.
+3. Since Pascal is very unfriendly when it comes to handling character strings
+   the syntax of the parameters is a bit unfriendly too. Also the max string
+   size that I can handle is 80 chars, and if you need more than that, you
+   can give less to the program and then edit the output file without any
+   difficulty. I give a lot of comments at appropriate places (all begin with
+   a % since that is a latex comment char), you can safely get rid of them in
+   your final document.
+4. What I regard as a bug in LaTeX (could pass for just a quirk), the
+   \caption command ALWAYS prints the "Figure 2.2" in normalsize no matter
+   what your environment fonttype is or what you specify in the caption
+   arguement. So, to get around it I have a command that explicitely puts a
+   caption-look-alike caption at the bottom of the figure in the specified
+   font. If you choose to print LaTeX caption then I force a normalsize
+   caption but if you want everything in another font then use "explicit"
+   option on the ??caption parameter. Since LaTeX decides the figure number
+   by itself, I ignore the "fignumber" parameter if you chose the "LaTeX"
+   option; on the other hand I ignore the "labelname" parameter if you chose
+   the "explicit" option. If you need things other than what the program
+   gives you you can explicitely edit the file.
+5. From my experience & personal preference, font "small" or even smaller
+   looks nice on the graph; normalsize comes out a bit too big and looks
+   unwieldly, specially for printing large real numbers along the Y-axis.
+
+
+Syntax of the parameters:
+-------------------------
+
+1.  All parameters are recognized by the string of 10 characters at the 
+    beginning and exactly 10 characters -- no more -- no less. They all
+    begin with a % sign because that is the comment character for latex.
+
+2. When the arguement for a parameter is an integer then there MUST be atleast
+   one blank after the parameter name and for more than one integer, again
+   blank char is the separater.
+
+3. When the arguement for a parameter is a string then there MUST BE NO BLANK
+   and instead it should be a /. The string that follows the / is taken exactly
+   as it appears starting from the next character including any blanks. All
+   that is important is that the 11th char be a /.
+
+4. There should be no blank lines before or  in the middle until the string
+   '%%%%%%%%%%' . That string of 10 %'s ends the list of arguements. I don't
+   think there should be any blank lines anywhere at all.
+
+5. The list of parameters SHOULD be the first thing in the file , that is, 
+   right on the top followed by data, if any. Without any data, you will
+   simply get the skeleton of the graph with all things laid out. This is
+   one way to make use of this program if you already have explicit statements
+   for plotting the points; first get the graph skeleton, and then insert
+   your file with latex commands that plot points at the appropriate place.
+   
+6. There are 5 parameters for plotting chars at the specified coordinates.
+   That means with this program you can have 5 kinds of data plotted in one
+   graph. The parameters are %plotchar1 .. %plotchar5. Each parameter has
+   a number at the end and that is very significant. The data to be plotted
+   must have as its first argument a number 1..5 that directly corresponds
+   to the plotchar# defined in the parameter list. E.g. the data line
+   2 20 30  => put plotchar2 at (X,Y)=(20,30) on the graph. The idea is that
+   I imagine that you will have some program that produces numbers to be
+   plotted and you can have that program produce the 3-tuples needed for
+   this program very easily.
+   
+7. The syntax for running the program is
+
+        latexgraph <inputfile >outputfile
+
+   inputfile should have , besides the parameters, only the data lines with 
+   3 numbers on each line:
+
+   integer1 Xreal2 Yreal3
+
+   integer1: range= 1..5
+   	     it is the code for the kind of character to be plotted at the
+	     specified coordinates.
+   Xreal2  : is the X-coordinate of the point to be plotted ,a real number.
+   Yreal3  : is the Y-coordinate of the point to be plotted ,a real number.
+
+
+
+The options are as follows:
+
+command		options		explanation
+-------		-------		-----------
+
+%pre&post?/	yes		writes the preamble & post-amble alongwith
+				the graph. idea is to have a standalone 
+				graph i.e. a complete document.
+		no		doesn't write any preamble or post-amble.
+				starts with \begin{figure}...... 
+				& ends with \end{figure}.
+
+%unitlngth	mm real		the unitlength for the graph.
+
+%font-name/	{fontname}	one of the many fontnames that LaTeX provides,
+				such as normalsize,tt,small, etc. All the 
+				printed stuff on the graph will be in the 
+				specified font.MUST put the {} around fontname.
+
+%picheight 	integer units	this is in graph units. max graph height about
+				200mm or so.
+
+%piclength 	integer	units	max graph width is about 240mm.for larger than
+				about 170mm you need to do -L on dvi-imagen,
+				which also means you have to print this page
+				separately, since just a page can't be rotated
+				by latex or dvi-imagen.
+
+%Xaxisstrg/	string		max char 80.for xaxis to appear in the legend
+				box and/or in the caption.
+				It should be kept small so as not to make
+				the box too large.
+
+%Yaxisstrg/	string	 	for yaxis ................. same as above.
+
+%??caption/	LaTeX		produce LaTeX command for making caption.
+		explicit	make an explicit box for a fake caption-look-
+				alike caption. see discussion above.
+		no		no caption of whatever kind.
+
+%fignumber/ 	string		max char = 10.
+				the number you wish to give this graph to 
+				appear on the fake-caption at bottom. This
+				is ignored if ??caption=LaTeX.
+
+%capstring/	YX  		
+		string 		explicit string of less than 80 characters.
+				option YX will print the string of 'Y vs. X'
+				where Y & X are same as the ones specified
+				in the Xaxisstrg & Yaxisstrg above.
+
+%labelname/	{labelname}	the name of label you wish to give to the
+				figure. This is ignored if you did not choose
+				LaTeX option on ??caption. MUST have {} around
+				the label name. Also LaTeX doesn't like blanks
+				in the name of a label.
+		no		no \label statement desired.
+
+%legendloc/	tr		this is for the placement of the standard
+    				legend-box. tr  means topright corner
+		tl			    tl  means topleft a little away 
+    						from the y-axis.
+		ex Xinteger Yinteger	    ex  means explicit location of
+    						the bottom-left corner of the
+						box in terms of the
+						X-coordinate (Xinteger)  &
+						Y-coordinate (Yinteger).
+		no			    no  means no box at all.
+
+%want-X^Y^/	no		no:   do not want the X & Y and their arrows
+    				      along respective axes.
+		yes		yes:  want them.
+
+%Xratiog:r 	integer1 real2 
+				g:r means graph vs. reality; i.e. to say that
+				integer1 # of units on graph represent real2
+				units of reality; e.g. 10 25 means each 10
+				units on graph = 25 reality units.
+				this ratio is used to translate the data from
+				reality numbers to graph units.
+
+%Xdeltabar 	integer		this specifies the increment used for putting
+				vertical bars (|) on the X-axis starting
+				from 0 and can be different from
+				Xdeltanum (see next parameter).
+				should be specified in graph units.
+
+%Xdeltanum 	integer		this specifies the increment used for putting
+				numbers along the X-axis. can be different
+				from Xdeltabar above. Although there is no
+				restriction, but normally one puts them under
+				the vertical bars and perhaps alternate bars.
+				should be specified in graph units. translated
+				to numbers using Xratiog:r. see example below.
+
+%Yratiog:r 	integer real
+
+%Ydeltabar 	integer		same story for these three as above.
+
+%Ydeltanum 	integer
+
+%plotchar1/	{definition of character to be plotted}
+		no
+
+%plotchar2/	{definition of character to be plotted}
+		no
+
+%plotchar3/	{definition of character to be plotted}
+		no
+
+%plotchar4/	{definition of character to be plotted}
+		no
+
+%plotchar5/	{definition of character to be plotted}
+		no		these specify the LaTeX statement for the
+				definition of the character to be put at the
+				coordinates, e.g. {circle*{1.0}}
+				no:  means no character with the number 
+				     associated with plotchar.
+				see discussion above.
+
+%%%%%%%%%%			THIS LINE OF 10 %'s IS A MUST. IT ACTS AS THE
+				DELIMITER OF THE ABOVE PARAMETERS.
+data follows after above parameters.
+
+-----------------------------------------------------------------------------
+An example of an inputfile:
+-----------------------------------------------------------------------------
+%pre&post?/yes
+%unitlngth  1.0		
+%font-name/{small}
+%picheight  110
+%piclength  130
+%Xaxisstrg/Number of Hops. 
+%Yaxisstrg/\%age of Hops
+%??caption/explicit
+%fignumber/3-9
+%capstring/Half-Length of Symmetric Intervals as \%-age of Lifetime means(40 byte packets)
+%labelname/{my-graph-1}
+%legendloc/tl 
+%want-X^Y^/yes
+%Xratiog:r  20 25
+%Xdeltabar  10
+%Xdeltanum  20
+%Yratiog:r  10 10
+%Ydeltabar  10
+%Ydeltanum  10
+%plotchar1/{\circle*{2.0}}
+%plotchar2/{\circle{2.0}}
+%plotchar3/{\makebox(0,0){$\otimes$}}
+%plotchar4/no
+%plotchar5/no
+%%%%%%%%%%   
+1 25.0 10.0
+2 53.56 20.0
+3 75.0 23.6789
+------------------------------------------------------------------------------
+The output produced by the above input:
+------------------------------------------------------------------------------
+%pre&post?/ye
+%unitlngth  1.00
+%font-name/{small}
+%picheight  110
+%piclength  130
+%Xaxisstrg/Number of Hops. 
+%Yaxisstrg/\%age of Hops
+%??caption/explicit
+%fignumber/3-9
+%capstring/Half-Length of Symmetric Intervals as \%-age of Lifetime means(40 byte packets)
+%labelname/{my-graph-1}
+%legendloc/tl
+%want-X^Y^/ye
+%Xratiog:r  20   25.00
+%Xdeltabar  10
+%Xdeltanum  20
+%Yratiog:r  10   10.00
+%Ydeltabar  10
+%Ydeltanum  10
+%plotchar1/{\circle*{2.0}}
+%plotchar2/{\circle{2.0}}
+%plotchar3/{\makebox(0,0){$\otimes$}}
+%plotchar4/no
+%plotchar5/no
+%%%%%%%%%% 
+\documentstyle{article}
+\setlength{\topmargin}{0cm}
+\setlength{\headheight}{1cm}
+\setlength{\footskip}{3cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\textwidth}{145.00mm}
+
+\renewcommand{\thepage}{}     % => no page number 
+\begin{document}
+
+\newcommand{\xaxis}{Number of Hops.                                                                } % the literal for X-axis
+\newcommand{\yaxis}{\%age of Hops                                                                  } % the literal for Y-axis
+\newcommand{\plotcharone}{\circle*{2.0}}                                                                
+\newcommand{\plotchartwo}{\circle{2.0}}                                                                 
+\newcommand{\plotcharthree}{\makebox(0,0){$\otimes$}}                                                     
+
+\begin{small}                                                                        
+\begin{figure}[p]     %you might want different options here
+\unitlength = 1.00mm
+\begin{picture}(140,120)(-10,-10)
+
+\thicklines
+\put(0,0){\vector(1,0){130}}
+\put(0,0){\vector(0,1){110}}
+\thinlines
+\put(0,-9){\makebox(130,2){X \hspace{0.6em} {\raisebox{0.6ex}{\vector(1,0){8}}}}}
+\put(-11,48){\makebox(2,2){Y}}
+\put(-10,54){\vector(0,1){8}}
+\multiput(0,-1)(10,0){13}{\line(0,1){2}}
+% Add a line similar to next one if 0 for X-axis at origin desired.
+\put(20,-5){\makebox(0,2){25}}
+\put(40,-5){\makebox(0,2){50}}
+\put(60,-5){\makebox(0,2){75}}
+\put(80,-5){\makebox(0,2){100}}
+\put(100,-5){\makebox(0,2){125}}
+\put(120,-5){\makebox(0,2){150}}
+\multiput(-1,0)(0,10){11}{\line(1,0){2}}
+% Add a line similar to next one if 0 for Y-axis at origin desired.
+\put(-7,10){\makebox(5,0)[r]{10}}
+\put(-7,20){\makebox(5,0)[r]{20}}
+\put(-7,30){\makebox(5,0)[r]{30}}
+\put(-7,40){\makebox(5,0)[r]{40}}
+\put(-7,50){\makebox(5,0)[r]{50}}
+\put(-7,60){\makebox(5,0)[r]{60}}
+\put(-7,70){\makebox(5,0)[r]{70}}
+\put(-7,80){\makebox(5,0)[r]{80}}
+\put(-7,90){\makebox(5,0)[r]{90}}
+\put(-7,100){\makebox(5,0)[r]{100}}
+% you might have to fix the box below to get the circles right.
+% also you'll have to fiddle with the X & Y coord of the box to
+% place it right. I have made an attempt at placement.
+% Change the AA,BB,....,EE in the box below to whatever you want
+% and try to keep it short; I don't expect other changes.
+\put(10,88){\fbox{\shortstack[l]{
+ {\makebox(4,2)[lb]{\put(2,1){\plotcharone}}}: AA\\
+ {\makebox(4,3)[lb]{\put(2,1){\plotchartwo}}}: BB\\
+ {\makebox(4,3)[lb]{\put(2,1){\plotcharthree}}}: CC\\
+ {\makebox(4,4)[b]{X}}: \xaxis \\
+ {\makebox(4,2)[b]{Y}}: \yaxis
+ }}}
+\put(0,-18){\makebox(130,0)[t]{
+Figure 3-9       $\!$:\hspace{0.5em}
+Half-Length of Symmetric Intervals as \%-age of Lifetime means(40 byte packets)
+}}
+% if the caption line is longer than the graphwidth, comment out
+% the previous stmt and use next one. you might have to fiddle
+% with the width of parbox.
+%\put(0,-18){\makebox(130,0)[tl]{
+%Figure 3-9       $\!$:\hspace{0.5em}\parbox[t]{113.00mm}{
+%Half-Length of Symmetric Intervals as \%-age of Lifetime means(40 byte packets)
+%}}}
+% beginning of data
+\put(  20.00000,  10.00000){\plotcharone}
+\put(  42.84800,  20.00000){\plotchartwo}
+\put(  60.00000,  23.67890){\plotcharthree}
+% end of data
+\end{picture}
+\end{figure}
+
+\end{small}                                                                        
+
+\end{document}
+------------------------------------------------------------------------------
+END OF DOC.
