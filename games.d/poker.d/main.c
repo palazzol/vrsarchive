@@ -28,7 +28,7 @@ char	**argv;
 {
 int	i,c,d;
 int	deck[52];		/* the cards */
-int	pot;			/* size of current pot	*/
+long	pot;			/* size of current pot	*/
 int	winner;			/* which player won this hand	*/
 int	first=0;		/* first player to bet, draw, etc. */
 # ifdef MASSCOMP
@@ -37,17 +37,18 @@ extern	void	srand();
 extern	void	srandom();	/* starts random number generator */
 # endif
 extern	long	time();		/* unique parameter to above */
-extern	void	crash();	/* if broken pipe, release port (I hope) */
 extern	int	strcmp();
 extern	int	getpid();	/* more random stuff */
 
 signal(SIGPIPE,crash);
 signal(SIGHUP,crash);
+#ifdef SIGXCPU
 signal(SIGXCPU,SIG_IGN);
+#endif
 # ifdef MASSCOMP
-	srand((int) time(0) ^ getpid() );
+	srand((int) time((long *)0) ^ getpid() );
 # else
-	srandom((int) time(0) ^ getpid() );
+	srandom((int) time((long *)0) ^ getpid() );
 # endif
 player[0].name = strsave( "Computer III" );
 player[0].cash = 200;

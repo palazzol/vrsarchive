@@ -21,11 +21,15 @@
 # 	include		<sys/file.h>
 # endif
 
-# define	SCORE_FILE	"/a2/s11/jjv3345/POKERSCORES"
+# define	SCORE_FILE	"/usr/games/lib/pokerscores"
 # define	TRUE		1
 # define	FALSE		0
 
-static	int	scores=(-1);	/* file channel for scores	*/
+extern void free();
+extern long lseek();
+extern char *malloc();
+
+static	int	scorefd=(-1);	/* file channel for scores	*/
 static	char	temp[81];
 
 played_before( name, id )
@@ -37,14 +41,14 @@ int	id;
 int	found=FALSE;
 char	*p;
 
-if ( scores == -1 )
-	if ( ( scores = open( SCORE_FILE, O_RDWR, 0 ) ) == -1 )
+if ( scorefd == -1 )
+	if ( ( scorefd = open( SCORE_FILE, O_RDWR, 0 ) ) == -1 )
 		{
 		perror( SCORE_FILE );
 		return( FALSE );
 		}
-lseek( scores, 0, 0 );
-while( read( scores, temp, 80 ) == 80 )
+lseek( scorefd, 0L, 0 );
+while( read( scorefd, temp, 80 ) == 80 )
 	if ( strncmp( temp, name, (p = index( temp, ':' )) - temp ) == 0 && atoi( p + 1 ) == id )
 		{
 		found = TRUE;
@@ -65,25 +69,25 @@ void	put_cash( name, id, cash )
 
 char	*name;		/* player's name	*/
 int	id;		/* player's userid	*/
-int	cash;		/* how much dough he had*/
+long	cash;		/* how much dough he had*/
 
 {
 int	found=FALSE;
 char	*p;
 char	idstr[10];
 
-lseek( scores, 0, 0 );
-while( read( scores, temp, 80 ) == 80 )
+lseek( scorefd, 0L, 0 );
+while( read( scorefd, temp, 80 ) == 80 )
 	if ( strncmp( temp, name, (p = index( temp, ':' )) - temp ) == 0 && atoi( p + 1 ) == id )
 		{
 		found = TRUE;
 		break;
 		}
 if ( found )
-	lseek( scores, -80, 1 );
+	lseek( scorefd, -80L, 1 );
 sprintf( idstr, "%d", id );
 sprintf( temp, "%s:%s:%-*d\n", name, idstr, 77 - strlen( name ) - strlen( idstr) , cash );
-write( scores, temp, 80 );
+write( scorefd, temp, 80 );
 }
 
 void	high_score_list( s )
@@ -103,10 +107,10 @@ char	name[30];
 char	output[80];
 
 head = NULL;
-lseek( scores, 0, 0 );
+lseek( scorefd, 0L, 0 );
 writeln( s, "HIGH SCORE LIST" );
 writeln( s, "=====================================" );
-while( read( scores, temp, 80 ) == 80 )
+while( read( scorefd, temp, 80 ) == 80 )
 	{
 	strncpy( name, temp, l = ( index( temp, ':' ) - temp ) );
 	name[l] = NULL;
@@ -154,7 +158,7 @@ ptr = head;
 while( ptr != NULL )
 	{
 	tempptr = ptr->next;
-	free( ptr );
+	free( (char *)ptr );
 	ptr = tempptr;
 	}
 }

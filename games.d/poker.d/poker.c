@@ -4,45 +4,71 @@
 # include	<sys/types.h>
 # include	<sys/socket.h>
 # ifdef MASSCOMP
+# ifdef INET
 # 	include		<net/in.h>
+# endif INET
 	typedef	unsigned long	u_long;
 #	include		<net/misc.h>
 # else
+# ifdef INET
 # 	include		<netinet/in.h>
+# endif INET
 # endif
+# ifdef INET
 # include	<netdb.h>
+# endif INET
 # include	<stdio.h>
 # include	<curses.h>
 # include	<ctype.h>
 # include	<signal.h>
 
+extern int getuid();
+extern unsigned sleep();
+extern char *strcpy();
+
 int	s;	/* the socket */
 
+/* ARGSUSED */
 main( argc, argv, envp )
-
 int	argc;
 char	**argv;
 char	**envp;
-
 {
+# ifdef INET
 struct	sockaddr_in	sockaddr;
 struct	hostent		*host;
+# else
+struct	sockaddr_un	sockaddr;
+# endif INET
 char	*getenv();
 char	*name;
 char	temp[80];
-extern	int	getuid();
-void	closem();
+int	closem();
 
+	if ( ( name = getenv( "POKER" ) ) == NULL )
+		if ( ( name = getenv( "NAME" ) ) == NULL )
+			name = getenv( "USER" );
+	if (name == NULL) {
+		printf("Please set the environment variable NAME to the\n");
+		printf("name you wish to be known by and try again.\n");
+		exit(1);
+	}
+	umask(0);		/* Allow free access to sockets	*/
 # ifdef MASSCOMP
 	s = socket( SOCK_STREAM, 0, 0, 0 );
 # else
+# ifdef INET
 	s = socket( AF_INET, SOCK_STREAM, 0 );
+# else
+	s = socket( AF_UNIX, SOCK_STREAM, 0 );
+# endif INET
 # endif
 if (s < 0) 
 	{
 	perror( "socket" );
 	exit(1);
 	}
+# ifdef INET
 if ((host = gethostbyname( (argc > 1) ? argv[1] : HOST )) == NULL)
 	{
 	perror( "gethostbyname" );
@@ -51,7 +77,11 @@ if ((host = gethostbyname( (argc > 1) ? argv[1] : HOST )) == NULL)
 sockaddr.sin_family = AF_INET;
 sockaddr.sin_port = htons( PORT );
 sockaddr.sin_addr.s_addr = *(u_long *) host->h_addr;
-printf( "Waiting for last hand to finish ... " );
+# else  INET
+sockaddr.sun_family = AF_UNIX;
+strcpy(sockaddr.sun_path, PORT);
+# endif INET
+printf( "Synchronizing with other players (if any)..." );
 fflush(stdout);
 signal( SIGINT, closem );
 signal( SIGQUIT, closem );
@@ -61,8 +91,17 @@ if ( connect( s, &sockaddr ) < 0 )
 if ( connect( s, &sockaddr, sizeof(sockaddr) ) < 0)
 # endif
 	{
-	perror( "connect" );
-	exit(1);
+	system( "nohup /usr/games/lib/pokerd >/dev/null &" );
+	sleep(2);
+# ifdef MASSCOMP
+	if ( connect( s, &sockaddr ) < 0 )
+# else
+	if ( connect( s, &sockaddr, sizeof(sockaddr) ) < 0)
+# endif
+		{
+		perror( "connect" );
+		exit(1);
+		}
 	}
 readln( s, temp );
 if ( strcmp( temp, "TOOMANY\n" ) == 0 )
@@ -72,14 +111,22 @@ else
 	if ( strcmp( temp, "OK\n" ) != 0 )	/* must go to another socket */
 		{
 		close( s );
+# ifdef INET
 		sockaddr.sin_port = htons( atoi( temp ) );
+# else
+		strcpy(sockaddr.sun_path, temp);
+# endif INET
 # ifdef MASSCOMP
 		s = socket( SOCK_STREAM, 0, 0, 0 );
 		if ( s < 0 )
 			perror("damn socket");
 		if ( connect( s, &sockaddr ) < 0 )
 # else
+# ifdef INET
 		s = socket( AF_INET, SOCK_STREAM, 0 );
+# else
+		s = socket( AF_UNIX, SOCK_STREAM, 0 );
+# endif INET
 		if ( connect( s, &sockaddr, sizeof(sockaddr) ) < 0 )
 # endif
 			{
@@ -89,9 +136,6 @@ else
 		}
 	signal( SIGINT, SIG_IGN );
 	signal( SIGQUIT, SIG_IGN );
-	if ( ( name = getenv( "POKER" ) ) == NULL )
-		if ( ( name = getenv( "NAME" ) ) == NULL )
-			name = getenv( "USER" );
 	writeln( s, name );
 	sprintf( temp, "%d", getuid() );
 	writeln( s, temp );
@@ -370,7 +414,7 @@ while ( ( c = getch() ) != '\n' )
 str[i] = NULL;
 }
 
-void	closem()
+int	closem()
 
 {
 close( s );

@@ -1,7 +1,6 @@
 /*
 ** Handle all the betting being done.
 */
-
 # include	<stdio.h>
 # include	"betting.h"
 # include	"players.h"
@@ -10,20 +9,20 @@
 # define	TRUE	1
 # define	FALSE	0
 
-int	betting( player, n_players, pot, first )
+extern void tellall();
 
+int	betting( player, n_players, pot, first )
 PLAYER	player[];		/* all player information */
 int	n_players;		/* # of players */
-int	*pot;			/* current pot */
+long	*pot;			/* current pot */
 int	first;			/* player who gets to bet first */
-
 {
 int	last_raiser=(-1);	/* player who made last raise */
 int	n_active=0;		/* # players active in betting (haven't folded) */
 int	n_raises=0;		/* # of raises this hand so far */
 int	j=(-1);			/* player currently betting */
 int	i;
-int	total_bet;		/* total amount bet each player this hand */
+long	total_bet;		/* total amount bet each player this hand */
 char	temp[80];
 int	done;			/* has player entered something valid yet? */
 int	amount;			/* how much more is player donating to pot? */
@@ -58,7 +57,7 @@ while( n_active > 1 && j != last_raiser )
 	{
 	sprintf( temp, "T%d", j );
 	tellall( player, n_players, temp );
-	sprintf( temp, "P%d", *pot );
+	sprintf( temp, "P%ld", *pot );
 	tellall( player, n_players, temp );
 	sprintf( temp, "B%d%d", j, player[j].bet );
 	tellall( player, n_players, temp );

@@ -4,11 +4,6 @@
 */
 
 # include	"cards.h"
-# ifdef MASSCOMP
-#	define		MAXRAND		32767
-# else
-# 	define		MAXRAND		2147483648
-# endif
 # define	ERROR	-1
 
 char	ranks[]="23456789TJQKA";

@@ -5,7 +5,6 @@
 ** 'k'  to keep the card in that position, or
 ** 'd'  to discard the card in that position.
 */
-
 # include	"draw.h"
 # include	"players.h"
 # include	"showcards.h"
@@ -14,14 +13,15 @@
 # define	TRUE		1
 # define	FALSE		0
 
-void	draw( player, n_players, deck, d, first )
+extern char *strcpy();
+extern void Computer_draw();
 
+void	draw( player, n_players, deck, d, first )
 PLAYER	player[];		/* hands are in here */
 int	n_players;		/* # of players */
 int	deck[];			/* shuffled deck of cards */
 int	d;			/* next card to take from deck */
 int	first;			/* player who gets to draw first */
-
 {
 int	i,c;
 char	temp[80];
@@ -38,7 +38,7 @@ while ( i != first || !cycle )
 		tellall( player, n_players, temp );
 		tellall( player, n_players, "U" );
 		if ( i == 0 )
-			computer_draw( player, temp );
+			Computer_draw( player, temp );
 		else
 			{
 			writeln( player[i].socket, "D" );

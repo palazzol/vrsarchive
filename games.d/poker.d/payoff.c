@@ -6,12 +6,10 @@
 # include	"tellall.h"
 
 void	payoff( player, n_players, winner, pot )
-
 PLAYER	player[];		/* player information */
 int	n_players;		/* number of players */
 int	winner;			/* which player won */
-int	pot;			/* how much $ was won */
-
+long	pot;			/* how much $ was won */
 {
 char	temp[80];
 

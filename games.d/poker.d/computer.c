@@ -1,7 +1,6 @@
 /*
 ** Handle betting and drawing for the computer's hand.
 */
-
 # include	"computer.h"
 # include	"players.h"
 # include	"cards.h"
@@ -9,30 +8,28 @@
 # include	"limits.h"
 
 # define	min(x,y)	((x) > (y) ? (y) : (x))
-
 # define	TRUE	1
 # define	FALSE	0
+
+extern char *strcpy();
 
 static	int	bluffing=FALSE;		/* bluffing this hand? */
 static	int	bluffmore=FALSE;	/* more bluff bets this hand? */
 
 void	computer_bet( player, n_players, n_active, n_raises, pot, total, temp )
-
 PLAYER	player[];		/* player information & hands */
 int	n_players;		/* number of players */
 int	n_active;		/* number of players still in current hand */
 int	n_raises;		/* # raises so far this betting session */
-int	pot;			/* size of pot */
-int	total;			/* current total bet */
+long	pot;			/* size of pot */
+long	total;			/* current total bet */
 char	temp[];			/* return betting command here */
-
 {
 int	raise;			/* amount to raise by */
 int	chance;			/* rating of hand */
-int	x;			/* random compared to chance to determine action */
 int	top=(-1);		/* highest card hand has most of */
 int	i;
-static	int	lastpot=99999;	/* trick to only get random once per hand */
+static	long	lastpot=99999;	/* trick to only get random once per hand */
 static	int	random_factor=0;
 
 evaluate( player, 0 );
@@ -75,7 +72,7 @@ else
 	sprintf( temp, "F" );
 }
 
-void	computer_draw( player, temp )
+void	Computer_draw( player, temp )
 
 PLAYER	player[];		/* computer's hand is in here */
 char	temp[];			/* return command here */
