@@ -9,6 +9,7 @@
 **
 */
 
+#include <sys/types.h>
 #include <sys/file.h>
 
 #define MAXENTRIES	16
@@ -33,7 +34,7 @@ struct iblk
 
 extern struct iblk Iblk ;
 extern short int Sblk[MAXIBLK] ;
-extern char knam[20], rnam[20] ;
+extern char knam[50], rnam[50] ;
 extern int Modified ;
 extern int CurBlk ;
 extern long int RecLoc ;
