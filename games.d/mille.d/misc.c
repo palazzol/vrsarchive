@@ -162,7 +162,7 @@ check_more() {
 
 	raw();	/* Flush input */
 	noraw();
-
+	crmode();
 	On_exit = TRUE;
 	if (Player[PLAYER].total >= 5000 || Player[COMP].total >= 5000)
 		if (getyn("Another game? "))
