@@ -181,3 +181,71 @@ readable and created a new one.
 
    -- David desJardins
 
+From omssw2!pmw Mon Jul 21 23:00:22 1986
+Date: Mon, 21 Jul 86 22:53:26 pdt
+From: omssw2!omssw2!pmw (Patrick Walsh)
+Message-Id: <8607220553.AA10495@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA10495; Mon, 21 Jul 86 22:53:26 pdt
+To: jdm, tw, vrs
+Subject: scroll bug
+
+
+want to core dump larn?  read a scroll of pulverization on the TOP level
+(i.e. Home, Bank, Shops, etc) and aim it at a building (I accidentally
+aimed it at the college from about 25 character cells away).  larn dumped
+core trying to process it when it hit...  I guess destroying your old Alma
+Mater is considered bad.
+
+Pat
+
+From omssw2!tw Tue Jul 22 02:00:26 1986
+Date: Tue, 22 Jul 86 01:14:20 pdt
+From: omssw2!omssw2!tw (Thomas Walsh)
+Message-Id: <8607220814.AA11044@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA11044; Tue, 22 Jul 86 01:14:20 pdt
+To: jdm, pmw, vrs
+Subject: Re:  scroll bug
+
+vrs fixed one where it locked up on the lower levels when aimed all the
+way across the dungeon (no walls).
+
+by the way, it seems that 'creator' is the highest level to attain.
+also, demon prince (wimps) are the worst monsters it can throw at you.
+
+also, if you aim a spell of polymorph at a mirror, it doesn't change you,
+while magic missiles, lightning... do hurt you.  seems inconsistent.
+
+belts of striking (+5) seem to be worth a negative resale in the trading
+post (bug?) while +4 and +6 have nice trade-ins.
+
+what is 'the orb'?
+
+-tom
+
+From omssw2!tw Sun Jul 20 22:00:28 1986
+Date: Sun, 20 Jul 86 21:46:35 pdt
+From: omssw2!omssw2!tw (Thomas Walsh)
+Message-Id: <8607210446.AA09045@omssw2>
+Received: by omssw2 (4.12/3.14)
+	id AA09045; Sun, 20 Jul 86 21:46:35 pdt
+To: fred!root, omssw2!tw
+Subject: Re:  Larn Bugs Fixed
+
+	yup, sounds good, but i turned up another!
+	when a deposit at the bank yields a balance > .5Million, there
+	is a message that the excess amt doesn't earn interest.  this message
+	is screwed up, (the high significance digits missing), and the gold that
+	you are carrying (just deposited) stays there (instead of going to 0).
+
+	is there anywhere in the code that restocks the shoppe ???
+	i bought a potion of gain level as an app. mage, when i came back
+	as a mighty evil master, they had another one. (this is great, as
+	the change to the next level is near impossible!.  just curious.
+
+	also, i'm getting worried!, i'm at 8+ million experience.  when
+	do i blow up???
+	(ala 'your crysknife vaporizes')
+	-tom
+
