@@ -6,17 +6,14 @@
 #include "pm.h"
 
 coord	pm_pos;
-struct	timeb	_tp;		/* used for timing			*/
 long	thescore = 0L,		/* player's score			*/
 	hi_score = 0L, 		/* high score so far			*/
 	move_cntr = 0L,		/* # of moves made by player		*/
-	chcnt = 0L, 		/* character count			*/
 	demon = 0L;		/* # of loops game made (psuedo time)	*/
 char	fr_ch,			/* fruit character			*/
 	ch = ' ',		/* current move of pm			*/
 	oldch = '\0',		/* old (temporary) move			*/
 	newch = '\0',		/* new move (future)			*/
-	baud = '\0',		/* output baud rate of terminal		*/
 	*argv0,			/* argv[0]				*/
 	*mesg;			/* pointer to last message		*/
 int	timeit = FALSE,		/* printing loop/move counter?		*/
@@ -72,6 +69,10 @@ void	init ()
 		fprintf(stderr, "Who the hell are you???\n");
 		exit(1);
 	}
+	(void) initscr();
+	nl();
+	crmode();
+	noecho();
 	randomize(SEED);
 #ifdef	PM_USER
 	if (chk_pm_user())	/* check user log file */
@@ -79,30 +80,12 @@ void	init ()
 			argv0);
 #endif
 	hi_score = get_hi_scr();
-	if (initscr() == ERR)
-	{
-		fprintf(stderr, "initscr() error\n");
-		perror(argv0);
-		exit(1);
-	}
-	if (!baud)	/* if baud, then we are trying to simulate another */
-	{
-		if (!bauds[_tty.sg_ospeed])
-		{
-			fprintf(stderr, "pm: baud rate must be at least %d(%d)\n", MIN_BAUD, _tty.sg_ospeed);
-			endwin();
-			exit(1);
-		}
-		baud = _tty.sg_ospeed;
-	}
 	trap(0);
 	h = &ghosts[0];
 	g = &ghosts[1];
 	c = &ghosts[2];
 	z = &ghosts[3];
 	mons_init();
-	crmode();
-	noecho();
 	mesg = NULL;
 	draw_screen();
 }
