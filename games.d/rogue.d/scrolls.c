@@ -43,7 +43,7 @@ read_scroll()
 			 */
 			player.t_flags |= CANHUH;
 			addmsg("Your hands begin to glow ");
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg(rnd_color());
 			else
 				msg("red");
@@ -53,7 +53,7 @@ read_scroll()
 				cur_armor->o_ac--;
 				cur_armor->o_flags &= ~ISCURSED;
 				msg("Your armor glows %s for a moment",
-					on(player, ISTRIP) ? rnd_color() : "silver");
+					on(player, ISTRIPY) ? rnd_color() : "silver");
 			}
 		when S_HOLD:
 			/*
@@ -225,7 +225,7 @@ read_scroll()
 					cur_weapon->o_dplus++;
 				msg("Your %s glows %s for a moment",
 					w_names[cur_weapon->o_which],
-					on(player, ISTRIP) ? rnd_color() : "blue");
+					on(player, ISTRIPY) ? rnd_color() : "blue");
 			}
 		when S_SCARE:
 			/*
@@ -242,7 +242,7 @@ read_scroll()
 				cur_ring[LEFT]->o_flags &= ~ISCURSED;
 			if (cur_ring[RIGHT] != NULL)
 				cur_ring[RIGHT]->o_flags &= ~ISCURSED;
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg("You feel in touch with the Universal Onenes");
 			else
 				msg("You feel as if somebody is watching over you");
@@ -254,7 +254,7 @@ read_scroll()
 			aggravate();
 			msg("You hear a high pitched humming noise");
 		when S_NOP:
-			if (on(player, ISTRIP))
+			if (on(player, ISTRIPY))
 				msg("What an interesting piece of paper.  Like, groovy, man!");
 			else
 				msg("This scroll seems to be blank");
