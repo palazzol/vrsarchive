@@ -1,0 +1,35 @@
+#! /bin/sh
+# from : sdcsvax!sdcrdcf!hplabs!hao!seismo!rlgvax!cvl!umcp-cs!eneevax!chris
+#
+# @(#)rmgroup.sh	(U of Maryland) FLB 28-Jun-1983
+#			Bug fixes 5 June 1984 Chris Torek
+#
+# Delete a newsgroup
+
+lib=/usr/new/lib/news
+spool=/usr/spool/news
+
+for group
+do
+	qgrp="`echo $group | sed 's/\./\\\./g'`"
+	if
+		grep -s "^$qgrp " $lib/active
+	then
+		ed - $lib/active << xxxFOOxxx
+/^$qgrp /d
+w
+q
+xxxFOOxxx
+	else
+		echo "$0: $group: no such active line" 2>&1
+	fi
+
+	dir=$spool/"`echo $group | sed 's/\./\//g'`"
+	if [ -d "$dir" ]
+	then
+		/bin/rm -rf "$dir"
+	else
+		echo "$0: $dir: no spool directory" 2>&1
+	fi
+done
+exit 0
