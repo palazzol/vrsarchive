@@ -21,7 +21,11 @@
 #ifdef BSD4_2
 #   include <sys/wait.h>
 #else
+#  ifdef __STDC__
+#   include <sys/wait.h>
+#  else
 #   include <wait.h>
+#  endif
 #endif
 
 #ifdef	LINT_ARGS
@@ -717,7 +721,13 @@ va_dcl
 
 #ifndef MSDOS
 #ifdef BSD4_2
+#define MY_SIGHOLD
+#endif
+#ifdef CYGWIN
+#define MY_SIGHOLD
+#endif
 
+#ifdef MY_SIGHOLD
 private long	SigMask = 0;
 
 #ifndef sigmask
@@ -726,12 +736,22 @@ private long	SigMask = 0;
 
 sighold(sig)
 {
+#ifdef CYGWIN
+	SigMask = sigmask(sig);
+	(void) sigprocmask(SIG_BLOCK, &SigMask, NULL);
+#else
 	(void) sigblock(SigMask |= sigmask(sig));
+#endif
 }
 
 sigrelse(sig)
 {
+#ifdef CYGWIN
+	SigMask = sigmask(sig);
+	(void) sigprocmask(SIG_UNBLOCK, &SigMask, NULL);
+#else
 	(void) sigsetmask(SigMask &= ~sigmask(sig));
+#endif
 }
 
 #endif
