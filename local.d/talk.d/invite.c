@@ -41,7 +41,9 @@ invite()
 */
 have_invite()
 {   struct stat other_buf;
+    char opipe[SYS_SIZE+10];
 
+    sprintf(opipe, "%s/tmp/%s", other_system, other_tty);
     message("Checking for invitation");
-    return(stat(other_tty, &other_buf) == 0);
+    return(stat(opipe, &other_buf) == 0);
 }

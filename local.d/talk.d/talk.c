@@ -21,6 +21,7 @@ char sccsid[] = "@(#)talk.c	1.3 12/3/84";
  *		Modified to run between hosts by Peter Moore, 8/19/82
  *		Modified to run under 4.1c by Peter Moore 3/17/83
  *		Rewritten to use System 3/5 named pipes by vrs 11/1/84
+ *		Modified to understand remote file names by vrs 02/11/86
 */
 main(argc, argv)
 int argc;

@@ -15,11 +15,11 @@ int sprintf();
 */
 announce()
 {
-    char full_tty[32];
+    char full_tty[SYS_SIZE+10];
     FILE *tf;
     struct stat stbuf;
 
-    (void) sprintf(full_tty, "/dev/%s", other_tty);
+    (void) sprintf(full_tty, "%s/dev/%s", other_system, other_tty);
     if (access(full_tty, 0) != 0) {
 	return(FAILED);
     }
@@ -66,14 +66,14 @@ FILE *tf;
     sizes[i] = strlen(line_buf[i]);
     max_size = max(max_size, sizes[i]);
     i++;
-    (void) sprintf(line_buf[i], "Talk: Connection requested by %s at %d:%02d.",
-	my_name, localclock->tm_hour , localclock->tm_min );
+    (void)sprintf(line_buf[i],"Talk: Connection requested by %s@%s at %d:%02d.",
+	my_name, my_system+2, localclock->tm_hour , localclock->tm_min );
     sizes[i] = strlen(line_buf[i]);
     max_size = max(max_size, sizes[i]);
     max_size = max(max_size, sizes[i]);
     i++;
-    (void) sprintf(line_buf[i], "Talk: respond with:  talk %s %s",
-		my_name, my_tty);
+    (void) sprintf(line_buf[i], "Talk: respond with:  talk %s@%s %s",
+		my_name, my_system+2, my_tty);
     sizes[i] = strlen(line_buf[i]);
     max_size = max(max_size, sizes[i]);
     i++;

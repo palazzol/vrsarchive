@@ -9,8 +9,9 @@
 #define	forever		for(;;)
 
 #define	BUF_SIZE		512
-#define NAME_SIZE		9
-#define TTY_SIZE		16
+#define NAME_SIZE		9	/* Size of a login name		*/
+#define SYS_SIZE		11	/* Size of a system name	*/
+#define TTY_SIZE		16	/* Size of a tty name		*/
 
 /*
  *	Values for answers
@@ -52,8 +53,10 @@ _extern WINDOW *line_win;
 
 _extern char my_tty[TTY_SIZE];		/* My tty name			*/
 _extern char my_name[NAME_SIZE];	/* My user name			*/
+_extern char my_system[SYS_SIZE];	/* My system name		*/
 _extern int mine;			/* My pipe fd			*/
 
 _extern char other_tty[TTY_SIZE];	/* Other tty name		*/
 _extern char other_name[NAME_SIZE];	/* Other user name		*/
+_extern char other_system[SYS_SIZE];	/* Other system name		*/
 _extern int other;			/* Other pipe fd		*/

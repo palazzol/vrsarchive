@@ -34,8 +34,10 @@ wait_open()
 
 open_other()
 {   char c = 'X';
+    char opipe[SYS_SIZE+10];
 
-    while ((other = open(other_tty, 2)) < 0) {
+    sprintf(opipe, "%s/tmp/%s", other_system, other_tty);
+    while ((other = open(opipe, 2)) < 0) {
         if (errno != EINTR)
             p_error("Cannot open other named pipe");
     }
