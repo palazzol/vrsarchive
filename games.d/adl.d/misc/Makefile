@@ -5,7 +5,7 @@ UTL = ../util
 INC = ../include
 
 # Flags for CC
-CFLAGS = -O -DHPUX -I${INC}
+CFLAGS = -M2l -O -DHPUX -I${INC}
 
 # Commands for shar
 # AR = shar -c -v
@@ -14,7 +14,7 @@ B = ..
 D = misc/
 
 # Where adldebug and adltouch will be installed
-BIN = /users/cunniff/bin
+#BIN = /users/cunniff/bin
 
 # The utilities used by adldebug
 UTIL =	${UTL}/virtmem.o	${UTL}/vstring.o	${UTL}/mytime.o
@@ -38,7 +38,7 @@ misc.shar	:	README Makefile *.c
 	> ${D}misc.shar )
 
 adldebug	:	adldebug.o	${UTIL}
-	${CC} -o adldebug adldebug.o ${UTIL}
+	$(CC) $(CFLAGS) -o $@ adldebug.o ${UTIL}
 
 adldebug.o	:	adldebug.c \
 			${INC}/adltypes.h	${INC}/adlprog.h \
@@ -46,6 +46,6 @@ adldebug.o	:	adldebug.c \
 			${INC}/virtmem.h
 
 adltouch	:	adltouch.o
-	${CC} -o adltouch adltouch.o
+	$(CC) $(CFLAGS) -o $@ adltouch.o
 
 adltouch.o	:	adltouch.c
