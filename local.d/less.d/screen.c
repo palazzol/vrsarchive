@@ -59,7 +59,11 @@ public int so_width, se_width;	/* Printing width of standout sequences */
  * and needed by, the termcap library.
  * It may be necessary on some systems to declare them extern here.
  */
+#ifdef __STDC__
+/*extern*/ speed_t ospeed;	/* Terminal output baud rate */
+#else
 /*extern*/ short ospeed;	/* Terminal output baud rate */
+#endif
 /*extern*/ char PC;		/* Pad character */
 
 extern int quiet;		/* If VERY_QUIET, use visual bell for bell */

@@ -12,7 +12,11 @@
 # ifndef LINT
 extern			/* it is defined in libtermlib (libtermcap) */
 # endif
+#ifdef __STDC__
+	speed_t ospeed;	/* terminal baudrate; used by tputs */
+#else
 	short ospeed;	/* terminal baudrate; used by tputs */
+#endif
 #else
 short	ospeed = 0;	/* gets around "not defined" error message */
 #endif

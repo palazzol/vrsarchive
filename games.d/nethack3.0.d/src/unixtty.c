@@ -69,7 +69,11 @@ struct tchars inittyb2, curttyb2;
 
 #endif
 
+#ifdef __STDC__
+extern speed_t ospeed;
+#else
 extern short ospeed;
+#endif
 char erase_char, intr_char, kill_char;
 static boolean settty_needed = FALSE;
 struct termstruct inittyb, curttyb;

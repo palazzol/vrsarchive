@@ -10,7 +10,11 @@ struct termios argp;
 struct sgttyb argp;
 #endif
 
+#ifdef __STDC__
+speed_t ospeed;
+#else
 short ospeed;
+#endif
 
 extern putchar();
 
