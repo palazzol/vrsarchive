@@ -15,7 +15,24 @@
 #include <pwd.h>
 #include "rogue.h"
 
-int end_win;
+int end_win = 0;
+
+/*
+ * leave:
+ *	Leave quickly, but curteously
+ */
+leave()
+{
+	if (end_win)
+	{
+		mvcur(0, COLS - 1, LINES - 1, 0);
+		refresh();
+		endwin();
+		end_win = 0;
+	}
+	(void) putchar('\n');
+	exit(0);
+}
 
 /*
  * main:
@@ -29,7 +46,7 @@ char **envp;
 	register struct passwd *pw;
 	struct passwd *getpwuid();
 	char *getpass(), *crypt();
-	int leave(), lowtime;
+	int lowtime;
 
 #ifndef DUMP
 	signal(SIGQUIT, leave);
@@ -149,7 +166,7 @@ char **envp;
  */
 endit()
 {
-	fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
+	fatal("Ok, if you want to leave that badly, I'll have to allow it\n");
 }
 
 /*
@@ -162,9 +179,7 @@ char *s;
 	clear();
 	move(LINES-2, 0);
 	printw("%s", s);
-	refresh();
-	endwin();
-	exit(0);
+	leave();
 }
 
 /*
@@ -259,14 +274,13 @@ playit()
 
 /*
  * quit:
- *	Have player make certain, then exit.
+ *	Have player make certain, then leave.
  */
 void
 quit()
 {
 	register int oy, ox;
 	register char c;
-	int leave();
 
 	/*
 	 * Reset the signal in case we got here via an interrupt
@@ -283,7 +297,7 @@ quit()
 		move(LINES - 1, 0);
 		refresh();
 		score(purse, 1);
-		exit(0);
+		leave();
 	}
 	else
 	{
@@ -302,21 +316,6 @@ quit()
 }
 
 /*
- * leave:
- *	Leave quickly, but curteously
- */
-leave()
-{
-	if (!end_win)
-	{
-		mvcur(0, COLS - 1, LINES - 1, 0);
-		endwin();
-	}
-	(void) putchar('\n');
-	exit(0);
-}
-
-/*
  * shell:
  *	Let him escape for a while
  */
@@ -331,8 +330,6 @@ shell()
 	 */
 	move(LINES-1, 0);
 	refresh();
-	endwin();
-	end_win = 0;
 	(void) putchar('\n');
 	in_shell = TRUE;
 	after = FALSE;
