@@ -504,7 +504,7 @@ read_config_file() {
 			append_slash(SAVEF);
 
 		} else if (!strncmp(buf, "GRAPHICS", 4)) {
-			struct symbols s;
+			struct symbols s = defsyms;
 
 			if (sscanf(bufp, "%u%u%u%u%u%u%u%u%u", &s.vwall,
 				    &s.hwall, &s.tlcorn, &s.trcorn, &s.blcorn,
