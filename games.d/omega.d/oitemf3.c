@@ -275,7 +275,7 @@ pob o;
     print1("Zap with white or black end [wb] ");
     do response = mcigetc(); while ((response != 'w') && (response != 'b'));
     print2("The staff discharges!");
-    if (response = 'w') enchant(o->blessing*2+1);
+    if (response == 'w') enchant(o->blessing*2+1);
     else dispel(o->blessing);
   }
 }
