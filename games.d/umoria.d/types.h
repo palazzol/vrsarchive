@@ -19,8 +19,8 @@ typedef char stat_type[7];
 typedef struct creature_type
 {
   ctype name;           /* Descrip of creature	*/
-  unsigned int cmove;	/* Bit field		*/
-  unsigned int spells;  /* Creature spells	*/
+  unsigned long cmove;	/* Bit field		*/
+  unsigned long spells;	/* Creature spells	*/
   wordint cdefense;	/* Bit field		*/
   worlint sleep;	/* Inactive counter	*/
   wordint mexp; 	/* Exp value for kill	*/
@@ -54,7 +54,7 @@ typedef struct treasure_type
   ttype name;	        /* Object name		*/
   byteint tval;	        /* Category number	*/
   char tchar;		/* Character representation*/
-  unsigned int flags;	/* Special flags		*/
+  unsigned long flags;	/* Special flags		*/
   int p1;	        /* Misc. use variable	*/
   int cost;	        /* Cost of item		*/
   int subval;	        /* Sub-category number	*/
@@ -128,7 +128,7 @@ typedef struct player_type
     } stats;
   struct flags
     {
-      unsigned int status;	/* Status of player    */
+      unsigned long status;	/* Status of player    */
       int rest;	                /* Rest counter	      */
       int blind;	        /* Blindness counter   */
       int paralysis;	        /* Paralysis counter   */
@@ -221,7 +221,7 @@ typedef struct race_type
   bytlint bsav;         /* Race base for saving throw	*/
   bytlint bhitdie;      /* Base hit points for race	*/
   bytlint infra;        /* See infra-red		*/
-  unsigned int tclass;  /* Bit field for class types	*/
+  unsigned long tclass;	/* Bit field for class types	*/
 } race_type;
 
 typedef struct class_type
