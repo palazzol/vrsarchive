@@ -1,0 +1,98 @@
+
+Unix System V ARC Version 1.1
+
+
+This is a COMPLETE (I hope!) version of PC ARC v5.12, ported to System V.
+It contains as much of the functionality of PC ARC as I could incorporate,
+and fixes all known bugs.
+
+Version 1.1 is based on the version posted to the net by Mike Stump,
+with several fixes and enhancements, as well as some general clean-up.
+
+Some enhancements:
+
+	Timestamping - arc will now stamp file upon extraction with the
+	date and time contained in the header.  This feature may cause
+	some discomfort with the recent change in Daylight Savings Time.
+
+
+	Full wildcard/pattern matching - arc will take over for the shell
+	if it receives standard shell-type wildcards and/or patterns.
+	Remember, though, that the shell will always try to expand what
+	it can FIRST, so if you explicitly want arc to do expansion,
+	quote the arguments.  Also, arc will NOT search for real files
+	based on wildcard matches.  I have left that under shell control;
+	i.e., typing:
+
+			arc -v "*.c"<RETURN>
+
+	will work whether or not real files exist that match the pattern,
+	but typing:
+
+			arc -a "*.c"<RETURN>
+
+	will report that file '*.c' was not found.
+
+
+	14 character file name entries - by default arc now supports
+	full 14 character file names in its entries.  This will, however,
+	cause the archive to be incompatible with PC ARC, so I have
+	added an option ('i') to truncate file names to the standard
+	PC limit of 12 characters.  Archives created with this option are
+	FULLY compatible with PC ARC.
+
+
+Some Bug Fixes:
+
+	An archive will no longer try to archive itself, even if it is
+	explicitly requested from the command line.  However, an archive
+	with a similar name, but in a different directory, can be added.
+
+	Arguments passed to arc are now sorted, eliminating the
+	possibility of duplicate entries for the same file in an archive.
+	The arguments are also checked for duplicates, so it is impossible
+	to add the same file name from multiple directories.  Only the
+	first occurence is used.
+
+	Arc will not core dump if any of the file name arguments cannot
+	be found.
+
+	Arc now cleans up after itself if it is aborted early.  Also,
+	no damage will be done to the archive if arc is aborted.
+
+
+Cleanup:
+
+	I tried my best to make the code uniform, removed some unused
+	variables and functions, and added/changed some of the comments.
+
+	I ran the resulting code through lint, which still considers
+	the code somewhat inconsistent, but otherwise acceptible,
+	with the exception of 'arclzw.c'.  Oh well, we can only do
+	so much...
+
+
+Known limitations:
+
+	Ther is a REMOTE possibility that an archive can become corrupted
+	if the IBM(TM) PC compatibility option ('i') is used/not used when it
+	should/shouldn't be.  This only happened to me once out of 150+
+	archives, and even that was during the early stages of the cleanup.
+	As a rule, if I can't remember whether or not the 'i' option was
+	used, I simply test the archive in questoion.  Testing an archive
+	can do NO damage to it.
+
+
+This code has been thoroughly (if there is such a thing) tested on an
+AT&T 3B5, 3B15, 3B2/300, and 3B2/400, running SYS V release 2 and release 3.
+
+I tried to keep things fairly portable, though I am not that familiar with
+BSD.  I imagine that most things should work (I did change all the 'rindex'
+calls to 'strrchr', sorry BSD), but I imagine that the setstamp() function
+is fairly System V dependent.  In any event, I will cheerfully listen to
+any reports of bugs and/or fixes, and will try to maintain the code as well
+as I can.
+
+Chris Seaman
+{ihnp4, rtech}!cpsc6a!crs
+
