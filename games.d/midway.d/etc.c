@@ -163,7 +163,11 @@ register struct squadron *planes, **head;
 	}
 	if (planes -> s_next)
 		planes -> s_next -> previous = planes -> previous;
+#ifdef __STDC__
+	free(planes);
+#else
 	cfree(planes);
+#endif
 }
 
 range(ar, ac, br, bc)

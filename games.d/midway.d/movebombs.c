@@ -61,7 +61,11 @@ int yank;
 			} else {
 				thud -> next_torp = fish -> next_torp;
 			}
+#ifdef __STDC__
+			free(fish);
+#else
 			cfree(fish);
+#endif
 		} else {
 			thud = fish;
 			drdc(fish -> course, &fish -> row, &fish -> col);
