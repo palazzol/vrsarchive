@@ -1,6 +1,6 @@
 static char *sccsid = "@(#)clear.c	4.1 (Berkeley) 10/1/80";
-/* load me with -ltermlib */
- * #include <retrofit.h> on version 6 */
+/* load me with -ltermlib
+ * include <retrofit.h> on version 6
  *
  * clear - clear the screen
 */
