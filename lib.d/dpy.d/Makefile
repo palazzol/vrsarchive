@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.5 1987-02-22 20:02:54 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.6 1990-04-13 15:06:26 vrs Exp $
 #
-ALL	= Slibdpy.a Mlibdpy.a Llibdpy.a
+ALL	= Slibdpy.a Mlibdpy.a Llibdpy.a libdpy.a
 OPTIONS	= -DUSG
-include ../../CONFIG
+include /etc/CONFIG
 HFILES	= dpy.h
 #
 OBJS	= dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o dpywindow.o
@@ -43,52 +43,86 @@ LLIB	= Llibdpy.a(dpy.L) \
 .PRECIOUS:	$(ALL)
 
 .c.S:
-	$(CC) -c $(CFLAGS) -Ms $<
-	mv $*.o $@
+	if i286; then \
+		$(CC) -c $(CFLAGS) -Ms $<; \
+		mv $*.o $@; \
+	else \
+		$(CC) -c $(CFLAGS) $<; \
+		mv $*.o $@; \
+	fi
 
 .c.M:
-	$(CC) -c $(CFLAGS) -Mm $<
-	mv $*.o $@
+	if i286; then \
+		$(CC) -c $(CFLAGS) -Mm $<; \
+		mv $*.o $@; \
+	else \
+		$(CC) -c $(CFLAGS) $<; \
+		mv $*.o $@; \
+	fi
 
 .c.L:
-	$(CC) -c $(CFLAGS) -Ml $<
-	mv $*.o $@
+	if i286; then \
+		$(CC) -c $(CFLAGS) -Ml $<; \
+		mv $*.o $@; \
+	else \
+		$(CC) -c $(CFLAGS) $<; \
+		mv $*.o $@; \
+	fi
 
 .s.S:
-	$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s
-	masm -Ml -o$@ tmp.s
-	rm tmp.s
+	if i286; then \
+		$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s; \
+		masm -Ml -o$@ tmp.s; \
+		rm tmp.s; \
+	else \
+		$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s; \
+		masm -o$@ tmp.s; \
+		rm tmp.s; \
+	fi
 
 .s.M:
-	$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s
-	masm -Ml -o$@ tmp.s
-	rm tmp.s
+	if i286; then \
+		$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s; \
+		masm -Ml -o$@ tmp.s; \
+		rm tmp.s; \
+	else \
+		$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s; \
+		masm -o$@ tmp.s; \
+		rm tmp.s; \
+	fi
 
 .s.L:
-	$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s
-	masm -Ml -o$@ tmp.s
-	rm tmp.s
+	if i286; then \
+		$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s; \
+		masm -Ml -o$@ tmp.s; \
+		rm tmp.s; \
+	else \
+		$(CC) $(CFLAGS) -Ms -E $*.s | sed '/^#/d' >tmp.s; \
+		masm -o$@ tmp.s; \
+		rm tmp.s; \
+	fi
 
 .c.a:
 	make $%
-	ar uv $@ $%
+	ar ruv $@ $%
 	rm -f $%
 
 .s.a:
 	make $%
-	ar uv $@ $%
+	ar ruv $@ $%
 	rm -f $%
 
 all:	$(ALL)
 
-Slibdpy.a: $(SLIB)
-	ranlib $@
+libdpy.a Slibdpy.a: $(SLIB)
+	rm -f libdpy.a; ln Slibdpy.a libdpy.a
+	$(RANLIB) $@
 
 Mlibdpy.a: $(MLIB)
-	ranlib $@
+	$(RANLIB) $@
 
 Llibdpy.a: $(LLIB)
-	ranlib $@
+	$(RANLIB) $@
 
 $(SOBJS): $(HFILES)
 $(MOBJS): $(HFILES)
@@ -102,10 +136,10 @@ clean:
 install: $(ALL) $(LIBDIR) $(INCDIR) $(MAN3)
 	cp $(ALL) $(CCLIB)
 	cd $(CCLIB); chmod 644 $(ALL)
-	for i in $(ALL); do ranlib $(CCLIB)/$$i; done
+	for i in $(ALL); do $(RANLIB) $(CCLIB)/$$i; done
 	cp $(ALL) $(LIBDIR)
 	cd $(LIBDIR); chmod 644 $(ALL)
-	for i in $(ALL); do ranlib $(LIBDIR)/$$i; done
+	for i in $(ALL); do $(RANLIB) $(LIBDIR)/$$i; done
 	cp dpy.h $(INCDIR)
 	cd $(INCDIR); chmod 644 dpy.h
 	cp dpy.3 $(MAN3)

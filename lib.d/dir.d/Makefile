@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/lib.d/dir.d/Makefile,v 1.3 1987-02-22 20:02:41 vrs Exp $
+#	$Header: /home/Vince/cvs/lib.d/dir.d/Makefile,v 1.4 1990-04-13 15:06:24 vrs Exp $
 #
 ALL	= Slibdir.a Mlibdir.a Llibdir.a
 OPTIONS	= -O -I.
-include ../../CONFIG
+include /etc/CONFIG
 OBJS	= closedir.o opendir.o readdir.o seekdir.o telldir.o getwd.o
 HFILES	= dir.h
 MFILES	= directory.3c getwd.3
