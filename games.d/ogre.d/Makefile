@@ -1,14 +1,14 @@
 #
-#	Ogre $Header: /home/Vince/cvs/games.d/ogre.d/Makefile,v 1.4 2002-11-23 04:09:42 Vincent Exp $
+#	Ogre $Header: /home/Vince/cvs/games.d/ogre.d/Makefile,v 1.5 2002-11-24 02:13:42 Vincent Exp $
 #
-ALL	= ogre
+ALL	= ogre$(EXE)
 MODEL	= -i -F 2000
 OPTIONS	= -O
 include $(HOME)/CONFIG
 OBJ	= init.o termcap.o map.o main.o move.o initround.o ogrecom.o \
 	  ogrestat.o attack.o resolve.o
 
-ogre: $(OBJ)
+ogre$(EXE): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
 install: $(ALL) $(GAMDIR) $(MAN6)
