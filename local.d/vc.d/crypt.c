@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 /*
  * Encryption utilites
  * Bradley Williams	
@@ -15,10 +16,11 @@
 
 #include "sc.h"
 
+extern FILE *fdopen();
 extern char curfile[];
 char        *strcpy();
 #ifdef SYSV3
-void exit();
+extern void exit();
 #endif
 
 int         Crypt = 0;

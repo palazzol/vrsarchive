@@ -27,6 +27,7 @@
 #include "sc.h"
 #define DEFCOLDELIM ':'
 
+extern FILE *fdopen();
 extern char curfile[];
 
 jmp_buf fpe_save;

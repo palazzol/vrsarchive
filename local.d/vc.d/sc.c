@@ -65,8 +65,8 @@ int  showme = 1;	/* 1 to display the current cell in the top line */
 int  showrange;		/* Causes ranges to be highlighted */
 int  lastmx, lastmy;	/* Screen address of the cursor */
 int  lastcol;		/* Spreadsheet Column the cursor was in last */
-char *under_cursor = " "; /* Data under the < cursor */
-char *rev = "$Revision: 1.6 $";
+char under_cursor[] = " "; /* Data under the < cursor */
+char *rev = "$Revision: 1.7 $";
 
 int seenerr;
 
@@ -429,9 +429,7 @@ update () {
 
 repaint(x, y, len)
 {
-    char *buf;
-
-    buf = " ";
+    char buf[] = " ";
 
     while(len-- > 0) {
 	(void) move(y,x);
@@ -509,9 +507,7 @@ char  **argv; {
 	if (edistate < 0 && linelim < 0 && (changed || FullUpdate))
 	    EvalAll (), changed = 0;
 	update();
-#ifndef SYSV3
 	(void) refresh(); /* 5.3 does a refresh in getch */ 
-#endif
 	c = nmgetch();
 	(void) move (1, 0);
 	(void) clrtoeol ();
@@ -1225,15 +1221,19 @@ deraw()
     resetkbd();
 }
 
+SIG_T
+quit()
+{
+    deraw();
+    resetkbd();
+    endwin();
+    exit(1);
+}
+
 signals()
 {
-#ifdef SYSV3
-    void quit();
-    void atimeout();
-#else
-    int quit();
-    int atimeout();
-#endif
+    SIG_T quit();
+    SIG_T atimeout();
 
     (void) signal(SIGINT, SIG_IGN);
     (void) signal(SIGQUIT, quit);
@@ -1242,17 +1242,6 @@ signals()
     (void) signal(SIGALRM, atimeout);
     (void) signal(SIGFPE, quit);
     (void) signal(SIGBUS, quit);
-}
-
-#ifdef SYSV3
-void
-#endif
-quit()
-{
-    deraw();
-    resetkbd();
-    endwin();
-    exit(1);
 }
 
 modcheck(endstr)
