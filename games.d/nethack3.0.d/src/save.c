@@ -267,11 +267,16 @@ again:
 }
 
 #if defined(DGK) && !defined(TOS)
+#ifdef __STDC__
+boolean
+savelev(int fd,xchar lev,int mode)
+#else
 boolean
 savelev(fd, lev, mode)
 int fd;
 xchar lev;
 int mode;
+#endif
 {
 	if (mode & COUNT) {
 # ifdef ZEROCOMP /* should be superfluous */
@@ -301,15 +306,26 @@ int mode;
 	return TRUE;
 }
 
-static
-void
+#ifdef __STDC__
+static void
+savelev0(int fd,xchar lev)
+#else
+static void
 savelev0(fd,lev)
+int fd;
+xchar lev;
+#endif
+#else
+#ifdef __STDC__
+void
+savelev(int fd,xchar lev)
 #else
 void
 savelev(fd,lev)
-#endif
 int fd;
 xchar lev;
+#endif
+#endif
 {
 #ifdef WORM
 	register struct wseg *wtmp;
@@ -444,11 +460,11 @@ register int fd;
 void
 bwrite(fd, loc, num)
 register int fd;
-register genericptr_t loc;
+register char *loc;
 register unsigned num;
 {
       bwritefd = fd;
-      for (; num; num--, ((char *)loc)++) {
+      for (; num; num--, loc++) {
 	      if (*((char *)loc) == RLESC) { /* One more char in run */
 		  if (++outrunlength == 0xFF) {
 		      flushoutrun(outrunlength);

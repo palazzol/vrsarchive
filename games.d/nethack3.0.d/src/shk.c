@@ -788,10 +788,15 @@ register struct obj *obj;
 
 
 /* called in hack.c when we pickup an object */
+#ifdef __STDC__
+void
+addtobill(struct obj *obj,boolean ininv)
+#else
 void
 addtobill(obj, ininv)
 register struct obj *obj;
 register boolean ininv;
+#endif
 {
 	register struct bill_x *bp;
 	char	buf[40];
@@ -1183,11 +1188,17 @@ register struct monst *shkp;
 	return(move_special(shkp,shkroom,appr,uondoor,avoid,omx,omy,gx,gy));
 }
 
+/*	New version to speed things up.
+ *	Compiler dependant, may not always work.
+ */
+#ifdef __STDC__
 int
-online(x,y)		/*	New version to speed things up.
-			 *	Compiler dependant, may not always work.
-			 */
+online(xchar x,xchar y)
+#else
+int
+online(x,y)
 register xchar x, y;
+#endif
 {
 	return((x-=u.ux) == 0 || (y-=u.uy) == 0 || x == y || (x+=y) == 0);
 }
