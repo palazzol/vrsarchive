@@ -8,6 +8,9 @@ MAN = man
 TROFF = xtroff
 TARFILES = Makefile Makefile4.1 Makefile4.2 Changes README top.c bzero.c top.1
 CFLAGS = -DFOUR_TWO -O
+# To make a version for the SUN, comment out the previous line and
+# uncomment the following line:
+#CFLAGS = -DFOUR_TWO -DSUN -O
 
 top: top.o
 	cc $(CFLAGS) -o top top.o -lcurses -ltermcap -lm
