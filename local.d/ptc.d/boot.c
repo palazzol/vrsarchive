@@ -15,8 +15,8 @@ typedef struct {
 			:12;
 	char	buf;
 } 	text;
-text	input = { stdin, 0, 0 };
-text	output = { stdout, 0, 0 };
+text	input = { NULL, 0, 0 };
+text	output = { NULL, 0, 0 };
 # define Fread(x, f) fread((char *)&x, sizeof(x), 1, f)
 # define Get(f) Fread((f).buf, (f).fp)
 # define Getx(f) (f).init = 1, (f).eoln = (((f).buf = fgetc((f).fp)) == '\n') ? (((f).buf = ' '), 1) : 0
@@ -39,7 +39,7 @@ void	Scanck();
 **	and for non-local gotos
 */
 # define Line __LINE__
-void	Caseerror();
+static void	Caseerror();
 # include <setjmp.h>
 static struct Jb { jmp_buf	jb; } J[1];
 /*
@@ -71,13 +71,14 @@ extern char *malloc();
 # define setbits 15
 typedef unsigned short	setword;
 typedef setword *	setptr;
-boolean	Member(), Le(), Ge(), Eq(), Ne();
-setptr	Union(), Diff();
-setptr	Insmem(), Mksubr();
-setptr	Currset(), Inter();
+static boolean	Member();
+boolean	Le(), Ge(), Eq(), Ne();
+static setptr	Union(), Diff();
+static setptr	Insmem(), Mksubr();
+static setptr	Currset(), Inter();
 static setptr	Tmpset;
 extern setptr	Conset[];
-void	Setncpy();
+static void	Setncpy();
 extern char *strncpy();
 /*
 **	Start of program definitions
@@ -1356,7 +1357,7 @@ nextsymbol(ss)
 }
 
  treeptr
-typeof(tp)
+type_of(tp)
 	treeptr	tp;
 {
 	register treeptr	R92;
@@ -1401,9 +1402,9 @@ typeof(tp)
 				tf = tq;
 			break ;
 		  case ncall:
-			tf = typeof(tq->U.V30.tcall);
+			tf = type_of(tq->U.V30.tcall);
 			if (tf == typnods.A[(int)(tpoly)])
-				tf = typeof(tq->U.V30.taparm);
+				tf = type_of(tq->U.V30.taparm);
 			break ;
 		  case nfunc:
 			tq = tq->U.V13.tfuntyp;
@@ -1425,9 +1426,9 @@ typeof(tp)
 			tq = tq->U.V41.texpl;
 			break ;
 		  case nplus:  case nminus:  case nmul:
-			tf = typeof(tq->U.V41.texpl);
+			tf = type_of(tq->U.V41.texpl);
 			if (tf == typnods.A[(int)(tinteger)])
-				tf = typeof(tq->U.V41.texpr);
+				tf = type_of(tq->U.V41.texpr);
 			else
 				if (tf->tt == nsetof)
 					tf = typnods.A[(int)(tset)];
@@ -1453,7 +1454,7 @@ typeof(tp)
 			tq = tq->U.V40.tfield;
 			break ;
 		  case nderef:
-			tq = typeof(tq->U.V42.texps);
+			tq = type_of(tq->U.V42.texps);
 			switch (tq->tt) {
 			  case nptr:
 				tq = tq->U.V16.tptrid;
@@ -1469,7 +1470,7 @@ typeof(tp)
 			}
 			break ;
 		  case nindex:
-			tq = typeof(tq->U.V39.tvariable);
+			tq = type_of(tq->U.V39.tvariable);
 			if (tq->tt == nconfarr)
 				tq = tq->U.V22.tcelem;
 			else
@@ -2223,7 +2224,7 @@ addfields(rp)
 scopeup(tp)
 	treeptr	tp;
 {
-	addfields(typeof(tp));
+	addfields(type_of(tp));
 }
 
  treeptr
@@ -3103,7 +3104,7 @@ pvariable(varptr)
 			tp = mknode(nselect);
 			tp->U.V40.trecord = varptr;
 			nextsymbol(*((symset *)Conset[103]));
-			tq = typeof(varptr);
+			tq = type_of(varptr);
 			enterscope(tq->U.V21.trscope);
 			tp->U.V40.tfield = oldid(currsym.U.V1.vid, lfield);
 			leavescope();
@@ -3575,7 +3576,7 @@ clower(tp)
 	register integer	R158;
 	treeptr	tq;
 
-	tq = typeof(tp);
+	tq = type_of(tp);
 	if (tq->tt == nscalar)
 		R158 = scalbase;
 	else
@@ -3603,7 +3604,7 @@ cupper(tp)
 	treeptr	tq;
 	integer	i;
 
-	tq = typeof(tp);
+	tq = type_of(tp);
 	if (tq->tt == nscalar) {
 		tq = tq->U.V17.tscalid;
 		i = scalbase;
@@ -3660,7 +3661,7 @@ csetsize(tp)
 	treeptr	tq;
 	integer	i;
 
-	tq = typeof(tp->U.V18.tof);
+	tq = type_of(tp->U.V18.tof);
 	i = clower(tq);
 	if ((i < 0) || (i >= 6 * (C37_setbits + 1)))
 		error(esetbase);
@@ -3837,7 +3838,7 @@ treeptr xtrenum();
 nametype(tp)
 	treeptr	tp;
 {
-	tp = typeof(tp);
+	tp = type_of(tp);
 	if (tp->tt == nrecord)
 		if (tp->U.V21.tuid == (struct S59 *)NIL)
 			tp->U.V21.tuid = mkvariable('S');
@@ -4338,7 +4339,7 @@ global(tp, dp, depend)
 			global(tp->U.V37.twithstmt, dp, depend);
 			break ;
 		  case nwithvar:
-			ip = typeof(tp->U.V38.texpw);
+			ip = type_of(tp->U.V38.texpw);
 			if (ip->U.V21.tuid == (struct S59 *)NIL)
 				ip->U.V21.tuid = mkvariable('S');
 			global(tp->U.V38.texpw, dp, depend);
@@ -4350,10 +4351,10 @@ global(tp, dp, depend)
 		  case ngt:  case nge:
 			global(tp->U.V41.texpl, dp, depend);
 			global(tp->U.V41.texpr, dp, depend);
-			ip = typeof(tp->U.V41.texpl);
+			ip = type_of(tp->U.V41.texpl);
 			if ((ip == typnods.A[(int)(tstring)]) || (ip->tt == narray))
 				usecomp = true;
-			ip = typeof(tp->U.V41.texpr);
+			ip = type_of(tp->U.V41.texpr);
 			if ((ip == typnods.A[(int)(tstring)]) || (ip->tt == narray))
 				usecomp = true;
 			break ;
@@ -4477,10 +4478,10 @@ filevar(tp)
 		fv = true;
 		break ;
 	  case nconfarr:
-		fv = filevar(typeof(tp->U.V22.tcelem));
+		fv = filevar(type_of(tp->U.V22.tcelem));
 		break ;
 	  case narray:
-		fv = filevar(typeof(tp->U.V23.taelem));
+		fv = filevar(type_of(tp->U.V23.taelem));
 		break ;
 	  case nrecord:
 		fv = false;
@@ -4492,7 +4493,7 @@ filevar(tp)
 		}
 		tq = tp->U.V21.tflist;
 		while (tq != (struct S61 *)NIL) {
-			if (filevar(typeof(tq->U.V14.tbind))) {
+			if (filevar(type_of(tq->U.V14.tbind))) {
 				fv = true;
 				tq = (struct S61 *)NIL;
 			} else
@@ -4503,7 +4504,7 @@ filevar(tp)
 		fv = false;
 		if (!tp->U.V16.tptrflag) {
 			tp->U.V16.tptrflag = true;
-			if (filevar(typeof(tp->U.V16.tptrid)))
+			if (filevar(type_of(tp->U.V16.tptrid)))
 				error(evarfile);
 			tp->U.V16.tptrflag = false;
 		}
@@ -4532,7 +4533,7 @@ fileinit(ti, tq, opn)
 		ty = mknode(nvar);
 		ty->U.V14.tattr = aregister;
 		ty->U.V14.tidl = tz;
-		ty->U.V14.tbind = typeof(tq->U.V23.taindx);
+		ty->U.V14.tbind = type_of(tq->U.V23.taindx);
 		tz = tq;
 		while (!(Member((unsigned)(tz->tt), Conset[137])))
 			tz = tz->tup;
@@ -4552,7 +4553,7 @@ fileinit(ti, tq, opn)
 		tz = fileinit(tz, tq->U.V23.taelem, opn);
 		tx = mknode(nfor);
 		tx->U.V34.tforid = ty;
-		ty = typeof(tq->U.V23.taindx);
+		ty = type_of(tq->U.V23.taindx);
 		if (ty->tt == nsubrange) {
 			tx->U.V34.tfrom = ty->U.V19.tlo;
 			tx->U.V34.tto = ty->U.V19.thi;
@@ -4604,13 +4605,13 @@ fileinit(ti, tq, opn)
 		ty = (struct S61 *)NIL;
 		tq = tq->U.V21.tflist;
 		while (tq != (struct S61 *)NIL) {
-			if (filevar(typeof(tq->U.V14.tbind))) {
+			if (filevar(type_of(tq->U.V14.tbind))) {
 				tz = tq->U.V14.tidl;
 				while (tz != (struct S61 *)NIL) {
 					tx = mknode(nselect);
 					tx->U.V40.trecord = ti;
 					tx->U.V40.tfield = tz;
-					tx = fileinit(tx, typeof(tq->U.V14.tbind), opn);
+					tx = fileinit(tx, type_of(tq->U.V14.tbind), opn);
 					tx->tnext = ty;
 					ty = tx;
 					tz = tz->tnext;
@@ -4638,7 +4639,7 @@ initcode(tp)
 		initcode(tp->U.V13.tsubsub);
 		tv = tp->U.V13.tsubvar;
 		while (tv != (struct S61 *)NIL) {
-			tq = typeof(tv->U.V14.tbind);
+			tq = type_of(tv->U.V14.tbind);
 			if (filevar(tq)) {
 				ti = tv->U.V14.tidl;
 				while (ti != (struct S61 *)NIL) {
@@ -4708,12 +4709,12 @@ arithexpr(tp)
 {
 	register boolean	R170;
 
-	tp = typeof(tp);
+	tp = type_of(tp);
 	if (tp->tt == nsubrange)
 		if (tp->tup->tt == nconfarr)
-			tp = typeof(tp->tup->U.V22.tindtyp);
+			tp = type_of(tp->tup->U.V22.tindtyp);
 		else
-			tp = typeof(tp->U.V19.tlo);
+			tp = type_of(tp->U.V19.tlo);
 	R170 = (boolean)((tp == typnods.A[(int)(tinteger)]) || (tp == typnods.A[(int)(tchar)]) || (tp == typnods.A[(int)(treal)]));
 	return R170;
 }
@@ -4752,9 +4753,9 @@ typeletter(tp)
 		}
 		tq = tp->U.V41.texpl;
 	}
-	tq = typeof(tq);
+	tq = type_of(tq);
 	if (tq->tt == nsubrange)
-		tq = typeof(tq->U.V19.tlo);
+		tq = type_of(tq->U.V19.tlo);
 	if (tq == typnods.A[(int)(tstring)])
 		R171 = 's';
 	else
@@ -5119,8 +5120,8 @@ enewsize(tp)
 
 	if ((tp->tnext != (struct S61 *)NIL) && unionnew) {
 		v = cvalof(tp->tnext);
-		tq = typeof(tp);
-		tq = typeof(tq->U.V16.tptrid);
+		tq = type_of(tp);
+		tq = type_of(tq->U.V16.tptrid);
 		if (tq->tt != nrecord)
 			fatal(etree);
 		tx = tq->U.V21.tvlist;
@@ -5159,7 +5160,7 @@ epredef(ts, tp)
 	td = ts->U.V13.tsubstmt->U.V12.tdef;
 	switch (td) {
 	  case dabs:
-		tq = typeof(tp->U.V30.taparm);
+		tq = type_of(tp->U.V30.taparm);
 		if ((tq == typnods.A[(int)(tinteger)]) || (tq->tt == nsubrange))
 			(void)fprintf(output.fp, "abs("), Putl(output, 0);
 		else
@@ -5177,12 +5178,12 @@ epredef(ts, tp)
 		(void)fprintf(output.fp, ".A));\n"), Putl(output, 1);
 		break ;
 	  case dchr:
-		tq = typeof(tp->U.V30.taparm);
+		tq = type_of(tp->U.V30.taparm);
 		if (tq->tt == nsubrange)
 			if (tq->tup->tt == nconfarr)
-				tq = typeof(tq->tup->U.V22.tindtyp);
+				tq = type_of(tq->tup->U.V22.tindtyp);
 			else
-				tq = typeof(tq->U.V19.tlo);
+				tq = type_of(tq->U.V19.tlo);
 		if ((tq == typnods.A[(int)(tinteger)]) || (tq == typnods.A[(int)(tchar)]))
 			eexpr(tp->U.V30.taparm);
 		else {
@@ -5241,7 +5242,7 @@ epredef(ts, tp)
 		(void)fprintf(output.fp, ");\n"), Putl(output, 1);
 		break ;
 	  case dput:  case dget:
-		if (typeof(tp->U.V30.taparm) == typnods.A[(int)(ttext)])
+		if (type_of(tp->U.V30.taparm) == typnods.A[(int)(ttext)])
 			if (td == dget)
 				(void)fprintf(output.fp, "Getx"), Putl(output, 0);
 			else
@@ -5263,7 +5264,7 @@ epredef(ts, tp)
 	  case dnew:
 		eexpr(tp->U.V30.taparm);
 		(void)fprintf(output.fp, " = ("), Putl(output, 0);
-		etypedef(typeof(tp->U.V30.taparm));
+		etypedef(type_of(tp->U.V30.taparm));
 		(void)fprintf(output.fp, ")malloc((unsigned)("), Putl(output, 0);
 		enewsize(tp->U.V30.taparm);
 		(void)fprintf(output.fp, "));\n"), Putl(output, 1);
@@ -5277,14 +5278,14 @@ epredef(ts, tp)
 		txtfile = false;
 		tq = tp->U.V30.taparm;
 		if (tq != (struct S61 *)NIL) {
-			tv = typeof(tq);
+			tv = type_of(tq);
 			if (tv == typnods.A[(int)(ttext)]) {
 				txtfile = true;
 				tv = tq;
 				tq = tq->tnext;
 			} else
 				if (tv->tt == nfileof) {
-					txtfile = (boolean)(typeof(tv->U.V18.tof) == typnods.A[(int)(tchar)]);
+					txtfile = (boolean)(type_of(tv->U.V18.tof) == typnods.A[(int)(tchar)]);
 					tv = tq;
 					tq = tq->tnext;
 				} else {
@@ -5420,14 +5421,14 @@ epredef(ts, tp)
 		txtfile = false;
 		tq = tp->U.V30.taparm;
 		if (tq != (struct S61 *)NIL) {
-			tv = typeof(tq);
+			tv = type_of(tq);
 			if (tv == typnods.A[(int)(ttext)]) {
 				txtfile = true;
 				tv = tq;
 				tq = tq->tnext;
 			} else
 				if (tv->tt == nfileof) {
-					txtfile = (boolean)(typeof(tv->U.V18.tof) == typnods.A[(int)(tchar)]);
+					txtfile = (boolean)(type_of(tv->U.V18.tof) == typnods.A[(int)(tchar)]);
 					tv = tq;
 					tq = tq->tnext;
 				} else {
@@ -5508,16 +5509,16 @@ epredef(ts, tp)
 				(void)fprintf(output.fp, ", 1)"), Putl(output, 0);
 		} else {
 			increment();
-			tx = typeof(tv);
+			tx = type_of(tv);
 			if (tx == typnods.A[(int)(ttext)])
 				tx = typnods.A[(int)(tchar)];
 			else
 				if (tx->tt == nfileof)
-					tx = typeof(tx->U.V18.tof);
+					tx = type_of(tx->U.V18.tof);
 				else
 					fatal(etree);
 			while (tq != (struct S61 *)NIL) {
-				if ((Member((unsigned)(tq->tt), Conset[139])) && (tx == typeof(tq))) {
+				if ((Member((unsigned)(tq->tt), Conset[139])) && (tx == type_of(tq))) {
 					(void)fprintf(output.fp, "%sFwrite(", voidcast), Putl(output, 0);
 					eexpr(tq);
 				} else {
@@ -5527,7 +5528,7 @@ epredef(ts, tp)
 						eselect(tv);
 						(void)fprintf(output.fp, "buf.S, "), Putl(output, 0);
 						eexpr(tq);
-						if (typeof(tp->U.V27.trhs) == typnods.A[(int)(tset)])
+						if (type_of(tp->U.V27.trhs) == typnods.A[(int)(tset)])
 							eexpr(tq);
 						else {
 							eselect(tq);
@@ -5561,10 +5562,10 @@ epredef(ts, tp)
 		;
 		break ;
 	  case dclose:
-		tq = typeof(tp->U.V30.taparm);
+		tq = type_of(tp->U.V30.taparm);
 		txtfile = (boolean)(tq == typnods.A[(int)(ttext)]);
 		if ((!txtfile) && (tq->tt == nfileof))
-			if (typeof(tq->U.V18.tof) == typnods.A[(int)(tchar)])
+			if (type_of(tq->U.V18.tof) == typnods.A[(int)(tchar)])
 				txtfile = true;
 		if (txtfile)
 			(void)fprintf(output.fp, "Closex("), Putl(output, 0);
@@ -5574,10 +5575,10 @@ epredef(ts, tp)
 		(void)fprintf(output.fp, ");\n"), Putl(output, 1);
 		break ;
 	  case dreset:  case drewrite:
-		tq = typeof(tp->U.V30.taparm);
+		tq = type_of(tp->U.V30.taparm);
 		txtfile = (boolean)(tq == typnods.A[(int)(ttext)]);
 		if ((!txtfile) && (tq->tt == nfileof))
-			if (typeof(tq->U.V18.tof) == typnods.A[(int)(tchar)])
+			if (type_of(tq->U.V18.tof) == typnods.A[(int)(tchar)])
 				txtfile = true;
 		if (txtfile)
 			if (td == dreset)
@@ -5595,7 +5596,7 @@ epredef(ts, tp)
 		if (tq == (struct S61 *)NIL)
 			(void)fprintf(output.fp, "NULL"), Putl(output, 0);
 		else {
-			tq = typeof(tq);
+			tq = type_of(tq);
 			if (tq == typnods.A[(int)(tchar)]) {
 				Putchr(cite, output);
 				ch = cvalof(tp->U.V30.taparm->tnext);
@@ -5616,21 +5617,21 @@ epredef(ts, tp)
 		break ;
 	  case darctan:
 		(void)fprintf(output.fp, "atan("), Putl(output, 0);
-		if (typeof(tp->U.V30.taparm) != typnods.A[(int)(treal)])
+		if (type_of(tp->U.V30.taparm) != typnods.A[(int)(treal)])
 			(void)fprintf(output.fp, "%s", dblcast), Putl(output, 0);
 		eexpr(tp->U.V30.taparm);
 		Putchr(')', output);
 		break ;
 	  case dln:
 		(void)fprintf(output.fp, "log("), Putl(output, 0);
-		if (typeof(tp->U.V30.taparm) != typnods.A[(int)(treal)])
+		if (type_of(tp->U.V30.taparm) != typnods.A[(int)(treal)])
 			(void)fprintf(output.fp, "%s", dblcast), Putl(output, 0);
 		eexpr(tp->U.V30.taparm);
 		Putchr(')', output);
 		break ;
 	  case dexp:
 		(void)fprintf(output.fp, "exp("), Putl(output, 0);
-		if (typeof(tp->U.V30.taparm) != typnods.A[(int)(treal)])
+		if (type_of(tp->U.V30.taparm) != typnods.A[(int)(treal)])
 			(void)fprintf(output.fp, "%s", dblcast), Putl(output, 0);
 		eexpr(tp->U.V30.taparm);
 		Putchr(')', output);
@@ -5638,25 +5639,25 @@ epredef(ts, tp)
 	  case dcos:  case dsin:  case dsqrt:
 		eexpr(tp->U.V30.tcall);
 		Putchr('(', output);
-		if (typeof(tp->U.V30.taparm) != typnods.A[(int)(treal)])
+		if (type_of(tp->U.V30.taparm) != typnods.A[(int)(treal)])
 			(void)fprintf(output.fp, "%s", dblcast), Putl(output, 0);
 		eexpr(tp->U.V30.taparm);
 		Putchr(')', output);
 		break ;
 	  case dtan:
 		(void)fprintf(output.fp, "atan("), Putl(output, 0);
-		if (typeof(tp->U.V30.taparm) != typnods.A[(int)(treal)])
+		if (type_of(tp->U.V30.taparm) != typnods.A[(int)(treal)])
 			(void)fprintf(output.fp, "%s", dblcast), Putl(output, 0);
 		eexpr(tp->U.V30.taparm);
 		Putchr(')', output);
 		break ;
 	  case dsucc:  case dpred:
-		tq = typeof(tp->U.V30.taparm);
+		tq = type_of(tp->U.V30.taparm);
 		if (tq->tt == nsubrange)
 			if (tq->tup->tt == nconfarr)
-				tq = typeof(tq->tup->U.V22.tindtyp);
+				tq = type_of(tq->tup->U.V22.tindtyp);
 			else
-				tq = typeof(tq->U.V19.tlo);
+				tq = type_of(tq->U.V19.tlo);
 		if ((tq == typnods.A[(int)(tinteger)]) || (tq == typnods.A[(int)(tchar)])) {
 			(void)fprintf(output.fp, "(("), Putl(output, 0);
 			eexpr(tp->U.V30.taparm);
@@ -5688,7 +5689,7 @@ epredef(ts, tp)
 		(void)fprintf(output.fp, ") & 1)"), Putl(output, 0);
 		break ;
 	  case dsqr:
-		tq = typeof(tp->U.V30.taparm);
+		tq = type_of(tp->U.V30.taparm);
 		if ((tq == typnods.A[(int)(tinteger)]) || (tq->tt == nsubrange)) {
 			(void)fprintf(output.fp, "(("), Putl(output, 0);
 			eexpr(tp->U.V30.taparm);
@@ -5697,7 +5698,7 @@ epredef(ts, tp)
 			(void)fprintf(output.fp, "))"), Putl(output, 0);
 		} else {
 			(void)fprintf(output.fp, "pow("), Putl(output, 0);
-			if (typeof(tp->U.V30.taparm) != typnods.A[(int)(treal)])
+			if (type_of(tp->U.V30.taparm) != typnods.A[(int)(treal)])
 				(void)fprintf(output.fp, "%s", dblcast), Putl(output, 0);
 			eexpr(tp->U.V30.taparm);
 			(void)fprintf(output.fp, ", 2.0)"), Putl(output, 0);
@@ -5714,8 +5715,8 @@ epredef(ts, tp)
 		Putchr(')', output);
 		break ;
 	  case dpack:
-		tq = typeof(tp->U.V30.taparm);
-		tx = typeof(tp->U.V30.taparm->tnext->tnext);
+		tq = type_of(tp->U.V30.taparm);
+		tx = type_of(tp->U.V30.taparm->tnext->tnext);
 		(void)fprintf(output.fp, "{    %s%s%c_j, _i = ", registr, inttyp, tab1), Putl(output, 0);
 		if (!arithexpr(tp->U.V30.taparm->tnext))
 			(void)fprintf(output.fp, "(int)"), Putl(output, 0);
@@ -5742,8 +5743,8 @@ epredef(ts, tp)
 		Putchr('}', output),Putchr('\n', output);
 		break ;
 	  case dunpack:
-		tq = typeof(tp->U.V30.taparm);
-		tx = typeof(tp->U.V30.taparm->tnext);
+		tq = type_of(tp->U.V30.taparm);
+		tx = type_of(tp->U.V30.taparm->tnext);
 		(void)fprintf(output.fp, "{   %s%s%c_j, _i = ", registr, inttyp, tab1), Putl(output, 0);
 		if (!arithexpr(tp->U.V30.taparm->tnext->tnext))
 			(void)fprintf(output.fp, "(int)"), Putl(output, 0);
@@ -5824,7 +5825,7 @@ ecall(tp)
 			else
 				printid(tq->U.V43.tsym->U.V6.lid);
 		} else {
-			tx = typeof(tq);
+			tx = type_of(tq);
 			if (tx == typnods.A[(int)(tboolean)]) {
 				tx = tq;
 				while (tx->tt == nuplus)
@@ -5956,7 +5957,7 @@ eexpr(tp)
 
 	(*G200_donearr) = false;
 	if (Member((unsigned)(tp->tt), Conset[144])) {
-		tq = typeof(tp->U.V41.texpl);
+		tq = type_of(tp->U.V41.texpl);
 		if ((Member((unsigned)(tq->tt), Conset[145])) || (tq == typnods.A[(int)(tset)])) {
 			switch (tp->tt) {
 			  case nplus:
@@ -6001,7 +6002,7 @@ eexpr(tp)
 				(void)fprintf(output.fp, ".S"), Putl(output, 0);
 			(void)fprintf(output.fp, ", "), Putl(output, 0);
 			eexpr(tp->U.V41.texpr);
-			tq = typeof(tp->U.V41.texpr);
+			tq = type_of(tp->U.V41.texpr);
 			if (tq->tt == nsetof)
 				(void)fprintf(output.fp, ".S"), Putl(output, 0);
 			Putchr(')', output);
@@ -6009,7 +6010,7 @@ eexpr(tp)
 		}
 	}
 	if (Member((unsigned)(tp->tt), Conset[147])) {
-		tq = typeof(tp->U.V41.texpl);
+		tq = type_of(tp->U.V41.texpl);
 		if (tq->tt == nconfarr)
 			fatal(ecmpconf);
 		if ((Member((unsigned)(tq->tt), Conset[148])) || (tq == typnods.A[(int)(tstring)])) {
@@ -6018,7 +6019,7 @@ eexpr(tp)
 			if (tq->tt == narray)
 				(void)fprintf(output.fp, ".A"), Putl(output, 0);
 			(void)fprintf(output.fp, ", "), Putl(output, 0);
-			tq = typeof(tp->U.V41.texpr);
+			tq = type_of(tp->U.V41.texpr);
 			if (tq->tt == nconfarr)
 				fatal(ecmpconf);
 			eexpr(tp->U.V41.texpr);
@@ -6155,13 +6156,13 @@ eexpr(tp)
 		(*G198_dropset) = true;
 		eexpr(tp->U.V41.texpr);
 		(*G198_dropset) = false;
-		tq = typeof(tp->U.V41.texpr);
+		tq = type_of(tp->U.V41.texpr);
 		if (tq->tt == nsetof)
 			(void)fprintf(output.fp, ".S"), Putl(output, 0);
 		Putchr(')', output);
 		break ;
 	  case nassign:
-		tq = typeof(tp->U.V27.trhs);
+		tq = type_of(tp->U.V27.trhs);
 		if (tq == typnods.A[(int)(tstring)]) {
 			(void)fprintf(output.fp, "%sstrncpy(", voidcast), Putl(output, 0);
 			eexpr(tp->U.V27.tlhs);
@@ -6189,17 +6190,17 @@ eexpr(tp)
 				if (tq == typnods.A[(int)(tnil)]) {
 					eexpr(tp->U.V27.tlhs);
 					(void)fprintf(output.fp, " = ("), Putl(output, 0);
-					etypedef(typeof(tp->U.V27.tlhs));
+					etypedef(type_of(tp->U.V27.tlhs));
 					(void)fprintf(output.fp, ")NIL"), Putl(output, 0);
 				} else {
-					tq = typeof(tp->U.V27.tlhs);
+					tq = type_of(tp->U.V27.tlhs);
 					if (tq->tt == nsetof) {
 						usescpy = true;
 						(void)fprintf(output.fp, "Setncpy("), Putl(output, 0);
 						eselect(tp->U.V27.tlhs);
 						(void)fprintf(output.fp, "S, "), Putl(output, 0);
 						(*G198_dropset) = true;
-						tq = typeof(tp->U.V27.trhs);
+						tq = type_of(tp->U.V27.trhs);
 						if (tq == typnods.A[(int)(tset)])
 							eexpr(tp->U.V27.trhs);
 						else {
@@ -6242,11 +6243,11 @@ eexpr(tp)
 			eexpr(tq);
 			Putchr(')', output);
 		}
-		tq = typeof(tp->U.V39.tvariable);
+		tq = type_of(tp->U.V39.tvariable);
 		if (tq->tt == narray)
 			if (clower(tq->U.V23.taindx) != 0) {
 				(void)fprintf(output.fp, " - "), Putl(output, 0);
-				tq = typeof(tq->U.V23.taindx);
+				tq = type_of(tq->U.V23.taindx);
 				if (tq->tt == nsubrange)
 					if (arithexpr(tq->U.V19.tlo))
 						eexpr(tq->U.V19.tlo);
@@ -6261,7 +6262,7 @@ eexpr(tp)
 		Putchr(']', output);
 		break ;
 	  case nderef:
-		tq = typeof(tp->U.V42.texps);
+		tq = type_of(tp->U.V42.texps);
 		if ((tq->tt == nfileof) || ((tq->tt == npredef) && (tq->U.V12.tdef == dtext))) {
 			eexpr(tp->U.V42.texps);
 			(void)fprintf(output.fp, ".buf"), Putl(output, 0);
@@ -6375,10 +6376,10 @@ eexpr(tp)
 			tq = tq->tup;
 		} while (!(Member((unsigned)(tq->tt), Conset[154])));
 		if (Member((unsigned)(tq->tt), Conset[155])) {
-			if (typeof(tq->U.V41.texpl) == typnods.A[(int)(tnil)])
-				tq = typeof(tq->U.V41.texpr);
+			if (type_of(tq->U.V41.texpl) == typnods.A[(int)(tnil)])
+				tq = type_of(tq->U.V41.texpr);
 			else
-				tq = typeof(tq->U.V41.texpl);
+				tq = type_of(tq->U.V41.texpl);
 			if (tq->tt == nptr) {
 				Putchr('(', output);
 				etypedef(tq);
@@ -6493,7 +6494,7 @@ etdef(uid, tp)
 		printid(tp->U.V43.tsym->U.V6.lid);
 		break ;
 	  case nptr:
-		tq = typeof(tp->U.V16.tptrid);
+		tq = type_of(tp->U.V16.tptrid);
 		if (tq->tt == nrecord) {
 			(void)fprintf(output.fp, "struct "), Putl(output, 0);
 			printid(tq->U.V21.tuid);
@@ -6527,7 +6528,7 @@ etdef(uid, tp)
 		(void)fprintf(output.fp, " } "), Putl(output, 0);
 		break ;
 	  case nsubrange:
-		tq = typeof(tp->U.V19.tlo);
+		tq = type_of(tp->U.V19.tlo);
 		if (tq == typnods.A[(int)(tinteger)])
 			etrange(tp);
 		else {
@@ -6619,7 +6620,7 @@ etdef(uid, tp)
 		(void)fprintf(output.fp, "struct { "), Putl(output, 0);
 		etdef((idptr)NIL, tp->U.V23.taelem);
 		(void)fprintf(output.fp, "%cA[", tab1), Putl(output, 0);
-		tq = typeof(tp->U.V23.taindx);
+		tq = type_of(tp->U.V23.taindx);
 		if (tq->tt == nsubrange) {
 			if (arithexpr(tq->U.V19.thi)) {
 				eexpr(tq->U.V19.thi);
@@ -6802,7 +6803,7 @@ ewithtype(tp)
 {
 	treeptr	tq;
 
-	tq = typeof(tp);
+	tq = type_of(tp);
 	(void)fprintf(output.fp, "struct "), Putl(output, 0);
 	printid(tq->U.V21.tuid);
 }
@@ -6970,7 +6971,7 @@ estmt(tp)
 				indent();
 				tq = idup(tp->U.V34.tforid);
 				etypedef(tq->U.V14.tbind);
-				tq = typeof(tq->U.V14.tbind);
+				tq = type_of(tq->U.V14.tbind);
 				Putchr(tab1, output);
 				printid(locid1);
 				(void)fprintf(output.fp, " = "), Putl(output, 0);
@@ -7007,7 +7008,7 @@ estmt(tp)
 			(void)fprintf(output.fp, "for ("), Putl(output, 0);
 			increment();
 			eexpr(tp->U.V34.tforid);
-			tq = typeof(tp->U.V34.tforid);
+			tq = type_of(tp->U.V34.tforid);
 			(void)fprintf(output.fp, " = "), Putl(output, 0);
 			eexpr(tp->U.V34.tfrom);
 			(void)fprintf(output.fp, "; "), Putl(output, 0);
@@ -7458,7 +7459,7 @@ eprogram(tp)
 			(void)fprintf(output.fp, "text%c", tab1), Putl(output, 0);
 			printid(defnams.A[(int)(dinput)]->U.V6.lid);
 			if (tp->U.V13.tsubid != (struct S61 *)NIL)
-				(void)fprintf(output.fp, " = { stdin, 0, 0 }"), Putl(output, 0);
+				(void)fprintf(output.fp, " = { NULL, 0, 0 }"), Putl(output, 0);
 			Putchr(';', output),Putchr('\n', output);
 		}
 		if (use(doutput)) {
@@ -7467,7 +7468,7 @@ eprogram(tp)
 			(void)fprintf(output.fp, "text%c", tab1), Putl(output, 0);
 			printid(defnams.A[(int)(doutput)]->U.V6.lid);
 			if (tp->U.V13.tsubid != (struct S61 *)NIL)
-				(void)fprintf(output.fp, " = { stdout, 0, 0 }"), Putl(output, 0);
+				(void)fprintf(output.fp, " = { NULL, 0, 0 }"), Putl(output, 0);
 			Putchr(';', output),Putchr('\n', output);
 		}
 	}
@@ -7685,6 +7686,8 @@ eprogram(tp)
 			(void)fprintf(output.fp, "main()\n"), Putl(output, 1);
 			Putchr('{', output),Putchr('\n', output);
 		}
+		(void)fprintf(output.fp, "%cinput.fp = stdin;\n", tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "%coutput.fp = stdout;\n", tab1), Putl(output, 1);
 		increment();
 		elabel(tp);
 		estmt(tp->U.V13.tsubstmt);
@@ -8900,6 +8903,8 @@ fatal(m)
 */
 main()
 {
+	input.fp = stdin;
+	output.fp = stdout;
 	if (setjmp(J[0].jb))
 	goto L9999;
 	initialize();

@@ -543,7 +543,7 @@ extern idptr mkvrnt();
 extern treeptr newid();
 extern treeptr oldid();
 extern idptr saveid();
-extern treeptr typeof();
+extern treeptr type_of();
 extern treeptr xtrenum();
 extern treeptr xtrit();
 extern void etypedef();

@@ -1645,7 +1645,7 @@ end;	(* nextsymbol *)
 
 (*	Return a pointer to the node describing the type of tp. This	*)
 (*	function also stores the result in the node for future ref.	*)
-function typeof(tp : treeptr) : treeptr;
+function type_of(tp : treeptr) : treeptr;
 
 var	tf, tq	: treeptr;
 
@@ -1704,9 +1704,9 @@ begin
 
 		  ncall:
 		    begin
-			tf := typeof(tq^.tcall);
+			tf := type_of(tq^.tcall);
 			if tf = typnods[tpoly] then
-				tf := typeof(tq^.taparm)
+				tf := type_of(tq^.taparm)
 		    end;
 
 		  nfunc:
@@ -1747,9 +1747,9 @@ begin
 		  nminus,
 		  nmul:
 		    begin
-			tf := typeof(tq^.texpl);
+			tf := type_of(tq^.texpl);
 			if tf = typnods[tinteger] then
-				tf := typeof(tq^.texpr)
+				tf := type_of(tq^.texpr)
 			else if tf^.tt = nsetof then
 				tf := typnods[tset]
 		    end;
@@ -1785,7 +1785,7 @@ begin
 
 		  nderef:
 		    begin
-			tq := typeof(tq^.texps);
+			tq := type_of(tq^.texps);
 			case tq^.tt of
 			  nptr:
 				tq := tq^.tptrid;
@@ -1798,7 +1798,7 @@ begin
 
 		  nindex:
 		    begin
-			tq := typeof(tq^.tvariable);
+			tq := type_of(tq^.tvariable);
 			if tq^.tt = nconfarr then
 				tq := tq^.tcelem
 			else if tq = typnods[tstring] then
@@ -1811,8 +1811,8 @@ begin
 	end;
 	if tp^.ttype = nil then
 		tp^.ttype := tf;	(* remember type for future reference *)
-	typeof := tf
-end;	(* typeof *)
+	type_of := tf
+end;	(* type_of *)
 
 (*	Connect all nodes to their fathers.				*)
 procedure linkup(up, tp : treeptr);
@@ -2446,7 +2446,7 @@ procedure parse;
 			    end
 		end;
 	begin
-		addfields(typeof(tp))
+		addfields(type_of(tp))
 	end;
 
 	(*	Check that the current label is new then save it in the	*)
@@ -3424,7 +3424,7 @@ procedure parse;
 				tp := mknode(nselect);
 				tp^.trecord := varptr;
 				nextsymbol([sid]);
-				tq := typeof(varptr);
+				tq := type_of(varptr);
 				enterscope(tq^.trscope);
 				tp^.tfield := oldid(currsym.vid, lfield);
 				leavescope
@@ -3903,7 +3903,7 @@ function clower(tp : treeptr) : integer;
 var	tq	: treeptr;
 
 begin
-	tq := typeof(tp);
+	tq := type_of(tp);
 	if tq^.tt = nscalar then
 		clower := scalbase
 	else if tq^.tt = nsubrange then
@@ -3926,7 +3926,7 @@ var	tq	: treeptr;
 	i	: integer;
 
 begin
-	tq := typeof(tp);
+	tq := type_of(tp);
 	if tq^.tt = nscalar then
 	    begin
 		tq := tq^.tscalid;
@@ -3975,7 +3975,7 @@ var	tq	: treeptr;
 	i	: integer;
 
 begin
-	tq := typeof(tp^.tof);
+	tq := type_of(tp^.tof);
 	i := clower(tq);
 	(* bits in sets are always numbered from 0, so we (arbitrarily)
 	   decide that the base must be in the first 6 words to avoid
@@ -4166,7 +4166,7 @@ procedure transform;
 			procedure nametype(tp : treeptr);
 
 			begin
-				tp := typeof(tp);
+				tp := type_of(tp);
 				if tp^.tt = nrecord then
 					if tp^.tuid = nil then
 						tp^.tuid := mkvariable('S');
@@ -4750,7 +4750,7 @@ procedure transform;
 			    end;
 			  nwithvar:
 			    begin
-				ip := typeof(tp^.texpw);
+				ip := type_of(tp^.texpw);
 				if ip^.tuid = nil then
 					ip^.tuid := mkvariable('S');
 				global(tp^.texpw, dp, depend);
@@ -4761,11 +4761,11 @@ procedure transform;
 			    begin
 				global(tp^.texpl, dp, depend);
 				global(tp^.texpr, dp, depend);
-				ip := typeof(tp^.texpl);
+				ip := type_of(tp^.texpl);
 				if (ip = typnods[tstring]) or
 							(ip^.tt = narray) then
 					usecomp := true;
-				ip := typeof(tp^.texpr);
+				ip := type_of(tp^.texpr);
 				if (ip = typnods[tstring]) or
 							(ip^.tt = narray) then
 					usecomp := true
@@ -4917,9 +4917,9 @@ procedure transform;
 			  nfileof:
 				fv := true;
 			  nconfarr:
-				fv := filevar(typeof(tp^.tcelem));
+				fv := filevar(type_of(tp^.tcelem));
 			  narray:
-				fv := filevar(typeof(tp^.taelem));
+				fv := filevar(type_of(tp^.taelem));
 			  nrecord:
 			    begin
 				fv := false;
@@ -4933,7 +4933,7 @@ procedure transform;
 				tq := tp^.tflist;
 				while tq <> nil do
 				    begin
-					if filevar(typeof(tq^.tbind)) then
+					if filevar(type_of(tq^.tbind)) then
 					    begin
 						fv := true;
 						tq := nil
@@ -4948,7 +4948,7 @@ procedure transform;
 				if not tp^.tptrflag then
 				    begin
 					tp^.tptrflag := true;
-					if filevar(typeof(tp^.tptrid)) then
+					if filevar(type_of(tp^.tptrid)) then
 						error(evarfile);
 					tp^.tptrflag := false
 				    end
@@ -4976,7 +4976,7 @@ procedure transform;
 				ty := mknode(nvar);
 				ty^.tattr := aregister;
 				ty^.tidl := tz;
-				ty^.tbind := typeof(tq^.taindx);
+				ty^.tbind := type_of(tq^.taindx);
 				tz := tq;
 				while not(tz^.tt in [nproc, nfunc, npgm]) do
 					tz := tz^.tup;
@@ -4997,7 +4997,7 @@ procedure transform;
 				tz := fileinit(tz, tq^.taelem, opn);
 				tx := mknode(nfor);
 				tx^.tforid := ty;
-				ty := typeof(tq^.taindx);
+				ty := type_of(tq^.taindx);
 				if ty^.tt = nsubrange then
 				    begin
 					tx^.tfrom := ty^.tlo;
@@ -5065,7 +5065,7 @@ procedure transform;
 				tq := tq^.tflist;
 				while tq <> nil do
 				    begin
-					if filevar(typeof(tq^.tbind)) then
+					if filevar(type_of(tq^.tbind)) then
 					    begin
 						tz := tq^.tidl;
 						while tz <> nil do
@@ -5074,7 +5074,7 @@ procedure transform;
 							tx^.trecord := ti;
 							tx^.tfield := tz;
 							tx := fileinit(tx,
-							    typeof(tq^.tbind),
+							    type_of(tq^.tbind),
 								opn);
 							tx^.tnext := ty;
 							ty := tx;
@@ -5097,7 +5097,7 @@ procedure transform;
 			tv := tp^.tsubvar;
 			while tv <> nil do
 			    begin
-				tq := typeof(tv^.tbind);
+				tq := type_of(tv^.tbind);
 				if filevar(tq) then
 				    begin
 					ti := tv^.tidl;
@@ -5190,12 +5190,12 @@ var	conflag,
 	function arithexpr(tp : treeptr) : boolean;
 
 	begin
-		tp := typeof(tp);
+		tp := type_of(tp);
 		if tp^.tt = nsubrange then
 			if tp^.tup^.tt = nconfarr then
-				tp := typeof(tp^.tup^.tindtyp)
+				tp := type_of(tp^.tup^.tindtyp)
 			else
-				tp := typeof(tp^.tlo);
+				tp := type_of(tp^.tlo);
 		arithexpr := (tp = typnods[tinteger]) or
 				(tp = typnods[tchar]) or
 					(tp = typnods[treal])
@@ -5248,9 +5248,9 @@ var	conflag,
 				    end;
 				tq := tp^.texpl
 			    end;
-			tq := typeof(tq);
+			tq := type_of(tq);
 			if tq^.tt = nsubrange then
-				tq := typeof(tq^.tlo);
+				tq := type_of(tq^.tlo);
 			if tq = typnods[tstring] then
 				typeletter := 's'
 			else if tq = typnods[tinteger] then
@@ -5670,8 +5670,8 @@ var	conflag,
 				(* tnext points to a tag-value, evaluate it *)
 				v := cvalof(tp^.tnext);
 				(* find union type *)
-				tq := typeof(tp);
-				tq := typeof(tq^.tptrid);
+				tq := type_of(tp);
+				tq := type_of(tq^.tptrid);
 				if tq^.tt <> nrecord then
 					fatal(etree);
 				(* find corresponding variant *)
@@ -5704,7 +5704,7 @@ var	conflag,
 		case td of
 		  dabs:
 		    begin
-			tq := typeof(tp^.taparm);
+			tq := type_of(tp^.taparm);
 			if (tq = typnods[tinteger]) or (tq^.tt = nsubrange) then
 				write('abs(')			(* LIB *)
 			else
@@ -5724,12 +5724,12 @@ var	conflag,
 		    end;
 		  dchr:
 		    begin
-			tq := typeof(tp^.taparm);
+			tq := type_of(tp^.taparm);
 			if tq^.tt = nsubrange then
 				if tq^.tup^.tt = nconfarr then
-					tq := typeof(tq^.tup^.tindtyp)
+					tq := type_of(tq^.tup^.tindtyp)
 				else
-					tq := typeof(tq^.tlo);
+					tq := type_of(tq^.tlo);
 			if (tq = typnods[tinteger]) or
 						(tq = typnods[tchar]) then
 				eexpr(tp^.taparm)
@@ -5806,7 +5806,7 @@ var	conflag,
 		  dput,
 		  dget:
 		    begin
-			if typeof(tp^.taparm) = typnods[ttext] then
+			if type_of(tp^.taparm) = typnods[ttext] then
 				if td = dget then
 					write('Getx')
 				else
@@ -5828,7 +5828,7 @@ var	conflag,
 		    begin
 			eexpr(tp^.taparm);
 			write(' = (');
-			etypedef(typeof(tp^.taparm));
+			etypedef(type_of(tp^.taparm));
 			write(')malloc((unsigned)(');	(* LIB *)
 			enewsize(tp^.taparm);
 			writeln('));')
@@ -5846,7 +5846,7 @@ var	conflag,
 			tq := tp^.taparm;
 			if tq <> nil then
 			    begin
-				tv := typeof(tq);
+				tv := type_of(tq);
 				if tv = typnods[ttext] then
 				    begin
 					(* reading from textfile *)
@@ -5857,7 +5857,7 @@ var	conflag,
 				else if tv^.tt = nfileof then
 				    begin
 					(* reading from other file *)
-					txtfile := typeof(tv^.tof) =
+					txtfile := type_of(tv^.tof) =
 							typnods[tchar];
 					tv := tq;
 					tq := tq^.tnext
@@ -6007,7 +6007,7 @@ var	conflag,
 			tq := tp^.taparm;
 			if tq <> nil then
 			    begin
-				tv := typeof(tq);
+				tv := type_of(tq);
 				if tv = typnods[ttext] then
 				    begin
 					(* writing to textfile *)
@@ -6018,7 +6018,7 @@ var	conflag,
 				else if tv^.tt = nfileof then
 				    begin
 					(* writing to other file *)
-					txtfile := typeof(tv^.tof) =
+					txtfile := type_of(tv^.tof) =
 							typnods[tchar];
 					tv := tq;
 					tq := tq^.tnext
@@ -6121,18 +6121,18 @@ var	conflag,
 			    end
 			else begin
 				increment;
-				tx := typeof(tv);
+				tx := type_of(tv);
 				if tx = typnods[ttext] then
 					tx := typnods[tchar]
 				else if tx^.tt = nfileof then
-					tx := typeof(tx^.tof)
+					tx := type_of(tx^.tof)
 				else
 					fatal(etree);
 				while tq <> nil do
 				    begin
 					if (tq^.tt in [nid, nindex, nselect,
 							nderef]) and
-						(tx = typeof(tq)) then
+						(tx = type_of(tq)) then
 					    begin
 						write(voidcast, 'Fwrite(');
 						eexpr(tq)
@@ -6145,7 +6145,7 @@ var	conflag,
 							eselect(tv);
 							write('buf.S, ');
 							eexpr(tq);
-							if typeof(tp^.trhs) =
+							if type_of(tp^.trhs) =
 							   typnods[tset] then
 								eexpr(tq)
 							else begin
@@ -6182,10 +6182,10 @@ var	conflag,
 		    end;
 		  dclose:
 		    begin
-			tq := typeof(tp^.taparm);
+			tq := type_of(tp^.taparm);
 			txtfile := tq = typnods[ttext];
 			if (not txtfile) and (tq^.tt = nfileof) then
-				if typeof(tq^.tof) = typnods[tchar] then
+				if type_of(tq^.tof) = typnods[tchar] then
 					txtfile := true;
 			if txtfile then
 				write('Closex(')
@@ -6197,10 +6197,10 @@ var	conflag,
 		  dreset,
 		  drewrite:
 		    begin
-			tq := typeof(tp^.taparm);
+			tq := type_of(tp^.taparm);
 			txtfile := tq = typnods[ttext];
 			if (not txtfile) and (tq^.tt = nfileof) then
-				if typeof(tq^.tof) = typnods[tchar] then
+				if type_of(tq^.tof) = typnods[tchar] then
 					txtfile := true;
 			if txtfile then
 				if td = dreset then
@@ -6218,7 +6218,7 @@ var	conflag,
 			if tq = nil then
 				write('NULL')
 			else begin
-				tq := typeof(tq);
+				tq := type_of(tq);
 				if tq = typnods[tchar] then
 				    begin
 					write(cite);
@@ -6242,7 +6242,7 @@ var	conflag,
 		  darctan:
 		    begin
 			write('atan(');	(* LIB *)
-			if typeof(tp^.taparm) <> typnods[treal] then
+			if type_of(tp^.taparm) <> typnods[treal] then
 				write(dblcast);
 			eexpr(tp^.taparm);
 			write(')')
@@ -6250,7 +6250,7 @@ var	conflag,
 		  dln:
 		    begin
 			write('log(');	(* LIB *)
-			if typeof(tp^.taparm) <> typnods[treal] then
+			if type_of(tp^.taparm) <> typnods[treal] then
 				write(dblcast);
 			eexpr(tp^.taparm);
 			write(')')
@@ -6258,7 +6258,7 @@ var	conflag,
 		  dexp:
 		    begin
 			write('exp(');	(* LIB *)
-			if typeof(tp^.taparm) <> typnods[treal] then
+			if type_of(tp^.taparm) <> typnods[treal] then
 				write(dblcast);
 			eexpr(tp^.taparm);
 			write(')')
@@ -6269,7 +6269,7 @@ var	conflag,
 		    begin
 			eexpr(tp^.tcall);	(* LIB *)
 			write('(');
-			if typeof(tp^.taparm) <> typnods[treal] then
+			if type_of(tp^.taparm) <> typnods[treal] then
 				write(dblcast);
 			eexpr(tp^.taparm);
 			write(')')
@@ -6277,7 +6277,7 @@ var	conflag,
 		  dtan:
 		    begin
 			write('atan(');		(* LIB *)
-			if typeof(tp^.taparm) <> typnods[treal] then
+			if type_of(tp^.taparm) <> typnods[treal] then
 				write(dblcast);
 			eexpr(tp^.taparm);
 			write(')')
@@ -6285,12 +6285,12 @@ var	conflag,
 		  dsucc,
 		  dpred:
 		    begin
-			tq := typeof(tp^.taparm);
+			tq := type_of(tp^.taparm);
 			if tq^.tt = nsubrange then
 				if tq^.tup^.tt = nconfarr then
-					tq := typeof(tq^.tup^.tindtyp)
+					tq := type_of(tq^.tup^.tindtyp)
 				else
-					tq := typeof(tq^.tlo);
+					tq := type_of(tq^.tlo);
 			if (tq = typnods[tinteger]) or
 						(tq = typnods[tchar]) then
 			    begin
@@ -6330,7 +6330,7 @@ var	conflag,
 		    end;
 		  dsqr:
 		    begin
-			tq := typeof(tp^.taparm);
+			tq := type_of(tp^.taparm);
 			if (tq = typnods[tinteger]) or (tq^.tt = nsubrange) then
 			    begin
 				write('((');
@@ -6341,7 +6341,7 @@ var	conflag,
 			    end
 			else begin
 				write('pow(');	(* LIB *)
-				if typeof(tp^.taparm) <> typnods[treal] then
+				if type_of(tp^.taparm) <> typnods[treal] then
 					write(dblcast);
 				eexpr(tp^.taparm);
 				write(', 2.0)')
@@ -6361,8 +6361,8 @@ var	conflag,
 		    end;
 		  dpack:
 		    begin
-			tq := typeof(tp^.taparm);
-			tx := typeof(tp^.taparm^.tnext^.tnext);
+			tq := type_of(tp^.taparm);
+			tx := type_of(tp^.taparm^.tnext^.tnext);
 			write('{    ', registr, inttyp, tab1, '_j, _i = ');
 			if not arithexpr(tp^.taparm^.tnext) then
 				write('(int)');
@@ -6392,8 +6392,8 @@ var	conflag,
 		    end;
 		  dunpack:
 		    begin
-			tq := typeof(tp^.taparm);
-			tx := typeof(tp^.taparm^.tnext);
+			tq := type_of(tp^.taparm);
+			tx := type_of(tp^.taparm^.tnext);
 			write('{   ', registr, inttyp, tab1, '_j, _i = ');
 			if not arithexpr(tp^.taparm^.tnext^.tnext) then
 				write('(int)');
@@ -6476,7 +6476,7 @@ var	conflag,
 					printid(tq^.tsym^.lid)
 			    end
 			else begin
-				tx := typeof(tq);
+				tx := type_of(tq);
 				if tx = typnods[tboolean] then
 				    begin
 					tx := tq;
@@ -6611,7 +6611,7 @@ var	conflag,
 		donearr := false;
 		if tp^.tt in [nplus, nminus, nmul, nle, nge, neq, nne] then
 		    begin
-			tq := typeof(tp^.texpl);
+			tq := type_of(tp^.texpl);
 			if (tq^.tt in [nset, nsetof]) or
 						(tq = typnods[tset]) then
 			    begin
@@ -6664,7 +6664,7 @@ var	conflag,
 					write('.S');
 				write(', ');
 				eexpr(tp^.texpr);
-				tq := typeof(tp^.texpr);
+				tq := type_of(tp^.texpr);
 				if tq^.tt = nsetof then
 					write('.S');
 				write(')');
@@ -6673,7 +6673,7 @@ var	conflag,
 		    end;
 		if tp^.tt in [neq, nne, ngt, nlt, nge, nle] then
 		    begin
-			tq := typeof(tp^.texpl);
+			tq := type_of(tp^.texpl);
 			if tq^.tt = nconfarr then
 				fatal(ecmpconf);
 			if (tq^.tt in [nstring, narray]) or
@@ -6684,7 +6684,7 @@ var	conflag,
 				if tq^.tt = narray then
 					write('.A');
 				write(', ');
-				tq := typeof(tp^.texpr);
+				tq := type_of(tp^.texpr);
 				if tq^.tt = nconfarr then
 					fatal(ecmpconf);
 				eexpr(tp^.texpr);
@@ -6802,7 +6802,7 @@ var	conflag,
 			dropset := true;	(* no need to save set-expr *)
 			eexpr(tp^.texpr);
 			dropset := false;
-			tq := typeof(tp^.texpr);
+			tq := type_of(tp^.texpr);
 			if tq^.tt = nsetof then
 				write('.S');
 			write(')')
@@ -6810,7 +6810,7 @@ var	conflag,
 
 		  nassign:
 		    begin
-			tq := typeof(tp^.trhs);
+			tq := type_of(tp^.trhs);
 			if tq = typnods[tstring] then
 			    begin
 				write(voidcast, 'strncpy(');
@@ -6843,11 +6843,11 @@ var	conflag,
 			    begin
 				eexpr(tp^.tlhs);
 				write(' = (');
-				etypedef(typeof(tp^.tlhs));
+				etypedef(type_of(tp^.tlhs));
 				write(')NIL')
 			    end
 			else begin
-				tq := typeof(tp^.tlhs);
+				tq := type_of(tp^.tlhs);
 				if tq^.tt = nsetof then
 				    begin
 					usescpy := true;
@@ -6855,7 +6855,7 @@ var	conflag,
 					eselect(tp^.tlhs);
 					write('S, ');
 					dropset := true;
-					tq := typeof(tp^.trhs);
+					tq := type_of(tp^.trhs);
 					if tq = typnods[tset] then
 						eexpr(tp^.trhs)
 					else begin
@@ -6905,12 +6905,12 @@ var	conflag,
 				eexpr(tq);
 				write(')')
 			     end;
-			tq := typeof(tp^.tvariable);
+			tq := type_of(tp^.tvariable);
 			if tq^.tt = narray then
 				if clower(tq^.taindx) <> 0 then
 				    begin
 					write(' - ');
-					tq := typeof(tq^.taindx);
+					tq := type_of(tq^.taindx);
 					if tq^.tt = nsubrange then
 						if arithexpr(tq^.tlo) then
 							eexpr(tq^.tlo)
@@ -6926,7 +6926,7 @@ var	conflag,
 		    end;
 		  nderef:
 		    begin
-			tq := typeof(tp^.texps);
+			tq := type_of(tp^.texps);
 			if (tq^.tt = nfileof) or
 			     ((tq^.tt = npredef) and (tq^.tdef = dtext)) then
 			    begin
@@ -7059,10 +7059,10 @@ var	conflag,
 			until	tq^.tt in [neq, nne, ncall, nassign, npgm];
 			if tq^.tt in [neq, nne] then
 			    begin
-				if typeof(tq^.texpl) = typnods[tnil] then
-					tq := typeof(tq^.texpr)
+				if type_of(tq^.texpl) = typnods[tnil] then
+					tq := type_of(tq^.texpr)
 				else
-					tq := typeof(tq^.texpl);
+					tq := type_of(tq^.texpl);
 				if tq^.tt = nptr then
 				    begin
 					write('(');
@@ -7180,7 +7180,7 @@ var	conflag,
 				printid(tp^.tsym^.lid);
 			  nptr:
 			    begin
-				tq := typeof(tp^.tptrid);
+				tq := type_of(tp^.tptrid);
 				if tq^.tt = nrecord then
 				    begin
 					write('struct ');
@@ -7226,7 +7226,7 @@ var	conflag,
 			    end;
 			  nsubrange:
 			    begin
-				tq := typeof(tp^.tlo);
+				tq := type_of(tp^.tlo);
 				if tq = typnods[tinteger] then
 					etrange(tp)
 				else begin
@@ -7339,7 +7339,7 @@ var	conflag,
 				write('struct { ');
 				etdef(nil, tp^.taelem);
 				write(tab1, 'A[');
-				tq := typeof(tp^.taindx);
+				tq := type_of(tp^.taindx);
 				if tq^.tt = nsubrange then
 				    begin
 					if arithexpr(tq^.thi) then
@@ -7537,7 +7537,7 @@ var	conflag,
 		var	tq	: treeptr;
 
 		begin
-			tq := typeof(tp);
+			tq := type_of(tp);
 			write('struct ');
 			printid(tq^.tuid)
 		end;
@@ -7707,7 +7707,7 @@ var	conflag,
 					indent;
 					tq := idup(tp^.tforid);
 					etypedef(tq^.tbind);
-					tq := typeof(tq^.tbind);
+					tq := type_of(tq^.tbind);
 					write(tab1);
 					printid(locid1);
 					write(' = ');
@@ -7748,7 +7748,7 @@ var	conflag,
 				write('for (');
 				increment;
 				eexpr(tp^.tforid);
-				tq := typeof(tp^.tforid);
+				tq := type_of(tp^.tforid);
 				write(' = ');
 				eexpr(tp^.tfrom);
 				write('; ');
@@ -8279,7 +8279,7 @@ var	conflag,
 				write('text', tab1);
 				printid(defnams[dinput]^.lid);
 				if tp^.tsubid <> nil then
-					write(' = { stdin, 0, 0 }');
+					write(' = { NULL, 0, 0 }');
 				writeln(';')
 			    end;
 			if use(doutput) then
@@ -8289,7 +8289,7 @@ var	conflag,
 				write('text', tab1);
 				printid(defnams[doutput]^.lid);
 				if tp^.tsubid <> nil then
-					write(' = { stdout, 0, 0 }');
+					write(' = { NULL, 0, 0 }');
 				writeln(';')
 			    end
 		    end;
@@ -8582,6 +8582,8 @@ var	conflag,
 				writeln('main()');
 				writeln('{')
 			     end;
+			writeln(tab1, 'input.fp = stdin;');
+			writeln(tab1, 'output.fp = stdout;');
 			increment;
 			elabel(tp);
 			estmt(tp^.tsubstmt);

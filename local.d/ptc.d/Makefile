@@ -4,7 +4,7 @@
 MODEL	= -M2l
 OPTIONS	= -O
 ALL	= test
-include /etc/CONFIG
+include $(HOME)/CONFIG
 FILES	= makefile ptc.p ptc.c ptc doc.ms doc.out ptc.man man.out
 #
 #	Build the bootstrap translator
@@ -19,12 +19,12 @@ cptc.c:	ptc.p boot
 	mv tmp.c cptc.c
 
 ptc:	cptc.o
-	cc -O -o $@ cptc.o
+	$(CC) -O -o $@ cptc.o
 #
 #	Compare reults from Pascal and C versions
 #
 test.c:	cptc.c ptc
-	ptc < ptc.p > tmp.c
+	./ptc < ptc.p > tmp.c
 	mv tmp.c test.c
 
 test:	cptc.c test.c
