@@ -49,7 +49,7 @@ srand (seed)
 int seed;
 { register int i;
 
-  if (seed == 0) seed = time();
+  if (seed == 0) seed = time((long *)0);
 
   /* Set the three random number seeds */
   seed1 = (seed1+seed) % MOD1;
