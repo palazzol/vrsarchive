@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/globals.c,v 1.3 1987-12-25 20:50:55 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/globals.c,v 1.4 1987-12-25 21:43:56 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/globals.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/globals.c,v 1.3 1987-12-25 20:50:55 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/globals.c,v 1.4 1987-12-25 21:43:56 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.3  87/12/25  20:50:55  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.1  87/10/09  11:07:25  11:07:25  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -271,7 +274,7 @@ double	e_bpv;			/* BPV of enemy */
 char Input[BUFSIZ];		/* Input from user */
 char *Inptr;			/* Pointer into Input */
 char parsed[BUFSIZ];		/* Returned command from yylex */
-#endif PARSER
+#endif /*PARSER*/
 
 struct ship_stat	us;	/* Our ship definition */
 struct ship_stat	them;	/* Their ship definition */

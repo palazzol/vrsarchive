@@ -1,10 +1,13 @@
-#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.4 1987-12-25 20:50:57 vrs Exp $"
+#ident "@(#) TREK73 $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.5 1987-12-25 21:43:59 vrs Exp $"
 /*
  * $Source: /home/Vince/cvs/games.d/trek73.d/main.c,v $
  *
- * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.4 1987-12-25 20:50:57 vrs Exp $
+ * $Header: /home/Vince/cvs/games.d/trek73.d/main.c,v 1.5 1987-12-25 21:43:59 vrs Exp $
  *
  * $Log: not supported by cvs2svn $
+ * Version 1.4  87/12/25  20:50:57  vrs
+ * Check in 4.0 version from the net
+ * 
  * Revision 1.1  87/10/09  11:08:01  11:08:01  okamoto (Jeff Okamoto)
  * Initial revision
  * 
@@ -92,7 +95,7 @@ playit()
 	register struct ship	*sp;
 #ifndef PARSER
 	char			buf1[30];
-#endif PARSER
+#endif /*PARSER*/
 	struct cmd		*cp;
 	int			loop;
 	char			*ch;
@@ -113,7 +116,7 @@ next:
 #else
 		(void) Gets(buf1, sizeof(buf1));
 		if (buf1[0] != NULL) {
-#endif PARSER
+#endif /*PARSER*/
 			(void) alarm(0);
 #ifdef PARSER
 			Inptr = Input;
@@ -125,12 +128,12 @@ next:
 				yyparse();
 			else
 				strcpy(parsed, Input);
-#endif PARSER
+#endif /*PARSER*/
 #ifdef PARSER
 			cp = scancmd(parsed);
 #else
 			cp = scancmd(buf1);
-#endif PARSER
+#endif /*PARSER*/
 			if (cp != NULL) {
 				(*cp->routine)(sp);
 				if (cp->turns == FREE)
