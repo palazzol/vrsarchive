@@ -1,0 +1,18 @@
+This article consists of some fixes to problems mailed to me
+since trek73 has been posted.  The source files included here
+should replace their original couterparts.
+
+Bugs fixed include:
+	parsit.c - a fix that I had long ago thought corrected
+		is in the loop that frees up the array.  SYSV
+		and BSD handle this loop differently.  This fix
+		should clear up segmentation violations that
+		occur upon typing the second command.
+	save.c - Some of the BSD-specific things have ben fixed.
+		It may not work the same, and for that I apologize.
+		I culled the save routines from rogue.
+	Makefile - Fixed and added stuff so parsit should compile
+		correctly.
+
+The New Number Who,	okamoto@ucbvax.berkeley.edu
+Jeff Okamoto		..!ucbvax!okamoto
