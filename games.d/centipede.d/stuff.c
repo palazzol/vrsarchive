@@ -68,11 +68,11 @@ displaymen()
 }
 
 char *addcommas(num)
-int num;
+long num;
 {
     static char str[14];
     register char *spot = str;
-    register int p10;
+    register long p10;
 
     for (p10 = 1000; num / p10 > 0; p10 *= 1000);
     p10 /= 1000;
