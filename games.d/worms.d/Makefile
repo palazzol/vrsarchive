@@ -5,7 +5,7 @@ ALL	= worms
 OPTIONS	= -O
 MODEL	= -i -F 2000
 LFLAGS	= -h
-include ../../CONFIG
+include /etc/CONFIG
 
 
 lint: ${CFILES} 
