@@ -1,0 +1,138 @@
+.TH CAR 1 12/09/82
+.SH NAME
+car \- auto maintenance reminder service
+.SH SYNOPSIS
+.B car
+[
+.B \-
+] [
+.B \-m
+] [
+.BR \-f [ m ]
+] [
+.B %
+]
+.SH DESCRIPTION
+With no arguments,
+.I car 
+accepts current mileages and newly performed services
+from the standard input 
+and records them on the file `car.log' in the current directory.
+With the argument \-,
+it consults the files `car.log' and `.carrc' in the current directory,
+and prints messages to tell you
+what services need to be performed.
+With the argument
+.BR \-m ,
+it mails messages to all users.
+Normally this is done daily in the wee hours under control of
+.IR cron (8).
+The argument % is equivalent to
+.BR \-m .
+The
+.B \-f
+option prints your average fuel consumption;
+in the form
+.B \-fm
+it uses metric units.
+.PP
+The file `.carrc' contains two kinds of entries.
+.I Definitions
+have the form
+.sp 1
+.RS
+B=charge battery
+.sp 1
+.RE
+i.e., a capital letter followed immediately by an equals sign
+and an arbitrary string.
+.I Car
+pre-defines the following services:
+.RS 1.0i
+.sp 1
+A	change air filter
+.br
+F	change oil filter
+.br
+K	check oil
+.br
+O	change oil
+.br
+.RE
+.PP
+.I Rules
+are lines that look like this:
+.RS
+.sp 1
+F 20000 180d 2O
+.sp 1
+.RE
+The first letter represents a service;
+the remaining entries
+tell how often the service is to be performed.
+The above entry means every 20,000 miles,
+180 days, or 2 oil changes, whichever comes first.
+An integer value may be followed by
+.B d
+for days,
+.B w
+for weeks,
+.B m
+for months,
+.B y
+for years,
+any capital letter for the corresponding service,
+.B k
+for kilometers,
+or nothing at all for miles.
+If service A depends on service B,
+.I car
+will report it when service B is due,
+instead of waiting till service B is performed.
+.PP
+.I Car
+normally requests a new mileage figure weekly.
+This can be changed by including a rule
+beginning with a question mark; e.g.,
+.RS
+.sp 1
+? 2w
+.RE
+.PP
+Entries to
+.I car
+without arguments
+may be integer or real mileages (optionally followed by
+.B k
+for kilometers)
+or capital letters (for services performed).
+You may also report fuel consumption
+as an integer or real followed by
+.B g
+for gallons or
+.B l for liters.
+.I Car
+will prompt you and acknowledge your entries as it reads them.
+.PP
+The file `car.log' is maintained in intellegible form
+so you can edit out errors.
+.SH FILES
+\&.carrc
+.br
+car.log
+.br
+/etc/passwd
+.br
+/usr/tmp/car*
+.br
+mail subprocess
+.SH "SEE ALSO"
+at(1), calendar(1), cron(8), mail(1)
+.SH BUGS
+Your chart and log must be public information for you
+to get reminder service.
+.br
+If your odometer passes zero, you must remember to report
+the extra hundred thousand miles (or kilometers).
+.SH AUTHOR
+Col. G. L. Sicherman

@@ -1,0 +1,80 @@
+.TH CTC 1 "14 April 1984"
+.UC 4
+.SH NAME
+ctc - display and diff termcap entries
+.SH SYNOPSIS
+.B ctc
+[
+.B -d
+] tcname [ file1 ] [ file2 ]
+.br
+.SH DESCRIPTION
+.I ctc
+is a program which displays, interprets, and diffs termcap entries. The
+.B tcname
+argument determines the termcap entry that is to be displayed or compared,
+while the number of
+.B filename
+arguments determine the function. If two file argumants are given, then the
+appropriate termcap entries in each file are extracted and then displayed
+side by side, one cap per line. If eaither argument is a plus sign, then
+the contents of the TERMCAP environmental variable is used in the file's
+place. If one file argument is given, then the termcap entry in that file
+is displayed with a canned explanation of the cap shown on the right.
+Finally, if no arguments are given, then the argument "+" is assumed.
+In this letter case the
+.I tcname
+may also be defaulted.
+.PP
+The
+.I \-d
+option specifies that on the diff listing only lines in which the two
+entries differ are to be displayed.
+.PP
+The format of the output has the capabilities sorted and printed one per
+line, with continuations as required. An example display function would
+look like:
+
+.nf
+Termcap entry for vwpt3a+ terminal:
+a+|vwpt3a+
+236  bytes in 30   strings          0    bytes in 0    strings
+----------------------------------- -----------------------------------
+am                                  automatic margins
+bc=^H                               backspace
+bl=^G                               bell
+bs                                  ^h does backspace
+cd=\EY                              clear to end of display
+ce=\ET                              clear to end of line
+cl=^Z                               clear screen
+cm=\E=%+\040%+\040                  cursor motion
+.fi
+
+A example of a diff listing follows:
+
+.nf
+Termcap entry for vt100 terminal:
+dj|vt100|vt100 with status line on  dj|vt100|vt100 with status line on 
+     line 24                             line 24
+909  bytes in 82   strings          909  bytes in 82   strings
+----------------------------------- -----------------------------------
+fs=1\E8                             fs=1\E8
+ho=1\E[H                            ho=1\E[H
+hs                                  hs
+if=/usr/lib/tabset/vt100            if=/usr/lib/tabset/vt100
+is=\E>\E[?1;3;4l\E[?7;8h\E[;23r\E(B is=\E>\E[?1;3;4l\E[?7;8h\E[;23r\E(B
+     \E)0^O                              \E)0^O
+is=\E>\E[?1;3;4l\E[?7;8h\E[r\E(B\E) is=\E>\E[?1;3;4l\E[?7;8h\E[r\E(B\E)
+     0^O                                 0^O
+k1=\EOP                             k1=\EOP
+k2=\EOQ                             k2=\EOQ
+ve=\E[?7h                           ve=\E[?7h
+vs=\E[?7l                           vs=\E[?7l
+vt#3                                vt#3
+ws#80                               ws#80
+xv                                  xv
+.fi
+.SH ENVIRONMENTAL VARIABLES
+TERMCAP is used for the default termcap entry.
+.SH AUTHOR
+Lyle McElhaney
