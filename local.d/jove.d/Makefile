@@ -20,7 +20,7 @@
 TMPDIR = /tmp
 ALL	= xjove recover teachjove portsrv
 MODEL	= -M2m -F 2000
-OPTIONS	= # -DiAPX286
+OPTIONS	=
 include /usr/vrs/ws/CONFIG
 MANDIR	= $(MAN1)
 MANEXT = 1
@@ -80,8 +80,6 @@ BACKUPS = $(HEADERS) $(JOVESRC) iproc-pipes.c iproc-ptys.c \
 	Makefile Ovmakefile keymaps.txt README $(DOCS)
 
 
-#all:	xjove recover teachjove portsrv
-
 xjove:	$(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
 	@-size xjove
@@ -121,50 +119,60 @@ install: $(DESTDIR)$(LIBDIR) $(TEACH-JOVE) $(CMDS.DOC) $(JOVERC) \
 	 $(PORTSRV) $(RECOVER) $(JOVE) $(TEACHJOVE) $(JOVEM) \
 	 $(RECOVERM) $(TEACHJOVEM)
 
-$(DESTDIR)$(LIBDIR):
-	-mkdir $(DESTDIR)$(LIBDIR)
-
 $(TEACH-JOVE): doc/teach-jove
-	install -c -m 644 doc/teach-jove $(TEACH-JOVE)
+	cp doc/teach-jove $(TEACH-JOVE)
+	chmod 644 $(TEACH-JOVE)
 
 doc/cmds.doc:	doc/cmds.doc.nr doc/jove.4 doc/jove.5
 	nroff doc/cmds.doc.nr doc/jove.4 doc/jove.5 > doc/cmds.doc
 
 $(CMDS.DOC): doc/cmds.doc
-	install -c -m 644 doc/cmds.doc $(CMDS.DOC)
+	cp doc/cmds.doc $(CMDS.DOC)
+	chmod 644 $(CMDS.DOC)
 
 $(JOVERC): doc/system.rc
-	install -c -m 644 doc/system.rc $(JOVERC)
+	cp doc/system.rc $(JOVERC)
+	chmod 644 $(JOVERC)
 
 $(PORTSRV): portsrv
-	install -c -s -m 755 portsrv $(PORTSRV)
+	cp portsrv $(PORTSRV)
+	chmod 755 $(PORTSRV)
 
 $(RECOVER): recover
-	install -c -s -m 755 recover $(RECOVER)
+	cp recover $(RECOVER)
+	chmod 755 $(RECOVER)
 
 $(JOVE): xjove
-	install -c -m 755 xjove $(JOVE)
+	cp xjove $(JOVE)
+	chmod 755 $(JOVE)
 
 $(TEACHJOVE): teachjove
-	install -c -s -m 755 teachjove $(TEACHJOVE)
+	cp teachjove $(TEACHJOVE)
+	chmod 755 $(TEACHJOVE)
 
 $(JOVEM): doc/jove.nr
 	@sed -e 's;TMPDIR;$(TMPDIR);' \
 	     -e 's;LIBDIR;$(LIBDIR);' \
 	     -e 's;SHELL;$(SHELL);' doc/jove.nr > /tmp/jove.nr
-	install -m 644 /tmp/jove.nr $(JOVEM)
+	cp /tmp/jove.nr $(JOVEM)
+	chmod 644 $(JOVEM)
+	rm -f /tmp/jove.nr
 
 $(RECOVERM): doc/recover.nr
 	@sed -e 's;TMPDIR;$(TMPDIR);' \
 	     -e 's;LIBDIR;$(LIBDIR);' \
 	     -e 's;SHELL;$(SHELL);' doc/recover.nr > /tmp/recover.nr
-	install -m 644 /tmp/recover.nr $(RECOVERM)
+	cp /tmp/recover.nr $(RECOVERM)
+	chmod 644 $(RECOVERM)
+	rm -f /tmp/recover.nr
 
 $(TEACHJOVEM): doc/teachjove.nr
 	@sed -e 's;TMPDIR;$(TMPDIR);' \
 	     -e 's;LIBDIR;$(LIBDIR);' \
 	     -e 's;SHELL;$(SHELL);' doc/teachjove.nr > /tmp/teachjove.nr
-	install -m 644 /tmp/teachjove.nr $(TEACHJOVEM)
+	cp /tmp/teachjove.nr $(TEACHJOVEM)
+	chmod 644 $(TEACHJOVEM)
+	rm -f /tmp/teachjove.nr
 
 echo:
 	@echo $(C-FILES) $(HEADERS)
