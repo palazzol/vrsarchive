@@ -1,22 +1,14 @@
-#include <stdio.h>
-#include <signal.h>
+/*
+ *	The main loop.
+*/
 #define GLOBAL
 #include "globals.h"
 
 extern void done();
 
-main(argc, argv)
-char **argv;
+main()
 {
-	keybd_init();		/* Init the keyboard fd		*/
-	pty_init();		/* Init the ptys for each vdisp	*/
-	signal(SIGHUP, done);
-	signal(SIGTERM, done);
-	/*
-	 * Main loop
-	 */
-	while (1) {
-		kchar();	/* Is there any input waiting?	*/
+	pipe_init();		/* Init the ptys for each vdisp	*/
+	while (1)
 		pchar();	/* Is there any output waiting?	*/
-	}
 }
