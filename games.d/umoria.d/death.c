@@ -65,7 +65,7 @@ char *day;
 char *fill_str(p1)
 char *p1;
 {
-  vtype s1, s2;
+  static vtype s1, s2;
   unsigned i;
 
   s1[0] = '\0';
