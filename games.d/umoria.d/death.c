@@ -44,6 +44,7 @@ void exit();
 #ifdef USG
 struct passwd *getpwuid();
 #endif
+extern char *ctime();
 
 char *getlogin();
 long time();
