@@ -104,6 +104,9 @@ int mode;
 			switch (version) {
 				case '0':
 				case '1':
+#ifndef FLP_80_9_2
+				case '2':
+#endif
 #ifndef FLP_80_15_2
 					fprintf(stderr, "80 track, 15 sector, double sided: not supported\n");
 					code = 1;
@@ -120,11 +123,8 @@ int mode;
 					}
 #endif /*FLP_80_15_2*/
 					break;
+#ifdef FLP_80_9_2
 				case '2':
-#ifndef FLP_80_9_2
-					fprintf(stderr, "3.5 inch 80 track, 9 sector, double sided: not supported\n");
-					code = 1;
-#else /*FLP_80_9_2*/
 					dir_start = 7;
 					dir_len = 7;
 					clus_size = 2;
@@ -135,8 +135,8 @@ int mode;
 						perror("init: open");
 						return(1);
 					}
-#endif /*FLP_80_9_2*/
 					break;
+#endif /*FLP_80_9_2*/
 				default:
 					fprintf(stderr, "Unknown DOS version '%02x'\n", version);
 					code = 1;
