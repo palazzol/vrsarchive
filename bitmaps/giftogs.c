@@ -296,4 +296,5 @@ char *argv[];
                             break;
             }
         } while (!quit);
+		return(0);
 }
