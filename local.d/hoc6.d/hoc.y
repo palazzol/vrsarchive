@@ -198,13 +198,13 @@ yylex()                  /*hoc6 */
 backslash(c)	/* get next char with \'s interpreted */
 	int c;
 {
-        char *index();  /* `strchr()' in some systems */
+        char *strchr();  /* `strchr()' in some systems */
 	static char transtab[] = "b\bf\fn\nr\rt\t";
 	if (c != '\\')
 		return c;
         c = getc(fin);
-	if (islower(c) && index(transtab, c))
-		return index(transtab, c)[1];
+	if (islower(c) && strchr(transtab, c))
+		return strchr(transtab, c)[1];
         return c;
 }
 follow(expect, ifyes, ifno)     /* look ahead for >=, etc. */
