@@ -1,0 +1,3 @@
+Subject: pokerd hangs
+
+when it runs out of fd's?  Shared D created by accept, but accept fails
