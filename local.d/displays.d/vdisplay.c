@@ -10,11 +10,13 @@ extern void done();
 extern char *malloc();
 
 struct screen {
-	short vstate;			/* State of the virtual display	*/
+	WINDOW *display;		/* Current screen contents	*/
+	FILE *trace_fd;			/* File for debug info		*/
+	char *tstop;			/* Current tab stops		*/
 	short cm_col;			/* Col for incomplete cursor mv	*/
 	short cm_row;			/* Row for incomplete cursor mv	*/
-	WINDOW *display;		/* Current screen contents	*/
-	char *tstop;			/* Current tab stops		*/
+	char vstate;			/* State of the virtual display	*/
+	char xn_flag;			/* True if xn wrap in progress	*/
 } screen[MAXVDISP];
 
 #define V_NORM		0		/* Normal state			*/
@@ -22,6 +24,17 @@ struct screen {
 #define V_ANSII		2		/* ANSII escape sequence	*/
 #define V_CM		3		/* Expecting column		*/
 #define V_FLAG		4		/* Expecting flag value		*/
+
+char *tracefile[] = {
+	"win0",
+	"win1",
+	"win2",
+	"win3",
+	"win4",
+	"win5",
+	"win6",
+	"win7"
+};
 
 /*
  *	Loop over all virtual screens, allocating and initializing
@@ -47,6 +60,13 @@ vdisp_init()
 		}
 		for (i = 0; i < COLS; i++)
 			screen[curvdsp].tstop[i] = (i%8 == 0);
+		if (trace) {
+			screen[curvdsp].trace_fd=fopen(tracefile[curvdsp],"w");
+			if (screen[curvdsp].trace_fd == NULL) {
+				perror("vdisp_init trace fopen");
+				done(1);
+			}
+		}
 	}
 	curvdsp = 0;
 }
@@ -74,31 +94,68 @@ register char c;
 {
 	int y, x;
 	WINDOW *vd;
+#define wmove_xn(y, x)	(wmove(vd, y, x), screen[vdisp].xn_flag = 0)
 
 	c &= 0177;
+	if (trace)
+		fputc(c, screen[vdisp].trace_fd);
 	vd = screen[vdisp].display;
 	getyx(vd, y, x);
 	switch (screen[vdisp].vstate) {
 	case V_NORM:
 		switch(c) {
 		default:
-			if (isprint(c))
-				waddch(vd, c);
+			if (isprint(c)) {
+			    if (screen[vdisp].xn_flag) {
+				screen[vdisp].xn_flag = 0;
+				x = 0;
+				wmove_xn(y, x);
+				wputc(vdisp, '\n');
+			    }
+			    screen[vdisp].xn_flag = (x == COLS-1);
+			    waddch(vd, c);
+			    if (screen[vdisp].xn_flag)
+				wmove(vd, y, x);
+			}
+			break;
+		case '\r':
+			wmove_xn(y, 0);
 			break;
 		case '\n':
-			waddch(vd, c);
+			if (y < LINES-1) {
+			    wmove_xn(y+1, x);
+			    break;
+			}
+			/*
+			 *	This is ugly.  Curses will only scroll curscr
+			 *	by emitting a line feed.  Other windows are
+			 *	repainted even if they take the whole hardware
+			 *	display.  So, we scroll curscr instead of vd.
+			 *	Then we must scroll vd to match the state of
+			 *	the terminal.  This may confuse curses about
+			 *	the location of the hardware cursor, if curses
+			 *	decides to use the position from curscr instead
+			 *	of the one from vd.  So, force a cursor motion
+			 *	to home and back to resynch hardware and
+			 *	software.
+			*/
+			scroll(curscr);
+			scroll(vd);
+			wmove(vd, 0, 0);
+			wrefresh(vd);
+			wmove(vd, y, x);
 			break;
 		case '\b':
 			if (x)
-				wmove(vd, y, x-1);
+			    wmove_xn(y, x-1);
 			break;
 		case '\t':
 			while (++x < COLS)
-				if (screen[vdisp].tstop[x])
-					break;
-			if (x++ >= COLS)
-				x = COLS-1;
-			wmove(vd, y, x);
+			    if (screen[vdisp].tstop[x])
+				break;
+			if (x >= COLS)
+			    x = COLS-1;
+			wmove_xn(y, x);
 			break;
 		case '\07':
 			beep();		/* Beep even if not current	*/
@@ -192,10 +249,10 @@ register char c;
 			break;
 		    case 'J':
 			if (screen[vdisp].cm_col)
-			    werase(vd);
+			    wclear(vd);
 			else
 			    wclrtobot(vd);
-			wmove(vd, y, x);
+			wmove_xn(y, x);
 			break;
 		    case 'K':
 			wclrtoeol(vd);
@@ -221,7 +278,7 @@ register char c;
 			screen[vdisp].vstate = V_FLAG;
 			break;
 		}
-		wmove(vd, y, x);
+		wmove_xn(y, x);
 		break;
 	case V_CM:
 		/*
@@ -247,7 +304,7 @@ register char c;
 			    screen[vdisp].cm_row--;
 			if (screen[vdisp].cm_col)
 			    screen[vdisp].cm_col--;
-			wmove(vd, screen[vdisp].cm_row, screen[vdisp].cm_col);
+			wmove_xn(screen[vdisp].cm_row, screen[vdisp].cm_col);
 			break;
 		}
 		break;
@@ -276,4 +333,13 @@ register char c;
 		}
 	}
 	wrefresh(screen[curvdsp].display);
+}
+
+vdisp_wrapup()
+{	int i;
+
+	if (trace) {
+		for (i = 0; i < MAXVDISP; i++)
+			fclose(screen[i].trace_fd);
+	}
 }
