@@ -1,5 +1,5 @@
 #ifndef lint
-static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.1 1991-11-05 03:59:10 vrs Exp $";
+static char rcsid[] = "$Header: /home/Vince/cvs/local.d/sucko.d/nntp.c,v 1.2 1992-04-07 20:10:07 vrs Exp $";
 #endif
 /*
  *	This code was shamelessly stolen from XRN by vrs.
@@ -903,12 +903,12 @@ char *filename;
 		}
 	}
 	if (ap == NULL) {
-		fprintf("nntp_open: bogus newsgroup '%s'\n", filename);
+		fprintf(stderr, "nntp_open: bogus newsgroup '%s'\n", filename);
 		return(NULL);
 	}
 	*ap++ = '\0';
 	if (!getgroup(filename)) {
-		fprintf("nntp_open: bogus newsgroup '%s'\n", filename);
+		fprintf(stderr, "nntp_open: bogus newsgroup '%s'\n", filename);
 		return(NULL);
 	}
 	return(getarticle(atol(ap)));
