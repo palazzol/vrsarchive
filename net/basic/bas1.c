@@ -52,7 +52,7 @@ char    **argv;
 	catchsignal();
 	startfp();              /* start up the floating point hardware */
 	setupfiles(argc,argv);
-	setupterm();            /* set up files after processing files */
+	bsetupterm();            /* set up files after processing files */
 	ecore = fendcore+sizeof(xlinnumb);
 	( (lpoint) fendcore )->linnumb=0;
 	clear(DEFAULTSTRING);
@@ -270,7 +270,7 @@ register int    lsize;
 	mtest(ecore+lsize);             /* get the core for it */
 	ecore += lsize;
 	bmovu( (short *)p,lsize);       /* make space for the line */
-	strcpy(nline,p->lin);           /* move the line into the space */
+	bstrcpy(nline,p->lin);           /* move the line into the space */
 	p->linnumb=linenumber;          /* give it a linenumber */
 	p->llen=lsize;                  /* give it its offset */
 }
@@ -577,7 +577,7 @@ memp    l;
 
 #ifdef  ALIGN4
 	if( (int)l & 03){
-		prints("Illegal allignment\n");
+		prints("Illegal alignment\n");
 		quit();
 	}
 #endif

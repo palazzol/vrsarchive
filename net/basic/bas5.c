@@ -65,7 +65,7 @@ for(;;){
 			point=savepoint; /* restore point to start of in. */
 			return(-1);     /* will trap at start of this in. */
 		}
-		strcpy(&line[i],lblock);
+		bstrcpy(&line[i],lblock);
 	}
 	else if(! filein(infile,lblock,512) )
 		error(30);
@@ -196,7 +196,7 @@ linput()
 			error(30);
 		if(i>255)
 			error(9);
-		p=strcpy(lblock,gblock);
+		p=bstrcpy(lblock,gblock);
 	}
 	else {
 		if(c=='"'){
@@ -226,7 +226,7 @@ linput()
 			point=savepoint; /* restore point to start of in. */
 			return(-1);     /* will trap at start of this in. */
 		}
-		p=strcpy(&line[i],gblock);
+		p=bstrcpy(&line[i],gblock);
 	}
 	gcursiz= p-gblock;
 	stringassign( (stdatap)l );

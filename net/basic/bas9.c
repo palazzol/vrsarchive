@@ -327,7 +327,7 @@ char    *s;
  */
 
 char    *
-strcpy(a,b)
+bstrcpy(a,b)
 register char   *a,*b;
 {
 	while(*b++ = *a++);

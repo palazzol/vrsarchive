@@ -42,7 +42,7 @@ readc()
  *    we exit. ( friendly ).
  */
 
-setupterm()
+bsetupterm()
 {
 	set_cap();
 	setu_term();

@@ -53,7 +53,7 @@ set_cap()
 	if ( ! type || ! *type )
 		type = "xx";
 	if (tgetent(ltcbuf, type) != 1)
-		strcpy("uk|dumb:", ltcbuf);
+		bstrcpy("uk|dumb:", ltcbuf);
 	aoftspace = tspace;
 	namp = "ambshcncbw";
 	fp = sflags;

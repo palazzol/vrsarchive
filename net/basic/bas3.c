@@ -36,7 +36,7 @@ evalint()
 struct  m {
 	value   r1;
 	int     lastop;
-	char    value;
+	char    mvalue;
 	char    vty;
 	};
 
@@ -63,7 +63,7 @@ eval()
 
 	checksp();
 	j=restab;
-	j->value=0;
+	j->mvalue=0;
 
 for(;;){
 	c=getch();
@@ -160,18 +160,18 @@ ex:
 	}
 	if(i>2)
 		firsttime = 0;
-ame:    if(j->value< (char)i){          /* current operator has higher */
+ame:    if(j->mvalue< (char)i){          /* current operator has higher */
 		(++j)->lastop=c;                        /* precedence */
 #ifndef V6C
 		j->r1 = res;
 #else
 		push(&j->r1);  /* block moving */
 #endif
-		j->value=i;
+		j->mvalue=i;
 		j->vty=vartype;
 		continue;
 	}
-	if(! j->value ){                /* end of expression */
+	if(! j->mvalue ){                /* end of expression */
 		point--;
 		return;
 	}
@@ -182,7 +182,7 @@ ame:    if(j->value< (char)i){          /* current operator has higher */
 			cvt(&j->r1);    /* if changed then they must be */
 		vartype=0;              /* changed to reals */
 	}
-	(*mbin[(j->value<<1)+vartype])(&j->r1,&res,j->lastop);
+	(*mbin[(j->mvalue<<1)+vartype])(&j->r1,&res,j->lastop);
 	j--;                    /* execute it then pop the stack and */
 	goto ame;               /* deal with the next operator */
 	}
@@ -425,12 +425,12 @@ evalu()
 	evallock++;
 	stringeval(gblock);
 	gblock[gcursiz]=0;
-	strcpy(nline,chblck2);          /* save nline */
+	bstrcpy(nline,chblck2);          /* save nline */
 	line[0]='\01';                  /* stop a line number being created */
-	strcpy(gblock,&line[1]);
+	bstrcpy(gblock,&line[1]);
 	compile(0);
-	strcpy(&nline[1],chblck1);    /* restore nline ( eval in immeadiate */
-	strcpy(chblck2,nline);        /* mode ). */
+	bstrcpy(&nline[1],chblck1);    /* restore nline ( eval in immeadiate */
+	bstrcpy(chblck2,nline);        /* mode ). */
 	tmp=point;
 	point=chblck1;
 	eval();

@@ -646,12 +646,12 @@ lpoint p;
 	register struct tabl *l;
 	register char    *r;
 
-	r=strcpy(printlin(p->linnumb) ,line);  /* do the linenumber */
+	r=bstrcpy(printlin(p->linnumb) ,line);  /* do the linenumber */
 	for(q= p->lin; *q && r < &line[MAXLIN]; q++){
 		if(*q &(char)0200)              /* reserved words */
 			for(l=table;l->chval;l++){
 				if((char)(l->chval) == *q){
-					r=strcpy(l->string,r);
+					r=bstrcpy(l->string,r);
 					break;
 				}
 			}
@@ -893,7 +893,7 @@ dauto()
 	autoincr=i2;
 	end=i2;
 	for(;;){
-		i1= strcpy(printlin(start),line) - line;
+		i1= bstrcpy(printlin(start),line) - line;
 		line[i1++]=' ';
 		c=edit(0,i1,i1);
 		if(trapped)
@@ -1688,7 +1688,7 @@ renumb()
 			p->linnumb = pl;        /* restore line number */
 			lenv(p) = size;         /* set size */
 		}
-		strcpy(nline,p->lin);   /* copy back new line */
+		bstrcpy(nline,p->lin);   /* copy back new line */
 	out:    ;
 	}
 	reset();

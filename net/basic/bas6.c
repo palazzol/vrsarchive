@@ -73,7 +73,7 @@ runfile(fp)
 	int    firsttime;
 	register lpoint p;
 
-	setupterm();            /* set up terminal - now done after files */
+	bsetupterm();            /* set up terminal - now done after files */
 	ecore= fendcore+sizeof(xlinnumb);
 	( (lpoint) fendcore )->linnumb=0;
 	firsttime=1;           /* flag to say that we are just loading */
