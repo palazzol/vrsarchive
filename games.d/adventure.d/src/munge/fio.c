@@ -56,12 +56,12 @@ int openf (name)
 	FILE *fd ;
 	register int unit ;
 	register char *s ;
-	char *strsav(), *rindex() ;
+	char *strsav(), *strrchr() ;
 
 	if ( ( fd = fopen (name,"r") ) == NULL )
 		return (-1) ;
 	unit = fileno (fd) ;
-	if ( ( s = rindex (name,'/') ) == (char *)0 )
+	if ( ( s = strrchr (name,'/') ) == (char *)0 )
 		fx[unit].fnam = strsav (name) ;
 	else
 		fx[unit].fnam = strsav (&(s[1])) ;

@@ -127,7 +127,8 @@ int def ()
 	return ;
 }
 
-#include <strings.h>
+#include <string.h>
+extern char *strrchr();
 
 int inc ()
 {
@@ -152,7 +153,7 @@ int inc ()
 		return ;
 	}
 
-	if ( ( s = rindex (token,'/') ) == (char *)0 )
+	if ( ( s = strrchr (token,'/') ) == (char *)0 )
 		errout ("%s:\n",token) ;
 	else
 		errout ("%s:\n",&(s[1])) ;
