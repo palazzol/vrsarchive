@@ -1,0 +1,3 @@
+#
+# Usage: stat fighter
+#awk  "/$1/ {count=35} count > 0 {print;count=count-1}" names.c|more

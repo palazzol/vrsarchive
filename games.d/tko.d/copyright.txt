@@ -1,0 +1,7 @@
+
+/*
+Copyright (c) 1979  Mike Gancarz
+Permission is hereby granted to freely distribute, copy, modify and otherwise
+use this software for nonprofit purposes as long as this copyright appears
+in the file and remains intact.
+*/
