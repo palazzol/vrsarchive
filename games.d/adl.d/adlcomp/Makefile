@@ -18,6 +18,7 @@ D = adlcomp/
 
 # Where adlcomp will be installed, with make install.
 #BIN = /users/cunniff/bin
+BIN		= ${GAMLIB}
 
 # Flags for lint
 LFLAGS = -DLINT -I${INC} -C
@@ -52,7 +53,7 @@ adlcomp2.shar	: adlmsg.c	adlobj.c	codegen.c	\
 		${D}compdict.c	${D}predef.c	${D}routcomp.c	\
 	> ${D}adlcomp2.shar )
 
-install		: adlcomp
+install		: ${ALL} ${BIN}
 	strip adlcomp
 	cp adlcomp ${BIN}
 	chmod 755 ${BIN}/adlcomp

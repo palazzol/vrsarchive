@@ -18,6 +18,7 @@ D = adlrun/
 
 # Where adlrun will reside, after make install
 #BIN = /users/cunniff/bin
+BIN		= ${GAMLIB}
 
 # Flags for the linker - you may need to change -lcurses to -ltermcap
 # or -ltermlib.
