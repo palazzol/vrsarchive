@@ -1,0 +1,599 @@
+
+..\v2.1\msstuff.c,487
+int osagetc(87,1694
+FILE *osaopen(64,1272
+int osaputc(94,1806
+int osbgetc(101,1934
+FILE *osbopen(71,1395
+int osbputc(108,2046
+oscheck(202,3970
+int osclose(80,1578
+oserror(39,691
+osfinish(34,631
+osflush(196,3850
+osinit(24,440
+int osrand(46,816
+ossymbols(276,5386
+int ostgetc(115,2173
+ostputc(174,3470
+static int xcheck(253,4917
+static xflush(233,4597
+static int xgetc(240,4720
+LVAL xgetkey(269,5257
+static xinfo(222,4324
+static xputc(246,4825
+LVAL xsystem(259,5016
+
+..\v2.1\xlbfun.c,1105
+LOCAL LVAL makesymbol(363,7220
+LVAL x1macroexpand(87,1989
+LVAL xapply(40,948
+LVAL xaref(511,10109
+LVAL xarrayp(179,3765
+LVAL xatom(116,2645
+LVAL xboundp(206,4275
+LVAL xbreak(594,11800
+LVAL xcerror(576,11392
+LVAL xcharp(161,3454
+LVAL xcleanup(611,12187
+LVAL xconsp(251,5073
+LVAL xcontinue(625,12398
+LVAL xendp(242,4925
+LVAL xeq(260,5221
+LVAL xeql(274,5470
+LVAL xequal(288,5736
+LVAL xerror(562,11099
+LVAL xeval(27,713
+LVAL xevalhook(632,12499
+LVAL xfboundp(215,4464
+LVAL xfloatp(152,3297
+LVAL xfuncall(54,1255
+LVAL xgensym(319,6336
+LVAL xget(438,8646
+LVAL xhash(487,9587
+LVAL xintegerp(143,3143
+LVAL xintern(357,7126
+LVAL xlistp(233,4765
+LVAL xmacroexpand(78,1823
+LVAL xmakesymbol(351,7021
+LVAL xmkarray(530,10534
+LVAL xnull(224,4617
+LVAL xnumberp(134,2970
+LVAL xobjectp(197,4098
+LVAL xputprop(452,8916
+LVAL xremprop(470,9273
+LVAL xset(302,5997
+LVAL xstreamp(188,3922
+LVAL xstringp(170,3608
+LVAL xsymbolp(125,2798
+LVAL xsymfunction(408,8100
+LVAL xsymname(378,7556
+LVAL xsymplist(425,8425
+LVAL xsymvalue(391,7776
+LVAL xtoplevel(618,12292
+LVAL xvector(544,10786
+
+..\v2.1\xlcont.c,1498
+LOCAL LVAL bquote1(98,2645
+LOCAL dobindings(1214,26210
+LOCAL LVAL doloop(858,18602
+LOCAL doupdates(1251,26908
+LOCAL LVAL evarg(1347,28896
+LOCAL LVAL evmatch(1376,29450
+LOCAL LVAL flet(602,13535
+LOCAL int keypresent(488,11329
+LOCAL LVAL let(553,12572
+LOCAL LVAL match(1317,28262
+LOCAL placeform(255,5946
+LOCAL LVAL prog(649,14536
+LOCAL LVAL progx(741,16216
+LOCAL setffunction(325,7694
+LOCAL tagbody(1290,27754
+LOCAL toofew(1415,30225
+LOCAL toomany(1422,30343
+LVAL xand(498,11531
+LVAL xblock(1018,22191
+LVAL xbquote(85,2424
+LVAL xcase(444,10395
+LVAL xcatch(1049,22783
+LVAL xcond(389,9362
+LVAL xdefmacro(370,8867
+LVAL xdefun(351,8361
+LVAL xdo(846,18431
+LVAL xdolist(914,19884
+LVAL xdostar(852,18515
+LVAL xdotimes(969,21066
+LVAL xerrset(1137,24537
+LVAL xflet(584,13216
+LVAL xfunction(60,1844
+LVAL xgetlambda(169,4223
+LVAL xgo(689,15307
+LVAL xif(526,12018
+LVAL xlabels(590,13317
+LVAL xlambda(151,3753
+LVAL xlet(541,12405
+LVAL xletstar(547,12489
+LVAL xloop(816,17843
+LVAL xmacrolet(596,13425
+LVAL xor(512,11779
+LVAL xprog(637,14361
+LVAL xprog1(729,16052
+LVAL xprog2(735,16136
+LVAL xprogn(765,16676
+LVAL xprogstar(643,14449
+LVAL xprogv(778,16921
+LVAL xpsetq(194,4726
+LVAL xquote(51,1703
+LVAL xreturn(702,15513
+LVAL xrtnfrom(715,15770
+LVAL xsetf(220,5255
+LVAL xsetq(178,4433
+LVAL xtagbody(1042,22686
+LVAL xthrow(1082,23412
+LVAL xtrace(1166,25118
+LVAL xunless(430,10141
+LVAL xuntrace(1188,25641
+LVAL xunwindprotect(1096,23692
+LVAL xwhen(416,9890
+
+..\v2.1\xldbug.c,170
+LOCAL int breakloop(98,2144
+xlabort(24,641
+xlbaktrace(179,3841
+xlbreak(33,811
+xlcerror(60,1337
+xldinit(198,4237
+xlerror(47,1063
+xlerrprint(73,1620
+xlfail(40,958
+
+..\v2.1\xldmem.c,740
+LOCAL int addseg(478,10505
+LVAL cons(41,1124
+LVAL cvchar(159,3535
+LVAL cvfile(126,2874
+LVAL cvfixnum(137,3076
+LVAL cvflonum(149,3354
+LVAL cvstring(72,1709
+LVAL cvsubr(115,2637
+LVAL cvsymbol(100,2313
+LOCAL findmem(279,6243
+gc(287,6386
+LOCAL mark(345,7704
+LVAL newclosure(189,4190
+LOCAL LVAL newnode(236,5250
+LVAL newobject(178,3956
+SEGMENT *newsegment(500,10988
+LVAL newstring(86,2021
+LVAL newstruct(203,4514
+LVAL newustream(168,3764
+LVAL newvector(214,4754
+#define segsize(13,310
+LOCAL stats(529,11583
+LOCAL unsigned char *stralloc(261,5786
+LOCAL sweep(425,9398
+LVAL xalloc(577,12725
+LVAL xexpand(553,12267
+LVAL xgc(540,12040
+xlminit(646,14210
+LVAL xmem(598,13167
+LVAL xrestore(626,13738
+LVAL xsave(613,13451
+
+..\v2.1\xleval.c,625
+LOCAL badarglist(873,20489
+LOCAL doenter(796,18722
+LOCAL doexit(818,19271
+LOCAL LVAL evalhook(324,7638
+LOCAL LVAL evform(183,4416
+LOCAL LVAL evfun(426,9965
+LOCAL int evpushargs(354,8321
+#define iskey(9,234
+int macroexpand(304,7164
+LVAL makearglist(410,9637
+LOCAL int member(837,19705
+int pushargs(385,9039
+#define trenter(16,461
+#define trexit(17,528
+xlabind(689,16100
+LVAL xlapply(122,3075
+xlargstkoverflow(867,20367
+LVAL xlclose(474,11037
+LVAL xleval(43,1519
+LVAL xlevalenv(72,2082
+LVAL xlexpandmacros(276,6505
+xlfunbound(854,20073
+xlstkoverflow(861,20233
+xlunbound(847,19914
+LVAL xlxeval(103,2712
+
+..\v2.1\xlfio.c,563
+LOCAL LVAL flatsize(112,2515
+LOCAL LVAL getstroutput(463,10105
+LOCAL LVAL printit(78,1766
+LVAL xclose(154,3365
+LVAL xflatc(106,2402
+LVAL xflatsize(100,2273
+LVAL xformat(400,8684
+LVAL xgetlstoutput(380,8305
+LVAL xgetstroutput(371,8128
+LVAL xmkstrinput(315,6899
+LVAL xmkstroutput(365,8023
+LVAL xopen(130,2867
+LVAL xpkchar(203,4382
+LVAL xprin1(52,1278
+LVAL xprinc(58,1376
+LVAL xprint(46,1179
+LVAL xrdbyte(189,4055
+LVAL xrdchar(175,3747
+LVAL xread(27,732
+LVAL xreadline(259,5626
+LVAL xterpri(64,1485
+LVAL xwrbyte(242,5266
+LVAL xwrchar(225,4906
+
+..\v2.1\xlftab.c,30
+LOCAL LVAL xnotimp(455,17022
+
+..\v2.1\xlglob.c,0
+
+..\v2.1\xlimage.c,265
+LOCAL LVAL cviptr(333,7702
+LOCAL OFFTYPE cvoptr(365,8575
+LOCAL freeimage(243,5894
+LOCAL readnode(310,7229
+LOCAL OFFTYPE readptr(322,7486
+LOCAL setoffset(278,6652
+LOCAL writenode(288,6803
+LOCAL writeptr(300,7053
+int xlirestore(126,3062
+int xlisave(41,1177
+
+..\v2.1\xlinit.c,58
+LOCAL initwks(50,1712
+xlinit(36,1405
+xlsymbols(88,3357
+
+..\v2.1\xlio.c,252
+dbgprint(183,3764
+dbgputstr(191,3931
+errprint(168,3480
+errputstr(176,3649
+stdprint(153,3189
+stdputstr(161,3361
+trcprin1(198,4051
+trcputstr(205,4187
+int xlflush(147,3105
+int xlgetc(13,362
+int xlpeek(81,1789
+xlputc(113,2446
+xlungetc(56,1282
+
+..\v2.1\xlisp.c,86
+main(27,722
+wrapup(160,3745
+xlevsave(143,3412
+xlfatal(152,3617
+xlrdsave(133,3150
+
+..\v2.1\xljump.c,225
+LOCAL findandjump(160,3887
+xlbegin(16,463
+xlbrklevel(112,2685
+xlcleanup(118,2807
+xlcontinue(125,2977
+xlend(34,925
+xlgo(41,1028
+xljump(131,3102
+xlreturn(64,1525
+xlsignal(90,2164
+xlthrow(77,1847
+xltoplevel(105,2518
+
+..\v2.1\xllist.c,1582
+LOCAL LVAL assoc(358,8404
+LOCAL LVAL cxr(77,2657
+LOCAL LVAL delif(780,17104
+int dotest1(453,10453
+int dotest2(472,10871
+LOCAL LVAL gluelists(909,19987
+LOCAL LVAL map(583,13062
+LOCAL LVAL nth(504,11489
+LOCAL LVAL remif(419,9716
+LOCAL LVAL sortlist(859,18772
+LOCAL splitlist(886,19459
+LOCAL LVAL sublis(339,7944
+LOCAL LVAL subst(296,7007
+LVAL xappend(138,3839
+LVAL xassoc(242,5861
+LVAL xcaaaar(59,1947
+LVAL xcaaadr(60,1989
+LVAL xcaaar(49,1601
+LVAL xcaadar(61,2031
+LVAL xcaaddr(62,2073
+LVAL xcaadr(50,1641
+LVAL xcaar(43,1424
+LVAL xcadaar(63,2115
+LVAL xcadadr(64,2157
+LVAL xcadar(51,1681
+LVAL xcaddar(65,2199
+LVAL xcadddr(66,2241
+LVAL xcaddr(52,1721
+LVAL xcadr(44,1462
+LVAL xcar(25,1126
+LVAL xcdaaar(67,2283
+LVAL xcdaadr(68,2325
+LVAL xcdaar(53,1761
+LVAL xcdadar(69,2367
+LVAL xcdaddr(70,2409
+LVAL xcdadr(54,1801
+LVAL xcdar(45,1500
+LVAL xcddaar(71,2451
+LVAL xcddadr(72,2493
+LVAL xcddar(55,1841
+LVAL xcdddar(73,2535
+LVAL xcddddr(74,2577
+LVAL xcdddr(56,1881
+LVAL xcddr(46,1538
+LVAL xcdr(34,1285
+LVAL xcons(99,3109
+LVAL xdelete(717,15847
+LVAL xdelif(766,16843
+LVAL xdelifnot(773,16965
+LVAL xlast(197,5006
+LVAL xlength(528,12044
+LVAL xlist(113,3371
+LVAL xmapc(559,12676
+LVAL xmapcar(565,12773
+LVAL xmapl(571,12867
+LVAL xmaplist(577,12967
+LVAL xmember(214,5303
+LVAL xnconc(682,15165
+LVAL xnth(492,11312
+LVAL xnthcdr(498,11404
+LVAL xremif(405,9458
+LVAL xremifnot(412,9580
+LVAL xremove(371,8728
+LVAL xreverse(174,4544
+LVAL xrplca(648,14509
+LVAL xrplcd(665,14839
+LVAL xsort(829,18089
+LVAL xsublis(315,7461
+LVAL xsubst(271,6492
+
+..\v2.1\xlmath.c,997
+LOCAL badfop(426,10612
+LOCAL badiop(420,10505
+LOCAL LVAL binary(64,1873
+checkfneg(202,4807
+checkfzero(194,4650
+checkizero(186,4495
+LOCAL LVAL compare(333,8577
+LOCAL LVAL predicate(285,7372
+LOCAL LVAL unary(227,5760
+LVAL xabs(211,4993
+LVAL xacos(218,5349
+LVAL xadd(25,689
+LVAL xadd1(212,5044
+LVAL xasin(217,5297
+LVAL xatan(219,5401
+LVAL xcos(215,5195
+LVAL xdiv(28,839
+LVAL xequ(327,8340
+LVAL xevenp(281,7210
+LVAL xexp(220,5453
+LVAL xexpt(32,1045
+LVAL xfix(222,5556
+LVAL xfloat(223,5612
+LVAL xgcd(38,1303
+LVAL xgeq(329,8437
+LVAL xgtr(330,8486
+LVAL xleq(326,8291
+LVAL xlogand(33,1098
+LVAL xlogior(34,1153
+LVAL xlognot(210,4939
+LVAL xlogxor(35,1208
+LVAL xlss(325,8243
+LVAL xmax(31,993
+LVAL xmin(30,941
+LVAL xminusp(278,7038
+LVAL xmul(27,789
+LVAL xneq(328,8388
+LVAL xoddp(282,7267
+LVAL xplusp(280,7153
+LVAL xrand(224,5665
+LVAL xrem(29,889
+LVAL xsin(214,5144
+LVAL xsqrt(221,5504
+LVAL xsub(26,739
+LVAL xsub1(213,5094
+LVAL xtan(216,5246
+LVAL xzerop(279,7096
+
+..\v2.1\xlobj.c,485
+LVAL clanswer(268,6953
+LVAL clisnew(239,6081
+LVAL clnew(231,5921
+LOCAL LVAL entermsg(293,7563
+LOCAL LVAL evmethod(368,9371
+LOCAL int getivcnt(417,10545
+LOCAL int listlength(427,10810
+LVAL obclass(183,4756
+LVAL obisnew(174,4608
+LVAL obshow(192,4927
+obsymbols(437,10990
+LOCAL LVAL sendmsg(314,8074
+xladdivar(81,2355
+xladdmsg(88,2513
+LVAL xlclass(59,1829
+int xlobgetvalue(102,2895
+int xlobsetvalue(138,3767
+xloinit(450,11346
+LVAL xsend(39,1363
+LVAL xsendsuper(47,1546
+
+..\v2.1\xlpp.c,156
+LOCAL int flatsize(116,2455
+LOCAL pp(44,1066
+LOCAL ppexpr(92,1973
+LOCAL pplist(54,1204
+LOCAL ppputc(100,2142
+LOCAL ppterpri(108,2273
+LVAL xpp(25,607
+
+..\v2.1\xlprin.c,309
+LOCAL putatm(237,5548
+LOCAL putchcode(307,7715
+LOCAL putclosure(256,6052
+LOCAL putfixnum(283,7132
+LOCAL putflonum(295,7422
+LOCAL putoct(329,8106
+LOCAL putqstring(188,4587
+LOCAL putstring(176,4347
+LOCAL putsubr(246,5780
+LOCAL putsymbol(129,3142
+xlprint(28,1050
+xlputstr(121,3013
+xlterpri(114,2917
+
+..\v2.1\xlread.c,783
+LOCAL badeof(753,16286
+LVAL callmacro(822,17765
+LOCAL int checkeof(742,16121
+defmacro(812,17485
+int isnumber(761,16429
+LOCAL int nextch(729,15843
+LOCAL pcomment(415,9203
+LOCAL LVAL plist(450,10066
+LOCAL int pname(604,13126
+LOCAL LVAL pnumber(431,9581
+LOCAL LVAL pquote(560,12242
+LOCAL LVAL pstruct(536,11814
+LOCAL LVAL psymbol(585,12737
+LOCAL LVAL punintern(595,12958
+LOCAL LVAL pvector(509,11280
+LOCAL LVAL readlist(659,14406
+int readone(126,3334
+LVAL rmbquote(339,7765
+LVAL rmcomma(353,8043
+LVAL rmdquote(259,6029
+LVAL rmhash(170,4271
+LVAL rmlpar(376,8474
+LVAL rmquote(245,5752
+LVAL rmrpar(390,8733
+LVAL rmsemi(396,8829
+LOCAL int storech(709,15433
+LVAL tentry(718,15587
+LOCAL upcase(839,18175
+int xlload(51,1787
+int xlread(112,3046
+xlrinit(848,18346
+
+..\v2.1\xlstr.c,1336
+LOCAL LVAL changecase(108,3890
+LOCAL LVAL chrcompare(486,13071
+#define fix(9,241
+LOCAL getbounds(190,5920
+LOCAL int inbag(223,6750
+LOCAL LVAL strcompare(50,1993
+LOCAL LVAL trim(151,4978
+LVAL xalphanumericp(461,11945
+LVAL xbothcasep(394,10466
+LVAL xchar(339,9304
+LVAL xcharcode(412,10864
+LVAL xcharint(358,9734
+LVAL xchdowncase(441,11490
+LVAL xchreql(472,12278
+LVAL xchrgeq(474,12407
+LVAL xchrgtr(475,12472
+LVAL xchrieql(480,12741
+LVAL xchrigeq(482,12885
+LVAL xchrigtr(483,12958
+LVAL xchrileq(479,12665
+LVAL xchrilss(478,12596
+LVAL xchrineq(481,12811
+LVAL xchrleq(471,12213
+LVAL xchrlss(470,12149
+LVAL xchrneq(473,12342
+LVAL xchupcase(431,11264
+LVAL xcodechar(421,11040
+LVAL xdigitchar(451,11714
+LVAL xdigitp(403,10662
+LVAL xdowncase(101,3647
+LVAL xintchar(367,9916
+LVAL xlefttrim(147,4842
+LVAL xlowercasep(385,10282
+LVAL xndowncase(105,3802
+LVAL xnupcase(104,3748
+LVAL xrighttrim(148,4887
+LVAL xstrcat(234,6980
+LVAL xstreql(36,1187
+LVAL xstrgeq(38,1320
+LVAL xstrgtr(39,1387
+LVAL xstrieql(44,1660
+LVAL xstrigeq(46,1806
+LVAL xstrigtr(47,1881
+LVAL xstrileq(43,1582
+LVAL xstrilss(42,1511
+LVAL xstrineq(45,1731
+LVAL xstring(311,8800
+LVAL xstrleq(35,1120
+LVAL xstrlss(34,1054
+LVAL xstrneq(37,1253
+LVAL xsubseq(269,7716
+LVAL xtrim(146,4790
+LVAL xupcase(100,3593
+LVAL xuppercasep(376,10096
+
+..\v2.1\xlstruct.c,240
+LOCAL addslot(355,9328
+LOCAL updateslot(419,11068
+LVAL xcpystruct(42,1027
+LVAL xdefstruct(90,2065
+xlprstruct(334,8701
+LVAL xlrdstruct(278,7249
+LVAL xmkstruct(21,623
+LVAL xstrref(56,1341
+LVAL xstrset(67,1566
+LVAL xstrtypep(80,1833
+
+..\v2.1\xlsubr.c,284
+int eq(134,2845
+int eql(141,2954
+int equal(162,3404
+int needsextension(98,2132
+LVAL xlbadtype(115,2508
+LVAL xlgetfile(63,1433
+LVAL xlgetfname(80,1765
+int xlgetkeyarg(22,564
+int xlgkfixnum(37,883
+LVAL xlsubr(12,315
+xltest(49,1119
+LVAL xltoofew(122,2642
+xltoomany(128,2756
+
+..\v2.1\xlsym.c,331
+LOCAL LVAL findprop(209,4620
+int hash(220,4864
+LVAL xlenter(17,454
+LVAL xlgetfunction(126,2796
+LVAL xlgetprop(174,3874
+LVAL xlgetvalue(57,1359
+LVAL xlmakesym(46,1150
+xlputprop(182,4054
+xlremprop(193,4297
+xlsetfunction(156,3476
+xlsetvalue(98,2193
+xlsinit(231,5059
+LVAL xlxgetfunction(140,3097
+LVAL xlxgetvalue(71,1628
+
+..\v2.1\xlsys.c,174
+LVAL xaddrs(151,3310
+LVAL xbaktrace(95,2331
+LVAL xexit(112,2569
+LVAL xload(23,617
+LVAL xpeek(119,2668
+LVAL xpoke(133,2946
+LVAL xtranscript(49,1146
+LVAL xtype(68,1603
