@@ -177,20 +177,17 @@ docast()
 
 	spell = getspell();
 	if (!spell) return(0);
-	else  {
-
-		energy = spellev(spell);
-		if(energy > u.uen)  {
-			pline("You are too weak to cast that spell.");
-			return(0);
-		} else  if ((u.uhunger <= 100) || (u.ustr < 6))  {
-			pline("You miss the strength for that spell.");
-			return(0);
-		} else	{
-			morehungry(energy * 10);
-			u.uen -= energy;
-		}
+	energy = spellev(spell);
+	if(energy > u.uen)  {
+		pline("You are too weak to cast that spell.");
+		return(0);
+	} else  if ((u.uhunger <= 100) || (u.ustr < 6))  {
+		pline("You miss the strength for that spell.");
+		return(0);
 	}
+	morehungry(energy * 10);
+	u.uen -= energy;
+	flags.botl = 1;
 #ifdef HARD
 	if (confused ||
 	    (rn2(10) + u.ulevel + u.uluck - spellev(spell)) <= 0) {
@@ -283,7 +280,6 @@ docast()
 		obfree(pseudo, (struct obj *)0);
 		return(0);
 	}
-	flags.botl = 1;
 	obfree(pseudo, (struct obj *)0);	/* now, get rid of it */
 	return(1);
 }
