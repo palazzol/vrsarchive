@@ -1,0 +1,96 @@
+.TH WHATCOMM l dulocal 
+.UC 4
+.SH NAME
+whatcomm \- locate a command  -dulocal
+.SH SYNOPSIS
+.B whatcomm 
+.br
+.SH DESCRIPTION
+Whatcomm provides an alternate way to find the name of a command.  
+.PP
+A classification 'tree' of command names is used to locate commands which
+have the desired function.  A user may move down the tree via a menu.
+At the last level, the user may print the manual for a command on the
+terminal.
+.PP
+.br
+.SH "EXAMPLE"
+
+% whatcomm
+
+ 1  Access control
+ 2  Communication
+ 3  Documentation
+ 4  File management
+ 5  Miscellaneous
+ 6  Program development
+ 7  Running programs
+ 8  Status information
+ 9  Text processing
+
+Enter # (0-9) or q (quit): 4 <CR>
+
+ 1  Analyse file(s)
+ 2  Location of file/directory
+ 3  Modify file/directory
+ 4  Read/print a file
+ 5  Tape format
+
+ To go back to the previous list, enter: 0
+
+Enter # (0-5) or q (quit): 0 <CR>
+
+ 1  Access control
+ 2  Communication
+ 3  Documentation
+ 4  File management
+ 5  Miscellaneous
+ 6  Program development
+ 7  Running programs
+ 8  Status information
+ 9  Text processing
+
+Enter # (0-9) or q (quit): 8 <CR>
+
+ 1  Files
+ 2  System
+ 3  Terminal
+ 4  Users
+
+ To go back to the previous list, enter: 0
+
+Enter # (0-4) or q (quit): 1 <CR>
+
+ 1  du          summarize disk usage
+ 2  file        determine file type
+ 3  ls -l       print long listing of file names, with status info
+ 4  size        size of an object file
+
+ To go back to the previous list, enter: 0
+
+Enter # (0-4) or q (quit): 2 <CR>
+.br
+	.
+.br
+	.
+.br
+	prints manual for file to your terminal
+.br
+	.
+.br
+	.
+.PP
+Enter # (0-4) or q (quit): q <CR>
+
+Did not find the command you want?
+  Then try: apropos <keyword>
+
+.SH "AUTHOR"
+This program was written by 
+Robert K. Ware, Computing Services,
+University of Denver.
+.SH "FILES"
+/usr/local/lib/whatlist
+.PP
+.SH "SEE ALSO"
+appropos (1), man (1)
