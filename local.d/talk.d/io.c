@@ -8,6 +8,7 @@
 #include "talk.h"
 #include <errno.h>
 #include <signal.h>
+#include <fcntl.h>
 #include <time.h>
 
 extern int	errno;
@@ -20,9 +21,9 @@ check_pipe()
     char buf[1];
 
     (void) signal(SIGALRM, check_pipe);
-    while (rdchk(mine) > 0) { 
-        nb = read(mine, buf, 1);
-        if ((nb == 0) || (buf[0] == '\004')) {
+    (void) fcntl(mine, F_SETFL, O_NDELAY|fcntl(mine, F_GETFL, 0));
+    while (nb = read(mine, buf, 1)) {
+        if (buf[0] == '\004') {
             message("Connection closed. Exiting");
             quit();
         } else {
