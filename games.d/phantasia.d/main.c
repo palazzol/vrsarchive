@@ -1429,7 +1429,7 @@ struct utmp	ubuf;		/* to read 'utmp' file */
     if ((fp = fopen("/etc/utmp", "r")) != NULL)
 	{
 	while (fread((char *) &ubuf, sizeof(ubuf), 1, fp) == 1)
-#ifdef	SYS5
+#ifdef	USER_PROCESS
 	    if (ubuf.ut_type == USER_PROCESS)
 #else
 	    if (ubuf.ut_name[0] != '\0')
