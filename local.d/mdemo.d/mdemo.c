@@ -1,13 +1,10 @@
 /*
- $	3/16/85	@(#)mdemo.c	1.3
+ *	%G%	%W%
  *	Display a constantly updated map of main memory.
  *
 */
-#ifdef lint
-#  define far				/* Lint chokes on far ptrs	*/
-#else
-static char *sccsid = "3/16/85 @(#)mdemo.c	1.3";
-					/* Suppress unref message	*/
+#ifndef lint
+static char *sccsid = "%G% %W%";
 #endif
 
 #include <curses.h>
