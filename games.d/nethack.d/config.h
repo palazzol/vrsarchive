@@ -28,6 +28,7 @@
 /* #define BETA		/* if a beta-test copy  [MRS] */
 #define VERSION	"1.3d"	/* version number. */
 
+/* #define TERMINFO	/* if terminfo curses is used */
 #define PYRAMID_BUG 	/* avoid a bug on the Pyramid */
 /* #define APOLLO		/* same for the Apollo */
 /* #define STUPID		/* avoid some complicated expressions if
