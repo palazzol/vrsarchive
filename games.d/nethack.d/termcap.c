@@ -116,14 +116,20 @@ startup()
 	 * pager as a string - so how can you send it NULLS???
 	 *  -jsb
 	 */
-	    HI = (char *) alloc(strlen(SO)+1);
-	    HE = (char *) alloc(strlen(SE)+1);
-	    i = 0;
-	    while(isdigit(SO[i])) i++;
-	    strcpy(HI, &SO[i]);
-	    i = 0;
-	    while(isdigit(SE[i])) i++;
-	    strcpy(HE, &SE[i]);
+	if (SO) {
+		HI = (char *) alloc(strlen(SO)+1);
+		i = 0;
+		while(isdigit(SO[i])) i++;
+		strcpy(HI, &SO[i]);
+	} else
+		HI = (char *) 0;
+	if (SE) {
+		HE = (char *) alloc(strlen(SE)+1);
+		i = 0;
+		while(isdigit(SE[i])) i++;
+		strcpy(HE, &SE[i]);
+	} else
+		HE = (char *) 0;
 #endif
 	CD = tgetstr("cd", &tbufptr);
 	set_whole_screen();		/* uses LI and CD */
