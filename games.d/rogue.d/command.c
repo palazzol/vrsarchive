@@ -195,13 +195,7 @@ command()
 				when 'S' : 
 					after = FALSE;
 					if (save_game())
-					{
-						move(LINES-1, 0); 
-						clrtoeol();
-						refresh();
-						endwin();
-						exit(0);
-					}
+						leave();
 				when '.' : ;			/* Rest command */
 				when ' ' : after = FALSE;	/* "Legal" illegal command */
 				when '^' :
