@@ -4,6 +4,11 @@
 
 #include "less.h"
 #include "position.h"
+#ifdef __STDC__
+#include <regex.h>
+#else
+char *regcmp();
+#endif
 
 public int hit_eof;	/* Keeps track of how many times we hit end of file */
 
@@ -504,8 +509,11 @@ search(direction, pattern, n)
 	}
 #else
 #if REGCMP
-	char *regcmp();
+#ifdef __STDC__
+	static regex_t cpattern;
+#else
 	static char *cpattern = NULL;
+#endif
 
 	if (pattern == NULL || *pattern == '\0')
 	{
@@ -513,7 +521,11 @@ search(direction, pattern, n)
 		 * A null pattern means use the previous pattern.
 		 * The compiled previous pattern is in cpattern, so just use it.
 		 */
+#ifdef __STDC__
+		if (cpattern.re_endp == NULL)
+#else
 		if (cpattern == NULL)
+#endif
 		{
 			error("No previous regular expression");
 			return;
@@ -523,14 +535,21 @@ search(direction, pattern, n)
 		/*
 		 * Otherwise compile the given pattern.
 		 */
+#ifdef __STDC__
+		regex_t s;
+		if (regcomp(&s, pattern, 0) != 0)
+#else
 		char *s;
 		if ((s = regcmp(pattern, 0)) == NULL)
+#endif
 		{
 			error("Invalid pattern");
 			return;
 		}
+#ifndef __STDC__
 		if (cpattern != NULL)
 			free(cpattern);
+#endif
 		cpattern = s;
 	}
 #else
@@ -647,7 +666,11 @@ search(direction, pattern, n)
 		 * on what pattern matching functions are available.
 		 */
 #if REGCMP
+#ifdef __STDC__
+		if ( (regexec(&cpattern, line, 0, NULL, 0) != 0)
+#else
 		if ( (regex(cpattern, line) != NULL)
+#endif
 #else
 #if RECOMP
 		if ( (re_exec(line) == 1)
