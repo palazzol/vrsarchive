@@ -85,7 +85,7 @@ struct  termio noret;
 #endif
 
 FILE *fp;                /* input file pointer */
-int  c;			/* I001 non-portable character comparison */
+int  c;
 char *s;
 char *filename[30];
 char page_runner;       /* true if to not display characters; need to get to
@@ -124,7 +124,7 @@ char *argv[];
         first_page = TRUE;
 
         if (argc < 2) {
-                printf("ditk [-p#] <ditroff.out>\n");
+                printf("dithds [-p#] <ditroff.out>\n");
                 exit(1);
         }
 
@@ -164,7 +164,7 @@ char *argv[];
         set_window(0,0,4095,TOP);
         page();
         /* set the graphtext precision to stroke */
-        /* I001 graph*/tx_prec(2);
+        tx_prec(2);
 
 #ifdef BSD4.x
         ioctl(0,TIOCGETP,(char *) &ottyb);
@@ -176,7 +176,9 @@ char *argv[];
 #ifdef USG
         ioctl(0, TCGETA, &old);      /* set for reading characters from tty */
         ioctl(0, TCGETA, &noret);
-        noret.c_lflag &= ~ICANON;
+        noret.c_cc[VMIN] = 1;
+        noret.c_cc[VTIME] = 0;
+        noret.c_lflag &= ~(ICANON|ECHO);
         ioctl(0, TCSETA, &noret);
 #endif
 
@@ -261,12 +263,12 @@ char *argv[];
                         char_width = raster_size * .4 + ROUNDING;  /* it looks good */
                         raster_height = .75 * raster_size;
                         char_space = 1.2 * raster_size + ROUNDING; /* close to default */
-                        /* I001 graph*/tx_size(char_width,raster_height,char_space);
+                        tx_size(char_width,raster_height,char_space);
                         break;
 
                 case 'f':       /* font change */
                         ignore_cr = FALSE;
-                        text_index(ctoi());             /* just change color */
+                        tx_font(ctoi());
                         break;
 
                 case 'h':       /* relative horizontal move */
@@ -311,7 +313,7 @@ char *argv[];
                         c = getc(fp);
                         if (page_runner == TRUE)
                                 break;
-                        printf("%cLT1%c",ESC,c);
+                        printf("\037%c",c);
                         break;
 
                 case 'C':
@@ -328,32 +330,32 @@ char *argv[];
                                 c = getc(fp);
                                 if (c == '\n') c = getc(fp);  /* remove newlines */
                                 if (c == 'u')  /* underline */
-                                        printf("%cLT1_",ESC);
+                                        printf("\037_");
                                 break;
                         case 'F':       /* fancy ff's */
-                                printf("%cLT1f",ESC);
+                                printf("\037f");
                                 currentx = currentx + char_space * .2 + ROUNDING;
                                 move(currentx,currenty);
-                                printf("%cLT1f",ESC);
+                                printf("\037f");
                                 c = getc(fp);
                                 if (c == '\n') c = getc(fp);  /* remove newlines */
                                 currentx = currentx + char_space * .2 + ROUNDING;
                                 move(currentx,currenty);
-                                printf("%cLT1%c",ESC,c);
+                                printf("\037%c",c);
                                 break;
                         case 'f':       /* fancy f's */
-                                printf("%cLT1f",ESC);
+                                printf("\037f");
                                 currentx = currentx + char_space * .2 + ROUNDING;
                                 move(currentx,currenty);
                                 c = getc(fp);
                                 if (c == '\n') c = getc(fp);  /* remove newlines */
-                                printf("%cLT1%c",ESC,c);
+                                printf("\037%c",c);
                                 break;
                         case 'h':       /* hypen */
                                 c = getc(fp);
                                 if (c == '\n') c = getc(fp);  /* remove newlines */
                                 c = '-';
-                                printf("%cLT1%c",ESC,c);
+                                printf("\037%c",c);
                                 break;
                         case 'd':       /* Cde is a degree sign */
                                 currenty = currenty + raster_height * .4;
@@ -363,7 +365,7 @@ char *argv[];
                                 if (c == '\n') c = getc(fp);
                                     /* remove newlines */
                                 c = 'o';
-                                printf("%cLT1%c",ESC,c);
+                                printf("\037%c",c);
                                 currenty = currenty - raster_height * .4;
                                 currentx = currentx - char_width * .5;
                                 move(currentx,currenty);
@@ -399,7 +401,7 @@ char *argv[];
                                 if (page_runner != TRUE) {
                                         currentx = absx * rasters_per_point + ROUNDING;
                                         move(currentx,currenty);
-                                        printf("%cLT1%c",ESC,c);
+                                        printf("\037%c",c);
                                 }
                         c = getc(fp);
                         if (c == 'w') c = getc(fp);  /* ignore 'w' */
@@ -511,21 +513,21 @@ char *argv[];
         del_segment(-1);        /* erase retained segments */
         page();
         fixup_level(6);         /* set fixup level back to default */
-        clear_dialog();
         dialog_visib(1);        /* turn the dialog area on*/
+        clear_dialog();
         select_code(1);         /* put in ansi mode */
 #ifdef BSD4.x
         ioctl(0,TIOCSETP,(char *) &ottyb);
 #endif
 #ifdef USG
-        ioctl(0, TCSETA, &old);         /* set tty back */
+        ioctl(0, TCSETAW, &old);         /* set tty back */
 #endif
 } /* tk */
 
 
 ctoi()
 {
-        int n , sign;		/* I001 i unused in ctoi()	*/
+        int n , sign;
         char s;
 
         s = ' ';
@@ -549,7 +551,6 @@ ctoi()
 
 readresponse()
 {
-        /* int n; I001 n unused in readresponse() */
         int delta_page;
         char s;
 
@@ -613,7 +614,6 @@ readresponse()
                         visibility[0] = 1;
                         visibility[1] = 1;      /* turn graphics plane on */
                         surf_visib(2,visibility);
-                        printf("dialog area off; graphics plane on\n");
                         read(0, &s, 1);
                         break;
                 case 'k':

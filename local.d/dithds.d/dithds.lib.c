@@ -3,6 +3,7 @@
 				helped by Phil Gross
 
 */
+#include <stdio.h>
 
 #define ESC 27
 
@@ -11,43 +12,34 @@
 coor_mode(mode,size)
 int mode;
 {
-	printf("%cUX",ESC);
-	trans_int(mode);
-	trans_int(size);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-191, 2/29/84, phg */
 select_code(mode)
 int mode;
 {
-	if (mode == 0)
-		printf("%c%%\!0",ESC);
-	else if (mode == 1)
-		printf("%c%%\!1",ESC);
-	else
-		printf("%c%%\!2",ESC);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-251, 2/29/84, phg */
 fixup_level(level)
 int level;
 {
-	printf("%cRF",ESC);
-	trans_int(level);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-40, 2/28/84, phg */
 clear_dialog()
 {
-	printf("%cLZ",ESC);
+	printf("%c[H%c[J", ESC, ESC);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-237, 2/29/84, phg */
 dialog_visib(status)
 int status;
 {
-	printf("%cLV",ESC);
-	trans_int(status);
+	if (status)
+		printf("\030");
+	else
+		printf("\035\037");
 }
 
 
@@ -55,70 +47,64 @@ int status;
 surf_visib(elems, arr)
 int elems, arr[];
 {
-	printf("%cRI",ESC);
-	int_array(elems, arr);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-360, 2/29/84, phg */
 text_index(text)
 int text;
 {
-	printf("%cMT",ESC);
-	trans_int(text);
 }
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-276, 2/29/84, phg */
-/*I001 graph*/tx_size(width, height, space)
+tx_size(width, height, space)
 int width, height, space;
 {
-	printf("%cMC",ESC);
-	trans_int(width);
-	trans_int(height);
-	trans_int(space);
+	static char size[] = {
+		';', ':', '9', '8', '1', '2', '3'
+	};
+	printf("%c%c", ESC, size[width/15]);
 }
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-277, 2/29/84, phg */
-/*I001 graph*/tx_slnt(angle)
+tx_slnt(angle)
 float angle;
 {
-	printf("%cMA",ESC);
-	trans_real(angle);
+	static char rot[] = { '2', '4', '6', '0' };
+	int i = angle/90;
+	printf("%c%c",ESC,rot[i]);
 }
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-270, 2/29/84, phg */
-/*I001 graph*/tx_font(font)
+tx_font(font)
 int font;
 {
-	printf("%cMF",ESC);
-	trans_int(font);
+	if (font == 2)
+		printf("%c<", ESC);
+	else
+		printf("%c=", ESC);
 }
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-274, 2/29/84, phg */
-/*I001 graph*/tx_prec(precision)
+tx_prec(precision)
 int precision;
 {
-	printf("%cMQ",ESC);
-	trans_int(precision);
 }
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-275, 2/29/84, phg */
-/*I001 graph*/tx_rot(angle)
+tx_rot(angle)
 float angle;
 {
-	printf("%cMR",ESC);
-	trans_real(angle);
 }
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-91, 2/29/84, phg */
 end_segment()
 {
-	printf("%cSC",ESC);
 }
 
 
@@ -126,8 +112,6 @@ end_segment()
 del_segment(segment)
 int segment;
 {
-	printf("%cSK",ESC);
-	trans_int(segment);
 }
 
 
@@ -135,14 +119,12 @@ int segment;
 begin_seg(segment_num)
 int segment_num;
 {
-	printf("%cSO",ESC);
-	trans_int(segment_num);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-140, 2/29/84, phg */
 page()
 {
-	printf("%c%c",ESC,12);  /* ESCAPE and a CONTROL L */
+	printf("\031");
 }
 
 
@@ -150,9 +132,6 @@ page()
 set_window(llx, lly, urx, ury)
 int llx, lly, urx, ury;
 {
-	printf("%cRW",ESC);
-	trans_xy(llx, lly);
-	trans_xy(urx, ury);
 }
 
 
@@ -196,7 +175,7 @@ float coord;
 move(x, y)
 int x, y;
 {
-	printf("%cLF",ESC);
+	printf("\035");
 	trans_xy(x, y);
 }
 
@@ -206,7 +185,6 @@ int x, y;
 draw(x, y)
 int x, y;
 {
-	printf("%cLG",ESC);
 	trans_xy(x, y);
 }
 
@@ -223,41 +201,8 @@ int x, y;
 	arr[3] = 0040 | getbits(x, 11, 5);
 	arr[4] = 0100 | getbits(x, 6, 5);
 	for (t = 0; t <= 4; t++)
-		printf("%c", arr[t]);
+		putchar(arr[t]);
 }
-
-
-/* Tektronix 4110 Series Command Reference, p. 7-160, 3/19/84, phg */
-trans_real(decimal)
-float decimal;
-{
-	float epsilon = 0.00006104;
-	float temp;
-	int trunc, neg_flag, mantissa, exponent;
-	temp = decimal;
-	neg_flag = 0;
-	exponent = 0;		/* I001 exponent may be used before set */
-	if (temp < 0) {
-		neg_flag = -1;
-		temp = neg_flag * temp;
-	}
-	trunc = temp / 1;
-	while ( temp > (trunc + epsilon) && trunc < 16383) {
-		temp = temp * 2.0;
-		exponent--;
-		trunc = temp / 1;
-	}
-	while (temp > 32767.0) {
-		temp = temp / 2.0;
-		exponent++;
-	}
-	mantissa = (temp + 0.5) / 1;
-	if (neg_flag == -1)
-		mantissa = -mantissa;
-	trans_int(mantissa);
-	trans_int(exponent);
-}
-
 
 
 /* Tektronix 4110 Series Command Reference, p. 7-129, 3/19/84, phg */
@@ -265,8 +210,8 @@ float decimal;
 trans_int(x)
 int x;
 {
-	int /*t,*/ arr[3];		/* I001 t set but not used */
-	if ((/* t = */getbits(x, 31, 1)) == 1) { /* I001 t set but not used */
+	int arr[3];
+	if ((getbits(x, 31, 1)) == 1) {
 		x = ~x + 0001;
 		arr[2] = 0040 | getbits(x, 3, 4);
 	}
@@ -303,27 +248,6 @@ getbits(x, p, n)
 unsigned x, p, n;
 {
 	return((x >> (p+1-n)) & ~(~0 << n));
-}
-
-
-/* Tektronix 4110 Series Command Reference, p. 7-6, 3/19/84, phg */
-/* prints a character string after printing a count */
-#include <stdio.h>
-char	*rmtb;
-
-trans_char(string)
-char string[];
-{
-	/* int char_len; I001 char_len unused in trans_char() */
-	int i;
-
-	rmtb = string;
-	i = strlen(string) - 1;
-	while (rmtb[i] == ' ')
-		i--;
-	rmtb[++i] = '\0';
-	trans_int(i);
-	printf("%s", rmtb);
 }
 
 /* Tektronix 4110 Series Command Reference, p. 7-6, 3/19/84, phg */
