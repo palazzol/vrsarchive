@@ -303,7 +303,7 @@ const int grownups[][2] = { {PM_LITTLE_DOG, PM_DOG}, {PM_DOG, PM_LARGE_DOG},
 int little_to_big(montype)
 int montype;
 {
-	register int *i;
+	register const int *i;
 	
 	for(i=grownups[0]; *i >= 0; i++)
 		if(montype == *i) return *(i+1);
@@ -313,7 +313,7 @@ int montype;
 int big_to_little(montype)
 int montype;
 {
-	register int *i;
+	register const int *i;
 	
 	for(i=grownups[0]; *i >= 0; i++)
 		if(montype == *(i+1)) return *i;
