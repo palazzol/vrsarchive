@@ -86,6 +86,7 @@ unsigned nbytes;
 /*
  * free memory from previous malloc or realloc
 */
+void
 free(ap)
 char *ap;
 {
@@ -107,6 +108,17 @@ char *ap;
 		abort();		/* brkctl failed		*/
 	p->s.ptr = freelist;
 	freelist = p;			/* Link into freelist		*/
+}
+
+/*
+ *	cfree -- just an alias for free(), but at the same level of abstraction
+ *	as calloc().
+*/
+void
+cfree(ap)
+char *ap;
+{
+	free(ap);
 }
 
 /*
