@@ -3,7 +3,15 @@
 #include "object.h"
 #include "monster.h"
 #include "room.h"
+#include <sys/types.h>
 #include <sys/file.h>
+#ifndef O_RDWR
+#include <fcntl.h>
+#endif !O_RDWR
+#ifndef R_OK
+#define R_OK	4
+#define W_OK	2
+#endif !R_OK
 
 extern char *player_name;
 extern char *monster_names[];

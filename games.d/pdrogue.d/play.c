@@ -1,4 +1,5 @@
 #include <curses.h>
+#include <signal.h>
 #include "object.h"
 #include "move.h"
 
@@ -81,7 +82,7 @@ CH:
 		case 'd':
 			drop();
 			break;
-		case '':
+		case '\020':
 			remessage();
 			break;
 		case '>':
@@ -97,7 +98,7 @@ CH:
 		case 'I':
 			single_inventory();
 			break;
-		case '':
+		case '\022':
 			wrefresh(curscr);
 			break;
 		case 'T':
@@ -119,9 +120,11 @@ CH:
 		case 't':
 			throw();
 			break;
+#ifdef SIGTSTP
 		case '\032':
 			tstp();
 			break;
+#endif SIGTSTP
 		case '!':
 			shell();
 			break;

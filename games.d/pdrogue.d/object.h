@@ -153,7 +153,7 @@ typedef struct room room;
 
 extern fighter rogue;
 extern room rooms[];
-unsigned extern short screen[SROWS][SCOLS];
+extern unsigned short screen[SROWS][SCOLS];
 extern object level_objects;
 
 extern struct identify id_scrolls[];

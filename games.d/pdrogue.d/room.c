@@ -195,7 +195,7 @@ shell()
 	}
 
 	if (!fork()) {
-		if (setreuid(-1, getuid()) < 0) exit(1);
+		if (setuid(getuid()) < 0) exit(1);
 		execl(sh, rindex(sh, '/') + 1, 0);
 		exit(0);
 	}

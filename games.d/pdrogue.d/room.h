@@ -5,6 +5,4 @@
 
 #define PASSAGE -3		/* current_room value */
 
-#define SCOREFILE "/usr1/tims/SCORE_FILE"
-
 #define AMULET_LEVEL 26

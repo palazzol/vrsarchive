@@ -3,7 +3,17 @@
 get_rand(x, y)
 int x, y;
 {
+#ifdef srandom
+	/*
+	 *	If srandom is defined, it should be defined to be srand.
+	 *	This causes the conditional compilation here to use the
+	 *	older (more standard?) srand/rand routines.
+	*/
+#define random rand
+	unsigned r, random();
+#else !srandom
 	long r, random();
+#endif srandom
 	int s;
 
 	two_sort(x, y);
