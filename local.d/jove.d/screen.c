@@ -52,7 +52,7 @@ make_scr()
 		free(Screen->s_line);	/* free all the screen data */
 		free((char *) Screen);
 	}
-#endif RESHAPING
+#endif /*RESHAPING*/
 
 	DesiredScreen = (struct scrimage *) malloc((unsigned) LI * sizeof (struct scrimage));
 	PhysScreen = (struct scrimage *) malloc((unsigned) LI * sizeof (struct scrimage));
@@ -709,7 +709,7 @@ C100i_lines(top, bottom, num)
 	CapLine = CapCol = 0;
 }
 
-#endif WIRED_TERMS
+#endif /*WIRED_TERMS*/
 
 GENi_lines(top, bottom, num)
 {
@@ -778,7 +778,7 @@ C100d_lines(top, bottom, num)
 	CapLine = CapCol = 0;
 }
 
-#endif WIRED_TERMS
+#endif /*WIRED_TERMS*/
 
 GENd_lines(top, bottom, num)
 {
@@ -826,7 +826,7 @@ struct ID_lookup {
 	"sun",		SUNi_lines,	SUNd_lines,
 	"bg",		BGi_lines,	BGd_lines,
 	"c1",		C100i_lines,	C100d_lines,
-#endif WIRED_TERMS
+#endif /*WIRED_TERMS*/
 	0,		0,		0
 };
 

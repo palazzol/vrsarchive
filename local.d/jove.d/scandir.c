@@ -60,7 +60,7 @@ DIR	*dp;
 	return &dir;
 }
 
-#endif BSD4_2
+#endif /*BSD4_2*/
 
 /* Scandir returns the number of entries or -1 if the directory cannoot
    be opened or malloc fails. */

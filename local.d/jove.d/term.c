@@ -11,7 +11,7 @@
 #   include <termio.h>
 #else
 #   include <sgtty.h>
-#endif SYSV
+#endif /*SYSV*/
 
 #ifdef IPROCS
 #   include <signal.h>
@@ -74,7 +74,7 @@ int	LI,
 char PC ;
 #else
 extern char	PC;
-#endif SYSV
+#endif /*SYSV*/
 
 static char	tspace[256];
 

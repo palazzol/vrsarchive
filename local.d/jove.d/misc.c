@@ -483,7 +483,7 @@ AnsiCodes()
 		complain(unsupported);
 	}
 }
-#endif ANSICODES
+#endif /*ANSICODES*/
 
 NotModified()
 {

@@ -150,7 +150,7 @@ char	*argv[];
 	}
 }
 
-#else PIPEPROCS
+#else /*PIPEPROCS*/
 main()
 {
 }

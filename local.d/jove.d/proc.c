@@ -374,7 +374,7 @@ char	*bname;
 	ShowErr();
 }
 
-#endif SPELL
+#endif /*SPELL*/
 
 ShToBuf()
 {
@@ -456,7 +456,7 @@ int	pid,
 		} else
 			kill_off(rpid, w);
 	}
-#endif IPROCS
+#endif /*IPROCS*/
 }
 
 /* Run the command to bufname, erase the buffer if clobber is non-zero,
@@ -479,7 +479,7 @@ va_dcl
 	char	*argv[32],
 		*mess;
 	File	*fp;
-	int	(*old_int)();
+	SIG_T	(*old_int)();
 
 	va_start(ap);
 	make_argv(argv, ap);
@@ -527,7 +527,7 @@ va_dcl
 	if (pid == 0) {
 #ifdef IPROCS
 		sigrelse(SIGCHLD);   /* don't know if this matters */
-#endif IPROCS
+#endif /*IPROCS*/
 		(void) signal(SIGINT, SIG_DFL);
 #ifdef JOB_CONTROL
 		sigrelse(SIGINT);
@@ -570,7 +570,7 @@ va_dcl
 		    }
 #else
 			mess = "Chugging along...";
-#endif LOAD_AV
+#endif /*LOAD_AV*/
 			message(mess);
 			redisplay();
 		}

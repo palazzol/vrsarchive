@@ -105,7 +105,7 @@ waitchar()
 #endif
 	unsigned int	old_time;
 	int	c;
-	int	(*oldproc)();
+	SIG_T	(*oldproc)();
 
 	alarmed = 0;
 	oldproc = signal(SIGALRM, slowpoke);
@@ -615,7 +615,7 @@ double *dp;
 	*dp = (double) loadav(0) / 100.0;
 }
 
-#    else PURDUE_EE
+#    else /*PURDUE_EE*/
 
 #include <nlist.h>
 
@@ -647,8 +647,8 @@ double	*dp;
 	*dp = avenrun[0];
 }
 
-#    endif PURDUE_EE
-#  else BSD4_2
+#    endif /*PURDUE_EE*/
+#  else /*BSD4_2*/
 
 get_la(dp)
 double	*dp;
@@ -659,8 +659,8 @@ double	*dp;
 	*dp = (double) avg[0] / 256;
 }
 
-#  endif BSD4_2
-#endif LOAD_AV
+#  endif /*BSD4_2*/
+#endif /*LOAD_AV*/
 
 /* get the time buf, designated by *timep, from FROM to TO. */
 char *
@@ -688,6 +688,7 @@ time_t	*timep;
 		return cp;
 }
 
+#ifdef STRLEN
 /* Return length of null terminated string. */
 
 strlen(s)
@@ -699,6 +700,7 @@ register char	*s;
 		;
 	return (s - base);
 }
+#endif
 
 char *
 index(s, c)

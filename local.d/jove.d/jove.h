@@ -21,7 +21,7 @@
 #	ifndef EUNICE
 #		define signal	sigset
 #	endif
-#   endif MENLO_JCL
+#   endif /*MENLO_JCL*/
 #endif
 
 #define EOF	-1
@@ -209,7 +209,7 @@ struct process {
 	data_obj
 		*p_cmd;		/* Command to call when process dies */
 };
-#endif IPROCS
+#endif /*IPROCS*/
 
 struct window {
 	Window	*w_prev,	/* circular list */
@@ -466,8 +466,6 @@ extern int
 	LastKeyStruck;
 
 extern int
-	stackp,
-
 	CapLine,	/* cursor line and cursor column */
 	CapCol,
 

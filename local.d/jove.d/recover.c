@@ -97,7 +97,7 @@ DIR	*dp;
 	return &dir;
 }
 
-#endif BSD4_2
+#endif /*BSD4_2*/
 
 /* Get a line at `tl' in the tmp file into `buf' which should be LBSIZE
    long. */
@@ -543,8 +543,8 @@ struct file_pair	*fp;
 #ifdef LSRHS
 	if (pexist(Header.Pid))
 		return 0;
-#endif LSRHS
-#endif KILL0
+#endif /*LSRHS*/
+#endif /*KILL0*/
 
 	if (Header.Nbuffers == 0) {
 		printf("There are no modified buffers in %s; should I delete the tmp file?", pntrfile);

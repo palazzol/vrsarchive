@@ -23,13 +23,13 @@
 #ifndef TCGETA
 #include <sys/ioctl.h>
 #endif
-#endif SYSV
+#endif /*SYSV*/
 #include <fcntl.h>
 
 #ifdef TIOCSLTC
 struct ltchars	ls1,
 		ls2;
-#endif TIOCSLTC
+#endif /*TIOCSLTC*/
 
 #ifdef TIOCGETC
 #ifndef SYSV
@@ -43,10 +43,10 @@ struct sg_brl	sg1, sg2;
 #else
 #ifdef SYSV
 struct termio	sg1, sg2;
-#else SYSV
+#else /*SYSV*/
 struct sgttyb	sg1, sg2;
-#endif SYSV
-#endif BRLUNIX
+#endif /*SYSV*/
+#endif /*BRLUNIX*/
 
 #ifdef BIFF
 private struct stat	tt_stat;	/* for biff */
@@ -144,7 +144,7 @@ register int	fd, on;
 	finish(SIGHUP);
     return;
 }
-#endif SYSV
+#endif /*SYSV*/
 
 Peekc()
 {
@@ -182,7 +182,7 @@ getchar()
 #else
 		while (nchars < 0 && errno == EINTR);
 		if (nchars <= 0)
-#endif SYSV
+#endif /*SYSV*/
 			finish(SIGHUP);
 		bp = smbuf;
 		InputPending = nchars > 1;
@@ -194,7 +194,7 @@ getchar()
 	nchars--;
 	return (*bp++ & 0177);
 }
-#else PIPEPROCS
+#else /*PIPEPROCS*/
 getchar()
 {
 	extern int	global_fd,
@@ -257,8 +257,8 @@ getchar()
 	nchars--;
 	return *bp++ & 0377;
 }
-#endif PIPEPROCS
-#else IPROCS
+#endif /*PIPEPROCS*/
+#else /*IPROCS*/
 getchar()
 {
 	extern int	errno;
@@ -281,7 +281,7 @@ getchar()
 	nchars--;
 	return *bp++ & 0377;
 }
-#endif IPROCS
+#endif /*IPROCS*/
 
 int	InputPending = 0;
 
@@ -310,7 +310,7 @@ charp()
 			c = 0;
 		some = (c > 0);
 	}
-#endif FIONREAD
+#endif /*FIONREAD*/
 #ifdef SYSV
 	setblock(0, 0);		/* turn blocking off */
 	nchars = read(0, smbuf, sizeof smbuf);	/* Is anything there? */
@@ -318,7 +318,7 @@ charp()
 	if (nchars > 0)		/* something was there */
 	    bp = smbuf;		/* make sure bp points to it */
 	some = (nchars > 0);	/* just say we found something */
-#endif SYSV
+#endif /*SYSV*/
 #ifdef c70
 	some = !empty(0);
 #endif
@@ -370,9 +370,9 @@ PauseJove()
 
 Push()
 {
-	int	pid,
-    		(*old_int)() = signal(SIGINT, SIG_IGN),
-		(*old_quit)() = signal(SIGQUIT, SIG_IGN);
+	int	pid;
+    	SIG_T	(*old_int)() = signal(SIGINT, SIG_IGN);
+	SIG_T	(*old_quit)() = signal(SIGQUIT, SIG_IGN);
 
 #ifdef IPROCS
 	sighold(SIGCHLD);
@@ -417,7 +417,7 @@ ttsize()
 		if (win.ws_row)
 			LI = win.ws_row;
 	}
-#else TIOCGWINSZ
+#else /*TIOCGWINSZ*/
 #ifdef BTL_BLIT
 #include <sys/jioctl.h>
 	struct jwinsize jwin;
@@ -428,8 +428,8 @@ ttsize()
 		if (jwin.bytesy)
 			LI = jwin.bytesy;
 	}
-#endif BTL_BLIT
-#endif TIOCGWINSZ
+#endif /*BTL_BLIT*/
+#endif /*TIOCGWINSZ*/
 	ILI = LI - 1;
 }
 
@@ -487,8 +487,8 @@ ttinit()
 		tc2.t_stopc = (char) -1;
 		tc2.t_startc = (char) -1;
 	}
-#endif SYSV
-#endif TIOCGETC
+#endif /*SYSV*/
+#endif /*TIOCGETC*/
 	do_sgtty();
 }
 
@@ -500,7 +500,7 @@ do_sgtty()
 	(void) ioctl(0, TCGETA, (char *) &sg1);
 #else
 	(void) gtty(0, &sg1);
-#endif SYSV
+#endif /*SYSV*/
 	sg2 = sg1;
 
 #ifdef SYSV
@@ -523,7 +523,7 @@ do_sgtty()
 	sg2.sg_xflags &= ~((sg2.sg_xflags&DC3DC1 ? 0 : STALL) | PAGE);
 #else
 	sg2.sg_flags &= ~(ECHO | CRMOD);
-#endif BRLUNIX
+#endif /*BRLUNIX*/
 
 #ifdef EUNICE
 	sg2.sg_flags |= RAW;	/* Eunice needs RAW mode last I heard. */
@@ -536,9 +536,9 @@ do_sgtty()
 #   endif
 #else
 	sg2.sg_flags |= (MetaKey ? RAW : CBREAK);
-#endif PURDUE_EE
-#endif EUNICE
-#endif SYSV
+#endif /*PURDUE_EE*/
+#endif /*EUNICE*/
+#endif /*SYSV*/
 }
 
 tty_reset()
@@ -563,17 +563,17 @@ ttyset(n)
 	(void) stty(0, n == 0 ? (struct sgttyb *) &sg1 : (struct sgttyb *) &sg2);
 #else
 	(void) ioctl(0, TIOCSETN, n == 0 ? (struct sgttyb *) &sg1 : (struct sgttyb *) &sg2);
-#endif BRLUNIX
-#endif SYSV
+#endif /*BRLUNIX*/
+#endif /*SYSV*/
 
 #ifdef TIOCSETC
 #ifndef SYSV
 	(void) ioctl(0, TIOCSETC, n == 0 ? (struct sgttyb *) &tc1 : (struct sgttyb *) &tc2);
-#endif SYSV
-#endif TIOCSETC
+#endif /*SYSV*/
+#endif /*TIOCSETC*/
 #ifdef TIOCSLTC
 	(void) ioctl(0, TIOCSLTC, n == 0 ? (struct sgttyb *) &ls1 : (struct sgttyb *) &ls2);
-#endif TIOCSLTC
+#endif /*TIOCSLTC*/
 	done_ttinit = 1;
 #ifdef BIFF
 	biff(!n);
@@ -1050,7 +1050,7 @@ char	*argv[];
 	sprintf(Mailbox, "/usr/mail/%s", getenv("LOGNAME"));
 #else
 	sprintf(Mailbox, "/usr/spool/mail/%s", getenv("USER"));
-#endif SYSV
+#endif /*SYSV*/
 	(void) joverc(Joverc);
 	if (!scanvec(argv, "-j")) {
 		char	tmpbuf[100];
