@@ -98,12 +98,13 @@
 
 
 #include	<curses.h>
-#include	<sgtty.h>
-#include	<strings.h>
+#include	<string.h>
 #include	"window.h"
 #include	"terminal.h"
 #include	"specs.h"
 
+extern char *calloc();
+extern char *strchr();
 
 /* Routines from termcap library.
  */
@@ -373,7 +374,7 @@ char	*var;
 			exit(1);
 		}
 
-		if ((var[0] != '\\') || (index(GVARMODES, var[1]) == 0))  {
+		if ((var[0] != '\\') || (strchr(GVARMODES, var[1]) == 0))  {
 			disperr("GRAPHICSMAP value has bad mode.");
 			exit(1);
  		}
@@ -403,12 +404,12 @@ int	*valp;
 	char	*str;
 	labelv	*lp;
 
-	for (str = *strp ; *str && index(VARSEP, *str) != 0 ; str++ );
+	for (str = *strp ; *str && strchr(VARSEP, *str) != 0 ; str++ );
 
 	for (lp = labeltab ; lp->label != NULL ; lp++)  {
 		if (substrp(str, lp->label))  {
 			*valp = lp->value;
-			str = index(str, '=');
+			str = strchr(str, '=');
 			if (str == NULL)
 			  	return(FALSE);
 			str++;
@@ -436,7 +437,7 @@ char	**valp;
 
 	var = *strp;
 	bp = buf;
-	while ((*var != NULL) && (index(VARTERM, *var) == NULL))  {
+	while ((*var != NULL) && (strchr(VARTERM, *var) == NULL))  {
 		*bp = read_slashed(&var);
 	       	bp++;
         }
@@ -468,14 +469,14 @@ char	**strp;
 	c = *str;
 	switch (c)  {
 	  default:
-		if (index(DIGITS, c) == NULL)
+		if (strchr(DIGITS, c) == NULL)
 		  	break;
 		c -= '0';
-		if (index(DIGITS, str[1]) == NULL)
+		if (strchr(DIGITS, str[1]) == NULL)
 		  	break;
 		str++;
 		c = (c * 8) + (*str - '0');
-		if (index(DIGITS, str[1]) == NULL)
+		if (strchr(DIGITS, str[1]) == NULL)
 		  	break;
 		str++;
 		c = (c * 8) + (*str - '0');
