@@ -48,7 +48,9 @@ struct variable	variables[] = {
 	VARIABLE, "interrupt-character", &IntChar, V_CHAR|V_TTY_RESET,
 	VARIABLE, "right-margin", &RMargin, V_BASE10,
 	VARIABLE, "scroll-step", &ScrollStep, V_BASE10,
+#ifdef ID_CHAR
 	VARIABLE, "search-exit-char", &SExitChar, V_CHAR,
+#endif
 	VARIABLE, "send-typeout-to-buffer", &UseBuffers, V_BOOL,
 	VARIABLE, "shell", (int *) Shell, V_STRING,
 	VARIABLE, "shell-flags", (int *) ShFlags, V_STRING,
