@@ -670,7 +670,7 @@ int y, x;
 /* based on flags set in the main creature record                */
 monster_death(y, x, flags)
 int y, x;
-unsigned int flags;
+unsigned long flags;
 {
   int i;
 
@@ -719,10 +719,10 @@ int monptr, dam;
   m_ptr->csleep = 0;
   if (m_ptr->hp < 0) 
     {
-      monster_death((int)m_ptr->fy, (int)m_ptr->fx,c_list[m_ptr->mptr].cmove);
+      monster_death((int)m_ptr->fy, (int)m_ptr->fx, c_list[m_ptr->mptr].cmove);
       c_ptr = &c_list[m_ptr->mptr];
       p_ptr = &py.misc;
-      acc_tmp = c_ptr->mexp*((c_ptr->level+0.1)/p_ptr->lev);
+      acc_tmp = ((long)c_ptr->mexp) * ((c_ptr->level+0.1)/p_ptr->lev);
       i = acc_tmp;
       acc_exp += (acc_tmp - i);
       if (acc_exp > 1) 
