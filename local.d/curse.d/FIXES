@@ -1,0 +1,26 @@
+ 
+ DESCRIPTION:
+                'curse' doesn't use the current size of the window
+ when the -ll option cannot find a 'quick to last line' entry in the
+ termcap.
+
+ REPEAT-BY:     
+                If you have a terminal which is NOT 24 lines tall and
+ whose termcap entry doesn't contain the 'll' option, run:
+
+ curse -ll
+
+ You'll end up some weird place (column 0, line 23).
+
+ FIX-BY:
+                Use LINES and COLS, as defined by 'curses', in order
+ to figure out your screen's size.  This allows for two easy options
+ to get the numbers of lines and columns of your terminal, say in 
+ shell variables:  
+
+ lines=`curse -li`
+ or
+ set lines=`curse -li`
+
+ diff.{c,1}  are ed(1) scripts for curse.c and curse.1 respectively.
+ The two new options are -li and -co.
