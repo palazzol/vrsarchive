@@ -1,5 +1,5 @@
 /*
- * $Header: /home/Vince/cvs/drivers/io/lp.c,v 1.3 1986-10-05 14:16:51 root Exp $
+ * $Header: /home/Vince/cvs/drivers/io/lp.c,v 1.4 1986-10-05 14:17:46 root Exp $
  * Copyright (C) 1983 Intel Corp.
  * All rights reserved. No part of this program or publication
  * may be reproduced, transmitted, transcribed, stored in a
@@ -11,7 +11,7 @@
  * Attn: Software License Administration.
 */
 char lp286copyright[] = "(C) 1985 Intel Corp.";
-static char lpvers[] = "@(#) lp driver $Revision: 1.3 $";
+static char lpvers[] = "@(#) lp driver $Revision: 1.4 $";
 /*
  * This is a set of procedures that implement a parallel port
  * driver for xenix. 
@@ -173,6 +173,7 @@ lpproc(tp,cmd)
 		case T_BLOCK:	/* Block input via stop-char	*/
 		case T_UNBLOCK:	/* Unblock input via start-char	*/
 		case T_BREAK:	/* Send BREAK			*/
+			return;
 		case T_TIME:	/* Time out is over		*/
 			tp->t_state &= ~TIMEOUT;
 				/* FALL THROUGH!!		*/
@@ -241,6 +242,10 @@ lpopen(dev,flag)
 	ttinit(tp);
 	tp->t_state |= CARR_ON;
 	(*linesw[tp->t_line].l_open)(dev,tp);
+	if (minor(dev) & 4) {		/* Kludge for compatibility	*/
+		tp->t_oflag &= ~OPOST;	/* Let's ditch this in R5	*/
+		return;			/* Let's ditch this in R5	*/
+	}
 	if (minor(dev) & 1)		/* Kludge for compatibility	*/
 		tp->t_oflag |= OLCUC;	/* Let's ditch this in R5	*/
 	tp->t_oflag |= ONLCR;		/* Let's ditch this in R5 too	*/
@@ -277,7 +282,7 @@ lpclose(dev,flag)
 	 *	4) Exit is called, which calls close.
 	 *	5) Line discipline close waits for output to drain.
 	*/
-	if (tp->t_state & OASLP)
+	if (tp->t_state & (OASLP|TTIOW))
 		while (getc(&tp->t_outq) >= 0) ;
 	(*linesw[tp->t_line].l_close)(tp);
 }
@@ -342,7 +347,6 @@ lpioctl(dev,cmd,addr,oflag)
  * CALL:	lprestart(tp)
  *
  * INTERFACES:	lpintr, XENIX
- *
  * CALLS:
  *
  * History:	part of line disipline upgrade
@@ -351,18 +355,19 @@ lprestart(tp)
 	register struct tty *tp;
 {
 	register struct lpcfg *pdev;
-	int stat;
+	int spl, stat;
 
 	pdev = &lpcfg[tp-lptty];
+	spl = splcli();
 	stat = inb(pdev->p_portb);
 	if ((stat & (PR_ACK_BAR | PR_BUSY | PR_ERROR)) != PR_ACK_BAR) {
-		printf("Lpintr: lp port %d not ready\n",tp-lptty);
 		timeout(lprestart,tp,LPTIMEO);
 		return;
 	}
-	outb(pdev->control,CL_PR_ACK); /* re-enable interrupts */
-	outb(pdev->control,SET_PRINTER_ACK);
-	lpstart();
+#ifdef DEBUG
+	printf("lprestart: Calling lpintr\n",stat);
+#endif DEBUG
+	lpintr(lpcfg[tp-lptty].p_level);	/* Fake an interrupt	*/
 }
 
 /*
