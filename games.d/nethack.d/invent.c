@@ -1016,7 +1016,10 @@ char let;
 	static char buf[4 + 4 + 15 + 1];
 
 	if (pos == NULL) pos = obj_symbols;
-	Sprintf(buf, "%s%s%s", HI, names[pos - obj_symbols], HE);
+	if (HI && HE)
+	    Sprintf(buf, "%s%s%s", HI, names[pos - obj_symbols], HE);
+	else
+	    Sprintf(buf, "%s", names[pos - obj_symbols]);
 	return (buf);
 }
 #endif /* SORTING /**/
