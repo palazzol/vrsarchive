@@ -1,0 +1,10 @@
+Date: Wed, 23 Jan 85 14:01:24 est
+>From: john (John Nelson)
+Subject: contextual diff on Bell systems
+
+This is a program for all those poor slobs that have to deal with UNIX systems
+that don't have a -c option on their diff.  This program eliminates the last
+excuse for bug fixes to be in standard diff format (especially since "patch"
+works so much more reliably on diffc format).
+
+Send bug reports to:  John Nelson  (decvax!genrad!john).

@@ -1,0 +1,61 @@
+.TH DIFFC l  "22 January 1985"
+.UC 4
+.SH NAME
+diffc \- context diff for systems whose diff has no \-c option
+.SH SYNOPSIS
+.B diff
+[
+.B \-options
+] [
+.B \-r
+] [
+\fB\-c#
+] file1 file2
+.SH DESCRIPTION
+.I Diffc
+is a front end for
+.IR diff (1)
+which outputs contextual diff format like Berkeley system's "diff -c".
+.I Diffc
+will actually run
+.I diff
+as a subprocess, and will merge the "standard" diff format with lines from
+both files.
+As far as I can tell, the output is exactly the same as that of a diff with
+the -c option.
+.PP
+The -c# option allows the amount of context to be specified.
+The default is 3 lines above and below the change.
+I find that -c1 works well for updates intended for use with patch(1).
+Any other options specified on the command line are passed along to
+.IR diff .
+Note that most options to
+.I diff
+should NOT be specified when using 
+.IR diffc ,
+but the capability is there, nevertheless.
+.PP
+The output format begins with identification of the files involved and
+their creation dates and then each change is separated
+by a line with a dozen *'s.
+The lines removed from
+.I file1
+are marked with `\(mi'; those added to
+.I file2
+are marked `+'.  Lines which are changed from one
+file to the other are marked in both files with `!'.
+.PP
+No claim is made that the algoritm used is either fast or bulletproof.
+It was only intended for standard text files with lines shorter than
+BUFSIZ.
+Fseek is used extensively to move around in the files, precluding the
+use of standard input as one of the files to be diff'ed.
+.SH "SEE ALSO"
+cmp(1), diff(1), comm(1), patch(1)
+.SH DIAGNOSTICS
+Exit status is nonzero to indicate problems.
+.SH BUGS
+This program is a hack, and should really be incorporated as part of "diff"
+by Bell.
+.SH AUTHOR
+John P. Nelson
