@@ -29,19 +29,19 @@
 # the header file struct.h.  You should first look at the beginning of
 # struct.h, which contains the machine-dependent preprocessor variables.
 
-# for VAXen, Pyramids, RT/PC and other plain vanilla UNIX boxes.
-CFLAGS= -O
+# for VAXen, Pyramids, RT/PC and other BSD UNIX boxes.
+#CFLAGS= -O -DBSD
 
-# Definitions for cross-compiling a MS-DOS version of IFP with the
-# XENIX system on a PC/AT.  The OPSYS variable in struct.h must
-# also be changed from UNIX to MSDOS.
+# Definitions for cross-compiling a MS-DOS version of IFP with a XENIX
+# system.  The OPSYS variable in struct.h must also be changed from UNIX
+# to MSDOS.
 #AOBJS=dos.o
-#CFLAGS= -Ml -DPCAT -K -O -dos -F 24000 
-#LFLAGS= -DPCAT
+#CFLAGS= -M2l -K -O -dos -F 24000 
+#LFLAGS=
 
 # Definitions for compiling a XENIX version of IFP on a PC/AT.
-#CFLAGS= -DPCAT -Ml -O 
-#LFLAGS= -DPCAT	       
+CFLAGS= -M2l -O 
+LFLAGS=
 
 # Definitions are for compiling IFP on a CRAY X-MP under CTSS
 #CFLAGS = 
@@ -78,6 +78,9 @@ ifp:    $(IOBJS) $(AOBJS) $(GOBJS)
 	cc $(CFLAGS) $(AOBJS) $(GOBJS) $(IOBJS) $(LIBS) -lm -o ifp
 #	strip ifp
 	echo "ifp recompiled"
+
+clean:
+	rm -f ifp $(IOBJS) $(AOBJS) $(GOBJS)
 
 $(IOBJS):	struct.h
 

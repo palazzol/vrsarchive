@@ -34,7 +34,7 @@
  * The preprocessor variables are listed below.
  *
  * OPSYS (UNIX, MSDOS, CTSS) - specifies operating system
- * PCAT - for compiling on PC/ATs
+ * BSD - for compiling on BSD UNIX
  * SQUEEZE - put space at a premium
  * DEBUG - incorporate interpreter debugging spy points
  * DUMP - incoporate dump command for debugging (see debug.c)
@@ -82,22 +82,17 @@
  * and dependent code should be removed.
  */
 #define PARAMBUG 1
+#define strchr index
 #endif
  
 #if OPSYS==MSDOS || OPSYS==CTSS 
 #define MAXPATH 65     /* Maximum pathname length allowed (in characters) */
+#define strchr index
 #endif
 
 #if OPSYS==UNIX
 #define MAXPATH 256    /* Maximum pathname length allowed (in characters) */
-#endif
-
-#if OPSYS==CTSS
-#define index strchr
-#endif
-
-#ifdef PCAT
-#define index strchr
+#define strchr index
 #endif
 
 /********** Fundamental Data Structures and Constants **********/

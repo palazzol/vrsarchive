@@ -405,7 +405,7 @@ void EnvGet (Key,Value,ValLim)
  * Find pathname of current working directory (relative to FP root).
  *
  * Input
- *      PathLim = length of Path buffer (used by PCAT versions only)
+ *      PathLim = length of Path buffer (used by SVID versions only)
  *
  * Output
  *      result = 1 if valid FP path, 0 otherwise
@@ -415,9 +415,9 @@ boolean CWDGet (Path,PathLim)
    register char *Path;
    int PathLim;
    {
-#ifdef PCAT
-      extern char *getcwd ();
-      if (!getcwd (Path,PathLim-2)) return 0;
+#ifdef BSD
+      extern char *getwd();
+      if (!getwd (Path)) return 0;
 #else
 #if S9000
       extern FILE *popen ();
@@ -426,10 +426,10 @@ boolean CWDGet (Path,PathLim)
       fscanf (F,"%s",Path);
       pclose (F);
 #else
-      extern char *getwd();
-      if (!getwd (Path)) return 0;
-#endif /* S9000 */
-#endif /* PCAT */
+      extern char *getcwd ();
+      if (!getcwd (Path,PathLim-2)) return 0;
+#endif /* !S9000 */
+#endif /* !BSD */
 
 #if OPSYS==MSDOS
       (void) strcpy (Path,Path+2);              /* Delete drive name */
