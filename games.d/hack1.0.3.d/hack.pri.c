@@ -44,8 +44,8 @@ char *str;
 #ifdef UNIX
 	if(!fork())
 		abort();	/* generate core dump */
-#endif UNIX
-#endif DEBUG
+#endif
+#endif
 	more();			/* contains a fflush() */
 	done("panicked");
 }
@@ -160,7 +160,7 @@ char ch;
 		impossible("At gets 0%o at %d %d.", ch, x, y);
 		return;
 	}
-#endif lint
+#endif
 	if(!ch) {
 		impossible("At gets null at %d %d.", x, y);
 		return;
@@ -286,7 +286,7 @@ pru()
 #ifndef NOWORM
 #include	"def.wseg.h"
 extern struct wseg *m_atseg;
-#endif NOWORM
+#endif
 
 /* print a position that is visible for @ */
 prl(x,y)
@@ -310,7 +310,7 @@ prl(x,y)
 		if(m_atseg)
 			pwseg(m_atseg);
 		else
-#endif NOWORM
+#endif
 		pmon(mtmp);
 	}
 	else if((otmp = o_at(x,y)) && room->typ != POOL)
@@ -323,7 +323,8 @@ prl(x,y)
 	else if(g_at(x,y) && room->typ != POOL)
 		atl(x,y,'$');
 	else if(!room->seen || room->scrsym == ' ') {
-		room->new = room->seen = 1;
+		room->seen = 1;
+		room->new = 1;
 		newsym(x,y);
 		on_scr(x,y);
 	}
@@ -462,7 +463,7 @@ register x,y;
 		nosee(x+1,y);
 	}
 }
-#endif QUEST
+#endif
 
 vism_at(x,y)
 register x,y;
@@ -494,7 +495,7 @@ register int show = (!obj->oinvis || See_invisible) &&
 		obj->ody = obj->oy;
 	}
 }
-#endif NEWSCR
+#endif
 
 unpobj(obj) register struct obj *obj; {
 /* 	if(obj->odispl){
@@ -532,7 +533,7 @@ register struct monst *mtmp;
 		pmon(mtmp);
 #ifndef NOWORM
 		if(mtmp->wormno) wormsee(mtmp->wormno);
-#endif NOWORM
+#endif
 	}
 }
 
@@ -595,7 +596,8 @@ register char *ob = oldbot, *nb = newbot;
 register int i;
 extern char *eos();
 	if(flags.botlx) *ob = 0;
-	flags.botl = flags.botlx = 0;
+	flags.botlx = 0;
+	flags.botl = 0;
 #ifdef GOLD_ON_BOTL
 	(void) sprintf(newbot,
 		"Level %-2d  Gold %-5lu  Hp %3d(%d)  Ac %-2d  Str ",
@@ -604,7 +606,7 @@ extern char *eos();
 	(void) sprintf(newbot,
 		"Level %-2d   Hp %3d(%d)   Ac %-2d   Str ",
 		dlevel,  u.uhp, u.uhpmax, u.uac);
-#endif GOLD_ON_BOTL
+#endif
 	if(u.ustr>18) {
 	    if(u.ustr>117)
 		(void) strcat(newbot,"18/**");
@@ -616,7 +618,7 @@ extern char *eos();
 	(void) sprintf(eos(newbot), "  Exp %2d/%-5lu ", u.ulevel,u.uexp);
 #else
 	(void) sprintf(eos(newbot), "   Exp %2u  ", u.ulevel);
-#endif EXP_ON_BOTL
+#endif
 	(void) strcat(newbot, hu_stat[u.uhs]);
 	if(flags.time)
 	    (void) sprintf(eos(newbot), "  %ld", moves);
@@ -647,7 +649,7 @@ mstatusline(mtmp) register struct monst *mtmp; {
 	    mtmp->data->mlevel, mtmp->mgold, mtmp->mhp, mtmp->mhpmax,
 	    mtmp->data->ac, (mtmp->data->damn + 1) * (mtmp->data->damd + 1));
 }
-#endif WAN_PROBING
+#endif
 
 cls(){
 	if(flags.toplin == 1)
