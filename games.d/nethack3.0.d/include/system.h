@@ -65,7 +65,11 @@ E void perror P((const char *));
 #if defined(BSD) || defined(ULTRIX)
 E int qsort();
 #else
+#ifdef __STDC__
+#include <stdlib.h>
+#else
 E void qsort P((genericptr_t,size_t,size_t,int(*)(genericptr_t,genericptr_t)));
+#endif
 #endif
 
 #ifdef ULTRIX
