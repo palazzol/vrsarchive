@@ -296,9 +296,9 @@ int gameid;
     if (DESTRUCTIVE_RESTORE && found < 2) {
       fd = fopen(Str2,"a");
       for(i=0;i<2-found;i++)
-	write_int(fd,gameid);
-      return((found<2) || (strcmp(getlogin(),WIZARD)==0));
+	  write_int(fd,gameid);
     }
+    return((found<2) || (strcmp(getlogin(),WIZARD)==0));
   }
   else {
     mprint("No omega.saves file! But I'll restore your game anyhow.");
