@@ -41,6 +41,8 @@ char **argv;                            /* Invocation argv              */
 unsigned tosleep;			/* Time to sleep                */
 daddr_t	swplo;				/* Base of swap space in kernel	*/
 struct var v;				/* Copy of kernel parameters    */
+#ifdef M_XENIX
+#define KERNEL "/xenix"
 struct nlist nl[] = {
   { "_v" },
 #define X_V	0
@@ -50,6 +52,18 @@ struct nlist nl[] = {
 #define X_SWPLO	2
   { NULL },
 };
+#else
+#define KERNEL "/unix"
+struct nlist nl[] = {
+  { "v" },
+#define X_V	0
+  { "proc" },
+#define X_PROC	1
+  { "swplo" },
+#define X_SWPLO	2
+  { NULL },
+};
+#endif
 char *malloc();                         /* Memory allocator             */
 long lseek();
 time_t time();
@@ -229,11 +243,19 @@ char *av[];
     { fprintf(stderr,"%s: Can't open swap area\n",argv[0]);
       exit(1);
     }
-  nlist("/xenix",nl);                  /* Get relevant pointers        */
+#ifdef M_XENIX
+  nlist(KERNEL,nl);                  /* Get relevant pointers        */
   if (nl[0].n_type == 0)
     { fprintf(stderr,"%s: No system namelist\n",argv[0]);
       exit(1);
     }
+#else
+  /* Get relevant pointers        */
+  if (nlist(KERNEL,nl) < 0)
+    { fprintf(stderr,"%s: No system namelist\n",argv[0]);
+      exit(1);
+    }
+#endif
   lseek(kmem, (long)nl[X_SWPLO].n_value, 0);
   read(kmem, (char *)&swplo, sizeof(swplo));
   utemp = open("/etc/utmp",0);          /* Open login info file         */
