@@ -8,10 +8,10 @@
 *								*
 \***************************************************************/
 
+#include <stdio.h>
 #include "pparm.h"
 #include "pcdst.h"
 #include "pleer.h"
-#include <stdio.h>
 
 #define netmax 50		/* max. net length		*/
 #define ratio 3			/* ratio for filter		*/
@@ -61,7 +61,7 @@ autor()
 
     Ferr_msg ("Preparing autoroute");
 
-    snl = (struct sntl *) malloc (V.nnh * sizeof (*snl));
+    snl = (struct sntl *) p_malloc (V.nnh * sizeof (*snl));
 
 
     segc = 0;			/* count segments and nets	 */
@@ -82,7 +82,7 @@ autor()
 
     qsort (snl, j, sizeof (*snl), netc_key);/* sort nets		 */
 
-    SSEGL = (struct ssegl *) malloc (sizeof (struct ssegl) * segc);
+    SSEGL = (struct ssegl *) p_malloc (sizeof (struct ssegl) * segc);
 
     printf ("%4d nets with %5d segments needs to be routed\n", netc, segc);
 
@@ -124,7 +124,7 @@ autor()
 	    netc += s -> p -> f;
 	}
 #endif
-    free (SSEGL);
+    p_free (SSEGL);
     printf ("\tPass2: %4d nets, %5d segments routed\n", netc, segc);
 
     Ferr_msg ("Autoroute: pass 3");
@@ -157,7 +157,7 @@ autor()
 	}
     printf ("\tPass5: %4d nets, %5d segments routed\n", netc, segc);
 
-    free (snl);			/* free memory			 */
+    p_free (snl);		/* free memory			 */
 
     Ferr_msg ("Saving result");
 
@@ -736,8 +736,8 @@ N_route (net, max, xl, yl, xh, yh)
 #endif
 
     nh = net -> l;		/* (max) number of holes in net	 */
-    htp = (struct htab *) malloc (nh * sizeof (*htp));
-    clp = (struct clst *) malloc (nh * (nh - 1) * sizeof (*clp) / 2);
+    htp = (struct htab *) p_malloc (nh * sizeof (*htp));
+    clp = (struct clst *) p_malloc (nh * (nh - 1) * sizeof (*clp) / 2);
 
     nh = 0;			/* count hole in area of interest */
     for (h1 = htp, p = net -> lp; p; p = p -> n) {
@@ -753,8 +753,8 @@ N_route (net, max, xl, yl, xh, yh)
     }
 
     if (nh < 2) {		/* nothing to do		 */
-	free (htp);
-	free (clp);
+	p_free (htp);
+	p_free (clp);
         deseln (net);
 	return 0;
     }
@@ -868,8 +868,8 @@ N_route (net, max, xl, yl, xh, yh)
     net -> f = (i >= nh && nh == net -> l) || cchk (net);
 
     deseln (net);
-    free (clp);			/* free memory			 */
-    free (htp);
+    p_free (clp);		/* free memory			 */
+    p_free (htp);
     return (no_seg);
 }
 
@@ -910,8 +910,8 @@ P_route (net)
     }
 
     nh = net -> l;		/* number of holes in net	 */
-    htp = (struct htab *) malloc (nh * sizeof (*htp));
-    clp = (struct clst *) malloc (nh * (nh - 1) * sizeof (*clp) / 2);
+    htp = (struct htab *) p_malloc (nh * sizeof (*htp));
+    clp = (struct clst *) p_malloc (nh * (nh - 1) * sizeof (*clp) / 2);
 
     i = 0;			/* count subnets		 */
     for ((h1 = htp, p = net -> lp); p; (h1++, p = p -> n)) {
@@ -1009,8 +1009,8 @@ P_route (net)
 	err("P_route: not MST", ttc, net -> l,
 	    (int) (net - NH) / sizeof(NH[0]), 0);
 
-    free (clp);			/* free memory			 */
-    free (htp);
+    p_free (clp);		/* free memory			 */
+    p_free (htp);
     deseln (net);
     return (no_seg);
 }

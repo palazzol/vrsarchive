@@ -135,7 +135,7 @@ select_AED() /* select AED terminal 5 or 6 depends where you are */
 
 finish()				/* clean up the mess		*/
 {
-    if (!batch) {
+    if (!batch && fp) {
 
 	putc (ESC, fp);			/* switch to 9600 baud		 */
 	putc (SBR, fp);
@@ -184,7 +184,7 @@ color (t, m)				/* set up color type and mask	*/
 
     if (!t && m & s2b)
 	m |= resb;			/* s2b erase: erase 'resb' also */
-    else if (m == (selb | s2b) && t & s2b) {
+    else if (!(~m & (s2b | selb))) {
 	m |= resb;			/* paint selected s2b: add 'resb' */
 	t |= resb;
     }
@@ -737,9 +737,37 @@ getcur (x, y)				/* get cursor			*/
 {
     char    buf[20];
     int     i, j;
+    static int rep_cnt = 0;
 
     if (batch)
 	err ("getcur: not allowed in batch mode", 0, 0, 0, 0);
+
+    msg_svd = 0;		/* reset message save delay	 */
+
+    if (mac_exp)		/* expanding a macro ?		 */
+	return macex_gc (x, y);
+
+    if (replay_fp) {	/* replay a keystroke file	 */
+	fflush (fp);
+	if (!rep_cnt)
+	    rep_cnt = getint ("Number of keystrokes", 0, 10000, 1);
+
+	if (!rep_cnt || 3 != fscanf (replay_fp, "%d%d%d", x, y, &i)) {
+	    if (rep_cnt)
+		printf ("Keystroke file exhausted\n");
+	    else
+		printf ("Replay terminated\n");
+	    beep ();
+	    rep_cnt = 0;
+	    fclose (replay_fp);
+	    replay_fp = 0;}
+	else {
+	    rep_cnt--;
+	    if (mac_def)	/* defining a macro ?		 */
+		macdf_gc (*x, *y, i);
+	    return i;
+	}
+    }
 
     putc (ETC, fp);		/* enable cursor */
     putc (XYZ, fp);
@@ -776,8 +804,17 @@ getcur (x, y)				/* get cursor			*/
     }
 
     for (j = (i & 16) ? 4 : 0; i; j++) {
-	if (i & 1)
-	    return (j);
+	if (i & 1) {
+	    if (save_fp) {
+		fprintf (save_fp, "%d %d %d\n", *x, *y, j);
+		fflush (save_fp);
+	    }
+
+	    if (mac_def)	/* defining a macro ?		 */
+		macdf_gc (*x, *y, j);
+
+	    return j;
+	}
 	i >>= 1;
     }
     err ("getcur: something went wrong", i, j, 0, 0);
@@ -937,6 +974,12 @@ err_msg (s)			/* display error messages	 */
 {   int i;
     long clock, time ();
     char *ctime ();
+
+    if (msg_svd && !batch) {
+	fflush (fp);
+	sleep (1);		/* wait a second		 */
+    }
+    msg_svd = s != 0 && s[0];	/* set messaeg delay if msg	 */
 
     if (batch) {
 	clock = time (0);
