@@ -13,7 +13,7 @@
 extern char *tgetstr(), *tgoto(), *getenv();
 extern long *alloc();
 
-#ifndef TERMINFO
+#ifndef xTERMINFO
 # ifndef lint
 extern			/* it is defined in libtermlib (libtermcap) */
 # endif
@@ -76,8 +76,8 @@ startup()
 	if(pc = tgetstr("pc", &tbufptr))
 		PC = *pc;
 	if(!(BC = tgetstr("bc", &tbufptr))) {	
-		if(!tgetflag("bs"))
-			error("Terminal must backspace.");
+		/*if(!tgetflag("bs"))
+			error("Terminal must backspace."); VRS */
 		BC = tbufptr;
 		tbufptr += 2;
 		*BC = '\b';
