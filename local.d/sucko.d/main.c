@@ -50,7 +50,7 @@ char *argv[];
 	}
 	if (!found) {
 	    strcpy(rcname, ngname);
-	    rclast = 0;
+	    rclast = ngfirst - 1;
 	}
 	if (ngfirst < rclast+1)
 	    ngfirst = rclast+1;
@@ -83,18 +83,19 @@ char *argv[];
 	    }
 	    outfp = fopen(buf, "w");
 	    if (!outfp)
-		abort();
+		goto bail;
 	    for (;;) {
 		count = fread(buf, 1, sizeof(buf), artfp);
 		if (count <= 0)
 		    break;
 		if (count != fwrite(buf, 1, count, outfp))
-		    abort();
+		    goto bail;
 	    }
 	    fclose(artfp);
 	    fclose(outfp);
 	}
-	printf("%s %d\n", rcname, nglast);
+bail:	found--;
+	printf("%s %d\n", rcname, found);
     }
     return(0);
 }
