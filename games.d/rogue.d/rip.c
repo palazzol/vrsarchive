@@ -1,3 +1,4 @@
+
 /*
  * File for the fun ends
  * Death or a total win
@@ -12,6 +13,8 @@
 #include <pwd.h>
 #include "rogue.h"
 #include "score.h"
+
+extern int end_win;
 
 static char *rip[] = {
   "                       __________",
@@ -44,7 +47,8 @@ char monst;
 	register SCORE *sc2;
 	register FILE *outf;
 	register int prflags = 0;
-	register int (*fp)(), uid;
+	unsigned short uid, getuid();
+	void (*fp)();
 
 	static SCORE top_ten[10];
 	static char  *reason[] = {
@@ -56,20 +60,21 @@ char monst;
 
 	start_score();
 
-	if (flags != -1)
-		endwin();
-
 	if (fd >= 0)
 		outf = fdopen(fd, "w");
-	else
+	else {
+		refresh();
+		endwin();
+		end_win = 0;
 		return;
+	}
 
 	for (scp = top_ten; scp < &top_ten[10]; scp++)
 	{
 		scp->sc_score = 0;
 		for (i = 0; i < MAXSTR; i++)
 			scp->sc_name[i] = rnd(255);
-		scp->sc_flags = RN;
+		scp->sc_flags = 0;
 		scp->sc_level = RN;
 		scp->sc_monster = RN;
 		scp->sc_uid = RN;
@@ -82,9 +87,9 @@ char monst;
 #endif
 		)
 	{
-		printf("[Press return to continue]");
-		fflush(stdout);
-		gets(prbuf);
+		printw("[Press return to continue]");
+		refresh();
+		getstr(prbuf);
 	}
 #ifdef WIZARD
 	if (wizard)
@@ -136,28 +141,27 @@ char monst;
 	/*
 	 * Print the list
 	 */
-	printf("\nTop Ten Rogueists:\nRank\tScore\tName\n");
+	clear();
+	printw("\nTop Ten Rogueists:\nRank\tScore\tName\n");
 	for (scp = top_ten; scp < &top_ten[10]; scp++)
 	{
-		int _putchar();
-
 		if (scp->sc_score) {
-			if (sc2 == scp && SO)
-				_puts(SO);
-			printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+			if (sc2 == scp)
+				standout();
+			printw("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
 				scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 				scp->sc_level);
 			if (scp->sc_flags == 0)
-				printf(" by %s", killname((char) scp->sc_monster, TRUE));
+				printw(" by %s", killname((char) scp->sc_monster, TRUE));
 			if (prflags == 1)
 			{
 				struct passwd *pp, *getpwuid();
 
 				if ((pp = getpwuid((int)scp->sc_uid)) == NULL)
-					printf(" (%d)", scp->sc_uid);
+					printw(" (%d)", scp->sc_uid);
 				else
-					printf(" (%s)", pp->pw_name);
-				putchar('\n');
+					printw(" (%s)", pp->pw_name);
+				addch('\n');
 			}
 			else if (prflags == 2)
 			{
@@ -177,9 +181,9 @@ char monst;
 				}
 			}
 			else
-				printf(".\n");
-			if (sc2 == scp && SE)
-				_puts(SE);
+				printw(".\n");
+			if (sc2 == scp)
+				standend();
 		}
 		else
 			break;
@@ -199,6 +203,9 @@ char monst;
 		}
 	}
 	fclose(outf);
+	refresh();
+	endwin();
+	end_win = 0;
 }
 
 /*
