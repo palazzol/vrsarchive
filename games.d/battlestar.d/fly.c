@@ -15,17 +15,15 @@ int dr = 0, dc = 0;
 char destroyed;
 int clock = 120;		/* time for all the flights in the game */
 char cross = 0;
-int (*oldsig)();
+void (*oldsig)();
 
 succumb()
 {
-	switch (oldsig) {
-	case SIG_DFL:
+	if (oldsig == SIG_DFL) {
 		endfly();
 		exit(1);
-	case SIG_IGN:
-		break;
-	default:
+	}
+	if (oldsig != SIG_IGN) {
 		endfly();
 		(*oldsig)();
 	}
@@ -37,10 +35,7 @@ visual()
 
 	destroyed = 0;
 	savetty();
-	if(initscr() == ERR){
-		puts("Whoops!  No more memory...");
-		return(0);
-	}
+	(void) initscr();
 	oldsig = signal(SIGINT, succumb);
 	crmode();
 	noecho();

@@ -76,7 +76,7 @@ char ch;
 	gettimeofday(&tv, (struct timezone *)0);	/* can't call time */
 	date = ctime(&tv.tv_sec);
 #else
-	int (*s)() = signal(SIGINT,SIG_IGN);
+	void (*s)() = signal(SIGINT,SIG_IGN);
 
 	time(&tv);
 	date = ctime(&tv);
