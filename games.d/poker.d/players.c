@@ -27,7 +27,11 @@
 #ifdef MASSCOMP
 extern char *strchr();
 #else
+#ifdef SYS5
+#include <string.h>
+#else
 #include <strings.h>
+#endif
 #endif
 
 # define	TRUE		1
@@ -145,7 +149,7 @@ int	block;		/* if nobody wants to join, wait on socket
       	/* don't allow colons in name because of format of score file */
       	if ( strchr( temp, ':' ) != NULL )	
       	  *strchr( temp, ':' ) = NULL;
-      	if ( strlen( temp ) > 25 )
+      	if ( strlen( temp ) > (unsigned)25 )
       	  temp[25] = NULL;
       	player[*n_players].name = strsave( temp );
       	/*printf("%s\n",temp);*/
@@ -242,8 +246,8 @@ if (listen( s, 0 ) < 0)
 return( s );
 }
 
-int	crash()
-
+SIG_T
+crash(dummy)
 {
 int	i;
 

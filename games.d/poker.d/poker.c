@@ -22,11 +22,26 @@
 # include	<ctype.h>
 # include	<signal.h>
 
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
 extern int getuid();
 extern unsigned sleep();
 extern char *strcpy();
 
 int	s;	/* the socket */
+
+SIG_T
+closem(dummy)
+{
+	close( s );
+	exit( 1 );
+}
 
 /* ARGSUSED */
 main( argc, argv, envp )
@@ -43,7 +58,6 @@ struct	sockaddr_un	sockaddr;
 char	*getenv();
 char	*name;
 char	temp[80];
-int	closem();
 
 	if ( ( name = getenv( "POKER" ) ) == NULL )
 		if ( ( name = getenv( "NAME" ) ) == NULL )
@@ -93,7 +107,7 @@ if ( connect( s, &sockaddr, sizeof(sockaddr) ) < 0)
 	{
 	char buf[512];
 	strcpy(buf,"nohup ");
-	strcat(buf,GAMLIB/pokerd >/dev/null &");
+	strcat(buf,FILENM(pokerd >/dev/null &));
 	system( buf );
 	sleep(3);
 # ifdef MASSCOMP
@@ -415,11 +429,4 @@ while ( ( c = getch() ) != '\n' )
 		x++;
 		}
 str[i] = NULL;
-}
-
-int	closem()
-
-{
-close( s );
-exit( 1 );
 }

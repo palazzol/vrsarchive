@@ -31,7 +31,7 @@ int	deck[52];		/* the cards */
 long	pot;			/* size of current pot	*/
 int	winner;			/* which player won this hand	*/
 int	first=0;		/* first player to bet, draw, etc. */
-# ifdef MASSCOMP
+# ifdef SYS5
 extern	void	srand();
 # else
 extern	void	srandom();	/* starts random number generator */
@@ -45,7 +45,7 @@ signal(SIGHUP,crash);
 #ifdef SIGXCPU
 signal(SIGXCPU,SIG_IGN);
 #endif
-# ifdef MASSCOMP
+# ifdef SYS5
 	srand((int) time((long *)0) ^ getpid() );
 # else
 	srandom((int) time((long *)0) ^ getpid() );

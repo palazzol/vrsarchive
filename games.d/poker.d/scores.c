@@ -13,15 +13,27 @@
 #	include		<sys/types.h>
 	char		*strchr();
 # else
+#ifdef SYS5
+# 	include		<string.h>
+#else
 # 	include		<strings.h>
 # endif
-# ifdef MASSCOMP
+# endif
+# ifdef SYS5
 #	include		<fcntl.h>
 # else
 # 	include		<sys/file.h>
 # endif
 
-# define	SCORE_FILE	GAMLIB/pokerscores"
+#ifdef __STDC__
+#define STR(x)	#x
+#define STRING(x)	STR(x)
+#define FILENM(x)	STRING(GAMLIB) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMLIB)/x"
+#endif
+# define	SCORE_FILE	FILENM(pokerscores)
 # define	TRUE		1
 # define	FALSE		0
 

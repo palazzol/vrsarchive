@@ -3,10 +3,14 @@
 */
 
 #ifdef INET
-# define	PORT		55142
-# define	HOST		"ritcv"
+#  ifndef PORT
+#    define	PORT		55142
+#  endif
+#  ifndef HOST
+#    define	HOST		"ritcv"
+#  endif
 #else
 #  ifndef PORT
-#   define	PORT		"/usr/tmp/pokerd"
+#    define	PORT		"/usr/tmp/pokerd"
 #  endif
 #endif

@@ -22,4 +22,4 @@ extern	PLAYER	player[];
 extern	int	n_players;	/* current number of players (including computer) */
 
 extern	void	new_players(),leave();
-extern  crash();
+extern  SIG_T	crash();

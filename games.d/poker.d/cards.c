@@ -43,7 +43,7 @@ int	crandom( limit )
 int	limit;
 
 {
-# ifdef MASSCOMP
+# ifdef SYS5
 # define	random	rand
 # endif
 #define MAXRAND (((unsigned)-1)>>1)
