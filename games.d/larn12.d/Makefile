@@ -1,6 +1,8 @@
 # Configuration options
 #  LARNHOME is the directory where the larn data files will be installed.
 #  BINDIR is the directory where the larn binary will be installed.
+# Recompile config.c when DESTDIR changes.
+DESTDIR	= //gandalf
 BINDIR	= $(DESTDIR)/usr/games
 LIBDIR	= $(BINDIR)/lib
 LARNHOME= $(LIBDIR)/larn12
@@ -59,7 +61,7 @@ TERMLIB	= -ltermlib -lx
 #		is 60 ticks per second.
 #
 # OPTIONS = -DEXTRA -DBSD -DVER=12 -DSUBVER=0 -DTIMECHECK -DWIZID=1000 -DVT100 -DHIDEBYLINK
-OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=-1 -DKERNELHZ=50
+OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=-1 -DKERNELHZ=50 -DSAVEINHOME
 CFLAGS= -M2l -K -F 2000 $(OPTIONS) -DLARNHOME=\"$(LARNHOME)/\"
 # End of configurable make options
 ########################################################################
