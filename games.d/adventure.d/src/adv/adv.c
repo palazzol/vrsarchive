@@ -13,7 +13,7 @@
 
 main ()
 {
-	srandom (time(0)+getpid()) ;
+	srand ((unsigned)(time(0)+getpid())) ;
 
 	setup () ;
 	opendb (ADV) ;
