@@ -1,9 +1,9 @@
 #
-#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.6 1988-11-30 11:03:03 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/crack.d/makefile,v 1.7 1988-11-30 11:38:09 vrs Exp $
 #
 ALL	= crack
 MODEL	= -i -K
-OPTIONS	= -O
+OPTIONS	= -O #-DTRYHARD
 include /etc/CONFIG
 
 crack:	crack.o
