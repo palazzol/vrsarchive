@@ -15,7 +15,7 @@ HEADERS=header.h data.h
 SUPT1=nations Makefile help README run man.page
 SUPT2=execute messages news
 
-$(ALL): $(OBJ)
+conquer$(EXE): $(OBJ)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
 
 $(OBJ): data.h
@@ -33,15 +33,19 @@ $(DATA):
 	mkdir -p $@
 
 install: $(GAMDIR) $(DATA) $(ALL)
-	cp $(ALL) $(GAMDIR)
-	cd $(GAMDIR); chown $(SAFEUID) $(ALL) $(DATA)
-	cd $(GAMDIR); chmod 4755 $(ALL)
+	echo "#!/bin/sh" >$(GAMDIR)/conquer
+	echo $(DATA)/conquer$(EXE) -d$(DATA) >>$(GAMDIR)/conquer
+	chmod 755 $(GAMDIR)/conquer
+	chown $(SAFEUID) $(DATA)
 	chmod 755 $(DATA)
+	cp $(ALL) $(DATA)
+	cd $(DATA); chown $(SAFEUID) $(ALL)
+	cd $(DATA); chmod 4755 $(ALL)
 	cp help nations run $(DATA)
 	cd $(DATA); chown $(SAFEUID) help nations run
 	cd $(DATA); chmod 644 help nations
 	cd $(DATA); chmod 700 run
-	$(GAMDIR)/conquer$(EXE) -d$(DATA) -m
+	$(GAMDIR)/conquer -m
 
 lint:
 	lint -u $(FILS)
