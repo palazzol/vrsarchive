@@ -40,18 +40,27 @@ register int i;
     if (inven[i].charges != UNKNOWN)
       sprintf (item, "%s [%d]", item, inven[i].charges);
 
-    sprintf (item, "%s %s%s%s%s%s%s%s%s%s.",	  /* DR UTexas */
-            item, inven[i].str, 
-             (itemis (i, KNOWN) ? "" : ", unknown"),
-             (used (inven[i].str) ? ", tried" : ""),
-             (itemis (i, CURSED) ? ", cursed" : ""),
-             (itemis (i, UNCURSED) ? ", uncursed" : ""),
-             (itemis (i, ENCHANTED) ? ", enchanted" : ""),
-             (itemis (i, PROTECTED) ? ", protected" : ""),
-             (itemis (i, WORTHLESS) ? ", useless" : ""),
-             (!itemis (i, INUSE) ? "" :
-              (inven[i].type == armor || inven[i].type == ring) ?
-              ", being worn" : ", in hand"));
+    sprintf (item, "%s %s", item, inven[i].str);
+    if (!itemis (i, KNOWN))
+	strcat(item, ", unknown");
+    if (used (inven[i].str))
+	strcat(item, ", tried");
+    if (!itemis (i, CURSED))
+	strcat(item, ", cursed");
+    if (!itemis (i, UNCURSED))
+	strcat(item, ", uncursed");
+    if (itemis (i, ENCHANTED))
+	strcat(item, ", enchanted");
+    if (itemis (i, PROTECTED))
+	strcat(item, ", protected");
+    if (itemis (i, WORTHLESS))
+	strcat(item, ", useless");
+    if (itemis (i, INUSE)) {
+	if (inven[i].type == armor || inven[i].type == ring)
+	    strcat(item, ", being worn.");
+	else
+	    strcat(item, ", in hand.");
+    }
   }
 
   return (item);
@@ -138,7 +147,7 @@ int pos;
 rollpackup (pos)
 register int pos;
 { register char *savebuf;
-  register int i;
+  int i;
 
   if (version >= RV53A) return;
 
@@ -169,7 +178,7 @@ register int pos;
 rollpackdown (pos)
 register int pos;
 { register char *savebuf;
-  register int i;
+  int i;
 
   if (version >= RV53A) return;
 
