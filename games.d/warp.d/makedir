@@ -1,7 +1,10 @@
 : use /bin/sh
-# $Header: /home/Vince/cvs/games.d/warp.d/makedir,v 1.1 1987-07-26 11:30:28 vrs Exp $
+# $Header: /home/Vince/cvs/games.d/warp.d/makedir,v 1.2 1987-07-26 14:33:04 vrs Exp $
 # 
 # $Log: not supported by cvs2svn $
+# Version 1.1  87/07/26  11:30:28  vrs
+# Initial version
+# 
 # Revision 7.0  86/10/08  15:12:34  lwall
 # Split into separate files.  Added amoebas and pirates.
 # 
@@ -41,7 +44,7 @@ fi
 list=''
 while true ; do
     case $1 in
-    */*)
+    ?*/*)
 	list="$1 $list"
 	set `echo $1 | sed 's:\(.*\)/:\1 :'`
 	;;
