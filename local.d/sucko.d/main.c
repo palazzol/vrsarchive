@@ -88,7 +88,8 @@ char *argv[];
 		count = fread(buf, 1, sizeof(buf), artfp);
 		if (count <= 0)
 		    break;
-		fwrite(buf, 1, count, outfp);
+		if (count != fwrite(buf, 1, count, outfp))
+		    abort();
 	    }
 	    fclose(artfp);
 	    fclose(outfp);
