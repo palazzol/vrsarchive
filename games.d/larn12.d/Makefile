@@ -54,10 +54,13 @@ TERMLIB	= -ltermlib -lx
 #		systems if the nap stuff does not work correctly (possible
 #		hang).  The nap() routine is primarilly used to delay for
 #		effect when casting missile type spells.
+#	KERNELHZ=# - This causes napms() to compute the delay time based on
+#		a clock rate of HERNELHZ ticks per second.  The default rate
+#		is 60 ticks per second.
 #
 # OPTIONS = -DEXTRA -DBSD -DVER=12 -DSUBVER=0 -DTIMECHECK -DWIZID=1000 -DVT100 -DHIDEBYLINK
-OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=-1
-CFLAGS= -M2l $(OPTIONS) -DLARNHOME=\"$(LARNHOME)/\"
+OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=-1 -DKERNELHZ=50
+CFLAGS= -M2l -F 2000 $(OPTIONS) -DLARNHOME=\"$(LARNHOME)/\"
 # End of configurable make options
 ########################################################################
 #
