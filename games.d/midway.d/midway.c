@@ -104,7 +104,7 @@ playit()
 	char buf[32];
 
 	for (;;) {
-		switch (c = getchar()) {
+		switch (c = getch()) {
 
 			case 'h':
 				flack(270, player);
@@ -342,8 +342,8 @@ initialize()
 	char **mess;
 	int *table;
 
-	printf("Choose a side (Japanese or American) ? ");
-	gets(r);
+	printw("Choose a side (Japanese or American) ? ");
+	getstr(r);
 	if (*r == 'J' || *r == 'j') {
 		mess = jmess;
 		table = japtable;
@@ -352,14 +352,14 @@ initialize()
 		table = amtable;
 	}
 	for (n=0; mess[n]; n++)
-		puts(mess[n]);
-	printf("\nWhich force do you like? ");
-	scanf("%d", &c);
-	printf("\n");
+		printw("%s\n", mess[n]);
+	printw("\nWhich force do you like? ");
+	scanw("%d", &c);
+	printw("\n");
 	for (n = table[c]; shiplist[n].flagship == table[c]; n++)
-		printf("%d) %s %s (%d Kilotons)\n", n - table[c], describe[shiplist[n].type], shiplist[n].name, shiplist[n].value);
-	printf("\nWhich ship do you like? ");
-	scanf("%d", &s);
+		printw("%d) %s %s (%d Kilotons)\n", n - table[c], describe[shiplist[n].type], shiplist[n].name, shiplist[n].value);
+	printw("\nWhich ship do you like? ");
+	scanw("%d", &s);
 	if ((virtual = player = s + table[c]) >= MAXSHIPS || player < 0) {
 		fprintf(stderr, "Ship not found.\n");
 		exit(1);
