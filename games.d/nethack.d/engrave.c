@@ -135,7 +135,7 @@ register int	canfeel;
 		impossible("Something is written in a very strange way.");
 		canfeel = 1;
 	    }
-	    if (canfeel)
+	    if (canfeel || !Blind)
 		pline("You %s: \"%s\".",
 		      (Blind) ? "feel the words" : "read",  ep->engr_txt);
 	}
