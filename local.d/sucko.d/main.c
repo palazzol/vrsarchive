@@ -3,6 +3,7 @@
  */
 #include <stdio.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 int n = 1;	/* Output file number */
 
@@ -74,8 +75,11 @@ char *argv[];
 	for (found = ngfirst; found <= nglast; found++) {
 	    sprintf(buf, "/usr/spool/news/%s/%d", ngname, found);
 	    artfp = nntp_open(buf);
-	    if (!artfp)
-		continue;
+	    if (!artfp) {
+		if (errno == ENOENT)
+		    continue;
+		break;
+	    }
 	    for (;;) {
 		sprintf(buf, "%d", n++);
 		if (stat(buf, &statbuf) != 0)
