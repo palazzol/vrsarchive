@@ -9,6 +9,7 @@ typedef struct coords {
 coords doorstk[100];
 int doorptr;
 
+extern char *malloc();
 
 /* Always picks a correct direction		*/
 correct_dir(rdir, cdir, y1, x1, y2, x2)
@@ -76,9 +77,11 @@ blank_cave()
 {
   int i, j;
 
-  for (i = 0; i < MAX_HEIGHT; i++)
+  for (i = 0; i < MAX_HEIGHT; i++) {
+    cave[i] = (cave_type *)malloc(MAX_WIDTH*sizeof(cave[i][0]));
     for (j = 0; j < MAX_WIDTH; j++)
       cave[i][j] = blank_floor;
+  }
 }
 
 

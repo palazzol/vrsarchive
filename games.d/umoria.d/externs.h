@@ -43,7 +43,7 @@ extern int panel_col_min, panel_col_max;
 extern int panel_col_prt, panel_row_prt;
 
 /*  Following are all floor definitions				*/
-extern cave_type cave[MAX_HEIGHT][MAX_WIDTH];
+extern cave_type *cave[MAX_HEIGHT];
 extern cave_type blank_floor;
 extern floor_type dopen_floor;
 extern floor_type lopen_floor;
