@@ -1292,8 +1292,8 @@ ttflui() {
 
 
 /* Timeout handler for communication line input functions */
-
-timerh() {
+SIG_T
+timerh(dummy) {
     longjmp(sjbuf,1);
 }
 
@@ -1301,14 +1301,16 @@ timerh() {
 /* Set up terminal interrupts on console terminal */
 
 #ifdef UXIII
-esctrp() {				/* trap console escapes (^\) */
+SIG_T
+esctrp(dummy) {				/* trap console escapes (^\) */
     conesc = 1;
     signal(SIGQUIT,SIG_IGN);		/* ignore until trapped */
 }
 #endif
 
 #ifdef V7
-esctrp() {				/* trap console escapes (^\) */
+SIG_T
+esctrp(dummy) {				/* trap console escapes (^\) */
     conesc = 1;
     signal(SIGQUIT,SIG_IGN);		/* ignore until trapped */
 }
@@ -1323,7 +1325,7 @@ esctrp() {				/* trap console escapes (^\) */
 
 /*  C O N I N T  --  Console Interrupt setter  */
 
-conint(f) int (*f)(); {			/* Set an interrupt trap. */
+conint(f) SIG_T (*f)(); {			/* Set an interrupt trap. */
     int x, y;
 
 /* Check for background operation, even if not running on real tty, so that */

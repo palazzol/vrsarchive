@@ -56,6 +56,4 @@ typedef long		POSITION;
 #define	CONTROL(c)		((c)&037)
 #define	SIGNAL(sig,func)	signal(sig,func)
 
-off_t lseek();
-
 #include "funcs.h"

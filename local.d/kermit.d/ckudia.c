@@ -521,11 +521,13 @@ static jmp_buf sjbuf;
 static SIGTYP (*savAlrm)();	/* for saving alarm handler */
 static SIGTYP (*savInt)();	/* for saving interrupt handler */
 
-dialtime() {			/* timer interrupt handler */
+SIG_T
+dialtime(dummy) {			/* timer interrupt handler */
     longjmp( sjbuf, F_time );
 }
 
-dialint()			/* user-interrupt handler */
+SIG_T
+dialint(dummy)			/* user-interrupt handler */
     {
     longjmp( sjbuf, F_int );
     }

@@ -3,6 +3,7 @@ OPTIONS	= -O -DUXIII -DDEBUG -DTLOG
 MODEL	= -i
 include /etc/CONFIG
 kermit:	wermit
+	rm -f $@
 	ln $? $@
 install: $(ALL)
 	cp $(ALL) $(BINDIR)

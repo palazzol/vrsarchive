@@ -52,7 +52,8 @@ static int got_it, no_cr;
 
 static jmp_buf alrmRng;		/* Envir ptr for connect errors */
 
-scrtime() {				/* modem read failure handler, */
+SIG_T
+scrtime(dummy) {				/* modem read failure handler, */
     longjmp(alrmRng,1);		/* notifies parent process to stop */
 }
 

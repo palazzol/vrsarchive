@@ -19,7 +19,7 @@
  * The type of signal handler functions.
  * Usually int, although it should be void.
  */
-typedef	int		HANDLER;
+typedef	SIG_T		HANDLER;
 
 /*
  * "sigs" contains bits indicating signals which need to be processed.
@@ -38,7 +38,7 @@ extern jmp_buf main_loop;
  * Interrupt signal handler.
  */
 	static HANDLER
-interrupt()
+interrupt(dummy)
 {
 	SIGNAL(SIGINT, interrupt);
 	sigs |= S_INTERRUPT;
@@ -51,7 +51,7 @@ interrupt()
  * "Stop" (^Z) signal handler.
  */
 	static HANDLER
-stop()
+stop(dummy)
 {
 	SIGNAL(SIGTSTP, stop);
 	sigs |= S_STOP;
