@@ -1,0 +1,124 @@
+
+		NetHack 3.0 -- General information
+
+NetHack 3.0 is a new generation of the dungeon exploration game NetHack.
+It is a distant descendent of Hack, and a direct descendent of NetHack 2.3.
+It is the product of a year-long, very intensive, international team
+effort.  Many parts of 2.3 were rewritten for NetHack 3.0, and many new
+features were added.  Judged by size alone, with all options enabled,
+NetHack 3.0 is twice as big as 2.3.
+
+While aiming at retaining the general atmosphere of NetHack 2.3, we sought
+to open up new directions of development for the game.  Alignment, both for
+player characters and for monsters, was introduced.  Player character
+attributes were added and integrated into the game.  Special compiled
+levels were added, and these open up endless future possibilities.  An
+endgame was written, for a climactic ending.  The code for monsters and
+objects was massively rewritten, and many new creatures and items were
+added.  The self-polymorph code was debugged and greatly enriched.  Shops,
+too, were enhanced.  There are now doors in doorways and chests that may
+contain valuables, both of which may be closed or locked.  New commands to
+open or kick doors and force locks on chests were added.  You can also use
+kicking as an attack mode, and you can kick objects around if it pleases
+you.  You will discover the rest for yourselves...
+
+To compensate for the massive additions, we rewrote the code around some
+new map fields for an increase in speed up to, if not beyond, that of 2.3.
+The code is now organized, and nearly lint-free.
+
+We dedicate the game to the many unknown hackers, both past and future, who
+contribute so much to the game.
+
+			- - - - - - - - - - -
+
+Please read items (1), (2) and (3) BEFORE doing anything with your new code.
+
+1.  Unpack the code in a dedicated new directory.  We will refer to that
+    directory as the 'Top' directory.  It makes no difference what you
+    call it.
+
+2.  If there is no flaw in the packaging, FIVE sub-directories will be
+    automatically created, and files will be deposited in them: 
+
+    a.  A 'src' directory, which will contain general *.c files.
+    b.  An 'include' directory, which will contain general *.h files.
+    c.  An 'auxil' directory, which will contain a variety of data files.
+    d.  An 'amiga' directory, which will contain the Amiga-specific files.
+    e.  An 'others' directory, which will contain MSDOS and TOS files.
+
+    The names of these directories should not be changed, unless you are
+    ready to go through the makefiles and the makedefs program and change
+    all the directory references in them.
+
+3.  Having unpacked, you should have a file called 'Files' in your Top
+    directory.  This file contains the list of all the files you now SHOULD 
+    have in each directory.  Please check the files in each directory 
+    against this list to make sure that you have a complete set.
+
+4.  Before you do anything else, please read carefully the file called
+    'license' in the auxil subdirectory.  It is expected that you comply
+    with the terms of that license, and we are very serious about it.  In
+    particular, you are prohibited by the terms of the license from using
+    NetHack 3.0 for gainful purposes.   
+
+5.  If everything is in order, you can now turn to trying to get the program
+    to compile and run on your particular system.  It is worth mentioning
+    that the default configuration is Ultrix (simply because the code was
+    housed on such a system).  It is also worth mentioning here that NetHack
+    3.0 is a huge program by comparison with 2.3.  If you intend to run it
+    on a small machine, you'll have to make hard choices among the options
+    available in config.h.
+
+    The files Install.* were written to guide you in configuring the program
+    for your operating system.  Reading them, and the man page, should answer
+    most of your questions.
+
+    At the time of this release, NetHack 3.0 is known to run on:
+
+	DEC vaxen running Ultrix and BSD
+	Sun-3s running SunOS 4.0
+	Encore Multimax running UMAX 4.2
+	Bull XPS100 running System V R2.2 or R3.1
+	AT&T 3B4000 running System V
+	AT&T 3B1 running System V (3.51)
+	286 box running Microport SysV/AT (not extensively tested)
+	IBM PC compatibles running MicroSoft C or Turbo C under MS-DOS
+	Commodore Amiga (probably -- there have been some changes since
+		the Amiga port was done, but we believe it should still work)
+
+    There are also many hooks for an Atari TOS port, but we have not had a
+    chance to test the 3.0 code on an Atari.  Undoubtedly, some tweaks will 
+    have to be made.
+
+			- - - - - - - - - - -
+
+If you have problems building the game, or you find bugs in it, the 
+development team may be reached as
+ 
+		    nethack-bugs@linc.cis.upenn.edu.  
+
+Patches especially should be directed to this address.  If you've changed 
+something to get NetHack to run on your system, it's likely that others have
+done it by making slightly different modifications.  By routing your patches
+through the development team, we should be able to avoid making everyone else
+choose among variant patches claiming to do the same thing, to keep most of
+the copies of 3.0 synchronized by means of official patches, and to maintain
+the painfully-created file organization.  (Remember the mess when everybody
+just posted their own patches to 2.3?  There were no archived bug-fixes to
+give people who got 2.3 after its initial release, so the same bugs kept being
+discovered by new batches of people.  Please cooperate to keep this from
+happening to 3.0.)
+
+It is inevitable that we will reject some proposed additions of new features
+either because they do not fit our conception of the game, or because they 
+require more code than we consider they're worth.  If we reject your feature,
+you are free, of course, to post the patches to the net yourself and let the
+marketplace decide its worth.
+
+All of this amounts to the following:  If you decide to apply a free-lanced
+patch to your 3.0 code, you are on your own.  In our own patches, including
+those which will update to 3.1, we will assume that your code is synchronized
+with ours.
+
+		  -- Good luck, and happy Hacking --
+

@@ -1,0 +1,1235 @@
+Article 4821 of rec.games.hack:
+Path: puffin!tekgen!tektronix!zephyr!uunet!portal!cup.portal.com!FelineGrace
+From: FelineGrace@cup.portal.com (Dana B Bourgeois)
+Newsgroups: rec.games.hack
+Subject: Re: NetHack Tutorial
+Message-ID: <20301@cup.portal.com>
+Date: 10 Jul 89 23:17:40 GMT
+References: <20288@cup.portal.com>
+Organization: The Portal System (TM)
+Lines: 1222
+
+
+ITEM EFFECTS:
+
+Scrolls: (Effects when the user is not confused)
+
+enchant armor (weapon) - Gives the armor (weapon) a +1 bonus. 
+
+destroy armor - Destroy the user's worn armor.
+
+confuse monster - The user will confuse the next monster he hits.
+
+scare monster - The scroll has two uses:
+
+   1) If read, all monster in sight will run in terror from the user.
+   2) If dropped on the ground, no monster may attack the user in hand
+        to hand combat so long as he remains standing on the scroll.
+        If the user attempts to pick up the scroll after he has dropped
+        it, it disintegrates.
+
+blank paper - The user may write on the paper in magic marker, and create a 
+              scroll. Write the name of a scroll you have already found.
+
+remove curse - All cursed items wielded or worn are uncursed.
+
+damage weapon - The weapon has a -1 penalty cast upon it.
+
+create monster - A monster appears next to the character.
+
+taming - Any creature next to the user becomes the user's pet except ghosts,
+long worms, ShopKeepers and other humans and the Wizard of Yendor.
+
+genocide - The user may destroy any one type of monster.
+
+light - If read in a room, the room is now lit.
+
+teleportation - The user teleports to a (random) location on the level.
+
+gold detection - Displays all gold on the level.
+
+food detection - Displays all food on the level.
+
+identify- The user may identify items in his possession.
+
+magic mapping - maps the level.
+
+amnesia - User loses all spells, maps and knowledge of what items are.
+
+fire - User loses 1-6 h.p., and may lose some flammable materiayl.
+
+punishment - The user is cursed with a heavy iron ball.
+
+
+______________________________________________________________________
+______________________________________________________________________
+Wands: (D) indicates the user must specify a direction.
+
+light - Acts as a scroll of light when zapped.
+
+secret door detection - All secret doors in sight of the user of found.
+
+create monster - Acts as a scroll of create monster.
+
+wishing - The user may wish for an item. This is discussed under
+          "WISHING FOR OBJECTS"
+
+striking - (D) The user gets a ranged attack on any creature or object it is
+           pointed at.
+
+nothing - This wand does nothing when zapped.
+
+slow monster - (D) The monster's speed is halved. Not cumulative.
+
+speed monster - (D) The monster's speed is doubled. The user gains Speed.
+
+undead turning - (D) If zapped at undead creatures, they run in fear.
+                 If zapped at a dead monster, it is brought back to life.
+
+polymorph - (D) The user changes the target(s). This is discussed further
+            under POLYMORPHING YOURSELF AND YOUR ITEMS.
+
+cancellation - (D) The target loses any special abilities. If the target had or
+               was a magic object, it loses any magic pluses and charges.
+
+teleportation - (D) Teleports the target (randomly).
+
+make invisible - (D) Makes the target invisible.
+
+probing - (D) Displays the stats of any monster it is pointed at.
+
+digging - (D) Digs a hole in walls in the direction the wand is pointed.
+
+magic missile,fire,cold,death,sleep - (D) Fires a bolt of that type in the
+        direction indicated. Death will kill any creature it hits except Z,
+        W, V, Demons or ' ', while sleep will sleep any creature it hits.
+_________________________________________________________________________
+_________________________________________________________________________
+Rings:
+
+adornment - No effect, other than its value.
+
+teleportation - Bestows intrinsic teleportation. [But not control! -PG]
+
+regeneration - The user heals one hit point per turn. Note: This ring makes
+        the user become hungrier 5 times as quickly. Also, at high 
+        levels the rings SLOWS DOWN your regeneration.
+
+searching - The user performs a free "s" command each turn.
+
+see invisible - The user can see all invisible objects and creatures.
+
+
+stealth - The user will not wake up sleeping monsters, unless he attacks them.
+
+levitation - The user floats off the ground, and can neither move or fall down,
+             nor can he pick up items. He is immune to pit traps, trap doors
+             and water spaces, and can carry more items up stairs.
+
+poison resistance - The user is unaffected by poison. (But watch out for 
+                    biologically contaminated orange juice).
+
+aggravate monster - All monsters will be awake and angry at the user.
+
+hunger - The user becomes hungrier 5 times as quickly.
+
+fire resistance - The user is immune to fire.
+
+cold resistance - The user is immune to cold.
+
+protection from shape changers - All shape changers appear as a ":", and can
+                                 not change shape.
+
+conflict - All creatures will attack the creature closest to themselves. 
+           Great at treasure zoos.
+
+gain strength - The user's strength is increased.
+
+increase damage - The user's damage is increased.
+
+protection - The user gains a bonus on his A.C.
+
+warning - The ring will glow when a monster is nearby with a timeout between
+          glowings.
+
+teleport control - The user may choose, when he teleports, where he wishes to
+                   go to.
+
+POTION MESSAGES
+Potions may be quaffed, or thrown. If a potion is thrown down (">" for
+direction), the message listed next to Vapor is received.
+
+ Name          Message(s)
+
+restore strength   Wow!  This makes you feel great!
+                   ... looks sound and hale again!   (Thrown to monster)
+
+gain energy    Magical energies course through your body.
+               You feel feverish.   (Confused)
+
+booze  Ooph!  This tastes like liquid fire!
+       You feel somewhat dizzy.  (Vapor)
+
+invisibility  Gee!  All of a sudden, you can't see yourself.
+              For an instance you couldn't see your right hand.(Vapor)
+              You feel rather airy. (Blinded)
+
+fruit juice    This tastes like fruit juice.
+
+
+healing  You begin to feel better.
+         ... looks sound and hale again! (Thrown to monster)
+
+paralysis  Your feet are frozen to the floor!
+           Something seems to be holding you. (Vapor)
+           You are motionlessly suspended. (Levitated)
+
+monster detection  You sense the presence of monsters.
+                   You feel threatened. (No monsters)
+
+object detection  You sense the presence of objects.
+                  You sense the presence of objects close nearby.
+                  You feel a pull downward. (No objects)
+
+sickness  Yech! This stuff tastes like poison.
+          ... looks rather ill. (Thrown to monster)
+
+confusion  Huh, What?  Where am I?
+           What a trippy feeling. (Hallucinating)
+           You feel somewhat dizzy. (Vapor)
+
+gain strength  Wow do you feel strong!
+               ... looks sound and hale again! (Thrown to monster)
+
+speed  You are suddenly moving much faster.
+       Your knees seem more flexible now. (Vapor)
+       Your legs get new energy. (Fast)
+
+blindness  A cloud of darkness falls upon you.
+           It suddenly gets dark. (Vapor)
+           Bummer!  Everything is dark!  Help! (Hallucinating)
+
+gain level  You feel more experienced.
+
+extra healing  You feel much better.
+               ... looks sound and hale again! (Thrown to monster)
+
+levitation  Oh wow!  You're floating in the air! (Hallucinating)
+
+hallucination  Oh wow!  Everything looks so cosmic!
+               You have a vision for a moment. (Vapor)
+
+holy water  You feel full of awe.
+            This burns like acid.  (When you are 'Z','V','W' or '&')
+            ... shrieks in pain!  (Thrown to 'Z','V','W',' ' or '&')
+
+
+EFFECTS OF SCROLLS WHEN CONFUSED:
+
+enchant armor - armor glows silver, and is now rust proof.
+destroy armor - armor is rustable.
+confuse monster - Turns hands purple and confuses you.
+scare monster - aggravate monster
+blank paper - ("you see strange patterns on this scroll")
+remove curse - curses item
+enchant weapon - weapon is now rust proof.
+damage weapon - weapon is now rustable
+create monster - surrounds the user with eight acid blobs ("a").
+taming - tames EVERY creature in sight. (fun for treasure zoos)
+genocide - kills all @. (including you)
+light - room is now not lit.
+teleportation - the user is teleported to a random level.
+                If the user has teleport control, he may choose the level.
+gold detection - see fake gold which is the real traps
+food detection - see fake food which is the real potions
+identify - identifies the scroll as an identify scroll
+magic mapping - gives random spaces of the map
+amnesia - you forget how to read.
+fire - you burn your hands.
+punishment - ("you feel guilty")
+
+Extended commands:
+
+#dip
+    Dip arrows, darts, shurikens and xbow bolts in the potion and if it was 
+    a potion of:
+    Sickness or Paralysis --> your dipped weapon gets stronger.
+    Holy water --> any weapon gets blessed, is better in use against the
+                   undead and is uncursed.
+    Note that this uses up the potion, just like quaffing it.
+
+#pray
+    You can pray 300 turns after you last prayed (1000 if a demigod).
+    However, you can wait too long between prayers. You can also use the
+    "time" option to see how much time has passed. Terrible things may happen
+    if you pray too soon, so be sure that your time has come. Possible
+    effects include having your strength, hit points and hunger restored,
+    with 5 additional hp; gaining an intrinsic power; gaining an item,
+    and becoming the hand of Elbereth (good luck). The negative effects
+    of praying too soon are left to the player to discover.
+
+#sit
+   Use this command while you are on an throne (\).  You might get a wish
+   (Chance 1 in 86), but also you can lose your gold or your possessions get
+   cursed or identified!!  I don't know what the author meant by your
+   possessions getting identified. This sounds like a good thing to me.  Like
+   an Identify scroll.
+
+#wipe
+   Clean your face when dirty.
+
+#breathe
+   First polymorph yourself in a Dragon. Then you can breathe fire.
+
+#remove
+    First polymorph into a Nymph. Then you can remove iron balls.
+
+SPECIAL NOTES FOR HACK:
+
+LUCK:
+    Luck is used in many different features of hack. In particular, luck
+  is used in combat to determine whether the user and his opponent hit, and
+  how much damage is done. Luck is also used when praying, and in using
+  wands of wishing.
+    Luck begins at 0, and increases or decreases as the game goes on. The
+  higher the user's luck, the luckier he is. The maximum luck is usually 10
+  (although this changes with the phases of the moon in some versions). The 
+  minimum luck is -10.
+    The user should try to be aware of two basic ways of modifying his luck.
+  The first is that killing any tame creature (such as your dog), and killing
+  any human (such as a shopkeeper) will result in the user's luck being
+  drastically reduced. The second is that if the user throws a gem at a
+  unicorn, his luck will be increased. It is the latter that we will discuss
+  in depth.
+
+
+    First, you must have an unidentified gem to get an increase of one, or 
+  an identified gem to get an increase of five.  More importantly, it is 
+  fairly difficult to get into a position to throw a gem at a unicorn, since 
+  the unicorn will never move into such a space.  Should the unicorn be 
+  forced to move into such a space, it will teleport to another space on the 
+  level. 
+    There are numerous methods to circumvent this. One method is to quaff
+  a haste potion, and simply walk next to it during the user's "free" move.
+  Another, more more useful method, is to get a teleport control ring and
+  teleport next to the unicorn (or along a line of sight). The unicorn does
+  not have a chance to move away, since teleporting if figured after the 
+  unicorn moves.  The latter method is more common, since teleportation 
+  is (can be) intrinsic to the character, and teleport control is a necessity.
+    One method to trap the unicorn, so that the user can move next to it
+  without the use of ^T is the following: 
+
+    Unicorns in rooms only move diagnolly, and will only teleport if a move
+  is impossible. Hence you can restrict the unicorn to two spaces as shown
+  below:
+    -------
+    |.....|
+    |..@..+
+    |1....|
+    |.2...|
+    -------
+    The unicorn will only move in the spaces marked 1 and 2, and will not
+  teleport away. This allows the user to teleport freely next to the unicorn.
+
+THE LITTLE DOG:
+   To me, the most interesting (although by far not the most useful) feature
+of hack is the little dog, and the way tame creatures work in general in hack.
+If the user wishes to try to make use of his pet, he should be aware of its
+abilities, limitations and its intelligence (or lack thereof).
+   The dog is friendly towards the user, and will tend to follow him around
+the dungeon. However, the dog, like the user, requires food to live. The dog
+can eat every non-poisonous substance safely, and will not eat tainted meat.
+Under normal circumstances, the dog will not eat food rations, fruit and
+other "human" foods.
+   The dog goes through three stages of development: little dog, dog and
+large dog. In fact, the dog actually goes through more, but they are divided
+equally into these three classes. All dogs may attack twice per turn, and move
+two spaces per turn (i.e. they are hasted). Dogs will do about 1-6 points of 
+damage per hit, so they can do 2-12 points of damage per round. A hasted dog
+can be quite vicious.
+   The dog improves by gaining experience from killing monsters, just as the
+character does. The dog, however, is limited to level 6, and about 85 hp, so
+the dog cannot become as powerful as the character. However, initially,
+the dog can be much better than the character at killing creatures, and so can
+be useful for low-level characters as a guard dog.
+   If the user goes up or down levels for any reason, then if the dog is on
+a space adjacent to the character, he will change levels with the user. But
+if the dog is not on an adjacent space, he is stranded on the old level.
+   When a dog becomes stranded and the hacker does not return for a while, he 
+becomes wild. The user may also find other wild dogs in the dungeon. A wild 
+dog will attack the user like any other monster. However, the dog will be 
+tamed if the user throws any food (except fruit) at the dog. The dog will then 
+"devour" the food, and is from then on the pet of the user. Note, also, that 
+the user is not limited to one pet, but may tame as many pets as he wishes.
+   A pet has other abilities as well. The first is that the pet will tend
+not to walk over cursed items unless the item has food on it which the dog 
+intends to eat. This gives the user a cheap test to see if an item is cursed. 
+In addition, the dog will pick up items that he finds, and bring them to the 
+user. 
+   Finally, the dog will stay closer to the user if the user has a tripe
+ration.
+
+GHOST LEVELS:
+  Occasionally, when a character dies, hack will save the level he died
+on for future use. This level is called a ghost level, and the reader is
+bound to find one sooner or later. Everything on the level will be exactly
+as it was when the character died, with one addition. The old character's
+ghost is also on the level. Ghosts, although hard to kill, can do almost no
+damage. The nice thing about ghost levels is that all of the old character's
+items are in one pile on the space the character died. It is a simple matter
+to get these items.  But be warned; most of these items will be cursed.
+  In fact, the hardest thing about ghost levels is that usually whatever
+killed the old character is powerful enough to kill the new character as
+well. There can be multiple ghost on one level. I recall one level
+which had three cockatrices and five ghosts.
+  Fortunately, ghost levels are eventually cleared by the program after
+a certain period of time, so the user does not have to worry to much about
+them in general.
+
+WISHING FOR OBJECTS:
+  Near the end of the game, the user will find wands of wishing. When 
+these are zapped, the user is asked to wish for an item. One of the most 
+frustrating things in hack is when a beginning player can not figure out 
+what the exact name of the item he wants to wish for is. Here is how wishing
+is accomplished.
+  In the previous item list, the name of the object is the name the user
+gives hack to wish for that item, not including the number wished for, and
+the plus of the item (when wishing for weapons or armor). The general
+format is:
+
+  <# wished for><plus of item><name of item>
+
+The user can NEVER wish for more than 3 of any item, or for an item with
+magical plus greater than +3.
+
+Example:   To wish for 3 potions of gain level, the user would type
+           "3 potions of gain level"
+
+           To wish for a +3 elven cloak,
+           "+3 elven cloak"
+
+Note that if the program can't understand what you want, it will make
+ a random selection. 
+
+NAMING OBJECTS:
+  Players of Hack would do well if they name these things these names-
+--------------------------------------------------------------------------
+Object    |Name         |Effect
+----------|-------------|-------------------------------------------------
+Long Sword| Excalibur   |
+2HandSword| Orcrist     |
+Dagger    | Sting       |
+ShortSword| Sting       |
+Katana    | Snickersnee |
+-------------------------------------------------------------------------- 
+ 
+THE CHARACTERS OF HACK:
+
+ARCHAEOLOGIST: (or Spelunker)
+  This character has a passion for the exploration of the unknown. But
+don't let those spectacle deceive you. believe that mild mannered exterior
+lies a character as tough as the Sahara. The Archaeologist begins with a
+pick axe, and a large box for storing his lunch.
+   Favorite dog names : Caesar, Rama Tut, Troy
+   Special abilities : Speed
+   Special items : pick axe, large box, studded leather armor, 2 potions
+
+TOURIST:
+   Always cheerful, the tourist has always wanted to see the sights
+in the Dungeon of Doom. Although the weakest of the characters, he is ready
+ready to have a ball. He has his picnic lunch, his wallet, his ever ready
+camera and his custom made darts (just in case there's a pub down there.)
+The camera also has the Fisso-Blast Nuclear Flash Bulb, making night into
+solar flare and blinding any creature to stupid enough to let its picture
+be taken. Let's hope you remembered the leash.
+The tourist: He may not be strong, but he sure isn't hungry.
+   Favorite dog names : Spot, Rover, Fluffy
+   Special abilities : None
+   Special items : expensive camera, leash, food, +2 darts, 
+                   2 potions x-healing
+
+FIGHTER:  Changed to BARBARIAN with NetHack 2.2 
+   You heard that the Dungeon was a real challenge, but you heard that 
+kind of talk before. Before you whip out your sword that is. It's not that
+accurate, but if it hits, you can kiss that baby goodbye. Rough and tough,
+with a sword the size of the Sears building, this character is a foe to be 
+reckoned with.
+   Favorite dog names : Spartan, Killer, Fluffy (don't laugh)
+   Special abilities : None
+   Special items : Ring Mail, 2-handed sword
+   
+KNIGHT:
+   Some people have called you a coward and a wimp because you wear so
+much armor, and you're not very strong. But then again, they're dead and
+you're not. After all, as long as you've got the armor available, why not
+use all at once. Plus you know a few tricks when it comes to turning undead.
+When it comes right down to it, a fellow can't be too careful.
+   Favorite dog names : Arthur, Lancelot, Sir Robin 
+   Special abilities : Turn undead
+   Special items : Gloves, Shield, Helmet, Long Sword, +1 ring mail,
+                   +2 spear
+
+CAVE-MAN:
+   FOOD! It is the way of life. Food is good. Raw. The big cave has much
+food. Has funny trinket too. You kill food with bow and club. You kill food
+with bare hands. You kill food with mean glance. Smash anything in your way.
+You may be hungry, but you sure are strong.
+   Favorite dog names : DOG, WOOF, FOOD
+   Special abilities : None
+   Special items : Leather armor, +1 Bow, +1 Club
+
+
+SAMURAI:
+   Your honor is at stake. You must recover the sacred amulet, or die 
+trying. The ancient fighting skills of all your warlord ancestors are yours
+to command, as is your mighty katana. You are quicker than your foes, and 
+strong, and will defeat the evil creatures in your path.
+   Favorite dog names : Sun-Tzu, Rising Sun, Tsunami
+   Special abilities : Speed
+   Special items : Bow, Katana, Splint mail armor
+
+NINJA:
+   None can hear you come, and none can warn your passing. Silent as the
+night and deadly as a cobra, you stalk your prize in the fabled dungeon. Your
+katana can dispatch the weak, and your stealth will allow you to pass the 
+strong. Quicker than your foes, the prize is as good as yours. The ninja
+never fails. 
+   Favorite dog names : Swift-wind, Night blade, Sushi
+   Special abilities : Speed, Stealth
+   Special items : Shuriken, Katana, Blindfold, as of NetHack 2.2
+
+PRIEST:
+   You are on a holy quest to recover the sacred relic from the hands
+of the evil in the Dungeon. With the power of God, you will turn the undead
+monstrosities, and venture into the bowels of the earth. You know a little
+magic as well. If only you had remembered the holy hand grenade.
+   Favorite dog names : Jonah, Samson, Gabriel
+   Special Abilities : Turn undead
+   Special items : 4 potions of Holy water, 2 spellbooks 
+
+VALKYRIE:
+   Fabled warrior of Norse legend, you enter the halls to do battle with
+the creatures of the dungeon. You wield your mighty spear, and use your 
+quickness and fighting skills to defeat your terrible foes. You are tough,
+and are used to the frigid winters of Frygia. Glory in the battle to come!
+   Favorite dog names : Thor, Odin's Blood, Balder
+   Special Abilities : Cold resistance
+   Special items : Long Sword
+
+ELF:
+   How silly to take something like the Dungeon so seriously. After all,
+how can any of those nasty creatures catch you, let alone escape your bow?
+Besides, you're pretty sneaky, and have really good eyesight.You may as well 
+get the amulet, and then think of something else that would be fun to do. 
+   Favorite dog names : Happy, Hee-Hee, Keebler
+   Special Abilities : Speed, See Invisible, Maybe Stealth
+   Special Items : Bow, Shortsword, Dagger
+
+HEALER:
+   As a doctor, you live to heal those in need. You also wouldn't mind
+making a lot of money. Stethoscope in hand, you venture bravely into the
+darkness of the dungeon. You were vaccinated, just in case, and have your 
+poison antidotes ready. You may be a healer, but you wouldn't mind kicking
+some butt down here.
+   Favorite dog names : Casey, Kildare, Quincy
+   Special Abilities : Poison resistance
+   Special Items : Stethoscope, 4 potions of healing, 4 x-healing potions
+
+
+WIZARD:
+   The mighty one, who wields the forces few can guess at. With your
+powerful magical items, magical spells and good teleportational potential,
+the denizens of this dungeon will bow before you power. Either the weakest
+or most powerful of characters, the wizard is in a class by himself.
+   Favorite dog names : Gandalf, Merlin, Skeeve
+   Special Abilities : Better with spells, teleport and magic whistles
+   Special Items : Spellbooks, wands, potions, scrolls and possibly 
+                   Magic Marker and Blindfold, as of NetHack 2.2
+
+POLYMORPHING YOURSELF AND YOUR ITEMS (and other masochistic pastimes):
+NOTE: The following only applies to nethack, and certain updated versions
+of hack.
+
+  The user should be aware that he is able in some versions to cast
+polymorph on himself and on objects, as well as on monsters. 
+  To polymorph yourself (and, in fact, to cast any spell on yourself), you
+type "." for the spell's direction. Polymorphing yourself results in the
+character becoming some type of monster. The character's hit points will be
+reduced to conform with the monster type, and the character will gain all
+abilities of the monster he is. 
+  Be forewarned, however, that any armor you are wearing when you polymorph
+may be destroyed, and that non-humanoid monsters can not wear armor or wield
+weapons, in addition to there more limited hit points. Polymorphing is not
+for everyone.
+  To polymorph an object, simply drop the object, and polymorph in the
+direction of the object, as if it were a monster. Objects are polymorphed
+into random objects of the same type. For instance, a food ration can be
+polymorphed into a carrot, a tripe ration, or any other comestible. The
+only exception is that rocks are polymorphed into gems.
+  The uses for this become quite clear after some thought on the readers part.
+For instance, useless items can be transformed into more powerful ones. In
+particular, polymorphing wands has its own special side effects.
+
+
+THE LEVELS BEYOND 26 (not for hack v1.0)
+
+  Once the user has reached level 26, he should be prepared to win the game.
+However, finding the amulet is by no means easy, if you don't know where to 
+look. Rather than tell the user how to find the amulet and wands of wishing,
+we will only give the following advice.
+
+Through the halls
+the dungeon calls
+for the hero to check the walls.
+
+For not in sight
+is the wand of might,
+but instead in a spot quite tight.
+
+Blast asunder
+to receive the plunder
+by pushing once, and looking under.
+
+The last you seek
+in a place quite bleak
+and of brimstone it does reek.
+
+Your quest now nigh
+Beware, or fry,
+If from fire you can die.
+
+Give not a care
+to lack of stair
+but go directly to His lair.
+
+To His home
+you must now roam,
+though surrounded by brine and foam.
+
+A protective coat
+is his moat
+above this trap you must float.
+
+And then you run
+up towards the sun
+and claim victory with a prize well won.
+
+
+STRATEGIES OF HACK:
+It's hard to give specific spoilers since I don't know what you may need
+to improve upon, but at least I can tell you what works for me.  My track
+record is ~50% wins for all games (~25% wins if the character is Healer).
+
+First, can I assume we're talking about Nethack?  If not, perhaps a subset
+of the following will apply.  I only play V2.2, the strategies may vary
+for V2.3 .
+
+The game is played in stages, with different goals and strategies at each
+stage.  Here is a brief rundown:
+
+1.  Getting Started - Escaping the Orcs
+
+You must reach at least experience level 3 (25 or more HP) before you go
+down very far in the dungeon.  I usually stay on Levels 1-2 until I reach
+this point.  I always leave the dog on Level 1 unless I run into a bunch
+of Orcs on Level 2, in which case I use him to run interference while I
+dash to the '>' down to Level 3.  Orcs are the most difficult monster
+you have to deal with at this stage.  You should avoid prolonged fights
+with them until your armor is 2 or lower.  When you are ready to take
+them on, pick your battlefield carefully.  You should have a clear path
+to a staircase.  Don't let them circle and block your retreat.  Get them
+to chase you down a corridor where you can turn a corner and fight them
+one at a time without taking darts from the Orcs in the rear.  If you
+have a 'hit at a distance' wand, you may want to fire it at them down a
+straight hallway to take out several at once.  If you find your hit points
+getting low, beat a hasty retreat to the stairs.  You can always wait on
+another level to regenerate and come back to finish the fight later.  Once
+you have the Orcs under control, you are ready for the next stage.
+
+2.  Identifying Magic Items - Beating the killer bees
+
+Don't read any scrolls until you have more than you can carry.  This is
+usually around Level 7 or lower.  Dump all your scrolls, spellbooks and
+spare items by the '>', then go to lower levels and bring back all the
+scrolls you find there.  The idea is to get as many scrolls as possible.
+Keep going down until you run into something really nasty like a killer
+bee or Dragon, then quickly retreat to your scroll pile.  Be systematic
+in the way you identify scrolls.  Wear expendable armor until you find
+'destroy armor'.  Wield an expendable weapon after you find 'enchant
+weapon'.  Read those scrolls which you have the most copies of first.
+Usually 'identify', 'light', and 'teleportation' are the most numerous.
+Use 'identify' scrolls to identify rings first.  After that, use them
+to identify other scrolls.  Don't enchant armor beyond +4; don't enchant
+weapons beyond +5 (identify the weapon if that is likely).  Genocide
+monsters in this order:  Dragon, cockatrice (if new moon), xan/killer
+bee (depending on armor).  Once you have identified all, or almost all
+scrolls, you will hopefully be ready to take on the killer bees.  You
+must first gain poison immunity, which means eating a spider or killer
+bee, then retreating until you recover your strength.  Your armor must
+be at least -1, and you should wield at least a +1 katana, two-handed
+sword, long sword, or chrysknife.  Fight the bees with the same tactics
+used on the Orcs, and use every advantage you have - speed, wands,
+spells, etc.  Once you get past the bees, it's on to the next stage.
+
+3.  Fire Resistance - Beating Dragons
+
+If you have genocided Dragons, then you just need to max out your luck
+and let the gods give you fire resistence for the fires of hell.  If
+D's are still a menace, then you must find, kill, and eat one in order
+to survive this stage.  When you locate a Dragon, stash all your scrolls
+and potions in a safe place and find a long, narrow room in which to do
+battle.  The idea is to lure the Dragon into the room where you can
+either sleep it or outrun it while you attack.  Sleeping is the best
+idea; then you are usually free to hit it from a distance with wands,
+spells or weapons until it dies.  If you have to fight hand to hand,
+you had better haste yourself/slow the Dragon so you can hit and move
+back out of its line of fire.  If your armor is at least -2, and your
+weapon is at least +2, and your HP is > 100, you'll probably survive.
+If not, you'd better bypass Dragon levels until you get your stats up.
+
+4.  Improving Your Luck - Beating Medusa
+
+You need to increase your luck to maximum by throwing gems at unicorns.
+By the time you find your first unicorn you will probably have at least
+ten unidentified gems, so you just need to get it to hold still long
+enough to shower it with gifts.  You can sleep or slow unicorns and make
+it very easy to catch up with them.  If you have intrinsic teleport and
+teleport control, you can corner them and move next to them on an
+'automatic' teleport (not ^T).  If all else fails, just keep chasing
+them until you get your chance.  With each gift, they lose some of
+their shyness.  After ten unidentified gems, you will have maximized
+your luck, and wonderful things start happening when you pray, sit on
+thrones, drink from fountains, etc.  With or without the unicorn's
+help, it is relatively easy to get by the Medusa.  She usually resides
+on Level 26 or 27.  It's best to do monster detection when you first
+reach Level 25.  Once you find the Medusa, you can either kill her or
+bypass her level (level teleport or dig a hole in the floor) to get
+to the first maze level with its guaranteed wand of wishing.  To kill
+the Medusa, you must first blind yourself (potion of blindness or
+blindfold), then apply the mirror to her, zap her, or beat on her
+(only if you have quaffed blindness).  She usually stays by the '>'
+until something wakens her.
+
+5.  Getting the Amulet - Beating the Wizard
+
+You will find a wand of wishing under an enormous boulder in a cul-
+de-sac on the first maze level.  Get at it either by digging a hole
+in the wall and pushing the boulder aside, dropping everything else 
+and squeezing in to get it, or by hitting it with the pickaxe.  Use 
+the wand to wish for any of the following items missing from your 
+inventory:  ring of teleport control (you need intrinsic teleport 
+ability), ring of polymorph control (so you don't hose your armor 
+on the first polymorph trap), blindfold (so you don't have to search 
+every maze level for the wizard), +3 crystal plate mail (the best 
+for its weight), +3 elven cloak (you probably didn't get this far 
+without one), wand of polymorph (if you want to play the polymorph 
+pile game), 3 scrolls of enchantment (if you want to boost your 
+armor or weapon strength), 3 dilithium crystals (so you will know 
+the most valuable gemstone when you see it).  Now you can either 
+spend time gathering up valuables to escape the dungeon with or go 
+right for the Wizard and his Amulet.  Assuming it's the latter, 
+level teleport yourself down to Level 60 (ring of teleport control, 
+potion of confusion or booze, scroll of teleportation, or level 
+teleport trap), and search for the '<'.  Once you find it, put on 
+your blindfold and start ascending stairs (they're all connecting).  
+Eventually, usually between Levels 35-45, you will find the 'd1' pair.  
+  Remove the blindfold and clear a path to the Wizard's castle.  
+The castle is surrounded by a moat which you will either need to fill 
+with an enormous boulder, vaporize with fire, or levitate across.
+The castle wall may be breeched with a pick-axe or other digging
+implement - there's a minotaur on every level who carries a wand
+of digging.  Kill the Wizard's dog, get the Amulet, and either
+kill or ignore the Wizard, as you please.  I believe he's less
+trouble if you kill him immediately, although he keeps rising
+from the dead.  You are free to simply walk out of the dungeon
+at this point, although the Wizard may put various obstacles in
+your path.  Level teleporting is greatly impaired by the Amulet,
+but if you have enough teleportation scrolls, it is possible to
+teleport directly to Level 1.  I have never had any trouble
+escaping the dungeon once I reached the point where I was capable
+of getting the Amulet.
+
+Miscellaneous Spoilers
+
+Here are a few odds and ends that I have discovered over many games.
+
+Potions
+
+I always drink unidentified potions immediately.  Rarely will they
+cause irreparable damage, and there's no sense in filling up your
+pack with useless ones.  After identifying 'gain level' I save up
+these until I have enough to reach the ^T autoteleport experience
+level.  Whenever possible, I keep an 'extra healing' around until
+I find 'hallucination', and 'restore strength' until I identify
+'sickness'.
+
+Rings
+
+Teleport and polymorph control are the only two you need to
+finish the game.  Most of the others will get you 'over the
+hump' until you gain the appropriate intrinsic ability.  Don't
+try on unidentified rings unless you're truly desperate.
+
+Wands
+
+Someone recently posted a spoiler for identifying every type of
+wand without a scroll of identify.  Wands are usually useful, but
+not necessary.  If you want to really beat nethack into the ground,
+and you have a polymorph wand, you can polymorph a pile of wands
+until you get a wand of wishing, wish for more wands, and repeat
+the process to get as many wands of wishing as you want.  
+
+Armor
+
+Good armor is really the secret to success.  You want to keep
+upgrading your armor throughout the game.  Always replace a
+'weaker' class with a 'stronger' class, starting with splint,
+then banded, then bronze, then plate, and crystal plate.  Elven
+cloaks are a must.  Carry an extra, if possible.  Elven chain
+mail is a good compromise, if you can't find any plate armor to
+wear under a cloak.  Be sure to collect one each of shields,
+helmets, and gloves.  Rings of protection are another way to
+supplement your armor class.  By the time you get your AC down
+to -10, not much can hurt you!
+
+Spellbooks
+
+A rule of thumb is not to engrave spellbooks until you reach
+experience level 10 and identify the scroll of amnesia.  If
+you dip your spellbooks in holy water before engraving, your
+chances of successfully adding the spell are improved.
+
+Shops
+
+Shops are the treasure trove of nethack.  Everything in a shop
+is yours for the taking, once you know how.  The strategy for
+stealing can get involved, so let me offer just a few pointers.
+When you discover a new shop, move everthing worth taking into
+a single pile before you gain intrinsic teleport ability.  Kill
+the Mimics (if you can, that is) before you start picking things
+up.  When you are ready to do some shoplifting, be sure to leave
+everything you don't need on the next lower level, so there's
+plenty of room for the stolen items.  Drop everything you own on
+the pile (sell it), then pick up everything at once.  You just
+have to wait for your autoteleport, and make it to the '>' before
+the shopkeeper catches up with you.  Avoid the Kops as much as
+possible.  Should you find yourself teleporting back to the shop
+(and the shopkeeper's still there), you can drop all your gold
+but for 1 piece, offer to pay him, and he will forget the fact
+that he was robbed.  Just don't let him get between you and any
+pie-throwing Kop.  The wand of teleportation is a license to
+steal.  If you dig a pit in front of a shop door or block the
+path with a boulder, it makes your getaway even easier.
+
+Fountains and Thrones
+
+Leave these alone until your luck is maximized.
+
+Praying
+
+Invoke the 'time' option to display your move count.  Pray every
+300 moves (until you get the Amulet), and you will cut your food
+requirement in half, double your HP's, bless every cursed ring
+or weapon, and recover from blindness and loss of strength over
+the course of the game.  Almost makes winning too easy.
+______________________________________________________________________________
+______________________________________________________________________________
+   The following is is a discussion of the various strategies used by 
+hack players, and some helpful advice from Erik Lauer, our resident hack
+expert.
+
+OVERALL STRATEGIES
+The blitz strategy:
+   This strategy is to blitz down as far as possible, taking only enough 
+time to find the items on the level and collect them. This particular
+strategy is usually used by more inexperienced players who want to see how
+far they can get in a certain amount of time. In fact, it is surprisingly
+easy to go down levels, at least to the 26th level, even with a character
+who is not very powerful. It is equally easy, however, to go to a level
+with creatures far beyond your ability to reckon with, so care must be
+taken to ensure this does not happen.
+
+The "snail's pace" strategy:
+   Here the player will only go down when he is running low on food. This
+allows the player to develop as much as possible before encountering the 
+harder creatures on the next level. This strategy has a few intrinsic problems.
+One is that it is extremely easy to run too low on food if the player is not
+careful. Another is that this takes a very long time, and so is only for the
+truly patient. Finally, there is a point of diminishing returns, sometime
+around when the cockatrices first appear, that it is no longer profitable to
+fudge around on the upper levels.
+   The best overall strategy is somewhere in between the two, and is based
+primarily on what you find available.
+   Although overall strategy is important, the most important thing in hack
+is based on a simple idea:
+
+   Hack is a game for opportunists.
+
+   That is, as hack has grown, and more options become available to the
+player, every little detail presents a potential tool for the observant
+player. This has become increasingly true as hack expanded into nethack.
+   Try to find a use for everything you find. I read an article once in
+which the writer denounced the destroy armor scroll as totally worthless.
+He had never thought that he could use it to destroy cursed armor also,
+and so made his game that much harder. 
+
+   If you can do this, then you can win the game.
+
+SPECIFIC HINTS ON VARIOUS PARTS OF HACK:
+
+Stores:
+   This section presents probably the most useful thing in hack : the
+store. The secret to stores does not lie in the buying of items, however.
+The real secret lies in robbing them blind.
+   There are probably as many ways to steal from shops as there are 
+shopkeepers. The most common is to acquire teleportation, on a scroll, wand,
+or intrinsically, pick up everything you can in the shop, and teleport out.
+Another method is to polymorph the shopkeeper. He may become more powerful,
+but it is not very likely. You can then walk past him. Another possibility
+is to kill the shopkeeper. This is recommended only if you are powerful
+(shopkeepers are not wimps), and either desperate or just plain sadistic.
+Finally, you can steal individual items by having your dog go into the shop
+and bring them out.  Reward your dog after he brings you the first item,
+and he will continue bringing you items.  Any item on the space directly 
+in front of the door is a freebie. 
+   Teleportation is the best method by far. Since it is very to find a
+leprechaun on the first and second levels, it is highly recommended that
+you eat one, and thereby gain intrinsic teleportation. The same in fact goes
+for finding floating eyes to gain telepathy. 
+
+Kops:
+   The Keystone Kops were an addition to nethack, originally intended to
+hinder people who rob shops. When a shop is robbed, a number of "K"'s appear.
+The Kops attack by throwing cream pies at you, and regenerate when they are 
+killed. 
+   However, the Kops in fact represent yet another aspect of hack which
+the observant player can make excellent use of. The Kops are very easy to
+kill, and do very little damage. Although you can be blinded by a cream pie,
+since it is very easy to acquire telepathy, this is definitely not a
+hindrance. Most importantly, since every Kop carries a large number of
+cream pies, they also create an abundance of readily available food. Finally,
+since Kops sometimes carry magic items, killing them gives the user hoards
+of treasure. Regeneration is, therefore, just a bonus, because it means
+your supplies of food, treasure and experience points will not run out.
+   There is only one way the Kops can hurt a player who is even moderately
+powerful, but it should not be taken lightly. If the Kops throw a cream pie
+at you, but miss and hit the shopkeeper, the shopkeeper will get mad and
+attack you. This means that you must trap the shopkeeper if you do not
+want him getting in the way. The best way is to trap yourself and the
+shopkeeper with a boulder in the shop. Then, when you teleport out, the
+shopkeeper is alive, but trapped.
+
+Food:
+   Once you have mastered combat, you will find that food becomes the
+main problem. If you do not continually eat food, you will eventually begin
+to faint and starve. Fainting is often enough to kill a character by itself.
+   The key is to hunt down food constantly. Hunt, kill and eat all the
+edible creatures you can find. ALWAYS search for monsters which can give
+you special abilities. In particular, before continuing below the second
+level you should find and eat, if possible, a leprechaun and a floating
+eye.  See my earlier comment on eating leprechauns. 
+   However, do not eat so much that you could not eat any more. The
+reason is that if you are on the verge of choking, and kill, for example,
+a wraith, you would not be able to eat the cadaver for a long time, and so
+it might spoil before you get the chance.
+
+Unidentified items:
+   Yet another key point is to find out as quickly as possible which
+items have which powers. This does not mean, however, that you should
+try every item out the instant you get it.
+   We will deal with the different items separately.
+
+
+Potions :
+   You should almost never test out potions until you are at fith level for 
+wizards, or ninth level for other characters, at full hit points and are on 
+a cleared level. If you are not of those levels, you run the risk of wasting 
+a potion of gain level without gaining the ability to teleport at will. 
+only if you have teleportitis.  If you are not at full hit points, then 
+should you quaff a healing potion, it will not affect your maximum hit 
+points. If there are creatures nearby, you run the risk of being paralyzed 
+or confused, and unable to defend yourself.  Lastly, always test your 
+duplicate potions first.
+
+Scrolls :
+   You should only test out scrolls when you are wearing a spare set of
+armor and are wielding a spare weapon. This allows you to not risk your good
+equipment on determining which scrolls are the destroy armor and damage
+weapon scrolls. Of course, once one of these have been found, you no longer
+have to take precautions against it. You also should wait until you have
+something to identify, in case it is an identify scroll. You won't have to 
+wait long. And, as with potions, check the duplicate scrolls first.
+
+Rings :
+   Rings should be identified first, since they are the hardest thing
+to identify, aside from gems. Trying on unidentified rings is not encouraged,
+as one cursed ring can ruin the game. If you have a scroll of remove curse,
+it is safe to try on the ring. You can check it out if there is a Nymph on 
+the level. That is dealt with later.  If you have several unidentified
+rings, (or armor or weapons) try them all until you have on as many
+cursed items as possible. This will allow you to de-curse as many as
+possible with one scroll. 
+
+Wands :
+   ALWAYS test out wands as soon as there is a weak monster in your area
+to zap them at. Since wand might shoot out a ray or a bolt, which bounce,
+it is vitally important to shoot the wand diagnolly in such a way that
+should the bolt bounce, it will not hit the character.  The bolt is of a
+finite length, so in a large room it may be safely zapped in a straight
+line.  Sometimes this is not a good idea.  You might get a  polymorph wand
+and might polymorph that weak monster into a dragon or other powerful 
+monster. 
+   Usually, the wand's function is now apparent. For wands, however, this
+may not be sufficient to identify the wand. After zapping such a wand, and
+observing the target, call the wand something such as "tested1". This shows
+you that, although its purpose is not known, the wand has been used.  If in
+NetHack, you also could try to engrave with the wand.  This will identify 
+a lot of wands.  The others could be identified by some other means.
+You can also engrave with the wand, "E".  The wands function should then 
+become apparent.
+
+Spellbooks :
+   Do not read spellbooks until you are at least eighth level and have
+identified a scroll of amnesia. This is because transcribing spells is hard
+for characters less than eighth level, and the amnesia scroll remove all the 
+spells you know. In either case, the user loses valuable spellbooks.  If
+you know any spells, but don't know which scroll is amnesia, don't read
+any scroll without identifying it. Also, just because you can learn a
+spell, doesn't mean you can cast it. Since spellbooks have a limited
+number of castings, be careful not to waste them.
+
+
+
+Vaults:
+   Eventually, the player will encounter what is known as a treasure
+vault. The vault is a 2x2 room, with four "$" spaces, and no doors. There
+is always a secret door somewhere on a vault level which leads to a space 
+which teleports the user to the vault. There is always an engraving which
+says "ad ?ae??um." If you find this engraving, search for the secret door
+next to it.
+   To get out of a vault with all the money, you have to either teleport
+or use a wand of digging. If you have neither, eventually a guard will
+enter the vault. He is harmless, but will lead you out of the vault if you 
+are carrying NO money. Should you discover the answer to his question, he 
+will leave by yourself in the vault. (In other words, knowing the answer
+does not help).  My luckiest move was zapping a guard with a wand of
+polymorph. He turned into a Quantum Mechanic, hit me, and teleported me out.
+
+Nymphs:
+   Although Nymphs can be annoying, they can do one extremely useful 
+thing: they can steal cursed items. Therefore, if a Nymph is found, you
+can use her to remove your cursed items. The way this is done is demonstrated
+in the following example of how to check unidentified rings with a Nymph on
+the level.
+
+   1) Clear out the level the Nymph is on.
+   2) Go down to the next level, and clear it.
+   3) Try putting on your unidentified rings. If a ring is not cursed,
+      name it something such as "uncursed1" to mark that this
+      type of ring is not cursed.
+   4) Upon finding a cursed ring, remove ALL of your equipment, and drop
+      it on that space. Then go up the stairs, find the Nymph, and
+      let her steal an item. The item she steals then has to be
+      the cursed item. Go back down, equip yourself, and continue.
+
+Not using the dog:
+   Although the dog seems to be a useful ally, in fact he presents a good
+player with a handicap. This is for a number of reasons.
+
+  1) Anything the dog kills, the character does not get experience for.
+     This means that it takes longer to go up levels while using the dog.
+
+  2) The dog will eat edible monsters and other Comestibles that the
+     character needs. Hence, there is less food for the character.
+
+  3) Perhaps the worst thing about the dog is that the user can NOT enter
+     the dog's space. This means that the dog can actually trap the user
+     in a corridor, and prevent the user's escape from a powerful monster.
+
+For these reasons, unless you have the uncontrollable urge to experiment with
+the dog, it is best to leave the dog behind on the first level. 
+
+Carry extra items, but don't carry gold:
+   The user should always carry as many items as he possibly can through
+the dungeon. This is because even worthless items can be polymorphed or sold
+in the shops for gold. On the other hand, you should NEVER carry gold. The
+gold weighs a non-negligible amount, and is not used unless the person is 
+buying an item in a shop. Since buying items is very rare, it is best to
+pile all the gold from a level next to the stairs going up. That way, on the
+way back up, the winning player can collect all the money he left behind.
+But, weight for weight, the most valuable gem is worth many times more than 
+the gold you could carry around.  Bring rocks and polymorph them into gems.
+   One useful technique of bringing more items than you can carry along
+is to shuffle them down. Carry your items in two (or more) piles. Leave one
+pile by the stairs, while carrying the other items. When you find the stairs
+going down, drop the surplus items, go get the other pile, and bring it down
+to the next level. Drop that pile, go back up, and get the other items.
+Or you could wear a ring of leviatation and use that to go up the stairs.
+
+Fighting floating eyes:
+   Many beginning players fight floating eyes by killing them in hand
+to hand combat. This is not a very good method, since it lets the eye get a
+chance to paralyze you. Instead, it is far preferable to attack floating eyes
+by throwing weapons at them. If you have your dog, you can always let the dog
+kill it, and then step in to eat the eye before the dog gets a chance.
+
+Killing Leprechauns:
+   The leprechaun is yet another reason not to carry any gold at all. If
+you are hit by a leprechaun while you have gold, not only do you lose the
+gold (temporarily), but the trickster also teleports away, and so you have
+to hunt him down. If you do not have any gold, however, he is a very weak 
+monster worth gold and experience. Before you fight one, drop your gold in a
+place he can not get to, and then kill him. Also be careful about letting
+the leprechaun run away, since he is faster than you are.
+
+Dealing with Shapechangers:
+   Once you begin to encounter shapechangers, you should already be able
+to deal with all the other creatures. The shape-changers, however, are the
+most potentially dangerous creatures in the game, because they cannot be
+genocided and can turn into previously genocided creatures.
+
+
+REAL SPOILERS:
+
+   The following are spoilers which go beyond (in my opinion) helpful hints. 
+Some of these spoilers (in fact most of them) can be figured out in the
+course of play, but they also dramatically change how the game works.
+Read this only if you are truly stuck.
+
+
+ELBERETH:
+   Any version which has engraving has the secret word Elbereth in it.
+If the user etches the word "Elbereth" on the ground, and does not smudge
+the word by moving (you may type "."), monster will flee in terror upon
+moving adjacent to the user, so long as the user stands on that space. It
+works much like a scare monster scroll, except that the user can not attack
+off of it and preserve its abilities.
+   Using Elbereth allows a competent player to win at will, but it is
+basically cheating. It is possible to guess about the word Elbereth, however.
+Use it only when no one is watching.  Elbereth has been weakened as of
+release 2.2 of NetHack.  The various denzins of the dungeon can throw stuff 
+at you and other indirect attacks.  You have a chance of rubbing out the 
+Elbereth unless you use a sharp weapon or a Magic Marker.
+
+EXCALIBUR:
+   In nethack, there is a fairly good chance that any long sword named
+"Excalibur" will become +5 after being dipped in a fountain. This gives a
+very powerful weapon to anyone who can get a long sword; in particular a
+knight. 
+
+CROESUS: 
+   Croesus is the name that the vault guard is expecting. This does not
+help you win the game, but is listed for the curious.
+
+The rubber chicken attack:
+   If the user is wearing gloves, he may pick up and wield a dead
+cockatrice. Any creature struck by the bird is automatically turned to
+stone. Unfortunately, the cockatrice disintigrates after a period of time,
+but in the mean time it can wreak vast devastation. Be careful! Should
+you fall down while carrying a dead cockatrice, it may accidentally
+touch you!  The cockatrice, though a powerful weapon, is not a good 
+weapon because it turns potential food into stone.  Just a warning.
+
+Polymorphing wands:
+   One really big spoiler is that should you collect a large number of
+wands (from a wand shop, for example), and put them in a pile, you may 
+polymorph the wands, and try to get wands of wishing. With enough wands and
+charges in your polymorph wand, you can eventually get at least one wand of
+wishing. By wishing for more polymorph wands, you can continue the process,
+acquiring a truly disgusting number of wishes. The best part is that the
+charges are the charges the old wand had, so that one wand may have up
+to 15 wishes!! Clearly this presents a simple, yet powerful (and cheap)
+method of winning.  This is also the only use I have found for the
+fabled "wand of nothing." They have a lot of charges. 
+
+Polymorphing your dog:
+   If you want a real powerful pet, you can polymorph your dog, and he
+will remain loyal to you. However, if you have a large dog, he's
+probably just as good without being polymorphed. 
+
+Praying for food:
+   One fairly common effect of praying is that the character is surrounded
+by a strong aura. This aura not only heals damage and restores strength, but
+it also raises the user's maximum hp. by 5 AND restores the user's hunger to
+its initial value of 900 turns. This means that, by praying every 300+ turns,
+even if this result only occurs once out of every four tries, the amount 
+of food that needs to be eaten is better than halved. Use the time option
+to keep track of when it is time to pray. 
+
+Canceling wands of wishing:
+   It is an interesting fact that a wand with zero charges CAN be zapped
+after a long number of tries, after which it can no longer be zapped, and
+has -1 charges. This works for wands of wishing as well. But, a wand of
+cancellation used on another wand makes the wand have 0 charges. Hence, by
+zapping a wand of wishing with a wand of cancellation after the wand is at
+-1 charges gives the user another wish. The user can continue this process
+indefinitely, but it takes a VERY long time. This is really an alternative
+to the polymorphing technique mentioned previously, but can be used by
+earlier versions of hack.  That's another "feature" written out of NetHack 
+2.2.  When a wand reaches -1 charges, it disintegrates. 
+
+Iron Balls:
+   The punishment scroll gives you an extremely powerful weapon: the 
+Iron Ball. Although the cockatrice is more powerful, it has the disadvantages
+of disintegrating and of destroying all edible monster. The iron ball,
+although very heavy, can kill many monsters in one swing, and almost every
+monster in two. Try wielding it some time.  The authors neglect to
+mention that you have to get the thing off your ankle. I believe this
+can be done via remove curse, or by praying. I know it can be done by
+polymorphing yourself into a Nymph and using the #remove command. 
+
+Nurses and the spell of extra-healing:
+   Both of these allow the user to gain an enormous number of hp. The
+spell grants the user hit points each time it is cast, so the user can 
+with this spell increase his maximum hit points as many times as he has the
+mana to do it.  No longer true, since the spell has a finite number of
+uses. 
+   Nurses will cast extra healing on any character they "attack" which 
+is not wearing any armor. This means that by letting a nurse attack you for
+a long period of time, you can gain literally hundreds of hit points.
+
+Finding the wands of wishing on the 26th level and below:
+   Each level below the 25th has a wand of wishing on it. The wands are
+located beneath a large boulder ("`") which is adjacent to 3 walls. To get
+one of the wands, use a wand of digging to create a hole next to the boulder
+and push the boulder away. Using a wand of striking will work also.  You
+can also remove most of your goodies, and move toward the rock again.
+This will let you crawl under it to get the wand. 
+
+The Medusa:
+   A new creature, the medusa, has been added as of NetHack 2.2. She is
+a unique monster, shown by the symbol "8". She guards the lower levels,
+and can be tough to defeat, since looking at her will instantly turn you
+to stone. Two items have been added to help you: the mirror, and the
+blindfold. Using these is the most popular method of destroying the medusa,
+but there are others.  You can blind yourself with a camera or quaff a 
+potion of blindness and attack her.
+
+Going below the 26th level:
+   To go below the 26th level, you must be confused and read a teleport
+scroll with a ring of teleport control on. This allows you to teleport to a 
+lower level. The dungeon goes down to the 40th level, and none of the levels
+beyond the 26th have stairs going down.  40 is no longer the lowest
+level, and the Wizard isn't always there.
+
+Surviving the 40th level.
+   You MUST have fire resistance to enter the 40th level and live. The
+amulet is guarded by a powerful wizard and his hell hound. They are located
+in the center of the level, surrounded by a moat, and an inner wall. 
+It looks like this:
+
+    ~~~~~~
+    ~----~
+    ~|..|~
+    ~----~
+    ~~~~~~
+The wizard is located in the center. You can levitate over the water, or you
+can destroy a space of water with a wand of fire. Once over the water, use
+a wand of digging to blast open the wall, fight the wizard and retrieve the
+amulet. Now leave the dungeon, and collect as much money as you can.
+You also get bonus points for leaving with a pet. These points are directly
+related to the pet's experience level.
+
+Thats all folks.
+
+
