@@ -1649,16 +1649,17 @@ insert_str(object_str, mtc_str, insert)
 char *object_str, *mtc_str, *insert;
 {
   int mtc_len, obj_len;
-  int bound, pc, i;
+  char *bound, *pc;
+  int i;
   char *temp_obj, *temp_mtc;
   char out_val[80];
 
   mtc_len = strlen(mtc_str);
   obj_len = strlen(object_str);
-  bound = (int)object_str + obj_len - mtc_len;
-  for (pc = (int)object_str; pc <= bound; pc++)
+  bound = object_str + obj_len - mtc_len;
+  for (pc = object_str; pc <= bound; pc++)
     {
-      temp_obj = (char *)pc;
+      temp_obj = pc;
       temp_mtc = mtc_str;
       for (i = 0; i < mtc_len; i++)
 	if (*temp_obj++ != *temp_mtc++)
@@ -1669,10 +1670,10 @@ char *object_str, *mtc_str, *insert;
 
   if (pc <= bound)
     {
-      (void) strncpy(out_val, object_str, (pc-(int)object_str));
-      out_val[(pc-(int)object_str)] = '\0';
+      (void) strncpy(out_val, object_str, (pc-object_str));
+      out_val[(pc-object_str)] = '\0';
       (void) strcat(out_val, insert);
-      (void) strcat(out_val, (char *)(pc+mtc_len));
+      (void) strcat(out_val, pc+mtc_len);
       (void) strcpy(object_str, out_val);
     }
 }
