@@ -248,7 +248,3 @@
 #define void int		/* is void to be avoided? */
 #define M_VOID		/* Xenix strikes again */
 #endif
-
-/* warp private library, may use ~ expansion, %x and %l */
-#define PRIVLIB "/usr/games/lib/warp"		/**/
-
