@@ -1,0 +1,71 @@
+.so tmac.m
+.th FFT2 LIBRARY 5/14/84
+.sh NAME
+fft2 - perform forward or inverse Fast Fourier Transform, length 2**n
+.sh SYNOPSIS
+.bd fft2
+(a, b, m, dx, inverse)
+.br
+float a[];
+.br
+float b[];
+.br
+int m;
+.br
+float dx;
+.br
+int inverse;
+.sh DESCRIPTION
+.it fft2
+is a function which forward transforms time series real data to 
+frequency spectrum complex data, or the inverse, where the length
+of the data is a power of 2.  Two references were utilized in the
+writing of
+.it fft2
+:
+.lp 9 2
+G-AE Subcommittee:  The Fast Fourier Transform
+.br
+IEEE Transactions on Acoustics, etc. (then Audio
+and Electroacoustics), vol. AU-15, No. 2, June
+1967, pp. 49-50.
+.lp 9 2
+Richard C. Singleton:  On Computing the Fast Fourier Transform
+.br
+Communications of the ACM, vol. 10, No. 10, Oct. 1967
+pp. 650, 651.
+.i0
+The algorithm is decimation in time with reverse binary permutation
+prior to the butterfly steps.  No advantage is taken of trigonometric
+function values of -1, 0, and 1.  The trigonometric function values
+are calculated using the second difference technique.
+.s1
+Parameter descriptions:
+.s1
+.lp 16 9
+a       is the input and output array of real values, time series
+for forward transform, and frequency for inverse transform.
+.s1
+.lp 16 9
+b       is the input and output array of imaginary values, set to
+zero by
+.it fft2
+for forward transform, frequency for inverse transform.
+.s1
+.lp 16 9
+m       is the log (base 2) of half the length of a and b.
+.s1
+.lp 16 9
+dx      is the time between samples in the time series, for
+.bd either
+forward or inverse transforms.
+.s1
+.lp 16 9
+inverse is true for an inverse transform, false for forward.
+.i0
+.sh FILES
+none.
+.sh DIAGNOSTICS
+.sh AUTHOR
+Dale Carstensen, Antares project, Los Alamos National Laboratory
+.sh BUGS
