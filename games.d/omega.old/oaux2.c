@@ -767,8 +767,8 @@ struct monster *m;
 	    m->level*2+m->speed*5+random_range(20)) {
 	  menuprint("\n...and succeeds!");
 	  m->movef = M_MOVE_SCAREDY;
-	  movemonster(m);
-	  movemonster(m);
+	  monster_move(m);
+	  monster_move(m);
 	  Tacmode = FALSE;
 	}
 	else menuprint("\n...and fails!");
