@@ -1,18 +1,18 @@
 /*
  * TITLE: scsi.c -- XENIX SCSI Driver for iSBC 286/100
  *
- *		Intel Corporation
- *		ISO
- *		2402 West Beardsley Road
- *		Phoenix, Arizona  85027
+ *	*** INTEL CORPORATION PROPRIETARY INFORMATION ***
  *
- *	Date: 05/24/1985
+ *	This software is supplied under the terms of a license agreement or
+ *	nondisclosure agreement with Intel Corporation and may be neither
+ *	copied nor disclosed except in acordance with the terms of that
+ *	agreement.
  *
- *	Programmer:	Brian J. McArdle
+ *	Brian J. McArdle	05/24/85
  *
  *	Modification History:
  *
- *	Vincent R. Slyngstad	11/1/85
+ *	Vincent R. Slyngstad	11/01/85
  *	Modified for XEBEC controller, more internal documentation, a few bug
  *	fixes.
  *
@@ -47,20 +47,8 @@
  *		scsi_error - reports error to console/kernel
  *		scsi_setup_dma - initializes the DMA controller for transfer
  *		scsi_dma_start - starts the DMA controller
+ *		LIST THE OTHERS HERE
 */
-
-	/*******************************************************\
-	|							|
-	|       INTEL CORPORATION PROPRIETARY INFORMATION       |
-	|							|
-	|       This software is supplied under the terms of a  |
-	|       license agreement or nondisclosure agreement    |
-	|       with Intel Corporation and may neither be       |
-	|       copied nor disclosed except in acordance with   |
-	|       the terms of that agreement.                    |
-	|							|
-	\*******************************************************/
-
 char scsicopyright[] = "Copyright 1985 Intel Corporation";
 
 #include "../h/param.h"
@@ -68,26 +56,30 @@ char scsicopyright[] = "Copyright 1985 Intel Corporation";
 #include "../h/conf.h"
 #include "../h/dir.h"
 #include "../h/a.out.h"
+#include "../h/proc.h"
 #include "../h/user.h"
 #include "../h/systm.h"
 #include "../h/mmu.h"
 #include "../h/iobuf.h"
 #include "../h/scsi.h"
-#include "../h/ADMA.h"
+#include "../h/adma.h"
 
 extern struct scsicdrt scsicdrt[];	/* media table */
 extern struct scsicfg scsicfg;		/* 218 configuration information */
 extern struct scsiminor scsiminor[];	/* Table of minor numbers*/
-extern int num_scsi;			/* number of configured units on bus */
+extern int num_scsi;			/* number of controllers on bus */
 extern char adma_ch0_lock;		/* ADMA channel mutual exclusion flag */
 
 struct iobuf scsitab;			/* header to driver buffer's */
 struct scsidev scsidev;			/* Device characteristic table */      
 struct buf scsirbuf[MAX_UNITS];		/* Raw buffer headers for raw io */
+struct user_ftk scsi_ftk[MAX_UNITS];	/* Format parameter buffers */
+					/* (Augments scsirbuf) */
 
-int m_dev;				/* currently busy device */
-char scsi_cmd[10];			/* SCSI command block */
-char scsi_mode[22];			/* data area for SCSI mode select */
+int scsistrategy();			/* Forward references to strat */
+int m_dev;				/* currently busy device (maj/min) */
+char scsi_cmd[6];			/* SCSI command block */
+char scsi_mode[10];			/* data area for SCSI init format */
 char scsi_sense[4];			/* data area for SCSI request sense */
 
 /* Title:  scsiinit
@@ -97,7 +89,7 @@ char scsi_sense[4];			/* data area for SCSI request sense */
  * Calls:
  *
  * Called by: kernel
- */
+*/
 scsiinit()
 {
 	register struct scsicfg *cp;
@@ -105,7 +97,7 @@ scsiinit()
 	register unsigned i;		/* loop index to init units/minors */
 
 #ifdef DEBUG
-	printf("scsi init called\n");
+	printf("SCSI init called\n");
 #endif
 	/*Set up device table constant characteristics*/
 	cp = &scsicfg;
@@ -130,14 +122,14 @@ scsiinit()
 	if ((inb(cp->portb) & BSY) == BSY)
 		dd->exists++;
 	printf("SCSI interface %s \n",
-                dd->exists ? "found" : "NOT found");
+		dd->exists ? "found" : "NOT found");
 }
 
 /* Title:  scsiopen
  *
  * Abstract:	This routine opens a partition on a drive unit.
  *
- *		Errors are returned to the kernel if the reference unit was
+ *		Errors are returned to the kernel if the referenced unit was
  *		not found.
  *
  * Parameters:	dev - device number (minor component used)
@@ -146,36 +138,54 @@ scsiinit()
  * Calls:
  * 
  * Called by: kernel
- */
+*/
 scsiopen(dev)
 int  dev;		/* device minor number */
-{
-	register unsigned unit;		/* device unit to be opened */
+{	register unsigned unit;		/* device unit to be opened */
 
 #ifdef DEBUG
 	printf("\nscsi open called");
 #endif
 	unit = UNIT(dev);
-	if ((unit >= num_scsi) || (scsidev.exists == FALSE))
+	if ((unit >= MAX_UNITS) || (scsidev.exists == FALSE)) {
 		u.u_error = ENXIO;
-	else {
-		/*
-		 * Mutex guaranteed because we never sleep and
-		 * close guards its clear operation).
-		*/
-		scsidev.d_unit[unit].flags |= OPEN;
-		scsidev.d_unit[unit].popen |= (1 << PARTITION(dev));
-					/* mark partition opened */
+		return;
 	}
+	/*
+	 * We queue an 'open' operation to the strategy routine.  This
+	 * causes scsistrategy() to issue an 'INIT_FORMAT' operation,
+	 * describing to the controller the media format.  Cylinder 0
+	 * does not necessarily have the desired info and we have to
+	 * supply it.
+	 *
+	 * Note: Two opens for the same unit with different drtab entries
+	 *	 WILL CONFUSE THE CONTROLLER.  The controller will try to
+	 *	 use the format implied by the last open.  The only way
+	 *	 around this is to initialize per I/O request, and I don't
+	 *	 want to pay in performance for functionality rarely used.
+	 *
+	 *	 We use physio() to handle mutex issues and talk to the
+	 *	 strategy routine.  We set up u.u_offset, u.u_count, etc.
+	 *	 because physio() wants to fill out the buffer header as if
+	 *	 input or output were being performed.
+	*/
+	u.u_offset = 0;
+	u.u_count = BSIZE;
+	u.u_base = sotofar(u.u_procp->p_fdsel,0);
+	physio(scsistrategy, &scsirbuf[unit], dev, B_OPEN);
+	/*
+	 * Mutex guaranteed below because we never sleep and
+	 * close guards its clear operation on these flags.
+	*/
+	scsidev.d_unit[unit].popen |= (1 << PARTITION(dev));
 }
 
 /* Title:  scsiclose
  *
- * Abstract:  This routine closes a unit by reseting drive partition flags to
- *		closed.  In addtion, if this is the last open partition on the
- *		drive, the unit open flag is set to NO.
+ * Abstract:	This routine closes a unit by reseting drive partition
+ *		flags to closed.
  *
- * Parameters: dev - device number(major & minor)
+ * Parameters:	dev - device number(major & minor)
  *
  * Called by: kernel
  */
@@ -183,7 +193,6 @@ scsiclose(dev)
 register dev_t dev;	/* device number */
 {
 	register struct scsiunit *dd;	/* unit device table */
-	extern dev_t rootdev;		/* root device id */
 	register unsigned x;
 
 #ifdef DEBUG
@@ -210,20 +219,25 @@ register dev_t dev;	/* device number */
 	 *	system (i.e., haltsys) do make the assumption that all I/O
 	 *	is complete before the return from close().
 	*/
-	x = spl6();
+	x = splbuf();
 	while ((scsitab.b_active != IO_IDLE) || (scsitab.b_actf != NULL)) {
+#ifdef DEBUG
+		if (scsitab.b_active != IO_IDLE)
+			printf("\nscsiclose(): Device not idle -- sleeping");
+		if (scsitab.b_actf != NULL)
+			printf("\nscsiclose(): Queue not empty -- sleeping");
+#endif DEBUG
 		/*
 		 * The strat routine will release the ADMA lock and
 		 * wakeup on &adma_ch0_lock when no more I/O is queued.
-		 * We sleep on this address and wake when the device
-		 * queue is empty.
 		*/
 		sleep((caddr_t) &adma_ch0_lock, PRIBIO+1);
 	}
 	dd->popen &= ~(1<< PARTITION(dev));
-	if (dd->popen == FALSE)
-		dd->flags &= ~OPEN;
 	splx(x);
+#ifdef DEBUG
+	printf("\nscsiclose(): returning after splx(%x)",x);
+#endif DEBUG
 }
 
 /* Title:  scsistrategy
@@ -240,69 +254,71 @@ register dev_t dev;	/* device number */
  *		scsiread - indirectly thru physio for raw read
  *		scsiwrite - indirectly thru physio for raw write
  *		scsiioctl - to queue format track op
- */
+*/
 scsistrategy(bp)
 register struct buf *bp;    /* ptr to buf header containing request info */
 {
-  register struct scsiunit *dd;	/* ptr to unit device info */
-  struct scsipartition *p;	/* ptr to media partition */
-  struct scsicdrt	*media;		/* ptr to media type in drive unit */
-  daddr_t secno;			/* sector number where access begins */
-  unsigned x;			/* saves old interrupt state */
+	struct scsipartition *p;	/* ptr to media partition */
+	struct scsicdrt *media;		/* ptr to media type in drive unit */
+	daddr_t secno;			/* sector number where access begins */
+	unsigned x;			/* saves old interrupt state */
 
 #ifdef DEBUG
-  printf("\nscsi Strat called bp: %x",bp);
+	printf("\nscsi Strat called bp: %x",bp);
 #endif
-  dd = &scsidev.d_unit[UNIT(bp->b_dev)];
-  media = scsicdrt + DRTAB(bp->b_dev);
-  p = &media->part[PARTITION(bp->b_dev)];
-  secno = bp->b_blkno;
-  if ((bp->b_flags & B_FORMAT) == FALSE)
-    secno *= (BSIZE/media->secsiz);	/* blkno * sectors per block */
-  /* Return an ERROR if 
-   * 	1) unit not open,
-   *	2) attempting to read/write beyond end of partition.
-  */
-  if (((dd->flags & OPEN) == FALSE) || (secno > p->p_nsec)
-  || ((secno==p->p_nsec) && ((bp->b_flags&B_WRITE)||(bp->b_flags&B_FORMAT)))) {
-    /*
-     * This is probably not the right error return for all of the
-     * above conditions.  Buyer beware for now.
-    */
-    bp->b_flags |= B_ERROR;
-    bp->b_error = ENXIO;
-    iodone(bp);
-    return;
-  }
-  /* return EOF if read or write extends beyond last sector */
-  if ((secno == p->p_nsec)
-  ||  ((secno+(bp->b_bcount+media->secsiz-1)/media->secsiz) > p->p_nsec)) {
-    /* set number of transfer bytes to zero */
-    bp->b_resid = bp->b_bcount;
-    iodone(bp);
-    return;
-  }
-  /*
-   * No error -- start I/O
-  */
-  secno += p->p_fsec;
-  /*
-   * still use cylinder to sort by, disksort can't sort
-   * by block number.
-   */
-  bp->b_cylin = secno / (media->spt * media->nhead);
-  /*
-   * Mutex through disksort and test of active flag.  These are seperate
-   * mutex issues, but we don't bother to release mutex in between.  I
-   * don't believe the sum of times is significantly worse than either
-   * (taken individually) from the viewpoint of interrupt latency.
-  */
-  x = spl6();			/* disable interrupts */
-  disksort(&scsitab, bp);	/* queue request */
-  if ((scsitab.b_active & IO_BUSY) == FALSE)
-  	scsi_start();		/* start I/O if driver idle */
-  splx(x);			/* restore interrupts */        
-  return;
+	media = scsicdrt + DRTAB(bp->b_dev);
+	p = &media->part[PARTITION(bp->b_dev)];
+	if (bp->b_flags & (B_FORMAT|B_OPEN))
+		secno = 0;		/* Not used */
+	else
+		secno = bp->b_blkno * (BSIZE/media->secsiz);
+					/* blkno * sectors per block */
+	/*
+	 * Return an error if attempting to read/write beyond end of partition
+	 * or attemting to write off the end of the partition.  Reading off the
+	 * end is OK, and returns a short read (up to the end of the partition).
+	*/
+	if ((secno > p->p_nsec)
+	|| ((secno == p->p_nsec) && !(bp->b_flags & B_READ))) {
+		bp->b_flags |= B_ERROR;
+		bp->b_error = ENXIO;
+		iodone(bp);
+		return;
+	}
+	/*
+	 * Calculate the amount to the transfer that is beyond the end of the
+	 * partition.  This causes an EOF if read extends beyond last sector.
+	 * The number temporarily computed into resid is the secctor number
+	 * of the last sector requested.
+	*/
+	bp->b_resid = secno + (bp->b_bcount+media->secsiz-1)/media->secsiz;
+	if (bp->b_resid > p->p_nsec)
+		bp->b_resid = (bp->b_resid-p->p_nsec)*media->secsiz;
+						/* Bytes beyond end	*/
+	else
+		bp->b_resid = 0;		/* Can do all		*/
+	/*
+	 * Start the requested I/O.  First, we calculate the absolute
+	 * sector number from the partition relative offset.
+	*/
+	secno += p->p_fsec;
+	/*
+	 * Still use cylinder to sort by, because disksort can't sort
+	 * by block number.
+	*/
+	bp->b_cylin = secno / (media->spt * media->nhead);
+	/*
+	 * Mutex through disksort and test of active flag.  These are seperate
+	 * mutex issues, but we don't bother to release mutex in between.  I
+	 * don't believe the sum of times is significantly worse than either
+	 * (taken individually) from the viewpoint of interrupt latency.
+	*/
+	x = splbuf();			/* disable interrupts */
+	disksort(&scsitab, bp);		/* queue the request */
+	if (!(scsitab.b_active & IO_BUSY))
+		scsi_start();		/* start I/O if driver idle */
+	splx(x);			/* restore interrupts */        
+	return;
 }
 
 /* Title:  scsi_start 
@@ -316,25 +332,23 @@ register struct buf *bp;    /* ptr to buf header containing request info */
  *		scsiintr - to resume I/O on next block
  *		scsiopen - to start I/O on any accumulated blocks
  *		scsistrategy - to start I/O on queued block
- */
+*/
 scsi_start()
 {
 	struct scsicdrt *media;		/* drive media description */
 	struct iobuf *bufh;		/* buffer header containing request */
 	struct buf *bp;			/* next buf header on request list */
-	char mode;			/* access mode (READ or WRITE) */
-	daddr_t block;			/* scsi device block number */
 	unsigned x;			/* interrupt mask */
 
 #ifdef DEBUG
 	printf("\nscsi start called, ");
 #endif
 	bufh = &scsitab;
-	x = spl6();
 	/*
 	 * Mutex the test for IO_IDLE with I/O pending. 
 	*/
-	if ((bufh->b_active==IO_IDLE) && ((bp = bufh->b_actf)!=NULL)) {
+	x = splbuf();
+	if ((bufh->b_active == IO_IDLE) && ((bp = bufh->b_actf) != NULL)) {
 		/* start I/O if controller idle */
 		bufh->b_active = IO_BUSY;		/* lock buffer */
 		/* 
@@ -342,58 +356,34 @@ scsi_start()
 		 * with I/O pending.
 		*/
 		splx(x);
-		m_dev = UNIT(bp->b_dev);
+		m_dev = bp->b_dev;
 #ifdef DEBUG
-		printf("for unit %x; bp %x", m_dev, bp);
+		printf("for unit %x; bp %x", UNIT(m_dev), bp);
 #endif
-		media = scsicdrt + DRTAB(bp->b_dev);
+		media = scsicdrt + DRTAB(m_dev);
 		/*
 		 * It is safe to muck with these variables since we have
-		 * marked ourselves IO_BUSY and interupt time calls to
-		 * scsistart() will not issue commands.  NO OTHER routine
+		 * marked ourselves IO_BUSY and possible interrupt time calls
+		 * to scsistart() will not issue commands.  NO OTHER routine
 		 * should build commands while IO_BUSY is set OR interrupts
-		 * are enabled.  I suspect format operations violate this
-		 * restriction.  Never format while the SCSI controller is
-		 * active doing anything else.
+		 * are enabled.
 		*/
 		scsidev.state = 0;
 		scsi_cmd[1] = UNIT(m_dev) << 5;
-		if ((bp->b_flags & B_FORMAT) == B_FORMAT)
-			scsi_format(bp);
-		else    /* read or write operation */
-		{
-			/* fill in SCSI command block */
-			if ((bp->b_flags & B_READ) == B_READ) {
-				scsi_cmd[0] = READ;
-				mode= READ;
-			}
-			else {	/* write operation */
-				scsi_cmd[0] = WRITE;
-				mode= WRITE;
-			}
-			block = (bp->b_blkno*(BSIZE/media->secsiz))
-			      + media->part[PARTITION(bp->b_dev)].p_fsec;
-			/*
-			 * Probably should insure block <= 2^20...
-			 * LARGER BLOCK NUMBERS WILL CORRUPT THE PARAMETER
-			 * BLOCK, specifically the drive number.  DriveS
-			 * > 500Mb c
-			*/
-			scsi_cmd[1] += block >> 16;	/* hope block >= 0 */
-			scsi_cmd[2]  = block >> 8;
-			scsi_cmd[3]  = block;
-			/*
-			 * Probably should insure < 255 sectors requested...
-			 * REQUESTS > 255 SECTORS (>= 128K BYTES) WILL silently
-			 * TAKE THE REQUEST SIZE MODULO 256 sectors.
-			*/
-			scsi_cmd[4]  = (unsigned)(bp->b_bcount/ media->secsiz);
-			scsi_cmd[5]  = 0; /* Non-portable fields */
-			scsi_setup_dma(bp->b_paddr, mode, bp->b_bcount);
+		if (bp->b_flags & B_OPEN) {
+			scsi_init_format(media);
+			scsidev.state |= INIT_FMT;
+		} else if (bp->b_flags & B_FORMAT) {
+			scsi_format(media);
+		} else if (bp->b_flags & B_READ) {
+			scsi_cmd[0] = READ;
+			scsi_read_write(bp, media);
+			scsi_setup_dma(bp->b_paddr, READ, bp->b_bcount);
+		} else {	/* write operation */
+			scsi_cmd[0] = WRITE;
+			scsi_read_write(bp, media);
+			scsi_setup_dma(bp->b_paddr, WRITE, bp->b_bcount);
 		}
-#ifdef DEBUG
-		printf ("\nscsi  addr: %lx", bp->b_paddr);
-#endif
 		scsi_select();
 		return;
 	}
@@ -433,9 +423,9 @@ scsi_start()
 
 /* Title:  scsiintr
  *
- * Abstract:  This routine is called from kernel upon receipt of an interrupt
- *		signal from SCSI device.  It reads the SCSI bus phase bits to
- *		determine what action must be taken.
+ * Abstract: This routine is called from kernel upon receipt of an interrupt
+ *	     signal from SCSI device.  It reads the SCSI bus phase bits to
+ *	     determine what action must be taken.
  *
  *  Calls: scsi_start - start I/O
  *	   scsi_dma_start - start DMA operation
@@ -447,10 +437,12 @@ scsi_start()
 scsiintr()
 {
 	unsigned char phase;			/* SCSI bus phase lines */
+	unsigned x;			/* SHOULDN'T NEED THIS */
 
 #ifdef DEBUG
 	printf("\nscsi intr called");
 #endif
+	x = splbuf();			/* SHOULDN'T NEED THIS */
 	phase= inb(scsicfg.portb); /* read SCSI bus state */
 	if ((phase & IO) == 0) {  /* +I/O signal asserted */
 		/* DATA IN, STATUS, or MSG IN phase */
@@ -461,23 +453,20 @@ scsiintr()
 			printf(" READ");
 #endif
 			scsi_dma_start();	/* DATA IN */
-		}
-		else if ((phase & MSG) != 0) {
+		} else if ((phase & MSG) != 0) {
 #ifdef DEBUG
-				printf(" STATUS  ");
-				printf(" 82258 GSR = %x", in(ADMA_GSR));
+			printf(" STATUS  ");
+			printf(" 82258 GSR = %x", in(ADMA_GSR));
 #endif
-				scsi_r_status();	/* STATUS */
-			}
-		else {
+			scsi_r_status();	/* STATUS */
+		} else {
 #ifdef DEBUG
 			printf(" MSG IN");
 #endif
 			scsi_r_msg();		/* MSG IN */
 			scsi_endop();
 		}
-	}
-	else {  /* +I/O is NOT asserted */
+	} else {/* +I/O is NOT asserted */
 		/* DATA OUT, COMMAND, or MSG OUT phase */
 		/* configure 8255 for data output */
 		outb(scsicfg.ctrl, PORTA_OUTPUT);
@@ -486,20 +475,15 @@ scsiintr()
 			printf(" WRITE");
 #endif
 			scsi_write_data();	/* DATA OUT */
-		}
-		else if ((phase & MSG) != 0) {
+		} else if ((phase & MSG) != 0) {
 #ifdef DEBUG
 			printf(" COMMAND");
 #endif
 			scsi_s_cmd();	/* COMMAND */
-		}
-		else {
-#ifdef DEBUG
-			printf(" MSG OUT");
-#endif
-			scsi_s_msg();	/* MSG OUT */
-		}
+		} else
+			panic("SCSI bus error (MSG OUT)");
 	}
+	splx();			/* SHOULDN'T NEED THIS */
 }
 
 /* Title:  scsiread()
@@ -551,7 +535,7 @@ dev_t dev;	/* device number */
  *	   iowait - kernel routine, sleep on a buffer
  *	   sleep - kernel routine used to delay until I/O block ready
  *	   splx - kernel routine which enables interrupt previously disabled
- *	   spl6 - kernel routine disables all interrupts except timer
+ *	   splbuf - kernel routine disables all interrupts except timer
  *
  *  Called by: kernel
  */
@@ -560,57 +544,51 @@ scsiioctl(dev, cmd, cmdarg)
 dev_t dev;		/* device number */
 int cmd;		/* command */
 faddr_t cmdarg;		/* user structure with parameters */
-{
-	register struct buf *bp;	/* I/O block used for format op */
+{	
+	register struct scsiunit *dd;	/* unit device table */
 	unsigned x;			/* saves old interrupt state */
 	unsigned unit;			/* floppy unit being formatted */
 
 #ifdef DEBUG
 	printf("\nscsi entered ioctl");
 #endif
-	/* initialize variables */
-	unit = UNIT(dev);
-	bp = &scsirbuf[unit];
 	if (cmd != IOC_FMT) {
 		u.u_error = ENXIO;	/* only FORMAT command supported */
 		return;
 	}
-	/* get the raw I/O buffer header to set up format request */
-	x = spl6();
+	unit = UNIT(dev);
+	dd = &scsidev.d_unit[unit];
 	/*
-	 * Mutex while waiting for raw I/O buffer header to be free.
+	 * Get the format parameters.  Note that we must mutex scsi_ftk[unit].
 	*/
-	while (bp->b_flags & B_BUSY)
-	{
-		bp->b_flags |= B_WANTED;
-#ifdef DEBUG
-		printf("\nscsi Just before sleep");
-#endif
-		sleep((caddr_t) bp, PRIBIO+1);
-	}
-	bp->b_flags = B_BUSY | B_FORMAT;
-	bp->b_dev = dev;
+	x = splbuf();
+	while (dd->flags & U_FORMAT)
+		sleep((caddr_t) dd, PRIBIO+1);
+	dd->flags |= U_FORMAT;
 	splx(x);
+	copyin(cmdarg, (caddr_t)&scsi_ftk[unit], sizeof scsi_ftk);
 	/*
-	 * Have the buffer header, done with the mutex.
+	 * We use physio() to handle the mutex issues and talk to the
+	 * strategy routine.  We set up u.u_offset, u.u_count, etc. so
+	 * physio() can pretend input or output is involved.
 	*/
-#ifdef DEBUG
-	printf("\nscsi queueing FORMAT request");
-#endif
-	scsistrategy(bp);	/* queue request ... */
-	iowait(bp);		/* wait for track to be formatted ... */
-	bp->b_flags &= ~(B_BUSY | B_FORMAT);	/* and release buffer */
-#ifdef DEBUG
-	printf("\nscsi bp->b_flags = %x\n", bp->b_flags);
-#endif
+	u.u_offset = 0;
+	u.u_count = BSIZE;
+	u.u_base = sotofar(u.u_procp->p_fdsel,0);
+monitor();
+	physio(scsistrategy, &scsirbuf[unit], dev, B_FORMAT);
+	/*
+	 * Now we release the mutex on scsi_ftk[unit].
+	*/
+	dd->flags &= ~U_FORMAT;
+	wakeup((caddr_t)dd);
 }
 
 /* Title:  scsi_endop
  *
  * Abstract:	This routine processes the status returned by the SCSI
  *		device. If an error is returned, the device is queried
- *		for extended status. Xenix operations which require
- *		multiple SCSI commands are handled here.
+ *		for extended status.
  *
  * Calls:	scsi_stop_dma - make sure 82258 is in good state	
  *		scsi_setup_dma - setup dma for multiple command operation
@@ -627,21 +605,18 @@ scsi_endop()
 
 	bufh = &scsitab;
 	bp = bufh->b_actf;
-
 	/*
 	 * An operation has completed.  We don't overlap commands while
 	 * previous I/O is in progress, so this means that not only is
 	 * the controller idle, but scsistart() is not in the process of
 	 * building a command.  Since we leave interrupts masked (and
-	 * the queue marked IO_BUSY, for that matter, we cannot get
+	 * the queue marked IO_BUSY, for that matter), we cannot get
 	 * blown away by scsistart() while we are in progress.  All of
 	 * which is to say that it is OK here (and only here) to break
 	 * the usual rule that only scsistart() should issue commands.
-	 * This allows us to send 'get status' commands on errors and
-	 * send 'format' commands after the 'init format' command
-	 * completes.
+	 * This allows us to send 'get status' commands on errors.
 	*/
-#ifdef DEBUGX
+#ifdef DEBUG
 	printf("\n	entered scsi_endop state= %x\n", scsidev.state);
 #endif
 	if ((scsidev.state & CHECK) != 0) {
@@ -650,53 +625,38 @@ scsi_endop()
 		*/
 		if ((scsidev.state & SENSE) == 0) {
 			/*
-			 * send 'get sense' command to the controller, since
+			 * Send 'get sense' command to the controller, since
 			 * we haven't done so yet.
-			 */
+			*/
 			scsidev.state |= SENSE;
 			scsi_stop_dma(); /* stop 82558 */
 			scsi_setup_dma(((long)dscraddr(KDS_SEL)+(long)scsi_sense),
-					 READ, REQ_SENSE_LEN);
+					 READ, sizeof scsi_sense);
 			scsi_cmd[0] = REQ_SENSE;
 			scsi_cmd[1] = UNIT(m_dev) << 5;
 			scsi_cmd[2] = scsi_cmd[3] = scsi_cmd[5] = 0;
-			scsi_cmd[4] = REQ_SENSE_LEN;
+			scsi_cmd[4] = sizeof scsi_sense;
 			scsi_select();
 			return;
 		} else {
 			/*
 			 * We got sense data, now notify user.
-			 */
+			*/
 			scsi_error(bp, &scsitab);
 		}
 	} else {
 		/*
-		 * No error, check for format request.
+		 * I/O completed, dequeue the finished request and mark
+		 * it as completed.
 		*/
-		if (((bp->b_flags & B_FORMAT) == B_FORMAT)
-		&&  ((scsidev.state & FORMAT2) == 0)) {
-			/*
-			 * Formatting is a 2 part SCSI operation.  We have
-			 * completed the 'init format' part correctly, and
-			 * now must do the actual format.
-			*/
-			scsi_format(bp);
-			scsi_select();
-			return;
-		} else {
-			/*
-			 * I/O completed, deque the finished request and mark
-			 * it as completed.
-			*/
-			scsidev.state = 0;
-			bufh->b_actf = bp->av_forw;
+		scsidev.state = 0;
+		bufh->b_actf = bp->av_forw;
 #ifdef DEBUG
-			printf("\n\tcalling iodone bp= %x, bp->av_forw= %x\n",
-				bp, bp->av_forw);
+		printf("\nscsi_endop calling iodone bp= %x, bp->av_forw= %x\n",
+			bp, bp->av_forw);
 #endif
-			iodone(bp);
-			bufh->b_active &= ~IO_BUSY;
-		}
+		iodone(bp);
+		bufh->b_active &= ~IO_BUSY;
 	}
 	/*
 	 * Start next I/O (if any).
@@ -722,9 +682,16 @@ register struct iobuf *bufh;	/* static buffer header */
 {
 	
 #ifdef DEBUGX
+	/*
+	 * I broke the printf calls down to be as simple as possible because
+	 * DEBUGX caused the driver to malfunction.  I think the issue is space
+	 * on the kernel stack.
+	*/
 	printf("\nentered scsi_error\n");
-	printf("scsi_sense= %x %x %x %x\n",scsi_sense[0],scsi_sense[1],
-		scsi_sense[2],scsi_sense[3]);
+	printf("scsi_sense = %x", scsi_sense[0]);
+	printf(" %x", scsi_sense[1]);
+	printf(" %x", scsi_sense[2]);
+	printf(" %x\n", scsi_sense[3]);
 #endif
 	/* output error message */
 	deverr(bufh, scsi_sense[1] & 0xFF, scsi_sense[0] & 0xFF, "SCSI");
@@ -754,7 +721,7 @@ scsi_r_msg()
 	char msg;	/* message byte from controller */
 
 #ifdef DEBUG
-	printf("      entered scsi rcv_msg\n");
+	printf("      entered SCSI rcv_msg\n");
 #endif
 	msg= inb(scsicfg.porta);
 	outb(scsicfg.portc, ALL_OFF);	/* idle bus */
@@ -777,7 +744,7 @@ scsi_r_status()
 
 	status= inb(scsicfg.porta);
 #ifdef DEBUG
-	printf("      entered scsi rcv_status status= %x\n", status);
+	printf("      entered SCSI rcv_status status= %x\n", status);
 #endif
 	if ((scsidev.state & SENSE) == 0)
 		scsidev.state |= (status & (CHECK | BUSY));
@@ -792,13 +759,16 @@ scsi_r_status()
  *
  *	This driver assumes that it is the only SCSI initiator on the bus.
  *	It does not put its host id on the data lines during target selection.
+ *	There is an implicit assumption that a call to inb will take at least
+ *	100 nanoseconds.  This will probably be true for a while :-), and the
+ *	granularity for delays is huge relative to this, so none were coded.
  *
  * Called by:	scsi_start 
  */
 scsi_select()
 {
 #ifdef DEBUG
-	printf("      entered scsi select\n");
+	printf("      entered SCSI select\n");
 #endif
 	/* reset 8255 */
 	outb (scsicfg.ctrl, PORTA_OUTPUT);
@@ -817,7 +787,7 @@ scsi_select()
 	/* deassert SEL */
 	outb(scsicfg.portc, ALL_OFF);
 }
-
+
 /* Title:  scsi_s_cmd
  *
  * Abstract:	This routine sends a SCSI command to the selected target.
@@ -828,48 +798,36 @@ scsi_select()
  */
 scsi_s_cmd()
 {
-	register int i, ncmd;	/* number of command bytes */
+	register int i;
 
 #ifdef DEBUGX
-	printf("\n      entered scsi send_cmd");
+	printf("\n      entered SCSI send_cmd");
 #endif
-	if ((scsi_cmd[0] & CLASS_MASK) == 0)
-		ncmd= 6;
-	else
-		ncmd= 10;
-	for (i=0; i < ncmd; i++) {
-		while ((inb(scsicfg.portb) & REQ) != 0);
+	for (i=0; i < sizeof scsi_cmd; i++) {
+		while ((inb(scsicfg.portb) & REQ) != 0)
+			;
 #ifdef DEBUGX
 	printf(" %x",scsi_cmd[i]);
 #endif
-/*		delay(1);	*/
 		outb(scsicfg.porta, scsi_cmd[i]);
+		/*
+		 * How does ACK- get toggled here?  According to my manual,
+		 * I'm supposed to assert ACK-, wait until the controller
+		 * removes REQ-, and remove ACK-.  On the other hand, this
+		 * mess seems to be working.
+		*/
 	}
-	outb(scsicfg.portb, 0x20); /* tweak scsi state machine hardware */
+	/*
+	 * The next line is black magic required when using interrupts
+	 * with the SCSI interface.  If you leave this out, the state
+	 * machine does not enable interrupts.  See INTERRUPT DRIVEN
+	 * OPERATION and the SCSI State Machine Diagram in Appendix B
+	 * of the iSBC 286/100 Single Board Computer User's Guide.
+	*/
+	outb(scsicfg.portb, 0x20);
 #ifdef DEBUGX
 	printf(" \n");
 #endif
-}
-
-/* Title:  scsi_s_msg
- *
- * Abstract:	This routine sends a message on the SCSI bus.
- *
- * Calls:
- *
- *	*************************************************
- *	*                                               *
- *	*                   NOTE                        *
- *	*                                               *
- *	* This routine should never be entered in this  *
- *	* implementation of the driver.                 *
- *	*                                               *
- *	*************************************************
- * Called by:	scsiintr
- */
-scsi_s_msg()
-{
-	panic("SCSI bus error (MSG OUT)");
 }
 
 /* Title:  scsi_setup_dma
@@ -879,10 +837,10 @@ scsi_s_msg()
  *
  * Calls:	sleep - kernel routine
  *		out, outb - kernel physical I/O routines
- *		splx, spl6 - kernel interrupt masking routines
+ *		splx, splbuf - kernel interrupt masking routines
  *
  * Called by:	scsi_start
- */
+*/
 scsi_setup_dma(b_addr, mode, count)
 paddr_t b_addr;			/* physical address of buffer */
 char mode;			/* read/write flag */
@@ -892,7 +850,7 @@ unsigned count;			/* transfer count */
 	register struct scsiiopb *iopb;
 
 #ifdef DEBUG
-	printf("Entered scsi setup_dma\n");
+	printf("\nEntered SCSI setup_dma");
 #endif
 	iopb = &scsidev.iopb;
 	iopb->adma_count = (long)count;
@@ -914,7 +872,7 @@ unsigned count;			/* transfer count */
 	 * WE SHOULD DO A MORE RIGOROUS CHECK that there is no
 	 * race with close, which also sleeps on &adma_ch0_lock.
 	*/
-	x = spl6();
+	x = splbuf();
 	if (adma_ch0_lock != SCSI_ADMA_ID) {
 		while (adma_ch0_lock != 0)
 			sleep(&adma_ch0_lock, PRIBIO+1);
@@ -924,82 +882,140 @@ unsigned count;			/* transfer count */
 	splx(x);
 }
 
-/* Title:  scsi_format
+/* Title:  scsi_init_format
  *
- * Abstract:	This routine fills in the data structures for the format
- *		command. Both phases of the format operation are handled.
+ * Abstract:	This routine fills in the data structures for the XEBEC 1420
+ *		INIT_FORMAT command.
  *
- * Calls:	sleep - kernel routine
- *		out, outb - kernel physical I/O routines
- *		splx, spl6 - kernel interrupt masking routines
+ * Calls:
  *
  * Called by:	scsi_start
 */
-scsi_format(bp)
-struct buf *bp;
+scsi_init_format(media)
+register struct scsicdrt *media;	/* ptr to media type in drive unit */
 {
-	struct scsicdrt	*media;		/* ptr to media type in drive unit */
-
 	/*
-	 * Formatting is heaviliy dependent on the the specific SCSI
-	 * controller.  This routine is implemented for the XEBEC 1420
-	 * controller and ST506 drives.  IT WILL NOT WORK on other drives
-	 * or other SCSI controller boards.  This is most unfortunate.
+	 * Format specification is heavily dependent on the the specific
+	 * SCSI controller.  This routine is implemented for the XEBEC
+	 * 1420 controller and standard drives.  IT WILL NOT WORK on other
+	 * drives or other SCSI controller boards.  This is most unfortunate.
 	*/
-	media = scsicdrt + DRTAB(m_dev);
-	if ((scsidev.state & FORMAT1) == 0) {
-		/*
-		 * Set up for a format operation.
-		*/
-		scsidev.state |= FORMAT1;
-#ifdef DEBUG
-		printf("	scsi FORMAT1\n");
-#endif
-		/*
-		 * setup SCSI init format command
-		 */
-		scsi_cmd[0] = INIT_FORMAT;
-		scsi_cmd[1] = UNIT(m_dev) << 5;
-		scsi_cmd[2] = scsi_cmd[3] = scsi_cmd[4] = scsi_cmd[5] = 0;
-		/*
-		 * Set up init format parameter list
-		*/
-		scsi_mode[0] = media->ncyl >> 8;/* # Cylinders		*/
-		scsi_mode[1] = media->ncyl & 0xFF;
-		scsi_mode[2] = media->nhead;	/* # Heads		*/
-		scsi_mode[3] = 0; /* ST-506 Non-Buffered seek - 3.0 mS rate */
-		scsi_mode[4] = 0x2;		/* Sector size (512)	*/
+	scsi_cmd[0] = INIT_FORMAT;
+	scsi_cmd[2] = 0;
+	scsi_cmd[3] = 0;
+	scsi_cmd[4] = 0;
+	scsi_cmd[5] = 0;
+	/*
+	 * Set up init format parameter list.  Multiple drtab
+	 * entries refer to the same drive.  WE FALL ON OUR
+	 * FACE IF YOU OPEN USING TWO DRTABS on a single unit.
+	*/
+	scsi_mode[0] = media->ncyl >> 8;
+	scsi_mode[1] = media->ncyl & 0xFF;	/* # Cylinders		*/
+	scsi_mode[2] = media->nhead;		/* # Heads		*/
+	scsi_mode[3] = media->fmt;
+	if (media->fmt) {
+		if (media->fmt == FLPY_FM)
+			scsi_mode[4] = 0x01;	/* Sector size (128)	*/
+		else
+			scsi_mode[4] = 0x03;	/* Sector size (512)	*/
+		scsi_mode[5] = 15;	/* 240Ms until head unloads	*/
+		scsi_mode[6] = 80;	/* 800Ms motor start time	*/
+		scsi_mode[7] = 15;	/* 30Ms head load time		*/
+		scsi_mode[8] = 20;	/* 2 seconds until motor off	*/
+		scsi_mode[9] = 0;	/* Must be zero			*/
+	} else {
+		/* ST-506 Non-Buffered seek - 3.0 Ms rate */
+		scsi_mode[4] = 0x2;	/* Sector size (512)		*/
 		scsi_mode[5] = media->ncyl >> 8;
-		scsi_mode[6] = media->ncyl & 0xFF;/* Reduce Write Current */
+		scsi_mode[6] = media->ncyl & 0xFF;
+					/* Reduce Write Current		*/
 		scsi_mode[7] = (media->ncyl/2) >> 8;
 		scsi_mode[8] = (media->ncyl/2) & 0xFF;
-						/* Write Precompensation */
-		scsi_mode[9] = 11;		/* Bits to correct	*/
-#ifdef DEBUGX
-		printf("\n%x %x %x %x %x ",scsi_mode[0],scsi_mode[1]&0xFF,
-		 scsi_mode[2],scsi_mode[3],scsi_mode[4]);
-		printf(" %x %x %x %x %x\n",scsi_mode[5],scsi_mode[6]&0xFF,
-		 scsi_mode[7],scsi_mode[8]&0xFF,scsi_mode[9]);
-#endif
-	} else {
-		/*
-		 * First half of format done.  Now do second half.
-		*/
-		scsidev.state |= FORMAT2;
-#ifdef DEBUG
-		printf("	scsi FORMAT2\n");
-#endif
-		/*
-		 * Issue SCSI format command as second step in
-		 * formatting drive.
-		 */
-		scsi_cmd[0] = FORMAT;
-		scsi_cmd[1] = UNIT(m_dev)<<5;
-		scsi_cmd[2] = 0; /* From sector 0 */
-		scsi_cmd[3] = 0; /* From sector 0 */
-		scsi_cmd[4] = 4; /* use interleave of 4 */
-		scsi_cmd[5] = 0; /* reserved */
+					/* Write Precompensation	*/
+		scsi_mode[9] = 11;	/* Bits to correct		*/
 	}
+}
+
+/* Title:  scsi_format
+ *
+ * Abstract:	This routine fills in the data structures for the format
+ *		command.
+ *
+ * Called by:	scsi_start
+*/
+scsi_format(media)
+register struct scsicdrt *media;	/* ptr to media type in drive unit */
+{
+	register unsigned unit;
+
+	/*
+	 * Formatting is heavily dependent on the the specific SCSI
+	 * controller.  This routine is implemented for the XEBEC 1420
+	 * controller and ST506 drives.  IT WILL PROBABLY NOT WORK on
+	 * other drives or other SCSI controller boards.  This is most
+	 * unfortunate.
+	*/
+	unit = UNIT(m_dev);
+	/*
+	 * Build the SCSI FORMAT command.
+	*/
+	scsi_cmd[0] = FORMAT;
+	scsi_cmd[1] = unit << 5;
+#ifndef okformat
+	/*
+	 * Format the whole drive.  Yes, I know we were only asked to
+	 * format a single track.  See #else.
+	*/
+	scsi_cmd[2] = 0; /* From sector 0 */
+	scsi_cmd[3] = 0; /* From sector 0 */
+#else
+	/*
+	 * There is a botch in my copy of the XEBEC manual, and the
+	 * correct parameter block for a 'format tracks' command is
+	 * not shown.  If I can research this, maybe I can make the
+	 * format utility work as expected.  The other piece of logic
+	 * needed is to determine if format wants to format an
+	 * alternate.  Right now bad tracks are lethal.
+	*/
+	scsi_cmd[2] = scsi_ftk[unit].f_track >> 8;
+	scsi_cmd[3] = scsi_ftk[unit].f_track & 0xFF;
+#endif okformat
+	scsi_cmd[4] = scsi_ftk[unit].f_intl;
+				/* use interleave requested by user */
+	scsi_cmd[5] = 0; /* reserved */
+}
+
+/* Title:  scsi_read_write
+ *
+ * Abstract:	Fill in the SCSI command block for a read/write request.
+ *
+ * Called by:	scsistart
+*/
+scsi_read_write(bp, media)
+register struct scsicdrt *media;	/* ptr to media type in drive unit */
+register struct buf *bp;    /* ptr to buf header containing request info */
+{
+	daddr_t block;			/* SCSI device block number */
+
+	block = (bp->b_blkno*(BSIZE/media->secsiz))
+	      + media->part[PARTITION(m_dev)].p_fsec;
+	/*
+	 * Probably should insure block <= 2^20...
+	 * LARGER BLOCK NUMBERS WILL CORRUPT THE PARAMETER
+	 * BLOCK, specifically the drive number.  Drives
+	 * > 500Mb c
+	*/
+	scsi_cmd[1] += block >> 16;	/* hope block >= 0 */
+	scsi_cmd[2]  = block >> 8;
+	scsi_cmd[3]  = block;
+	/*
+	 * Probably should insure < 255 sectors requested...
+	 * REQUESTS > 255 SECTORS (>= 128K BYTES) WILL silently
+	 * TAKE THE REQUEST SIZE MODULO 256 sectors.
+	*/
+	scsi_cmd[4]  = (unsigned)(bp->b_bcount/ media->secsiz);
+	scsi_cmd[5]  = 0; /* Non-portable fields */
 }
 
 /* Title:  scsi_dma_start
@@ -1010,13 +1026,13 @@ struct buf *bp;
  * Calls:	out, outb - kernel physical I/O routines
  *
  * Called by:	scsiintr
- */
+*/
 scsi_dma_start()
 {
 	long p_addr;		/* 24 bit address of iopb struct */
 
 #ifdef DEBUG
-	printf("Entered scsi start_dma\n");
+	printf("Entered SCSI start_dma\n");
 #endif
 	p_addr = (long)dscraddr(KDS_SEL) + (long)(&scsidev.iopb);
 	/* load ADMA Command Pointer Register with address of iopb */
@@ -1043,28 +1059,33 @@ scsi_stop_dma()
 /* Title:  scsi_write_data
  *
  * Abstract:	This routine starts the dma for a data write or directly
- *		handles the transfer for a mode select command.
+ *		handles the transfer for a init format command.
  *
  * Calls:	out, outb - kernel physical I/O routines
  *		scsi_dma_start
  *
  * Called by:	scsiintr  
- */
+*/
 scsi_write_data()
 {
 	int i;
 
-	if (((scsidev.state & FORMAT1)!= 0) &&
-	     ((scsidev.state & FORMAT2)== 0)) {
+	if (scsidev.state & INIT_FMT) {
+		/*
+		 * Can this hack be done away with?  That is, is it possible
+		 * to DMA the scsi_mode junk just as we would regular buffer
+		 * data?
+		*/
 #ifdef DEBUG
-		printf("	sending MODE SELECT data\n");
+		printf("	sending INIT_FORMAT data\n");
 #endif
-		for (i=0; i<INIT_FORMAT_LEN; i++) {
-			while ((inb(scsicfg.portb) & REQ) != 0);
+		for (i=0; i < sizeof scsi_mode; i++) {
+			while ((inb(scsicfg.portb) & REQ) != 0)
+				;
 			outb(scsicfg.porta, scsi_mode[i]);
 		}
+		scsidev.state &= ~INIT_FMT;
 		return;
-	}
-	else 
+	} else 
 		scsi_dma_start();
 }
