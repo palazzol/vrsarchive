@@ -123,10 +123,15 @@ char	*cp, *tp;
     *tp = '\0';
 }
 
+#ifdef __STDC__
+void
+parseoptions(char *opts,boolean from_env)
+#else
 void
 parseoptions(opts, from_env)
 register char *opts;
 boolean from_env;
+#endif
 {
 	register char *op;
 /*

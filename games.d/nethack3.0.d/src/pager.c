@@ -559,10 +559,16 @@ dohistory()
 	return 0;
 }
 
+/* return: 0 - cannot open fnam; 1 - otherwise */
+#ifdef __STDC__
 int
-page_file(fnam, silent)	/* return: 0 - cannot open fnam; 1 - otherwise */
+page_file(char *fnam,boolean silent)
+#else
+int
+page_file(fnam, silent)
 register char *fnam;
 boolean silent;
+#endif
 {
 #ifdef DEF_PAGER			/* this implies that UNIX is defined */
       {
