@@ -438,7 +438,7 @@ load_1stats(inp)
 FILE	*inp;
 {
 	int		i,n;
-	int		tmp;
+	long		tmp;
 	int		c;
 	float	v, lv, fv;
 	float	etotal, ctotal;
@@ -447,7 +447,7 @@ FILE	*inp;
 
 	for (i = 0 ; i <= MAXCHAR ; i++)  logprob[i] = 0.0;
 
-	if (fscanf(inp, "%d", &tmp) != 1)  {
+	if (fscanf(inp, "%ld", &tmp) != 1)  {
 		printf("Error while getting total");
 		return;
 		}
@@ -460,7 +460,7 @@ FILE	*inp;
 		}
 
 	while (TRUE) {
-		if ((n = fscanf(inp, "%d", &tmp)) != 1)  {
+		if ((n = fscanf(inp, "%ld", &tmp)) != 1)  {
 			if (n == 0) break;
 			if (n == EOF) break;
 			printf("Error while getting character count");
@@ -483,6 +483,7 @@ FILE	*inp;
 
 	if (etotal != ctotal) {
 		printf("Expected total is %f.  Actual total is %f.\n",etotal,ctotal);
+		exit(1);
 		}
 
 	logmean = vec_mean(prob, logprob, MAXCHAR);
@@ -551,7 +552,7 @@ FILE	*inp;
 {
 register	int		i,j;
     int		n;
-	int		tmp;
+	long		tmp;
 	int		c;
 	int		left_index, right_index;
 	float	v, lv, fv;
@@ -573,7 +574,7 @@ register	int		i,j;
 	for (i = 0 ; i < MAXCHAR+1 ; i++)
 		char_bimap[i] = 0;		/* Default index if char unknown. */
 
-	if (fscanf(inp, "%d", &tmp) != 1)  {
+	if (fscanf(inp, "%ld", &tmp) != 1)  {
 		printf("Error while getting total");
 		exit(0);
 		}
@@ -586,7 +587,7 @@ register	int		i,j;
 
 	ctotal = 0.0;
 	while (TRUE) {
-		if ((n = fscanf(inp, "%d", &tmp)) != 1)  {
+		if ((n = fscanf(inp, "%ld", &tmp)) != 1)  {
 			if (n == 0) break;
 			if (n == EOF) break;
 			printf("Error while getting character count (singles)");
@@ -625,7 +626,7 @@ register	int		i,j;
 
 	ctotal = 0.0;
 	while (TRUE) {
-		if ((n = fscanf(inp, "%d", &tmp)) != 1)  {
+		if ((n = fscanf(inp, "%ld", &tmp)) != 1)  {
 			if (n == 0) break;
 			if (n == EOF) break;
 			printf("Error while getting character count (pairs)");
