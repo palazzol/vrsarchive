@@ -1,0 +1,7 @@
+This is the source directory for uuhosts, which may be used to
+automatically collect map information from mod.map.all and also
+to display it to the users.
+
+Unlike the version I posted some time back, this one doesn't have
+security problems with extracting things from mod.map.all, and it
+can also display UUCP mail paths and USENET map entries faster.
