@@ -78,7 +78,7 @@ open_score()
  */
 setup()
 {
-		int  auto_save(), quit(), endit(), tstp();
+		int  auto_save(), endit(), tstp();
 #ifdef CHECKTIME
 		int  checkout();
 #endif
@@ -394,6 +394,6 @@ unlock_sc()
  */
 flush_type()
 {
-		raw();
-		noraw();
+		nocrmode();
+		crmode();
 }
