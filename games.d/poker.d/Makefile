@@ -1,5 +1,5 @@
 #
-#	@(#)Makefile	1.2 12/20/85
+#	@(#)Makefile	1.3 12/21/85
 #
 SHELL	= /bin/sh
 GAMEDIR	= $(DESTDIR)/usr/games
