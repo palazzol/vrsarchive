@@ -323,5 +323,5 @@ char c;
     putchar(c);
 }
 float ranf() {
-    return((float)rand()/32767);
+    return((float)rand()/32768);
 }
