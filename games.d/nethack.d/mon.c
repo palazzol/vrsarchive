@@ -257,9 +257,9 @@ nexttry:	/* eels prefer the water, but if there is no water nearby,
 		}
 		/* we cannot avoid traps of an unknown kind */
 		{ register struct trap *ttmp = t_at(nx, ny);
-		  register int tt;
+		  unsigmed long tt;
 			if(ttmp) {
-				tt = 1 << ttmp->ttyp;
+				tt = 1L << ttmp->ttyp;
 				/* below if added by GAN 02/06/87 to avoid
 				 * traps out of range
 				 */
