@@ -24,9 +24,12 @@ data sizes are:
 As I have not had access to different machines, I do not know whether
 certain data in the tab file is of int or long type, since that type
 is the same on our machine. I have assumed int type.
+[They appear to indeed be int type, which will preclude moving the binaries
+ between 16 and 32 bit systems. VRS]
 
 If your luck is really bad, I suppose it is possible that the format
 of the tab file is different across various implementations.
+[I know that V7 uses a different format. VRS]
 
 The format of the tab file is:
 Type	Name		Size on HP9000		Description
@@ -104,10 +107,15 @@ necessary.
 The t.bset and t.breset flags will need definitions from either
 <termio.h> or <sgtty.h>. Include whichever is appropriate for your
 system in tabXXX.c.
+[On XENIX 3.x systems, you must include <sys/types.h> before <termio.h>.
+ Since this is harmless on other termio systems, I recommend always doing
+ it. VRS]
 
 After the tabXXX.c file has been edited, place it in the same
 directory as table.c and the Makefile, and compile the table with:
 	make tabXXX
+[The latest Makefile has this generalized.  Just add your new file's name
+ to the TABLES list in the Makefile. VRS]
 
 This will compile and run a program which will in turn make the
 tab file. Move the tabfile to its destination directory (likely
@@ -122,7 +130,7 @@ Debugging is not easy.
 You can use the supplied program which takes a tab file (tabXXX) and
 makes a source file (tabXXX.c). The program is called elbat (reverse
 of table) Do this by:
-	elbat tabXXX > tabXXX.c
+	elbat tabXXX > tabXXX.x
 and compare to your original tabXXX.c
 	Do this for tab files that you have already to check that
 the format is the same on your system as on mine.
@@ -150,6 +158,8 @@ However, the nroff results using the two files should be identical.
 
 The program has not been extensively tested. There may be bugs or
 misinformation. Let me know of any problems.
+[I've never had any problems with these programs.  Note, however, that
+ nroff refuses to deal with 8 bit character sets. VRS]
 
 If the tab files produced by this program do not work at all on your
 system, then it may be that the data types for c_size, and
@@ -165,6 +175,8 @@ the sizeof(int) on your system is 16 bits, then the difference
 should be 502. If it is not, then perhaps the types (some or all)
 of c_size, and the elements in t_stor should be changed to reflect
 this.
+[Again, this does not seem to be a problem, as I have used this software
+ essentially unchanged on 16 bit systems. VRS]
 
 			Good luck!
 
@@ -174,3 +186,4 @@ I can be reached at:
 or		(613) 726 - 3008			(Phone)
 		(Ottawa, Canada)
 
+[Don't even try to reach me. VRS]
