@@ -28,7 +28,7 @@
  * compiler barfs on these.
  */
 #ifdef __GNUC__ /* add other compilers as the need arises */
-#ifdef CYGWIN
+#ifdef __STDC__
 # define P(s)		s
 #else
 # define P(s)		()
