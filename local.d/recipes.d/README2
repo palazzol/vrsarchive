@@ -1,0 +1,69 @@
+This is the distribution of programs that work with mod.recipes files, to make
+the USENET cookbook. There is a separate distribution of the documentation.
+You must have both distributions before you can do the installation. They
+are sent in two parts because the network often loses large articles.
+
+-->	If you are not a programmer, but want to use this	<--
+	software, and can't enlist the help of a
+	programmer, please read the file "Novice". It
+	contains simplified instructions, and can lead
+	you through the installation procedure even if
+	you have never installed software before.
+
+	Ignore the rest of this README2 file if you decide to use
+	the Novice instructions.
+
+To install the recipe software at your site, copy either Makefile.bsd or
+Makefile.sysv over to be named "Makefile", then edit it per the instructions
+in the beginning. If you are running any non-BSD Unix, such as Sys III or
+Venix, then you want to use Makefile.sysv even though you don't have sysv.
+
+If you have the "less" program, you will probably want to use it instead of
+"more".
+
+You may find that the best version of troff at your site is called "ptroff"
+or "dtroff" or "itroff" or "qtroff" or whatever--the first letter tends to
+correspond to the manufacturer of the machine for which that troff is
+targeted.
+
+Once you have edited your Makefile, type
+	make configure
+This will produce configured executable versions of the cookbook software in
+your current directory. Once you have satisfied yourself that it is not a
+trojan horse, type
+	make install
+which will copy the executable programs to the directory you have chosen for
+them (we put them in /usr/local/bin) and copy the manual pages to
+/usr/man/man1 and /usr/man/man5. You needn't be root to install, you only
+need to be a user who has write permission in the bin and man directories.
+
+Once you've done that, go read the man pages, then go play with "rn" and have
+fun printing cookbooks. This will also work with readnews; I don't know from
+notesfiles, and I have never tried it with vnews or yarn or any of those
+other programs.
+
+Here are the program names and what they do:
+
+rcbook.t	make a cookbook with troff
+rcnew.t		make a cookbook update with troff
+rcextract	extract a recipe from a news article (called by rctypeset)
+rcindex		produce an index of saved recipes (called by rcbook)
+rcintro		generate the introduction to the cookbook (called by rcbook)
+rckeep		keep a recipe
+rckeepnew	keep all new recipes (new since last rckeepnew run)
+rcnroff		run one recipe through nroff
+rcshow		show one recipe on the screen
+rctypeset	run one recipe through troff
+rcbook.n	nroff version of rcbook.t
+rcnew.n		nroff version of rcnew.t
+
+The troff and nroff macros use the manual macros /usr/lib/tmac/tmac.an as a
+subroutine. If your site has changed those manual page macros significantly
+from the original AT&T or Berkeley distribution, then things might not work.
+In particular, the macros distributed by DEC with Ultrix 1.2 are not
+compatible.
+
+	Brian Reid
+	DEC Western Research Laboratory
+	Palo Alto, California
+	{ucbvax,ihnp4,decvax}!decwrl!reid	-or-	reid@decwrl.DEC.COM
