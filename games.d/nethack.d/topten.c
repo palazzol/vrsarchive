@@ -46,7 +46,7 @@ topten(){
 	int sleepct = 300;
 	FILE *rfile;
 	register flg = 0;
-	extern char *getdate();
+	extern char *get_date();
 #ifndef DGK
 #define	HUP	if(!done_hup)
 #else
@@ -86,7 +86,7 @@ topten(){
 	(t0->name)[NAMSZ] = 0;
 	(void) strncpy(t0->death, killer, DTHSZ);
 	(t0->death)[DTHSZ] = 0;
-	(void) strcpy(t0->date, getdate());
+	(void) strcpy(t0->date, get_date());
 
 	/* assure minimum number of points */
 	if(t0->points < POINTSMIN)

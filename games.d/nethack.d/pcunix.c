@@ -46,7 +46,7 @@ getyear()
 }
 
 char *
-getdate()
+get_date()
 {
 	static char datestr[7];
 	register struct tm *lt = getlt();
