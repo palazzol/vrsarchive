@@ -11,7 +11,14 @@
 #   include <wait.h>
 #endif
 #include <signal.h>
+#ifdef __STDC__
+#include <sys/termios.h>
+#include <sys/ioctl.h>
+#include <sys/ttold.h>
+#define CRMOD	O_CRMOD
+#else
 #include <sgtty.h>
+#endif
 #include <errno.h>
 
 #define DEAD	1	/* dead but haven't informed user yet */
@@ -80,7 +87,7 @@ proc_pid(pid)
 	register Process	*p;
 
 	for (p = procs; p != 0; p = p->p_next)
-		if (p->p_pid == pid)
+		if (p->p_opid == pid)
 			break;
 
 	return p;
@@ -383,7 +390,7 @@ out:	if (s == 0 && t == 0)
 	newp = (Process *) emalloc(sizeof *newp);
 
 	newp->p_fd = ptyfd;
-	newp->p_pid = pid;
+	newp->p_opid = pid;
 
 	newbuf = do_select((Window *) 0, bufname);
 	newbuf->b_type = B_PROCESS;
