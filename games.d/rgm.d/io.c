@@ -318,7 +318,7 @@ terpbot ()
 
     Str = Str * 100; Strmax = Strmax * 100;
   }
-  else				/* Rogue 5.3 (and beyond???) */
+  else				/* Rogue 5.3 (and beyond?) */
   { sscanf (screen[23],
          " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Arm: %d Exp: %d/%d %s",
          &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);

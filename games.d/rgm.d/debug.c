@@ -52,7 +52,7 @@ int msgtype, a1, a2, a3, a4, a5, a6, a7, a8;
     saynow (msg);
     playing = 0;
     quitrogue ("fatal error trap", Gold, SAVED);
-    longjmp (commandtop);
+    longjmp (commandtop, 1);
   }
 
   if (! debug (msgtype | D_INFORM))		/* If debugoff */
