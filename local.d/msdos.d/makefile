@@ -56,7 +56,7 @@ install: $(ALL) $(BINDIR) $(MAN1)
 	cp Mmd.1 $(MAN1)/mmd.1
 	cp Mrd.1 $(MAN1)/mrd.1
 	cp Mren.1 $(MAN1)/mren.1
-	cd $(BINDIR); chmod 711 $(MANS)
+	cd $(MAN1); chmod 711 $(MANS)
 
 clean:
 	rm -f convdate.o fixname.o getfat.o init.o isdir.o match.o mdel.o
