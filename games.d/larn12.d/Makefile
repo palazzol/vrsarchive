@@ -56,7 +56,7 @@ TERMLIB	= -ltermlib -lx
 #		effect when casting missile type spells.
 #
 # OPTIONS = -DEXTRA -DBSD -DVER=12 -DSUBVER=0 -DTIMECHECK -DWIZID=1000 -DVT100 -DHIDEBYLINK
-OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=0 
+OPTIONS	= -DEXTRA -DSYSV -DVER=12 -DSUBVER=0 -DWIZID=-1
 CFLAGS= -M2l $(OPTIONS) -DLARNHOME=\"$(LARNHOME)/\"
 # End of configurable make options
 ########################################################################
@@ -71,15 +71,13 @@ larn12.0: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o larn12.0 $(TERMLIB)
 	size larn12.0
 
-all: larn12.0 install
-
 $(OBJS): header.h
 
 $(BINDDIR) $(LIBDIR) $(LARNHOME):
 	mkdir $@
 	chmod 755 $@
 
-install: $(BINDDIR) $(LIBDIR) $(LARNHOME)
+install: larn12.0 $(BINDDIR) $(LIBDIR) $(LARNHOME)
 	chmod a+w $(LARNHOME)
 	cp larn12.0 $(BINDIR)/larn
 	cp $(DOTFILES) $(LARNHOME)
