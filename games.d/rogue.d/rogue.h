@@ -451,3 +451,7 @@ struct room	*roomin();
 static DISTANCE(y1, x1, y2, x2)
 { return((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
+
+#ifdef __STDC__
+#define cfree free
+#endif
