@@ -14,6 +14,7 @@
  *****************************************************************/
 
 # include <curses.h>
+# include <signal.h>
 
 # define NEWROBOT	"/usr/local/games/robots"
 # define ROBOT		"/usr/games/robots"
@@ -24,6 +25,9 @@
 # define max(A,B)	((A)>(B)?(A):(B))
 # define min(A,B)	((A)<(B)?(A):(B))
 # define sgn(A)		((A)==0?0:((A)>0?1:-1))
+
+# define ROWS	24
+# define COLS	80
 
 /* Define the Rob-O-Matic pseudo-terminal */
 
@@ -45,6 +49,7 @@ int   child;
 int   frobot, trobot;
 int   debug=0;
 FILE *trace=NULL;
+struct sgttyb ttsave;
 /****************************************************************
  * Main routine
  ****************************************************************/
@@ -55,7 +60,9 @@ char *argv[];
 
 { int   ptc[2], ctp[2];
   char *rfile=NULL;
-  struct sgttyb ttsave;
+
+  /* Save initial tty state */
+  gtty(2, &ttsave);
 
   /* Get the options from the command line */
   while (--argc > 0 && (*++argv)[0] == '-')
@@ -106,16 +113,26 @@ char *argv[];
   }
 
   /* Call Robomatic as the Parent Process */
-  else
-  { robomatic (); }
+  robomatic ();
+}
+
+/****************************************************************
+ * Panic: Abort child, reset terminal, and exit.
+ ****************************************************************/
+panic()
+{ send('q');
+  send('\n');
+  while (wait((int *)0) != child)
+    ;
+  move (ROWS-1, 0); clrtoeol (); refresh ();
+  endwin (); nocrmode (); noraw (); echo ();
+  stty(2, &ttsave);
+  exit (0);
 }
 
 /****************************************************************
  * Robomatic: Play Robots.  Read the scrren, choose a move, and send it
  ****************************************************************/
-
-# define ROWS	24
-# define COLS	80
 
 char screen[ROWS][COLS];
 int playing=1;
@@ -124,10 +141,13 @@ int row=0, col=0, atrow= -1, atcol= -1;
 robomatic ()
 { int cmd;
   
+  /* Clean up if SIGINT seen */
+  signal(SIGINT, panic);
+
   /* Initialize the Curses package */
   initscr (); crmode (); noecho (); clear (); refresh ();
 
-  /* Clearn the screen array */
+  /* Clear the screen array */
   blankscreen ();
 
   /* Read the first screen of output */
@@ -142,7 +162,7 @@ robomatic ()
     { switch (getchar ())
       { case 'd':	debug++; 
 			break;
-        case 'r':	clear (); refresh (); drawscreen (); refresh (); 
+        case 'r':	clear (); drawscreen (); refresh (); 
 			break;
 	default:	break;
       }
@@ -162,6 +182,10 @@ robomatic ()
   /* Clear the scoreboard on some Robots */
   send ('\n');
 
+  /* Wait for robots to get through, just in case */
+  while (wait((int *)0) != child)
+    ;
+
   /* Now wait for the user to type a character before finishing */
   refresh ();
   getchar ();
@@ -172,6 +196,7 @@ robomatic ()
 
   deadrobot ();
 
+  stty(2, &ttsave);
   exit (0);
 }
 
@@ -285,8 +310,7 @@ getrobot ()
 	/* Control character */
         if (ch < ' ')
         { fprintf (stderr, "Unknown character '\\%o'\n", ch);
-	  kill (child, 9);
-	  exit (1);
+	  panic();
         }
 
 	/* Printing character */
