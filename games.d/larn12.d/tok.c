@@ -3,16 +3,19 @@
 #ifdef SYS5
 #include <fcntl.h>
 #include <termio.h>
-#else SYS5
+#ifndef TCGETA
+# include <sys/ioctl.h>
+#endif
+#else
 #include <sys/ioctl.h>
-#endif SYS5
+#endif
 #include "header.h"
 
 static char lastok=0;
 int yrepcount=0,dayplay=0;
 #ifndef FLUSHNO
 #define FLUSHNO 5
-#endif FLUSHNO
+#endif
 static int flushno=FLUSHNO;	/* input queue flushing threshold */
 #define MAXUM 52	/* maximum number of user re-named monsters */
 #define MAXMNAME 40	/* max length of a monster re-name */
@@ -53,20 +56,18 @@ yylex()
 				lflush();  savegame(savefilename);  wizard=nomove=1;  sleep(4);
 				died(-257);
 				}
-#endif TIMECHECK
+#endif
 
 			}
 
+#ifdef FIONREAD
 		do		/* if keyboard input buffer is too big, flush some of it */
 			{
-#ifdef FIONREAD
 			ioctl(0,FIONREAD,&ic);
-#else
-			ic = rdchk(0);
-#endif FIONREAD
 			if (ic>flushno)   read(0,&cc,1);
 			}
 		while (ic>flushno);
+#endif
 
 		if (read(0,&cc,1) != 1) return(lastok = -1);
 
@@ -99,18 +100,20 @@ yylex()
  */
 flushall()
 	{
+#ifdef FIONREAD
 	char cc;
 	int ic;
 	for (;;)		/* if keyboard input buffer is too big, flush some of it */
 		{
-#ifdef FIONREAD
 		ioctl(0,FIONREAD,&ic);
-#else
-		ic = rdchk(0);
-#endif FIONREAD
 		if (ic<=0) return;
 		while (ic>0)   { read(0,&cc,1); --ic; } /* gobble up the byte */
 		}
+#else
+	struct termio tmp;
+	ioctl(0, TCGETA, &tmp);
+	ioctl(0, TCSETAF, &tmp);
+#endif
 	}
 
 /*
