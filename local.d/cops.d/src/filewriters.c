@@ -104,9 +104,10 @@ print_gid(out, gid)
 FILE	*out;
 int	gid;
 {
-	struct	group	*grpent;
+	struct	group		*grpent;
+	extern struct group	*getgrgid();
 	
-	if ((grpent = getgrgid(gid)) == NULL)  {
+	if ((grpent = getgrgid(gid)) == (struct group *)NULL)  {
 		fprintf(stderr, "Bad group id %d.\n", gid);
 		exit(1);
 		}

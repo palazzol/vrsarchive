@@ -25,11 +25,12 @@ char	*argv[];
 	struct	group	*grent;
 	struct	passwd	*pwent;
 	char	**user;
+	extern struct group	*getgrnam();
 
 /*
  * Print the list of group members from /etc/group.
  */
-	if ((grent = getgrnam(argv[1])) == NULL)  {
+	if ((grent = getgrnam(argv[1])) == (struct group *)NULL)  {
 		fprintf(stderr, "%s: Bad group name %s.\n",
 			argv[0], argv[1]);
 		exit(1);
