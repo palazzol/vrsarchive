@@ -646,5 +646,4 @@ tc_cmget()
 	}
 	cm_end[j] = 0;
 }
-
-#endif CURSES
+#endif /*CURSES*/
