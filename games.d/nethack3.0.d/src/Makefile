@@ -4,7 +4,7 @@ MODEL	= -Ml -Gt24
 OPTIONS	= -O -I../include -DHACKDIR=\"$(GAMLIB)/nethack3.0\"
 GAME	= nethack3.0
 ALL		= $(GAME)
-include /etc/CONFIG
+include $(HOME)/CONFIG
 # This makefile replaces the previous Makefile.unix, Makefile.xenix,
 # Makefile.3B2, Makefile.att, and Makefile.tos.
 # Set SYSTEM to one of:
@@ -52,8 +52,8 @@ TERMLIB	= $(LIBS)
 
 # yacc/lex programs to use to generate lev_comp.c, lev_comp.h, and lev_lex.c.
 # if, instead of yacc/lex you have bison/flex, comment/uncomment the following.
-YACC     = yacc
-LEX      = lex
+#YACC     = yacc
+#LEX      = lex
 #YACC     = bison
 #LEX      = flex
 
