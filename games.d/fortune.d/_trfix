@@ -1,0 +1,91 @@
+/^echo shar: "extracting 'obscene\.r13\.\(..\)'[^0-9]*\([0-9]*\) characters.*$/s//numchars=\2;suffix=\1/
+/^numchars/a\
+if test -f .obscene.com\
+then\
+\	. .obscene.com\
+else\
+\	echo -n a > .echo_tmp\
+\	if egrep n .echo_tmp > /dev/null\
+\	then\
+\		n=""\
+\		c="\\c"\
+\	else\
+\		n="-n"\
+\		c=""\
+\	fi\
+\	rm -f .echo_tmp\
+\	cat << \\EOF\
+***********************************************************************\
+The fortune database has a section of potentially offensive fortunes\
+which may offend people because of references to sex, politics, or\
+religion, or because they use words that some find offensive.  To get\
+fortunes from this list, a user must specifically ask for them, using\
+either -o or -a, so no one gets them by surprise.  Some groups don't\
+even like the existence of such a section of fortunes -- to protect\
+them, the section is transmitted with rot13 encryption.  You have the\
+following options right now:\
+\
+\	(1) unencrypt the fortunes and leave them on your system.\
+\	(2) leave the encrypted fortunes on the system.\
+\	(3) delete the section right now, replacing it with a\
+\	    statement that says the section isn't on the system.\
+\
+(3) is final; both (1) and (2) allow you to change your mind latter,\
+but do result in the section being present on your disk.\
+***********************************************************************\
+EOF\
+\	echo $n "Do you want to unencrypt the potentially offensive fortunes now? [ny] $c"\
+\	read first_answer\
+\	case "$first_answer" in\
+\	  y*|Y*)\
+\		;;\
+\	  *)\
+\		echo $n "Do you want to remove the potentially offensive fortunes? [ny] $c"\
+\		read second_answer\
+\		;;\
+\	esac\
+\	cat > .obscene.com << SHAR_EOF\
+first_answer="$first_answer"\
+second_answer="$second_answer"\
+SHAR_EOF\
+fi\
+case "$first_answer" in\
+\  y*|Y*)\
+\	if test -f ./Rot13\
+\	then\
+\		ob_file=obscene.$suffix\
+\		ob_com=./Rot13\
+\	else\
+\		echo "*** ./Rot13 is missing.  You must have unshared part 01 before ***"\
+\		echo "*** unsharing this if you want do decode while extracting.     ***"\
+\		exit 1\
+\	fi\
+\	;;\
+\  *)\
+\	echo "*** Potentially offensive fortunes left encrpyted. ***"\
+\	case "$second_answer" in\
+\	  y*|Y*)\
+\		ob_file=obscene\
+\		ob_com="echo No potentially offensive fortunes in this database"\
+\		echo "*** Potentially offensive fortunes discarded during upcoming extraction ***"\
+\		;;\
+\	  *)\
+\		ob_com=cat\
+\		ob_file=obscene.r13.$suffix\
+\		cat << \EOF\
+We will create a temporary "obscene" file.  Potentially offensive\
+fortunes will be left as "obscene.r13.??".  To decode say:\
+\	rm obscene\
+\	make obscene.r13\
+\	./Rot13 obscene.r13 > obscene\
+\	rm obscene.r13\
+EOF\
+\		echo "No offensive fortunes in this database" > obscene\
+\		;;\
+\	esac\
+\	;;\
+esac\
+echo shar: "extracting '$ob_file'" "($numchars characters)"
+/sed.*obscene/s/ > / | $ob_com > /
+/cat.*obscene/s/cat/$ob_com/
+/'obscene\.r13\...'/s//$ob_file/

@@ -1,0 +1,84 @@
+This is the Berkeley fortune database program.  To submit fortunes,
+mail one of (only one of, please):
+
+	fortune@ucbvax.berkeley.edu
+	ucbvax!fortune
+	fortune@ucbvax.arpa
+
+Fortunes are split into two parts -- non-offensive and potentially
+offensive.  The former are in the file "scene", and the latter in
+"obscene".  In the distribution, the file "obscene" is encrypted using
+rot-13 encryption.  The program "Rot13" will undo this encryption.
+When unpacking the shell archive, you will be asked if you want this
+done automatically.  If you say anything which starts with a "y", it
+will be done.  If you say anything else you will be asked if you want
+to keep them around at all.  If you do, they will be kept in the
+encrypted form, and you will be told how to decrypt.  If you don't want
+to keep it around, it will be removed from your system.  In either of
+these latter cases, the file "obscene" will contain a message to users
+that the potentially offensive fortunes are not on your system.
+
+The file "Notes" contains notes about the formatting and contents of
+the fortune database.  If you want to add your own fortunes to the
+database
+
+		***************************************
+		* => PLEASE READ "Notes" CAREFULLY <= *
+		***************************************
+
+The formatting stuff only keeps things looking nice, so we do recommend
+that you follow it, but the notes about splitting out the potentially
+offensive fortunes will keep you out of trouble if followed
+sensitively.
+
+To compile after extraction, you can just say "make".  "make install"
+will install the program and database.  "Makefile" uses "BINDIR" and
+"LIBDIR" for the directories, respectively.  "make clean" will clean
+out unnecessary files.  If you change "LIBDIR", you must change
+"FORTFILE" (see below).
+
+The "DEFS" variable in the Makefile is for preprocessor directives.
+Useful things to set here are:
+
+	NO_RANDOM	Don't have the BSD random() function, so use
+			the code in "rnd.c".
+	REGCMP		Use regcmp() function for regular expressions --
+			if this is not defined (and NO_REGEX is not
+			defined), the regular expression handler is
+			assumed to be regex().  regcmp() is the System
+			V version; regex() is used on 4BSD.  I don't
+			know what other systems will have -- consult
+			your manual.
+	NO_REGEX	No regular expression handler exists.
+
+The "LIBS" variable is a separate library to look in for the regular
+expression routines.  On 4BSD systems, it is in the default library, so
+it should be set to nothing.
+
+So, generally speaking, for BSD systems,
+
+	DEFS=
+	LIBS=
+
+and for System V systems,
+
+	DEFS=	-DREGCMP -DNO_RANDOM
+	LIBS=	-lPW
+
+
+The "USER" variable is the user to which "fortune" will be set-uid, and
+which will own the fortune database.  The fortune database is set to be
+readable only by the owner of the database to prevent random users from
+printing out the database, which has lots of non-ascii stuff at the
+front.  *This is a common error*, since it doesn't occur to everyone
+that the database wouldn't be human-readable.  This method was used
+after three people used up about half a box of line printer paper each
+in a period of two days trying to print it out.  If you trust your
+users, you might care to undo this, but I wouldn't if I were you.
+"fortune" is carefully written so as not to be a security hole, but
+USER should be not be set to "root" anyway.  On most systems it is
+"games" or "daemon".
+
+		Ken Arnold
+		arnold@ucbvax.berkeley.edu
+		ucbvax!arnold

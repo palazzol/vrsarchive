@@ -1,0 +1,35 @@
+   File Name		Archive #	Description
+-----------------------------------------------------------
+ MANIFEST                  1	This shipping list
+ READ_ME                   1	
+ Makefile                  1	The Makefile
+ Notes                     1	Rules for adding your own fortunes
+ fortune.6                 1	The manual page
+ fortune.c                 1	The main program
+ obscene.sp.ok             1	
+ scene.sp.ok               1	
+ rnd.c                     2	random() for those that need it
+ strfile.8                 1	
+ strfile.c                 2	Create random access table of strings
+ strfile.h                 1	
+ unstr.c                   2	
+ :trfix                    2	For sharing
+ Do_troff                  1	
+ Rot13                     1	Unrotate obscene fortunes
+ Shar_split                1	For sharing
+ Troff.mac                 1	
+ Troff.sed                 2	
+ obscene.r13.aa            3	Obscene fortunes - part 1 (rot13)
+ obscene.r13.ab            4	Obscene fortunes - part 2 (rot13)
+ scene.aa                  5	Non-obscene fortunes - part 1
+ scene.ab                  6	Non-obscene fortunes - part 2
+ scene.ac                  7	Non-obscene fortunes - part 3
+ scene.ad                  8	Non-obscene fortunes - part 4
+ scene.ae                  9	Non-obscene fortunes - part 5
+ scene.af                 10	Non-obscene fortunes - part 6
+ scene.ag                 11	Non-obscene fortunes - part 7
+ scene.ah                 12	Non-obscene fortunes - part 8
+ scene.ai                 13	Non-obscene fortunes - part 9
+ scene.aj                 14	Non-obscene fortunes - part 10
+ scene.ak                 15	Non-obscene fortunes - part 11
+ scene.al                 16	Non-obscene fortunes - part 12

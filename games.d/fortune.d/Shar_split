@@ -1,0 +1,27 @@
+#!/bin/csh -f
+@ maxsize=50000
+set ls=(`ls -l $1`)
+@ numfiles = ($ls[4] + ($maxsize - 1)) / $maxsize
+echo "	# think we need $numfiles files"
+set wc=(`wc $1`)
+@ splitsize = ($wc[1] + ($numfiles - 1)) / $numfiles
+echo "	split -$splitsize $1 $1."
+split -$splitsize $1 $1.
+@ i = $3
+set l=($1.??)
+if ($#l != $numfiles) echo "	# actually made $#l files"
+foreach f ($l)
+	if ($i < 10) then
+		set outf=$2.0$i
+	else
+		set outf=$2.$i
+	endif
+	if ("$5" == "") then
+		echo "	shar $4 $f > $outf"
+		shar $4 $f > $outf
+	else
+		echo "	shar $4 $f | $5 > $outf"
+		shar $4 $f | $5 > $outf
+	endif
+@	i++
+end
