@@ -135,7 +135,8 @@ register uchar weptyp;		/* uwep->otyp or 0 */
 	/* cut the worm in two halves */
 	mtmp2 = newmonst(0);
 	*mtmp2 = *mtmp;
-	mtmp2->mxlth = mtmp2->mnamelth = 0;
+	mtmp2->mnamelth = 0;
+	mtmp2->mxlth = 0;
 
 	/* sometimes the tail end dies */
 	if(rn2(3) || !getwn(mtmp2)){
@@ -180,4 +181,4 @@ remseg(wtmp) register struct wseg *wtmp; {
 		newsym(wtmp->wx, wtmp->wy);
 	free((char *) wtmp);
 }
-#endif NOWORM
+#endif

@@ -120,7 +120,8 @@ fnd:
 
 	/* make something interesting happen */
 	if(!(guard = makemon(&pm_guard,x,y))) return;
-	guard->isgd = guard->mpeaceful = 1;
+	guard->mpeaceful = 1;
+	guard->isgd = 1;
 	EGD->gddone = 0;
 	gdlevel = dlevel;
 	if(!cansee(guard->mx, guard->my)) {
@@ -256,4 +257,4 @@ register struct monst *mtmp, *mtmp2;
 		guard = mtmp2;
 }
 
-#endif QUEST
+#endif
