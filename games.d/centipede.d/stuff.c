@@ -116,7 +116,7 @@ int len,wid,y,x;
 
 showla()
 {
-    register double la[3];
+    double la[3];
     static int ol = -1,exceeded = 0;
     register int l;
 

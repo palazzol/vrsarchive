@@ -69,7 +69,7 @@ extern double maxload;
 
 extern PEDE *getpede();
 extern char *addcommas(),*getlogin(),*getenv(),*strchr();
-extern int catchint(),catchstop(),stopawhile(),quit(),catchalarm();
+extern SIG_T catchint(),catchstop(),stopawhile(),quit(),catchalarm();
 extern FILE *popen();
 
 #define COMPSPOTS(s1,s2) ((s1).y == (s2).y && (s1).x == (s2).x)
