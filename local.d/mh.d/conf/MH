@@ -1,9 +1,39 @@
-# @(#)$Id: MH,v 1.1 1990-04-12 13:27:02 vrs Exp $
-# a 4.2BSD VAX system running SendMail
-bin	/usr/local
-bboards	on
-etc	/usr/local/lib/mh
+#
+#
+#	A V.4.0 system running SMTP without sendmail
+# -UALTOS -UATHENA -UBANG -UBERK -UBSD41A -UBSD42 -UBSD43 -UCOMPAT -UDBM
+# -UDPOP -UPOPSERVICE -URPOP -UISI -ULINK -Ulocname -UMHE -UNFS
+# -UIOCTLH -UNOMHSEQ -UOVERHEAD -USBACKUP -USENDMAILBUG -USUN40 -UTTYD
+# -UUCI -UUK -UV7 -UWP -UWHATNOW
+#cc		cc
+#ldoptions	-s
+#ldoptlibs	-lndir
+#lex	lex -nt
+#slibdir /usr/lib
+bbdelivery on
+bbhome	/usr/spool/news
+bboards	nntp
+bin		/usr/elf386/bin
+ccoptions -g
+chown	chown
+curses	-lcurses
+debug	off
+editor	vi
+etc		/usr/elf386/lib/mh
 mail	/usr/spool/mail
-manuals	local
+mailgroup mail
+mandir	/usr/elf386/man
+manuals	standard
+mf		on
+mts		mmdf2/smtp
 mts	sendmail
-options	BSD42
+oldload	off
+options	ATZ DUMB FOLDPROT='"0700"' MHRC MSGPROT='"0600"' RPATHS TZNAME
+options BIND NTOHLSWAP SOCKETS
+options MORE='"pg"' NDIR='"dirent.h" SHADOW SYS5 SYS5DIR TYPESIG=void
+pop		off
+ranlib	off
+remove	mv -f
+sharedlib off
+sprintf	int
+tma		off
