@@ -1,0 +1,6 @@
+#! /bin/sh
+# uurec - strip mail header & leading N's from stdin, feed to rnews
+PATH=/bin:/usr/bin:/usr/ucb; export PATH
+
+sed -n '1,/^$/d
+s/^N//p' | rnews

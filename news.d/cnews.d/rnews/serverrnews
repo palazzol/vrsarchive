@@ -1,0 +1,36 @@
+#! /bin/sh
+# execute relaynews commands on the server, for the sake of locking
+NEWSCTL=${NEWSCTL-/usr/lib/news}	# export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}	# export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}	# export NEWSARTS
+PATH=$NEWSCTL:$NEWSBIN:$NEWSBIN/relay:/bin:/usr/bin:/usr/ucb:/usr/local; export PATH
+
+# set -x
+server=`cat $NEWSCTL/server 2>/dev/null`
+case "$server" in
+"")	server="`hostname`" ;;		# if no server file, assume this is it
+esac
+case "`hostname`" in
+$server)
+	case $# in
+	0)	exec relaynews ;;		# do it locally
+	*)	exec relaynews "$@" ;;		# do it locally
+	esac
+	;;
+*)				# kick it to the server
+	here="`pwd`"
+	case "$here" in
+	/n/*)	;;		# already anchored
+	*)			# needs to be qualified
+		HOST="`hostname`"
+		here=/n/$HOST/$here	# V8-style remote machine name
+		;;
+	esac
+	cmd=""
+	for arg
+	do
+		cmd="$cmd "\'$arg\'
+	done
+	exec rsh $server "cd $here; relaynews $cmd"
+	;;
+esac

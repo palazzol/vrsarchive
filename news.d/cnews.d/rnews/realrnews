@@ -1,0 +1,54 @@
+#! /bin/sh
+# realrnews - receive remote news & relay: feeds incoming news to C news serverrnews
+NEWSCTL=${NEWSCTL-/usr/lib/news}	# export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}	# export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}	# export NEWSARTS
+PATH=$NEWSCTL:$NEWSBIN:$NEWSBIN/relay:/bin:/usr/bin:/usr/local; export PATH
+NOTIFY=usenet
+F=/tmp/rnews$$			# should be lots of room here
+DEBUG=''
+
+umask 2
+trap '' 1 2 15			# ignore signals to avoid losing articles
+
+# don't allow options
+case "$1" in
+-*)
+	echo "usage: $0" >&2
+	exit 1
+	;;
+esac
+
+# capture incoming news in case serverrnews fails
+if cat $* >$F; then
+	if uncompress <$F >$F.un; then
+		mv $F.un $F	# $F was compressed
+	else
+		rm $F.un	# $F was uncompressed already
+	fi
+	# -p redirects stdout & stderr into log files
+	if serverrnews -p -d "$DEBUG" <$F # -s $NEWSARTS -l $NEWSCTL
+	then
+		rm -f $F	# far out, it worked
+	else
+		status=$?
+		FAIL=$F.m
+		(cat <<!; sed 's/^/X/' $F; echo ---) >$FAIL
+subject: failed news; serverrnews status $status
+
+---
+!
+		if mail $NOTIFY <$FAIL; then
+			rm -f $FAIL	# $NOTIFY got told about the failure
+		else
+			# leave $FAIL and $F around to be seen
+			mail $NOTIFY <<!
+look at $FAIL and $F, they are lost news.
+!
+		fi
+	fi
+else
+	status=$?
+	(echo "subject: lost news; cat status $status"; echo; cat $F) |
+		mail $NOTIFY
+fi

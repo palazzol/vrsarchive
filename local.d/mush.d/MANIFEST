@@ -1,0 +1,57 @@
+   File Name		Archive #	Description
+-----------------------------------------------------------
+ MANIFEST                  1	This shipping list
+ README                    1	
+ aliases.c                 2	
+ bind.c                    4	
+ bindings.h                1	
+ check.pr                  1	
+ cmd_help                  5	
+ coffee.cup.pr             1	
+ commands.c                7	
+ config.h-dist             1	
+ curs_io.c                 2	
+ curses.c                  6	
+ cycle.pr                  1	
+ dates.c                   2	
+ dn.arrow.pr               1	
+ doproc.c                  4	
+ edit_menu.c               1	
+ envelope.pr               1	
+ execute.c                 2	
+ expr.c                    1	
+ fkeys.c                   5	
+ folders.c                 2	
+ glasses.pr                1	
+ hdr_panel.c               1	
+ hdr_procs.c               1	
+ hdrs.c                    8	
+ help.c                    3	
+ init.c                    4	
+ loop.c                    9	
+ mail.c                   10	
+ mail.icon.1               1	
+ mail.icon.2               1	
+ main.c                    3	
+ main_panel.c              2	
+ makefile.bsd              1	
+ makefile.sun              1	
+ makefile.sys.v            1	
+ misc.c                    7	
+ msgs.c                    6	
+ mush.1.a                 11	FIRST HALF OF MANPAGE
+ mush.1.b                 12	SECOND HALF OF MANPAGE
+ mush.h                    6	
+ pick.c                    3	
+ print.c                   1	
+ rite.c                    2	
+ select.c                  5	
+ setopts.c                 3	
+ signals.c                 3	
+ sort.c                    2	
+ strings.h                 1	
+ tool.c                    1	
+ tool_help                 8	
+ up.arrow.pr               1	
+ viewopts.c                4	
+ write.pr                  1	

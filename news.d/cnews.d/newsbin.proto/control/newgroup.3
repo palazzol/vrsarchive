@@ -1,0 +1,26 @@
+#! /bin/sh
+# newgroup group - create group (3-field version: B-2.10.2 compatible)
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+PATH=/bin:/usr/bin:/usr/ucb:$NEWSCTL:$NEWSBIN; export PATH	# must find mkpdir
+F=/tmp/nc$$
+admin=usenet
+
+cat >$F
+SENDER="`grep '^Sender:' $F | sed 's/^[^:]*: *//'`"
+case "$SENDER" in
+"")
+	SENDER="`grep '^From:' $F | sed 's/^[^:]*: *//'`"
+	;;
+esac
+
+if grep -s "^`echo $1 | sed 's/\./\\\\./g'` " $NEWSCTL/active; then	# group exists
+	: do nothing
+else							# no group, make it
+	echo "$1 00000 00000" >>$NEWSCTL/active
+	mkpdir $NEWSARTS/`echo $1 | sed 's/\./\//g' `
+	echo "newsgroup $1 was created by $SENDER." | mail $admin
+fi
+
+rm -f $F*

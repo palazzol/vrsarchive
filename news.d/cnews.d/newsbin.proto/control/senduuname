@@ -1,0 +1,11 @@
+#! /bin/sh
+# senduuname - mail `uuname` to sender identified in stdin's headers
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+PATH=$NEWSCTL:$NEWSBIN:/bin:/usr/bin; export PATH
+NEWSADMIN=usenet
+
+SENDER="`newsreply`"
+(echo "Subject: response to your senduuname"; echo ""; uuname) | mail "$SENDER"
+echo "uuname output sent to $SENDER" | mail $NEWSADMIN

@@ -1,0 +1,5 @@
+#! /bin/sh
+# sendnews destination - protect & mail article on stdin to destination
+PATH=/bin:/usr/bin:/usr/ucb; export PATH
+
+(echo ''; sed 's/^/N/') | mail "$1"

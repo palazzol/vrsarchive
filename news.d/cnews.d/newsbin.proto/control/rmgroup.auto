@@ -1,0 +1,37 @@
+#! /bin/sh
+# rmgroup group - snuff group. active file is locked at entry
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+F=/tmp/nc$$
+admin=usenet
+
+cat >$F
+
+SENDER="`grep '^Sender:' $F | sed 's/^[^:]*: *//'`"
+case "$SENDER" in
+"")
+	SENDER="`grep '^From:' $F | sed 's/^[^:]*: *//'`"
+	;;
+esac
+
+# remove active entry
+sed "/^`echo $1 | sed 's/\./\\\\./g'` /d" $NEWSCTL/active >$F.act
+cp $NEWSCTL/active $NEWSCTL/active.old
+cp $F.act $NEWSCTL/active
+
+# rm -rf $NEWSARTS/`echo $1 | sed 's;\.;/;g'`	# remove the directory
+dir=$NEWSARTS/`echo $1 | sed 's;\.;/;g'`	# name the directory
+export dir				# for sub-shell below
+(
+	cd /tmp				# in case "cd $dir" fails but shell continues
+	cd $dir				# go there
+	rm -f *
+	cd ..
+	rmdir `basename "$dir" '' `	# remove the empty directory
+)
+
+# tell the local usenet administrator the bad news
+echo "rmgrouped $1 cuz $SENDER said to" | mail $admin
+
+rm -f $F*

@@ -1,0 +1,152 @@
+/* @(#)README	2.4	(c) copyright 10/28/86	(Dan Heller) */
+
+Author:
+    Dan Heller
+
+Network address:
+    island!argv@sun.com   or   argv@spam.istc.sri.com
+
+Contained is the source for "Mail User's Shell" (MUSH), an interface
+for the sending, viewing and managing of electronic mail on UNIX(tm) systems.
+Redistribution of this code is permitted as long as all copyright notices
+remain intact and all other identifying notices remain in the code and
+in the binary.  This includes message headers on outgoing mail and
+the startup message.  Failing to adhere to this reflects on your poor
+sense of fair play and bad attitude -- you will probably fail in your
+social and business affairs with little honor and respect from your peers.
+
+With that out of the way...
+
+To install Mush on your system, find the file that most closely resembles
+"config.h" (probably "config.h-dist") COPY it to config.h, edit it to reflect
+the system dependencines described there.  Decide which makefile applies
+to you.  makefile.sun applies only to suns and creates a binary called
+"mush."  If the binary ends in "tool", then the graphics (tool) mode will
+be used by default on invocation. Otherwise, you must specify -t for toolmode
+on sun workstations.  The SUNTOOL define must be set in the makefile.sun
+in order to compile the suntools version.  You don't need to be running
+sunview; old sunwindows (2.0+) may be used.
+
+If you're on a BSD system and it's not a sun workstation, or if you're on a
+sun workstation and know that you're not going to use the suntools mode then
+you should use makefile.bsd so that SUNTOOL won't be defined and unneccessary
+files not be compiled so the binary will be made smaller.
+
+makefile.sys.v is for unix machines that are not running any flavor of
+BSD and probably running a system-v flavor of unix (Xenix, for example).
+This makefile has the define, SYSV to indicate system V unix.  Some older
+unix systems have SYSV defined in /usr/include/curses.h (which is used if
+you have CURSES defined in the makefile).  In most cases, these only
+generate annoying warning messages and does not effect the compilation
+of the code.
+
+Mush was designed to use sendmail. However, other mail delivery subsystem have
+worked.  The mail delivery subsystem you use should be defined in config.h
+under the MAIL_DELIVERY macro define. By default, /usr/lib/sendmail -i
+is used -- the option, -i, tells sendmail not to exit on "." on a line
+by itself.  Mush will pick that up by itself if you want that option
+(read the man page).
+
+If your mailer does NOT have a verbose option, then you should not have
+VERBOSE_ARG defined.  Otherwise, define it to be whatever the
+verbose argument is for your mailer.
+
+Sendmail uses the -m argument to say, "metoo" -- when sending to mailing
+lists, normally sendmail will send mail to mailing lists, but if you're
+in that list, you are excluded from getting your own mail.  However, if
+you have the variable metoo set with your variables, then the METOO argument
+is passed to sendmail to say, "I know I'm on this mailing list, but send
+me a copy of my message even tho I sent it."  For sendmail, this is -m.
+If your mailer uses something else, then define METOO_ARG in the config file.
+If you don't have it (sys-v), then do not define this macro.
+
+If you use "smail" and you're on a system-v small unix box, you might have
+to increase your stack size (see makefile.sys.v) to prevent stack overflow.
+You'll know you have to do this if you try sending mail (using smail as
+the mail delivery subsystem), mush core dumps and adb doesn't know where
+the stack pointer is.
+
+VPRINTF should be defined if your system has the vprintf functions. You
+*have* these functions if 1) you are running system V (xenix) or 2) you
+are running a Sun release on or later than version 3.0.  If you are still not
+sure, try the following command from your shell:
+
+% ar t /lib/libc.a | grep vprintf
+
+If you have it, you'll probably get something like
+vprintf.o
+vsprintf.o
+as output.  If you don't have it, you won't have any output.  If your
+main C-libraries are not in /lib/libc.a, then find where they are and
+try the same command using that file.
+
+A default mailrc should be installed for new users.  UCB mail's default
+Mailrc works but no mailrc works as well. The location of the default
+file should be defined in config.h.  To have no default mailrc, set the
+default to /dev/null.  For sun systems, the default .mailrc (/usr/lib/Mailrc)
+does not work very well because sun's Mail is not standard /usr/ucb/Mail.
+For this reason, sun has not changed the default mailrc file and still
+resides in /usr/lib/Mail.rc (note this has the "." whereas the other file
+does not).  The default config.h-dist reflects this.
+
+The help files should be placed somewhere which is readable and accessible
+by all. Failing to do so removes virtually the entire help facility's
+ability to help anyone.  There is a help file for command help ( `command -?'),
+and the other is for the graphics mode (Sun workstations only).  You should
+define where you want these files in "config.h" so at runtime, they can be
+accessed without error.
+
+The default settings in config.h may be documented as the default values
+in the help files.  Be aware that changing some default values may cause
+inconsistencies with the help files and documentation.
+
+If your system has *sys_siglist[], skip this paragraph.  If it doesn't,
+or if your system has a non-standard list, you should edit signals.c at
+the top and build the table manually from the one given for System-V people.
+Note that most system-v unix systems need not change anything as long as
+SYSV is defined.
+
+Maintenance:
+
+If you want to use dbx or any other debugger, the undocumented flag, -e
+should be used as command line argument when you run the binary under
+the debugger.  What this flag does is prevents your echo from being
+turned off and leaving cbreak on, thus, keeping your tty in a sane state.
+Beware of curses mode tho, since it must be turned off for that -- e.g.
+the -e flag is overridden if you enter curses mode.  The -e flag can be
+used in general usage anyway, but there's no difference known to the user
+except for the fact that you can not type control characters.
+
+If you have memory allocation checking and validation (sun 3.0+ ?) then
+define M_DEBUG in the makefile (main.c) and add the library
+/usr/lib/debug/malloc.o to the library list. Do this only if you are
+find bugs in the program and suspect memory allocation errors. main.c
+has the code which sets the debugging level according to the value of
+an environment variable.  Because malloc-debugging is so cpu intensive,
+the sunwindows program will get a SIGXCPU (cpu time limit exceeded)
+because of the large amount of opening and closing large pixrects and
+devices.  For this reason, SIGXPCPU is is caught in main.c.
+
+If you ever get "Message N has bad date: <date string>" then note
+the FORMAT of that date and edit dates.c.  There are a number of
+"sscanf"s which you can see match known date formats.  Use them as
+examples and insert the new date format you have.
+
+If you ever add new variables, be sure to add them in viewopts.c and the
+man page.
+
+If Mush ever coredumps and you are suspicious about whether or not
+your folder (or spool directory) was removed.  Or, if you were editing
+a letter, you should check for the files .mushXXXXXX and .edXXXXXXX.
+Mush won't die without telling you that it's dying and it will ask if you
+want to save the .mush????? file and if you actually want it to dump core.
+Note that if you run mush from .suntools and there is a core dump, it
+probably wants to do some IO with the console and may hang (not exit)
+because it doesn't know it can't talk to you.
+
+Last attempted, mush passed lint with a small number of errors indicating
+that fflush, fclose and other similar functions returned values which
+were always ignored.  Sorry.  I did not attempt lint on the suntools mode.
+Curses doesn't lint very well, but even when you lint mush with CURSES
+defined, it only complains about the unused curses globals in curses.h;
+don't let it discourage you.

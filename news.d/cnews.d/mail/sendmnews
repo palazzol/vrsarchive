@@ -1,0 +1,5 @@
+#! /bin/sh
+# sendmnews destination - uuencode, add trailing N & mail article on stdin to destination
+PATH=/bin:/usr/bin:/usr/ucb; export PATH
+
+(echo ''; uuencode news | sed 's/$/N/') | mail "$1"

@@ -1,0 +1,16 @@
+p=${1:+$1/}
+d='!End!Marker!'
+for f in *
+do
+	if [ -d $f ]
+	then
+		echo "echo 'mkdir $p$f'"
+		echo "mkdir $p$f"
+		(cd $f; sh ../makedistr $p$f)
+	else
+		echo "echo 'x - $p$f'"
+		echo "cat > $p$f <<'"$d"'"
+		cat $f
+		echo $d
+	fi
+done

@@ -1,0 +1,34 @@
+From: sq!ian
+To: utcs!geoff
+Cc: darwin!ian
+Subject: bcopy timings
+Date: 25 Feb 1986 0051-EST (Tuesday)
+
+Script started on Mon Feb 24 23:14:31 1986
+% @ for f in obvious duff.byte duff.long duff.longs
+> do echo $f
+> cc bcopy.c $f.o
+> time a.out
+> time a.out
+> time a.out
+> done
+obvious
+Time:      1:01.0 real        56.6 user         0.4 sys  
+Time:      1:02.0 real        56.6 user         0.4 sys  
+Time:        59.0 real        56.6 user         0.3 sys  
+duff.byte
+Time:        19.0 real        17.1 user         0.3 sys  
+Time:        17.0 real        17.1 user         0.3 sys  
+Time:        18.0 real        17.1 user         0.3 sys  
+duff.long
+Time:        13.0 real        11.6 user         0.4 sys  
+Time:        12.0 real        11.5 user         0.3 sys  
+Time:        12.0 real        11.5 user         0.3 sys  
+duff.longs
+Time:        10.0 real         6.6 user         0.4 sys  
+Time:         7.0 real         6.6 user         0.3 sys  
+Time:         7.0 real         6.6 user         0.3 sys  
+@ 
+script done on Mon Feb 24 23:22:43 1986
+
+Great stuff!

@@ -1,0 +1,20 @@
+#! /bin/sh
+# newsreply - print return address from news article on stdin
+# This version assumes a domain mailer (user@host.domain works)
+F=/tmp/nc$$
+
+cat >$F
+
+SENDER="`grep '^Reply-To:' $F | sed 's/^[^:]*://
+s/ (.*)//
+1q' `"
+case "$SENDER" in
+"")
+	SENDER="`grep '^From:' $F | sed 's/^[^:]*://
+s/ (.*)//
+1q' `"
+	;;
+esac
+
+echo "$SENDER"
+rm -f $F

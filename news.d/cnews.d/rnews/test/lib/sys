@@ -1,0 +1,19 @@
+# ourselves: accept everything but noise and ut.stardate from U. Texas
+utcs:all,!ut.stardate,!net.philosophy,!net.politics,!net.religion,!net.flame,!net.bizarre,net.music.synth,!net.music,!net.audio,!net.abortion,!net.movies,!net.women,!net.sf-lovers,!net.origins
+# our news feed: send everything & locally-written articles go direct
+utzoo:net,comp,news,sci,rec,misc,soc,talk,mod,world,na,can,ont,tor,ut,to.utzoo:F:/usr/src/cmd/news/rnews/test/newsbatch/utzoo
+# sites we feed (no outstanding requests)
+#	utfyzx gets everything we get
+utfyzx:net,comp,news,sci,rec,misc,soc,talk,mod,world,na,can,ont,tor,ut,to.utfyzx:F:/usr/src/cmd/news/rnews/test/newsbatch/utfyzx
+#	ryesone gets everything we get.
+ryesone:net,comp,news,sci,rec,misc,soc,talk,mod,world,na,can,ont,tor,ut,to.ryesone:F:/usr/src/cmd/news/rnews/test/newsbatch/ryesone
+#	bnr-vpa gets everything we get except ut and tor
+bnr-vpa:net,comp,news,sci,rec,misc,soc,talk,mod,world,na,can,ont,to.bnr-vpa:F:/usr/src/cmd/news/rnews/test/newsbatch/bnr-vpa
+#	utcsstat gets a few net groups and local groups
+utcsstat:all.sources,mod.computers.sun,mod.computers.ibm-pc,net.unix-wizards,net.announce,net.math,net.physics,net.micro,net.news.config,world,can,ont,tor,ut,to.utcsstat:F:/usr/src/cmd/news/rnews/test/newsbatch/utcsstat
+#	utcsscb gets a few net groups plus local groups
+utcsscb:net.announce,net.micro,net.unix,net.math,net.news.config,world,can,ont,tor,ut,to.utcsscb:F:/usr/src/cmd/news/rnews/test/newsbatch/utcsscb
+#	lsuc gets ont and net.news.config only.	their primary feed is mnetor.
+lsuc:world,ont,net.news.config,to.lsuc:F:/usr/src/cmd/news/rnews/test/newsbatch/lsuc
+#	mnetor gets everything we post locally except ut
+#	utcsri gets just articles in local groups or locally-written articles

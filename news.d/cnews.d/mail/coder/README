@@ -1,0 +1,2 @@
+These are rewritten versions of the standard 4BSD uu*code.c,
+which run much faster.

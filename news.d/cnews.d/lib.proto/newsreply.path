@@ -1,0 +1,11 @@
+#! /bin/sh
+# newsreply - print return address from news article on stdin
+# This version is for those without domain mailers
+F=/tmp/nc$$
+
+cat >$F
+
+SENDER="`grep '^Path:' $F | sed 's/^[^:]*://' `"
+
+echo "$SENDER"
+rm -f $F

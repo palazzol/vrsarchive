@@ -1,0 +1,18 @@
+#! /bin/sh
+# recmnews - strip mail header & trailing N's from stdin, uudecode, feed to rnews
+PATH=/bin:/usr/bin:/usr/ucb:/usr/lib/news; export PATH
+
+DIR=/tmp/rmn$$
+if mkdir $DIR; then
+	: far out
+else
+	exit 1
+fi
+cd $DIR
+
+sed -n '1,/^$/d
+s/N$//p' | uudecode		# TODO: worry about full disks during uudecode
+if rnews <news; then
+	cd /tmp
+	rm -rf $DIR
+fi

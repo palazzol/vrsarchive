@@ -1,0 +1,67 @@
+#! /bin/sh
+: checkgroups - check active file for missing or extra newsgroups.
+:	stdin must a checkgroups news article, sends mail to $NOTIFY
+:	after updating $nl/newsgroups from $nl/localgroups
+: v1.4 of 9/4/84, adapted to C news
+PATH=/bin:/usr/bin:/usr/ucb; export PATH
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+NOTIFY=usenet
+
+# generate newsgroups from localgroups & stdin
+cp $NEWSCTL/localgroups $NEWSCTL/newsgroups
+sed '1,/^$/d' >>$NEWSCTL/newsgroups	# behead the article (snuff headers)
+
+# generate list of approved newsgroups from $nl/newsgroups
+echo junk >/tmp/$$a
+echo control >>/tmp/$$a
+# [^.]*\. in next two egreps was net.|mod.|fa., which is inadequate - geoff
+sed 's/[ \	].*//' $NEWSCTL/newsgroups |
+	egrep "^([^.]*\.|general)" >>/tmp/$$a
+sort -u /tmp/$$a -o /tmp/$$a
+
+# generate list of locally-present newsgroups from $nl/active
+egrep "^([^.]*\.|general|junk|control)" $NEWSCTL/active |
+	sed 's/ .*//' | sort  -u >/tmp/$$b
+
+# compare 'em & note differences
+comm -13 /tmp/$$a /tmp/$$b >/tmp/$$remove
+comm -23 /tmp/$$a /tmp/$$b >/tmp/$$add
+
+if test -s /tmp/$$remove; then
+	echo "The following newsgroups are not valid and should be removed."
+	sed "s/^/	/" /tmp/$$remove
+	echo ""
+	echo "You can do this by executing the command:"
+	echo "	$NEWSCTL/control/rmgroup \\"
+	sed 's;.*;		& \\;' /tmp/$$remove
+	echo ""
+fi 2>&1 >/tmp/$$out
+
+if test -s /tmp/$$add; then
+	echo "The following newsgroups were missing." # "and were added."
+	sed "s/^/	/" /tmp/$$add
+	echo ""
+
+#	for i in `cat /tmp/$$add`
+#	do
+# *** "Subject: cmsg " is a hideous botch of a kludge-hack; avoid it!
+#		inews -h <<!
+#Control: newgroup $i
+#Newsgroups: control
+#Subject: newgroup $i
+#Distribution: general
+#
+#Create $i locally.
+#!
+#	done
+
+fi 2>&1 >>/tmp/$$out
+
+if test -s /tmp/$$out; then
+	(echo "Subject: Problems with your active file"; echo "";
+	 cat /tmp/$$out) | mail $NOTIFY
+fi
+
+rm -f /tmp/$$*		# clean up temporaries

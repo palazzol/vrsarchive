@@ -1,0 +1,12 @@
+#! /bin/sh
+# sendsys - mail sys file to sender identified in stdin's headers
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+PATH=$NEWSCTL:$NEWSBIN:/bin:/usr/bin; export PATH
+NEWSADMIN=usenet
+
+SENDER="`newsreply`"
+(echo "Subject: response to your sendsys"; echo ""; cat $NEWSCTL/sys) |
+	mail "$SENDER"
+echo "news/sys file has been sent to $SENDER." | mail $NEWSADMIN

@@ -1,0 +1,9 @@
+#! /bin/sh
+# version - mail version id to sender identified in stdin's headers
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+PATH=$NEWSCTL:$NEWSBIN:/bin:/usr/bin; export PATH
+
+SENDER="`newsreply`"
+echo "C, Official Alpha Release" | mail "$SENDER"

@@ -1,0 +1,17 @@
+#! /bin/sh
+# rmgroup group - snuff group
+F=/tmp/nc$$
+admin=usenet
+
+cat >$F
+SENDER="`grep '^Sender:' $F | sed 's/^[^:]*: *//'`"
+case "$SENDER" in
+"")
+	SENDER="`grep '^From:' $F | sed 's/^[^:]*: *//'`"
+	;;
+esac
+
+# tell the local usenet administrator to do it by hand
+echo "rmgroup $1 says $SENDER" | mail $admin
+
+rm -f $F*

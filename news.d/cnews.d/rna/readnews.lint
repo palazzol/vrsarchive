@@ -1,0 +1,97 @@
+header.c(126): warning: possible pointer alignment problem
+
+readnews.c(268): warning: possible pointer alignment problem
+readnews.c(269): warning: possible pointer alignment problem
+readnews.c(345): warning: com set but not used in function subs
+readnews.c(953): warning: possible pointer alignment problem
+readnews.c(1256): warning: possible pointer alignment problem
+readnews.c(1256): warning: possible pointer alignment problem
+
+funcs.c(232): warning: long assignment may lose accuracy
+
+active.c(103): warning: possible pointer alignment problem
+
+newsrc.c(82): warning: possible pointer alignment problem
+newsrc.c(90): warning: possible pointer alignment problem
+newsrc.c(115): warning: possible pointer alignment problem
+newsrc.c(153): warning: possible pointer alignment problem
+
+history.c(109): warning: possible pointer alignment problem
+history.c(120): warning: possible pointer alignment problem
+history.c(172): warning: long assignment may lose accuracy
+history.c(172): warning: long assignment may lose accuracy
+
+maketime.c(413): warning: long assignment may lose accuracy
+maketime.c(413): warning: long assignment may lose accuracy
+maketime.c(413): warning: long assignment may lose accuracy
+maketime.c(444): warning: long assignment may lose accuracy
+maketime.c(444): warning: long assignment may lose accuracy
+maketime.c(445): warning: long assignment may lose accuracy
+maketime.c(445): warning: long assignment may lose accuracy
+
+sprintf value declared inconsistently	llib-lc:llib-lc(287)  ::  header.c(469)
+
+qsort, arg. 2 used inconsistently	llib-lc:llib-lc(210)  ::  readnews.c(132)
+apply, arg. 3 used inconsistently	newsrc.c(138)  ::  readnews.c(144)
+apply, arg. 3 used inconsistently	newsrc.c(138)  ::  readnews.c(146)
+apply, arg. 3 used inconsistently	newsrc.c(138)  ::  readnews.c(154)
+wait, arg. 1 used inconsistently	llib-lc:llib-lc(138)  ::  readnews.c(1163)
+qsort, arg. 2 used inconsistently	llib-lc:llib-lc(210)  ::  readnews.c(1265)
+sprintf value declared inconsistently	llib-lc:llib-lc(287)  ::  readnews.c(859)
+
+sprintf value declared inconsistently	llib-lc:llib-lc(287)  ::  funcs.c(238)
+
+error defined( maketime.c(237) ), but never used
+fputs returns value which is always ignored
+ungetc returns value which is always ignored
+sprintf returns value which is always ignored
+alist defined( active.c(13) ), but never used
+endpwent returns value which is always ignored
+signal returns value which is sometimes ignored
+fflush returns value which is sometimes ignored
+subsub returns value which is sometimes ignored
+strcpy returns value which is sometimes ignored
+seen returns value which is sometimes ignored
+fclose returns value which is always ignored
+_flsbuf returns value which is always ignored
+system returns value which is always ignored
+strncpy returns value which is always ignored
+close returns value which is always ignored
+fseek returns value which is always ignored
+gtty returns value which is always ignored
+stty returns value which is always ignored
+newstr6 defined( funcs.c(81) ), but never used
+ngsquash defined( funcs.c(196) ), but never used
+getunique defined( funcs.c(220) ), but never used
+chown returns value which is always ignored
+unlink returns value which is sometimes ignored
+rconvg defined( funcs.c(350) ), but never used
+readln defined( funcs.c(392) ), but never used
+applyng defined( funcs.c(420) ), but never used
+getseq defined( active.c(23) ), but never used
+setlow defined( active.c(141) ), but never used
+initgrp defined( active.c(167) ), but never used
+cancel defined( history.c(73) ), but never used
+chkhist defined( history.c(86) ), but never used
+openhist defined( history.c(140) ), but never used
+writehist defined( history.c(156) ), but never used
+closehist defined( history.c(165) ), but never used
+
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(149)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(150)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(151)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(152)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(227)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(228)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(229)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(230)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1158)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1159)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1160)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1161)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1166)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1167)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1168)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  readnews.c(1169)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  newsrc.c(251)
+signal, arg. 2 used inconsistently	llib-lc:llib-lc(117)  ::  newsrc.c(252)

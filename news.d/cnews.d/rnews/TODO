@@ -1,0 +1,15 @@
+prevent cross-posting across universes: on receipt,
+	use first universe in $NEWSCTL/universes only
+modify Path: on reading instead of on writing (in headers.c)?
+avoid array overruns: use malloc for string storage
+
+remove embarrassing comments
+more packaging effort a la Horton
+
+test long headers: >512 bytes, >1024 bytes
+test and read all code (including sh scripts) before release
+
+D news idea:
+	read batch into memory (assumes VM); compose whole article in memory,
+	write it all at once, using the right name for the first group.
+	insist on reading from disk? probably not.

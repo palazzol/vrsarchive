@@ -1,0 +1,98 @@
+This is an alpha test release.  Do not distribute modified copies of it;
+see the COPYRIGHT file for details.
+
+Send bug reports to utzoo!cnews-alpha.  This software is believed to
+work, though it could doubtless stand some improvement.  The code is
+going to be cleaned up and possibly sped up before general release.
+
+
+``yer about to be boarded, ye scurvy network news dogs! har har ...''
+		-- Oliver Wendell Jones, Bloom County Hacker & Cracker
+
+``No news is good news.''
+``When bigger machines are built, netnews will saturate them.''
+``USENET -- All the news that's fit to `N'.''
+		-- /usr/games/fortune
+
+``B news is Bad news.''
+``Net news is the television of computing.''
+		-- Geoff Collyer
+
+Does your inews wallow in the mud like a pregnant sow? Does your expire
+flop on its back, wiggle its feet and gurgle pathetically?  Then you
+need new, improved *C news*, the sentient being's news system: no more
+odious Relay-Version headers, no more sluggish machines caused by
+overfed news software.  Real locking.  No line-eater bugs.
+
+Available from fine news administrators everywhere.  C news.
+___
+
+Assumptions:
+	you already have B news and possibly rn running
+	you personally installed B news
+	you are now upgrading to C news
+
+Before using make for anything else, you must
+
+	make variant
+
+where variant is your UNIX variant: v7, v8, v9, bsd42 or usg.
+It will tell you to edit the makefile DEPSRC and DEPOBJ definitions to match.
+
+If you need a roadmap, see ../usr.lib/README.
+
+../expire and ../time require that /usr/include/time.h exists.
+If it doesn't exist on your (4.2BSD) system, thanks to gratuitous
+tinkering (at UCB), execute
+
+	cd /usr/include; ln -s sys/time.h
+
+This may require super-user privileges, which should be easy to obtain
+on 4.2.
+
+After compiling inews, install it as /usr/lib/news/realinews,
+setuid-news.  On older systems, you will to also install a small
+program, setnewids, setuid-root.  If this worries you, read
+setnewsids.c; all it does is execute setgid(), setuid() to the "news"
+group and user if they exist, otherwise realinews's real ids. Install
+sh/inews as /usr/bin/inews, rnews.sh as /usr/bin/rnews and
+/usr/bin/cunbatch.  You can test realinews by giving NEWSCTL, NEWSBIN
+or NEWSARTS environment variables to change the library, binary or
+spool directories and I encourage this.
+
+If you plan to run rn, you'll need the latest rn patches to allow Xref:
+to work without Relay-Version:.
+
+You can get postnews from B news & Pnews from rn.
+
+Your sys file should not refer to a given batch file (with the F or f
+flags) more than once, or the batch file will be scrambled; this will be
+fixed and isn't a disaster as the C batcher is quite flexible and can
+compensate.  The Ln flag isn't yet fully implemented.
+
+If your `domain' isn't "uucp", you will need to put your domain name in
+/usr/lib/news/domain.  No upper case letters in your new domain please,
+there is no call for it and it just looks ugly.
+
+You must remove /usr/lib/news/LOCK* and /usr/lib/news/lock.* somewhere
+in /etc/rc*.  Thus you must only permit rnews to run on file servers.
+
+You'll need compress for compressing or uncompressing batches of news.
+See the contact person of your news feed or the moderator of the
+newsgroup comp.sources.unix.
+
+See the anews directory for conversion filters from A to B and back.
+
+You'll need to install /usr/lib/news/gngp (see ../gngp) before inews
+will work.
+
+B-2.11-isms: your /usr/lib/news/mailpaths file must be updated to point
+at your nearest backbone site.  A 5th sys file field for Distribution:
+patterns is here (add them in sys after the subscription list, separated
+by "/"), and a 6th field for excluded hosts is half-here, separated by
+"/" from the system name.  Active file support for 4 fields and the m
+flag are here.
+
+Good Luck.
+
+	Geoff Collyer

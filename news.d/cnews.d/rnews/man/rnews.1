@@ -1,0 +1,78 @@
+.TH RNEWS 1 Usenet "Public Domain"
+.DA 22 Aug 1987
+.SH NAME
+rnews, cunbatch \- receive `remote' news articles
+.SH SYNOPSIS
+.B rnews
+.SH DESCRIPTION
+.I Rnews
+broadcasts (network) news articles
+(receives `\fIr\fPemote'
+.IR news )
+from its standard input.
+.I Cunbatch
+is just a link to
+.IR rnews .
+Typically the articles will be in a batch
+(see
+.IR news (5)),
+which may be compressed
+(see
+.IR compress (1)).
+.PP
+Typically articles are stored locally
+and queued for transmission to one's netnews neighbours via
+.IR newsbatch (1)
+and thence via
+.IR uux (1)
+or
+.IR mail (1).
+.SH FILES
+.PD 0
+.TP 1.5i
+.I $NEWSARTS
+netnews article tree
+.TP 1.5i
+.IB $NEWSCTL /sys
+determines who receives broadcast netnews articles
+.TP 1.5i
+.IB $NEWSCTL /active
+contains locally-legal newsgroups and (un)moderated flag
+.TP 1.5i
+.IB $NEWSCTL /log
+log of incoming articles
+.TP 1.5i
+.IB $NEWSCTL /errlog
+log of errors, should be empty
+.PD
+.SH "SEE ALSO"
+.IR compress (1),
+.IR mail (1),
+.IR newsbatch (1),
+.IR uux (1),
+.IR news (5)
+.SH DIAGNOSTICS
+Batches which generate
+.I rnews
+errors will be mailed to
+.IR usenet ,
+who should rerun them by hand after fixing the problem.
+.br
+If
+.I compress
+is not found by the standard PATH,
+compressed news batches may be mailed to
+.IR usenet .
+.SH HISTORY
+Written by Geoff Collyer
+at the University of Toronto
+as part of the C news project.
+.SH BUGS
+.I Rnews
+could run much faster if
+.I Control:
+were required to be the first header,
+if present,
+and if
+.I Newsgroups:
+were required to be the next.

@@ -1,0 +1,239 @@
+.TH POSTNEWS 1
+.SH NAME
+postnews \- submit news articles
+.SH SYNOPSIS
+.B postnews
+.RB [ -h ]
+.RB [ -s
+subject]
+.RB [ -n
+newsgroups]
+.RB [ -d
+distribution]
+.br
+.in +9
+.RB [ -e
+expiredate ..]
+.RB [ -r
+references]
+.RB [ -i
+interpfile]
+.br
+.in -9
+.P
+.B postnews
+.B -c
+control_command
+.RB [ -n
+newsgroups]
+.RB [ -d
+distribution]
+.br
+.P
+.B postnews
+.B -p
+.SH DESCRIPTION
+.I Postnews
+submits news articles to the network news system.
+Normally
+.I postnews
+is used interactively, in which case no arguments are required,
+and
+.I postnews
+will prompt the user for the subject, newsgroup and distribution
+fields.
+If any other fields are required they must be specified on the command
+line.
+The article text may then be entered, and may be terminated by a `.' or EOT.
+Like
+.IR mail (1),
+commands are available while entering an article, to escape to an
+editor, interpolate the current article or run a shell command.
+.P
+The second two forms of the
+.B postnews
+command are for news administration use only.
+.I Postnews
+is often called by
+.IR readnews (1)
+to post follow-up articles, and post new articles;
+many flag arguments are provided for this purpose.
+.P
+Optional flags are:
+.TP
+.B -h
+is used when input is redirected from a file containing an article.
+It specifies that headers are present at the beginning of the article,
+and that these headers should be included with the article header instead
+of as text.
+Only headers the user may set are permitted.
+.TP
+\fB-s \fIsubject\fR
+specifies the subject of the article.
+If it is not specified in this way it must be specified interactively.
+This must be carefully chosen to be brief yet descriptive.
+.TP
+\fB-n \fInewsgroups\fR
+specifies a comma separated list of newsgroups to which the article
+will be posted.
+The default is
+.BR general .
+.TP
+\fB-d \fIdistribution\fR
+usually not specified, is the same format as a newsgroup,
+and is used to restrict the article's distribution to those
+hosts which subscribe to the group(s) specified.
+.TP
+\fB-e \fIexpiredate\fR ..
+specifies a date for the article to expire (instead of the usual default).
+The format of the date arguments are as follows:
+.RS 5
+.TP 14
+.IR day :
+(
+.I dayofweek
+[ 
+.B week
+] ) |
+.BR 1 .. 31
+.RS 2
+.TP 14
+.IR dayofweek :
+.B sunday
+| ... | 
+.B saturday
+|
+.B tomorrow
+|
+.B today
+.RE
+.TP
+.IR month :
+.B january
+| ... | 
+.B december
+.TP
+.IR year :
+.BR 1970 .. 2038
+.RE
+.P
+.RS 5
+The arguments
+.I day
+,
+.I month
+and
+.I year
+are order-independent,
+and words may be shortened to a non-ambiguous abbreviation.
+.P
+As the time must be in the future, unspecified
+.I day
+,
+.I month
+and
+.I year
+arguments default to the `next' day, month or year as necessary;
+otherwise the current day, month and year are used.
+.P
+.RE
+.TP
+\fB-r \fIreferences\fR
+usually used by
+.IR readnews (1)
+when posting a followup article.
+.I references
+contain the message-id of the article being followed up.
+.TP
+\fB-i \fIinterpfile\fR
+usually used by
+.IR readnews (1)
+when posting a followup article.
+.I interpfile
+is the file available to the `.i' command when entering an
+article interactively.
+.TP
+\fB-c \fIcontrol_command\fR
+specifies special control commands.
+Commands are
+\fR`\fBnewgroup \fIgroupname\fR'
+to create a new newsgroup (news admin only)
+and
+\fR`\fBcancel \fImessageid\fR'
+to cancel a message (sender or news admin only).
+Newsgroups and distribution may be specified to
+limit the scope of the control command.
+.TP
+.B -p
+indicates the article on standard input has come from
+another host (and contains headers etc.) - news admin only.
+.P
+When entering an article interactively,
+a
+.RB \&' . '
+or EOT
+by itself on a line terminates entering and posts the article.
+Other commands are available:
+.TP
+\&\fB.e\fR
+Edit the article collected so far (see
+.IR ed (1)).
+After editing further lines may be appended to the article.
+.TP
+\&\fB.i\fR
+Interpolate
+the file specified by the
+.B -i
+flag
+onto the end of the message. The interpolated item
+is indented by four spaces.
+.TP
+\&\fB.!\fIcmd\fR or \fB!\fIcmd\fR
+Shell escape.
+.IR Cmd
+is executed.
+.TP
+.B DEL
+Causes posting to be aborted, and the article entered so far
+is saved in
+.BR $HOME/dead.article .
+.P
+When posting an article, the environment is checked for information
+about the sender.
+If
+.B NAME
+is found,
+its value is used for the full name, rather than the system value
+(found in
+.BR /etc/passwd ).
+If
+.B ORGANIZATION
+is found,
+the value overrides the system default organization.
+An alternative editor (for the
+.B .e
+command) may be used by setting
+.B EDITOR
+in the environment.
+.P
+After local installation of the article,
+.I postnews
+will transmit the article to all systems that subscribe to the
+newsgroups that the articles belong to.
+.SH FILES
+.ta 24
+.nf
+/usr/lib/news/active	current newsgroups
+/usr/lib/news/seq	contains next sequence number
+/usr/lib/news/history	messageids of all articles received
+/usr/lib/news/sys	subscriptions lists for other hosts
+%news		where the articles are kept
+%news/itmp*	temporary articles
+$HOME/dead.article	saved article when aborted
+.fi
+.SH SEE ALSO
+readnews(1), mail(1), uusend(8), uurec(8).
+.SH BUGS
+The headers can't be altered by using the `.e' command.
+.SH AUTHOR
+Michael Rourke, University of N.S.W. (decvax!mulga!michaelr:elecvax)

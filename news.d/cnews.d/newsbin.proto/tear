@@ -1,0 +1,14 @@
+#! /bin/sh
+# tear prefix [file...] - tear RFC822 header and body apart (prefix: /tmp/in$$)
+PATH=/bin:/usr/bin; export PATH
+
+hdr=${1-/tmp/in0}hdr
+body=${1-/tmp/in0}body
+shift
+>>$hdr					# create files just in case
+>>$body
+exec awk '
+BEGIN { hdrpat="/^([ \t]|[^ \t]*:)/" }
+inbody == 0 && $0 ~ /^([ \t]|[^ \t]*:)/ { print $0 >"'$hdr'" }
+inbody != 0 || $0 !~ /^([ \t]|[^ \t]*:)/ { inbody = 1; print $0 >"'$body'" }
+' $*

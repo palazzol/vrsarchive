@@ -1,0 +1,20 @@
+From: geoff (Geoff Collyer)
+To: research!dmr, sig
+Subject: fast fgets, fread, fwrite, fputs
+Date: 16 Dec 1985 0416-EST (Monday)
+
+[ Approximate wording ]  My new one is 15% faster than DMR's on
+/usr/dict/words and 68% faster on /etc/passwd.  Uglix has some of the
+same improvements.
+
+These are faster versions of fputs, fread and fwrite. Unlike my fgets,
+these are much faster than Dennis's and are still public-domain and
+plug-compatible. I haven't bothered measuring fputs, but I did three
+timing trials using fread and fwrite to copy 195k from stdin to stdout
+each time, using fread and fwrite buffers of 8 bytes, 512 bytes and
+16,384 bytes.  Again on a 4.2 750, my fread/fwrite were respectively
+1.67, 21.63 and 23.77 times faster than Dennis's.
+
+Comments?
+
+[ much code omitted here ]

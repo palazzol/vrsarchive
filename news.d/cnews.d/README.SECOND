@@ -1,0 +1,113 @@
+C news is a replacement for most of B news with much better performance.
+See our paper in the winter 1987 Usenix for some details of how.
+
+C news does not include an all-singing-all-dancing news reader.  We think
+Larry Wall's rn is the reader of choice.  There are others.  We have no
+desire to write one ourselves.
+
+We have included the Australian readnews (with permission) as a simple
+news reader, for those who wish to dispense with B news completely.
+Note that we have changed it a bit and bugs should be assumed to be our
+fault not Michael Rourke's.
+
+For those who have run one of our ancient pre-beta versions, many things
+have changed, and in particular the four-field history file format is gone.
+
+Speaking of file formats...
+
+The active file format is the 4-field one that B news introduced midway
+through 2.10, unchanged.
+
+The history file format is like B with one exception:  the second field,
+which few programs ever look at, now consists of two subfields separated
+by a tilde (~).  The first is the arrival date as a decimal number, the
+second is the expiry date (if any) as a human-readable date (as emitted by
+rnews) or a decimal number (after expire has gotten its hands on it once).
+Expire is tolerant of human-readable dates in both those places, but other
+things may not be.  The best way to get the history file into the new
+format is to rebuild it completely (this is RELATIVELY quick).
+
+The sys file format is like a late-model B news with two extensions.  First,
+the second field (groups and distributions) may optionally be split into
+two subfields (newsgroups and distributions, respectively) with a slash.
+This permits solutions to various tricky problems that can arise in odd
+situations if it is impossible to tell what's a newsgroup name and what's
+a distribution.  Second, there is a new flag in the third field:  f is like
+F except that its output has the size information that the C batcher
+wants for accurate limiting of batch size.  (Incidentally, note a limitation,
+one that will be fixed in the definitive release:  with both f and F, having
+the same filename in more than one sys-file line is, uh, a bad idea.  The
+batcher is flexible enough to get around most needs for this.)
+
+The way the news articles themselves are stored is totally unchanged; we
+have been unable to think of any changes that are worth the trouble.
+
+Finally, there is a new control file, conventionally named
+/usr/lib/news/explist, which is expire's control file (see the expire
+manual page) (pre-alpha sites, note that the format has changed).
+
+File organization:  the one change is that programs are now kept mostly in
+/usr/lib/newsbin, with /usr/lib/news reserved for control files etc.  Most
+(by intent all) of the programs understand four key environment variables:
+NEWSARTS specifies location of articles (default /usr/spool/news), NEWSCTL
+specifies location of control files (default /usr/lib/news), NEWSBIN gives
+location of programs (default /usr/lib/newsbin), and NEWSUMASK gives the
+umask to be used in creating files (default 002).  The environment variables
+override the defaults for testing and for operation in funny situations.
+Note that one or two things (e.g. relaynews), as distributed, will insist
+on renouncing setuid privileges if invoked with these overrides.
+
+C news is divided into various subsystems, each occupying a directory
+of its own.
+
+Two directories -- include and libcnews -- are support stuff (respectively
+include files and library functions) used by most of the subsystems.
+
+The libc directory contains stuff that is in our C libraries but might not
+be in yours.
+
+The input spooler, which accepts incoming news batches and spools them
+up for later processing, is in directory input.  Be warned:  it does do one
+essential function other than spooling -- it strips the stupid "#! cunbatch"
+header off 2.11-style batches.  It includes the "rnews" program that goes
+in /bin (or /usr/bin, or wherever); "rnews" and "cunbatch" are identical
+in C news.
+
+The output batcher is in directory batch.  It will work with B news as well,
+although not as well (it really wants to be told the size of an article as
+well as its name).
+
+Expire and its friends, including history rebuilding and active-file updating
+(neither of which are done by expire itself in C news) are in directory
+expire.
+
+gngp contains a grep-like program which matches newsgroups, used in inews
+among other things.
+
+time contains a couple of small programs occasionally useful in maintaining
+the history file with its numeric dates -- ctime converts numeric to human
+and getdate goes the other way.
+
+newshist contains a maintenance program which accepts a news message-ID
+and prints the history line for that article.
+
+mail contains various bits of software for shipping news via mail, both
+cleaner and faster than uurec et al.
+
+lib.proto is a sort of prototype /usr/lib/news containing some useful things
+(notably newsboot, which should be run from /etc/rc on reboot) and some old
+unnecessary trash (probably).  newsbin.proto is similar for /usr/lib/newsbin.
+
+rna is the Australian readnews, plus other odds and ends of their software
+that we haven't sorted through yet.
+
+And rnews is the Augean Stables themselves (read RFC850 if you don't believe
+us):  the news-relaying software, containing most of the work and most of
+the speedup.  Various auxiliaries, sped-up versions of libraries, and other
+things proliferate underneath this directory.  Of note is setnewsids, a little
+setuid-root (gasp!) program needed on systems which do not permit the
+setuid(geteuid()) operation, to make relaynews run with the right ownerships.
+Note, by the way, that the only program now named "rnews" is the one in
+the input subsystem, although programs with various related names live under
+the rnews directory.  This was a late change, removing much previous
+confusion but perhaps creating some of its own.

@@ -1,0 +1,743 @@
+From nuucp Sun Oct  7 04:41:24 1984
+>From decvax!mulga!michaelr:elecvax  Sun Oct  7 04:28:09 1984 remote from ihnp4
+From: ihnp4!decvax!mulga!michaelr:elecvax
+Received: by ihnp4.ATT.UUCP; id AA13572; 7 Oct 84 04:28:09 CDT (Sun)
+Return-Path: <decvax!mulga!michaelr:elecvax>
+Received: by decvax.UUCP (4.12/1.0)
+	id AA19171; Sun, 7 Oct 84 04:50:18 edt
+Message-Id: <8410070850.AA19171@decvax.UUCP>
+Received: by mulga.OZ (4.3)
+	id AA25613; Fri, 5 Oct 84 19:32:39 EST
+Date: Fri, 5 Oct 84 18:22:05 EST
+To: ihnp4!jett!bill@decvax.UUCP:mulga
+Subject: Final Update of News Software (says he hopefully)
+
+Here are the changes I warned you about, note that a big chunk was moved from
+readnews.c to funcs.c. If you are now totally confused, I'll resend anything
+you like.
+
+CHANGE SUMMARY (includes some changes you got in the last distribution)
+
+  subscription lists can be altered without editing .newsrc
+    (readnews -s[+-?] [group])
+  
+  control commands added: "sendsys, senduuname, version"
+    a response will always be sent
+  
+  subscription list matching is upward compatible with 2.10.2: X matches X.thing
+    (X.all still matches X - I think it should)
+  
+  new groups aren't created automatically anymore, article is placed
+    in "junk" group, and a warning issued
+  
+  when new groups are created, "active" gets an empty entry, but the
+    existance of the directory still indicates subscription
+    (regardless of "active").
+
+  some local mods to postnews, re default sub. lists (won't be of much use
+  to you)
+
+I believe there should now be NO compatability problems with news 2.10.2
+
+DIFFS OF CHANGED FILES:
+
+----------
+active.c
+----------
+138d137
+< 	extern char	*itoa();
+148a148,173
+> 	fclose(f);
+> #if !AUSAM
+> 	unlock(actname);
+> #endif
+> }
+> 
+> /*
+>  * initgrp - initialise an entry for this group
+>  */
+> initgrp(group)
+> char *group;
+> {
+> 	register FILE	*f;
+> 	char		gbuf[BUFSIZ / 2], dbuf[BUFSIZ / 4], dbuf2[BUFSIZ / 4];
+> 
+> 	f = fopenl(actname);
+> 	lineno = 0;
+> 	while(getline(f, gbuf, dbuf, dbuf2))
+> 		if(CMP(gbuf, group) == 0)
+> 		{
+> #if !AUSAM
+> 			unlock(actname);
+> #endif
+> 			return;
+> 		}
+> 	fprintf(f, "%s 00000 00001\n", group);
+
+----------
+defs.h
+----------
+12c12
+< #define NEWSVERSION	 "B UNSW 1.0 3/14/84"
+---
+> #define NEWSVERSION	 "B UNSW 1.1 19 Sep 1984"
+18,19c18,19
+< #define DFLTSUB "general,general.all"	/* default subscription list	*/
+< #define	ADMSUB	"general"		/* Mandatory subscription list */
+---
+> #define DFLTSUB "system,general"	/* default subscription list	*/
+> #define	ADMSUB	"system"		/* Mandatory subscription list */
+36,37c36
+< #define NETPATH	1			/* if you have path finding program
+< 					   /bin/netpath */
+---
+> #define NETPATH	"/bin/netpath"		/* if you have path finding program */
+57a57,58
+> #define MC	"/bin/mc"
+> #define UUNAME	"ls /tmp/net ^ grep '^[a-z]'"	/* uuname program */
+159,160c160,161
+< char	*catstr2(), *bsearch(), *mtempnam();
+< char	*getunique();
+---
+> char	*catstr2(), *bsearch(), *mtempnam(), *newstr6();
+> char	*getunique(), *getretaddr(), *getsubject();
+
+----------
+funcs.c
+----------
+68a69,75
+> newstr6(s1, s2, s3, s4, s5, s6)
+> char *s1, *s2, *s3, *s4, *s5, *s6;
+> {
+> 	return strcat(strcat(strcat(strcat(strcat(strcpy(myalloc(strlen(s1) + strlen(s2) + strlen(s3) + strlen(s4) + strlen(s5) + strlen(s6) + 1), s1), s2), s3), s4), s5), s6);
+> }
+> 
+> char *
+89a97,98
+>  * sublist uses "all" like shell uses "*", and "." like shell uses "/"
+>  * if subscription X matches Y, it also matches Y.anything
+159c168,169
+< 			return *ng2 == '\0';	/* if "\0"'s line up - match */
+---
+> 			return (*ng2 == '\0' || *ng2 == '.');
+> 			/* full match or X matching X.thing */
+405a416,571
+> }
+> 
+> /*
+>  * generate a return address
+>  */
+> char *
+> getretaddr(hp)
+> header *hp;
+> {
+> 	register char	*ra;
+> 
+> 	extern char	*getpath(), *exaddress();
+> #ifdef NETPATH
+> 	extern char	*getnetpath();
+> #endif
+> 
+> 	if(hp->h_replyto)
+> 		ra = exaddress(hp->h_replyto);
+> 	else if(hp->h_from)
+> 		ra = exaddress(hp->h_from);
+> 	else
+> 		ra = NIL(char);
+> 	if(hp->h_path && !ra)
+> 		ra = getpath(hp->h_path);
+> #ifdef NETPATH
+> 	if(CMPN(ra, PATHPREF, sizeof(PATHPREF) - 1) == 0)
+> 		ra = getnetpath(ra);
+> #endif
+> 	return ra;
+> }
+> 
+> /*
+>  * try and make a proper address
+>  */
+> char *
+> exaddress(addr)
+> char *addr;
+> {
+> 	register char	*space, *dot, *at;
+> 	register char	*raddr;
+> 
+> 	raddr = NIL(char);
+> 	if(space = strchr(addr, ' '))
+> 		*space = '\0';
+> 	if(at = strchr(addr, '@'))
+> 	{
+> 		*at = '\0';
+> 		if(dot = strchr(at + 1, '.'))
+> 		{
+> 			*dot = '\0';
+> #if OZ
+> 			if(CMP(dot + 1, MYDOMAIN) == 0)
+> 				raddr = newstr3(addr, ":", at + 1);
+> 			else
+> #endif
+> 				raddr = newstr4(PATHPREF, at + 1, PSEPS, addr);
+> 			*dot = '.';
+> 		}
+> 		*at = '@';
+> 	}
+> 	if(space)
+> 		*space = ' ';
+> 	return raddr;
+> 		
+> }
+> 
+> /*
+>  * return the last two components of the path
+>  */
+> char *
+> getpath(path)
+> char *path;
+> {
+> 	register char	*exlast, *ex;
+> 	register char	*raddr;
+> 
+> 	if(exlast = strrchr(path, PSEPCHAR))
+> 	{
+> 		*exlast = '\0';
+> 		if(ex = strrchr(path, PSEPCHAR))
+> 			raddr = newstr4(PATHPREF, ex + 1, PSEPS, exlast + 1);
+> 		else
+> 			raddr = newstr3(path, PSEPS, exlast + 1);
+> 		*exlast = PSEPCHAR;
+> 	}
+> 	else
+> 		raddr = NIL(char);
+> 	return raddr;
+> }
+> 
+> #ifdef NETPATH
+> /*
+>  * try and work out a path from our "netpath" database
+>  */
+> char *
+> getnetpath(path)
+> char *path;
+> {
+> 	FILE		*f;
+> 	register char	*ex1, *ex2, *com, *new;
+> 	char		buf[BUFSIZ];
+> 
+> 	if((ex1 = strchr(path, PSEPCHAR))
+> 	&& (ex2 = strchr(ex1 + 1, PSEPCHAR)))
+> 	{
+> 		*ex2 = '\0';
+> 		com = newstr4("exec ", NETPATH, " mulga ", ex1 + 1);
+> 		if((f = popen(com, "r")) == NIL(FILE))
+> 			printf("Couldn't run \"%s\"\n", com);
+> 		else
+> 		{
+> 			fread(buf, sizeof(buf), 1, f);
+> 			if(pclose(f) != 0)
+> 			{
+> 				printf("Error in running \"%s\"\n", com);
+> 				fflush(stdout);
+> 			}
+> 			else if(CMPN(buf, "mulga!", 6) == 0)
+> 			{
+> 				if(ex1 = strchr(buf, '\n'))
+> 					*ex1 = '\0';
+> 				new = newstr4(buf + 6, PSEPS, ex2 + 1, ":mulga");
+> 				free(path);
+> 				path = new;
+> 			}
+> 		}
+> 		free(com);
+> 		*ex2 = PSEPCHAR;
+> 	}
+> 	return path;
+> 
+> }
+> #endif
+> 
+> /*
+>  * remove extra spaces, and insert separators if necessary in
+>  * newsgroups specification
+>  */
+> convgrps(sp)
+> register char *sp;
+> {
+> 	register char	*sep;
+> 
+> 	sep = NIL(char);
+> 	while(*sp)
+> 	{
+> 		if(sep)
+> 			sp++;
+> 		while(*sp && (isspace(*sp) || *sp == NGSEPCHAR))
+> 			strcpy(sp, sp + 1);
+> 		if(sep)
+> 			*sep = (*sp ? NGSEPCHAR : '\0');
+> 		while(*sp && !isspace(*sp) && *sp != NGSEPCHAR)
+> 			sp++;
+> 		sep = sp;
+> 	}
+
+----------
+newsrc.c
+----------
+174c174,180
+< 			if(ap->a_low - 1 > np->n_last)
+---
+> 			/*
+> 			 * if we haven't read any news for a while (or at all),
+> 			 * or somehow seq got smaller (active corrupted?),
+> 			 * set last read to oldest available article
+> 			 */
+> 			if(ap->a_low - 1 > np->n_last
+> 			|| ap->a_seq < np->n_last)
+
+----------
+postnews.c
+----------
+14a15,16
+> extern char	mydomain[];
+> extern char	newsversion[];
+19a22,24
+> #ifdef UUNAME
+> char		uuname[] = UUNAME;
+> #endif
+47a53,54
+> char		*dfltgrp();
+> extern FILE	*mailreply();
+157a165,172
+> 		if(!h.h_replyto)
+> 			h.h_replyto = newstr5(
+> #if AUSAM
+> 					pe.pw_strings[LNAME],
+> #else
+> 					pp->pw_name,
+> #endif
+> 					"@", systemid, ".", mydomain);
+172c187,189
+< 	if(!h.h_newsgroups)
+---
+> 	if(h.h_newsgroups)
+> 		convgrps(h.h_newsgroups);
+> 	else
+173a191,196
+> 	if(h.h_distribution)
+> 	{
+> 		convgrps(h.h_distribution);
+> 		if(CMP(h.h_newsgroups, h.h_distribution) == 0)
+> 			h.h_distribution = NIL(char);
+> 	}
+191c214
+< 		if(applyng(h.h_newsgroups, checkng))
+---
+> 		if(!cflag && applyng(h.h_newsgroups, checkng))
+208a232
+> 	initgrp(grp);		/* make entry in active file */
+301c325
+< 		h.h_subject = geth(t_subject, "");
+---
+> 		h.h_subject = geth(t_subject, NIL(char));
+305c329
+< 		h.h_newsgroups = geth(t_newsgroups, DFLTGRP);
+---
+> 		h.h_newsgroups = geth(t_newsgroups, dfltgrp());
+309,314c333
+< 		h.h_distribution = geth(t_distribution,
+< 					(h.h_newsgroups ? h.h_newsgroups
+< 							: DFLTGRP));
+< 	if(h.h_distribution && h.h_newsgroups
+< 	&& CMP(h.h_distribution, h.h_newsgroups) == 0)
+< 		h.h_distribution = NIL(char);
+---
+> 		h.h_distribution = geth(t_distribution, h.h_newsgroups);
+332c351
+< 		if(*def)
+---
+> 		if(def)
+338,339c357,358
+< 		if(*def)
+< 			return NIL(char);
+---
+> 		if(def)
+> 			return newstr(def);
+379c398
+< 		h.h_messageid = catstr2(h.h_messageid, MYDOMAIN, ">");
+---
+> 		h.h_messageid = catstr2(h.h_messageid, mydomain, ">");
+463c482
+< 	if(ccount < 5 && !pflag && !cflag)
+---
+> 	if(ccount < 5 && !pflag)
+704c723
+< 	register char	*s;
+---
+> 	register char	*s, *com;
+716c735,738
+< 			creatgroup(g);
+---
+> 			com = newstr6("exec ", POSTNEWS, " -c 'newgroup ", g,
+> 				 "' -n ", g);
+> 			system(com);
+> 			free(com);
+733a756,757
+> 	static char	junk[] = "junk";
+> 
+741c765,771
+< 		applyng(newg, linkng, tmpname);
+---
+> 		if(!applyng(newg, linkng, tmpname))
+> 		{
+> 			while(!linkng(junk, tmpname))
+> 				creatgroup(junk);
+> 			fprintf(stderr, "postnews: article placed in \"junk\" because no groups active from:\n\t%s\n",
+> 				newg);
+> 		}
+758,764c788,791
+< 	if(pflag)
+< 	{
+< 		dname = convg(newstr3(newsdir, "/", g));
+< 		if(access(dname, 0) != 0)
+< 			creatgroup(g);
+< 		free(dname);
+< 	}
+---
+> 	dname = convg(newstr3(newsdir, "/", g));
+> 	free(dname);
+> 	if(access(dname, 0) != 0)
+> 		return 0;		/* don't save - not an active group */
+771a799
+> 	return 1;
+782a811
+> 	{
+783a813,815
+> 		while(*s && isspace(*s))
+> 			s++;
+> 	}
+784a817,819
+> 	{
+> 		if(!s || !*s)
+> 			error("Cancel: message-id not specified.");
+785a821
+> 	}
+786a823,825
+> 	{
+> 		if(!s || !*s)
+> 			error("Newgroup: group name not specified.");
+788c827
+< 			error("Permission denied.");
+---
+> 			error("Newgroup: permission denied.");
+790a830,836
+> 	}
+> 	else if(CMP(com, "sendsys") == 0)
+> 		sendsys();
+> 	else if(CMP(com, "version") == 0)
+> 		version();
+> 	else if(CMP(com, "senduuname") == 0)
+> 		senduuname();
+792,793c838,844
+< 		error("Unknown control command: %s (Valid: cancel, newgroup)",
+< 			 com);
+---
+> 	{
+> 		sorry(com);
+> 		error("Unknown control command: %s %s\n(Valid: cancel, newgroup, sendsys, senduuname, version)\nSent from: %s",
+> 			com, s ? s : "",
+> 			(h.h_replyto ? h.h_replyto
+> 				     : (h.h_from ? h.h_from : "Unknown?")));
+> 	}
+796a848,958
+>  * send sys file to originator
+>  */
+> sendsys()
+> {
+> 	register FILE	*pp, *fp;
+> 	register int	c;
+> 
+> 	fp = fopenf(sys, "r");
+> 	pp = mailreply("News sendsys request");
+> 	while((c = getc(fp)) != EOF)
+> 		putc(c, pp);
+> 	mailclose(pp);
+> 	fclose(fp);
+> }
+> 
+> /*
+>  * send version name and number to originator
+>  */
+> version()
+> {
+> 	register FILE	*pp;
+> 
+> 	pp = mailreply("News version request");
+> 	fprintf(pp, "Current version: %s\n", newsversion);
+> 	mailclose(pp);
+> 	fclose(pp);
+> }
+> 
+> /*
+>  * send uuname data to originator
+>  */
+> senduuname()
+> {
+> 	register FILE	*pp, *f;
+> 	register int	c;
+> 
+> 	extern FILE	*tmpfile();
+> 
+> #ifndef UUNAME
+> 	sorry("uuname");
+> #else
+> 	if((pp = popen(uuname, "r")) == NIL(FILE))
+> 		error("Couldn't run \"%s\"", uuname);
+> 	if((f = tmpfile()) == NIL(FILE))
+> 		error("Can't open tmp file.");
+> 
+> 	while((c = getc(pp)) != EOF)
+> 		putc(c, f);
+> 
+> 	if(pclose(pp) != 0)
+> 		error("\"%s\" had bad exit status.", uuname);
+> 	rewind(f);
+> 
+> 	pp = mailreply("News senduuname request");
+> 	while((c = getc(f)) != EOF)
+> 		putc(c, pp);
+> 
+> 	fclose(f);
+> 	mailclose(pp);
+> #endif
+> }
+> 
+> 
+> /*
+>  * send message about unimplemented command
+>  */
+> sorry(com)
+> char *com;
+> {
+> 	register FILE	*pp;
+> 
+> 	pp = mailreply("Unimplemented news control message");
+> 	fprintf(pp, "The control message \"%s\" is not implemented at this site.\n", com);
+> 	fprintf(pp, "Our current version of news is: %s\n", newsversion);
+> 	mailclose(pp);
+> 	fclose(pp);
+> }
+> 
+> /*
+>  * set up a pipe to a mail program to reply to control requests
+>  */
+> FILE *
+> mailreply(s)
+> char *s;
+> {
+> 	register FILE	*pp;
+> 	register char	*com, *ra;
+> 
+> 	if((ra = getretaddr(&h)) == NIL(char))
+> 		error("Can't form return address for control message");
+> 	com = newstr4("exec ", MAIL, " ", ra);
+> 	if((pp = popen(com, "w")) == NIL(FILE))
+> 		error("Couldn't run \"%s\"", com);
+> 	fprintf(pp, "Subject: %s\n", s);
+> 	fprintf(pp, "Responding-system: %s.%s\n\n", systemid, mydomain);
+> 	free(com);
+> 	free(ra);
+> 	return pp;
+> }
+> 
+> /*
+>  * close the mail pipe
+>  */
+> mailclose(pp)
+> FILE *pp;
+> {
+> 	if(pclose(pp) != 0)
+> 		error("Mail reply for control message failed");
+> }
+> 
+> /*
+844a1007,1031
+> }
+> 
+> /*
+>  * work out the default group for this user
+>  */
+> char *
+> dfltgrp()
+> {
+> #if MANGRPS
+> 	register char	**sp;
+> 	extern char	**getclasses();
+> 
+> 	for(sp = getclasses(pe.pw_cmask); *sp; sp++)
+> 	{
+> 		if(CMP(*sp, "C-Staff") == 0 || CMP(*sp, "System") == 0)
+> 			return "system";
+> 		if(CMP(*sp, "CLUBS") == 0)
+> 			return newstr2("general.club.", pe.pw_strings[LNAME]);
+> 		if(CMP(*sp, "Languages") == 0)
+> 			return newstr2("general.lang.", pe.pw_strings[LNAME]);
+> 		if(CMP(*sp, "Classaccount") == 0)
+> 			return newstr2("class.", pe.pw_strings[LNAME]);
+> 	}
+> #endif
+> 	return DFLTGRP;
+
+----------
+readnews.c
+----------
+63,65d62
+< char		*getnetpath();
+< char		*getsubject(), *exaddress(), *getpath();
+< 
+112c109,111
+< 	if(!nflag)
+---
+> 	if(nflag)
+> 		convgrps(nflag);
+> 	else
+113a113,114
+> 	if(rcgrps)
+> 		convgrps(rcgrps);
+318c319
+< 	register char	*tmp;
+---
+> 	register char	*tmp, *com;
+325c326,327
+< 		if((f = popen("exec /bin/mc", "w")) == NULL)
+---
+> 		com = newstr2("exec ", MC);
+> 		if((f = popen(com, "w")) == NULL)
+326a329
+> 		free(com);
+1057,1069c1060
+< 	if(hp->h_replyto)
+< 		argv[argc++] = exaddress(hp->h_replyto);
+< 	else if(hp->h_from)
+< 		argv[argc++] = exaddress(hp->h_from);
+< 	else
+< 		argv[argc++] = NIL(char);
+< 	if(hp->h_path && !argv[argc - 1])
+< 		argv[argc - 1] = getpath(hp->h_path);
+< #if NETPATH
+< 	if(CMPN(argv[argc - 1], PATHPREF, sizeof(PATHPREF) - 1) == 0)
+< 		argv[argc - 1] = getnetpath(argv[argc - 1]);
+< #endif
+< 	if(!argv[argc - 1])
+---
+> 	if((argv[argc++] = getretaddr(hp)) == NIL(char))
+1105,1208d1095
+< 
+< /*
+<  * try and make a proper address
+<  */
+< char *
+< exaddress(addr)
+< char *addr;
+< {
+< 	register char	*space, *dot, *at;
+< 	register char	*raddr;
+< 
+< 	raddr = NIL(char);
+< 	if(space = strchr(addr, ' '))
+< 		*space = '\0';
+< 	if(at = strchr(addr, '@'))
+< 	{
+< 		*at = '\0';
+< 		if(dot = strchr(at + 1, '.'))
+< 		{
+< 			*dot = '\0';
+< #if OZ
+< 			if(CMP(dot + 1, "SUN") == 0	/* compatability */
+< 			|| CMP(dot + 1, "OZ") == 0)
+< 				raddr = newstr3(addr, ":", at + 1);
+< 			else
+< #endif
+< 				raddr = newstr4(PATHPREF, at + 1, PSEPS, addr);
+< 			*dot = '.';
+< 		}
+< 		*at = '@';
+< 	}
+< 	if(space)
+< 		*space = ' ';
+< 	return raddr;
+< 		
+< }
+< 
+< /*
+<  * return the last two components of the path
+<  */
+< char *
+< getpath(path)
+< char *path;
+< {
+< 	register char	*exlast, *ex;
+< 	register char	*raddr;
+< 
+< 	if(exlast = strrchr(path, PSEPCHAR))
+< 	{
+< 		*exlast = '\0';
+< 		if(ex = strrchr(path, PSEPCHAR))
+< 			raddr = newstr4(PATHPREF, ex + 1, PSEPS, exlast + 1);
+< 		else
+< 			raddr = newstr3(path, PSEPS, exlast + 1);
+< 		*exlast = PSEPCHAR;
+< 	}
+< 	else
+< 		raddr = NIL(char);
+< 	return raddr;
+< }
+< 
+< #if NETPATH
+< /*
+<  * try and work out a path from our "netpath" database
+<  */
+< char *
+< getnetpath(path)
+< char *path;
+< {
+< 	FILE		*f;
+< 	register char	*ex1, *ex2, *com, *new;
+< 	char		buf[BUFSIZ];
+< 
+< 	if((ex1 = strchr(path, PSEPCHAR))
+< 	&& (ex2 = strchr(ex1 + 1, PSEPCHAR)))
+< 	{
+< 		*ex2 = '\0';
+< 		com = newstr2("exec /bin/netpath mulga ", ex1 + 1);
+< 		if((f = popen(com, "r")) == NIL(FILE))
+< 			printf("Couldn't run \"%s\"\n", com);
+< 		else
+< 		{
+< 			fread(buf, sizeof(buf), 1, f);
+< 			if(pclose(f) != 0)
+< 			{
+< 				printf("Error in running \"%s\"\n", com);
+< 				fflush(stdout);
+< 			}
+< 			else if(CMPN(buf, "mulga!", 6) == 0)
+< 			{
+< 				if(ex1 = strchr(buf, '\n'))
+< 					*ex1 = '\0';
+< 				new = newstr4(buf + 6, PSEPS, ex2 + 1, ":mulga");
+< 				free(path);
+< 				path = new;
+< 			}
+< 		}
+< 		free(com);
+< 		*ex2 = PSEPCHAR;
+< 	}
+< 	return path;
+< 
+< }
+< #endif
+
+THE END!
+
+Hopefully you won't see any more of this!
+Please tell me if you have any problems.
+
+Michael

@@ -1,0 +1,15 @@
+#! /bin/sh
+# nukehist - zero history files, unlock, snuff mon.out's, zero logs
+>history
+>history.pag
+>history.dir
+>log
+>errlog
+rm -f LOCK mon.out
+cd ../spool
+rm -f .tmp* core mon.out gmon.out
+cd net			# clean out old articles
+rm -rf unix-wizards; mkdir unix-wizards	# special case for speed
+rm -rf unix; mkdir unix	# special case for speed
+rm -rf lan; mkdir lan	# special case for speed
+rm -f */* */*/*		# remove previous runs

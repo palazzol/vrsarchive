@@ -1,0 +1,444 @@
+/* @(#)cmd_help	1.4	10/28/86 (Dan heller) */
+
+%?%
+The `?' will give you a list of legal commands.  Most commands
+accept -? as an option.  This will give you specialized help
+with that particular command.
+%%
+
+%ignore%
+usage: ignore/unignore [headers]
+Use this command to set the message headers you would like not
+to be printed when you read a message. If no header specified,
+then a list of all headers currently being ignored is printed.
+You must specify a header for unignore.
+
+You can set the variable "alwaysignore" to force normally
+ignored headers to be ignored while saving messages, forwarding
+messages or including messages into message buffers.
+%%
+
+%set%
+usage: set/unset [variable] [= value]
+set by itself prints values for variables in its group
+To set a boolean variable (on or off), "set variable"
+To set a variable's value to a string, use:
+set variable = 'value'
+
+If you want double-quote's or white-space embedded in
+a string, encase the string in single quotes.  If you
+want single quotes in a string, encase the string in
+double quotes.
+
+Type "set ?all" for a list of all settable variables.
+"set ?variable_name" for help on a single variable.
+%%
+
+%readmsg%
+You can read messages in different ways.  "type" and "print"
+will print the current message.  "top" will only print the
+first N lines of the current message where N is the value of
+the variable "crt".  "next" will go to the next unread message
+and print that. "previous" will go back and read the first
+unread message previous to the current. ^ will print the first
+message, $ will print the last.
+All can be followed by a message list and each message in
+that list will be printed (or piped to other commands).
+%%
+
+%alts_help%
+usage: alts [hostnames]
+alts contains a list of hostnames on which you have an account
+Normally, when you respond to all recipients of mail, your
+account name will be listed and you send yourself mail. If you
+don't have metoo set, then your name will be removed from the
+mailing list if your login name is on the list and the host
+specified is in the alternates list.  `*' matches all hostnames
+and only the login name is tested.
+%%
+
+%source_help%
+usage: source/saveopts [file]
+source/saveopts will load/save all variable settings, options,
+aliases, cmd's, ignored headers ... everything you can set,
+it loads or saves. The file named used follows these rules:
+
+1) if a filename is given, that file is used.
+2) file described by the environment variable MAILRC
+3) user's home directory: .mailrc
+%%
+
+%general%
+This is the general help message. To get help on a specific
+command, try "command -?". Extended help is given by typing
+`help item' where item is one of:
+    path, msg_list, prompt, hdr_format.
+Help with msg_list is highly advisable!
+
+Type "?" to get a list of available commands.  Try "? command"
+to get help on the particular command that you specify.
+%%
+
+%path%
+Whenever "path" is specified, the following syntax is legal besides the
+normal path addressing scheme used by unix.
+~[user]     -- the home directory of specified user (yours by default)
+%[user]     --/usr/spool/mail/login_name [user_name] (yours by default)
++file       --the directory described by `set folder'; file is `file'
+%%
+
+%msg_list%
+A "msg_list" references one or more messages.  The user specifies
+a group of messages according to a special syntax.
+
+*      All messages.
+^      The first message.
+$      The last message.
+.      The current message.
+N-M    A range of messages between N and M.
+
+In the last case, N and M may be * ^ $ . or digits referencing
+explicit message numbers.  The range must be in ascending order.
+
+You can also negate messages by placing the message list inside
+braces, `{' `}' -- thus, the expression "2-19 {11-14}" references
+messages 2 through 19 except for those between 11 through 14.
+
+Commands can be "piped" to one another, because the return
+value of a command is a msg_list, not text.
+pick -f fred | lpr   will find all messages "from fred" and
+send them to the printer.
+
+Commands dealing with more than one message process them in
+order -- not necessarily the order specified.  Thus, the command,
+save 1-5 9 7 6 file
+will save the messages in ascending order; not as specified.
+%%
+
+%preserve_help%
+usage: preserve [msg_list]
+Preserve saves deleted or read messages in your mailbox.
+Without explicitely setting preserve, all mail that you
+read will be saved in ~/mbox (or set mbox).  If you set
+"hold", then this is equivalent to preserving each message
+as you read it.
+%%
+
+%save_help%
+usage: save/write/copy [!] [msg_list] [filename]
+
+If no filename is specified, ~/mbox (or set mbox) is used.
+Save and write will append msg if `file' already exists
+Specifying the `!' will overwrite file (e.g. erasing it first).
+To save messages to a filename beginning with a digit,
+escape the filename with a backslash (\)
+`write' will write message without the headers (msg body only).
+Save and write both mark messages for deletion unless "keepsave"
+is set.  Copy is identical to save except that messages are not
+marked for deletion (identical to having keepsave set).
+%%
+
+%lpr%
+use: lpr [-] [-] [msg_list]
+-n         print body of message only (not headers)
+-h         print all headers with message body (default true)
+-       print on printer 
+%%
+
+%respond_help%
+usage: replysender/replyall [msg_list] [mail_flags] [users]
+Replysender only replies to the sender and replyall responds
+to everyone on the To: and Cc: lines of the message.
+
+The commands "repond", "reply", and "r" are identical to
+"replysender." The command, "R" is identical to "replyall."
+
+If a message list is indicated, then each message on the list is
+replied to in the same manner.  All other arguments are passed
+to the mail command ('mail_flags' and 'users').
+
+Type "mail -?" for information on legal mail flags.
+%%
+
+%sort_help%
+usage: sort [-] [d | a | s | S | R]
+  d         sort according to date received
+  a         author (alphabetical)
+  s         subject ignoring Re: as part of the subject
+  R         subject (alphabetical)
+  S         by status
+The optional `-' flag will reverse the order of sorting
+By default (no arguments), sort sorts messages by status:
+New, unread messages are first, followed by preserved messages
+and finally the deleted messages are placed at the end
+%%
+
+%pick%
+use: pick [-r msg_list] [-d [-][date] ] [-s|f|t]] [-x] [-i] [<pat>]
+Search for patterns within messages. Entire messages are searched
+for <pattern> unless -s, -f, or -t is specified.
+Only one of -s, -f, -t, and -d can be specified at once. No patterns with -d.
+-r msg_list  restrict the range of messages search to msg_list
+-d: print message headers on or after [`-' before] `date'
+     `date' is of the form: month/date/year
+      Omitted fields default to today's values. Examples:
+      pick -d 4/20     msgs on or after Apr 20, this year
+      pick -d -/2/85   on or before the 2nd, this month, 1985
+      pick -d /        finds today's messages only.
+    At least one `/' char must be used in date.
+    There is no strong date checking; 2/30 would be considered valid
+-s search for pattern in the "subject" headers only.
+-f search for pattern in the "from" field (author) only.
+-t search for pattern in the "to" field.
+-i ignore case of letters.
+-x return those messages which do NOT match.
+%%
+
+%alias%
+options for alias:
+alias                           print all namelists
+alias name                      print namelist associated with name
+alias name namelist             set "name" to value of namelist.
+unalias namelist                unalias names in namelist
+
+A "namelist" consists of one or more addresses. An address
+may be a name already set to another list, valid user, file
+or program.  Filenames must be full pathnames beginning with
+a '/' (or a ~ expanding to a home directory).  A "program"
+must start with a pipe and be encased in quotes:
+
+    "|program_name"
+
+The command, "expand", will print addresses (including sublists)
+associated with the given alias.
+%%
+
+%from%
+With no arguments, from will print the current message's header.
+If given a message list, from will print the headers of those
+messages which are in the list.
+
+The special arguments, `-' and `+' can be given to move the
+current message pointer to the previous or next message
+respectively while also printing that message's header.
+
+If a message list was given in addition to `-' or `+', then
+the current message pointer will be set to the first or last
+message, respectively, in the message list given.
+
+from - 10-30 {16}
+will print the headers of messages 10 through 30 except for
+message 16 and set the current message pointer to 10.
+
+pick -f Dan | from +
+will print the headers of all messages that contain Dan in
+in the author's name and set the current message pointer to
+the last one of that kind in the list.
+
+from +
+will print the header of the message after the current message
+and increment the current message pointer to the next message.
+%%
+
+%own_hdrs%
+Here is where you set, unset or view your own message headers.
+These headers are included in all your outgoing mail.
+
+options for my_hdrs:
+my_hdr                          all headers
+my_hdr header                   value associated with header
+my_hdr header: string           set header to string
+un_hdr header                   unset header
+%%
+
+%fkey_help%
+fkey's are function key settings in Suntools (graphics) mode
+When run as a tool (-t on command line), choose the Options Item,
+and the function key menu option.
+%%
+
+%func_help%
+cmd's are just like aliases in the c-shell.
+cmd                     view all commands
+cmd `command'           value associated with command
+cmd `command' "value"   set command to value
+uncmd `command'         unset command
+
+If you want to reference history commands within a cmd,
+escape the ! with a backslant. For example:
+
+mail> cmd r 'replysender \!* ; delete -t'
+
+will reply using whatever arguments you will have given
+on the command line and then delete that message and
+then print the next message (-t argument to "delete").
+%%
+
+%headers%
+usage: headers [+ | - | N] [-H:c]
+print out a screenful of headers.
++  print the next screenful.
+-  print the previous screenful.
+N  (where N is a number) print a screenful starting at N.
+set show_deleted to list deleted messages.
+cmd h headers        look like UCB-Mail
+cmd H Headers        show deleted messages (or set show_deleted)
+cmd z headers +      `z' is next screenful
+
+Arguments to the headers command include -H:c where `c' is one of
+    n    just print messages headers of NEW messages
+    d    deleted messages
+    u    unread messages
+    o    old messages
+    a    all messages (mostly for the command line argument -H:c)
+
+piping to headers will print the headers of the "output" messages.
+%%
+
+%hdr_format%
+set hdr_format="string" for changing the display of message headers.
+The string uses printf style formatting and follows these conventions:
+    %S  message Status.
+    %f  "from" field (author).
+    %a  the address of the author.
+    %n  the name of the author.
+    %t  "to" field (recipients).
+    %d  date of the message.
+    %s  subject of the message.
+    %l  number of lines in the message.
+    %c  number of characters (bytes) in the message.
+    \n  a newline
+    \t  a tab.
+A field specifier may be used.  Thus, %20f will print the first 20
+characters of the from line.  No matter what the formatting string,
+the message number followed by a '>' (if current message) is printed.
+%%
+
+%folder_help%
+usage: folder [-N] [-r] [!] [ %[user] | # | & | file ]
+Change current folder.
+No arguments prints current folder.
+-N: No headers are displayed upon entering new folder (also command line).
+-r: read only mode (you won't be able to write changes to this folder).
+If `!' is specified, current folder is not updated.
+%[user] folder to /usr/spool/mail/[user] (you default)
+#  folder accessed previous to current folder
+&  "mbox" -- default is ~/mbox; or set mbox = "file"
+%%
+
+%prompt%
+set prompt = "string"
+"string" is follows printf style formatting conventions:
+    \t, \n will be replaced by a tab or newline respectively.
+    %m	 current message number
+    %t	 total number of messages
+    %d	 number of deleted messages
+    %u	 number of unread messages
+    %n	 number of new messages
+    %f	 name of the current working folder
+    %T	 current time
+    %D	 day of the week
+    %Y	 year
+    %M	 month
+    %N	 number of the day in the month (date)
+%%
+
+%quit_help%
+usage: quit/exit",
+quit will update your mailbox; if new mail has come in, you will be
+told so and given an option whether to really quit or not.
+"exit" will leave mail not updating your mailbox nor check for new mail.
+%%
+
+%ls%
+The ls command is exactly like the UNIX command, "ls."
+All arguments are the same.  The variable "lister" can
+be set to always default to the same arguments avoiding
+having to specify them all the time.  The "folders"
+command is nothing more than doing "ls $folder" from
+the Mush prompt.
+%%
+
+%shell%
+usage: sh [command]
+If a "command" is given, that UNIX command will be executed
+under the Bourne shell. If no command is specified, then an
+interactive shell will be started. The environment variable
+SHELL or the local mail shell variable shell  describes the
+shell to invoke.  If none is set, then the default shell is
+defined by the system administrator (currently set to csh).
+
+Users on systems with job control will probably have little
+use for the sh command.
+%%
+
+%stop%
+The stop command sends a stop signal to the mail shell.
+It is equivalent to ^Z as it will stop the process.
+Since the shell never needs to be exited, the command
+'q' may be aliased to "stop" and the shell may have,
+% alias 'mail   ?mush'
+which will bring mush into the foreground rather than
+having to invoke a new shell.  New mail will be read 
+into the shell automatically and much time and energy 
+is saved.
+%%
+
+%curses%
+The curses-based interface for Mush does not require a graphics
+display, but does requires a terminal which can handle upline
+cursor movement capabilities.  All commands are one key-stroke
+commands and are executed instantaneously.  A list of curses
+commands is given by using the `?' key in curses mode.
+%%
+
+%bind%
+Binding is done for the curses interface only.  It allows
+the user to bind keystrokes or key sequences to commands.
+
+To bind keystrokes that are control characters, you must use
+the notation: "\CX" where "X" is in upper-case and it represents
+the control key you want to use. "\CN" would be control-N; "\n"
+is carriage return.  You may not bind keyboard generated signals;
+for most users, those key sequences are control-C and control-\.
+For users with job control, control-Z and control-Y are ignored.
+To reference the escape key, use the string, "\E".
+
+The spacebar may not be bound since it is the only way to return
+to the main level from the "...continue..." prompt.
+
+Trying to bind a key sequence which prefixes another sequence
+is an error and the user is warned that the longer binding will
+not work.
+
+As always, -? will give help.
+%%
+
+%msg_flags%
+usage: flags [msg_list [N O R D P U] ]
+This command displays the state of messages as seen by the internals
+of Mush.  This is not a documented command, so don't tell anyone.
+If a list is given (or piped), it will tell which bits of the message
+are set: New, Old, Read, Deleted, Preserved, or Unread.
+If any (one or more) of the optional bits are given, then it will set
+the appropriate bit in the list given.  As usual, if no list is given,
+then the current message is used (or set bits on a pipe).
+%%
+
+%setenv%
+usage: setenv VARIABLE [value]
+
+Variable names may be any string, but traditionally environment variables
+are all upper case.  If no "value" is specified, then the variable name
+will be set to an empty string.  If the value contains spaces, you should
+enclose the string in quotation marks.  Use printenv to print a list of
+all your environment variables.
+%%
+
+%unsetenv%
+usage: unsetenv VARIABLE
+
+You must specify one and only one variable to unset in your environment
+variable settings.  Use printenv to print a list of all your environment
+variables.
+%%

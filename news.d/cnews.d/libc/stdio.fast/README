@@ -1,0 +1,5 @@
+This directory does not form a library; fgets.o, fputs.o and rdwr.o
+constitute re-written stdio guts, thought to be compatible with the
+usual UNIX stdio implementation.
+
+memcpy.o need only be generated if your C library lacks memcpy.

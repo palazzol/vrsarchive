@@ -1,0 +1,40 @@
+# makefile.sun	(c) copyright 1986	(Dan Heller)
+#
+HDRS= mush.h config.h-dist strings.h bindings.h
+
+SRCS= main.c init.c misc.c mail.c hdrs.c execute.c commands.c rite.c \
+      select.c doproc.c print.c signals.c aliases.c setopts.c msgs.c \
+      hdr_procs.c tool.c hdr_panel.c main_panel.c help.c viewopts.c sort.c \
+      pick.c fkeys.c expr.c folders.c dates.c loop.c edit_menu.c \
+      curses.c curs_io.c bind.c
+
+OBJS= main.o init.o misc.o mail.o hdrs.o execute.o commands.o rite.o \
+      select.o doproc.o print.o signals.o aliases.o setopts.o msgs.o \
+      hdr_procs.o tool.o hdr_panel.o main_panel.o help.o viewopts.o sort.o \
+      pick.o fkeys.o expr.o folders.o dates.o loop.o edit_menu.o \
+      curses.o curs_io.o bind.o
+
+IMAGES= mail.icon.1 mail.icon.2 check.pr cycle.pr envelope.pr glasses.pr \
+	write.pr up.arrow.pr dn.arrow.pr coffee.cup.pr
+
+HELP_FILES= README cmd_help tool_help mush.1
+
+MAKES= makefile.sun makefile.bsd makefile.sys.v
+
+CFLAGS= -O -DSUNTOOL -DCURSES -DBSD
+LDFLAGS= -s
+LIBES= -lcurses -ltermlib -lsuntool -lsunwindow -lpixrect
+LINTFLAGS= -bxah -Dlint
+
+mush: $(OBJS)
+	@echo loading...
+	@cc $(LDFLAGS) $(OBJS) $(LIBES) -o mush
+
+tar:
+	@tar fcv MUSH $(HDRS) $(SRCS) $(IMAGES) $(HELP_FILES) $(MAKES)
+
+lint:
+	make -f makefile.bsd lint
+
+clean:
+	rm -f *.o core mush

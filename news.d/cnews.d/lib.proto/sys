@@ -1,0 +1,16 @@
+# ourselves: accept almost everything we get from our feed (rather limited)
+utstat:comp,news,list,to,junk,control,sci.crypt,sci.math,misc.jobs,\
+!comp.binaries,!comp.sys,comp.sys.sun,comp.sys.ibm,comp.sys.mac,\
+!comp.lang.lisp,can,ont,tor,ut,!ut.stardate,utstat,\
+!all.all.amiga,!all.all.atari,!all.all.xenix,!all.all.venix,\
+!all.games,!all.all.games,!all.all.vms,!all.all.ada,!all.all.cpm,\
+!all.all.kermit,!all.all.appletalk,!general/world,na,can,ont,tor,ut,utstat
+# our news feed: send everything & locally-written articles go direct
+utgpu:all,!to,to.utgpu,!utstat:F:/usr/lib/news/batch/b.utcs/togo
+utgpu:all,!to,to.utgpu,!utstat:L:/usr/lib/news/sendnews utcs!rnews
+# local groups go out to local sites faster
+utcsri:world,na,can,ont,tor,ut,to.utcsri:L:/usr/lib/news/sendnews utcsri!rnews
+# eventually chew up mod.map for pathalias; for now mail so they aren't lost
+uucpmap:comp.mail.map/world,na,can,ont,tor,ut::/usr/lib/news/uucpmapmuncher
+# various individuals get our hacknews by mail
+hacknewsers:utstat.hacknews/world,utstat::mail hacknewsers

@@ -1,0 +1,6 @@
+# universes of control
+cabal	comp,news,sci,misc,talk,rec,soc
+alt	alt
+bit	list
+local	to,junk,control,can,ont,tor,ut
+motd	utstat

@@ -1,0 +1,38 @@
+#! /bin/sh
+# newgroup group - create group (4-field version: B-2.10.3 and later compatible)
+#	subject to our sys file group pattern
+# B 2.11 requires an Approved: header; someday.
+NEWSCTL=${NEWSCTL-/usr/lib/news}; export NEWSCTL
+NEWSBIN=${NEWSBIN-/usr/lib/newsbin}; export NEWSBIN
+NEWSARTS=${NEWSARTS-/usr/spool/news}; export NEWSARTS
+PATH=/bin:/usr/bin:/usr/ucb:$NEWSCTL:$NEWSBIN; export PATH	# must find mkpdir
+F=/tmp/nc$$
+admin=usenet
+
+cat >$F
+SENDER="`grep '^Sender:' $F | sed 's/^[^:]*: *//'`"
+case "$SENDER" in
+"")
+	SENDER="`grep '^From:' $F | sed 's/^[^:]*: *//'`"
+	;;
+esac
+
+if grep -s "^`echo $1 | sed 's/\./\\\\./g'` " $NEWSCTL/active; then	# group exists
+	: do nothing
+elif gngp -a `
+    egrep "^(\`hostname\`|ME):" $NEWSCTL/sys | awk -F: '{print $2; exit}'
+    ` >/dev/null <<!
+$1
+!
+then			# no group in active, but sys file likes it: make it
+	case "$2" in
+	moderated)	flag=m ;;
+	*)	flag=y ;;
+	esac
+	echo "$1 00000 00000 $flag" >>$NEWSCTL/active
+	# TODO: is it worth making the directory now? maybe, rn bitches otherwise
+	mkpdir $NEWSARTS/`echo $1 | sed 's/\./\//g' `
+	echo "newsgroup $1 was created by $SENDER." | mail $admin
+fi
+
+rm -f $F*

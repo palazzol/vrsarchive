@@ -1,0 +1,4 @@
+elecvax:test,general.all,net.all,aus.all,to.elecvax,mod.all,class.all::
+basser:net.all,aus.all,mod.all,to.basser::/usr/lib/news/uusend rnews:basser
+elec70a:test,general.all,to.elec70a,class.all::exec net -helec70a -nrnews -f
+elec70b:test,general.all,to.elec70b,class.all::exec net -helec70b -nrnews -f

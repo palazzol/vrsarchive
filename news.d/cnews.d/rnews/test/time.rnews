@@ -1,0 +1,4 @@
+#! /bin/sh
+HERE=`pwd`
+PATH=$HERE/lib:/bin:/usr/bin; export PATH
+time realrnews -s $HERE/spool -l $HERE/lib <demo/batch.large $* # -d fhlmt # -p

@@ -1,0 +1,20 @@
+.TH UUSEND 8
+.SH NAME
+uusend \- send news articles via mail
+.SH SYNOPSIS
+.B /usr/lib/news/uusend
+destination
+.SH DESCRIPTION
+.I uusend
+reads an article from standard input,
+prepends an `N' to each line of the article,
+and then mails the article to
+.IR destination .
+.P
+.IR uurec (8)
+is used at the destination host to unpackage the article
+and pass it to
+.IR postnews (1).
+.SH SEE ALSO
+postnews(1), readnews(1),
+uurec(8), smail(8).

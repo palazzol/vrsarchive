@@ -1,0 +1,17 @@
+#! /bin/sh
+# mkpdir dir ... - make directory and parents
+PATH=/bin:/usr/bin:/usr/ucb:/usr/lib/news; export PATH	# must include this file's dir.
+status=0
+
+for dir
+do
+	mkdir "$dir" 2>/dev/null
+	if test ! -d "$dir"; then
+		mkpdir "`echo $dir | sed 's;/[^/]*$;;'`"
+		mkdir "$dir"
+		if test ! -d "$dir"; then
+			status=1
+		fi
+	fi
+done
+exit $status

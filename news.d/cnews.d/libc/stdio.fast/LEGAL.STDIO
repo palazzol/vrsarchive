@@ -1,0 +1,3 @@
+Page 165 of The C Programming Language describes some of the workings
+of the UNIX stdio implementation. In particular, it describes the
+function of _ptr and _cnt.

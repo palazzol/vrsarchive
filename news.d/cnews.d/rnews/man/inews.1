@@ -1,0 +1,57 @@
+.TH INEWS 1 Usenet "Public Domain"
+.DA 22 Aug 1987
+.SH NAME
+inews \- `user-friendly' front-end for rnews
+.SH SYNOPSIS
+.B inews
+[
+.B \-h
+]
+.\" TODO: fill in silly B options here
+[
+file ...
+]
+.SH DESCRIPTION
+.I Inews
+broadcasts a (network) news article
+(\fIi\fPnjects it into the
+.I news
+flow)
+normally
+by giving it as standard input to
+.IR rnews (1),
+after adding and altering headers.
+The article will instead be mailed
+to the moderators of the moderated newsgroups in the
+.I Newsgroups:
+header,
+if any are found.
+Normal usage is simply
+.IR "inews -h" .
+.PP
+There are plenty of silly options
+(inherited from B news)
+which are essentially all equivalent to
+adding headers.
+.SH FILES
+.PD 0
+.TP 1.5i
+.IB $NEWSCTL /active
+contains (un)moderated flag
+.PD
+.SH "SEE ALSO"
+.IR mail (1),
+.IR rnews (1)
+.\" .SH DIAGNOSTICS
+.\" This section appears ONLY if there is something unobvious and important about
+.\" the diagnostics or the general behavior in case of error.
+.SH HISTORY
+Written by Geoff Collyer
+at the University of Toronto
+as part of the C news project.
+.SH BUGS
+.I Inews
+should be unnecessary;
+most long-time news posters simply use
+.I rnews
+directly anyway.

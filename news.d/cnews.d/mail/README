@@ -1,0 +1,5 @@
+This pair of programs is used to exchange news articles
+(or batches of articles) by mail.
+
+They are superior to the old B news compatible ones because they permit
+transmission of very long lines or binary files even over Bitnet links.

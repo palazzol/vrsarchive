@@ -1,0 +1,58 @@
+For a number of reasons, notably continued slow progress and strong demand,
+Geoff and I have decided to release an "official alpha test" C news widely.
+
+This IS NOT the definitive release.  As the word "alpha" implies, it
+is not even beta test.  This release is NOT nicely packaged, it is NOT
+bug-free, it does NOT have the full desired functionality (for example,
+it doesn't have moderated-group security yet), it undoubtedly has some
+portability and compatibility problems, it is not properly documented,
+and it WILL be superseded by a later version in a conversion that is
+NOT guaranteed to be painless.  In other words, use at your own risk.
+It is essentially our current working version.
+
+If you don't have time to explore its idiosyncrasies and babysit its
+problems, you should not even try to put it up.  Note the redistribution
+restrictions in the copyright notices, by the way -- these are meant solely
+to keep this alpha release under control, and will not be present in the
+final release.
+
+We strongly suggest, however, that anyone currently running one of our
+old informal pre-alpha releases upgrade to this one.  It will be no harder
+to install than the pre-alpha one was, and it fixes a near-endless list
+of bugs, bad behaviors, and gaps in functionality.
+
+
+We know that this release has problems of various kinds.  We intend to fix
+them.  We are interested in hearing about the more subtle ones.  We DO NOT
+want to see 2000 lines of diff listing!  Why?  First, because our source
+will have changed by the time your diffs arrive.  Second, because there is
+a good chance that we are already aware of the problem you've found; we
+may even have fixed it already.  Send us a SHORT description of what you've
+found and what (if anything) you've done about it; if we want diffs, we
+will certainly ask.  The same applies to changes and improvements.
+
+If you want us to consider changes/fixes/etc, send them to us, don't just
+post them to the net.  We reserve the right to ignore all posted changes
+and "improvements" when preparing the definitive release.  For at least the
+duration of the alpha release, only postings from us are officially part
+of C news.
+
+Readers should not assume that comments saying "to do" in the source
+or suggestively-named files reflect our current thinking on what needs
+doing or should be done.
+
+The place to send comments, complaints, problem reports, etc. is NOT to
+Geoff or me personally, but to:
+
+	utzoo!cnews-alpha
+
+Utzoo connects to half the known universe (well, not quite, but try via
+attunix, allegra, ihnp4, decvax, pyramid, floyd, hoptoad, kitty, linus,
+mnetor, utai, utcsri, or watmath).  Sorry, we don't have a direct uunet
+hookup at present.  Nor are we on the Arpa internet, although those of
+you with MX-comprehending mailers can try cnews-alpha@utzoo.toronto.edu
+(it is supposed to work).  If you are off in the wonderful (?) world of
+Bitnet, try cnews-alpha@utzoo.utoronto or words to that effect.
+
+					Geoff Collyer
+					Henry Spencer

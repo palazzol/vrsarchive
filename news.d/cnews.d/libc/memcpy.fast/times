@@ -1,0 +1,14 @@
+Script started on Sat Feb  8 07:50:49 1986
+cs% time bcopy.vax
+       12.1 real         6.5 user         0.7 sys  
+cs% time bcopy.obvious
+       85.5 real        75.0 user         2.4 sys  
+timecs%  bcopy.duff
+       28.9 real        27.3 user         1.1 sys  
+cs% time bcopy.duff.long
+       16.8 real        13.9 user         0.8 sys  
+cs% time bcopy.duff.double
+       15.6 real        14.5 user         0.7 sys  
+cs% time bcopy.duff.longs
+        9.4 real         8.2 user         0.6 sys  
+script done on Sat Feb  8 09:00:42 1986
