@@ -1,6 +1,6 @@
 extern int character_generated;  /* don't save score until char gen finished */
 extern int highscore_fd;	/* High score file descriptor */
-extern int player_max_exp;	/* Max exp possible    */
+extern long player_max_exp;	/* Max exp possible    */
 extern char norm_state[STATE_SIZE];	/* Contains seed #     */
 extern char randes_state[STATE_SIZE];
 extern int randes_seed;	    /* For encoding colors */
@@ -59,7 +59,7 @@ extern floor_type boundary_wall;
 /* Following are player variables				*/
 extern player_type py;
 extern btype player_title[MAX_CLASS][MAX_PLAYER_LEVEL];
-extern int player_exp[MAX_PLAYER_LEVEL];
+extern long player_exp[MAX_PLAYER_LEVEL];
 extern double acc_exp;	                  /* Accumulator for fractional exp*/
 extern dtype bare_hands;
 extern int char_row;
