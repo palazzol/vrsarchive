@@ -54,7 +54,25 @@ int Debug;				/* Debugging? */
 void outerr();				/* error writing output file */
 void tmperr();				/* error writing temp file */
 void writeerr();			/* error writing file */
-int fprintf();				/* libc defined, -1 on error */
+
+/*
+** efopen() -- fopen() that fatals on error
+*/
+FILE *
+efopen( file, mode )
+char *file;
+char *mode;
+{
+    FILE * fp;
+
+    if( NULL == (fp = fopen( file, mode ) ) )
+    {
+	fprintf(stderr, "Can't open \"%s\" mode \"%s\"\n", file, mode );
+	perror("efopen");
+	exit( 1 );
+    }
+    return( fp );
+}
 
 /*
 ** main() -- fix a cpio archive with "Out of phase -- get help" problems.
@@ -77,7 +95,6 @@ char **argv;
     char buf[ 512 ];			/* holds a trailer. */
 
     char *getenv();			/* libc defined */
-    FILE *efopen();			/* fopen, fatal on error */
     FILE *getmember();			/* stash a member in a temp file */
     long putmember();			/* write temp file */
 
@@ -351,25 +368,6 @@ register FILE *ofp;
 }
 
 /*
-** efopen() -- fopen() that fatals on error
-*/
-FILE *
-efopen( file, mode )
-char *file;
-char *mode;
-{
-    FILE * fp;
-
-    if( NULL == (fp = fopen( file, mode ) ) )
-    {
-	fprintf(stderr, "Can't open \"%s\" mode \"%s\"\n", file, mode );
-	perror("efopen");
-	exit( 1 );
-    }
-    return( fp );
-}
-
-/*
 ** outerr() -- handle error writing output file
 */
 void
@@ -396,7 +394,7 @@ char *what;
 {
     fprintf(stderr, "\007Error writing %s file", what );
     perror("");
-
+    exit( 1 );
 }
 
 /* end of fixcpio.c */
