@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 /*
  *	arcadd.c	1.2
  *
