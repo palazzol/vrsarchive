@@ -33,8 +33,8 @@ CHMOD=/bin/chmod
 ######################
 #  Change these lines!
 ######################
-SECURE=/usr/foo/bar
-SECURE_USERS="foo@bar.edu"
+SECURE=`pwd`
+SECURE_USERS="root"
 ######################
 
 SECURE_PROGRAMS="root.chk dev.chk dir.chk file.chk group.chk \
