@@ -135,7 +135,15 @@ double	dtemp;			/* for temporary calculations */
 		/*NOTREACHED*/
 
 	    case 'S':	/* set 'Wizard' */
+#ifdef __STDC__
+		Wizard = (getuid() == UIDA);
+		if (!Wizard) {
+		    struct passwd *pw = getpwuid(getuid());
+		    Wizard = (pw && !strcmp(pw->pw_name, WIZARDB));
+		}
+#else
 		Wizard = ((getuid() == UIDA) || (getuid() == UIDB));
+#endif
 		break;
 
 	    case 'x':	/* examine */
@@ -1303,6 +1311,9 @@ playinit()
     signal(SIGALRM, SIG_IGN);
     signal(SIGHUP, ill_sig);
     signal(SIGTRAP, ill_sig);
+#ifndef SIGIOT
+#define SIGIOT	SIGABRT
+#endif
     signal(SIGIOT, ill_sig);
     signal(SIGEMT, ill_sig);
     signal(SIGFPE, ill_sig);
