@@ -109,12 +109,16 @@ short mode;
 	static struct ltchars ltc_orig;
 	struct ltchars ltc_temp;
 #endif
+#ifdef TIOCGETC
 	static struct tchars tc_orig;
 	struct tchars tc_temp;
+#endif
 
 	if (!called_before) {
 		called_before = 1;
+#ifdef TIOCGETC
 		ioctl(0, TIOCGETC, &tc_orig);
+#endif
 #ifdef TIOCGLTC
 		ioctl(0, TIOCGLTC, &ltc_orig);
 #endif
@@ -122,17 +126,22 @@ short mode;
 #ifdef TIOCGLTC
 	ltc_temp = ltc_orig;
 #endif
+#ifdef TIOCGETC
 	tc_temp = tc_orig;
-
+#endif
 	if (!mode) {
 #ifdef TIOCGLTC
 		ltc_temp.t_suspc = ltc_temp.t_dsuspc = -1;
 		ltc_temp.t_rprntc = ltc_temp.t_flushc = -1;
 		ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
 #endif
+#ifdef TIOCGETC
 		tc_temp.t_startc = tc_temp.t_stopc = -1;
+#endif
 	}
+#ifdef TIOCSETC
 	ioctl(0, TIOCSETC, &tc_temp);
+#endif
 #ifdef TIOCGLTC
 	ioctl(0, TIOCSLTC, &ltc_temp);
 #endif
@@ -535,6 +544,6 @@ md_tstp()
 #endif
 }
 
-#endif CURSES
+#endif /*CURSES*/
 
-#endif UNIX
+#endif /*UNIX*/
