@@ -132,6 +132,74 @@ clrlin(){
 	flags.toplin = 0;
 }
 
+#ifdef __STDC__
+#include <stdarg.h>
+void
+pline(const char *line, ...)
+{	va_list ap;
+	char pbuf[BUFSZ];
+	register char *bp = pbuf, *tl;
+	register int n,n0;
+
+	va_start(ap, line);
+	va_arg(ap, const char *);
+	if(!line || !*line) return;
+	if(!index(line, '%')) Strcpy(pbuf,line); else
+	vsprintf(pbuf,line,ap);
+	nscr();		/* %% */
+
+	/* If there is room on the line, print message on same line */
+	/* But messages like "You die..." deserve their own line */
+	n0 = strlen(bp);
+	if(flags.toplin == 1 && tly == 1 &&
+	    n0 + strlen(toplines) + 3 < CO-8 &&  /* leave room for --More-- */
+	    strncmp(bp, "You die", 7)) {
+		Strcat(toplines, "  ");
+		Strcat(toplines, bp);
+		tlx += 2;
+		addtopl(bp);
+		return;
+	}
+	if(flags.toplin == 1 && !strcmp(pbuf, toplines) &&
+	    (n0 + strlen(toplines) + 3 >= CO-8)) {
+		more();
+		home();
+		putstr("");
+		cl_end();
+		goto again;
+	}
+	if(flags.toplin == 1) more();
+	else if(tly > 1) {	/* for when flags.toplin == 2 && tly > 1 */
+		docorner(1, tly-1);	/* reset tly = 1 if redraw screen */
+		tlx = tly = 1;	/* from home--cls() and docorner(1,n) */
+	}
+again:
+	remember_topl();
+	toplines[0] = 0;
+	while(n0){
+		if(n0 >= CO){
+			/* look for appropriate cut point */
+			n0 = 0;
+			for(n = 0; n < CO; n++) if(bp[n] == ' ')
+				n0 = n;
+			if(!n0) for(n = 0; n < CO-1; n++)
+				if(!letter(bp[n])) n0 = n;
+			if(!n0) n0 = CO-2;
+		}
+		(void) strncpy((tl = eos(toplines)), bp, n0);
+		tl[n0] = 0;
+		bp += n0;
+
+		/* remove trailing spaces, but leave one */
+		while(n0 > 1 && tl[n0-1] == ' ' && tl[n0-2] == ' ')
+			tl[--n0] = 0;
+
+		n0 = strlen(bp);
+		if(n0 && tl[0]) Strcat(tl, "\n");
+	}
+	redotoplin();
+}
+#else
 /*VARARGS1*/
 /* Because the modified mstatusline has 9 arguments KAA */
 void
@@ -202,7 +270,27 @@ again:
 	}
 	redotoplin();
 }
+#endif
 
+#ifdef __STDC__
+/*VARARGS1*/
+void
+You(const char *line, ...)
+{	va_list ap;
+	char buf[BUFSZ];
+	char *tmp;
+
+	va_start(ap, line);
+	va_arg(ap, const char *);
+	tmp = (char *)alloc((unsigned int)(strlen(line) + 5));
+	Strcpy(tmp, "You ");
+	Strcat(tmp, line);
+	vsprintf(buf, tmp, ap);
+	pline("%s", tmp);
+	free(tmp);
+	return;
+}
+#else
 /*VARARGS1*/
 void
 You(line,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
@@ -219,7 +307,27 @@ const char *line,*arg1,*arg2,*arg3,*arg4,*arg5,*arg6,*arg7,*arg8,*arg9;
 	free(tmp);
 	return;
 }
+#endif
 
+#ifdef __STDC__
+/*VARARGS1*/
+void
+Your(const char *line, ...)
+{	va_list ap;
+	char buf[BUFSZ];
+	char *tmp;
+
+	va_start(ap, line);
+	va_arg(ap, const char *);
+	tmp = (char *)alloc((unsigned int)(strlen(line) + 6));
+	Strcpy(tmp, "Your ");
+	Strcat(tmp, line);
+	vsprintf(buf, tmp, ap);
+	pline("%s", tmp);
+	free(tmp);
+	return;
+}
+#else
 /*VARARGS1*/
 void
 Your(line,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
@@ -236,10 +344,16 @@ const char *line,*arg1,*arg2,*arg3,*arg4,*arg5,*arg6,*arg7,*arg8,*arg9;
 	free(tmp);
 	return;
 }
+#endif
 
+#ifdef __STDC__
+void
+putsym(char c)
+#else
 void
 putsym(c)
 char c;
+#endif
 {
 	switch(c) {
 	case '\b':
@@ -268,12 +382,18 @@ register char *s;
 	while(*s) putsym(*s++);
 }
 
-char
-yn_function(resp, def)
-char *resp, def;
 /*
  *   Generic yes/no function
  */
+#ifdef __STDC__
+char
+yn_function(const char *resp,char def)
+#else
+char
+yn_function(resp, def)
+const char *resp;
+char def;
+#endif
 {
 	register char q;
 	char rtmp[8];
