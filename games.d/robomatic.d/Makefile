@@ -1,5 +1,5 @@
 #
-#	robomatic @(#)Makefile	1.6 10/19/85
+#	robomatic @(#)Makefile	1.7 10/19/85
 #
 SHELL	= /bin/sh
 CFLAGS	= -O -i -F 2000 # -p
