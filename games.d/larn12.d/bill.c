@@ -20,7 +20,7 @@ static letter1()
   lprcat("\ncounty of Larn is in dire need of funds, we have spared no time");
   lprintf("\nin preparing your tax bill.  You owe %d gold pieces as",
 	(long)c[GOLD]*TAXRATE);
-  lprcat("\nof this notice, and is due within 5 days.  Failure to pay will");
+  lprcat("\nof this notice, and it is due within 5 days.  Failure to pay will");
   lprcat("\nmean penalties.  Once again, congratulations, We look forward");
   lprcat("\nto your future successful expeditions.\n");
   lwclose(); return(1);
@@ -51,8 +51,8 @@ static letter3()
   standout("\nSubject:"); lprcat("  You Bastard!\n");
   lprcat("\n   I heard (from sources) of your journey.  Congratulations!");
   lprcat("\nYou Bastard!  With several attempts I have yet to endure the");
-  lprcat(" caves,\nand you, a nobody, makes the journey!  From this time");
-  lprcat(" onward, bewarned\nupon our meeting you shall pay the price!\n");
+  lprcat(" caves,\nand you, a nobody, makes it!  From this time onward,");
+  lprcat(" be warned that\nupon our meeting you shall pay the price!\n");
   lwclose(); return(1);
   }
 
@@ -64,9 +64,9 @@ static letter4()
   standout("From:"); lprcat("  Mainair, Duke of Larnty\n");
   standout("\nSubject:"); lprcat("  High Praise\n");
   lprcat("\n   With a certainty a hero I declare to be amongst us!  A nod of");
-  lprcat("\nfavour I send to thee.  Me thinks Count Endelford this day of");
+  lprcat("\nfavour I send to thee.  Methinks Count Endelford on this day of");
   lprcat("\nright breath'eth fire as of dragon of whom ye are slayer.  I");
-  lprcat("\nyearn to behold his anger and jealously.  Should ye choose to");
+  lprcat("\nyearn to behold his anger and jealousy.  Should ye chose to");
   lprcat("\nunleash some of thy wealth upon those who be unfortunate, I,");
   lprcat("\nDuke Mainair, Shall equal thy gift also.\n");
   lwclose(); return(1);
