@@ -118,7 +118,7 @@ yylex () {
     return ret;
 }
 
-#ifdef BSD42
+#ifndef KEY_LEFT
 #define N_KEY 4
 
 struct key_map {
@@ -219,9 +219,7 @@ nmgetch()
     return(c);
 }
 
-#endif
-
-#ifdef SYSV
+#else /*KEY_LEFT*/
 
 initkbd()
 {
@@ -243,7 +241,7 @@ nmgetch()
     return (c);
 }
 
-#endif
+#endif /*KEY_LEFT*/
 
 void
 timeout()
