@@ -13,18 +13,14 @@ OPTIONS	= -O
 MODEL	= -i
 include /etc/CONFIG
 
-.c:
-	@$(MAKE) dummy_file $@.o
+
+$(TABLES):: table.o
+	@make $@.o
 	$(CC) $(CFLAGS) table.o $@.o
 	./a.out $@
 	rm -f ./a.out $@.o
 
 # This dummy_file should never exist -- it is a kludge to get Make to
-# be quiet if table.o exists.  This is because dependencies on the .c:
-# line above do not get made.
-dummy_file:	table.o
-	@rm -f dummy_file
-
 elbat:	elbat.c
 	$(CC) $(CFLAGS) elbat.c -o $@
 	rm -f elbat.o

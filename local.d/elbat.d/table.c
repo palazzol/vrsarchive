@@ -57,6 +57,7 @@ char	*c_pointer[256];
 int	c_length[256];
 char	*c_end = c_data;
 int	n_strings, c_size;
+char *strcpy();
 
 main (argc, argv)
 int	argc;
@@ -64,7 +65,7 @@ char	*argv[];
 {
 	FILE	*table;
 	int	i, j, i_len, j_len;
-	char	*tail, *start, *char_pointer, *strcpy();
+	char	*tail, *start, *char_pointer;
 
 	if (argc != 2) {	/* Need a file name argument */
 	    fprintf (stderr, "Usage: table \"file\"\n");
