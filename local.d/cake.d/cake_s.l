@@ -4,7 +4,7 @@
 */
 
 static	char
-rcs_id[] = "$Header: /home/Vince/cvs/local.d/cake.d/cake_s.l,v 1.1 1987-11-16 17:45:14 vrs Exp $";
+rcs_id[] = "$Header: /home/Vince/cvs/local.d/cake.d/cake_s.l,v 1.2 1987-11-18 08:57:59 vrs Exp $";
 
 #include	"cake.h"
 #include	"cake_g.h"
@@ -36,6 +36,7 @@ bool		afterifdef = FALSE;
 %}
 
 %a	2500
+%e	250
 %o	5000
 
 %start	edge middle
