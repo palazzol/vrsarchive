@@ -1,19 +1,10 @@
 #
-#	@(#)Makefile	1.3 4/8/86
+#	$Header: /home/Vince/cvs/lib.d/dpy.d/Makefile,v 1.4 1987-02-16 11:19:19 vrs Exp $
 #
-SHELL	= /bin/sh
-USRLCL	= ..
-USRDPY	= $(USRLCL)/dpy
-USRLIB	= $(USRDPY)/lib
+ALL	= Slibdpy.a Mlibdpy.a Llibdpy.a
+OPTIONS	= -DUSG
+include ../../CONFIG
 HFILES	= dpy.h
-CFLAGS	= -DUSG
-#
-#	Use a no-op for $(RANLIB) if you are running on an AT&T UNIX system.
-#	UNIX is a trademark of AT&T.  Of course, you'll need to recode the
-#	shared data calls.
-#
-RANLIB	= ranlib
-SACRED	= Slibdpy.a Mlibdpy.a Llibdpy.a
 #
 OBJS	= dpy.o dpymove.o dpyplace.o dpyget.o dpyread.o dpywindow.o
 SOBJS	= $(OBJS:.o=.S)
@@ -49,7 +40,7 @@ LLIB	= Llibdpy.a(dpy.L) \
 #
 .SUFFIXES:
 .SUFFIXES:	.a .S .M .L .o .s .c
-.PRECIOUS:	$(SACRED)
+.PRECIOUS:	$(ALL)
 
 .c.S:
 	$(CC) -c $(CFLAGS) -Ms $<
@@ -88,7 +79,7 @@ LLIB	= Llibdpy.a(dpy.L) \
 	ar uv $@ $%
 	rm -f $%
 
-all:	$(SACRED)
+all:	$(ALL)
 
 Slibdpy.a: $(SLIB)
 	ranlib $@
@@ -104,16 +95,15 @@ $(MOBJS): $(HFILES)
 $(LOBJS): $(HFILES)
 
 clean:
-#	rm -f $(SOBJS) $(MOBJS) $(LOBJS) $(SACRED) make.out
-
+	rm -f $(SOBJS) $(MOBJS) $(LOBJS) $(ALL) make.out
 #
 #	Build the works and install it.
 #
-install:	$(SACRED) # $(USRLCL) $(USRDPY) $(USRLIB)
-#		cp $(SACRED) $(USRLIB)
-#		cd $(USRLIB); chmod 644 $(SACRED)
-#		for i in $(SACRED); do ranlib $(USRLIB)/$$i; done
-
-$(USRLCL) $(USRDPY) $(USRLIB):
-		mkdir $@
-		chmod 755 $@
+install: $(ALL) $(LIBDIR) $(INCDIR) $(MAN3)
+	cp $(ALL) $(LIBDIR)
+	cd $(LIBDIR); chmod 644 $(ALL)
+	for i in $(ALL); do ranlib $(LIBDIR)/$$i; done
+	cp dpy.h $(INCDIR)
+	cd $(INCDIR); chmod 644 dpy.h
+	cp dpy.3 $(MAN3)
+	cd $(MAN3); chmod 644 dpy.3
