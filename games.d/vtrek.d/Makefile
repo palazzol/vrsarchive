@@ -1,12 +1,12 @@
 #
-#	vtrek @(#)Makefile	1.2 9/20/85
+#	vtrek @(#)Makefile	1.3 4/8/86
 #
 SHELL	= /bin/sh
 OBJS	= main.o plot.o sub1.o sub2.o termio.o
 LIBS	= -lm -ltermcap
 GAMDIR	= $(DESTDIR)/usr/games
 GAMLIB	= $(GAMDIR)/lib
-CFLAGS	= -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\"
+CFLAGS	= -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\" -F 2000
 
 vtrek:	$(OBJS)
 	$(CC) $(OBJS) $(LIBS) -o $@
