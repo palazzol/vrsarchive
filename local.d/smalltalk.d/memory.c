@@ -23,6 +23,8 @@
 # include "env.h"
 # include "memory.h"
 
+extern char *calloc();
+
 # define ObjectTableMax 5000
 # define MemoryBlockSize 1000
 
@@ -81,8 +83,7 @@ sysError(s1, s2)
 char *s1, *s2;
 {	int i;
 	fprintf(stderr,"%s\n%s\n", s1, s2);
-	i = 0;
-	i = 32 / i;
+	abort();
 }
 
 /*
