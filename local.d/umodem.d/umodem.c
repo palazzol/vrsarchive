@@ -190,7 +190,13 @@ int ARPA, RECVFLAG, SENDFLAG, FTP1, PMSG, DELFLAG, LOGFLAG, MUNGMODE;
 int STATDISP, BIT7, BITMASK;
 int delay;
 
-alarmfunc();
+/* function for alarm clock timeouts */
+SIG_T
+alarmfunc(dummy)
+{
+        return;  /* this is basically a dummy function to force error */
+                 /* status return on the "read" call in "readbyte"    */
+}
 
 main(argc, argv)
 int argc;
@@ -1083,13 +1089,6 @@ char data;
         dataout = (data&BITMASK);  /* mask for 7 or 8 bits */
         write(1, &dataout, 1);  /* write the byte */
         return;
-}
-
-/* function for alarm clock timeouts */
-alarmfunc()
-{
-        return;  /* this is basically a dummy function to force error */
-                 /* status return on the "read" call in "readbyte"    */
 }
 
 /* print data on TTY setting */

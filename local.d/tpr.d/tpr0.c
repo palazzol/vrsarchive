@@ -97,12 +97,10 @@ main(argc,argv)
 	short argc;
 	char **argv;{
 	FILE *file;
-	extern char _sobuf[];
 	
 	progname = *argv;
 	for(argc--, argv++; argc > 0 && **argv == '-' && (*argv)[1] != '\0'; argc--, argv++)
 		setoptions(*argv);
-	setbuf(stdout,_sobuf);
 	if(argc == 0)
 		tpr(stdin,"stdin");
 	else

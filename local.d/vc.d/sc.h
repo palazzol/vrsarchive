@@ -120,7 +120,7 @@ struct enode {
 #define is_leftflush 0010
 #define is_deleted   0020
 
-#define ctl(c) ('c'&037)
+#define ctl(c) (c&037)
 
 extern struct ent *tbl[MAXROWS][MAXCOLS];
 

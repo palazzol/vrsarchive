@@ -13,10 +13,8 @@
 #endif
 #ifndef DEBUG
 #include <signal.h>
-extern int int_handler();
-extern int quit_handler();
-extern int hup_handler();
 #endif
+
 
 int lf_sw;		/* nonzero: make up a LF following an entered CR*/
 struct termio tty_orig;	/* original tty flags				*/
@@ -24,6 +22,46 @@ struct termio tty_new;	/* new tty flags				*/
 struct termio tty_noint;/* new tty flags, no intr character		*/
 int inp_noterm;		/* nonzero if standard input is not a terminal	*/
 int out_noterm;		/* nonzero if standard output is not a terminal	*/
+int in_read = 0;	/* flag for "read busy" (used by interrupt handler) */
+int flusho = 0;
+
+#ifndef DEBUG
+SIG_T
+int_handler(dummy)
+{	signal(SIGINT, int_handler);	/* prepare for another */
+	if (exitflag <= 0) {		/* if executing commands */
+		if (et_val & ET_CTRLC)
+			et_val &= ~ET_CTRLC;/* if "trap ^C", clear it, ignore */
+		else
+			exitflag = -2;	/* else set flag to stop execution */
+	}
+	if (in_read) {			/* if interrupt happened in "getchar" */
+		in_read = 0;		/* clear "read" switch */
+		qio_char(CTL ('C'));	/* send a ^C to input stream */
+	}
+}
+
+/* routine to handle "hangup" signal */
+SIG_T
+hup_handler(dummy)
+{	signal(SIGHUP, hup_handler);	/* prepare for another */
+	if (!exitflag)
+		exitflag = -3;	/* if executing, set flag to terminate */
+	else {
+		panic();	/* dump buffer and close output files */
+		exit(1);
+	}
+}
+
+/* routine to handle ^O signal */
+SIG_T
+quit_handler(dummy)
+{	signal(SIGQUIT, quit_handler);	/* prepare for another */
+	ioctl(fileno(stdout), TCFLSH, (char *)0);
+	crlf();
+	flusho = !flusho;
+}
+#endif
 
 /*
  *	Set tty (stdin) mode.  TECO mode is CBREAK, no ECHO, sep CR & LF
@@ -45,7 +83,7 @@ int arg;
 		ttybuf = tty_new = tty_orig;		/* make a copy of tty control structure */
 		tty_new.c_lflag &= ~ECHO & ~ICANON;	/* Set up teco modes */
 		tty_new.c_lflag |= NOFLSH;		/* Set up teco modes */
-		tty_new.c_cc[VQUIT] = CTL(O);		/* ^O is quit char */
+		tty_new.c_cc[VQUIT] = CTL('O');		/* ^O is quit char */
 		tty_new.c_cc[VEOL] = -1;		/* No "eol" char */
 		tty_noint = tty_new;
 		tty_noint.c_cc[VINTR] = -1;	/* disable interrupt char in this one */
@@ -68,8 +106,6 @@ int arg;
 }
 
 /* routines to handle keyboard input */
-
-int in_read = 0;	/* flag for "read busy" (used by interrupt handler) */
 
 /*
  *	Routine to get a character without waiting, used by ^T when ET & 64 is
@@ -116,23 +152,6 @@ char gettty()
 	return( (char) c & 0177);	/* else return the 7-bit char */
 }
 
-#ifndef DEBUG
-
-int_handler()
-{	signal(SIGINT, int_handler);	/* prepare for another */
-	if (exitflag <= 0) {		/* if executing commands */
-		if (et_val & ET_CTRLC)
-			et_val &= ~ET_CTRLC;/* if "trap ^C", clear it, ignore */
-		else
-			exitflag = -2;	/* else set flag to stop execution */
-	}
-	if (in_read) {			/* if interrupt happened in "getchar" */
-		in_read = 0;		/* clear "read" switch */
-		qio_char(CTL (C));	/* send a ^C to input stream */
-	}
-}
-#endif
-
 SIG_T (*old_func)();		/* storage for previous signal handler */
 
 /*
@@ -157,23 +176,6 @@ char c;
 {
 	ungetc(c, stdin);	/* send char to input stream */
 }
-
-#ifndef DEBUG
-
-/* routine to handle "hangup" signal */
-hup_handler()
-{	signal(SIGHUP, hup_handler);	/* prepare for another */
-	if (!exitflag)
-		exitflag = -3;	/* if executing, set flag to terminate */
-	else {
-		panic();	/* dump buffer and close output files */
-		exit(1);
-	}
-}
-#endif
-
-
-
 /* type a crlf */
 crlf()
 {
@@ -181,18 +183,6 @@ crlf()
 	type_char(LF);
 }
 
-
-int flusho = 0;
-
-#ifndef DEBUG
-/* routine to handle ^O signal */
-quit_handler()
-{	signal(SIGQUIT, quit_handler);	/* prepare for another */
-	ioctl(fileno(stdout), TCFLSH, (char *)0);
-	crlf();
-	flusho = !flusho;
-}
-#endif
 
 /* reset ^O status */
 reset_ctlo()
