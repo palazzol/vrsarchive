@@ -274,7 +274,7 @@ void inititem1()
   Objects[FOODID+12].basevalue = 4;
   strcpy(Objects[FOODID+13].truename,"nutty-smelling helix");
   strcpy(Objects[FOODID+13].cursestr,"pecan twirl");
-  strcpy(Objects[FOODID+13].objstr,"pecal twirl");
+  strcpy(Objects[FOODID+13].objstr,"pecan twirl");
   Objects[FOODID+13].usef = I_FOOD;
   Objects[FOODID+13].aux = 16;
   Objects[FOODID+13].level = 2;
