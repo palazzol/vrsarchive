@@ -1,5 +1,5 @@
 #ifndef lint
-static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/pat/pat.c,v 1.1 1987-02-07 19:05:31 vrs Exp $";
+static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/pat/pat.c,v 1.2 1987-02-07 20:28:58 vrs Exp $";
 #endif
 
 /*
