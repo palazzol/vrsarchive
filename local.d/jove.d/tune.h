@@ -18,18 +18,22 @@
    IBMPC is defined in the Makefile. All MAC defines should be
    numerical (i.e. #define MAC 1) so that defined() will work. */
 
-#if !(defined(MSDOS) || defined(MAC))
+#if !(defined(MSDOS) && !defined(MAC))
 #	define UNIX
 #endif
 
 
 #ifdef UNIX		
 			/* pick your version of Unix */
-#   define BSD4_2	/* Berkeley 4.2 BSD */
-#   define BSD4_3	/* Berkeley 4.3 BSD and 2.10 BSD */
+/* Moved to Makefile -- vrs */
+/*# define BSD4_2	/* Berkeley 4.2 BSD */
+/*# define BSD4_3	/* Berkeley 4.3 BSD and 2.10 BSD */
 /*# define SYSV		/* for (System III/System V) UNIX systems */
 /*# define SYSVR2	/* system 5, rel. 2 */
 			/* M_XENIX is defined by the Compiler */
+#ifdef SYS5
+#define SYSV
+#endif
 #endif /* UNIX */
 
 #ifdef SYSVR2
@@ -59,7 +63,7 @@
 #endif
 
 #ifdef UNIX
-#   if vax || sel || sun || pyr || mc68000 || tahoe || iAPX286 || GOULD_NP1 || u3b2
+#   if vax || sel || sun || pyr || mc68000 || tahoe || iAPX286 || GOULD_NP1 || u3b2 || i386
 #	define VMUNIX		/* Virtual Memory UNIX */
 #	define BUFSIZ	1024
 #	if iAPX286
@@ -129,7 +133,7 @@
 #endif
 
 #ifdef IPROCS
-#   ifdef BSD4_2
+#   ifdef SIGIO
 #	define INPUT_SIG	SIGIO
 #   else
 #	define PIPEPROCS		/* do it with pipes */
