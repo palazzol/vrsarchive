@@ -7,9 +7,9 @@ GAMLIB	= $(GAMDIR)/lib
 USRMAN	= $(DESTDIR)/usr/man
 MANDIR	= $(USRMAN)/man6
 FDEFS	= -DLIBDIR=\"$(GAMLIB)\" -DOBJECTFILE=\"$(GAMLIB)/objects.war\"
-CFLAGS	= $(FDEFS) -O -Ml -I /usr/local/berkeley/include -F 3000
-DPYLIB	= /usr/local/dpy/lib/Llibdpy.a
-LIBS	= $(DPYLIB) /usr/local/berkeley/lib/Llibberkeley.a -ltermlib -lx
+CFLAGS	= $(FDEFS) -O -Ml -I ../berkeley.d/h -F 3000
+DPYLIB	= ../dpy.d/Llibdpy.a
+LIBS	= $(DPYLIB) ../berkeley.d/Llibberkeley.a -ltermlib -lx
 
 CFILES	= main.c talk.c cmd.c view.c init.c scan.c
 OFILES	= main.o talk.o cmd.o view.o init.o scan.o
