@@ -1,9 +1,14 @@
+#ifndef SYS5
 #include <nlist.h>
+#endif
 #include <stdio.h>
 
 loadav(avenrun)         /* Function storing 1,5,15 minute load averages in */
 double *avenrun;        /* avenrun; should be declared double avenrun[3];  */
 {                       /* Returns -1 if error, 0 otherwise.               */
+#ifdef SYS5
+    *avenrun = 0;
+#else
     static struct nlist nl[] = {
 	{"_avenrun"},
 	{0},
@@ -34,6 +39,7 @@ double *avenrun;        /* avenrun; should be declared double avenrun[3];  */
 	syserror("Can't read from /dev/kmem.");
 	return(-1);    /* sizeof avenrun is 24. */
     }
+#endif
     return(0);
 }
 
