@@ -1,13 +1,13 @@
-EXDIR=/a/rgb/bin
-MANDIR=/usr/man/man1
-
+EXDIR	= /usr/local
+MANDIR	= /usr/man/man1
 # Use me for system V.
-#CFLAGS= -O -DSYSV
-#LIB=-lcurses
+#KEYS	= -DKEY_LEFT="'h'" -DKEY_RIGHT="'l'" -DKEY_UP="'k'" -DKEY_DOWN="'j'"
+#CFLAGS	= -O -DSYSV $(KEYS)
+#LIB	= -lcurses
 
 #Use me for BSD 4.2
-CFLAGS= -O -DBSD42
-LIB=-lcurses -ltermcap
+CFLAGS	= -O -DBSD42 -i
+LIB	= -lcurses -ltermcap
 
 vc:	sc.o lex.o gram.o interp.o cmds.o
 	cc ${CFLAGS} sc.o lex.o gram.o interp.o cmds.o ${LIB} -o vc
@@ -55,7 +55,7 @@ install: $(EXDIR)/vc
 inst-man: $(MANDIR)/vc.1
 
 $(EXDIR)/vc: vc
-	mv $(EXDIR)/vc $(EXDIR)/vc.old
+	-mv $(EXDIR)/vc $(EXDIR)/vc.old
 	cp vc $(EXDIR)
 
 $(MANDIR)/vc.1: vc.1
