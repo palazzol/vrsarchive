@@ -21,8 +21,8 @@
 #TMPDIR = /tmp
 #LIBDIR = /usr/local/lib/jove
 #BINDIR = /usr/local
-#MANDIR = /usr/man/manl
-#MANEXT = l
+MANDIR = $(MAN1)
+MANEXT = 1
 #SHELL = /bin/csh
 #all:	sdate xjove$(EXE) recover$(EXE) teachjove$(EXE) portsrv$(EXE) macvert$(EXE) edate
 # for SCO Xenix, set
@@ -33,9 +33,9 @@ ALL		= sdate xjove$(EXE) recover$(EXE) teachjove$(EXE) portsrv$(EXE) macvert$(EX
 include $(HOME)/CONFIG
 
 # These should all just be right if the above ones are.
-JOVE = $(DESTDIR)$(BINDIR)/jove
+JOVE = $(DESTDIR)$(BINDIR)/jove$(EXE)
 TEACHJOVE = $(DESTDIR)$(BINDIR)/teachjove
-RECOVER = $(DESTDIR)$(LIBDIR)/recover
+RECOVER = $(DESTDIR)$(LIBDIR)/recover$(EXE)
 PORTSRV = $(DESTDIR)$(LIBDIR)/portsrv$(EXE)
 JOVERC = $(DESTDIR)$(LIBDIR)/.joverc
 CMDS.DOC = $(DESTDIR)$(LIBDIR)/cmds.doc
@@ -174,8 +174,6 @@ iproc.o: iproc-ptys.c iproc-pipes.c iproc.c
 macvert$(EXE):	macvert.c
 	$(CC) $(CFLAGS) -o $@ macvert.c
 
-# install doesn't work for Xenix (no install program)
-
 install: $(DESTDIR)$(LIBDIR) $(TEACH-JOVE) $(CMDS.DOC) $(JOVERC) \
 	 $(PORTSRV) $(RECOVER) $(JOVE) $(TEACHJOVE) $(JOVEM) \
 	 $(RECOVERM) $(TEACHJOVEM)
@@ -184,40 +182,49 @@ install: $(DESTDIR)$(LIBDIR) $(TEACH-JOVE) $(CMDS.DOC) $(JOVERC) \
 #	-mkdir $(DESTDIR)$(LIBDIR)
 
 $(TEACH-JOVE): doc/teach-jove
-	install -c -m 644 doc/teach-jove $(TEACH-JOVE)
+	cp doc/teach-jove $(TEACH-JOVE)
+	chmod 644 $(TEACH-JOVE)
 
 doc/cmds.doc:	doc/cmds.doc.nr doc/jove.4 doc/jove.5
-	nroff doc/cmds.doc.nr doc/jove.4 doc/jove.5 > doc/cmds.doc
+	$(NROFF) doc/cmds.doc.nr doc/jove.4 doc/jove.5 > doc/cmds.doc
 
 $(CMDS.DOC): doc/cmds.doc
-	install -c -m 644 doc/cmds.doc $(CMDS.DOC)
+	cp doc/cmds.doc $(CMDS.DOC)
+	chmod 644 $(CMDS.DOC)
 
 $(JOVERC): doc/system.rc
-	install -c -m 644 doc/system.rc $(JOVERC)
+	cp doc/system.rc $(JOVERC)
+	chmod 644 $(JOVERC)
 
 $(PORTSRV): portsrv$(EXE)
-	install -c -s -m 755 portsrv$(EXE) $(PORTSRV)
+	cp portsrv$(EXE) $(PORTSRV)
+	chmod 755 $(PORTSRV)
 
 $(RECOVER): recover$(EXE)
-	install -c -s -m 755 recover$(EXE) $(RECOVER)
+	cp recover$(EXE) $(RECOVER)
+	chmod 755 $(RECOVER)
 
 $(JOVE): xjove$(EXE)
-	install -c -m 755 xjove$(EXE) $(JOVE)
+	cp xjove$(EXE) $(JOVE)
+	chmod 755 $(JOVE)
 
 $(TEACHJOVE): teachjove$(EXE)
-	install -c -s -m 755 teachjove$(EXE) $(TEACHJOVE)
+	cp teachjove$(EXE) $(TEACHJOVE)
+	chmod 755 $(TEACHJOVE)
 
 $(JOVEM): doc/jove.nr
 	@sed -e 's;TMPDIR;$(TMPDIR);' \
 	     -e 's;LIBDIR;$(LIBDIR);' \
 	     -e 's;SHELL;$(SHELL);' doc/jove.nr > /tmp/jove.nr
-	install -m 644 /tmp/jove.nr $(JOVEM)
+	cp /tmp/jove.nr $(JOVEM)
+	chmod 644 $(JOVEM)
 
 $(TEACHJOVEM): doc/teachjove.nr
 	@sed -e 's;TMPDIR;$(TMPDIR);' \
 	     -e 's;LIBDIR;$(LIBDIR);' \
 	     -e 's;SHELL;$(SHELL);' doc/teachjove.nr > /tmp/teachjove.nr
-	install -m 644 /tmp/teachjove.nr $(TEACHJOVEM)
+	cp /tmp/teachjove.nr $(TEACHJOVEM)
+	chmod 644 $(TEACHJOVEM)
 
 echo:
 	@echo $(C-FILES) $(HEADERS)
