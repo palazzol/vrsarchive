@@ -18,7 +18,7 @@ cptc.c:	ptc.p boot
 	./boot$(EXE) < ptc.p > tmp.c
 	mv tmp.c cptc.c
 
-ptc:	cptc.o
+ptc$(EXE):	cptc.o
 	$(CC) -O -o $@ cptc.o
 #
 #	Compare reults from Pascal and C versions
