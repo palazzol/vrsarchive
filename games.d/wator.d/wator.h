@@ -34,9 +34,9 @@ struct	item *free_list;
 
 int	num_fish;			/* number fish this generation */
 int	num_shark;			/* number sharks this generation */
-int	f_breed;			/* age at which fish breed */
-int	s_breed;			/* age at which sharks breed */
-int	starve;				/* how often must sharks eat */
+unsigned	f_breed;			/* age at which fish breed */
+unsigned	s_breed;			/* age at which sharks breed */
+unsigned	starve;				/* how often must sharks eat */
 int	generation;			/* current generation */
 int	lines;				/* # lines on display */
 int	wide;				/* # columns on display */
