@@ -1,0 +1,93 @@
+Sorry for more or less repeating myself, but several arpa-nauts pointed
+out the fact that net.sources goes where net.lang.st80 does not - 
+specifically, net.lang.st80 does not get to arpa-land.
+
+So, here is the entire text of the announcement made in net.lang.st80.
+(and, buy the way, yes the distibution includes all sources).
+
+     An interpreter for a  Smalltalk-like  language  is  now
+available from the University of Arizona.  The system, known
+as ``Little Smalltalk'', is written entirely in C, and  does
+not  require  any special hardware beyond conventional ascii
+terminals.  Unlike Smalltalk-80, Little Smalltalk is  not  a
+complete  programming  environment,  but sits on top of Unix
+and uses the Unix file  system  and  Unix  editors.   It  is
+intended  to provide an introduction to some of the concepts
+of Smalltalk (such as object oriented programming and inher-
+itance)  for  individuals (particularly students) who do not
+have  access  to  the  more  modern  hardware  required  for
+Smalltalk-80.
+
+     The language recognized by the Little Smalltalk  system
+is  similar,  although  not  identical,  to the Smalltalk-80
+language described in the book by Goldberg and Robson.   The
+elimination  of the bit-mapped display and the mouse permit-
+ted the removal of  much  of  the  graphics  kernel.   Other
+changes  were  made in the interest of reducing size or sim-
+plifying the implementation.  Among the most notable differ-
+ences are:
+
+*    No mice - no browser,  none  of  the  nice  environment
+     described in the orange book
+
+*    Fewer classes, many of the classes  in  the  blue  book
+     have  been  eliminated for space or implementation rea-
+     sons.
+
+*    No class methods - all classes respond to the same  set
+     of messages
+
+*    Instance variables have scope restricted to  the  class
+     in which they are defined.
+
+*    No indexed instance variables.
+
+*    No pool variables (instead, there is  a  single  global
+     dictionary the user can access).
+
+*    Cascades have been redefined to  make  them  easier  to
+     understand and more like expressions.
+
+*    Internal representation is totally different from  that
+     of the blue book.
+
+     All these differences, and much more, are explained  in
+detail  in the documentation distributed along with the dis-
+tribution tape.
+
+     Currently, the system has been ported to the  following
+systems:
+
+*    VAX 780 / Berkeley 4.2
+
+*    PDP 11/70 and 11/44 (using separate I/D)
+
+*    Ridge / ROS 3.0
+
+*    DecPro 350 (using code mapping feature)
+
+     As evidenced by the implementations on  the  11/70  and
+the  DecPro, size requirements for the system are not large,
+although it would probably not fit on  a  pure  64K  address
+space.
+
+     The system is totally independent of the Xerox  virtual
+image, and in fact has been produced using only the descrip-
+tion provided by the blue book.
+
+     The little Smalltalk system can be obtained by  sending
+a  check  for  $15  (US)  payable  to  ``The  University  of
+Arizona'', to the following address:
+
+        Timothy A. Budd
+        Smalltalk Distribution
+        Department of Computer Science
+        The University of Arizona
+        Tucson, Arizona
+        85721
+
+
+     Please specify  along  with  your  request  your  name,
+address,  electronic  mail address, the type of computer you
+will be using and its operating system.  Source  is  distri-
+buted in 9-track tar format, preferably 1600 bpi.
