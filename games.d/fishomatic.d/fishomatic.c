@@ -39,7 +39,7 @@ char *	argv[];
 		case 0:	/* child */
 			if (close(0) == 0 && close(1) == 0 &&
 				dup(itoufids[0]) == 0 && dup(utoifids[1]) == 1)
-					execl("/usr/games/fish", "fish", 0);
+					execl(FISH, "fish", (char *)0);
 		case -1:
 			return 2;
 	}
