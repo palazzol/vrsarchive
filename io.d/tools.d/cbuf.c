@@ -48,7 +48,7 @@ struct	nlist nl[] = {
 	{ "serial_tty",	0L, 0, 0, 0, 0 },
 #define	X_ISERIAL	16	/* serial 					*/
 	{ "asy_tty",	0L, 0, 0, 0, 0 },
-#define	X_IASY		17	/* asy tty; # of tty = 3	*/
+#define	X_IASY		17	/* asy tty					*/
 #ifdef later
 	{ "n_i3xxcp",	0L, 0, 0, 0, 0 },
 #define	X_N3XXCP	18	# of i3xxcp 				
@@ -70,6 +70,7 @@ struct tty *tty8251, *tty546, *tty354, *ttyatcs, *ttyspt;
 
 	/* # of tty for each board */
 int	portkd, portserial, port8251, port546, port354, portatcs, portspt;
+#define portasy		2	/* asy has two ports				*/
 
 int	kmem;				/* Kernel memory					*/
 long	lseek();
@@ -216,7 +217,7 @@ char *argv[];
 		ttykd = (struct tty *)malloc(portkd*sizeof(*ttykd));
 	}
 	if (nl[X_IASY].n_sclass != 0) {
-		ttyasy = (struct tty *)malloc(3*sizeof(*ttyasy));
+		ttyasy = (struct tty *)malloc(2*sizeof(*ttyasy));
 	}
 	if (nl[X_NSERIAL].n_sclass != 0)  {
 		(void) lseek(kmem, nl[X_NSERIAL].n_value, 0);
@@ -232,7 +233,7 @@ char *argv[];
 	snapshot(nl[X_CFREELIST].n_value, sizeof(cfreehead), (char *)&cfreehead);
 	snapshot(cfree, sizeof(*cpool)*cfreecnt, (char *)cpool);
 	snapshot(nl[X_IKD].n_value, sizeof(*ttykd)*portkd, (char *)ttykd);
-	snapshot(nl[X_IASY].n_value, sizeof(*ttyasy)*3, (char *)ttyasy);
+	snapshot(nl[X_IASY].n_value, sizeof(*ttyasy)*portasy, (char *)ttyasy);
 	snapshot(nl[X_ISERIAL].n_value, sizeof(*ttyserial)*portserial, (char *)ttyserial);
 	snapshot(nl[X_I8251].n_value, sizeof(*tty8251)*port8251, (char *)tty8251);
 	snapshot(nl[X_I546].n_value, sizeof(*tty546)*port546, (char *)tty546);
@@ -245,7 +246,7 @@ char *argv[];
 	snapshot(nl[X_CFREELIST].n_value, sizeof(cfreehead), (char *)&cfreehead);
 	snapshot(cfree, sizeof(*cpool)*cfreecnt, (char *)cpool);
 	snapshot(nl[X_IKD].n_value, sizeof(*ttykd)*portkd, (char *)ttykd);
-	snapshot(nl[X_IASY].n_value, sizeof(*ttyasy)*3, (char *)ttyasy);
+	snapshot(nl[X_IASY].n_value, sizeof(*ttyasy)*portasy, (char *)ttyasy);
 	snapshot(nl[X_ISERIAL].n_value, sizeof(*ttyserial)*portserial, (char *)ttyserial);
 	snapshot(nl[X_I8251].n_value, sizeof(*tty8251)*port8251, (char *)tty8251);
 	snapshot(nl[X_I546].n_value, sizeof(*tty546)*port546, (char *)tty546);
@@ -262,7 +263,7 @@ char *argv[];
 	}
 	doports("KD", ttykd, portkd);
 	doports("serial", ttyserial, portserial);
-	doports("asy", ttyasy, 3);
+	doports("asy", ttyasy, portasy);
 	doports("8251", tty8251, port8251);
 	doports("546", tty546, port546);
 	doports("354", tty354, port354);
