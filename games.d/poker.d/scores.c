@@ -21,7 +21,7 @@
 # 	include		<sys/file.h>
 # endif
 
-# define	SCORE_FILE	"/usr/games/lib/pokerscores"
+# define	SCORE_FILE	GAMLIB/pokerscores"
 # define	TRUE		1
 # define	FALSE		0
 
