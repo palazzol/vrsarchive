@@ -12,7 +12,7 @@
 #include "adldef.h"
 #include "adlrun.h"
 #include "vstring.h"
-
+extern char *tgoto();
 
 #if HPTERM
 static char
