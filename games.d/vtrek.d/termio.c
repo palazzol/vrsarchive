@@ -6,9 +6,18 @@
 /* DDT.  They will be a 0103 and 0107 if this file is loaded first. */
 char cm[4] = "\033=";		/* cursor movement string */
 char cl[4] = "\032";		/* clear screen string */
-#else /* UNIX */
+#else
+#ifdef SYS5
+#include <sys/types.h>
+#include <termio.h>
+#ifndef TCGETA
+#include <sys/ioctl.h>
+#endif
+struct termio savetty;
+#else
 #include <sgtty.h>
-static int saveflags;
+struct sgttyb savetty;
+#endif
 static char bp[1024], area[1024];
 static char *cl, *cm;
 
@@ -24,7 +33,11 @@ extern short ospeed;
 terminit()
 {
 #ifdef UNIX
+#ifdef SYS5
+	struct termio tty;
+#else
 	struct sgttyb tty;
+#endif
 	char *p, *getenv(), *tgetstr();
 	if ((p = getenv("TERM")) == NULL) {
 	    fprintf(stderr, "TERM not set\n");
@@ -39,12 +52,23 @@ terminit()
 	cm = tgetstr("cm", &p);
 	UP = tgetstr("up", &p);
 	BC = tgetstr("bc", &p);
+#ifdef SYS5
+	ioctl(0, TCGETA, &tty);
+	ospeed = tty.c_cflag & CBAUD;	/* This is required to get padding */
+	savetty = tty;
+	tty.c_iflag &= ~(ICRNL);
+	tty.c_lflag &= ~(ICANON|ECHO);
+	tty.c_cc[VMIN] = 1;
+	tty.c_cc[VTIME] = 0;
+	ioctl(0, TCSETAW, &tty);
+#else
 	gtty(0, &tty);
-	ospeed = tty.sg_ospeed;	/* THIS IS REQUIRED TO GET PADDING */
-	saveflags = tty.sg_flags;
+	ospeed = tty.sg_ospeed;		/* This is required to get padding */
+	savetty = tty;
 	tty.sg_flags |= RAW;
 	tty.sg_flags &= ~(ECHO | XTABS);
 	stty(0, &tty);
+#endif
 #endif
 }
 
@@ -52,10 +76,11 @@ terminit()
 termreset()
 {
 #ifdef UNIX
-	struct sgttyb tty;
-	gtty(0, &tty);
-	tty.sg_flags = saveflags;
-	stty(0, &tty);
+#ifdef SYS5
+	ioctl(0, TCSETAW, &savetty);
+#else
+	stty(0, &savetty);
+#endif
 #endif
 }
 
@@ -67,7 +92,7 @@ getch()
 	while ((ch = CPM(6, 0xff)) == 0)
 	    ;
 	return ch;
-#else /* UNIX */
+#else
 	return getchar() & 0177;
 #endif
 }
@@ -78,7 +103,7 @@ int ch;
 {
 #ifdef AZTEC
 	CPM(6, ch);
-#else /* UNIX */
+#else
 	putchar(ch);
 #endif
 }
@@ -97,7 +122,7 @@ int ypos,xpos;
 {
 #ifdef AZTEC
 	printf("%s%c%c", cm, ypos+31, xpos+31);
-#else /* UNIX */
+#else
 	tputs(tgoto(cm, xpos - 1, ypos - 1),1,putch);
 #endif
 }
@@ -107,7 +132,7 @@ cls()
 {
 #ifdef AZTEC
 	fputs(cl, stdout);
-#else /* UNIX */
+#else
 	tputs(cl,24,putch);
 #endif
 }
