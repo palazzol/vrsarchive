@@ -1,0 +1,4 @@
+: /bin/sh
+sort -u primo.h -o primo.h
+sort -u crack.h -o crack.h
+comm -13 primo.h crack.h | sort -o crack.h
