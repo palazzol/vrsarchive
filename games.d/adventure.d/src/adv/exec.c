@@ -135,5 +135,5 @@ int prime ()
 int rnd (n)
   int n ;
 {
-	return ((random())%n) ;
+	return ((rand())%n) ;
 }
