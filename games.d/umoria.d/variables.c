@@ -37,13 +37,13 @@ int key_bindings;
 
 /* Operating hours for Moria				-RAK-	*/
 /*       X = Open; . = Closed                                   */
-char  *days[7] = { "SUN:XXXXXXXXXXXXXXXXXXXXXXXX",
-		   "MON:XXXXXXXX.........XXXXXXX",
-		   "TUE:XXXXXXXX.........XXXXXXX",
-		   "WED:XXXXXXXX.........XXXXXXX",
-		   "THU:XXXXXXXX.........XXXXXXX",
-		   "FRI:XXXXXXXX.........XXXXXXX",
-		   "SAT:XXXXXXXXXXXXXXXXXXXXXXXX" };
+char  days[7][80] = { "SUN:XXXXXXXXXXXXXXXXXXXXXXXX",
+		      "MON:XXXXXXXX.........XXXXXXX",
+		      "TUE:XXXXXXXX.........XXXXXXX",
+		      "WED:XXXXXXXX.........XXXXXXX",
+		      "THU:XXXXXXXX.........XXXXXXX",
+		      "FRI:XXXXXXXX.........XXXXXXX",
+		      "SAT:XXXXXXXXXXXXXXXXXXXXXXXX" };
 
 int closing_flag = 0;	         /* Used for closing   */
 
