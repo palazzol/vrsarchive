@@ -1,0 +1,21 @@
+			Sun Feb  8 03:52:58 PST 1987
+
+This is a general purpose utility to check for frequently used passwords.  The
+database of possible passwords is represented as a list of quoted strings in
+the file "crack.h".  The source for most of this was the netnews map, which
+provides a list of netnews sites.  I took this list, added some local site
+names, user's first names, and the odd word or two to make the current list.
+If you keep it to one password per line you can do things like sort, grep,
+etc. on it.
+
+The file crack.c is the source code for the password scan.  Note that there
+are two special cases: the user's login name and the name of the password
+file (system name if /etc/passwd is being scanned) are always tried.  This
+is to check for the all too common practices of setting the login name as
+a user password, or setting the machine name as an administrative password.
+
+The output should be self explanatory.  The input is a file, either /etc/passwd
+by default, or a file which should be named after the system from which it
+came.
+
+	Vince
