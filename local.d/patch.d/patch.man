@@ -1,6 +1,15 @@
-''' $Header: /home/Vince/cvs/local.d/patch.d/patch.man,v 1.4 1986-10-05 12:10:45 root Exp $
+''' $Header: /home/Vince/cvs/local.d/patch.d/patch.man,v 1.5 1986-10-05 12:11:14 root Exp $
 ''' 
 ''' $Log: not supported by cvs2svn $
+''' Revision 1.2.1.2  84/12/05  11:06:55  lwall
+''' Added -l switch, and noted bistability bug.
+''' 
+''' Revision 1.2.1.1  84/12/04  17:23:39  lwall
+''' Branch for sdcrdcf changes.
+''' 
+''' Revision 1.2  84/12/04  17:22:02  lwall
+''' Baseline version.
+''' 
 .de Sh
 .br
 .ne 5
@@ -175,6 +184,14 @@ forces
 .I patch
 to interpret the patch file as an ed script.
 .TP 5
+.B \-l
+causes the pattern matching to be done loosely, in case the tabs and
+spaces have been munged in you input file.
+Any sequence of whitespace in the pattern line will match any sequence
+in the input file.
+Normal characters must still match exactly.
+Each line of the context must still match a line in the input file.
+.TP 5
 .B \-n
 forces
 .I patch
@@ -251,3 +268,8 @@ worked, but not always.
 .SH BUGS
 Could be smarter about partial matches, excessively \&deviant offsets and
 swapped code, but that would take an extra pass.
+.PP
+If you apply a patch you've already applied,
+.I patch
+will think it is a reversed patch, and un-apply the patch.
+This could be construed as a feature.

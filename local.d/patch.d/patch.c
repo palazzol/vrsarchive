@@ -1,6 +1,6 @@
 /* patch - a program to apply diffs to original files
  *
- * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.4 1986-10-05 12:05:37 root Exp $
+ * $Header: /home/Vince/cvs/local.d/patch.d/patch.c,v 1.5 1986-10-05 12:06:52 root Exp $
  *
  * Copyright 1984, Larry Wall
  *
@@ -8,6 +8,9 @@
  * money off of it, or pretend that you wrote it.
  *
  * $Log: not supported by cvs2svn $
+ * Revision 1.2.1.3  84/12/05  11:18:43  lwall
+ * Added -l switch to do loose string comparison.
+ * 
  * Revision 1.2.1.2  84/12/04  09:47:13  lwall
  * Failed hunk count not reset on multiple patch file.
  * 
@@ -119,6 +122,7 @@ int debug = 0;
 #endif
 bool verbose = TRUE;
 bool reverse = FALSE;
+bool canonicalize = FALSE;
 
 #define CONTEXT_DIFF 1
 #define NORMAL_DIFF 2
@@ -131,6 +135,7 @@ char *revision = Nullch;		/* prerequisite revision, if any */
 
 LINENUM locate_hunk();
 bool patch_match();
+bool similar();
 char *malloc();
 char *savestr();
 char *strcpy();
@@ -347,6 +352,9 @@ get_some_switches()
 		break;
 	    case 'e':
 		diff_type = ED_DIFF;
+		break;
+	    case 'l':
+		canonicalize = TRUE;
 		break;
 	    case 'n':
 		diff_type = NORMAL_DIFF;
@@ -701,12 +709,45 @@ LINENUM offset;
     register LINENUM pat_lines = pch_ptrn_lines();
 
     for (pline = 1, iline=base+offset; pline <= pat_lines; pline++,iline++) {
-	if (strnNE(ifetch(iline,(offset >= 0)),
+	if (canonicalize) {
+	    if (!similar(ifetch(iline,(offset >= 0)),
+			 pfetch(pline),
+			 pch_line_len(pline) ))
+		return FALSE;
+	}
+	else if (strnNE(ifetch(iline,(offset >= 0)),
 		   pfetch(pline),
 		   pch_line_len(pline) ))
 	    return FALSE;
     }
     return TRUE;
+}
+
+/* match two lines with canonicalized white space */
+
+bool
+similar(a,b,len)
+register char *a, *b;
+register int len;
+{
+    while (len) {
+	if (isspace(*b)) {		/* whitespace (or \n) to match? */
+	    if (!isspace(*a))		/* no corresponding whitespace? */
+		return FALSE;
+	    while (len && isspace(*b) && *b != '\n')
+		b++,len--;		/* skip pattern whitespace */
+	    while (isspace(*a) && *a != '\n')
+		a++;			/* skip target whitespace */
+	    if (*a == '\n' || *b == '\n')
+		return (*a == *b);	/* should end in sync */
+	}
+	else if (*a++ != *b++)		/* match non-whitespace chars */
+	    return FALSE;
+	else
+	    len--;			/* probably not necessary */
+    }
+    return TRUE;			/* actually, this is not reached */
+					/* since there is always a \n */
 }
 
 /* input file with indexable lines abstract type */
