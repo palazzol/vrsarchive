@@ -115,10 +115,14 @@ C
 C						!VALID EXIT?
 C
 #ifdef PDP
-1400	call outstr(INLINE, INLNT)
+1400	call outstr(INBUF, INLNT)
 #else
 1400	WRITE(OUTCH,1410) (INBUF(J),J=1,INLNT)
+#ifdef NOCC
+1410	FORMAT(78A1)
+#else NOCC
 1410	FORMAT(1X,78A1)
+#endif NOCC
 #endif PDP
 	TELFLG=.TRUE.
 C						!INDICATE OUTPUT.

@@ -18,21 +18,27 @@ C
 #ifdef PDP
 5	if (WHO .eq. 1) call prompt
 C	read a line of input
-90	call rdlin(BUFFER,LENGTH,WHO)
+90	call rdlin(BUFFER,LENGTH)
 #else
 5	GO TO (90,10),WHO+1
 C						!SEE WHO TO PROMPT FOR.
 10	WRITE(OUTCH,50)
 C						!PROMPT FOR GAME.
+#ifdef NOCC
+50	FORMAT('>',$)
+#else NOCC
 50	FORMAT(' >',$)
+#endif NOCC
 
-90	READ(INPCH,100) BUFFER
+90	READ(INPCH,100, END=210) BUFFER
 100	FORMAT(78A1)
 
 	DO 200 LENGTH=78,1,-1
 	  IF(BUFFER(LENGTH).NE.' ') GO TO 250
 200	CONTINUE
 	GO TO 5
+C						!END OF FILE
+210	STOP
 C						!TRY AGAIN.
 
 C
@@ -109,7 +115,11 @@ C						!CLEAR ORPHANS.
 #ifdef debug
 	if(dflag) write(0,*) "parse good"
 	IF(DFLAG) PRINT 10,PARSE,PRSA,PRSO,PRSI
+#ifdef NOCC
+10	FORMAT('PARSE RESULTS- ',L7,3I7)
+#else NOCC
 10	FORMAT(' PARSE RESULTS- ',L7,3I7)
+#endif NOCC
 #endif
 	RETURN
 C
@@ -215,7 +225,11 @@ C						!ANY LAST WORD?
 	LEX=.TRUE.
 #ifdef debug
 	IF(DFLAG) PRINT 10,CP,OP,PRSCON,(OUTBUF(I),I=1,OP+1)
+#ifdef NOCC
+10	FORMAT('LEX RESULTS- ',3I7/1X,10O7)
+#else NOCC
 10	FORMAT(' LEX RESULTS- ',3I7/1X,10O7)
+#endif NOCC
 #endif debug
 	RETURN
 C
@@ -224,7 +238,11 @@ C
 4000	J1=ichar(J)-ichar(DLIMIT(I+2))
 #ifdef debug
 	IF(DFLAG) PRINT 20,J,J1,CP
+#ifdef NOCC
+20	FORMAT('LEX- CHAR= ',3I7)
+#else NOCC
 20	FORMAT(' LEX- CHAR= ',3I7)
+#endif NOCC
 #endif debug
 	IF(CP.GE.6) GO TO 200
 C						!IGNORE IF TOO MANY CHAR.

@@ -133,3 +133,41 @@ invaluable help in this area.
 	Moderator, comp.sources.games
 	Tektronix, Inc.
 	games-request@tekred.TEK.COM
+-----
+The patches do the following:
+1. Define a new flag: NOCC.  If compiled with -DNOCC formats
+   without carriage control characters are use; also the $
+   format is not used.
+2. All doors have the doorbit.
+3. Ending with ^D is more graceful now.
+4. Correcting some bugs: DEBUG in stead of DFLAG in one file.
+5. A number of bugs in the data 3RHOU,2RRS instead of 3RHOU,1RS
+   (original only) and a PILE is also the pile of leaves.
+6. Fix some minor bugs/typos affecting the PDP version
+7. Change P1 & P2 in sverbs.F to PP1 & PP2 to avoid conflict with
+   parser.h global variables.
+8. Makes VERBOSE work all of the time.
+9. Puts PATCHLEVEL to 3 and edit level to 'C'.
+10. Allows compilation with 4.3BSD on the tahoe.
+
+ad 1.
+   Output is nicer, especially for commands like score etc.
+ad 2.
+   Enter game and try 'knock on door'.
+ad 3.
+   Just try.
+ad 7.
+   Some linkers complain about re-defining the variables.
+ad 8.
+   Previously when in VERBOSE mode you only get verbose replys
+   about 20% of the time.
+ad 10.
+   4.3BSD f77 on tahoe does not like data initialisations with
+   octal constants (they are compiled, but wrong).
+
+The lot goes in one sharchive; it contains 4 files:
+	README.pch3	this file
+	Patches03	does 1 to 9; suitable for patch
+	Fix.tahoe	to be used before compilation on tahoe
+	Unfix.tahoe	undoes the work of Fix.tahoe
+	no.octals	auxiliary file for Fix.tahoe

@@ -16,7 +16,7 @@ C
 	LOGICAL FINDXT,QHERE,F
 	INTEGER JOKES(25)
 	CHARACTER ANSSTR(78)
-	CHARACTER P1(6),P2(6),CH(6)
+	CHARACTER PP1(6),PP2(6),CH(6)
 	INTEGER ANSWER(28)
 #include "parser.h"
 #include "gamestate.h"
@@ -178,7 +178,11 @@ C
 5000	call prvers(vmaj,vmin,vedit)
 #else
 5000	WRITE(OUTCH,5010) VMAJ,VMIN,VEDIT
+#ifdef NOCC
+5010	FORMAT('V',I1,'.',I2,A1)
+#else NOCC
 5010	FORMAT(' V',I1,'.',I2,A1)
+#endif NOCC
 #endif PDP
 	TELFLG=.TRUE.
 	RETURN
@@ -427,6 +431,27 @@ C						!GET PLAY TIME.
 	I=K/60
 	J=MOD(K,60)
 C
+#ifdef NOCC
+	IF(I.EQ.0.AND.J.EQ.1) WRITE(OUTCH,21010) J
+	IF(I.EQ.0.AND.J.NE.1) WRITE(OUTCH,21011) J
+	IF(I.EQ.1.AND.J.EQ.1) WRITE(OUTCH,21012) I,J
+	IF(I.EQ.1.AND.J.NE.1) WRITE(OUTCH,21013) I,J
+	IF(I.GE.2.AND.J.EQ.1) WRITE(OUTCH,21014) I,J
+	IF(I.GE.2.AND.J.NE.1) WRITE(OUTCH,21015) I,J
+	TELFLG=.TRUE.
+	RETURN
+C
+21010	FORMAT('You have been playing Dungeon for ',I2,' minute.')
+21011	FORMAT('You have been playing Dungeon for ',I2,' minutes.')
+21012	FORMAT('You have been playing Dungeon for ',I3,' hour and ',
+&		I2,' minute.')
+21013	FORMAT('You have been playing Dungeon for ',I3,' hour and ',
+&		I2,' minutes.')
+21014	FORMAT('You have been playing Dungeon for ',I3,' hours and ',
+&		I2,' minute.')
+21015	FORMAT('You have been playing Dungeon for ',I3,' hours and ',
+&		I2,' minutes.')
+#else NOCC
 	WRITE(OUTCH,21010)
 	IF(I.NE.0) WRITE(OUTCH,21011) I
 	IF(I.GE.2) WRITE(OUTCH,21012)
@@ -442,6 +467,7 @@ C
 21013	FORMAT('+ and ',$)
 21014	FORMAT('+',I2,' minute.')
 21015	FORMAT('+',I2,' minutes.')
+#endif NOCC
 #endif PDP
 C
 C V91--	LEAP.  USUALLY A JOKE, WITH A CATCH.
@@ -526,7 +552,11 @@ C
 	if(J .ne. 0) call cured(I)
 #else
  	IF(J.NE.0) WRITE(OUTCH,25100) I
+#ifdef NOCC
+25100	FORMAT('You will be cured after ',I3,' moves.')
+#else NOCC
 25100	FORMAT(' You will be cured after ',I3,' moves.')
+#endif NOCC
 #endif PDP
 C
 	CALL RSPEAK(478+K)
@@ -540,8 +570,8 @@ C V95--	INCANT
 C
 26000	DO 26100 I=1,6
 C						!SET UP PARSE.
-	  P1(I)=' '
-	  P2(I)=' '
+	  PP1(I)=' '
+	  PP2(I)=' '
 26100	CONTINUE
 	WP=1
 C						!WORD POINTER.
@@ -557,23 +587,23 @@ C						!SPACE?
 	  IF(CP.NE.1) WP=WP+1
 	  CP=1
 	  GO TO 26200
-26150	  IF(WP.EQ.1) P1(CP)=INBUF(I)
+26150	  IF(WP.EQ.1) PP1(CP)=INBUF(I)
 C						!STUFF INTO HOLDER.
-	  IF(WP.EQ.2) P2(CP)=INBUF(I)
+	  IF(WP.EQ.2) PP2(CP)=INBUF(I)
 	  CP=MIN0(CP+1,6)
 26200	CONTINUE
 C
 26300	PRSCON=1
 C						!KILL REST OF LINE.
-	IF(P1(1).NE.' ') GO TO 26400
+	IF(PP1(1).NE.' ') GO TO 26400
 C						!ANY INPUT?
 	CALL RSPEAK(856)
 C						!NO, HO HUM.
 	RETURN
 C
-26400	CALL ENCRYP(P1,CH)
+26400	CALL ENCRYP(PP1,CH)
 C						!COMPUTE RESPONSE.
-	IF(P2(1).NE.' ') GO TO 26600
+	IF(PP2(1).NE.' ') GO TO 26600
 C						!TWO PHRASES?
 C
 	IF(SPELLF) GO TO 26550
@@ -583,10 +613,14 @@ C						!HE'S TRYING TO LEARN.
 C						!TELL HIM.
 	TELFLG=.TRUE.
 #ifdef PDP
-	call voice(P1,CH)
+	call voice(PP1,CH)
 #else
- 	WRITE(OUTCH,26510) P1,CH
+  	WRITE(OUTCH,26510) PP1,CH
+#ifdef NOCC
+26510	FORMAT('A hollow voice replies:  "',6A1,1X,6A1,'".')
+#else NOCC
 26510	FORMAT(' A hollow voice replies:  "',6A1,1X,6A1,'".')
+#endif NOCC
 #endif PDP
 C
 	RETURN
@@ -601,7 +635,7 @@ C						!HE'S NOT IN ENDGAME.
 C
 26600	IF(and(RFLAG(TSTRS),RSEEN).NE.0) GO TO 26800
 	DO 26700 I=1,6
-	  IF(P2(I).NE.CH(I)) GO TO 26575
+	  IF(PP2(I).NE.CH(I)) GO TO 26575
 C						!WRONG.
 26700	CONTINUE
 	SPELLF=.TRUE.

@@ -93,10 +93,17 @@ C						!ENDGAME?
 #ifdef PDP
 	call pscore(AS,MXSCOR,MOVES)
 #else
+#ifdef NOCC
+ 	IF(FLG.AND.MOVES.NE.1) WRITE(OUTCH,100) AS,MXSCOR,MOVES
+ 	IF(FLG.AND.MOVES.EQ.1) WRITE(OUTCH,120) AS,MXSCOR,MOVES
+ 	IF(.NOT.FLG.AND.MOVES.NE.1) WRITE(OUTCH,110) AS,MXSCOR,MOVES
+ 	IF(.NOT.FLG.AND.MOVES.EQ.1) WRITE(OUTCH,130) AS,MXSCOR,MOVES
+#else NOCC
  	IF(FLG) WRITE(OUTCH,100)
  	IF(.NOT.FLG) WRITE(OUTCH,110)
  	IF(MOVES.NE.1) WRITE(OUTCH,120) AS,MXSCOR,MOVES
  	IF(MOVES.EQ.1) WRITE(OUTCH,130) AS,MXSCOR,MOVES
+#endif NOCC
 #endif PDP
 C
 	DO 10 I=1,10
@@ -109,9 +116,14 @@ C
 60	continue
 	call pscore(EGSCOR,EGMXSC,MOVES)
 #else
+#ifdef NOCC
+60	IF(FLG) WRITE(OUTCH,140) EGSCOR,EGMXSC,MOVES
+ 	IF(.NOT.FLG) WRITE(OUTCH,150) EGSCOR,EGMXSC,MOVES
+#else NOCC
 60	IF(FLG) WRITE(OUTCH,140)
  	IF(.NOT.FLG) WRITE(OUTCH,150)
  	WRITE(OUTCH,120) EGSCOR,EGMXSC,MOVES
+#endif NOCC
 #endif PDP
 	DO 70 I=1,5
 	  IF((EGSCOR*20/EGMXSC).GE.ERANK(I)) GO TO 80
@@ -120,12 +132,27 @@ C
 	RETURN
 
 #ifndef PDP
+#ifdef NOCC
+100	FORMAT('Your score would be',I4,' [total of',I4,' points], in',
+&		I5,' moves.')
+110	FORMAT('Your score is',I4,' [total of',I4,' points], in',
+&		I5,' moves.')
+120	FORMAT('Your score would be',I4,' [total of',I4,' points], in',
+&		I5,' move.')
+130	FORMAT('Your score is',I4,' [total of',I4,' points], in',
+&		I5,' move.')
+140	FORMAT('Your score in the endgame would be',I4,' [total of',
+&		I4,' points], in',I5,' moves.')
+150	FORMAT('Your score in the endgame is',I4,' [total of',
+&		I4,' points], in',I5,' moves.')
+#else NOCC
 100	FORMAT(' Your score would be',$)
 110	FORMAT(' Your score is',$)
 120	FORMAT('+',I4,' [total of',I4,' points], in',I5,' moves.')
 130	FORMAT('+',I4,' [total of',I4,' points], in',I5,' move.')
 140	FORMAT(' Your score in the endgame would be',$)
 150	FORMAT(' Your score in the endgame is',$)
+#endif NOCC
 #endif PDP
 C
 	END

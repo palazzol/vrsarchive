@@ -25,7 +25,8 @@ FOPTS = -q # -g -Ddebug
 #FOPTS = -q -Nn650 -DSYSV # -Ddebug
 # f77 compiler flags for pdp (64K split I/D)
 #FOPTS = -q -I2 -L1 -i -DPDP # -Nn650 -Ddebug
-FFLAGS = -O $(FOPTS)
+# use -DNOCC if system does not react on carriage control (e.g. Unix)
+FFLAGS = -O -DNOCC $(FOPTS)
 
 # flags for the loader
 LDFLAGS = # -s -g -v

@@ -39,7 +39,7 @@ toknlp:
 		else if ((j >= 'A') && (j <= 'Z'))
 			j -= '@';
 		else if (((j >= '1') && (j <= '9')) || (j == '-'))
-			j -= 0x0c;	/* formfeed */
+			j -= 0x12;
 		else {
 			if (*vbflag)
 				rspeak_(&num601);

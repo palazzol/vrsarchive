@@ -36,7 +36,11 @@ C
 &		FORM='UNFORMATTED',ACCESS='DIRECT',recl=76,err=60)
 C
 	print 20
+#ifdef NOCC
 20	format('Sigh... '/)
+#else NOCC
+20	format(' Sigh... '/)
+#endif NOCC
 C
 C	get numbers and call speaking program
 C
@@ -54,6 +58,18 @@ C
 60	print 970
 	print 980
 	goto 99
+#ifdef NOCC
+960	FORMAT('I can''t open ',RTEXTFILE,'.')
+970	FORMAT('I can''t open ',TEXTFILE,'.')
+980	FORMAT('Suddenly a sinister, wraithlike figure appears before '
+&	'you,'/'seeming to float in the air.  In a low, sorrowful voice'
+&	' he says,'/'"Alas, the very nature of the world has changed, '
+&	'and the dungeon'/'cannot be found.  All must now pass away."'
+&	'  Raising his oaken staff'/'in farewell, he fades into the '
+&	'spreading darkness.  In his place'/'appears a tastefully '
+&	'lettered sign reading:'//23X,'INITIALIZATION FAILURE'//
+&	'The darkness becomes all encompassing, and your vision fails.')
+#else NOCC
 960	FORMAT(' I can''t open ',RTEXTFILE,'.')
 970	FORMAT(' I can''t open ',TEXTFILE,'.')
 980	FORMAT(' Suddenly a sinister, wraithlike figure appears before '
@@ -64,6 +80,7 @@ C
 &	'spreading darkness.  In his place'/' appears a tastefully '
 &	'lettered sign reading:'//23X,'INITIALIZATION FAILURE'//
 &	' The darkness becomes all encompassing, and your vision fails.')
+#endif NOCC
 99	stop
 	end
 C
@@ -116,7 +133,11 @@ C
 C
 C  600	WRITE(OUTCH,650) (B1(J:J),J=1,I)		
 600	PRINT 650, (B1(J:J),J=1,I)		
+#ifdef NOCC
+650	FORMAT(74A1)
+#else NOCC
 650	FORMAT(1X,74A1)
+#endif NOCC
 	X=X+1					
 	READ(UNIT=DBCH,REC=X) NEWREC,B1
 	IF(OLDREC.EQ.NEWREC) GO TO 100		

@@ -63,6 +63,18 @@ C
 	IF(PROTCT(X)) GO TO 10000
 C						!PROTECTION VIOLATION?
 	PRINT 10100
+#ifdef NOCC
+10100	FORMAT('There appears before you a threatening figure clad '
+&	'all over'/'in heavy black armor.  His legs seem like the '
+&	'massive trunk'/'of the oak tree.  His broad shoulders and '
+&	'helmeted head loom'/'high over your own puny frame, and '
+&	'you realize that his powerful'/'arms could easily crush the '
+&	'very life from your body.  There'/'hangs from his belt a '
+&	'veritable arsenal of deadly weapons:'/'sword, mace, ball '
+&	'and chain, dagger, lance, and trident.'/'He speaks with a '
+&	'commanding voice:'//20X,'"You shall not pass."'//'As '
+&	'he grabs you by the neck all grows dim about you.')
+#else NOCC
 10100	FORMAT(' There appears before you a threatening figure clad '
 &	'all over'/' in heavy black armor.  His legs seem like the '
 &	'massive trunk'/' of the oak tree.  His broad shoulders and '
@@ -73,6 +85,7 @@ C						!PROTECTION VIOLATION?
 &	'and chain, dagger, lance, and trident.'/' He speaks with a '
 &	'commanding voice:'//20X,'"You shall not pass."'//' As '
 &	'he grabs you by the neck all grows dim about you.')
+#endif NOCC
 	CALL EXIT
 #endif PDP
 C
@@ -184,8 +197,8 @@ C
 	call aryrd(220,OREAD)
 C
 	call intrd(R2LNT)
-	call aryrd(20,O2)
-	call aryrd(20,R2)
+	call aryrd(20,OROOM2)
+	call aryrd(20,RROOM2)
 C
 	call intrd(CLNT)
 	call aryrd(25,CTICK)
@@ -455,7 +468,11 @@ C						!GET VERSION.
 
 #ifdef debug
 	PRINT 150
+#ifdef NOCC
+150	FORMAT('RESTORING FROM "dindx.dat"')
+#else NOCC
 150	FORMAT(' RESTORING FROM "dindx.dat"')
+#endif NOCC
 #endif debug
 	READ(1,130) MXSCOR,STRBIT,EGMXSC
 	READ(1,130) RLNT,RDESC2,RDESC1,REXIT,RACTIO,RVAL,RFLAG
@@ -499,6 +516,16 @@ C
 #ifdef debug
 	PRINT 1050,RLNT,RMAX,XLNT,XMAX,OLNT,OMAX,MLNT,MMAX,
 &	  VLNT,VMAX,ALNT,AMAX,CLNT,CMAX,R2LNT,R2MAX
+#ifdef NOCC
+1050	FORMAT('USED:'/I5,' OF',I5,' ROOMS'/
+&	  I5,' OF',I5,' EXITS'/
+&	  I5,' OF',I5,' OBJECTS'/
+&	  I5,' OF',I5,' MESSAGES'/
+&	  I5,' OF',I5,' VILLAINS'/
+&	  I5,' OF',I5,' ADVENTURERS'/
+&	  I5,' OF',I5,' CLOCK EVENTS'/
+&	  I5,' OF',I5,' ROOM2 SLOTS')
+#else NOCC
 1050	FORMAT(' USED:'/1X,I5,' OF',I5,' ROOMS'/
 &	  1X,I5,' OF',I5,' EXITS'/
 &	  1X,I5,' OF',I5,' OBJECTS'/
@@ -507,10 +534,17 @@ C
 &	  1X,I5,' OF',I5,' ADVENTURERS'/
 &	  1X,I5,' OF',I5,' CLOCK EVENTS'/
 &	  1X,I5,' OF',I5,' ROOM2 SLOTS')
+#endif NOCC
 	PRINT 1150,MXSCOR,EGMXSC,RECNO,RDESC2,MBASE,STRBIT
+#ifdef NOCC
+1150	FORMAT('MAX SCORE=',I5/'EG SCORE=',I5/
+&	  'MAX RECNO=',I5/'RDESC2 BASE=',I5/
+&	  'MELEE START=',I5/'STAR MASK=',I7)
+#else NOCC
 1150	FORMAT(' MAX SCORE=',I5/' EG SCORE=',I5/
 &	  ' MAX RECNO=',I5/' RDESC2 BASE=',I5/
 &	  ' MELEE START=',I5/' STAR MASK=',I7)
+#endif NOCC
 	PAUSE 1
 #endif debug
 C
@@ -528,6 +562,20 @@ C
 1950	PRINT 960
 	PRINT 980
 	RETURN
+#ifdef NOCC
+910	FORMAT('I can''t open ',INDXFILE,'.')
+920	FORMAT('"dindx.dat" is version ',I1,'.',I1,A1,'.'/
+&		'I require version ',I1,'.',I1,A1,'.')
+960	FORMAT('I can''t open ',TEXTFILE,'.')
+980	FORMAT('Suddenly a sinister, wraithlike figure appears before '
+&	'you,'/'seeming to float in the air.  In a low, sorrowful voice'
+&	' he says,'/'"Alas, the very nature of the world has changed, '
+&	'and the dungeon'/'cannot be found.  All must now pass away."'
+&	'  Raising his oaken staff'/'in farewell, he fades into the '
+&	'spreading darkness.  In his place'/'appears a tastefully '
+&	'lettered sign reading:'//23X,'INITIALIZATION FAILURE'//
+&	'The darkness becomes all encompassing, and your vision fails.')
+#else NOCC
 910	FORMAT(' I can''t open ',INDXFILE,'.')
 920	FORMAT(' "dindx.dat" is version ',I1,'.',I1,A1,'.'/
 &		' I require version ',I1,'.',I1,A1,'.')
@@ -540,6 +588,7 @@ C
 &	'spreading darkness.  In his place'/' appears a tastefully '
 &	'lettered sign reading:'//23X,'INITIALIZATION FAILURE'//
 &	' The darkness becomes all encompassing, and your vision fails.')
+#endif NOCC
 C
 	END
 C PROTCT-- CHECK FOR USER VIOLATION

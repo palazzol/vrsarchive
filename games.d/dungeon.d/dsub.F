@@ -96,7 +96,11 @@ C						!BACKSCAN FOR BLANKS.
 500	CONTINUE
 C
 600	WRITE(OUTCH,650) (B1(J:J),J=1,I)
+#ifdef NOCC
+650	FORMAT(74A1)
+#else NOCC
 650	FORMAT(1X,74A1)
+#endif NOCC
 	X=X+1
 C						!ON TO NEXT RECORD.
 	READ(UNIT=DBCH,REC=X) NEWREC,B1
@@ -208,7 +212,11 @@ C
 	IF(DBGFLG.NE.0) RETURN
 	CALL EXIT
 C
+#ifdef NOCC
+100	FORMAT('PROGRAM ERROR ',I2,', PARAMETER=',I6)
+#else NOCC
 100	FORMAT(' PROGRAM ERROR ',I2,', PARAMETER=',I6)
+#endif NOCC
 	END
 #endif PDP
 C NEWSTA-- SET NEW STATUS FOR OBJECT
@@ -438,7 +446,8 @@ C
 C DECLARATIONS
 C
 	IMPLICIT INTEGER (A-Z)
-	LOGICAL PROB,LIT,RAPPLI
+	LOGICAL LIT,RAPPLI
+C	LOGICAL PROB
 #include "parser.h"
 #include "gamestate.h"
 #include "screen.h"
@@ -482,7 +491,14 @@ C						!OBJ ONLY?
 C						!ASSUME SHORT DESC.
 	IF((FULL.EQ.0)
 &		.AND.(SUPERF.OR.(((and(RFLAG(HERE),RSEEN)).NE.0)
-&		        .AND.(BRIEFF.OR.PROB(80,80)))))       GO TO 400
+C
+C  The next line means that when you request VERBOSE mode, you
+C  only get long room descriptions 20% of the time. I don't either
+C  like or understand this, so the mod. ensures VERBOSE works
+C  all the time.			jmh@ukc.ac.uk 22/10/87
+C
+C&		        .AND.(BRIEFF.OR.PROB(80,80)))))       GO TO 400
+&		        .AND.BRIEFF)))       GO TO 400
 	I=RDESC1(HERE)
 C						!USE LONG.
 	IF((I.NE.0).OR.(RA.EQ.0)) GO TO 400

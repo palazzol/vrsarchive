@@ -38,7 +38,11 @@ C
 C						!SEARCH ROOM.
 #ifdef debug
 	IF(DFLAG) PRINT 10,OBJ
+#ifdef NOCC
+10	FORMAT('SCHLST- ROOM SCH ',I6)
+#else NOCC
 10	FORMAT(' SCHLST- ROOM SCH ',I6)
+#endif NOCC
 #endif debug
 	IF(OBJ) 1000,200,100
 C						!TEST RESULT.
@@ -55,7 +59,11 @@ C						!IN VEHICLE?
 C						!SEARCH VEHICLE.
 #ifdef debug
 	IF(DFLAG) PRINT 20,NOBJ
+#ifdef NOCC
+20	FORMAT('SCHLST- VEH SCH  ',I6)
+#else NOCC
 20	FORMAT(' SCHLST- VEH SCH  ',I6)
+#endif NOCC
 #endif debug
 	IF(NOBJ) 1100,400,300
 C						!TEST RESULT.
@@ -71,7 +79,11 @@ C
 C						!SEARCH ADVENTURER.
 #ifdef debug
 	IF(DFLAG) PRINT 30,NOBJ
+#ifdef NOCC
+30	FORMAT('SCHLST- ADV SCH  ',I6)
+#else NOCC
 30	FORMAT(' SCHLST- ADV SCH  ',I6)
+#endif NOCC
 #endif debug
 	IF(NOBJ) 1100,600,500
 C						!TEST RESULT
@@ -99,7 +111,11 @@ C
 C						!END OF SEARCH.
 #ifdef debug
 	IF(DFLAG) PRINT 40,GETOBJ
+#ifdef NOCC
+40	FORMAT('SCHLST- RESULT   ',I6)
+#else NOCC
 40	FORMAT(' SCHLST- RESULT   ',I6)
+#endif NOCC
 #endif debug
 	RETURN
 	END
