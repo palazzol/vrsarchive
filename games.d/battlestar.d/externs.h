@@ -7,7 +7,7 @@
 #endif
 #include <stdio.h>
 
-#define PATH(x)		"/usr/games/lib/x"
+#define PATH(x)		GAMLIB/x"
 #define logfile		PATH(battlestar.log)
 
 #define BITS (8 * sizeof (int))
