@@ -1,7 +1,7 @@
 ALL	= vc vc.1
 MODEL	= -i
-OPTIONS	= -O
-include /etc/CONFIG
+OPTIONS	= -g
+include $(HOME)/CONFIG
 SRC	= sc.h sc.c lex.c gram.y interp.c cmds.c crypt.c xmalloc.c range.c \
 	  eres.sed sres.sed Makefile cvt.sed psc.c
 OBJS	= sc.o lex.o gram.o interp.o cmds.o crypt.o xmalloc.o range.o
