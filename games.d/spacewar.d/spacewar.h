@@ -11,13 +11,13 @@
 #endif /* VMS */
 
 #ifdef BSD
-#	define SWPIDFILE	"/usr/dir/sw/swpid"
-#	define SWLGNFILE	"/usr/dir/sw/swlgn"
+#	define SWPIDFILE	GAMEDIR/swpid"
+#	define SWLGNFILE	GAMEDIR/swlgn"
 #else /* VMS SYSIII SYSV */
 #ifdef VMS
 #	define SWCOMFILE	"swmlbx"
 #else /* SYSIII SYSV */
-#	define SWCOMFILE	"/usr/dir/sw/swcomm"
+#	define SWCOMFILE	GAMEDIR/swcomm"
 #endif /* VMS SYSIII SYSV */
 #endif /* BSD VMS SYSIII SYSV */
 
@@ -29,15 +29,15 @@
 #	define SWERR		"$DISK2:[TSDIR.SW]swerr"
 #	define SWOBJ		"$DISK2:[TSDIR.SW]swobj"
 #else /* BSD SYSIII SYSV */
-#	define SWDATABASE	"/usr/dir/sw/swdb"
-#	define SWGAME		"/usr/dir/sw/sw"
-#	define SWREAD		"/usr/dir/sw/rsw"
-#	define SWNEWS		"/usr/dir/sw/swnews"
-#	define SWERR		"/usr/dir/sw/swerr"
-#	define SWOBJ		"/usr/dir/sw/swobj" /* see objupdate.c */
+#	define SWDATABASE	GAMEDIR/swdb"
+#	define SWGAME		GAMEDIR/sw"
+#	define SWREAD		GAMEDIR/rsw"
+#	define SWNEWS		GAMEDIR/swnews"
+#	define SWERR		GAMEDIR/swerr"
+#	define SWOBJ		GAMEDIR/swobj" /* see objupdate.c */
 #endif /* VMS BSD SYSIII SYSV */
 
-#define SWMASTER	"Dan R"
+#define SWMASTER	"root"
 
 #define PI		(3.1415926536)
 #define TWOPI		(6.2831853072)
