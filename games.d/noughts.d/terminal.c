@@ -4,7 +4,7 @@
 
 # include <sgtty.h>
 struct sgttyb argp;
-char ospeed;
+short ospeed;
 
 extern putchar();
 
