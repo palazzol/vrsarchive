@@ -10,7 +10,7 @@ install: $(ALL) $(GAMDIR) $(MAN6)
 	cp $(ALL) $(GAMDIR)
 	cd $(GAMDIR); chmod 711 $(ALL)
 	cp robomatic.6 $(MAN6)
-	chmod 711 $(MAN6)/robomatic.6
+	chmod 644 $(MAN6)/robomatic.6
 
 lint:
 	lint $(CFLAGS) $(LIBS) robomatic.c | tee lint.out
