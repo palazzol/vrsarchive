@@ -8,6 +8,7 @@
  * 4/14/84
  */
 
+# include <errno.h>
 # include <stdio.h>
 # include <a.out.h>
 # include <ctype.h>
