@@ -12,7 +12,7 @@
 
 #define SYSNAMELEN 255
 static char systemname[SYSNAMELEN];
-extern char *index();
+extern char *strchr();
 
 char *sysname()
 #ifdef GETHOSTNAME
@@ -27,7 +27,7 @@ char *sysname()
     fd = open("/etc/systemid",0);
     read(fd,systemname,sizeof(systemname));
     close(fd);
-    *(index(systemname, '\n')) = '\0';	/* Index over strchr for consitiency */
+    *(strchr(systemname, '\n')) = '\0';
   }
 #endif
 

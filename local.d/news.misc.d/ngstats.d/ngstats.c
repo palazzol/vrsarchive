@@ -149,7 +149,7 @@ char **argv; {
 readnewsrc(rcp, filename)
 char *filename;
 FILE *rcp; {
-    char buf[100], *cp, *index();
+    char buf[100], *cp, *strchr();
     int i;
 
 #ifdef RAPIDOFLEX
@@ -158,7 +158,7 @@ FILE *rcp; {
 
     while (fgets(buf, 100, rcp)) {
 
-       if ((cp = index(buf, ':')) == NULL)
+       if ((cp = strchr(buf, ':')) == NULL)
            continue;
 
        *cp = '\0';
@@ -188,7 +188,7 @@ struct NG *ng; {
     /* create directory name */
     sprintf(ngdir, "%s/%s", SPOOLDIR, ng->name);
     cp = ngdir;
-    while (cp = index(cp, '.'))
+    while (cp = strchr(cp, '.'))
        *cp = '/';
 
     /* calculate usage of all articles combined */
