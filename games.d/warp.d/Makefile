@@ -1,7 +1,10 @@
 #
-# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.7 2002-11-24 03:02:07 Vincent Exp $
+# $Header: /home/Vince/cvs/games.d/warp.d/Makefile,v 1.8 2002-11-24 20:15:36 vrs Exp $
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2002/11/24 03:02:07  Vincent
+# Fix make clean.  Use #! for myread.
+#
 # Revision 1.6  2002/11/22 22:15:17  Vincent
 # Installs on CYGWIN.
 #
@@ -83,7 +86,7 @@ SHELL = /bin/sh
 .c.o:
 	$(CC) -c $(CFLAGS) $*.c
 
-warp: $(obj)
+warp$(EXE): $(obj)
 	$(CC) $(CFLAGS) $(obj) $(LIBS) -o $@
 
 # if a .h file depends on another .h file...
@@ -138,7 +141,7 @@ smap.6: smp.6 sm
 	./sm <smp.6 >smap.6
 smap.7: smp.7 sm
 	./sm <smp.7 >smap.7
-sm: sm.c
+sm$(EXE): sm.c
 	$(CC) sm.c -o $@
 
 depend: makedepend
