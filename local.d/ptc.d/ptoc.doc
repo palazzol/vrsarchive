@@ -358,7 +358,7 @@ a short table in the translator.
 The table is scanned from top to bottom until an enclosing range is found
 and the corresponding type-name is emitted.
 .IP \-
-C-arrays have peculiar semantix.
+C-arrays have peculiar semantics.
 To unify the treatment of arrays and other datatypes we always encapsulate
 an array in a struct,
 thus an array always becomes a
@@ -593,7 +593,7 @@ which points to the local variable
 .I j
 in procedure
 .I a.
-In order to preserve the proper semantix in the face of recursion
+In order to preserve the proper semantics in the face of recursion
 the value of the pointer need also be saved in the local variable
 .I F57
 during the invocation of
@@ -872,12 +872,12 @@ are very similar in the two languages and need no further explanation.
 If
 .LP
 Pascal if-statements
-have the same structure and semantix as C if-statments.
+have the same structure and semantics as C if-statments.
 .NH 3
 Case
 .LP
 Pascal case-statements
-have the same structure and semantix as C switch-statements provided that a
+have the same structure and semantics as C switch-statements provided that a
 .I break
 is always added to each entry.
 .LP
@@ -888,7 +888,7 @@ to signify a default entry in a case-statement.
 .NH 3
 Labels
 .LP
-Pascal labeled statements and labels have the same structure and semantix as
+Pascal labeled statements and labels have the same structure and semantics as
 C labeled statements except that Pascal labels are numbers where C labels
 are identifiers,
 this difference is solved by simply prefixing the labels with the letter
@@ -897,7 +897,7 @@ this difference is solved by simply prefixing the labels with the letter
 Goto
 .LP
 Pascal goto-statements
-have the same structure as C goto statements but the semantix differ in
+have the same structure as C goto statements but the semantics differ in
 that Pascal allows a goto to lead out of the current procedure.
 This is implemented using the
 .I setjmp/longjmp
@@ -919,7 +919,7 @@ For
 .LP
 The for-statement
 of Pascal has a structure that is similar to the C for-statement
-but the semantix differ completely.
+but the semantics differ completely.
 Pascal requires that a loop be exited when the upper bound
 has been reached,
 Pascal also requires that the loop-boundaries be evaluated exactly once.
@@ -960,7 +960,7 @@ where C permits a single statment in the loop.
 .NH 3
 Empty
 .LP
-The empty statement has (of course) the same structure and semantix
+The empty statement has (of course) the same structure and semantics
 in both languages.
 .NH 2
 Expressions and assignments
