@@ -49,14 +49,14 @@ bool thrown;
 	if (tp->t_type == 'M' && tp->t_disguise != 'M' && !on(player, ISBLIND))
 	{
 		tp->t_disguise = 'M';
-		if (on(player, ISTRIP)) {
+		if (on(player, ISTRIPY)) {
 			ch = rnd(26) + 'A';
 			mname = monsters[ch - 'A'].m_name;
 			mvaddch(tp->t_pos.y, tp->t_pos.x, ch);
 		}
 		else
 			mname = monsters['M'-'A'].m_name;
-		if (on(player, ISTRIP))
+		if (on(player, ISTRIPY))
 			msg("Wait!  That's a monster!");
 		else
 			msg("Wait!  That's a mimic!");
@@ -66,7 +66,7 @@ bool thrown;
 	if (on(player, ISBLIND) ||
 	   (on(*tp, ISINVIS) && !on(player, CANSEE|SEEMONST)))
 			mname = "it";
-	else if (on(player, ISTRIP)) {
+	else if (on(player, ISTRIPY)) {
 		if (see_monst(tp))
 			mname = monsters[toascii(mvinch(tp->t_pos.y, tp->t_pos.x))-'A'].m_name;
 		else
@@ -87,7 +87,7 @@ bool thrown;
 			tp->t_flags |= ISHUH;
 			player.t_flags &= ~CANHUH;
 			msg("Your hands stop glowing %s",
-				on(player, ISTRIP) ? rnd_color() : "red");
+				on(player, ISTRIPY) ? rnd_color() : "red");
 		}
 		if (tp->t_stats.s_hpt <= 0)
 			killed(tp, TRUE);
@@ -121,13 +121,13 @@ register THING *mp;
 	if (mp->t_type == 'M' && mp->t_disguise != 'M' && !on(player, ISBLIND))
 	{
 		mp->t_disguise = 'M';
-		if (on(player, ISTRIP))
+		if (on(player, ISTRIPY))
 			mvaddch(mp->t_pos.y, mp->t_pos.x, rnd(26) + 'A');
 	}
 	if (on(player, ISBLIND) ||
 	   (on(*mp, ISINVIS) && !on(player, CANSEE|SEEMONST)))
 			mname = "it";
-	else if (on(player, ISTRIP)) {
+	else if (on(player, ISTRIPY)) {
 		ch = toascii(mvinch(mp->t_pos.y, mp->t_pos.x));
 		if (!isupper(ch))
 			addch(ch = rnd(26) + 'A');
@@ -344,11 +344,7 @@ bool hurl;
 	register int hplus;
 	register int dplus;
 	register int damage;
-#ifdef USG
 	char *strchr();
-#else
-	char *index();
-#endif
 
 	att = &thatt->t_stats;
 	def = &thdef->t_stats;
@@ -405,13 +401,8 @@ bool hurl;
 	for (;;)
 	{
 		ndice = atoi(cp);
-#ifdef USG
 		if ((cp = strchr(cp, 'd')) == NULL)
 			break;
-#else
-		if ((cp = index(cp, 'd')) == NULL)
-			break;
-#endif
 		nsides = atoi(++cp);
 		if (swing(att->s_lvl, def_arm, hplus + str_plus(att->s_str)))
 		{
@@ -426,13 +417,8 @@ bool hurl;
 			def->s_hpt -= max(0, damage);
 			did_hit = TRUE;
 		}
-#ifdef USG
 		if ((cp = strchr(cp, '/')) == NULL)
 			break;
-#else
-		if ((cp = index(cp, '/')) == NULL)
-			break;
-#endif
 		cp++;
 	}
 	return did_hit;
@@ -675,7 +661,7 @@ bool pr;
 	register char *mname;
 
 	if (pr)
-		if (!on(player, ISTRIP))
+		if (!on(player, ISTRIPY))
 			mname = monsters[tp->t_type-'A'].m_name;
 		else
 			if (see_monst(tp))
