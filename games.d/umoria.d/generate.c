@@ -78,7 +78,8 @@ blank_cave()
   int i, j;
 
   for (i = 0; i < MAX_HEIGHT; i++) {
-    cave[i] = (cave_type *)malloc(MAX_WIDTH*sizeof(cave[i][0]));
+    if (!cave[i])
+      cave[i] = (cave_type *)malloc(MAX_WIDTH*sizeof(cave[i][0]));
     for (j = 0; j < MAX_WIDTH; j++)
       cave[i][j] = blank_floor;
   }
