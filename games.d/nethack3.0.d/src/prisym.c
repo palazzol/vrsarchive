@@ -11,10 +11,15 @@
 static void pwseg P((struct wseg *));
 #endif
 
+#ifdef __STDC__
+void
+atl(int x,int y,char ch)
+#else
 void
 atl(x,y,ch)
 register int x, y;
 char ch;
+#endif
 {
 	register struct rm *crm = &levl[x][y];
 
@@ -248,9 +253,14 @@ prl(x,y)
 	room->seen = 1;
 }
 
+#ifdef __STDC__
+uchar
+news0(xchar x,xchar y)
+#else
 uchar
 news0(x,y)
 register xchar x,y;
+#endif
 {
 	register struct obj *otmp;
 	register struct trap *ttmp;

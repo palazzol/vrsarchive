@@ -11,12 +11,17 @@
 #include "epri.h"
 
 /* used for the insides of shk_move and pri_move */
+#ifdef __STDC__
+int
+move_special(struct monst *mtmp,schar monroom,schar appr,boolean uondoor,boolean avoid,xchar omx,xchar omy,xchar gx,xchar gy)
+#else
 int
 move_special(mtmp,monroom,appr,uondoor,avoid,omx,omy,gx,gy)
 register struct monst *mtmp;
 schar monroom,appr;
 boolean uondoor,avoid;
 register xchar omx,omy,gx,gy;
+#endif
 {
 	register xchar nx,ny,nix,niy;
 	register schar i;

@@ -701,9 +701,14 @@ identify(otmp)		/* also called by newmail() */
 	return(1);
 }
 
+#ifdef __STDC__
+void
+litroom(boolean on)
+#else
 void
 litroom(on)
 register boolean on;
+#endif
 {
 	register int zx,zy;
 

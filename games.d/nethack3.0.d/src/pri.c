@@ -102,10 +102,15 @@ register struct monst *mon;
 	return(show);
 }
 
+#ifdef __STDC__
+void
+at(xchar x,xchar y,uchar ch,uchar typ)
+#else
 void
 at(x,y,ch,typ)
 register xchar x,y;
 uchar ch,typ;
+#endif
 {
 #ifndef LINT
 	/* if xchar is unsigned, lint will complain about  if(x < 0)  */
@@ -150,11 +155,17 @@ prme(){
 					) at(u.ux,u.uy,u.usym,AT_U);
 }
 
+/* produce a magical shield effect at x,y */
+#ifdef __STDC__
 void
-shieldeff(x, y)		/* produce a magical shield effect at x,y */
-	register xchar x, y;
+shieldeff(xchar x,xchar y)
+#else
+void
+shieldeff(x, y)
+register xchar x, y;
+#endif
 {
-	register char *ch;
+	register const char *ch;
 	register struct monst *mtmp = 0;
 
 	if((x != u.ux) || (y != u.uy)) {
@@ -768,7 +779,7 @@ rank_array() {
 	return(ranks);
 }
 
-static char *
+static const char *
 rank() {
 	register int place;
 	register const char **ranks = rank_array();
@@ -1072,10 +1083,14 @@ hcolor()
  *  redraws.  Unfortunately, as this requires much time and testing,
  *  it will have to wait for NetHack 3.1.  -3.
  */
-
+#ifdef __STDC__
+static void
+hilite(uchar let,uchar typ)
+#else
 static void
 hilite(let,typ)
 uchar let, typ;
+#endif
 {
 
 	if (let == ' '
@@ -1143,9 +1158,14 @@ uchar let, typ;
 #endif
 }
 
+#ifdef __STDC__
+static boolean
+ismnst(char let)
+#else
 static boolean
 ismnst(let)
 char let;
+#endif
 {
 	register int ct;
 	register struct permonst *ptr;
