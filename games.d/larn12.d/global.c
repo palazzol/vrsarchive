@@ -618,4 +618,4 @@ rund(x)
 	{
 	return((((randx=randx*1103515245+12345)>>7)%(x))  );
 	}
-#endif MACRORND
+#endif

@@ -670,7 +670,7 @@ oelevator(dir)
 	int x;
 	x=dir;
 	dir=x;
-#endif lint
+#endif
 	}
 
 ostatue()

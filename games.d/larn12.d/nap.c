@@ -10,12 +10,12 @@
 #else
 #ifdef BSD
 #include <sys/timeb.h>
-#endif BSD
-#endif SYS5
+#endif
+#endif
 
 #ifndef HZ
 #define HZ 60	/* Take a guess */
-#endif !HZ
+#endif
 #define MS	(1000/HZ)	/* Milliseconds per clock tick	*/
 
 /*
@@ -34,7 +34,7 @@ napms(x)	/* do nothing */
 	int x;
 	{
 	}
-#else NONAP
+#else
 #ifdef SYS5
 /*	napms - sleep for time milliseconds - uses times() */
 /* this assumes that times returns a relative time in 60ths of a second */
@@ -54,7 +54,7 @@ napms(time)
 		;
 	}
 
-#else not SYS5
+#else
 #ifdef BSD
 #ifdef SIGVTALRM
 /* This must be BSD 4.2!  */
@@ -118,8 +118,8 @@ static napms(time)
 		}
 	}
 #endif
-#else not BSD
+#else
 static napms(time) int time; {}	/* do nothing, forget it */
-#endif BSD
-#endif SYS5
-#endif NONAP
+#endif
+#endif
+#endif

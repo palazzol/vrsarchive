@@ -402,7 +402,7 @@ unsigned long readnum();
 	/* macro to clear the screen and home the cursor */
 #define clear() (lprcat("\33[2J\33[f"), cbak[SPELLS]= -50)
 #define cltoeoln() lprcat("\33[K")
-#else VT100
+#else
 	/* defines below are for use in the termcap mode only */
 #define ST_START 1
 #define ST_END   2
@@ -424,7 +424,7 @@ unsigned long readnum();
 #define clear() (*lpnt++ =CLEAR, cbak[SPELLS]= -50)
 	/* macro to clear to end of line */
 #define cltoeoln() (*lpnt++ = CL_LINE)
-#endif VT100
+#endif
 
 	/* macro to output one byte to the output buffer */
 #define lprc(ch) ((lpnt>=lpend)?(*lpnt++ =(ch), lflush()):(*lpnt++ =(ch)))
@@ -435,7 +435,7 @@ unsigned long readnum();
 	/* macros to generate random numbers   1<=rnd(N)<=N   0<=rund(N)<=N-1 */
 #define rnd(x)  ((((randx=randx*1103515245+12345)>>7)%(x))+1)
 #define rund(x) ((((randx=randx*1103515245+12345)>>7)%(x))  )
-#endif MACRORND
+#endif
 	/* macros for miscellaneous data conversion */
 #define min(x,y) (((x)>(y))?(y):(x))
 #define max(x,y) (((x)>(y))?(x):(y))
@@ -445,5 +445,5 @@ unsigned long readnum();
 #define toupper(x) (to_upper[x])
 #define lcc(x) (to_lower[x])
 #define ucc(x) (to_upper[x])
-#endif NODEFS
+#endif
 
