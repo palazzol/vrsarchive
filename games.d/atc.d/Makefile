@@ -2,15 +2,15 @@
 # Makefile for atc parent
 #
 
-OWNER =		edjames
-DESTINATION =	/usr/public
+OWNER =		cron
+DESTINATION =	/usr/games
 
 GAME =		atc
 SRC =		src
 DIST =		dist
 GAMES =		games
 
-CURSESLIBR =	libatc_curses.o
+CURSESLIBR =	libatc.a
 TUNABLE	=	tunable.c
 NF      =	$(GAME) -p
 MAKEFILE =	Makefile.dist
@@ -23,8 +23,10 @@ install:	distrib $(DIST)
 		-cp $(GAMES)/* `$(DIST)/$(NF)`
 		-chmod 644 `$(DIST)/$(NF)`/*
 		-chmod 755 `$(DIST)/$(NF)`
-		-chown -f $(OWNER) `$(DIST)/$(NF)`/* `$(DIST)/$(NF)`
-		(cd $(DIST); install -o $(OWNER) -m 4755 $(GAME) $(DESTINATION))
+		-chown $(OWNER) `$(DIST)/$(NF)`/* `$(DIST)/$(NF)`
+		cd $(DIST); cp $(GAME) $(DESTINATION)
+		cd $(DESTINATION); chown $(OWNER) $(GAME)
+		cd $(DESTINATION); chmod 4755 $(GAME)
 
 distrib:	$(DIST)/Makefile $(DIST)/$(TUNABLE) \
 		$(DIST)/$(CURSESLIBR)
