@@ -2,6 +2,12 @@
 #
 # edit as necessary, then make
 
+# CRMODE: if your version of curses uses "crmode()"
+#         instead of "cbreak()", define CRMODE here.
+# BSD: if your OS supports random() and srandom()
+#FLAGS = -DCRMODE
+FLAGS =
+
 # where the executable will go
 BINDIR = /usr/games
 
@@ -15,7 +21,7 @@ CFLAGS = -O
 LIBS = -lcurses -ltermcap
 
 tttt: tttt.c
-	cc $(CFLAGS) -o tttt tttt.c $(LIBS)
+	cc $(CFLAGS) $(FLAGS) -o tttt tttt.c $(LIBS)
 
 install: tttt tttt.man
 	cp tttt $(BINDIR)/tttt

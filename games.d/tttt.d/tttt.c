@@ -41,6 +41,15 @@
 #define FALSE	0
 #endif
 
+#ifdef BSD
+# define rand	random
+# define srand	srandom
+#else
+/* Current versions of System V */
+# define rand	lrand48		/* comment this out if you only have rand() */
+# define srand	srand48		/* comment this out if you only have srand() */
+#endif
+
 char board [4][4];		/* this is the playing board */
 int pieces;
 int randomness;			/* whether the computer uses randomness */
@@ -143,11 +152,15 @@ char *argv[];
 
 	initscr();
 	savetty();
+#ifdef CRMODE
+	crmode();
+#else
 	cbreak();
+#endif
 	noecho();
 
 	signal(SIGINT,quit);
-	srandom(getpid() * (1 + getuid()));
+	srand(getpid());
 
 	clear();
 
@@ -391,14 +404,17 @@ Move:	row = col = -1;
 int computer_move(type)
 int type;
 {
-	int bestrow = 0, bestcol = 0, i, j;
-	int bestrank = 0, numbest = 0, rank, numrank;
+	int bestrow, bestcol, i, j;
+	int bestrank, numbest, rank, numrank;
 		/* rank == the rank score */
 		/* num == the number of times the score happened */
+
+	bestrow = bestcol = bestrank = numbest = 0;
 
 	for (i=0; i<4; i++) {
 		for (j=0; j<4; j++) {
 			getrank(type,i,j,&rank,&numrank);
+			if (rank == 0) continue;
 			if (rank > bestrank) {
 				bestrow = i;
 				bestcol = j;
@@ -411,7 +427,7 @@ int type;
 					bestrank = rank;
 					numbest = numrank;
 				} else if (numrank == numbest) {
-					if ((random() % 2) && randomness) {
+					if ((rand() % 2) && randomness) {
 						bestrow = i;
 						bestcol = j;
 						bestrank = rank;
@@ -435,8 +451,8 @@ int type;
 	this ranks a move location in order of "preference".
 
 	the strategy is to not let the opponent get lots in a row.
-	ever.
 
+	ever.
 
 	rows, columns, and diagonals get treated independently, and
 	the "best" rank of them all is considered.
@@ -450,7 +466,7 @@ int type, row, col, *rank, *numrank;
 	*numrank = 0;
 
 	/* if already taken, this isn't a good spot */
-	if (board[row][col]) return;
+	if (board[row][col] != EMPTY) return;
 
 	/* check across */
 	countx = counto = 0;
@@ -490,7 +506,7 @@ int type, row, col, *rank, *numrank;
 
 	/* add one, so that even no blocks still shows as a valid move	*/
 	/* and return the rank for this move				*/
-	*rank++;
+	++(*rank);
 }
 
 /*
