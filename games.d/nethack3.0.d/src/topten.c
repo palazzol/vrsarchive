@@ -10,9 +10,7 @@
 
 static char *itoa P((int)), *ordin P((int));
 static void outheader();
-static int outentry P((int,struct toptenentry *,int));
 
-#define newttentry() (struct toptenentry *) alloc(sizeof(struct toptenentry))
 #define	NAMSZ	10
 #define	DTHSZ	60
 #define	PERSMAX	 1		/* entries per name/uid per char. allowed */
@@ -32,6 +30,8 @@ struct toptenentry {
 	char death[DTHSZ+1];
 	char date[7];		/* yymmdd */
 } *tt_head;
+static int outentry P((int,struct toptenentry *,int));
+#define newttentry() (struct toptenentry *) alloc(sizeof(struct toptenentry))
 
 void
 topten(){
@@ -98,7 +98,7 @@ topten(){
 	(t0->name)[NAMSZ] = 0;
 	(void) strncpy(t0->death, killer, DTHSZ);
 	(t0->death)[DTHSZ] = 0;
-	Strcpy(t0->date, getdate());
+	Strcpy(t0->date, mygetdate());
 
 	/* assure minimum number of points */
 	if(t0->points < POINTSMIN) t0->points = 0;

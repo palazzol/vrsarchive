@@ -59,7 +59,7 @@ getyear()
 }
 
 char *
-getdate()
+mygetdate()
 {
 #ifdef LINT	/* static char datestr[7]; */
 	char datestr[7];

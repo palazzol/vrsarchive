@@ -458,7 +458,7 @@ register int thrown;
 			if(mon->msleep) mon->msleep = 0;
 			setmangry(mon);
 			mon->mcansee = 0;
-			if((mon->mblinded + tmp) > 127) mon->mblinded = 127;
+			if((mon->mblinded + tmp) > (unsigned)127) mon->mblinded = 127;
 			else mon->mblinded += tmp;
 			hittxt = TRUE;
 			get_dmg_bonus = FALSE;
@@ -1266,7 +1266,7 @@ register int malive;
 		    mon->mhp += tmp / 2;
 		    if (mon->mhpmax < mon->mhp) mon->mhpmax = mon->mhp;
 		/* at a certain point, the monster will reproduce! */
-		    if(mon->mhpmax > ((mon->m_lev+1) * 8)) {
+		    if(mon->mhpmax > (unsigned)((mon->m_lev+1) * 8)) {
 			register struct monst *mtmp;
 
 			if(mtmp = clone_mon(mon)) {

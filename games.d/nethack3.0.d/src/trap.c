@@ -14,12 +14,17 @@ static boolean thitm();
  * if the item could not be rusted; otherwise a message is printed and TRUE is
  * returned only for rustable items.
  */
+#ifdef __STDC__
+boolean
+rust_dmg(struct obj *otmp,char *ostr,int type,boolean print)
+#else
 boolean
 rust_dmg(otmp, ostr, type, print)
 register struct obj *otmp;
 register char *ostr;
 int type;
 boolean print;
+#endif
 {
 	static const char *gook[] = { "slag", "rust", "rot", "corrosion" };
 	static const char *action[] = { "smolder", "rust", "rot", "corrode" };

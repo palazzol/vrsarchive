@@ -178,7 +178,23 @@ introff() {		/* disable kbd interrupts if required*/
 	}
 }
 
+#ifdef __STDC__
+/* fatal error */
+#include <stdarg.h>
+void
+error(char *s, ...)
+{	va_list ap;
 
+	va_start(ap, s);
+	va_arg(ap, char *);
+	if(settty_needed)
+		settty(NULL);
+	vprintf(s, ap);
+	(void) putchar('\n');
+	va_end(ap);
+	exit(1);
+}
+#else
 /* fatal error */
 /*VARARGS1*/
 void
@@ -191,3 +207,4 @@ char *s, *x, *y;
 	(void) putchar('\n');
 	exit(1);
 }
+#endif
