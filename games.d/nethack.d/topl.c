@@ -70,7 +70,7 @@ register int cnt = OTLMAX;
 
 addtopl(s) char *s; {
 	curs(tlx,tly);
-	if(tlx + strlen(s) > CO) putsym('\n');
+	if(tlx + strlen(s) > (unsigned)CO) putsym('\n');
 	putstr(s);
 	tlx = curx;
 	tly = cury;
@@ -139,7 +139,7 @@ register char *line,*arg1,*arg2,*arg3,*arg4,*arg5,*arg6,*arg7,*arg8,*arg9;
 	/* But messages like "You die..." deserve their own line */
 	n0 = strlen(bp);
 	if(flags.toplin == 1 && tly == 1 &&
-	    n0 + strlen(toplines) + 3 < CO-8 &&  /* leave room for --More-- */
+	    n0 + strlen(toplines) + 3 < (unsigned)(CO-8) &&  /* leave room for --More-- */
 	    strncmp(bp, "You ", 4)) {
 		(void) strcat(toplines, "  ");
 		(void) strcat(toplines, bp);

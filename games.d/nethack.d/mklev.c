@@ -693,7 +693,7 @@ int trap_type;
 		if(trap_type) {
 		    ttmp = maketrap(xx, yy+dy, trap_type);
 		    ttmp->once = 1;
-		    if (strlen(engravings[trap_type]) > 0)
+		    if (strlen(engravings[trap_type]) != 0)
 			make_engr_at(xx, yy-dy, engravings[trap_type]);
 		}
 		dosdoor(xx, yy, aroom, SDOOR);

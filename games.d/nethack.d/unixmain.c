@@ -18,8 +18,8 @@ extern char plname[PL_NSIZ], pl_character[PL_CSIZ];
 int (*afternmv)();
 int (*occupation)();
 
-int done1();
-int hangup();
+SIG_T done1();
+SIG_T hangup();
 
 int hackpid;				/* current pid */
 int locknum;				/* max num of players */

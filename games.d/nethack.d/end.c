@@ -13,7 +13,9 @@ int done_stopprint;
 int done_hup;
 
 
-done1()
+/* ARGSUSED */
+SIG_T
+done1(dummy)
 {
 	(void) signal(SIGINT,SIG_IGN);
 #if defined(WIZARD) && defined(UNIX) 
@@ -31,13 +33,15 @@ done1()
 		clrlin();
 		(void) fflush(stdout);
 		if(multi > 0) nomul(0);
-		return(0);
+		return;
 	}
 	done("quit");
 	/* NOTREACHED */
 }
 
-done_intr(){
+/* ARGSUSED */
+SIG_T
+done_intr(dummy){
 	done_stopprint++;
 	(void) signal(SIGINT, SIG_IGN);
 #ifdef UNIX
@@ -46,7 +50,9 @@ done_intr(){
 }
 
 #ifdef UNIX
-done_hangup(){
+/* ARGSUSED */
+SIG_T
+done_hangup(dummy){
 	done_hup++;
 	(void) signal(SIGHUP, SIG_IGN);
 	done_intr();

@@ -427,7 +427,7 @@ extern char *eos();
 	(void) strcat(newbot, hu_stat[u.uhs]);
 	if(flags.time)
 	    (void) sprintf(eos(newbot), "  %ld", moves);
-	if(strlen(newbot) >= COLNO) {
+	if(strlen(newbot) >= (unsigned)COLNO) {
 		register char *bp0, *bp1;
 		bp0 = bp1 = newbot;
 		do {

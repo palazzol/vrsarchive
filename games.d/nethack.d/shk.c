@@ -32,6 +32,7 @@ char *shkname(){ return(""); }
 #define	NOTANGRY(mon)	mon->mpeaceful
 #define	ANGRY(mon)	!NOTANGRY(mon)
 
+extern struct obj *carrying();
 extern char plname[], *xname();
 extern struct obj *o_on(), *bp_to_obj();
 
@@ -240,7 +241,6 @@ register roomno = inroom(u.ux,u.uy);
 		}
 		if(!ESHK(shopkeeper)->following) {
 		    boolean box, pick;
-		    struct obj *carrying();
 
 		    pline("Hello %s! Welcome%s to %s's %s shop!",
 			plname,
