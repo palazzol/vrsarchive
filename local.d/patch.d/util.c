@@ -218,7 +218,7 @@ int arg1,arg2,arg3;
     if (!tty2)
 	say1(buf);
 }
-#endif lint
+#endif /*lint*/
 
 /* How to handle certain events when not in a critical region. */
 
