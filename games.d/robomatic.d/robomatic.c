@@ -15,13 +15,14 @@
 
 # include <curses.h>
 
-# define NEWROBOT	"/usr/mlm/bin/robots"
+# define NEWROBOT	"/usr/local/games/robots"
 # define ROBOT		"/usr/games/robots"
 
 # define READ		0
 # define WRITE		1
 # define abs(A)		((A)>0?(A):-(A))
 # define max(A,B)	((A)>(B)?(A):(B))
+# define min(A,B)	((A)<(B)?(A):(B))
 # define sgn(A)		((A)==0?0:((A)>0?1:-1))
 
 /* Define the Rob-O-Matic pseudo-terminal */
@@ -54,6 +55,7 @@ char *argv[];
 
 { int   ptc[2], ctp[2];
   char *rfile=NULL;
+  struct sgttyb ttsave;
 
   /* Get the options from the command line */
   while (--argc > 0 && (*++argv)[0] == '-')
@@ -306,11 +308,12 @@ getrobot ()
  ****************************************************************/
 
 deadrobot ()
-{ int level=0, score=0;
+{ int level=0;
+  long score=0;
   char junk[BUFSIZ];
 
-  sscanf (screen[ROWS-1], "%s level: %d score: %d", junk, &level, &score);
-  printf ("Died on level %d with a score of %d.\n", level, score);
+  sscanf (screen[ROWS-1], "%s level: %d score: %ld", junk, &level, &score);
+  printf ("Died on level %d with a score of %ld.\n", level, score);
 }
 
 /****************************************************************
@@ -348,9 +351,8 @@ drawscreen ()
  * 5. Teleport.
  ****************************************************************/
 
-/* Arrays for finding directions and keys to go that way */
-int deltar[] = {-1, -1, -1,  0,  0,  0,  1,  1,  1};
-int deltac[] = {-1,  0,  1, -1,  0,  1, -1,  0,  1};
+/* keymap[dy+1][dx+1] == character to get you there */
+char keymap[3][3] = { 'y', 'k', 'u', 'h', '.', 'l', 'b', 'j', 'n'};
 char *keydir = "ykuh.lbjn";
 
 strategy ()
@@ -363,17 +365,50 @@ strategy ()
     { if (cmd = makemove (hr, hc)) return (cmd); }  
   }
 
-  /* Make a random move */
-  cmd = 't';
-  for (k=0; k<9; k++)
-  { r = atrow + deltar[k];
-    c = atcol + deltac[k];
-    ch = keydir[k];
-    if (safe (r, c))
-    { if (cmd=='t') cmd = ch;
-      else if (time(0) & 1) cmd = ch;
-    }
-  }
+/*
+ * No good offense known.  Make a safe move toward the center.  The 'toward
+ * the center' rule is a weak heuristic to maximize collisions among robots
+ * not an immediate threat to us.  Better heuristics would take advantage
+ * of existing heaps.
+*/
+  /* Find the direction toward the center. */
+  r = ROWS/2 - atrow;
+  if (r < 0)
+    r = -1;
+  else
+    r =  1;
+  c = COLS/2 - atcol;
+  if (c < 0)
+    c = -1;
+  else
+    c =  1;
+  /*
+   * Evaluation function (normalized view):
+   *  (C)			<- Center of screen
+   *     123
+   *     467			<- 6 is (atrow, atcol)
+   *     589
+  */
+  if (safe(atrow+r, atcol+c))		/* Try to go that way. */
+    cmd = keymap[1+r][1+c];
+  else if (safe(atrow+r, atcol))	/* Prefer vertical progress */
+    cmd = keymap[1+r][1];
+  else if (safe(atrow+r, atcol-c))	/* even for horizontal losses */
+    cmd = keymap[1+r][1-c];
+  else if (safe(atrow, atcol+c))	/* then horizontal progress */
+    cmd = keymap[1][1+c];
+  else if (safe(atrow-r, atcol+c))	/* of any kind */
+    cmd = keymap[1-r][1+c];
+  else if (safe(atrow, atcol))		/* then staying put */
+    cmd = keymap[1][1];
+  else if (safe(atrow, atcol-c))	/* compromise horizontal first */
+    cmd = keymap[1][1-c];
+  else if (safe(atrow-r, atcol))	/* then compromise vertical */
+    cmd = keymap[1-r][1];
+  else if (safe(atrow-r, atcol-c))	/* then compromise both */
+    cmd = keymap[1-r][1-c];
+  else					/* PUNT! */
+    cmd = 't';
 
   return (cmd);
 }
