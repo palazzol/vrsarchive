@@ -194,7 +194,7 @@ getcommand()
 		c = gettoken();
 		if (c == erase_char) {
 			if (pop() < 0)
-				noise();
+				flash();
 		} else if (c == kill_char) {
 			while (pop() >= 0)
 				;
@@ -209,7 +209,7 @@ getcommand()
 				}
 			}
 			if (!done)
-				noise();
+				flash();
 		}
 	} while (T_STATE != -1);
 
