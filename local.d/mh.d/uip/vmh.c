@@ -1,6 +1,6 @@
 /* vmh.c - visual front-end to mh */
 #ifndef	lint
-static char ident[] = "@(#)$Id: vmh.c,v 1.1 1990-04-12 13:29:39 vrs Exp $";
+static char ident[] = "@(#)$Id: vmh.c,v 1.2 1990-05-07 06:33:52 vrs Exp $";
 #endif	lint
 #ifdef	SYS5
 /*
@@ -134,6 +134,7 @@ static struct tchars    tc;
 #define	EOFC	sg.c_cc[VEOF]
 #define	INTR	sg.c_cc[VINTR]
 static struct termio    sg;
+#undef	TIOCGLTC	/* Easier than figuring a way to get ttold.h - vrs */
 #endif	SYS5
 
 #ifndef	TIOCGLTC
@@ -153,9 +154,9 @@ char   *tgoto ();
 
 
 					/* SIGNALS */
-static int     ALRMser (), PIPEser (), SIGser ();
+static TYPESIG     ALRMser (), PIPEser (), SIGser ();
 #ifdef	SIGTSTP
-static int	TSTPser ();
+static TYPESIG	TSTPser ();
 #endif	SIGTSTP
 
 
@@ -1331,7 +1332,7 @@ sideground () {
 
 /* ARGSUSED */
 
-static int  ALRMser (sig)
+static TYPESIG  ALRMser (sig)
 int     sig;
 {
      longjmp (PEERctx, DONE);
@@ -1342,7 +1343,7 @@ int     sig;
 /* ARGSUSED */
 #endif	BSD42
 
-static int  PIPEser (sig)
+static TYPESIG  PIPEser (sig)
 int	sig;
 {
 #ifndef	BSD42
@@ -1357,7 +1358,7 @@ int	sig;
 /* ARGSUSED */
 #endif	BSD42
 
-static int  SIGser (sig)
+static TYPESIG  SIGser (sig)
 int     sig;
 {
 #ifndef	BSD42
@@ -1369,7 +1370,7 @@ int     sig;
 
 
 #ifdef	SIGTSTP
-static int  TSTPser (sig)
+static TYPESIG  TSTPser (sig)
 int     sig;
 {
 #ifndef	TERMINFO
