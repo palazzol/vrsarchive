@@ -2,6 +2,7 @@
  *	@(#)talk.h	1.3 12/3/84
 */
 
+#include <sys/types.h>
 #include <stdio.h>
 #include <curses.h>
 #include <utmp.h>

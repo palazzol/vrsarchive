@@ -15,10 +15,9 @@
  *	opens the pipe the other way.
 */
 
-#include <sys/types.h>
+#include "talk.h"
 #include <sys/stat.h>
 #include <errno.h>
-#include "talk.h"
 
 extern int errno;
 
