@@ -4,6 +4,9 @@
 
 #include <ctype.h>
 #include <curses.h>
+#ifndef A_REVERSE	/* No terminfo */
+#define flushinp()	(raw(), noraw(), crmode())
+#endif
 #include <math.h>
 #include <pwd.h>
 #include <setjmp.h>
