@@ -5,6 +5,7 @@
 extern char fut_geno[];
 extern char *index();
 extern struct obj *mkobj_at();
+extern boolean in_mklev;
 struct monst zeromonst;
 
 /*
@@ -62,7 +63,7 @@ gotmon:
 		mtmp->mimic = 1;
 		mtmp->mappearance = ']';
 	}
-	{ extern boolean in_mklev;
+	{
 	if(!in_mklev) {
 		if(x == u.ux && y == u.uy && ptr->mlet != ' ')
 			mnexto(mtmp);
