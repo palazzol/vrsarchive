@@ -97,7 +97,7 @@
  */
 
 
-#include	<curses.h>
+#include	<stdio.h>
 #include	<string.h>
 #include	"window.h"
 #include	"terminal.h"
@@ -872,3 +872,58 @@ register char	*s;
 	while (*t++ = *s++);
 	return(p); 
 }
+
+/*
+ *	Emulation of curses routines
+*/
+#ifdef TERMINFO
+#include <termio.h>
+
+/*
+ *	savetty()/resetty()
+*/
+struct termio savettyb;
+savetty()
+{	ioctl(0, TCGETA, &savettyb);
+}
+resetty()
+{	ioctl(0, TCSETAW, &savettyb);
+}
+
+/*
+ *	echo()/noecho()
+*/
+echo()
+{	struct termio ttyb;
+	ioctl(0, TCGETA, &ttyb);
+	ttyb.c_lflag |= (savettyb.c_lflag&(ECHO|ECHOE|ECHOK|ECHONL));
+	ioctl(0, TCSETAW, &ttyb);
+}
+noecho()
+{	struct termio ttyb;
+	ioctl(0, TCGETA, &ttyb);
+	ttyb.c_lflag &= ~(ECHO|ECHOE|ECHOK|ECHONL);
+	ioctl(0, TCSETAW, &ttyb);
+}
+
+/*
+ *	crmode()/nocrmode()
+*/
+crmode()
+{	struct termio ttyb;
+	ioctl(0, TCGETA, &ttyb);
+	ttyb.c_lflag &= ~ICANON;
+	ttyb.c_cc[VMIN] = 1;
+	ttyb.c_cc[VTIME] = 0;
+	ioctl(0, TCSETAW, &ttyb);
+}
+nocrmode()
+{	struct termio ttyb;
+	ioctl(0, TCGETA, &ttyb);
+	ttyb.c_lflag |= ICANON;
+	ttyb.c_cc[VEOF] = savettyb.c_cc[VEOF];
+	ttyb.c_cc[VTIME] = savettyb.c_cc[VTIME];
+	ioctl(0, TCSETAW, &ttyb);
+}
+
+#endif /* TERMINFO */
