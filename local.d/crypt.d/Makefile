@@ -10,7 +10,7 @@ CBOBJ	= pword.o lpair.o approx.o eclass.o cipher.o char-io.o tritab.o \
 	  autotri.o pqueue.o webster.o user.o gblock.o dblock.o dbsaux.o \
 	  banner.o cblocks.o stats.o parser.o knit.o pgate.o perm.o \
 	  terminal.o keylib.o windowlib.o dline.o screen.o
-ECTOBJS	= edriver.o eclass.o cipher.o char-io.o triglist.o webster.o user.o \
+ECTOBJ	= edriver.o eclass.o cipher.o char-io.o triglist.o webster.o user.o \
 	  gblock.o dblock.o dbsaux.o banner.o cblocks.o trigram.o stats.o \
 	  parser.o knit.o pgate.o perm.o keylib.o windowlib.o dline.o screen.o
 
@@ -51,8 +51,8 @@ stats: stats.o char-io.o
 tri: tdriver.o $(CBOBJ)
 	$(CC) $(CFLAGS) tdriver.o $(CBOBJ) $(LIBS) -o $@
 
-ect: $(ECTOBJS)
-	$(CC) $(CFLAGS) $(ECTOBJS) $(LIBS) -o $@
+ect: $(ECTOBJ)
+	$(CC) $(CFLAGS) $(ECTOBJ) $(LIBS) -o $@
 
 ptt: char-io.o probtab.o
 	$(CC) $(CFLAGS) char-io.o probtab.o $(LIBS) -o $@
@@ -68,7 +68,7 @@ $(CBWLIB):
 	chmod 755 $@
 
 clean:
-	rm -f $(CBOBJS) start.o enigma.o zeecode.o bdriver.o sdriver.o
+	rm -f $(CBOBJ) start.o enigma.o zeecode.o bdriver.o sdriver.o
 	rm -f $(ECTOBJ) approx.o stats.o char-io.o tdriver.o char-io.o
 	rm -f $(ALL) probtab.o disptest.o triplace.o
 
