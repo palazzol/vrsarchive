@@ -1,0 +1,310 @@
+Access control        (login control, etc)
+  chfn          change full name of user
+  chmod         change mode (protection) of a file
+  chsh          change default login shell
+  finger        user information lookup program
+  groups        show group memberships
+  login         sign on
+  mesg          permit or deny messages
+  passwd        change login password
+  su            substitute user id temporarily
+Communication         (i/o)
+  Graphics
+    graph       draw a graph
+    plot        graphics filters
+    spline      interpolate smooth curve
+    vpr         raster printer/plotter spooler
+  Machine to machine
+    clear       clear terminal screen
+    ftp         file transfer program
+    gets        get a string from standard input
+    lpq         spool queue examination program
+    lpr         line printer spooler
+    lprm        remove jobs from the line printer spooling queue
+    rcp         remote file copy
+    rlogin      remote login
+    rpr         remote printer spooler -dulocal
+    rsh         remote shell
+    tip         connect to a remote system
+    uucp        unix to unix copy
+    uuencode    encode/decode a binary file for transmission via mail
+    uusend      send a file to a remote host
+    uux         unix to unix command execution
+  People to people -local
+    biff        be notified if mail arrives and who it is from
+    binmail     send or receive mail among users
+    from        who is my mail from?
+    mail        send and receive mail
+    newaliases  rebuild the data base for the mail aliases file
+    prmail      print out mail in the post office
+    rmail       handle remote mail received via uucp
+    talk        talk to another user
+    wall        write to all users
+    uuencode    encode/decode a binary file for transmission via mail
+    write       write to another user
+    xsend       secret mail
+  People to people -network
+    checknews   check to see if user has news
+    inews       submit news articles
+    netstat     show network status
+    postnews    submit news articles
+    readnews    read news articles
+    telnet      user interface to the TELNET protocol
+  Tape
+    dd          convert and copy a file
+    mt          Magnetic tape manipulating program
+    od          octal dump
+    tar         tape archiver
+    tp          manipulate tape archive
+Documentation         (what's on the system)
+  apropos       locate commands by keyword lookup
+  intro         introduction to commands
+  learn         computer aided instruction about UNIX
+  man           find manual information by keywords; print out the manual
+  trman         translate version 6 manual macros to version 7 macros
+  whatis        describe what a command is
+File management       (doing things with/to files and directories)
+  Analyse file(s)
+    cmp         compare two files
+    comm        select or reject lines common to two sorted files
+    diff        differential file and directory comparator
+    diff3       3-way differential file comparison
+    ls          list contents of directory
+    nm          print name list
+    pr          print file
+    sum         sum and count blocks in a file
+    test        condition command
+    what        what versions of object modules were used to construct a file
+  Location of file/directory
+    cd          change working directory
+    cp          copy
+    find        find files
+    install     install binaries
+    ln          make links
+    ls          list contents of directory
+    mkdir       make a directory
+    mv          move or rename files
+    rcp         remote file copy
+    whereis     locate source, binary, and or manual for program
+    which       locate program file including aliases and paths (\fIcsh\fR only)
+  Modify file/directory
+    chgrp       change group
+    chmod       change mode (protection) of a file
+    compact     compress and uncompress files, and cat them
+    install     install binaries
+    mkdir       make a directory
+    mv          move or rename files
+    ranlib      convert archives to random libraries
+    rm          remove (unlink) files
+    split       split a file into pieces
+    strip       remove symbols and relocation bits
+    touch       update date last modified of a file
+  Read/print a file
+    cat         catenate and print
+    head        give first few lines
+    more        file perusal filter for crt viewing
+    see         see what a file has in it
+    strings     find the printable strings in a object, or other binary, file
+    tail        deliver the last part of a file
+  Revision control system
+    ci          check in RCS revisions
+    co          check out RCS revisions
+    ident       identify files
+    merge       three-way file merge
+    rcs         change RCS file attributes
+    rcsdiff     compare RCS revisions
+    rcsintro    introduction to RCS commands
+    rcsmerge    merge RCS revisions
+    rlog        print log messages and other information about RCS files
+  Tape format
+    ar          archive and library maintainer
+    dd          convert and copy a file
+    mt          Magnetic tape manipulating program
+    od          octal dump
+    tar         tape archiver
+    tp          manipulate tape archive
+Miscellaneous         (special purpose programs)
+  bc            arbitrary-precision arithmetic language
+  dc            desk calculator
+  echo          echo arguments
+  false         provide truth values
+  play          play and control games -dulocal
+  script        make typescript of terminal session
+  true          provide truth values
+  units         conversion program
+  yes           be repetitively affirmative
+Program development   (compilers - debuggers, etc)
+  C
+    cb          C program beautifier
+    cc          C compiler
+    ctags       create a tags file
+    indent      indent and format C program source
+    lint        a C program verifier
+    mkstr       create an error message file by massaging C source
+    xstr        extract strings from C programs to implement shared strings
+    vgrind      grind nice listings of programs
+  Compile/load/debug
+    adb         debugger
+    cc          C compiler
+    dbx         debugger
+    error       analyze and disperse compiler error messages
+    gcore       get core images of running processes
+    gprof       display call graph profile data
+    ld          link editor
+    lorder      find ordering relation for an object library
+    make        maintain program groups
+    pc          Pascal compiler
+    pdx         pascal debugger
+  Fortran
+    ctags       create a tags file
+    efl         Extended Fortran Language
+    f77         Fortran 77 compiler
+    fsplit      split a multi-routine Fortran file into individual files
+    ratfor      rational Fortran dialect
+    fpr         print Fortran file
+    struct      structure Fortran programs
+  Other languages
+    as          assembler
+    awk         pattern scanning and processing language
+    csh         a shell (command interpreter) with C-like syntax
+    eyacc       modified yacc allowing much improved error recovery
+    fp          Functional Programming language compiler/interpreter
+    lex         generator of lexical analysis programs
+    lisp        lisp interpreter
+    liszt       compile a Franz Lisp program
+    lxref       lisp cross reference program
+    sh          command language
+    vlp         Format Lisp programs to be printed with nroff, vtroff, or troff
+    yacc        yet another compiler-compiler
+  Pascal
+    ctags       create a tags file
+    pc          Pascal compiler
+    pdx         pascal debugger
+    pi          Pascal interpreter code translator
+    pix         Pascal interpreter and executor
+    pmerge      pascal file merger
+    px          Pascal interpreter
+    pxp         Pascal execution profiler
+    pxref       Pascal cross-reference program
+    vgrind      grind nice listings of programs
+Running programs      (executing object/script files)
+  apply         apply a command to a set of arguments
+  at            execute commands at a later time
+  csh           a shell (command interpreter) with C-like syntax
+  gprof         display call graph profile data
+  kill          terminate a process with extreme prejudice
+  nice          run a command at low priority (\fIsh\fR only)
+  sh            command language
+  script        make typescript of terminal session
+  sleep         suspend execution for an interval
+  tee           pipe fitting (split output of a command)
+  time          time a command
+  wait          await completion of process
+Status information    (what's happening? How are things set?)
+  Files
+    du          summarize disk usage
+    file        determine file type
+    ls -l       print long listing of file names, with status info
+    quota       display disc usage and limits
+    size        size of an object file
+  System
+    date        print and set the date
+    df          disk free
+    du          summarize disk usage
+    hostid      set or print identifier of current host system
+    hostname    set or print name of current host system
+    iostat      report I/O statistics
+    printenv    print out the environment
+    pagesize    print system page size
+    prof        display profile data
+    ps          process status
+    ruptime     show host status of local machines
+    sysline     display system status on status line of a terminal
+    uptime      show how long system has been up
+    users       compact list of users who are on the system
+    vmstat      report virtual memory statistics
+    w           who is on and what they are doing
+    who         who is on the system
+  Terminal
+    reset       reset the teletype bits to a sensible state
+    stty        set terminal options
+    tabs        set terminal tabs
+    tset        set terminal modes
+    tty         get terminal name
+  Users
+    cal         print calendar
+    calendar    reminder service
+    last        indicate last logins of users and teletypes
+    lastcomm    show last commands executed in reverse order
+    leave       remind you when you have to leave
+    news        access general news items about the system
+    ps          process status
+    pwd         working directory name
+    quota       display disc usage and limits
+    rwho        who's logged in on local machines
+    users       compact list of users who are on the system
+    w           who is on and what they are doing
+    who         who is on the system
+    whoami      print effective current user id
+Text processing       (Doing things in english)
+  Analyse text files
+    awk         pattern scanning and processing language
+    checknr     check nroff/troff files
+    grep        search a file for a pattern
+    uniq        report repeated lines in a file
+    vfontinfo   inspect and print out information about unix fonts
+    wc          word count
+  Composition/style
+    diction     print wordy sentences; thesaurus for diction
+    explain     print wordy sentences; thesaurus for diction
+    look        find lines in a sorted list
+    spell       find spelling errors
+    style       analyze surface characteristics of a document
+  Edit file
+    addbib      create or extend bibliographic database
+    colrm       remove columns from a file
+    deroff      remove nroff, troff, tbl and eqn constructs
+    ed          text editor
+    eqn         typeset mathematics
+    ex          text editor
+    indxbib     build inverted index for a bibliography, find references 
+    join        relational database operator
+    refer       find and insert literature references in documents
+    roffbib     run off bibliographic database
+    sed         stream editor
+    sortbib     sort bibliographic database
+    vi          screen oriented (visual) display editor based on ex
+  Format a file
+    colcrt      filter nroff output for CRT previewing
+    col         filter reverse line feeds
+    fmt         simple text formatter
+    fold        fold long lines for finite width output device
+    fpr         print Fortran file
+    nroff       text formatting
+    pti         phototypesetter interpreter
+    ptx         permuted index
+    soelim      eliminate \&.so's from nroff input
+    tbl         format tables for nroff or troff
+    tc          photypesetter simulator
+    tk          paginator for the Tektronix 4014
+    troff       text formatting and typesetting
+    vgrind      grind nice listings of programs
+    vlp         Format Lisp programs to be printed with nroff, vtroff, or troff
+    vtroff      troff to a raster plotter
+    vwidth      make troff width table for a font
+  Modify text
+    basename    strip filename affixes
+    crypt       encode/decode
+    expand      expand tabs to spaces, and vice versa
+    expr        evaluate arguments as an expression
+    lex         generator of lexical analysis programs
+    m4          macro processor
+    sed         stream editor
+    tr          translate characters
+    ul          do underlining
+  Sort
+    rev         reverse lines of a file
+    sort        sort or merge files
+    symorder    rearrange name list
+    sortbib     sort bibliographic database
+    tsort       topological sort
