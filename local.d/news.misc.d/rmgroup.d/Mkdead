@@ -1,0 +1,12 @@
+#!/bin/sh
+# see Update.active for usage
+# change all groups that we have (but shouldn't) to be removed,
+# and change all groups that we dont have (but sould) to be a comment
+sed	-e '/general/d'\
+	-e '/control/d' \
+	-e '/junk/d' \
+	-e '/sources/d' \
+	-e '/ca.*/d' \
+	-e '/sdnet.*/d' \
+	-e 's,<,./rmgroup,' \
+	-e 's,>,#,'
