@@ -57,9 +57,11 @@ die() {
     mvcur(0, COLS-1, LINES-1, 0);       /* Go to bottom of screen */
     endwin();                           /* Set terminal to initial state */
     printf("Save game? ");
+    fflush(stdout);
     scanf("%s", str);
     if (str[0] == 'y' || str[0] == 'Y') {
 	printf("File name: ");
+	fflush(stdout);
 	scanf("%s", str);
 	if ((fp1 = creat(str, 0644)) < 0) {
 	    printf("Cannot open %s.  You get one more chance.\n",str);
