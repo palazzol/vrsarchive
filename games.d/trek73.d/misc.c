@@ -3,55 +3,53 @@
  *
  * Miscellaneous Routines
  *
- * help, scancmd, new_slot, return_slot, betw, vowelstr, plural,
- * check_p_damage, check_t_damage, check_p_turn, check_t_turn
+ * help, scancmd, new_slot, return_slot, vowelstr,
+ * check_p_damage, check_t_damage, check_p_turn, check_t_turn,
+ * ship_class
  *
  */
 
-#include "defines.h"
-#include "structs.h"
-#include <stdio.h>
+#include "externs.h"
 
 int help(dummy)
 struct ship *dummy;
 {
-	extern	struct cmd cmds[];
-	struct	cmd *cp;
-	int column = 0;
+	struct cmd	*cpbegin, *cpmiddle;
 
-	printf("\nTrek84 Commands: \n");
-	printf("Code		Command\n\n");
-	for (cp = &cmds[0]; cp->routine != NULL; cp++) {
-		printf("%3s: ", cp->word1);
-		if (cp->turns == 0)
-			printf (" *");
-		else
-			printf ("  ");
-		printf(" %-31s", cp->word2);
-		if (column++ & 1)
-			puts("");
+	puts("\nTrek73 Commands:");
+	puts("Code		Command			Code		Command");
+	putchar('\n');
+	cpbegin = &cmds[0];
+	cpmiddle = &cmds[(cmdarraysize + 1) >> 1];
+	while (cpmiddle->routine != NULL) {
+		printf("%3s:  %c %-31s:%3s:  %c %-31s\n",
+		    cpbegin->word1, ((cpbegin->turns) ? ' ' : '*'),
+		    cpbegin->word2, cpmiddle->word1,
+		    ((cpmiddle->turns) ? ' ' : '*'), cpmiddle->word2);
+		cpbegin++;
+		cpmiddle++;
 	}
-	printf("\n\n\n * does not use a turn\n");
+	if (cmdarraysize & 1)
+		printf("%3s:  %c %-31s", cpbegin->word1,
+		    ((cpbegin->turns) ? ' ' : '*'), cpbegin->word2);
+	puts("\n\n * does not use a turn");
 	dummy = dummy;				/* LINT */
 }
 
 struct cmd *scancmd(buf)
 char *buf;
 {
-	extern	struct cmd cmds[];
+	static char **argp = NULL;
 	struct	cmd *cp;
-	extern	char **argp;
 	int	argnum;
 	int	first;
 
 	argnum = parsit(buf, &argp);
 	first = strlen(argp[0]);
-	if (argnum && first) {
-		for (cp = &cmds[0]; cp->routine != NULL; cp++) {
-			if (strncmp(argp[0], cp->word1, first) == 0)
+	if (argnum && first)
+		for (cp = &cmds[0]; cp->routine != NULL; cp++)
+			if (!strncmp(argp[0], cp->word1, first))
 				return (cp);
-		}
-	}
 	return (NULL);
 }
 
@@ -61,8 +59,6 @@ char *buf;
  */
 new_slot()
 {
-	extern char slots[];
-	extern int shipnum;
 	/*
 	 * This is to make it appear that in a 2-ship duel, for
 	 * instance, the first object to appear will be numbered
@@ -70,8 +66,13 @@ new_slot()
 	 */
 	int i = shipnum + 2;
 
-	while (slots[i] == 'X')
+	while ((slots[i] == 'X') && (i <= HIGHSLOT))
 		i++;
+	if (i > HIGHSLOT) {
+		puts("The game will terminate now due to an inability to handle the number of");
+		puts("objects in space (i.e. vessels, torpedoes, probes, etc).  Sorry!");
+		exit(-1);
+	}
 	slots[i] = 'X';
 	return i;
 }
@@ -82,21 +83,11 @@ new_slot()
 return_slot(i)
 int i;
 {
-	extern char slots[];
-	
 	if (slots[i] != 'X')
 		printf("FATAL ERROR - Slot already empty!");
 	slots[i] = ' ';
 }
 
-betw(i, j, k)
-int i, j, k;
-{
-	if ((i > j) && (i < k))
-		return(1);
-	else
-		return(0);
-}
 
 char *vowelstr(str)
 char *str;
@@ -113,14 +104,6 @@ char *str;
 	}
 }
 
-char *plural(i)
-int i;
-{
-	if (i != 1)
-		return("s");
-	else
-		return("");
-}
 
 /*
  * This routine takes an array generated from commands 1, 3, and 5
@@ -132,10 +115,11 @@ int array[];
 struct ship *sp;
 char *string;
 {
-	int i, j = 0;
+	int i, j;
 
-	for (i=0; i<4; i++) {
-		if ((array[i] != 0) && (sp->phasers[i].status & P_DAMAGED)) {
+	j = 0;
+	for (i=0; i<sp->num_phasers; i++) {
+		if (array[i] && (sp->phasers[i].status & P_DAMAGED)) {
 			if (!j)
 				printf("Computer: Phaser(s) %d", i+1);
 			else
@@ -143,8 +127,10 @@ char *string;
 			j++;
 		}
 	}
-	if (j)
-		printf(" damaged and unable to %s.\n", string);
+	if (j > 1)
+		printf(" are damaged and unable to %s.\n", string);
+	else if (j == 1)
+		printf(" is damaged and unable to %s.\n", string);
 }
 
 /*
@@ -157,10 +143,11 @@ int array[];
 struct ship *sp;
 char *string;
 {
-	int i, j = 0;
+	int i, j;
 
-	for (i=0; i<6; i++) {
-		if ((array[i] != 0) && (sp->tubes[i].status & P_DAMAGED)) {
+	j = 0;
+	for (i=0; i<sp->num_tubes; i++) {
+		if (array[i] && (sp->tubes[i].status & P_DAMAGED)) {
 			if (!j)
 				printf("Computer: Tube(s) %d", i+1);
 			else
@@ -168,8 +155,10 @@ char *string;
 			j++;
 		}
 	}
-	if (j)
-		printf(" damaged and unable to %s.\n", string);
+	if (j > 1)
+		printf(" are damaged and unable to %s.\n", string);
+	else if (j == 1)
+		printf(" is damaged and unable to %s.\n", string);
 }
 
 /*
@@ -182,15 +171,16 @@ struct ship *sp;
 int flag;			/* If 1, came from fire_phasers */
 {
 	register int i;
-	register int j = 0;
-	register int k;
-	register int bear;
+	register int j;
+	register float k;
+	register float bear;
 	struct ship *target;
 
-	for (i=0; i<4; i++) {
-		if (array[i] == 0)
+	j = 0;
+	for (i=0; i<sp->num_phasers; i++) {
+		if (!array[i])
 			continue;
-		if ((flag) && (!(sp->phasers[i].status & P_FIRING)))
+		if (flag && !(sp->phasers[i].status & P_FIRING))
 			continue;
 		target = sp->phasers[i].target;
 		/*
@@ -206,7 +196,9 @@ int flag;			/* If 1, came from fire_phasers */
 			k = bear - sp->course;
 		}
 		k = rectify(k);
-		if ((k > 125) && (k < 235) && (!(sp->status & S_ENG))) {
+
+		if (betw(k, sp->p_blind_left, sp->p_blind_right)
+		    && !(is_dead(sp, S_ENG))) {
 			if (!j)
 				printf("Computer: Phaser(s) %d", i + 1);
 			else
@@ -214,8 +206,10 @@ int flag;			/* If 1, came from fire_phasers */
 			j++;
 		}
 	}
-	if (j)
+	if (j > 1)
 		printf(" are pointing into our blind side.\n");
+	else if (j == 1)
+		printf(" is pointing into our blind side.\n");
 }
 
 /*
@@ -228,15 +222,16 @@ struct ship *sp;
 int flag;			/* If 1, came from fire_tubes */
 {
 	register int i;
-	register int j = 0;
-	register int k;
-	register int bear;
+	register int j;
+	register float k;
+	register float bear;
 	struct ship *target;
 
-	for (i=0; i<6; i++) {
-		if (array[i] == 0)
+	j = 0;
+	for (i=0; i<sp->num_tubes; i++) {
+		if (!array[i])
 			continue;
-		if (flag && (!(sp->tubes[i].status & T_FIRING)))
+		if (flag && !(sp->tubes[i].status & T_FIRING))
 			continue;
 		target = sp->tubes[i].target;
 		/*
@@ -252,7 +247,7 @@ int flag;			/* If 1, came from fire_tubes */
 			k = bear - sp->course;
 		}
 		k = rectify(k);
-		if ((k > 135) && (k < 225) && (!(sp->status & S_ENG))) {
+		if (betw(k, sp->t_blind_left, sp->t_blind_right) && !(is_dead(sp, S_ENG))) {
 			if (!j)
 				printf("Computer: Tubes(s) %d", i + 1);
 			else
@@ -260,6 +255,20 @@ int flag;			/* If 1, came from fire_tubes */
 			j++;
 		}
 	}
-	if (j)
+	if (j > 1)
 		printf(" are pointing into our blind side.\n");
+	else if (j == 1)
+		printf(" is pointing into our blind side.\n");
+}
+
+struct ship_stat *ship_class(s)
+char *s;
+{
+	int i;
+
+	for (i = 0; i< MAXSHIPCLASS; i++)
+		if (!strcmp(stats[i].abbr, s)) {
+			return(&stats[i]);
+		}
+	return(NULL);
 }

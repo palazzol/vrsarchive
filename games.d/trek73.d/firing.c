@@ -8,20 +8,14 @@
  *
  */
 
-#include "defines.h"
-#include "structs.h"
+#include "externs.h"
 
-extern struct ship *shiplist[];
-extern char shutup[];
 
 phaser_firing(sp)
 struct ship *sp;
 {
-	extern	struct list head;
-	extern	struct list *tail;
-	extern	struct damage p_damage;
 	register int i;
-	register int j;
+	register float j;
 	int	hit;
 	struct	ship *ep;
 	struct	torpedo *tp;
@@ -29,42 +23,40 @@ struct ship *sp;
 	int	x, y;
 	struct	ship *target;
 	struct	list *lp;
-	int	bear;
+	float	bear;
 	struct 	ship *fed;
 
 
 	fed = shiplist[0];
-	for (i=0; i<4; i++) {
+	for (i=0; i<sp->num_phasers; i++) {
 		if (sp->phasers[i].status & P_FIRING)
 			break;
 	}
-	if (i == 4)
+	if (i == sp->num_phasers)
 		return 0;
 	sp->phasers[i].status &= ~P_FIRING;
 	target = sp->phasers[i].target;
 	/*
-	 * Put in j the exact bearing of the phasers relative to
-	 * the ship
+	 * Put in j the relative bearing of the phasers relative to the ship
+	 * Put in bear the absolute direction the phasers are pointing
 	 */
-	if (target == NULL) {
-		bear = sp->phasers[i].bearing + sp->course;
-		j = sp->phasers[i].bearing;
-	} else {
-		bear = bearing(sp->x, target->x, sp->y, target->y);
-		j = bear - sp->course;
-	}
-	j = rectify(j);
-	if (j > 125 && j < 235 && !(sp->status & S_ENG))
+	bear = sp->phasers[i].bearing + sp->course;
+	j = rectify(sp->phasers[i].bearing);
+	if (betw(j, sp->p_blind_left, sp->p_blind_right)
+	    && !is_dead(sp, S_ENG))
 		return 0;
-	if (target != NULL && (target->status & S_DEAD)) {
-		if ((sp = fed) && (!shutup[PHASERS+j])&& !(sp->status & S_DEAD))
-			printf("%s phaser %d disengaging\n", sp->name, i+1);
+	if (target != NULL && is_dead(target, S_DEAD)) {
+		if ((sp = fed) && (!shutup[PHASERS+i])
+		    && !(is_dead(sp, S_DEAD))) {
+			printf("%s phaser %d unlocking\n",
+			    sp->name, i+1);
+			shutup[PHASERS+i]++;
+		}
 		sp->phasers[i].target = NULL;
-		shutup[PHASERS+j]++;
 		return 0;
 	}
-	if (target != NULL)
-		sp->phasers[i].bearing = j;
+	if (cantsee(sp))
+		e_cloak_off(sp, fed);
 	printf(" <%s frng phasers>\n", sp->name);
 	for (lp = &head; lp != tail; lp = lp->fwd) {
 		if (lp->type == 0)
@@ -83,29 +75,29 @@ struct ship *sp;
 			y = tp->y;
 		}
 		hit = phaser_hit(sp, x, y, &sp->phasers[i], bear);
-		if (hit == 0)
+		if (hit <= 0)
 			continue;
 		if (tp) {
-			if (tp->timedelay > 2) {
+			if (tp->timedelay > segment) {
 				switch (lp->type) {
-				default:
-				case I_SHIP:
-					printf("oops...\n");
-					break;
 				case I_TORPEDO:
 					printf("hit on torpedo %d\n",
 						tp->id);
 					break;
 				case I_ENG:
-					printf("%s's engineering hit.\n",
+					printf("hit on %s's engineering\n",
 						tp->from->name);
 					break;
 				case I_PROBE:
 					printf("hit on probe %d\n", 
 						tp->id);
 					break;
+				default:
+					fprintf(stderr, "hit on lp->type\n",
+						lp->type);
+					break;
 				}
-				tp->timedelay = 2;
+				tp->timedelay = 0.;
 			}
 			tp->fuel -= hit/2;
 			if (tp->fuel < 0)
@@ -116,45 +108,41 @@ struct ship *sp;
 		 * Determine which shield was hit
 		 */
 		j = rectify(bearing(x, sp->x, y, sp->y) - ep->course);
-		if (j > 315 || j < 45)
+		if (j > 315.0 || j < 45.0)
 			s = 1;
-		else if (j < 135)
+		else if (j < 135.0)
 			s = 2;
-		else if (j < 225)
+		else if (j < 225.0)
 			s = 3;
 		else
 			s = 4;
-		damage(hit, ep, s, &p_damage);
+		(void) damage(hit, ep, s, &p_damage, D_PHASER);
 	}
 	/*
 	 * Reduce the load by the firing percentage
 	 */
-	sp->phasers[i].load = sp->phasers[i].load
-	    - sp->phasers[i].load * sp->p_percent / 100;
+	sp->phasers[i].load *= 1.0 - (float) sp->p_percent / 100;
 	return 0;
 }
 
 torpedo_firing(sp)
 struct ship *sp;
 {
-	extern	struct damage a_damage;
-	extern	struct list *newitem();
 	register int i;
-	register int j;
+	register float j;
 	register int th;
 	struct	torpedo *tp;
 	struct	ship *target;
 	struct	list *lp;
-	int	bear;
+	float	bear;
 	struct	ship *fed;
 
-
 	fed = shiplist[0];
-	for (i=0; i<6; i++) {
+	for (i=0; i<sp->num_tubes; i++) {
 		if (sp->tubes[i].status & T_FIRING)
 			break;
 	}
-	if (i == 6)
+	if (i == sp->num_tubes)
 		return 0;
 	sp->tubes[i].status &= ~T_FIRING;
 	th = sp->tubes[i].load;
@@ -162,31 +150,29 @@ struct ship *sp;
 		return 0;
 	target = sp->tubes[i].target;
 	/*
-	 * Put in j the relative bearing of the tube
+	 * Put in j the relative bearing of the tubes to the ship
+	 * Put in bear the absolute direction the tubes are pointing
 	 */
-	if (target == NULL) {
-		bear = sp->tubes[i].bearing + sp->course;
-		j = sp->tubes[i].bearing;
-	} else {
-		bear = bearing(sp->x, target->x, sp->y, target->y);
-		j = bear - sp->course;
-	}
-	j = rectify(j);
-	if (j > 125 && j < 235 && !(sp->status & S_ENG))
+	bear = sp->tubes[i].bearing + sp->course;
+	j = rectify(sp->tubes[i].bearing);
+	if (betw(j, sp->t_blind_left, sp->t_blind_right) && !is_dead(sp, S_ENG))
 		return 0;
-	if (target != NULL && (target->status & S_DEAD)) {
-		if ((sp = fed) && (!shutup[TUBES+j])&&!(sp->status & S_DEAD))
+	if (target != NULL && (is_dead(target, S_DEAD))) {
+		if ((sp == fed) && !shutup[TUBES+i] && !is_dead(sp, S_DEAD)) {
 			printf("   tube %d disengaging\n", i+1);
+			shutup[TUBES+i]++;
+		}
 		sp->tubes[i].target = NULL;
-		shutup[TUBES+j]++;
 		return 0;
 	}
-	if (target != NULL)
-		sp->tubes[i].bearing = j;
 	sp->tubes[i].load = 0;
 	lp = newitem(I_TORPEDO);
 	lp->type = I_TORPEDO;
 	lp->data.tp = MKNODE(struct torpedo, *, 1);
+	if (lp->data.tp == (struct torpedo *)NULL) {
+		fprintf(stderr, "torpedo_firing: malloc failed\n");
+		exit(2);
+	}
 	tp = lp->data.tp;
 	tp->from = sp;
 	tp->x = sp->x;
@@ -196,10 +182,18 @@ struct ship *sp;
 	tp->fuel = th;
 	tp->speed = sp->t_lspeed + sp->warp;
 	tp->newspeed = tp->speed;
-	tp->timedelay = sp->t_delay * 10;
+	tp->timedelay = (float)sp->t_delay;
 	tp->prox = sp->t_prox;
 	tp->id = new_slot();
-	printf(" <<%s frng torpedo %d>>\n", sp->name, tp->id);
+	tp->type = TP_TORPEDO;
+	if (teletype)
+		printf("\007");
+	if (cantsee(sp))
+		e_cloak_off(sp, fed);
+	printf(" <<%s frng torpedo %d>>", sp->name, tp->id);
+	if (teletype)
+		printf("\007");
+	printf("\n");
 	return 1;
 }
 
@@ -212,16 +206,19 @@ struct list *lp;
 
 	fuel = 0;
 	printf("++%s++ destruct.\n", sp->name);
-	for (i=0; i<4; i++)
-		if (sp->phasers[i].status & ~P_DAMAGED)
-			fuel += min(sp->phasers[i].load, 10);
-	for (i=0; i<6; i++)
-		if (sp->tubes[i].status & ~T_DAMAGED)
-			fuel += min(sp->tubes[i].load, 10);
+	for (i=0; i<sp->num_phasers; i++)
+		if (!(sp->phasers[i].status & P_DAMAGED))
+			fuel += min(sp->phasers[i].load, MAX_PHASER_CHARGE);
+	for (i=0; i<sp->num_tubes; i++)
+		if (!(sp->tubes[i].status & T_DAMAGED))
+			fuel += min(sp->tubes[i].load, MAX_TUBE_CHARGE);
 	fuel += sp->pods;
 	antimatter_hit((char *) sp, sp->x, sp->y, fuel);
 	lp->type = 0;
-	sp->status |= S_DEAD;
+	for (i=0; i< S_NUMSYSTEMS; i++)
+		sp->status[i] = 100;	/* He's dead, Jim */
+	sp->cloaking = C_NONE;
+	sp->complement = -1;
 }
 
 
@@ -231,9 +228,6 @@ struct list *lp;
 {
 
 	switch (lp->type) {
-		case I_SHIP:
-			printf("we aren't supposed to be here \n");
-			break;
 		case I_TORPEDO:
 			printf(":: torp %d ::\n", tp->id);
 			break;
@@ -244,7 +238,7 @@ struct list *lp;
 			printf("## %s engineering ##\n", tp->from->name);
 			break;
 		default:
-			printf("what the heck is this\n");
+			fprintf(stderr, "torp_detonate lp->type %d\n",lp->type);
 			break;
 	}
 	antimatter_hit((char *) tp, tp->x, tp->y, tp->fuel);

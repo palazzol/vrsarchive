@@ -3,59 +3,42 @@
  *
  * Actual command execution
  *
- * move_ships
+ * move_ships, check_targets, misc_timers, disposition
  *
  */
 
-#include "defines.h"
-#include "structs.h"
-
-extern int defenseless;
-extern int corbomite;
-extern int surrender;
-extern int surrenderp;
-extern char shutup[];
-extern int global;
-extern int reengaged;
+#include "externs.h"
 
 
-move_ships() {
-	extern	double sin();
-	extern	double cos();
-	extern	double sqrt();
-	extern	float fabs();
-	extern	struct list head;
-	extern	struct list *tail;
-	extern	int shipnum;
-	extern	struct ship *shiplist[];
+move_ships() 
+{
 	register int i;
-	register int j;
-	register int k;
+	register float j;
+	register float k;
 	register struct list *lp;
 	register struct ship *sp;
+	register float fuel_use;
 	struct	torpedo *tp;
 	struct	ship *fed;
 	struct	list *lp1;
 	struct	ship *sp1;
-	int	iterations;
+	float	iterations;
 	float	tmpf;
-	int	course, newcourse, energy;
+	float	energy;
+	float	course, newcourse;
 	float	warp, newwarp;
 	int	x, y;
 	struct	ship *target;
-	int	kills, others, fedstatus;
-	struct	ship *ep;
 	double	d0;
-	extern	float	segment;
-	extern	float	timeperturn;
 	float	Mpersegment;
+	double	floor(), fabs();
 
 	/*
 	 * The value 100 is the number of Megameters per second
 	 * per warp-factor
 	 */
 	Mpersegment = segment * 100.0;
-	iterations = timeperturn/segment;
+	iterations = (int)floor(timeperturn/segment + 0.5); /* What a crock! */
 	for (i=0; i<=shipnum; i++)
 		distribute(shiplist[i]);
 	fed = shiplist[0];
@@ -63,7 +46,7 @@ move_ships() {
 		for (lp = &head; lp != NULL; lp = lp->fwd) {
 			if (lp == tail)
 				break;
-			if (lp->type == 0)
+			if (lp->type == I_UNDEFINED)
 				continue;
 			sp = NULL;
 			tp = NULL;
@@ -71,24 +54,24 @@ move_ships() {
 				sp = lp->data.sp;
 			else
 				tp = lp->data.tp;
-			if (sp && sp->status & S_DEAD)
+			if (sp && is_dead(sp, S_DEAD))
 				continue;
-			if (sp) {
-				phaser_firing(sp);
-				torpedo_firing(sp);
-			}
+			if ((sp) && (i % sp->p_firing_delay == 0))
+				(void) phaser_firing(sp);
+			if ((sp) && (i % sp->t_firing_delay == 0))
+				(void) torpedo_firing(sp);
 			/*
 			 * time fuses
 			 */
 			if (tp) {
-				tp->timedelay--;
-				if (tp->timedelay <= 0) {
+				tp->timedelay -= segment;
+				if (tp->timedelay <= 0.) {
 					torp_detonate(tp, lp);
 					continue;
 				}
 			} else {
-				sp->delay--;
-				if (sp->delay <= 0) {
+				sp->delay -= segment;
+				if (sp->delay <= 0.) {
 					ship_detonate(sp, lp);
 					continue;
 				}
@@ -98,30 +81,44 @@ move_ships() {
 			 */
 			if (tp && tp->prox != 0) {
 				for (lp1 = &head; lp1 != tail; lp1 = lp1->fwd) {
-					if (lp1->type != I_SHIP)
+					if (lp1->type == I_SHIP) {
+						sp1 = lp1->data.sp;
+						if (sp1 == tp->from)
+							continue;
+						if (cantsee(sp1))
+							continue;
+						j = rangefind(tp->x, sp1->x,
+						    tp->y, sp1->y);
+					} else if (lp1->type == I_ENG) {
+						sp1 = lp1->data.sp;
+						if (sp1 == tp->from)
+							continue;
+						if (cantsee(sp1))
+							continue;
+						j = rangefind(tp->x, sp1->x,
+						    tp->y, sp1->y);
+					} else
 						continue;
-					sp1 = lp1->data.sp;
-					if (sp1 == tp->from)
-						continue;
-					j=rangefind(tp->x,sp1->x,tp->y,sp1->y);
-					if (j > tp->prox)
+					if (j >= tp->prox)
 						continue;
 					torp_detonate(tp, lp);
-					tp = 0;
 					break;
 				}
-				if (!tp)
+				if (lp1 != tail)
 					continue;
 			}
 			/*
 			 * movement simulation
 			 */
-			if (sp && sp->status & S_DEAD)
+			if (sp && is_dead(sp, S_DEAD))
 				continue;
 			if (sp) {
 				x = sp->x;
 				y = sp->y;
 				warp = sp->warp;
+				if (fabs(sp->newwarp) > sp->max_speed)
+					sp->newwarp = (sp->newwarp > 0)
+					    ? sp->max_speed : -sp->max_speed;
 				newwarp = sp->newwarp;
 				course = sp->course;
 				newcourse = sp->newcourse;
@@ -130,22 +127,28 @@ move_ships() {
 				/*
 				 * fuel consumption
 				 */
-				if (fabs((double) warp) >= 1)
-					j = (int) (warp * sp->eff * segment);
+				if (fabs(warp) > 1.0)
+					fuel_use = (fabs(warp) * sp->eff * segment);
 				else
-					j = 0;
-				if (j < 0)
-					j *= -1;
-				if (j > energy) {
-					if (!shutup[BURNOUT + sp->id]  && !(sp->status & S_WARP)) {
+					fuel_use = 0.;
+#ifdef TRACE
+				/*
+				if (trace)
+					printf("*** Fuel use = %.2f, energy = %.2f\n",
+					    fuel_use, energy);
+				*/
+#endif
+				if (fuel_use > energy) {
+					if (!shutup[BURNOUT + sp->id] &&
+					    !(is_dead(sp, S_WARP)) && cansee(sp)) {
 						printf("%s's warp drive burning out.\n",
 							sp->name);
 						shutup[BURNOUT + sp->id]++;
 					}
-					newwarp = warp < 0 ? -.99 : .99;
+					newwarp = (warp < 0.0) ? -0.99 : 0.99;
 					energy = 0;
 				} else
-					energy -= j;
+					energy -= fuel_use;
 			} else {
 				x = tp->x;
 				y = tp->y;
@@ -158,67 +161,74 @@ move_ships() {
 			/*
 			 * destroyed warp drive
 			 */
-			if (sp && (sp->status & S_WARP))
-				if (fabs((double)warp) > 1.0)
-					newwarp = warp < 0.0 ? -.99 : .99;
+			if (sp && (is_dead(sp, S_WARP)))
+				if (fabs(warp) > 1.0)
+					newwarp = (warp < 0.0) ? -0.99 : 0.99;
 			/*
 			 * automatic pilot
 			 */
-			if (target != NULL) {
-				if (sp && (target->status & S_DEAD)) {
-					if ((sp == fed) && (!shutup[DISENGAGE]) && !(sp->status & S_DEAD))
+			if (target != NULL)
+				if (sp && (is_dead(target, S_DEAD))) {
+					if ((sp == fed) && !shutup[DISENGAGE]
+					    && !is_dead(sp, S_DEAD)) {
 						printf("%s's autopilot disengaging.\n",
-						sp->name);
+						    sp->name);
+						shutup[DISENGAGE]++;
+					}
 					newcourse = course;
-					shutup[DISENGAGE]++;
 					target = NULL;
-					sp->eluding = 0;
+					sp->relbear = 0.0;
 				} else {
-					j = bearing(x, target->x, y, target->y);
-					if (sp && sp->eluding)
-						j = rectify(j + 180);
-					newcourse = (float) j;
-					/*if ((sp) && (sp != fed)) {
-						sp->newwarp = 1.0;
-						newwarp = 1.0;
-					}*/
-					if (tp)
-						course = newcourse;
+					if (cantsee(target))
+						j =bearing(x,target->position.x,
+						    y, target->position.y);
+					else
+						j = bearing(x, target->x, y, target->y);
+					if (sp)
+						j = rectify(j - sp->relbear);
+					newcourse = j;
 				}
-			}
 			/*
-			 * turn rate
+			 * turn rate (known to be a ship)
 			 */
-			if (course != newcourse) {
+			if (tp)
+				course = newcourse;
+			if (sp && course != newcourse) {
 				j = rectify(newcourse - course);
 				if (j > 180)
 					j -= 360;
 				/*
 				 * maximum degrees turned in one turn
 				 */
-				k = (int) ((12.0 - warp) * 4.0 * segment);
-				if (sp->status & S_WARP)
+				k = ((sp->max_speed + 2.0 - warp)
+				    * sp->deg_turn * segment);
+				/* If you have no warp drive, you're less
+				 * maneuverable
+				 */
+				if (is_dead(sp, S_WARP))
 					k /= 2;
-				k = (int) course + (j < 0 ? -1 : 1) *
-					min(abs(j), k);
-				course = (float) rectify(k);
+				k = course + (j < 0.0 ? -1.0 : 1.0) *
+					min(fabs(j), k);
+				course = rectify(k);
 			}
 			/*
 			 * acceleration
 			 */
 			tmpf = newwarp - warp;
-			if (tmpf < 0.0)
-				d0 = (double) (tmpf * -1.0);
-			else
-				d0 = (double) tmpf;
-			if (tmpf != 0.0)
-				warp += (tmpf < 0 ? -1 : 1) * sqrt(d0)
-				    * segment;
-			d0 = (double) toradians(course);
+			d0 = fabs(tmpf);
+			warp += ((tmpf < 0.0) ? -1 : 1) * sqrt(d0) * segment;
+			d0 = toradians(course);
 			x += (int) (warp * cos(d0) * Mpersegment);
 			y += (int) (warp * sin(d0) * Mpersegment);
-			if ((warp > -0.1) && (warp < 0.1)){
-				warp = 0.0;
+			/*
+			 * projected position (cloaked)
+			 */
+			if (sp && cantsee(sp)) {
+				d0 = toradians(sp->position.course);
+				sp->position.x += (sp->position.warp * cos(d0)
+				    * segment);
+				sp->position.y += (sp->position.warp * sin(d0)
+				    * segment);
 			}
 			/*
 			 * reset all the vars
@@ -228,48 +238,102 @@ move_ships() {
 				sp->y = y;
 				sp->warp = warp;
 				sp->newwarp = newwarp;
-				sp->course = course % 360;
-				sp->newcourse = newcourse % 360;
+				/* XXXXX should these be rectified? */
+				sp->course = rectify(course);
+				sp->newcourse = rectify(newcourse);
 				sp->energy = energy;
 				sp->target = target;
 			} else {
 				tp->x = x;
 				tp->y = y;
 				tp->speed = warp;
-				tp->course = course % 360;
+				tp->course = rectify(course);
 				tp->target = target;
 			}
 		}
 	}
+}
+
+
+check_targets()
+{
+	register int i;
+	register int j;
+	struct ship *sp;
+	struct ship *fed;
+	struct ship *target;
+
+	fed = shiplist[0];
 	for (i=0; i <= shipnum; i++) {		/* Check targets */
 		sp = shiplist[i];
-		if (sp->status & S_DEAD)
+		if (is_dead(sp, S_DEAD))
 			continue;
-		for (j=0; j<4; j++) {
-			target = sp->phasers[j].target;
-			if (target && (target->status & S_DEAD)) {
-				if ((sp == fed) && (!shutup[PHASERS+j])&& !(sp->status & S_DEAD))
-					printf("  phaser %d disengaging\n",j+1);
-				sp->phasers[j].target = NULL;
-				shutup[PHASERS+j]++;
+		target = sp->target;
+		if (target && is_dead(target, S_DEAD)) {
+			if ((sp == fed) && !shutup[DISENGAGE]) {
+				puts("   helm lock disengaging");
+				shutup[DISENGAGE]++;
 			}
+			sp->target = NULL;
+			sp->relbear = 0.0;
 		}
-		for (j=0; j<6; j++) {
+		for (j=0; j<sp->num_phasers; j++) {
+			target = sp->phasers[j].target;
+			if (target && is_dead(target, S_DEAD)) {
+				if ((sp == fed) && (!shutup[PHASERS+j])
+				    && !(is_dead(sp, S_DEAD))) {
+					printf("  phaser %d disengaging\n",j+1);
+					shutup[PHASERS+j]++;
+				}
+				sp->phasers[j].target = NULL;
+			} else if (target)
+				sp->phasers[j].bearing = rectify(bearing(sp->x,
+				    (cantsee(target)) ? target->position.x
+						     : target->x, sp->y,
+				    (cantsee(target)) ? target->position.y
+						     : target->y) - sp->course);
+		}
+		for (j=0; j<sp->num_tubes; j++) {
 			target = sp->tubes[j].target;
-			if (target && (target->status & S_DEAD)) {
-				if ((sp == fed) && (!shutup[TUBES+j]) && !(sp->status & S_DEAD))
+			if (target && is_dead(target, S_DEAD)) {
+				if ((sp == fed) && (!shutup[TUBES+j])
+				    && !(is_dead(sp, S_DEAD))) {
 					printf("  tube %d disengaging\n", j+1);
+					shutup[TUBES+j]++;
+				}
 				sp->tubes[j].target = NULL;
-				shutup[TUBES+j]++;
-			}
+			} else if (target)
+				sp->tubes[j].bearing = rectify(bearing(sp->x,
+				    (cantsee(target)) ? target->position.x
+						     : target->x, sp->y,
+				    (cantsee(target)) ? target->position.y
+						     : target->y) - sp->course);
 		}
 	}
+	if (sp->cloak_delay > 0)
+		sp->cloak_delay--;
+}
+
+misc_timers()
+{
+	struct ship *fed;
+
 	/*
 	 * self-destruct warning
 	 */
-	if ((fed->delay < 1000) && (fed->delay > 8)) {
-		printf("Computer:   %d seconds to self destruct.\n",fed->delay/9);
+	fed = shiplist[0];
+	if ((fed->delay < 1000.) && (fed->delay > 0.)) {
+		if (is_dead(fed, S_COMP)) {
+			printf("%s:  Self-destruct has been aborted due to computer damage\n",
+			    science);
+			fed->delay = 10000.;
+		} else
+			printf("Computer:   %5.2f seconds to self destruct.\n",
+			    fed->delay);
 	} 
+
+	fed->probe_status = PR_NORMAL;
+
 	/*
 	 * Ruses, bluffs, surrenders
 	 */
@@ -281,47 +345,94 @@ move_ships() {
 		surrender++;
 	if (surrenderp)
 		surrenderp++;
+}
+
+disposition()
+{
+	struct ship *sp;
+	struct ship *fed;
+	struct ship *ep;
+	int kills;
+	int others;
+	int fedstatus;
+	register int i;
+	register int j;
+	register int k;
+
 	/*
 	 * Federation dispostion
 	 */
+	fed = shiplist[0];
 	sp = fed;
 	kills = others = fedstatus = 0;
-	if ((sp->crew <= 0) || (sp->status & S_DEAD)) {
-		fedstatus = 1;
-		sp->status |= S_DEAD;
-	} else
-		for (j=0; j<1; j++) {
-			for (i=0; i<4; i++)
-				if (~sp->phasers[i].status | ~P_DAMAGED)
-					break;
-			if (i != 4)
-				continue;
-			for (i=0; i<6; i++)
-				if (~sp->tubes[i].status | ~T_DAMAGED)
-					break;
-			if (i != 6)
-				continue;
-			fedstatus = 1;
+	if (sp->complement <= 0 && !is_dead(sp, S_DEAD)) {
+		sp->status[S_DEAD] = 100;
+		sp->newwarp = 0.0;
+		sp->newcourse = sp->course;
+		sp->target = NULL;
+		sp->relbear = 0.0;
+		for (i = 0; i < sp->num_phasers; i++) {
+			sp->phasers[i].target = NULL;
+			sp->phasers[i].drain = MIN_PHASER_DRAIN;
+			sp->phasers[i].status &= ~P_FIRING;
 		}
+		for (i = 0; i < sp->num_tubes; i++) {
+			sp->tubes[i].target = NULL;
+			sp->tubes[i].status &= ~T_FIRING;
+		}
+		for (i = 0; i < SHIELDS; i++)
+			sp->shields[i].attemp_drain = 0.0;
+		sp->regen = 0.0;
+		sp->cloaking = C_NONE;
+	}
+	if (is_dead(sp, S_DEAD))
+		fedstatus = 1;
+	else {
+		for (i=0; i<sp->num_phasers; i++)
+			if (!(sp->phasers[i].status & P_DAMAGED))
+				break;
+		if (i == sp->num_phasers) {
+			for (i=0; i<sp->num_tubes; i++)
+				if (!(sp->tubes[i].status & T_DAMAGED))
+					break;
+			if (i == sp->num_tubes)
+				fedstatus = 1;
+		}
+	}
 	/*
 	 * enemy disposition
 	 */
 	for (k=1; k <= shipnum; k++) {
 		ep = shiplist[k];
-		if (ep->status & S_DEAD) {
-			kills++;
-			continue;
+		if (ep->complement <= 0 && !is_dead(ep, S_DEAD)) {
+			ep->status[S_DEAD] = 100;
+			ep->newwarp = 0.0;
+			ep->newcourse = ep->course;
+			ep->target = NULL;
+			ep->relbear = 0.0;
+			for (i = 0; i < ep->num_phasers; i++) {
+				ep->phasers[i].target = NULL;
+				ep->phasers[i].drain = MIN_PHASER_DRAIN;
+				ep->phasers[i].status &= ~P_FIRING;
+			}
+			for (i = 0; i < ep->num_tubes; i++) {
+				ep->tubes[i].target = NULL;
+				ep->tubes[i].status &= ~T_FIRING;
+			}
+			for (i = 0; i < SHIELDS; i++)
+				ep->shields[i].attemp_drain = 0.0;
+			ep->regen = 0.0;
+			ep->cloaking = C_NONE;
 		}
-		if (ep->crew <= 0) {
-			ep->status |= S_DEAD;
+		if (is_dead(ep, S_DEAD)) {
 			kills++;
 			continue;
 		}
 		if (fedstatus)
 			continue;
 		j = rangefind(sp->x, ep->x, sp->y, ep->y);
-		if ((j>3500 && (ep->status & S_WARP)) ||
-			(j>4500 && ep->delay<100)) {
+		if ((j>3500 && is_dead(ep, S_WARP)) ||
+			(j>4500 && ep->delay<10.)) {
 				others++;
 				continue;
 		}
@@ -330,54 +441,46 @@ move_ships() {
 			reengaged = 0;
 		if (ep->energy > 10)
 			continue;
-		for (i=0; i<4; i++)
-			if (~ep->phasers[i].status | ~P_DAMAGED)
+		for (i=0; i<ep->num_phasers; i++)
+			if (!(ep->phasers[i].status & P_DAMAGED))
 				break;
-		if (i != 4)
+		if (i != ep->num_phasers)
 			continue;
-		for (i=0; i<6; i++)
-			if (~ep->tubes[i].status | ~T_DAMAGED)
+		for (i=0; i<ep->num_tubes; i++)
+			if (!(ep->tubes[i].status & T_DAMAGED))
 				break;
-		if (i != 6)
+		if (i != ep->num_tubes)
 			continue;
 		kills++;
 	}
-	if (fedstatus == 0 && (global & E_SURRENDER)) {
+	if (!fedstatus && (global & E_SURRENDER))	/* enemy surrender */
 		if (leftovers())
-			warn(4);
-		else {
-			final(4);
-		}
-	}
-	if ((fed->status & S_SURRENDER) && (kills + others < shipnum)) {
-		if (leftovers())
-			warn(3);
-		else {
-			final(3);
-		}
-	}
-	if (fedstatus == 0 && kills+others < shipnum)
+			(void) warn(FIN_E_SURRENDER);
+		else
+			(void) final(FIN_E_SURRENDER);
+	if ((is_dead(fed, S_SURRENDER)) && (kills + others < shipnum))
+		if (leftovers())		/* federation surrender */
+			(void) warn(FIN_F_SURRENDER);
+		else
+			(void) final(FIN_F_SURRENDER);
+	if (!fedstatus && (kills + others) < shipnum)	/* play continues */
 		return 0;
-	if (fedstatus == 1 && kills+others < shipnum) {
+	if (fedstatus && kills < shipnum)		/* Fed. defeated */
 		if (leftovers())
-			warn(0);
+			(void) warn(FIN_F_LOSE);
 		else
-			final(0);
-	}
-	if (fedstatus == 0 && kills == shipnum) {
+			(void) final(FIN_F_LOSE);
+	if (!fedstatus && kills == shipnum)		/* Fed. victory */
 		if (leftovers())
-			warn(1);
+			(void) warn(FIN_E_LOSE);
 		else
-			final(1);
-	}
-	if (fedstatus == 0 && kills+others == shipnum) {
+			(void) final(FIN_E_LOSE);
+	if (!fedstatus && (kills + others) == shipnum)	/* outmaneuvered */
 		if (leftovers())
-			warn(2);
+			(void) warn(FIN_TACTICAL);
 		else
-			final(2);
-	}
-	if (fedstatus == 1 && kills == shipnum) {
-		final(5);
-	}
+			(void) final(FIN_TACTICAL);
+	if (fedstatus && kills == shipnum)
+		(void) final(FIN_COMPLETE);		/* both sides dead */
 	return 0;
 }
