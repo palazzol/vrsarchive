@@ -830,7 +830,7 @@ ctype descrip;
 			{
 			  c_ptr = &cave[i][j];
 			  if (c_ptr->tptr != 0) 
-			    if (destroy(t_list[c_ptr->tptr].tval))
+			    if ((*destroy)(t_list[c_ptr->tptr].tval))
 			      (void) delete_object(i, j);
 			  if (c_ptr->fopen) 
 			    {
@@ -935,7 +935,7 @@ char *ddesc;
 	  {
 	    c_ptr = &cave[i][j];
 	    if (c_ptr->tptr != 0) 
-	      if (destroy(t_list[c_ptr->tptr].tval))
+	      if ((*destroy)(t_list[c_ptr->tptr].tval))
 		(void) delete_object(i, j);
 	    if (c_ptr->fopen) 
 	      {
