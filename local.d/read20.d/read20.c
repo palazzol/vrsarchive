@@ -12,7 +12,7 @@
 				/* logfile should be changable */
 #define LOGFILE "Logfile"
 
-char *ctime(), *index(), *rindex();
+char *ctime(), *strchr(), *strrchr();
 char *unixname();
 
 int  fdTape;                    /* File handle for Dumper-20 format tape */
@@ -286,7 +286,7 @@ char *block;
 	if (debug > 5) printf("File Header block:\n");
 
 	getstring(block, name, WdoffFLName, sizeof(name));
-	ts = index(name, ';');          /* Chop off ;Pprotection;Aacct */
+	ts = strchr(name, ';');          /* Chop off ;Pprotection;Aacct */
 	*ts = 0;
 
 	t = unixtime(block, WdoffFDB_Wrt);
@@ -382,7 +382,7 @@ char *name, *pattern;
 {
 	int  plen = strlen(pattern);
 
-	while ((name=index(name, *pattern)))
+	while ((name=strchr(name, *pattern)))
 	{
 		if (strncmp(name, pattern, plen)==0) return(1);
 		name++;
@@ -407,14 +407,14 @@ char *name;
 		return(newname);
 	}
 
-	name = index(name, '<');        /* Trim off device */
-	t = rindex(name, '>');          /* find end of directory */
+	name = strchr(name, '<');        /* Trim off device */
+	t = strrchr(name, '>');          /* find end of directory */
 
 	/* eventually make subdirectories */
 	/* eventually optionally lowify filename */
 
 	strcpy(newname, ++t);   /* Skip over the > */
-	t = rindex(newname, '.');       /* find last . */
+	t = strrchr(newname, '.');       /* find last . */
 	*t = 0;                         /* zap it out */
 	return(newname);
 }
