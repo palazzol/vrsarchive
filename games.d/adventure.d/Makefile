@@ -15,7 +15,6 @@ src/adv/adv: force
 
 adv.key adv.rec: src/munge/munge
 	src/munge/munge < comcave
-	@echo "All done."
 
 lint print:
 	@cd src/kio ; make $@
