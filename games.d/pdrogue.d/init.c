@@ -1,7 +1,6 @@
 #include <curses.h>
 #include "object.h"
 #include "room.h"
-#include <sgtty.h>
 #include <signal.h>
 
 char *player_name;
@@ -9,12 +8,15 @@ short cant_int = 0, did_int = 0;
 
 extern char ichars[];
 extern short party_room;
+extern int byebye(), onintr();
+#ifdef SIGTSTP
+extern int tstp();
+#endif SIGTSTP
 
 init()
 {
 	char *getlogin();
 	short i;
-	int tstp(), byebye(), onintr();
 
 	if (!(player_name = getlogin())) {
 		fprintf(stderr, "Hey!  Who are you?");
@@ -29,7 +31,9 @@ init()
 		ichars[i] = 0;
 	}
 	start_window();
+#ifdef SIGTSTP
 	signal(SIGTSTP, tstp);
+#endif SIGTSTP
 	signal(SIGINT, onintr);
 	signal(SIGQUIT, byebye);
 	if ((LINES < 24) || (COLS < 80)) {
@@ -147,24 +151,30 @@ edchars(mode)
 short mode;
 {
 	static short called_before = 0;
+#ifdef TIOCGLTC
 	static struct ltchars ltc_orig;
-	static struct tchars tc_orig;
 	struct ltchars ltc_temp;
+#endif TIOCGLTC
+	static struct tchars tc_orig;
 	struct tchars tc_temp;
 
 	if (!called_before) {
 		called_before = 1;
 		ioctl(0, TIOCGETC, &tc_orig);
+#ifdef TIOCGLTC
 		ioctl(0, TIOCGLTC, &ltc_orig);
+#endif TIOCGLTC
 	}
-	ltc_temp = ltc_orig;
 	tc_temp = tc_orig;
 
+#ifdef TIOCGLTC
+	ltc_temp = ltc_orig;
 	if (!mode) {
 		ltc_temp.t_suspc = ltc_temp.t_dsuspc = ltc_temp.t_rprntc =
 		ltc_temp.t_flushc = ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
 	}
+	ioctl(0, TIOCSLTC, &ltc_temp);
+#endif TIOCGLTC
 
 	ioctl(0, TIOCSETC, &tc_temp);
-	ioctl(0, TIOCSLTC, &ltc_temp);
 }

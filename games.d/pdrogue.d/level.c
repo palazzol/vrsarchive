@@ -254,8 +254,13 @@ print_stats()
 {
 	char mbuf[100];
 
-	sprintf(mbuf, "Level: %d  Gold: %3d  Hp: %2d(%d)  Str: %2d(%d)  Arm: %2d  Exp: %d/%d %s", current_level, rogue.gold, rogue.hp_current, rogue.hp_max, rogue.strength_current, rogue.strength_max, get_armor_class(rogue.armor), rogue.exp, rogue.exp_points, hu
-nger_str);
+	sprintf(mbuf,
+     "Level: %d  Gold: %3d  Hp: %2d(%d)  Str: %2d(%d)  Arm: %2d  Exp: %d/%d %s",
+     current_level, rogue.gold, rogue.hp_current,
+			rogue.hp_max, rogue.strength_current,
+					rogue.strength_max,
+						get_armor_class(rogue.armor),
+				       rogue.exp, rogue.exp_points, hunger_str);
 	mvaddstr(LINES-1, 0, mbuf);
 	clrtoeol();
 	refresh();
