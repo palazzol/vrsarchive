@@ -175,8 +175,8 @@ int     in,
     if (i < 0)
 	die ("error reading temporary file");
 
-    close (in);
-    close (out);
+    /* close (in);	Must leave for later lkclose() -- vrs */
+    /* close (out);	Must leave for later lkclose() -- vrs */
 }
 
 /*  */
