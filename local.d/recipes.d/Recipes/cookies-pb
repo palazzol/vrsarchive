@@ -1,0 +1,38 @@
+.RH MOD.RECIPES-SOURCE COOKIES-PB D "30 Jun 86" 1986
+.RZ "AMAZING COOKIES" "Simple peanut-butter cookies"
+These are very simple peanut-butter cookies.  They turn out a
+little moist, but are yummy.
+.IH "Makes 1 batch"
+.IG "1 cup" "peanut-butter" "180 g"
+.IG "1 cup" "sugar" "190 g"
+.IG "1" "large egg"
+.PH
+.SK 1
+Beat the egg.  Don't let your neighbours find out, though.
+.SK 2
+Mix everything together.
+.SK 3
+Preheat oven to 
+.TE 325 160 .
+.SK 4
+Place blobs of cookie dough on a greased cookie sheet in the size you like,
+and flatten with a fork to make the traditional peanut-butter cookie pattern.
+.SK 5
+Put in oven and bake for 8\-10 minutes.
+.NX
+These cookies are a bit moist, so don't worry about that.  Don't burn them;
+they don't taste good when they're burnt.
+.SH RATING
+.I Difficulty:
+easy.
+.I Time:
+5 minutes preparation, 10 minutes baking.
+.I Precision:
+Measure the ingredients.
+.WR
+Andrew Scott Beals
+Lawrence Livermore National Laboratory, Computation Research Group
+Livermore, California, U.S.A.
+bandy@lll-crg.arpa
+
+
