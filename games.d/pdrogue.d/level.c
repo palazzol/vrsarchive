@@ -1,80 +1,154 @@
+/*
+ * level.c
+ *
+ * This source herein may be modified and/or distributed by anybody who
+ * so desires, with the following restrictions:
+ *    1.)  No portion of this notice shall be removed.
+ *    2.)  Credit shall not be taken for the creation of this source.
+ *    3.)  This code is not to be traded, sold, or used for personal
+ *         gain or profit.
+ *
+ */
+
+#ifndef CURSES
 #include <curses.h>
-#include "move.h"
-#include "object.h"
-#include "room.h"
-#include "macros.h"
+#endif CURSES
+#include "rogue.h"
 
-short current_level = 0, max_level = 1;
-extern short current_room;
-char *hunger_str = "";
-short party_room;
-extern short being_held;
-extern short detect_monster, has_amulet;
+#define swap(x,y) {t = x; x = y; y = t;}
 
-int level_points[] = {
-	      10,
-	      20,
-	      40,
-	      80,
-	     160,
-	     320,
-	     640,
-	    1300,
-	    2600,
-	    5200,
-	   10000,
-	   20000,
-	   40000,
-	   80000,
-	  160000,
-	  320000,
-	 1000000,
-	10000000
+short cur_level = 0, max_level = 1, cur_room;
+char *new_level_message = 0;
+short party_room = NO_ROOM;
+short r_de;
+
+long level_points[MAX_EXP_LEVEL] = {
+		  10L,
+		  20L,
+		  40L,
+		  80L,
+		 160L,
+		 320L,
+		 640L,
+		1300L,
+		2600L,
+		5200L,
+	   10000L,
+	   20000L,
+	   40000L,
+	   80000L,
+	  160000L,
+	  320000L,
+	 1000000L,
+	 3333333L,
+	 6666666L,
+	  MAX_EXP,
+	99900000L
 };
+
+char random_rooms[MAXROOMS+1] = "\003\007\005\002\010\006\001\004\0";
+
+extern boolean being_held, wizard, detect_monster;
+extern boolean see_invisible;
+extern short bear_trap, levitate, extra_hp, less_hp, cur_room;
+extern short party_counter;
 
 make_level()
 {
-	short i;
-	short must_exist1, must_exist2;
+	short i, j;
+	short must_exist1, must_exist2, must_exist3;
+	boolean big_room;
 
-	party_room = -1;
-
-	if (current_level < 126) {
-		current_level++;
+	if (cur_level < LAST_DUNGEON) {
+		cur_level++;
 	}
-	if (current_level > max_level) max_level = current_level;
+	if (cur_level > max_level) {
+		max_level = cur_level;
+	}
+	must_exist1 = get_rand(0, 5);
 
-	if (rand_percent(50)) {
-		must_exist1 = 1;
-		must_exist2 = 7;
-	} else {
+	switch(must_exist1) {
+	case 0:
+		must_exist1 = 0;
+		must_exist2 = 1;
+		must_exist3 = 2;
+		break;
+	case 1:
 		must_exist1 = 3;
+		must_exist2 = 4;
+		must_exist3 = 5;
+		break;
+	case 2:
+		must_exist1 = 6;
+		must_exist2 = 7;
+		must_exist3 = 8;
+		break;
+	case 3:
+		must_exist1 = 0;
+		must_exist2 = 3;
+		must_exist3 = 6;
+		break;
+	case 4:
+		must_exist1 = 1;
+		must_exist2 = 4;
+		must_exist3 = 7;
+		break;
+	case 5:
+		must_exist1 = 2;
 		must_exist2 = 5;
+		must_exist3 = 8;
+		break;
 	}
-
-	for (i = 0; i < MAXROOMS; i++) {
-		make_room(i, must_exist1, must_exist2, 4);
-	}
-
-	try_rooms(0, 1, 2);
-	try_rooms(0, 3, 6);
-	try_rooms(2, 5, 8);
-	try_rooms(6, 7, 8);
-
-	for (i = 0; i < (MAXROOMS); i++) {
-		connect_rooms(i, i+1, must_exist1, must_exist2, 4);
-		if (i < (MAXROOMS-3)) {
-			connect_rooms(i, i+3, must_exist1, must_exist2, 4);
+	big_room = ((cur_level == party_counter) && rand_percent(1));
+	if (big_room) {
+		make_room(BIG_ROOM, 0, 0, 0);
+	} else {
+		for (i = 0; i < MAXROOMS; i++) {
+			make_room(i, must_exist1, must_exist2, must_exist3);
 		}
 	}
-	add_dead_ends();
+	if (!big_room) {
+		add_mazes();
 
-	if (!has_amulet && (current_level >= AMULET_LEVEL)) {
+		mix_random_rooms();
+
+		for (j = 0; j < MAXROOMS; j++) {
+
+			i = random_rooms[j];
+
+			if (i < (MAXROOMS-1)) {
+				(void) connect_rooms(i, i+1);
+			}
+			if (i < (MAXROOMS-3)) {
+				(void) connect_rooms(i, i+3);
+			}
+			if (i < (MAXROOMS-2)) {
+				if (rooms[i+1].is_room & R_NOTHING) {
+					if (connect_rooms(i, i+2)) {
+						rooms[i+1].is_room = R_CROSS;
+					}
+				}
+			}
+			if (i < (MAXROOMS-6)) {
+				if (rooms[i+3].is_room & R_NOTHING) {
+					if (connect_rooms(i, i+6)) {
+						rooms[i+3].is_room = R_CROSS;
+					}
+				}
+			}
+			if (is_all_connected()) {
+				break;
+			}
+		}
+		fill_out_level();
+	}
+	if (!has_amulet() && (cur_level >= AMULET_LEVEL)) {
 		put_amulet();
 	}
 }
 
-make_room(n, r1, r2, r3)
+make_room(rn, r1, r2, r3)
+short rn, r1, r2, r3;
 {
 	short left_col, right_col, top_row, bottom_row;
 	short width, height;
@@ -82,7 +156,7 @@ make_room(n, r1, r2, r3)
 	short i, j;
 	short ch;
 
-	switch(n) {
+	switch(rn) {
 	case 0:
 		left_col = 0;
 		right_col = COL1-1;
@@ -97,7 +171,7 @@ make_room(n, r1, r2, r3)
 		break;
 	case 2:
 		left_col = COL2+1;
-		right_col = COLS-1;
+		right_col = DCOLS-1;
 		top_row = MIN_ROW;
 		bottom_row = ROW1-1;
 		break;
@@ -115,7 +189,7 @@ make_room(n, r1, r2, r3)
 		break;
 	case 5:
 		left_col = COL2+1;
-		right_col = COLS-1;
+		right_col = DCOLS-1;
 		top_row = ROW1+1;
 		bottom_row = ROW2-1;
 		break;
@@ -123,24 +197,27 @@ make_room(n, r1, r2, r3)
 		left_col = 0;
 		right_col = COL1-1;
 		top_row = ROW2+1;
-		bottom_row = LINES - 2;
+		bottom_row = DROWS - 2;
 		break;
 	case 7:
 		left_col = COL1+1;
 		right_col = COL2-1;
 		top_row = ROW2+1;
-		bottom_row = LINES - 2;
+		bottom_row = DROWS - 2;
 		break;
 	case 8:
 		left_col = COL2+1;
-		right_col = COLS-1;
+		right_col = DCOLS-1;
 		top_row = ROW2+1;
-		bottom_row = LINES - 2;
+		bottom_row = DROWS - 2;
 		break;
-	}
-
-	if ((n != r1) && (n != r2) && (n != r3) && rand_percent(45)) {
-		goto END;
+	case BIG_ROOM:
+		top_row = get_rand(MIN_ROW, MIN_ROW+5);
+		bottom_row = get_rand(DROWS-7, DROWS-2);
+		left_col = get_rand(0, 10);;
+		right_col = get_rand(DCOLS-11, DCOLS-1);
+		rn = 0;
+		goto B;
 	}
 	height = get_rand(4, (bottom_row-top_row+1));
 	width = get_rand(7, (right_col-left_col-2));
@@ -154,7 +231,11 @@ make_room(n, r1, r2, r3)
 	left_col += col_offset;
 	right_col = left_col + width - 1;
 
-	rooms[n].is_room = 1;
+	if ((rn != r1) && (rn != r2) && (rn != r3) && rand_percent(40)) {
+		goto END;
+	}
+B:
+	rooms[rn].is_room = R_ROOM;
 
 	for (i = top_row; i <= bottom_row; i++) {
 		for (j = left_col; j <= right_col; j++) {
@@ -166,459 +247,485 @@ make_room(n, r1, r2, r3)
 			} else {
 				ch = FLOOR;
 			}
-			add_mask(i, j, ch);
+			dungeon[i][j] = ch;
 		}
 	}
-END:	rooms[n].top_row = top_row;
-	rooms[n].bottom_row = bottom_row;
-	rooms[n].left_col = left_col;
-	rooms[n].right_col = right_col;
-	rooms[n].height = height;
-	rooms[n].width = width;
+END:
+	rooms[rn].top_row = top_row;
+	rooms[rn].bottom_row = bottom_row;
+	rooms[rn].left_col = left_col;
+	rooms[rn].right_col = right_col;
 }
 
-connect_rooms(room1, room2, m1, m2, m3)
-{
-	if ((room1 != m1) && (room1 != m2) && (room1 != m3) && (room2 != m1) &&
-	    (room2 != m2) && (room2 != m3)) {
-		if (rand_percent(80)) {
-			return;
-		}
-	}
-
-	if (adjascent(room1, room2)) {
-		do_connect(room1, room2);
-	}
-}
-
-do_connect(room1, room2)
+connect_rooms(room1, room2)
+short room1, room2;
 {
 	short row1, col1, row2, col2, dir;
 
-	if ((rooms[room1].left_col > rooms[room2].right_col) &&
-	(on_same_row(room1, room2))) {
-		put_door(room1, LEFT, &row1, &col1);
-		put_door(room2, RIGHT, &row2, &col2);
+	if ((!(rooms[room1].is_room & (R_ROOM | R_MAZE))) ||
+		(!(rooms[room2].is_room & (R_ROOM | R_MAZE)))) {
+		return(0);
+	}
+	if (same_row(room1, room2) &&
+		(rooms[room1].left_col > rooms[room2].right_col)) {
+		put_door(&rooms[room1], LEFT, &row1, &col1);
+		put_door(&rooms[room2], RIGHT, &row2, &col2);
 		dir = LEFT;
-	} else if ((rooms[room2].left_col > rooms[room1].right_col) &&
-	(on_same_row(room1, room2))) {
-		put_door(room1, RIGHT, &row1, &col1);
-		put_door(room2, LEFT, &row2, &col2);
+	} else if (same_row(room1, room2) &&
+		(rooms[room2].left_col > rooms[room1].right_col)) {
+		put_door(&rooms[room1], RIGHT, &row1, &col1);
+		put_door(&rooms[room2], LEFT, &row2, &col2);
 		dir = RIGHT;
-	} else if ((rooms[room1].top_row > rooms[room2].bottom_row) &&
-	(on_same_col(room1, room2))) {
-		put_door(room1, UP, &row1, &col1);
-		put_door(room2, DOWN, &row2, &col2);
+	} else if (same_col(room1, room2) &&
+		(rooms[room1].top_row > rooms[room2].bottom_row)) {
+		put_door(&rooms[room1], UP, &row1, &col1);
+		put_door(&rooms[room2], DOWN, &row2, &col2);
 		dir = UP;
-	} else if ((rooms[room2].top_row > rooms[room1].bottom_row) &&
-	(on_same_col(room1, room2))) {
-		put_door(room1, DOWN, &row1, &col1);
-		put_door(room2, UP, &row2, &col2);
+	} else if (same_col(room1, room2) &&
+		(rooms[room2].top_row > rooms[room1].bottom_row)) {
+		put_door(&rooms[room1], DOWN, &row1, &col1);
+		put_door(&rooms[room2], UP, &row2, &col2);
 		dir = DOWN;
 	} else {
-		return;
+		return(0);
 	}
-	draw_simple_passage(row1, col1, row2, col2, dir);
-	if (rand_percent(10)) {
-		draw_simple_passage(row1, col1, row2, col2, dir);
-	}
-	rooms[room1].doors[dir/2].other_room = room2;
-	rooms[room1].doors[dir/2].other_row = row2;
-	rooms[room1].doors[dir/2].other_col = col2;
 
-	rooms[room2].doors[(((dir+4)%8)/2)].other_room = room1;
-	rooms[room2].doors[(((dir+4)%8)/2)].other_row = row1;
-	rooms[room2].doors[(((dir+4)%8)/2)].other_col = col1;
+	do {
+		draw_simple_passage(row1, col1, row2, col2, dir);
+	} while (rand_percent(4));
+
+	rooms[room1].doors[dir/2].oth_room = room2;
+	rooms[room1].doors[dir/2].oth_row = row2;
+	rooms[room1].doors[dir/2].oth_col = col2;
+
+	rooms[room2].doors[(((dir+4)%DIRS)/2)].oth_room = room1;
+	rooms[room2].doors[(((dir+4)%DIRS)/2)].oth_row = row1;
+	rooms[room2].doors[(((dir+4)%DIRS)/2)].oth_col = col1;
+	return(1);
 }
 
 clear_level()
 {
-	int i, j;
+	short i, j;
 
 	for (i = 0; i < MAXROOMS; i++) {
-		rooms[i].is_room = 0;
+		rooms[i].is_room = R_NOTHING;
 		for (j = 0; j < 4; j++) {
-			rooms[i].doors[j].other_room = NO_ROOM;
+			rooms[i].doors[j].oth_room = NO_ROOM;
 		}
 	}
-	for (i = 0; i < SROWS; i++) {
-		for (j = 0; j < SCOLS; j++) {
-			screen[i][j] = BLANK;
+
+	for (i = 0; i < MAX_TRAPS; i++) {
+		traps[i].trap_type = NO_TRAP;
+	}
+	for (i = 0; i < DROWS; i++) {
+		for (j = 0; j < DCOLS; j++) {
+			dungeon[i][j] = NOTHING;
 		}
 	}
-	detect_monster = 0;
-	being_held = 0;
+	detect_monster = see_invisible = 0;
+	being_held = bear_trap = 0;
+	party_room = NO_ROOM;
+	rogue.row = rogue.col = -1;
+	clear();
 }
 
-print_stats()
-{
-	char mbuf[100];
-
-	sprintf(mbuf,
-     "Level: %d  Gold: %3d  Hp: %2d(%d)  Str: %2d(%d)  Arm: %2d  Exp: %d/%d %s",
-     current_level, rogue.gold, rogue.hp_current,
-			rogue.hp_max, rogue.strength_current,
-					rogue.strength_max,
-						get_armor_class(rogue.armor),
-				       rogue.exp, rogue.exp_points, hunger_str);
-	mvaddstr(LINES-1, 0, mbuf);
-	clrtoeol();
-	refresh();
-}
-
-add_mask(row, col, mask)
-int row, col;
-unsigned short mask;
-{
-	if (mask == DOOR) {
-		remove_mask(row, col, HORWALL);
-		remove_mask(row, col, VERTWALL);
-	}
-	screen[row][col] |= mask;
-/*switch(mask) {
-	case FLOOR:
-		mvaddch(row, col, '.');
-		break;
-	case STAIRS:
-		mvaddch(row, col, '%');
-		break;
-	case DOOR:
-		mvaddch(row, col, '+');
-		break;
-	case VERTWALL:
-		mvaddch(row, col, '|');
-		break;
-	case HORWALL:
-		mvaddch(row, col, '-');
-		break;
-	case TUNNEL:
-		mvaddch(row, col, '#');
-		break;
-}*/
-}
-
-remove_mask(row, col, mask)
-{
-	screen[row][col] &= (~mask);
-}
-
-adjascent(room1, room2)
-{
-	if ((!rooms[room1].is_room) || (!rooms[room2].is_room)) {
-		return(0);
-	}
-	two_sort(room1, room2);
-	return((on_same_col(room1,room2) || on_same_row(room1, room2))
-	&& (((room2 - room1) == 1) || (((room2 - room1) == 3))));
-}
-
-put_door(rn, dir, row, col)
+put_door(rm, dir, row, col)
+room *rm;
+short dir;
 short *row, *col;
 {
+	short wall_width;
+
+	wall_width = (rm->is_room & R_MAZE) ? 0 : 1;
+
 	switch(dir) {
 	case UP:
 	case DOWN:
-		*row = ((dir == UP) ? rooms[rn].top_row :
-				     rooms[rn].bottom_row);
-		*col = get_rand(rooms[rn].left_col+1,
-		rooms[rn].right_col-1);
+		*row = ((dir == UP) ? rm->top_row : rm->bottom_row);
+		do {
+			*col = get_rand(rm->left_col+wall_width,
+				rm->right_col-wall_width);
+		} while (!(dungeon[*row][*col] & (HORWALL | TUNNEL)));
 		break;
 	case RIGHT:
 	case LEFT:
-		*row = get_rand(rooms[rn].top_row+1,
-		rooms[rn].bottom_row-1);
-		*col = (dir == LEFT) ? rooms[rn].left_col :
-				     rooms[rn].right_col;
+		*col = (dir == LEFT) ? rm->left_col : rm->right_col;
+		do {
+			*row = get_rand(rm->top_row+wall_width,
+				rm->bottom_row-wall_width);
+		} while (!(dungeon[*row][*col] & (VERTWALL | TUNNEL)));
 		break;
 	}
-	add_mask(*row, *col, DOOR);
+	if (rm->is_room & R_ROOM) {
+		dungeon[*row][*col] = DOOR;
+	}
+	if ((cur_level > 2) && rand_percent(HIDE_PERCENT)) {
+		dungeon[*row][*col] |= HIDDEN;
+	}
+	rm->doors[dir/2].door_row = *row;
+	rm->doors[dir/2].door_col = *col;
 }
 
 draw_simple_passage(row1, col1, row2, col2, dir)
+short row1, col1, row2, col2, dir;
 {
-	short i, middle;
+	short i, middle, t;
 
 	if ((dir == LEFT) || (dir == RIGHT)) {
-		if (col2 < col1) {
+		if (col1 > col2) {
 			swap(row1, row2);
 			swap(col1, col2);
 		}
 		middle = get_rand(col1+1, col2-1);
 		for (i = col1+1; i != middle; i++) {
-			add_mask(row1, i, TUNNEL);
+			dungeon[row1][i] = TUNNEL;
 		}
 		for (i = row1; i != row2; i += (row1 > row2) ? -1 : 1) {
-			add_mask(i, middle, TUNNEL);
+			dungeon[i][middle] = TUNNEL;
 		}
 		for (i = middle; i != col2; i++) {
-			add_mask(row2, i, TUNNEL);
+			dungeon[row2][i] = TUNNEL;
 		}
 	} else {
-		if (row2 < row1) {
+		if (row1 > row2) {
 			swap(row1, row2);
 			swap(col1, col2);
 		}
 		middle = get_rand(row1+1, row2-1);
 		for (i = row1+1; i != middle; i++) {
-			add_mask(i, col1, TUNNEL);
+			dungeon[i][col1] = TUNNEL;
 		}
 		for (i = col1; i != col2; i += (col1 > col2) ? -1 : 1) {
-			add_mask(middle, i, TUNNEL);
+			dungeon[middle][i] = TUNNEL;
 		}
 		for (i = middle; i != row2; i++) {
-			add_mask(i, col2, TUNNEL);
+			dungeon[i][col2] = TUNNEL;
 		}
+	}
+	if (rand_percent(HIDE_PERCENT)) {
+		hide_boxed_passage(row1, col1, row2, col2, 1);
 	}
 }
 
-on_same_row(room1, room2)
+same_row(room1, room2)
 {
 	return((room1 / 3) == (room2 / 3));
 }
 
-on_same_col(room1, room2)
+same_col(room1, room2)
 {
 	return((room1 % 3) == (room2 % 3));
 }
 
-add_dead_ends()
+add_mazes()
 {
 	short i, j;
 	short start;
-	short row, col, distance, dir;
-	short found;
-	short dead_end_percent;
+	short maze_percent;
 
-	if (current_level <= 2) return;
+	if (cur_level > 1) {
+		start = get_rand(0, (MAXROOMS-1));
+		maze_percent = (cur_level * 5) / 4;
 
-	start = get_rand(0, (MAXROOMS-1));
-	dead_end_percent = 12 + current_level + current_level;
-
-	for (i = 0; i < MAXROOMS; i++) {
-		j = ((start + i) % MAXROOMS);
-		if (rooms[j].is_room) continue;
-		if (!rand_percent(dead_end_percent)) continue;
-
-		row = rooms[j].top_row + get_rand(0, 6);
-		col = rooms[j].left_col + get_rand(0, 19);
-
-		found = 0;
-		while (!found) {
-			distance = get_rand(8, 20);
-			dir = get_rand(0, 3) * 2;
-
-			for (j = 0; (j < distance) && !found; j++) {
-				switch(dir) {
-				case UP:
-					if ((row - 1) >= MIN_ROW) {
-						--row;
-					}
-					break;
-				case RIGHT:
-					if ((col + 1) < (COLS-1)) {
-						++col;
-					}
-					break;
-				case DOWN:
-					if ((row + 1) < (LINES-2)) {
-						++row;
-					}
-					break;
-				case LEFT:
-					if ((col - 1) > 0) {
-						--col;
-					}
-					break;
-				}
-				if ((screen[row][col] & VERTWALL) ||
-				(screen[row][col] & HORWALL) ||
-				(screen[row][col] & DOOR)) {
-					break_in(row, col, screen[row][col],
-					dir);
-					found = 1;
-				} else {
-					add_mask(row, col, TUNNEL);
+		if (cur_level > 15) {
+			maze_percent += cur_level;
+		}
+		for (i = 0; i < MAXROOMS; i++) {
+			j = ((start + i) % MAXROOMS);
+			if (rooms[j].is_room & R_NOTHING) {
+				if (rand_percent(maze_percent)) {
+				rooms[j].is_room = R_MAZE;
+				make_maze(get_rand(rooms[j].top_row+1, rooms[j].bottom_row-1),
+					get_rand(rooms[j].left_col+1, rooms[j].right_col-1),
+					rooms[j].top_row, rooms[j].bottom_row,
+					rooms[j].left_col, rooms[j].right_col);
+				hide_boxed_passage(rooms[j].top_row, rooms[j].left_col,
+					rooms[j].bottom_row, rooms[j].right_col,
+					get_rand(0, 2));
 				}
 			}
 		}
 	}
 }
 
-break_in(row, col, ch, dir)
+fill_out_level()
 {
-	short rn;
-	short i, drow, dcol;
+	short i, rn;
 
-	if (ch == DOOR) {
-		return;
+	mix_random_rooms();
+
+	r_de = NO_ROOM;
+
+	for (i = 0; i < MAXROOMS; i++) {
+		rn = random_rooms[i];
+		if ((rooms[rn].is_room & R_NOTHING) ||
+			((rooms[rn].is_room & R_CROSS) && coin_toss())) {
+			fill_it(rn, 1);
+		}
 	}
-	rn = get_room_number(row, col);
+	if (r_de != NO_ROOM) {
+		fill_it(r_de, 0);
+	}
+}
 
-	if (ch == VERTWALL) {
-		if (col == rooms[rn].left_col) {
-			if (rooms[rn].doors[LEFT/2].other_room != NO_ROOM) {
-				drow = door_row(rn, LEFT);
-				for (i = row; i != drow;
-				i += (drow < row) ? -1 : 1) {
-					add_mask(i, col-1, TUNNEL);
-				}
-			} else {
-				rooms[rn].doors[LEFT/2].other_room = DEAD_END;
-				add_mask(row, col, DOOR);
-			}
+fill_it(rn, do_rec_de)
+int rn;
+boolean do_rec_de;
+{
+	short i, tunnel_dir, door_dir, drow, dcol;
+	short target_room, rooms_found = 0;
+	short srow, scol, t;
+	static short offsets[4] = {-1, 1, 3, -3};
+	boolean did_this = 0;
+
+	for (i = 0; i < 10; i++) {
+		srow = get_rand(0, 3);
+		scol = get_rand(0, 3);
+		t = offsets[srow];
+		offsets[srow] = offsets[scol];
+		offsets[scol] = t;
+	}
+	for (i = 0; i < 4; i++) {
+
+		target_room = rn + offsets[i];
+
+		if (((target_room < 0) || (target_room >= MAXROOMS)) ||
+			(!(same_row(rn,target_room) || same_col(rn,target_room))) ||
+			(!(rooms[target_room].is_room & (R_ROOM | R_MAZE)))) {
+			continue;
+		}
+		if (same_row(rn, target_room)) {
+			tunnel_dir = (rooms[rn].left_col < rooms[target_room].left_col) ?
+				RIGHT : LEFT;
 		} else {
-			if (rooms[rn].doors[RIGHT/2].other_room != NO_ROOM) {
-				drow = door_row(rn, RIGHT);
-				for (i = row; i != drow;
-				i += (drow < row) ? -1 : 1) {
-					add_mask(i, col+1, TUNNEL);
-				}
-			} else {
-				rooms[rn].doors[RIGHT/2].other_room = DEAD_END;
-				add_mask(row, col, DOOR);
+			tunnel_dir = (rooms[rn].top_row < rooms[target_room].top_row) ?
+				DOWN : UP;
+		}
+		door_dir = ((tunnel_dir + 4) % DIRS);
+		if (rooms[target_room].doors[door_dir/2].oth_room != NO_ROOM) {
+			continue;
+		}
+		if (((!do_rec_de) || did_this) ||
+			(!mask_room(rn, &srow, &scol, TUNNEL))) {
+			srow = (rooms[rn].top_row + rooms[rn].bottom_row) / 2;
+			scol = (rooms[rn].left_col + rooms[rn].right_col) / 2;
+		}
+		put_door(&rooms[target_room], door_dir, &drow, &dcol);
+		rooms_found++;
+		draw_simple_passage(srow, scol, drow, dcol, tunnel_dir);
+		rooms[rn].is_room = R_DEADEND;
+		dungeon[srow][scol] = TUNNEL;
+
+		if ((i < 3) && (!did_this)) {
+			did_this = 1;
+			if (coin_toss()) {
+				continue;
 			}
 		}
-	} else {		/* break in througt top or bottom --- */
-		if (col == rooms[rn].left_col) {
-			if (row == MIN_ROW) {
-				add_mask(row+1, col-1, TUNNEL);
-				break_in(row+1, col, VERTWALL, RIGHT);
-			} else if (row == (LINES-2)) {
-				add_mask(row-1, col-1, TUNNEL);
-				break_in(row-1, col, VERTWALL, RIGHT);
-			} else {
-				if (row == rooms[rn].top_row) {
-					if (dir == RIGHT) {
-						add_mask(row-1, col-1, TUNNEL);
-						add_mask(row-1, col, TUNNEL);
-					}
-					add_mask(row-1, col+1, TUNNEL);
-					break_in(row, col+1, HORWALL, DOWN);
-				} else {
-					if (dir == RIGHT) {
-						add_mask(row+1, col-1, TUNNEL);
-						add_mask(row+1, col, TUNNEL);
-					}
-					add_mask(row+1, col+1, TUNNEL);
-					break_in(row, col+1, HORWALL, UP);
-				}
-			}
-			return;
-		} else if (col == rooms[rn].right_col) {
-			if (row == MIN_ROW) {
-				add_mask(row+1, col+1, TUNNEL);
-				break_in(row+1, col, VERTWALL, LEFT);
-			} else if (row == (LINES-2)) {
-				add_mask(row-1, col+1, TUNNEL);
-				break_in(row-1, col, VERTWALL, LEFT);
-			} else {
-				if (row == rooms[rn].top_row) {
-					if (dir == DOWN) {
-						add_mask(row-1, col+1, TUNNEL);
-						add_mask(row, col+1, TUNNEL);
-					}
-					add_mask(row+1, col+1, TUNNEL);
-					break_in(row+1, col, VERTWALL, LEFT);
-				} else {
-					if (dir == UP) {
-						add_mask(row+1, col+1, TUNNEL);
-						add_mask(row, col+1, TUNNEL);
-					}
-					add_mask(row-1, col+1, TUNNEL);
-					break_in(row-1, col, VERTWALL, LEFT);
-				}
-			}
-			return;
+		if ((rooms_found < 2) && do_rec_de) {
+			recursive_deadend(rn, offsets, srow, scol);
 		}
-		if (row == rooms[rn].top_row) {
-			if (rooms[rn].doors[UP/2].other_room != NO_ROOM) {
-				dcol = door_col(rn, UP);
-				for (i = col; i != dcol;
-				i += (dcol < col) ? -1 : 1) {
-					add_mask(row-1, i, TUNNEL);
-				}
-			} else {
-				rooms[rn].doors[UP/2].other_room = DEAD_END;
-				add_mask(row, col, DOOR);
-			}
+		break;
+	}
+}
+
+recursive_deadend(rn, offsets, srow, scol)
+short rn;
+short *offsets;
+short srow, scol;
+{
+	short i, de;
+	short drow, dcol, tunnel_dir;
+
+	rooms[rn].is_room = R_DEADEND;
+	dungeon[srow][scol] = TUNNEL;
+
+	for (i = 0; i < 4; i++) {
+		de = rn + offsets[i];
+		if (((de < 0) || (de >= MAXROOMS)) ||
+			(!(same_row(rn, de) || same_col(rn, de)))) {
+			continue;
+		}
+		if (!(rooms[de].is_room & R_NOTHING)) {
+			continue;
+		}
+		drow = (rooms[de].top_row + rooms[de].bottom_row) / 2;
+		dcol = (rooms[de].left_col + rooms[de].right_col) / 2;
+		if (same_row(rn, de)) {
+			tunnel_dir = (rooms[rn].left_col < rooms[de].left_col) ?
+				RIGHT : LEFT;
 		} else {
-			if (rooms[rn].doors[DOWN/2].other_room != NO_ROOM) {
-				dcol = door_col(rn, DOWN);
-				for (i = col; i != dcol;
-				i += (dcol < col) ? -1 : 1) {
-					add_mask(row+1, i, TUNNEL);
-				}
-			} else {
-				rooms[rn].doors[DOWN/2].other_room = DEAD_END;
-				add_mask(row, col, DOOR);
+			tunnel_dir = (rooms[rn].top_row < rooms[de].top_row) ?
+				DOWN : UP;
+		}
+		draw_simple_passage(srow, scol, drow, dcol, tunnel_dir);
+		r_de = de;
+		recursive_deadend(de, offsets, drow, dcol);
+	}
+}
+
+boolean
+mask_room(rn, row, col, mask)
+short rn;
+short *row, *col;
+unsigned short mask;
+{
+	short i, j;
+
+	for (i = rooms[rn].top_row; i <= rooms[rn].bottom_row; i++) {
+		for (j = rooms[rn].left_col; j <= rooms[rn].right_col; j++) {
+			if (dungeon[i][j] & mask) {
+				*row = i;
+				*col = j;
+				return(1);
 			}
 		}
 	}
 	return(0);
 }
 
-door_row(rn, dir)
+make_maze(r, c, tr, br, lc, rc)
+short r, c, tr, br, lc, rc;
 {
-	short i, col, row;
+	char dirs[4];
+	short i, t;
 
-	if (rooms[rn].doors[dir/2].other_room == NO_ROOM) {
-		return(-1);
+	dirs[0] = UP;
+	dirs[1] = DOWN;
+	dirs[2] = LEFT;
+	dirs[3] = RIGHT;
+
+	dungeon[r][c] = TUNNEL;
+
+	if (rand_percent(33)) {
+		for (i = 0; i < 10; i++) {
+			short t1, t2;
+
+			t1 = get_rand(0, 3);
+			t2 = get_rand(0, 3);
+
+			swap(dirs[t1], dirs[t2]);
+		}
 	}
-
-	row = rooms[rn].top_row;
-
-	switch(dir) {
-	case LEFT:
-		col = rooms[rn].left_col;
-		for (i = row; !(screen[i][col] & DOOR); i++) ;
-		break;
-	case RIGHT:
-		col = rooms[rn].right_col;
-		for (i = row; !(screen[i][col] & DOOR); i++) ;
-		break;
-	}
-	return(i);
-}
-
-door_col(rn, dir)
-{
-	short i, col, row;
-
-	if (rooms[rn].doors[dir/2].other_room == NO_ROOM) {
-		return(-1);
-	}
-
-	col = rooms[rn].left_col;
-
-	switch(dir) {
-	case UP:
-		row = rooms[rn].top_row;
-		for (i = col; !(screen[row][i] & DOOR); i++) ;
-		break;
-	case DOWN:
-		row = rooms[rn].bottom_row;
-		for (i = col; !(screen[row][i] & DOOR); i++) ;
-		break;
-	}
-	return(i);
-}
-
-put_player()
-{
-	for (;;) {
-		get_rand_row_col(&rogue.row, &rogue.col, (FLOOR | IS_OBJECT));
-
-		current_room = get_room_number(rogue.row, rogue.col);
-
-		if (current_room != party_room) {
+	for (i = 0; i < 4; i++) {
+		switch(dirs[i]) {
+		case UP:
+			if (((r-1) >= tr) &&
+				(dungeon[r-1][c] != TUNNEL) &&
+				(dungeon[r-1][c-1] != TUNNEL) &&
+				(dungeon[r-1][c+1] != TUNNEL) &&
+				(dungeon[r-2][c] != TUNNEL)) {
+				make_maze((r-1), c, tr, br, lc, rc);
+			}
+			break;
+		case DOWN:
+			if (((r+1) <= br) &&
+				(dungeon[r+1][c] != TUNNEL) &&
+				(dungeon[r+1][c-1] != TUNNEL) &&
+				(dungeon[r+1][c+1] != TUNNEL) &&
+				(dungeon[r+2][c] != TUNNEL)) {
+				make_maze((r+1), c, tr, br, lc, rc);
+			}
+			break;
+		case LEFT:
+			if (((c-1) >= lc) &&
+				(dungeon[r][c-1] != TUNNEL) &&
+				(dungeon[r-1][c-1] != TUNNEL) &&
+				(dungeon[r+1][c-1] != TUNNEL) &&
+				(dungeon[r][c-2] != TUNNEL)) {
+				make_maze(r, (c-1), tr, br, lc, rc);
+			}
+			break;
+		case RIGHT:
+			if (((c+1) <= rc) &&
+				(dungeon[r][c+1] != TUNNEL) &&
+				(dungeon[r-1][c+1] != TUNNEL) &&
+				(dungeon[r+1][c+1] != TUNNEL) &&
+				(dungeon[r][c+2] != TUNNEL)) {
+				make_maze(r, (c+1), tr, br, lc, rc);
+			}
 			break;
 		}
 	}
 }
 
-check_down()
+hide_boxed_passage(row1, col1, row2, col2, n)
+short row1, col1, row2, col2, n;
 {
-	if (screen[rogue.row][rogue.col] & STAIRS) {
+	short i, j, t;
+	short row, col, row_cut, col_cut;
+	short h, w;
+
+	if (cur_level > 2) {
+		if (row1 > row2) {
+			swap(row1, row2);
+		}
+		if (col1 > col2) {
+			swap(col1, col2);
+		}
+		h = row2 - row1;
+		w = col2 - col1;
+
+		if ((w >= 5) || (h >= 5)) {
+			row_cut = ((h >= 2) ? 1 : 0);
+			col_cut = ((w >= 2) ? 1 : 0);
+
+			for (i = 0; i < n; i++) {
+				for (j = 0; j < 10; j++) {
+					row = get_rand(row1 + row_cut, row2 - row_cut);
+					col = get_rand(col1 + col_cut, col2 - col_cut);
+					if (dungeon[row][col] == TUNNEL) {
+						dungeon[row][col] |= HIDDEN;
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+put_player(nr)
+short nr;		/* try not to put in this room */
+{
+	short rn = nr, misses;
+	short row, col;
+
+	for (misses = 0; ((misses < 2) && (rn == nr)); misses++) {
+		gr_row_col(&row, &col, (FLOOR | TUNNEL | OBJECT | STAIRS));
+		rn = get_room_number(row, col);
+	}
+	rogue.row = row;
+	rogue.col = col;
+
+	if (dungeon[rogue.row][rogue.col] & TUNNEL) {
+		cur_room = PASSAGE;
+	} else {
+		cur_room = rn;
+	}
+	if (cur_room != PASSAGE) {
+		light_up_room(cur_room);
+	} else {
+		light_passage(rogue.row, rogue.col);
+	}
+	wake_room(get_room_number(rogue.row, rogue.col), 1, rogue.row, rogue.col);
+	if (new_level_message) {
+		message(new_level_message, 0);
+		new_level_message = 0;
+	}
+	mvaddch(rogue.row, rogue.col, rogue.fchar);
+}
+
+drop_check()
+{
+	if (wizard) {
+		return(1);
+	}
+	if (dungeon[rogue.row][rogue.col] & STAIRS) {
+		if (levitate) {
+			message("you're floating in the air!", 0);
+			return(0);
+		}
 		return(1);
 	}
 	message("I see no way down", 0);
@@ -627,23 +734,29 @@ check_down()
 
 check_up()
 {
-	if (!(screen[rogue.row][rogue.col] & STAIRS)) {
-		message("I see no way up", 0);
-		return(0);
+	if (!wizard) {
+		if (!(dungeon[rogue.row][rogue.col] & STAIRS)) {
+			message("I see no way up", 0);
+			return(0);
+		}
+		if (!has_amulet()) {
+			message("your way is magically blocked", 0);
+			return(0);
+		}
 	}
-	if (!has_amulet) {
-		message("your way is magically blocked", 0);
-		return(0);
-	}
-	if (current_level == 1) {
+	new_level_message = "you feel a wrenching sensation in your gut";
+	if (cur_level == 1) {
 		win();
 	} else {
-		current_level -= 2;
+		cur_level -= 2;
 		return(1);
 	}
+	return(0);
 }
 
-add_exp(e)
+add_exp(e, promotion)
+int e;
+boolean promotion;
 {
 	char mbuf[40];
 	short new_exp;
@@ -653,24 +766,31 @@ add_exp(e)
 
 	if (rogue.exp_points >= level_points[rogue.exp-1]) {
 		new_exp = get_exp_level(rogue.exp_points);
+		if (rogue.exp_points > MAX_EXP) {
+			rogue.exp_points = MAX_EXP + 1;
+		}
 		for (i = rogue.exp+1; i <= new_exp; i++) {
 			sprintf(mbuf, "welcome to level %d", i);
 			message(mbuf, 0);
-			hp = get_rand(3, 10);
-			rogue.hp_current += hp;
-			rogue.hp_max += hp;
-			print_stats();
+			if (promotion) {
+				hp = hp_raise();
+				rogue.hp_current += hp;
+				rogue.hp_max += hp;
+			}
+			rogue.exp = i;
+			print_stats(STAT_HP | STAT_EXP);
 		}
-		rogue.exp = new_exp;
+	} else {
+		print_stats(STAT_EXP);
 	}
-	print_stats();
 }
 
 get_exp_level(e)
+long e;
 {
 	short i;
 
-	for (i = 0; i < 50; i++) {
+	for (i = 0; i < (MAX_EXP_LEVEL - 1); i++) {
 		if (level_points[i] > e) {
 			break;
 		}
@@ -678,11 +798,43 @@ get_exp_level(e)
 	return(i+1);
 }
 
-try_rooms(r1, r2, r3)
+hp_raise()
 {
-	if (rooms[r1].is_room && !rooms[r2].is_room && rooms[r3].is_room) {
-		if (rand_percent(75)) {
-			do_connect(r1, r3);
-		}
+	int hp;
+
+	hp = (wizard ? 10 : get_rand(3, 10));
+	return(hp);
+}
+
+show_average_hp()
+{
+	char mbuf[80];
+	float real_average;
+	float effective_average;
+
+	if (rogue.exp == 1) {
+		real_average = effective_average = 0.00;
+	} else {
+		real_average = (float)
+			((rogue.hp_max - extra_hp - INIT_HP) + less_hp) / (rogue.exp - 1);
+		effective_average = (float) (rogue.hp_max - INIT_HP) / (rogue.exp - 1);
+
+	}
+	sprintf(mbuf, "R-Hp: %.2f, E-Hp: %.2f (!: %d, V: %d)", real_average,
+		effective_average, extra_hp, less_hp);
+	message(mbuf, 0);
+}
+
+mix_random_rooms()
+{
+	short i, t;
+	short x, y;
+
+	for (i = 0; i < (3 * MAXROOMS); i++) {
+		do {
+			x = get_rand(0, (MAXROOMS-1));
+			y = get_rand(0, (MAXROOMS-1));
+		} while (x == y);
+		swap(random_rooms[x], random_rooms[y]);
 	}
 }

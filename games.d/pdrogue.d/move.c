@@ -1,103 +1,106 @@
+/*
+ * move.c
+ *
+ * This source herein may be modified and/or distributed by anybody who
+ * so desires, with the following restrictions:
+ *    1.)  No portion of this notice shall be removed.
+ *    2.)  Credit shall not be taken for the creation of this source.
+ *    3.)  This code is not to be traded, sold, or used for personal
+ *         gain or profit.
+ *
+ */
+
+#ifndef CURSES
 #include <curses.h>
-#include "object.h"
-#include "room.h"
-#include "move.h"
-#include "monster.h"
+#endif CURSES
+#include "rogue.h"
 
-extern short current_room, halluc, detect_monster, blind, being_held;
-extern short confused, interrupted, has_amulet;
-extern char *hunger_str;
+short m_moves = 0;
+boolean jump = 1;
+char *you_can_move_again = "you can move again";
 
-single_move_rogue(dirch, pickup)
+extern short cur_room, halluc, blind, levitate;
+extern short cur_level, max_level;
+extern short bear_trap, haste_self, confused;
+extern short e_rings, regeneration, auto_search;
+extern char hunger_str[];
+extern boolean being_held, interrupted, r_teleport;
+
+one_move_rogue(dirch, pickup)
+short dirch, pickup;
 {
 	short row, col;
-	object *obj, *object_at(), *pick_up();
-	char description[SCOLS];
+	object *obj;
+	char desc[DCOLS];
 	short n, status;
 
 	row = rogue.row;
 	col = rogue.col;
 
-	if (being_held) {
-		get_dir_rc(dirch, &row, &col);
-
-		if (!(screen[row][col] & MONSTER)) {
-			message("you are being held", 1);
-			return(MOVE_FAILED);
-		}
-	}
-	row = rogue.row;
-	col = rogue.col;
-
 	if (confused) {
-		dirch = get_rand_dir();
+		dirch = gr_dir();
 	}
+	get_dir_rc(dirch, &row, &col, 1);
 
-	switch(dirch) {
-	case 'h':
-		col--;
-		break;
-	case 'j':
-		row++;
-		break;
-	case 'k':
-		row--;
-		break;
-	case 'l':
-		col++;
-		break;
-	case 'b':
-		col--;
-		row++;
-		break;
-	case 'y':
-		col--;
-		row--;
-		break;
-	case 'u':
-		col++;
-		row--;
-		break;
-	case 'n':
-		col++;
-		row++;
-		break;
-	}
-	if (screen[row][col] & MONSTER) {
-		rogue_hit(object_at(&level_monsters, row, col));
-		register_move();
-		return(MOVE_FAILED);
-	}
 	if (!can_move(rogue.row, rogue.col, row, col)) {
 		return(MOVE_FAILED);
 	}
-	if (screen[row][col] & DOOR) {
-		if (current_room == PASSAGE) {
-			current_room = get_room_number(row, col);
-			light_up_room();
-			wake_room(current_room, 1, row, col);
+	if (being_held || bear_trap) {
+		if (!(dungeon[row][col] & MONSTER)) {
+			if (being_held) {
+				message("you are being held", 1);
+			} else {
+				message("you are still stuck in the bear trap", 0);
+				(void) reg_move();
+			}
+			return(MOVE_FAILED);
+		}
+	}
+	if (r_teleport) {
+		if (rand_percent(R_TELE_PERCENT)) {
+			tele();
+			return(STOPPED_ON_SOMETHING);
+		}
+	}
+	if (dungeon[row][col] & MONSTER) {
+		rogue_hit(object_at(&level_monsters, row, col), 0);
+		(void) reg_move();
+		return(MOVE_FAILED);
+	}
+	if (dungeon[row][col] & DOOR) {
+		if (cur_room == PASSAGE) {
+			cur_room = get_room_number(row, col);
+			light_up_room(cur_room);
+			wake_room(cur_room, 1, row, col);
 		} else {
 			light_passage(row, col);
 		}
-	} else if ((screen[rogue.row][rogue.col] & DOOR) &&
-		   (screen[row][col] & TUNNEL)) {
+	} else if ((dungeon[rogue.row][rogue.col] & DOOR) &&
+		   (dungeon[row][col] & TUNNEL)) {
 		light_passage(row, col);
-		wake_room(current_room, 0, row, col);
-		darken_room(current_room);
-		current_room = PASSAGE;
-	} else if (screen[row][col] & TUNNEL) {
+		wake_room(cur_room, 0, rogue.row, rogue.col);
+		darken_room(cur_room);
+		cur_room = PASSAGE;
+	} else if (dungeon[row][col] & TUNNEL) {
 			light_passage(row, col);
 	}
-	mvaddch(rogue.row, rogue.col,
-	get_room_char(screen[rogue.row][rogue.col], rogue.row, rogue.col));
+	mvaddch(rogue.row, rogue.col, get_dungeon_char(rogue.row, rogue.col));
 	mvaddch(row, col, rogue.fchar);
-	rogue.row = row; rogue.col = col;
-	if (screen[row][col] & CAN_PICK_UP) {
-		if (pickup) {
+
+	if (!jump) {
+		refresh();
+	}
+	rogue.row = row;
+	rogue.col = col;
+	if (dungeon[row][col] & OBJECT) {
+		if (levitate && pickup) {
+			return(STOPPED_ON_SOMETHING);
+		}
+		if (pickup && !levitate) {
 			if (obj = pick_up(row, col, &status)) {
-				get_description(obj, description);
+				get_desc(obj, desc);
 				if (obj->what_is == GOLD) {
-					free(obj);
+					free_object(obj);
 					goto NOT_IN_PACK;
 				}
 			} else if (!status) {
@@ -106,26 +109,31 @@ single_move_rogue(dirch, pickup)
 				goto MOVE_ON;
 			}
 		} else {
-MOVE_ON:		obj = object_at(&level_objects, row, col);
-			strcpy(description, "moved onto ");
-			get_description(obj, description+11);
+MOVE_ON:
+			obj = object_at(&level_objects, row, col);
+			(void) strcpy(desc, "moved onto ");
+			get_desc(obj, desc+11);
 			goto NOT_IN_PACK;
 		}
-		n = strlen(description);
-		description[n] = '(';
-		description[n+1] = obj->ichar;
-		description[n+2] = ')';
-		description[n+3] = 0;
-NOT_IN_PACK:	message(description, 1);
-		register_move();
+		n = strlen(desc);
+		desc[n] = '(';
+		desc[n+1] = obj->ichar;
+		desc[n+2] = ')';
+		desc[n+3] = 0;
+NOT_IN_PACK:
+		message(desc, 1);
+		(void) reg_move();
 		return(STOPPED_ON_SOMETHING);
 	}
-	if ((screen[row][col] & DOOR) || (screen[row][col] & STAIRS)) {
-		register_move();
+	if (dungeon[row][col] & (DOOR | STAIRS | TRAP)) {
+		if ((!levitate) && (dungeon[row][col] & TRAP)) {
+			trap_player(row, col);
+		}
+		(void) reg_move();
 		return(STOPPED_ON_SOMETHING);
 	}
-MVED:	if (register_move()) {			/* fainted from hunger */
-		return(STOPPED_ON_SOMETHING);
+MVED:	if (reg_move()) {			/* fainted from hunger */
+			return(STOPPED_ON_SOMETHING);
 	}
 	return((confused ? STOPPED_ON_SOMETHING : MOVED));
 }
@@ -138,8 +146,8 @@ multiple_move_rogue(dirch)
 	switch(dirch) {
 	case '\010':
 	case '\012':
-	case '':
-	case '':
+	case '\013':
+	case '\014':
 	case '\031':
 	case '\025':
 	case '\016':
@@ -147,9 +155,9 @@ multiple_move_rogue(dirch)
 		do {
 			row = rogue.row;
 			col = rogue.col;
-			if (((m = single_move_rogue((dirch + 96), 1)) ==
-			MOVE_FAILED) || (m == STOPPED_ON_SOMETHING) ||
-			interrupted) {
+			if (((m = one_move_rogue((dirch + 96), 1)) == MOVE_FAILED) ||
+				(m == STOPPED_ON_SOMETHING) ||
+				interrupted) {
 				break;
 			}
 		} while (!next_to_something(row, col));
@@ -162,25 +170,31 @@ multiple_move_rogue(dirch)
 	case 'Y':
 	case 'U':
 	case 'N':
-		while (!interrupted &&
-			single_move_rogue((dirch + 32), 1) == MOVED) ;
+		while (	(!interrupted) &&
+				(one_move_rogue((dirch + 32), 1) == MOVED)) ;
 		break;
 	}
 }
 
 is_passable(row, col)
+register row, col;
 {
-	if ((row < MIN_ROW) || (row > (LINES - 2)) || (col < 0) ||
-	    (col > (COLS-1))) {
+	if ((row < MIN_ROW) || (row > (DROWS - 2)) || (col < 0) ||
+		(col > (DCOLS-1))) {
 		return(0);
 	}
-	return(screen[row][col] & (FLOOR | TUNNEL | DOOR | STAIRS));
+	if (dungeon[row][col] & HIDDEN) {
+		return((dungeon[row][col] & TRAP) ? 1 : 0);
+	}
+	return(dungeon[row][col] & (FLOOR | TUNNEL | DOOR | STAIRS | TRAP));
 }
 
 next_to_something(drow, dcol)
+register drow, dcol;
 {
 	short i, j, i_end, j_end, row, col;
 	short pass_count = 0;
+	unsigned short s;
 
 	if (confused) {
 		return(1);
@@ -188,27 +202,48 @@ next_to_something(drow, dcol)
 	if (blind) {
 		return(0);
 	}
-	i_end = (rogue.row < (LINES-2)) ? 1 : 0;
-	j_end = (rogue.col < (COLS-1)) ? 1 : 0;
+	i_end = (rogue.row < (DROWS-2)) ? 1 : 0;
+	j_end = (rogue.col < (DCOLS-1)) ? 1 : 0;
 
 	for (i = ((rogue.row > MIN_ROW) ? -1 : 0); i <= i_end; i++) {
 		for (j = ((rogue.col > 0) ? -1 : 0); j <= j_end; j++) {
-			if ((i == 0) && (j == 0)) continue;
-			if (((rogue.row+i)==drow)&&((rogue.col+j)==dcol)) {
+			if ((i == 0) && (j == 0)) {
 				continue;
 			}
-			if(screen[rogue.row+i][rogue.col+j]&(MONSTER|IS_OBJECT))return(1);
-			if ((((i - j) == 1) || ((i - j) == -1)) &&
-			(screen[rogue.row+i][rogue.col+j] & TUNNEL)) {
+			if (((rogue.row+i) == drow) && ((rogue.col+j) == dcol)) {
+				continue;
+			}
+			row = rogue.row + i;
+			col = rogue.col + j;
+			s = dungeon[row][col];
+			if (s & HIDDEN) {
+				continue;
+			}
+			/* If the rogue used to be right, up, left, down, or right of
+			 * row,col, and now isn't, then don't stop */
+			if (s & (MONSTER | OBJECT | STAIRS)) {
+				if (((row == drow) || (col == dcol)) &&
+					(!((row == rogue.row) || (col == rogue.col)))) {
+					continue;
+				}
+				return(1);
+			}
+			if (s & TRAP) {
+				if (!(s & HIDDEN)) {
+					if (((row == drow) || (col == dcol)) &&
+						(!((row == rogue.row) || (col == rogue.col)))) {
+						continue;
+					}
+					return(1);
+				}
+			}
+			if ((((i - j) == 1) || ((i - j) == -1)) && (s & TUNNEL)) {
 				if (++pass_count > 1) {
 					return(1);
 				}
 			}
-			row = rogue.row+i; col = rogue.col+j;
-			if ((screen[row][col] & DOOR)||(is_object(row,col))) {
-				if (i == 0 || j == 0) {
+			if ((s & DOOR) && ((i == 0) || (j == 0))) {
 					return(1);
-				}
 			}
 		}
 	}
@@ -221,29 +256,23 @@ can_move(row1, col1, row2, col2)
 		return(0);
 	}
 	if ((row1 != row2) && (col1 != col2)) {
-		if ((screen[row1][col1]&DOOR)||(screen[row2][col2]&DOOR)) {
+		if ((dungeon[row1][col1]&DOOR)||(dungeon[row2][col2]&DOOR)) {
 			return(0);
 		}
-		if ((!screen[row1][col2]) || (!screen[row2][col1])) {
+		if ((!dungeon[row1][col2]) || (!dungeon[row2][col1])) {
 			return(0);
 		}
 	}
 	return(1);
 }
 
-is_object(row, col)
-{
-	return(screen[row][col] & IS_OBJECT);
-}
-
 move_onto()
 {
 	short ch;
-	short first_miss = 1;
+	boolean first_miss = 1;
 
-	while (!is_direction(ch = getchar())) {
-		putchar(7);
-		fflush(stdout);
+	while (!is_direction(ch = rgetchar())) {
+		sound_bell();
 		if (first_miss) {
 			message("direction? ", 0);
 			first_miss = 0;
@@ -251,13 +280,15 @@ move_onto()
 	}
 	check_message();
 	if (ch != CANCEL) {
-		single_move_rogue(ch, 0);
+		(void) one_move_rogue(ch, 0);
 	}
 }
 
+boolean
 is_direction(c)
 {
-	return( (c == 'h') ||
+	return(
+		(c == 'h') ||
 		(c == 'j') ||
 		(c == 'k') ||
 		(c == 'l') ||
@@ -269,68 +300,91 @@ is_direction(c)
 		);
 }
 
-is_pack_letter(c)
+boolean
+check_hunger(messages_only)
+boolean messages_only;
 {
-	return(((c >= 'a') && (c <= 'z')) || (c == CANCEL) || (c == LIST));
-}
-
-check_hunger()
-{
-	short i, n;
-	short fainted = 0;
+	register short i, n;
+	boolean fainted = 0;
 
 	if (rogue.moves_left == HUNGRY) {
-		hunger_str = "hungry";
+		(void) strcpy(hunger_str, "hungry");
 		message(hunger_str, 0);
-		print_stats();
+		print_stats(STAT_HUNGER);
 	}
 	if (rogue.moves_left == WEAK) {
-		hunger_str = "weak";
-		message(hunger_str, 0);
-		print_stats();
+		(void) strcpy(hunger_str, "weak");
+		message(hunger_str, 1);
+		print_stats(STAT_HUNGER);
 	}
-	if ((rogue.moves_left) <= FAINT) {
+	if (rogue.moves_left <= FAINT) {
 		if (rogue.moves_left == FAINT) {
-			hunger_str = "faint";
+			(void) strcpy(hunger_str, "faint");
 			message(hunger_str, 1);
-			print_stats();
+			print_stats(STAT_HUNGER);
 		}
 		n = get_rand(0, (FAINT - rogue.moves_left));
 		if (n > 0) {
 			fainted = 1;
-			if (rand_percent(40)) rogue.moves_left++;
+			if (rand_percent(40)) {
+				rogue.moves_left++;
+			}
 			message("you faint", 1);
 			for (i = 0; i < n; i++) {
-				if (rand_percent(50)) {
-					move_monsters();
+				if (coin_toss()) {
+					mv_mons();
 				}
 			}
-			message("you can move again", 1);
+			message(you_can_move_again, 1);
 		}
 	}
-	if (rogue.moves_left <= STARVE) {
-		killed_by(0, STARVATION);
+	if (messages_only) {
+		return(fainted);
 	}
-	rogue.moves_left--;
+	if (rogue.moves_left <= STARVE) {
+		killed_by((object *) 0, STARVATION);
+	}
+
+	switch(e_rings) {
+	/*case -2:
+		Subtract 0, i.e. do nothing.
+		break;*/
+	case -1:
+		rogue.moves_left -= (rogue.moves_left % 2);
+		break;
+	case 0:
+		rogue.moves_left--;
+		break;
+	case 1:
+		rogue.moves_left--;
+		(void) check_hunger(1);
+		rogue.moves_left -= (rogue.moves_left % 2);
+		break;
+	case 2:
+		rogue.moves_left--;
+		(void) check_hunger(1);
+		rogue.moves_left--;
+		break;
+	}
 	return(fainted);
 }
 
-register_move()
+boolean
+reg_move()
 {
-	static short moves = 0;
-	short fainted;
+	boolean fainted;
 
-	if ((rogue.moves_left <= HUNGRY) || !has_amulet) {
-		fainted = check_hunger();
+	if ((rogue.moves_left <= HUNGRY) || (cur_level >= max_level)) {
+		fainted = check_hunger(0);
 	} else {
 		fainted = 0;
 	}
 
-	move_monsters();
+	mv_mons();
 
-	if (++moves >= 80) {
-		moves = 0;
-		start_wanderer();
+	if (++m_moves >= 120) {
+		m_moves = 0;
+		wanderer();
 	}
 	if (halluc) {
 		if (!(--halluc)) {
@@ -349,8 +403,26 @@ register_move()
 			unconfuse();
 		}
 	}
+	if (bear_trap) {
+		bear_trap--;
+	}
+	if (levitate) {
+		if (!(--levitate)) {
+			message("you float gently to the ground", 1);
+			if (dungeon[rogue.row][rogue.col] & TRAP) {
+				trap_player(rogue.row, rogue.col);
+			}
+		}
+	}
+	if (haste_self) {
+		if (!(--haste_self)) {
+			message("you feel yourself slowing down", 0);
+		}
+	}
 	heal();
-
+	if (auto_search > 0) {
+		search(auto_search, auto_search);
+	}
 	return(fainted);
 }
 
@@ -358,13 +430,17 @@ rest(count)
 {
 	int i;
 
+	interrupted = 0;
+
 	for (i = 0; i < count; i++) {
-		if (interrupted) break;
-		register_move();
+		if (interrupted) {
+			break;
+		}
+		(void) reg_move();
 	}
 }
 
-get_rand_dir()
+gr_dir()
 {
 	short d;
 
@@ -372,32 +448,38 @@ get_rand_dir()
 
 	switch(d) {
 		case 1:
-			return('j');
+			d = 'j';
 		case 2:
-			return('k');
+			d = 'k';
 		case 3:
-			return('l');
+			d = 'l';
 		case 4:
-			return('h');
+			d = 'h';
 		case 5:
-			return('y');
+			d = 'y';
 		case 6:
-			return('u');
+			d = 'u';
 		case 7:
-			return('b');
+			d = 'b';
 		case 8:
-			return('n');
+			d = 'n';
 	}
+	return(d);
 }
 
 heal()
 {
-	static short exp = -1, n, c = 0;
+	static short heal_exp = -1, n, c = 0;
+	static boolean alt;
 
-	if (rogue.exp != exp) {
-		exp = rogue.exp;
+	if (rogue.hp_current == rogue.hp_max) {
+		c = 0;
+		return;
+	}
+	if (rogue.exp != heal_exp) {
+		heal_exp = rogue.exp;
 
-		switch(exp) {
+		switch(heal_exp) {
 		case 1:
 			n = 20;
 			break;
@@ -436,19 +518,15 @@ heal()
 			n = 2;
 		}
 	}
-	if (rogue.hp_current == rogue.hp_max) {
-		c = 0;
-		return;
-	}
-
 	if (++c >= n) {
 		c = 0;
 		rogue.hp_current++;
-		if (rogue.hp_current < rogue.hp_max) {
-			if (rand_percent(50)) {
-				rogue.hp_current++;
-			}
+		if (alt = !alt) {
+			rogue.hp_current++;
 		}
-		print_stats();
+		if ((rogue.hp_current += regeneration) > rogue.hp_max) {
+			rogue.hp_current = rogue.hp_max;
+		}
+		print_stats(STAT_HP);
 	}
 }

@@ -1,119 +1,147 @@
+/*
+ * init.c
+ *
+ * This source herein may be modified and/or distributed by anybody who
+ * so desires, with the following restrictions:
+ *    1.)  No portion of this notice shall be removed.
+ *    2.)  Credit shall not be taken for the creation of this source.
+ *    3.)  This code is not to be traded, sold, or used for personal
+ *         gain or profit.
+ *
+ */
+
+#ifndef CURSES
 #include <curses.h>
-#include "object.h"
-#include "room.h"
-#include <signal.h>
+#endif CURSES
+#include <stdio.h>
+#include "rogue.h"
 
-char *player_name;
-short cant_int = 0, did_int = 0;
+char login_name[30];
+char *nick_name = "";
+char *restore_file = 0;
+boolean cant_int = 0, did_int = 0, score_only, init_curses = 0;
+boolean save_is_interactive = 1;
+boolean ask_quit = 1, show_skull = 1;
+char *error_file = "rogue.esave";
+char *byebye_string = "Okay, bye bye!";
 
-extern char ichars[];
-extern short party_room;
-extern int byebye(), onintr();
-#ifdef SIGTSTP
-extern int tstp();
-#endif
+extern char *fruit;
+extern char *save_file;
+extern short party_room, party_counter;
+extern boolean jump;
 
-init()
+init(argc, argv)
+int argc;
+char *argv[];
 {
-	char *getlogin();
-	short i;
+	char *pn;
+	int seed;
 
-	if (!(player_name = getlogin())) {
-		fprintf(stderr, "Hey!  Who are you?");
-		exit(1);
+	do_args(argc, argv);
+	do_opts();
+
+	pn = md_gln();
+	if ((!pn) || (strlen(pn) >= 30)) {
+		clean_up("Hey!  Who are you?");
 	}
-	printf("Hello %s, just a moment while I dig the dungeon...",
-	player_name);
-	fflush(stdout);
+	(void) strcpy(login_name, pn);
+
+	if (!score_only && !restore_file) {
+		printf("Hello %s, just a moment while I dig the dungeon...",
+		((nick_name[0]) ? nick_name : login_name));
+		fflush(stdout);
+	}
 
 	initscr();
-	for (i = 0; i < 26; i++) {
-		ichars[i] = 0;
-	}
-	start_window();
-#ifdef SIGTSTP
-	signal(SIGTSTP, tstp);
-#endif
-	signal(SIGINT, onintr);
-	signal(SIGQUIT, byebye);
-	if ((LINES < 24) || (COLS < 80)) {
+	if ((LINES < DROWS) || (COLS < DCOLS)) {
 		clean_up("must be played on 24 x 80 screen");
 	}
-	LINES = SROWS;
+	start_window();
+	init_curses = 1;
 
-	srandom(getpid());
-	shuffle_colors();
-	mix_metals();
+	md_heed_signals();
+
+	if (score_only) {
+		put_scores((object *) 0, 0);
+	}
+	seed = md_gseed();
+	(void) srrandom(seed);
+	if (restore_file) {
+		restore(restore_file);
+		return(1);
+	}
+	mix_colors();
+	get_wand_and_ring_materials();
 	make_scroll_titles();
 
 	level_objects.next_object = 0;
-	level_monsters.next_object = 0;
+	level_monsters.next_monster = 0;
 	player_init();
+	party_counter = get_rand(1, PARTY_TIME);
+	ring_stats(0);
+	return(0);
 }
 
 player_init()
 {
-	object *get_an_object(), *obj;
+	object *obj;
 
 	rogue.pack.next_object = 0;
 
-	obj = get_an_object();
-	get_food(obj);
-	add_to_pack(obj, &rogue.pack, 1);
+	obj = alloc_object();
+	get_food(obj, 1);
+	(void) add_to_pack(obj, &rogue.pack, 1);
 
-	obj = get_an_object();		/* initial armor */
+	obj = alloc_object();		/* initial armor */
 	obj->what_is = ARMOR;
-	obj->which_kind = RING;
-	obj->class = RING+2;
-	obj->is_cursed = obj->is_protected = 0;
-	obj->damage_enchantment = 1;
-	obj->identified = 1;
-	add_to_pack(obj, &rogue.pack, 1);
-	rogue.armor = obj;
+	obj->which_kind = RINGMAIL;
+	obj->class = RINGMAIL+2;
+	obj->is_protected = 0;
+	obj->d_enchant = 1;
+	(void) add_to_pack(obj, &rogue.pack, 1);
+	do_wear(obj);
 
-	obj = get_an_object();		/* initial weapons */
+	obj = alloc_object();		/* initial weapons */
 	obj->what_is = WEAPON;
 	obj->which_kind = MACE;
-	get_weapon_thd(obj);
-	obj->is_cursed = 0;
 	obj->damage = "2d3";
-	obj->to_hit_enchantment = obj->damage_enchantment = 1;
+	obj->hit_enchant = obj->d_enchant = 1;
 	obj->identified = 1;
-	add_to_pack(obj, &rogue.pack, 1);
-	rogue.weapon = obj;
+	(void) add_to_pack(obj, &rogue.pack, 1);
+	do_wield(obj);
 
-	obj = get_an_object();
+	obj = alloc_object();
 	obj->what_is = WEAPON;
 	obj->which_kind = BOW;
-	get_weapon_thd(obj);
-	obj->is_cursed = 0;
 	obj->damage = "1d2";
-	obj->to_hit_enchantment = 1;
-	obj->damage_enchantment = 0;
+	obj->hit_enchant = 1;
+	obj->d_enchant = 0;
 	obj->identified = 1;
-	add_to_pack(obj, &rogue.pack, 1);
+	(void) add_to_pack(obj, &rogue.pack, 1);
 
-	obj = get_an_object();
+	obj = alloc_object();
 	obj->what_is = WEAPON;
 	obj->which_kind = ARROW;
 	obj->quantity = get_rand(25, 35);
-	get_weapon_thd(obj);
-	obj->is_cursed = 0;
 	obj->damage = "1d2";
-	obj->to_hit_enchantment = 0;
-	obj->damage_enchantment = 0;
+	obj->hit_enchant = 0;
+	obj->d_enchant = 0;
 	obj->identified = 1;
-	add_to_pack(obj, &rogue.pack, 1);
+	(void) add_to_pack(obj, &rogue.pack, 1);
 }
 
 clean_up(estr)
 char *estr;
 {
-	move(LINES-1, 0);
-	refresh();
-	stop_window();
-	printf("\n%s\n", estr);
-	exit(0);
+	if (save_is_interactive) {
+		if (init_curses) {
+			move(DROWS-1, 0);
+			refresh();
+			stop_window();
+		}
+		printf("\n%s\n", estr);
+	}
+	md_exit(0);
 }
 
 start_window()
@@ -121,55 +149,129 @@ start_window()
 	crmode();
 	noecho();
 	nonl();
-	edchars(0);
+	md_control_keybord(0);
 }
 
 stop_window()
 {
 	endwin();
-	edchars(1);
+	md_control_keybord(1);
 }
 
 byebye()
 {
-	clean_up("Okay, bye bye!");
+	md_ignore_signals();
+	if (ask_quit) {
+		quit(1);
+	} else {
+		clean_up(byebye_string);
+	}
+	md_heed_signals();
 }
 
 onintr()
 {
+	md_ignore_signals();
 	if (cant_int) {
 		did_int = 1;
 	} else {
-		signal(SIGINT, SIG_IGN);
 		check_message();
 		message("interrupt", 1);
-		signal(SIGINT, onintr);
+	}
+	md_heed_signals();
+}
+
+error_save()
+{
+	save_is_interactive = 0;
+	save_into_file(error_file);
+	clean_up("");
+}
+
+do_args(argc, argv)
+int argc;
+char *argv[];
+{
+	short i, j;
+
+	for (i = 1; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			for (j = 1; argv[i][j]; j++) {
+				switch(argv[i][j]) {
+				case 's':
+					score_only = 1;
+					break;
+				}
+			}
+		} else {
+			restore_file = argv[i];
+		}
 	}
 }
 
-edchars(mode)
-short mode;
+do_opts()
 {
-#ifdef TIOCGLTC
-	static short called_before = 0;
-	static struct ltchars ltc_orig;
-	struct ltchars ltc_temp;
-	static struct tchars tc_orig;
-	struct tchars tc_temp;
+	char *eptr;
 
-	if (!called_before) {
-		called_before = 1;
-		ioctl(0, TIOCGETC, &tc_orig);
-		ioctl(0, TIOCGLTC, &ltc_orig);
+	if (eptr = md_getenv("ROGUEOPTS")) {
+		for (;;) {
+			while ((*eptr) == ' ') {
+				eptr++;
+			}
+			if (!(*eptr)) {
+				break;
+			}
+			if (!strncmp(eptr, "fruit=", 6)) {
+				eptr += 6;
+				env_get_value(&fruit, eptr, 1);
+			} else if (!strncmp(eptr, "file=", 5)) {
+				eptr += 5;
+				env_get_value(&save_file, eptr, 0);
+			} else if (!strncmp(eptr, "nojump", 6)) {
+				jump = 0;
+			} else if (!strncmp(eptr, "name=", 5)) {
+				eptr += 5;
+				env_get_value(&nick_name, eptr, 0);
+			} else if (!strncmp(eptr, "noaskquit", 9)) {
+				ask_quit = 0;
+			} else if (!strncmp(eptr, "noskull", 5) ||
+					!strncmp(eptr,"notomb", 6)) {
+				show_skull = 0;
+			}
+			while ((*eptr) && (*eptr != ',')) {
+				eptr++;
+			}
+			if (!(*(eptr++))) {
+				break;
+			}
+		}
 	}
-	tc_temp = tc_orig;
+}
 
-	ltc_temp = ltc_orig;
-	if (!mode) {
-		ltc_temp.t_suspc = ltc_temp.t_dsuspc = ltc_temp.t_rprntc =
-		ltc_temp.t_flushc = ltc_temp.t_werasc = ltc_temp.t_lnextc = -1;
+env_get_value(s, e, add_blank)
+char **s, *e;
+boolean add_blank;
+{
+	short i = 0;
+	char *t;
+
+	t = e;
+
+	while ((*e) && (*e != ',')) {
+		if (*e == ':') {
+			*e = ';';		/* ':' reserved for score file purposes */
+		}
+		e++;
+		if (++i >= 30) {
+			break;
+		}
 	}
-	ioctl(0, TIOCSLTC, &ltc_temp);
-	ioctl(0, TIOCSETC, &tc_temp);
-#endif
+	if (!(*s = md_malloc(i + (add_blank ? 2 : 1)))) {
+		clean_up("cannot alloc() memory");
+	}
+	(void) strncpy(*s, t, i);
+	if (add_blank) {
+		(*s)[i++] = ' ';
+	}
+	(*s)[i] = '\0';
 }

@@ -1,38 +1,59 @@
-#include <curses.h>
-#include <signal.h>
-#include "object.h"
-#include "move.h"
+/*
+ * play.c
+ *
+ * This source herein may be modified and/or distributed by anybody who
+ * so desires, with the following restrictions:
+ *    1.)  No portion of this notice shall be removed.
+ *    2.)  Credit shall not be taken for the creation of this source.
+ *    3.)  This code is not to be traded, sold, or used for personal
+ *         gain or profit.
+ *
+ */
 
-short interrupted = 0;
-extern short party_room, detect_monster;
+#ifndef CURSES
+#include <curses.h>
+#endif CURSES
+#include "rogue.h"
+
+boolean interrupted = 0;
+char *unknown_command = "unknown command";
+
+extern short party_room, bear_trap;
 extern char hit_message[];
+extern boolean wizard, trap_door;
 
 play_level()
 {
 	short ch;
-	int count = 0;
+	int count;
 
 	for (;;) {
 		interrupted = 0;
 		if (hit_message[0]) {
-			message(hit_message);
+			message(hit_message, 1);
 			hit_message[0] = 0;
+		}
+		if (trap_door) {
+			trap_door = 0;
+			return;
 		}
 		move(rogue.row, rogue.col);
 		refresh();
-		ch = getchar();
+
+		ch = rgetchar();
 		check_message();
+		count = 0;
 CH:
 		switch(ch) {
 		case '.':
 			rest((count > 0) ? count : 1);
 			break;
-		case 'i':
-			inventory(&rogue.pack, IS_OBJECT);
+		case 's':
+			search(((count > 0) ? count : 1), 0);
 			break;
-		/*case 'p':
-			inventory(&level_objects, IS_OBJECT);
-			break;*/
+		case 'i':
+			inventory(&rogue.pack, ALL_OBJECTS);
+			break;
 		case 'f':
 			fight(0);
 			break;
@@ -47,7 +68,7 @@ CH:
 		case 'u':
 		case 'n':
 		case 'b':
-			single_move_rogue(ch, 1);
+			(void) one_move_rogue(ch, 1);
 			break;
 		case 'H':
 		case 'J':
@@ -58,9 +79,9 @@ CH:
 		case 'U':
 		case 'N':
 		case '\010':
-		case '\012':		/* ^J */
-		case '':
-		case '':
+		case '\012':
+		case '\013':
+		case '\014':
 		case '\031':
 		case '\025':
 		case '\016':
@@ -82,11 +103,20 @@ CH:
 		case 'd':
 			drop();
 			break;
+		case 'P':
+			put_on_ring();
+			break;
+		case 'R':
+			remove_ring();
+			break;
 		case '\020':
 			remessage();
 			break;
+		case '\027':
+			wizardize();
+			break;
 		case '>':
-			if (check_down()) {
+			if (drop_check()) {
 				return;
 			}
 			break;
@@ -95,17 +125,23 @@ CH:
 				return;
 			}
 			break;
-		case 'I':
-			single_inventory();
+		case ')':
+		case ']':
+			inv_armor_weapon(ch == ')');
 			break;
-		case '\022':
-			wrefresh(curscr);
+		case '=':
+			inv_rings();
+			break;
+		case '^':
+			id_trap();
+			break;
+		case 'I':
+			single_inv(0);
 			break;
 		case 'T':
 			take_off();
 			break;
 		case 'W':
-		case 'P':
 			wear();
 			break;
 		case 'w':
@@ -120,19 +156,11 @@ CH:
 		case 't':
 			throw();
 			break;
-#ifdef SIGTSTP
-		case '\032':
-			tstp();
-			break;
-#endif
-		case '!':
-			shell();
-			break;
 		case 'v':
-			message("i_rogue: Version 1.0. (stoehr was here)", 0);
+			message("rogue-clone: Version II. (Tim Stoehr was here), tektronix!zeus!tims", 0);
 			break;
 		case 'Q':
-			quit();
+			quit(0);
 		case '0':
 		case '1':
 		case '2':
@@ -143,17 +171,70 @@ CH:
 		case '7':
 		case '8':
 		case '9':
-			count = 0;
+			move(rogue.row, rogue.col);
+			refresh();
 			do {
-				count = (10 * count) + (ch - '0');
-				ch = getchar();
-			} while ((ch >= '0') && (ch <= '9'));
-			goto CH;
+				if (count < 100) {
+					count = (10 * count) + (ch - '0');
+				}
+				ch = rgetchar();
+			} while (is_digit(ch));
+			if (ch != CANCEL) {
+				goto CH;
+			}
 			break;
 		case ' ':
 			break;
+		case '\011':
+			if (wizard) {
+				inventory(&level_objects, ALL_OBJECTS);
+			} else {
+				message(unknown_command, 0);
+			}
+			break;
+		case '\023':
+			if (wizard) {
+				draw_magic_map();
+			} else {
+				message(unknown_command, 0);
+			}
+			break;
+		case '\024':
+			if (wizard) {
+				show_traps();
+			} else {
+				message(unknown_command, 0);
+			}
+			break;
+		case '\017':
+			if (wizard) {
+				show_objects();
+			} else {
+				message(unknown_command, 0);
+			}
+			break;
+		case '\001':
+			show_average_hp();
+			break;
+		case '\003':
+			if (wizard) {
+				new_object_for_wizard();
+			} else {
+				message(unknown_command, 0);
+			}
+			break;
+		case '\015':
+			if (wizard) {
+				show_monsters();
+			} else {
+				message(unknown_command, 0);
+			}
+			break;
+		case 'S':
+			save_game();
+			break;
 		default:
-			message("unknown command");
+			message(unknown_command, 0);
 			break;
 		}
 	}

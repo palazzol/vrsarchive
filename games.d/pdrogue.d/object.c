@@ -1,43 +1,59 @@
+/*
+ * object.c
+ *
+ * This source herein may be modified and/or distributed by anybody who
+ * so desires, with the following restrictions:
+ *    1.)  No portion of this notice shall be removed.
+ *    2.)  Credit shall not be taken for the creation of this source.
+ *    3.)  This code is not to be traded, sold, or used for personal
+ *         gain or profit.
+ *
+ */
+
+#ifndef CURSES
 #include <curses.h>
-#include "object.h"
-#include "room.h"
+#endif CURSES
+#include "rogue.h"
 
 object level_objects;
-unsigned short screen[SROWS][SCOLS];
-
-extern short current_level, max_level;
-extern short party_room;
-
-short has_amulet = 0;
+unsigned short dungeon[DROWS][DCOLS];
 short foods = 0;
+short party_counter;
+object *free_list = (object *) 0;
+char *fruit = "slime-mold ";
 
 fighter rogue = {
 	0, 0,		/* armor, weapon */
-	12, 12,		/* Hp */
+	0, 0,		/* rings */
+	INIT_HP,	/* Hp current */
+	INIT_HP,	/* Hp max */
 	16, 16,		/* Str */
 	{0},		/* pack */
-	0,		/* gold */
+	0,			/* gold */
 	1, 0,		/* exp, exp_points */
 	0, 0,		/* row, col */
 	'@',		/* char */
-	1200		/* moves */
+	1250		/* moves */
 };
 
-struct identify id_potions[POTIONS] = {
-{100, "blue \0                           ", "of increase strength ",0},
-{250, "red \0                            ", "of restore strength ",0},
-{100, "green \0                          ", "of healing ",0},
-{200, "grey \0                           ", "of extra healing ",0},
- {10, "brown \0                          ", "of poison ",0},
-{300, "clear \0                          ", "of raise level ",0},
- {10, "pink \0                           ", "of blindness ",0},
- {25, "white \0                          ", "of hallucination ",0},
-{100, "purple \0                         ", "of detect monster ",0},
-{100, "black \0                          ", "of detect things ",0},
- {10, "yellow \0                         ", "of confusion ",0}
+struct id id_potions[POTIONS] = {
+{100, "blue \0                           ", "of increase strength ", 0},
+{250, "red \0                            ", "of restore strength ", 0},
+{100, "green \0                          ", "of healing ", 0},
+{200, "grey \0                           ", "of extra healing ", 0},
+ {10, "brown \0                          ", "of poison ", 0},
+{300, "clear \0                          ", "of raise level ", 0},
+ {10, "pink \0                           ", "of blindness ", 0},
+ {25, "white \0                          ", "of hallucination ", 0},
+{100, "purple \0                         ", "of detect monster ", 0},
+{100, "black \0                          ", "of detect things ", 0},
+ {10, "yellow \0                         ", "of confusion ", 0},
+ {80, "plaid \0                          ", "of levitation ", 0},
+{150, "burgundy \0                       ", "of haste self ", 0},
+{145, "beige \0                          ", "of see invisible ", 0}
 };
 
-struct identify id_scrolls[SCROLLS] = {
+struct id id_scrolls[SCROLLS] = {
 {505, "                                   ", "of protect armor ", 0},
 {200, "                                   ", "of hold monster ", 0},
 {235, "                                   ", "of enchant weapon ", 0},
@@ -48,19 +64,22 @@ struct identify id_scrolls[SCROLLS] = {
 {610, "                                   ", "of scare monster ", 0},
 {210, "                                   ", "of remove curse ", 0},
 {100, "                                   ", "of create monster ",0},
- {25, "                                   ", "of aggravate monster ",0}
+ {25, "                                   ", "of aggravate monster ",0},
+{180, "                                   ", "of magic mapping ",0}
 };
 
-struct identify id_weapons[WEAPONS] = {
+struct id id_weapons[WEAPONS] = {
 	{150, "short bow ", "", 0},
+	  {8, "darts ", "", 0},
 	 {15, "arrows ", "", 0},
+	 {27, "daggers ", "", 0},
 	 {35, "shurikens ", "", 0},
-	{370, "mace ", "", 0},
-	{480, "long sword ", "", 0},
-	{590, "two-handed sword ", "", 0}
+	{360, "mace ", "", 0},
+	{470, "long sword ", "", 0},
+	{580, "two-handed sword ", "", 0}
 };
 
-struct identify id_armors[ARMORS] = {
+struct id id_armors[ARMORS] = {
 	{300, "leather armor ", "", (UNIDENTIFIED)},
 	{300, "ring mail ", "", (UNIDENTIFIED)},
 	{400, "scale mail ", "", (UNIDENTIFIED)},
@@ -70,38 +89,57 @@ struct identify id_armors[ARMORS] = {
 	{700, "plate mail ", "", (UNIDENTIFIED)}
 };
 
-struct identify id_wands[WANDS] = {
+struct id id_wands[WANDS] = {
 	 {25, "                                 ", "of teleport away ",0},
 	 {50, "                                 ", "of slow monster ", 0},
-	 {45, "                                 ", "of kill monster ",0},
+	 {45, "                                 ", "of confuse monster ",0},
 	  {8, "                                 ", "of invisibility ",0},
 	 {55, "                                 ", "of polymorph ",0},
 	  {2, "                                 ", "of haste monster ",0},
-	 {25, "                                 ", "of put to sleep ",0},
+	 {25, "                                 ", "of sleep ",0},
+	 {20, "                                 ", "of magic missile ",0},
+	 {20, "                                 ", "of cancellation ",0},
 	  {0, "                                 ", "of do nothing ",0}
 };
 
+struct id id_rings[RINGS] = {
+	 {250, "                                 ", "of stealth ",0},
+	 {100, "                                 ", "of teleportation ", 0},
+	 {255, "                                 ", "of regeneration ",0},
+	 {295, "                                 ", "of slow digestion ",0},
+	 {200, "                                 ", "of add strength ",0},
+	 {250, "                                 ", "of sustain strength ",0},
+	 {250, "                                 ", "of dexterity ",0},
+	  {25, "                                 ", "of adornment ",0},
+	 {300, "                                 ", "of see invisible ",0},
+	 {290, "                                 ", "of maintain armor ",0},
+	 {270, "                                 ", "of searching ",0},
+};
+
+extern short cur_level, max_level;
+extern short party_room;
+extern char *error_file;
+extern boolean is_wood[];
+
 put_objects()
 {
-	short row, col, i, n;
-	char *malloc();
-	object *obj, *get_rand_object();
+	short i, n;
+	object *obj;
 
-	if (current_level < max_level) return;
-
-	n = get_rand(2, 4);
-	if (rand_percent(35)) n++;
-
-	if (rand_percent(50)) {
-		strcpy(id_weapons[SHURIKEN].title, "daggers ");
+	if (cur_level < max_level) {
+		return;
 	}
-	if (rand_percent(5)) {
+	n = coin_toss() ? get_rand(2, 4) : get_rand(3, 5);
+	while (rand_percent(33)) {
+		n++;
+	}
+	if (cur_level == party_counter) {
 		make_party();
+		party_counter = next_party();
 	}
 	for (i = 0; i < n; i++) {
-		obj = get_rand_object();
-		put_object_rand_location(obj);
-		add_to_pack(obj, &level_objects, 0);
+		obj = gr_object();
+		rand_place(obj);
 	}
 	put_gold();
 }
@@ -110,61 +148,74 @@ put_gold()
 {
 	short i, j;
 	short row,col;
-	object *obj, *get_an_object();
+	boolean is_maze, is_room;
 
 	for (i = 0; i < MAXROOMS; i++) {
-		if (rooms[i].is_room && rand_percent(GOLD_PERCENT)) {
-			for (j = 0; j < 25; j++) {
+		is_maze = (rooms[i].is_room & R_MAZE) ? 1 : 0;
+		is_room = (rooms[i].is_room & R_ROOM) ? 1 : 0;
+
+		if (!(is_room || is_maze)) {
+			continue;
+		}
+		if (is_maze || rand_percent(GOLD_PERCENT)) {
+			for (j = 0; j < 50; j++) {
 				row = get_rand(rooms[i].top_row+1,
 				rooms[i].bottom_row-1);
 				col = get_rand(rooms[i].left_col+1,
 				rooms[i].right_col-1);
-				if ((screen[row][col] == FLOOR) ||
-				    (screen[row][col] == PASSAGE)) {
-					put_gold_at(row, col);
+				if ((dungeon[row][col] == FLOOR) ||
+					(dungeon[row][col] == TUNNEL)) {
+					plant_gold(row, col, is_maze);
 					break;
 				}
 			}
-		continue;
 		}
 	}
 }
 
-put_gold_at(row, col)
+plant_gold(row, col, is_maze)
+short row, col;
+boolean is_maze;
 {
 	object *obj;
 
-	obj = get_an_object();
+	obj = alloc_object();
 	obj->row = row; obj->col = col;
 	obj->what_is = GOLD;
-	obj->quantity = get_rand((2*current_level), (16*current_level));
-	add_mask(row, col, GOLD);
-	add_to_pack(obj, &level_objects, 0);
+	obj->quantity = get_rand((2 * cur_level), (16 * cur_level));
+	if (is_maze) {
+		obj->quantity += obj->quantity / 2;
+	}
+	dungeon[row][col] |= OBJECT;
+	(void) add_to_pack(obj, &level_objects, 0);
 }
 
-put_object_at(obj, row, col)
+place_at(obj, row, col)
 object *obj;
 {
 	obj->row = row;
 	obj->col = col;
-	add_mask(row, col, obj->what_is);
-	add_to_pack(obj, &level_objects, 0);
+	dungeon[row][col] |= OBJECT;
+	(void) add_to_pack(obj, &level_objects, 0);
 }
 
-object *object_at(pack, row, col)
-object *pack;
+object *
+object_at(pack, row, col)
+register object *pack;
+short row, col;
 {
 	object *obj;
 
 	obj = pack->next_object;
 
-	while (obj && (obj->row != row) || (obj->col != col)) {
+	while (obj && ((obj->row != row) || (obj->col != col))) {
 		obj = obj->next_object;
 	}
 	return(obj);
 }
 
-object *get_letter_object(ch)
+object *
+get_letter_object(ch)
 {
 	object *obj;
 
@@ -185,11 +236,23 @@ object *objlist;
 		obj = objlist->next_object;
 		objlist->next_object =
 			objlist->next_object->next_object;
-		free(obj);
+		free_object(obj);
 	}
 }
 
-char *name_of(obj)
+free_free_list()
+{
+	object *obj;
+
+	while (free_list) {
+		obj = free_list;
+		free_list = free_list->next_object;
+		free_object(obj);
+	}
+}
+
+char *
+name_of(obj)
 object *obj;
 {
 	char *retstring;
@@ -202,26 +265,41 @@ object *obj;
 		retstring = obj->quantity > 1 ? "potions " : "potion ";
 		break;
 	case FOOD:
-		retstring = obj->quantity > 1 ? "rations " : "ration ";
+		if (obj->which_kind == RATION) {
+			retstring = "food ";
+		} else {
+			retstring = fruit;
+		}
 		break;
 	case WAND:
-		retstring = "wand ";
+		retstring = is_wood[obj->which_kind] ? "staff " : "wand ";
 		break;
 	case WEAPON:
 		switch(obj->which_kind) {
+		case DART:
+			retstring=obj->quantity > 1 ? "darts " : "dart ";
+			break;
 		case ARROW:
 			retstring=obj->quantity > 1 ? "arrows " : "arrow ";
 			break;
-		case SHURIKEN:
-			if (id_weapons[SHURIKEN].title[0] == 'd') {
+		case DAGGER:
 			retstring=obj->quantity > 1 ? "daggers " : "dagger ";
-			} else {
+			break;
+		case SHURIKEN:
 			retstring=obj->quantity > 1?"shurikens ":"shuriken ";
-			}
 			break;
 		default:
 			retstring = id_weapons[obj->which_kind].title;
 		}
+		break;
+	case ARMOR:
+		retstring = "armor ";
+		break;
+	case RING:
+			retstring = "ring ";
+		break;
+	case AMULET:
+		retstring = "amulet ";
 		break;
 	default:
 		retstring = "unknown ";
@@ -230,72 +308,79 @@ object *obj;
 	return(retstring);
 }
 
-object *get_rand_object()
+object *
+gr_object()
 {
-	object *obj, *get_an_object();
+	object *obj;
 
-	obj = get_an_object();
+	obj = alloc_object();
 
-	if (foods < (current_level/2)) {
+	if (foods < (cur_level / 3)) {
 		obj->what_is = FOOD;
+		foods++;
 	} else {
-		obj->what_is = get_rand_what_is();
+		obj->what_is = gr_what_is();
 	}
-	obj->identified = 0;
-
 	switch(obj->what_is) {
 	case SCROLL:
-		get_rand_scroll(obj);
+		gr_scroll(obj);
 		break;
 	case POTION:
-		get_rand_potion(obj);
+		gr_potion(obj);
 		break;
 	case WEAPON:
-		get_rand_weapon(obj);
+		gr_weapon(obj, 1);
 		break;
 	case ARMOR:
-		get_rand_armor(obj);
+		gr_armor(obj);
 		break;
 	case WAND:
-		get_rand_wand(obj);
+		gr_wand(obj);
 		break;
 	case FOOD:
-		foods++;
-		get_food(obj);
+		get_food(obj, 0);
+		break;
+	case RING:
+		gr_ring(obj, 1);
 		break;
 	}
 	return(obj);
 }
 
-get_rand_what_is()
+unsigned short
+gr_what_is()
 {
 	short percent;
-	short what_is;
+	unsigned short what_is;
 
-	percent = get_rand(1, 92);
+	percent = get_rand(1, 91);
 
 	if (percent <= 30) {
 		what_is = SCROLL;
 	} else if (percent <= 60) {
 		what_is = POTION;
-	} else if (percent <= 65) {
+	} else if (percent <= 64) {
 		what_is = WAND;
-	} else if (percent <= 75) {
+	} else if (percent <= 74) {
 		what_is = WEAPON;
-	} else if (percent <= 85) {
+	} else if (percent <= 83) {
 		what_is = ARMOR;
-	} else {
+	} else if (percent <= 88) {
 		what_is = FOOD;
+	} else {
+		what_is = RING;
 	}
 	return(what_is);
 }
 
-get_rand_scroll(obj)
+gr_scroll(obj)
 object *obj;
 {
 	short percent;
 
-	percent = get_rand(0, 82);
+	percent = get_rand(0, 85);
+
+	obj->what_is = SCROLL;
 
 	if (percent <= 5) {
 		obj->which_kind = PROTECT_ARMOR;
@@ -307,27 +392,31 @@ object *obj;
 		obj->which_kind = IDENTIFY;
 	} else if (percent <= 43) {
 		obj->which_kind = TELEPORT;
-	} else if (percent <= 52) {
+	} else if (percent <= 50) {
 		obj->which_kind = SLEEP;
-	} else if (percent <= 57) {
+	} else if (percent <= 55) {
 		obj->which_kind = SCARE_MONSTER;
-	} else if (percent <= 66) {
+	} else if (percent <= 64) {
 		obj->which_kind = REMOVE_CURSE;
-	} else if (percent <= 71) {
-		obj->which_kind = ENCHANT_ARMOR;
-	} else if (percent <= 76) {
-		obj->which_kind = ENCHANT_WEAPON;
-	} else {
+	} else if (percent <= 69) {
+		obj->which_kind = ENCH_ARMOR;
+	} else if (percent <= 74) {
+		obj->which_kind = ENCH_WEAPON;
+	} else if (percent <= 80) {
 		obj->which_kind = AGGRAVATE_MONSTER;
+	} else {
+		obj->which_kind = MAGIC_MAPPING;
 	}
 }
 
-get_rand_potion(obj)
+gr_potion(obj)
 object *obj;
 {
 	short percent;
 
-	percent = get_rand(1, 105);
+	percent = get_rand(1, 118);
+
+	obj->what_is = POTION;
 
 	if (percent <= 5) {
 		obj->which_kind = RAISE_LEVEL;
@@ -349,35 +438,40 @@ object *obj;
 		obj->which_kind = HALLUCINATION;
 	} else if (percent <= 95) {
 		obj->which_kind = CONFUSION;
-	} else {
+	} else if (percent <= 105) {
 		obj->which_kind = POISON;
+	} else if (percent <= 110) {
+		obj->which_kind = LEVITATION;
+	} else if (percent <= 114) {
+		obj->which_kind = HASTE_SELF;
+	} else {
+		obj->which_kind = SEE_INVISIBLE;
 	}
 }
 
-get_rand_weapon(obj)
+gr_weapon(obj, assign_wk)
 object *obj;
+int assign_wk;
 {
 	short percent;
 	short i;
-	short blessing, cursed, increment;
+	short blessing, increment;
 
-	obj->which_kind = get_rand(0, (WEAPONS-1));
-
-	if ((obj->which_kind == ARROW) || (obj->which_kind == SHURIKEN)) {
+	obj->what_is = WEAPON;
+	if (assign_wk) {
+		obj->which_kind = get_rand(0, (WEAPONS - 1));
+	}
+	if ((obj->which_kind == ARROW) || (obj->which_kind == DAGGER) ||
+		(obj->which_kind == SHURIKEN) | (obj->which_kind == DART)) {
 		obj->quantity = get_rand(3, 15);
 		obj->quiver = get_rand(0, 126);
 	} else {
 		obj->quantity = 1;
 	}
-	obj->identified = 0;
-	obj->to_hit_enchantment = obj->damage_enchantment = 0;
-	get_weapon_thd(obj);
+	obj->hit_enchant = obj->d_enchant = 0;
 
-	/* notice, long swords are ALWAYS cursed or blessed */
-
-	percent = get_rand(1, ((obj->which_kind == LONG_SWORD) ? 32 : 96));
+	percent = get_rand(1, 96);
 	blessing = get_rand(1, 3);
-	obj->is_cursed = 0;
 
 	if (percent <= 16) {
 		increment = 1;
@@ -387,19 +481,23 @@ object *obj;
 	}
 	if (percent <= 32) {
 		for (i = 0; i < blessing; i++) {
-			if (rand_percent(50)) {
-				obj->to_hit_enchantment += increment;
+			if (coin_toss()) {
+				obj->hit_enchant += increment;
 			} else {
-				obj->damage_enchantment += increment;
+				obj->d_enchant += increment;
 			}
 		}
 	}
 	switch(obj->which_kind) {
 	case BOW:
-		obj->damage = "1d2";
+	case DART:
+		obj->damage = "1d1";
 		break;
 	case ARROW:
 		obj->damage = "1d2";
+		break;
+	case DAGGER:
+		obj->damage = "1d3";
 		break;
 	case SHURIKEN:
 		obj->damage = "1d4";
@@ -416,136 +514,257 @@ object *obj;
 	}
 }
 
-get_rand_armor(obj)
+gr_armor(obj)
 object *obj;
 {
 	short percent;
 	short blessing;
 
-	obj->which_kind = get_rand(0, (ARMORS-1));
+	obj->what_is = ARMOR;
+	obj->which_kind = get_rand(0, (ARMORS - 1));
 	obj->class = obj->which_kind + 2;
 	if ((obj->which_kind == PLATE) || (obj->which_kind == SPLINT)) {
 		obj->class--;
 	}
-	obj->is_cursed = 0;
 	obj->is_protected = 0;
-	obj->damage_enchantment = 0;
+	obj->d_enchant = 0;
 
 	percent = get_rand(1, 100);
 	blessing = get_rand(1, 3);
 
 	if (percent <= 16) {
 		obj->is_cursed = 1;
-		obj->damage_enchantment -= blessing;
+		obj->d_enchant -= blessing;
 	} else if (percent <= 33) {
-		obj->damage_enchantment += blessing;
+		obj->d_enchant += blessing;
 	}
 }
 
-get_rand_wand(obj)
+gr_wand(obj)
 object *obj;
 {
-	obj->which_kind = get_rand(0, (WANDS-1));
-	obj->class = get_rand(3, 7);
+	obj->what_is = WAND;
+	obj->which_kind = get_rand(0, (WANDS - 1));
+	if (obj->which_kind == MAGIC_MISSILE) {
+		obj->class = get_rand(6, 12);
+	} else if (obj->which_kind == CANCELLATION) {
+		obj->class = get_rand(5, 9);
+	} else {
+		obj->class = get_rand(3, 6);
+	}
 }
 
-get_food(obj)
+get_food(obj, force_ration)
 object *obj;
+boolean force_ration;
 {
-	obj->which_kind = obj->what_is = FOOD;
+	obj->what_is = FOOD;
+
+	if (force_ration || rand_percent(80)) {
+		obj->which_kind = RATION;
+	} else {
+		obj->which_kind = FRUIT;
+	}
 }
 
 put_stairs()
 {
 	short row, col;
 
-	get_rand_row_col(&row, &col, (FLOOR | TUNNEL));
-	screen[row][col] = STAIRS;
-}
-
-get_weapon_thd(obj)
-object *obj;
-{
-	switch(obj->which_kind) {
-	case BOW:
-		break;
-	case ARROW:
-		break;
-	case SHURIKEN:
-		break;
-	case MACE:
-		break;
-	case LONG_SWORD:
-		break;
-	case TWO_HANDED_SWORD:
-		break;
-	}
+	gr_row_col(&row, &col, (FLOOR | TUNNEL));
+	dungeon[row][col] |= STAIRS;
 }
 
 get_armor_class(obj)
 object *obj;
 {
 	if (obj) {
-		return(obj->class + obj->damage_enchantment);
+		return(obj->class + obj->d_enchant);
 	}
 	return(0);
 }
 
-object *get_an_object()
+object *
+alloc_object()
 {
 	object *obj;
-	char *malloc();
 
-	if (!(obj = (object *) malloc(sizeof(object)))) {
-		clean_up("Cannot allocate item");
+	if (free_list) {
+		obj = free_list;
+		free_list = free_list->next_object;
+	} else if (!(obj = (object *) md_malloc(sizeof(object)))) {
+			free_free_list();
+			message("cannot allocate object, saving game", 0);
+			save_into_file(error_file);
 	}
 	obj->quantity = 1;
 	obj->ichar = 'L';
-	obj->picked_up = 0;		/* not picked up yet */
+	obj->picked_up = obj->is_cursed = 0;
+	obj->in_use_flags = NOT_USED;
+	obj->identified = UNIDENTIFIED;
+	obj->damage = "1d1";
 	return(obj);
+}
+
+free_object(obj)
+object *obj;
+{
+	obj->next_object = free_list;
+	free_list = obj;
 }
 
 make_party()
 {
-	object *obj;
 	short n;
 
-	party_room = get_rand_room();
-	n = fill_room_with_objects(party_room);
-	fill_room_with_monsters(party_room, n);
+	party_room = gr_room();
+
+	n = rand_percent(99) ? party_objects(party_room) : 11;
+	if (rand_percent(99)) {
+		party_monsters(party_room, n);
+	}
 }
 
 show_objects()
 {
 	object *obj;
+	short mc, rc, row, col;
+	object *monster;
 
 	obj = level_objects.next_object;
 
 	while (obj) {
-		mvaddch(obj->row, obj->col, get_room_char(obj->what_is));
+		row = obj->row;
+		col = obj->col;
+
+		rc = get_mask_char(obj->what_is);
+
+		if (dungeon[row][col] & MONSTER) {
+			if (monster = object_at(&level_monsters, row, col)) {
+				monster->trail_char = rc;
+			}
+		}
+		mc = mvinch(row, col);
+		if (((mc < 'A') || (mc > 'Z')) &&
+			((row != rogue.row) || (col != rogue.col))) {
+			mvaddch(row, col, rc);
+		}
 		obj = obj->next_object;
+	}
+
+	monster = level_monsters.next_object;
+
+	while (monster) {
+		if (monster->m_flags & IMITATES) {
+			mvaddch(monster->row, monster->col, (int) monster->disguise);
+		}
+		monster = monster->next_monster;
 	}
 }
 
 put_amulet()
 {
-	short row, col;
-	object *obj, *get_an_object();
+	object *obj;
 
-	obj = get_an_object();
+	obj = alloc_object();
 	obj->what_is = AMULET;
-	put_object_rand_location(obj);
-	add_to_pack(obj, &level_objects, 0);
+	rand_place(obj);
 }
 
-put_object_rand_location(obj)
+rand_place(obj)
 object *obj;
 {
 	short row, col;
 
-	get_rand_row_col(&row, &col, (FLOOR | TUNNEL));
-	add_mask(row, col, obj->what_is);
-	obj->row = row;
-	obj->col = col;
+	gr_row_col(&row, &col, (FLOOR | TUNNEL));
+	place_at(obj, row, col);
 
+}
+
+new_object_for_wizard()
+{
+	short ch, max, wk;
+	object *obj;
+	char buf[80];
+
+	if (pack_count((object *) 0) >= MAX_PACK_COUNT) {
+		message("pack full", 0);
+		return;
+	}
+	message("type of object?", 0);
+
+	while (r_index("!?:)]=/,\033", (ch = rgetchar()), 0) == -1) {
+		sound_bell();
+	}
+	check_message();
+
+	if (ch == '\033') {
+		return;
+	}
+	obj = alloc_object();
+
+	switch(ch) {
+	case '!':
+		obj->what_is = POTION;
+		max = POTIONS - 1;
+		break;
+	case '?':
+		obj->what_is = SCROLL;
+		max = SCROLLS - 1;
+		break;
+	case ',':
+		obj->what_is = AMULET;
+		break;
+	case ':':
+		get_food(obj, 0);
+		break;
+	case ')':
+		gr_weapon(obj, 0);
+		max = WEAPONS - 1;
+		break;
+	case ']':
+		gr_armor(obj);
+		max = ARMORS - 1;
+		break;
+	case '/':
+		gr_wand(obj);
+		max = WANDS - 1;
+		break;
+	case '=':
+		max = RINGS - 1;
+		obj->what_is = RING;
+		break;
+	}
+	if ((ch != ',') && (ch != ':')) {
+GIL:
+		if (get_input_line("which kind?", "", buf, "", 0, 1)) {
+			wk = get_number(buf);
+			if ((wk >= 0) && (wk <= max)) {
+				obj->which_kind = (unsigned short) wk;
+				if (obj->what_is == RING) {
+					gr_ring(obj, 0);
+				}
+			} else {
+				sound_bell();
+				goto GIL;
+			}
+		} else {
+			free_object(obj);
+			return;
+		}
+	}
+	get_desc(obj, buf);
+	message(buf, 0);
+	(void) add_to_pack(obj, &rogue.pack, 1);
+}
+
+next_party()
+{
+	int n;
+
+	n = cur_level;
+	while (n % PARTY_TIME) {
+		n++;
+	}
+	return(get_rand((n + 1), (n + PARTY_TIME)));
 }

@@ -1,93 +1,137 @@
+/*
+ * hit.c
+ *
+ * This source herein may be modified and/or distributed by anybody who
+ * so desires, with the following restrictions:
+ *    1.)  No portion of this notice shall be removed.
+ *    2.)  Credit shall not be taken for the creation of this source.
+ *    3.)  This code is not to be traded, sold, or used for personal
+ *         gain or profit.
+ *
+ */
+
+#ifndef CURSES
 #include <curses.h>
-#include "object.h"
-#include "move.h"
-#include "monster.h"
+#endif CURSES
+#include "rogue.h"
 
 object *fight_monster = 0;
-short detect_monster;
+boolean detect_monster;
 char hit_message[80] = "";
 
-extern short halluc, blind, being_held, interrupted;
+extern short halluc, blind, cur_level;
+extern short add_strength, ring_exp, r_rings;
+extern boolean being_held, interrupted, wizard;
 
-monster_hit(monster, other)
+mon_hit(monster, other, flame)
 register object *monster;
 char *other;
+boolean flame;
 {
 	short damage, hit_chance;
-	char *mn, *monster_name();
+	char *mn;
 	float minus;
 
 	if (fight_monster && (monster != fight_monster)) {
 		fight_monster = 0;
 	}
-	monster->trow = -1;
-	hit_chance = monster->class;
-	hit_chance -= (rogue.exp + rogue.exp);
-	if (hit_chance < 0) hit_chance = 0;
-
+	monster->trow = NO_ROOM;
+	if (cur_level >= (AMULET_LEVEL * 2)) {
+		hit_chance = 100;
+	} else {
+		hit_chance = monster->m_hit_chance;
+		hit_chance -= (((2 * rogue.exp) + (2 * ring_exp)) - r_rings);
+	}
+	if (wizard) {
+		hit_chance /= 2;
+	}
 	if (!fight_monster) {
 		interrupted = 1;
 	}
+	mn = mon_name(monster);
 
-	mn = monster_name(monster);
+	if (other) {
+		hit_chance -= ((rogue.exp + ring_exp) - r_rings);
+	}
 
 	if (!rand_percent(hit_chance)) {
 		if (!fight_monster) {
 			sprintf(hit_message + strlen(hit_message),
 			"the %s misses", (other ? other : mn));
-			message(hit_message, 0);
+			message(hit_message, 1);
 			hit_message[0] = 0;
 		}
 		return;
 	}
 	if (!fight_monster) {
-		sprintf(hit_message + strlen(hit_message), "the %s hit", (other ? other : mn));
-		message(hit_message, 0);
+		sprintf(hit_message + strlen(hit_message), "the %s hit",
+			(other ? other : mn));
+		message(hit_message, 1);
 		hit_message[0] = 0;
 	}
-
-	if (monster->ichar != 'F') {
-		damage = get_damage(monster->damage, 1);
-		minus = (float) get_armor_class(rogue.armor) * 3.00;
-		minus = minus/100.00 * (float) damage;
+	if (!(monster->m_flags & STATIONARY)) {
+		damage = get_damage(monster->m_damage, 1);
+		if (other) {
+			if (flame) {
+				if ((damage -= get_armor_class(rogue.armor)) < 0) {
+					damage = 1;
+				}
+			}
+		}
+		if (cur_level >= (AMULET_LEVEL * 2)) {
+			minus = (float) ((AMULET_LEVEL * 2) - cur_level);
+		} else {
+			minus = (float) get_armor_class(rogue.armor) * 3.00;
+			minus = minus/100.00 * (float) damage;
+		}
 		damage -= (short) minus;
 	} else {
-		damage = monster->identified++;
+		damage = monster->stationary_damage++;
+	}
+	if (wizard) {
+		damage /= 3;
 	}
 	if (damage > 0) {
 		rogue_damage(damage, monster);
 	}
-	special_hit(monster);
+	if (monster->m_flags & SPECIAL_HIT) {
+		special_hit(monster);
+	}
 }
 
-rogue_hit(monster)
+rogue_hit(monster, force_hit)
 register object *monster;
+boolean force_hit;
 {
 	short damage, hit_chance;
-	char mbuf[80], *monster_name();
-	float minus;
-	short cx;
 
-	if (check_xeroc(monster)) {
-		return;
-	}
-	hit_chance = get_hit_chance(rogue.weapon);
-
-	if (!rand_percent(hit_chance)) {
-		if (!fight_monster) {
-			strcpy(hit_message, "you miss  ");
+	if (monster) {
+		if (check_imitator(monster)) {
+			return;
 		}
-		goto RET;
-	}
-	damage = get_weapon_damage(rogue.weapon);
+		hit_chance = force_hit ? 100 : get_hit_chance(rogue.weapon);
 
-	if (monster_damage(monster, damage)) {	/* still alive? */
-		if (!fight_monster) {
-			strcpy(hit_message, "you hit  ");
+		if (wizard) {
+			hit_chance *= 2;
 		}
+		if (!rand_percent(hit_chance)) {
+			if (!fight_monster) {
+				(void) strcpy(hit_message, "you miss  ");
+			}
+			goto RET;
+		}
+		damage = get_weapon_damage(rogue.weapon);
+		if (wizard) {
+			damage *= 3;
+		}
+		if (mon_damage(monster, damage)) {	/* still alive? */
+			if (!fight_monster) {
+				(void) strcpy(hit_message, "you hit  ");
+			}
+		}
+RET:	check_gold_seeker(monster);
+		wake_up(monster);
 	}
-RET:	check_orc(monster);
-	wake_up(monster);
 }
 
 rogue_damage(d, monster)
@@ -96,17 +140,18 @@ object *monster;
 {
 	if (d >= rogue.hp_current) {
 		rogue.hp_current = 0;
-		print_stats();
+		print_stats(STAT_HP);
 		killed_by(monster, 0);
 	}
 	rogue.hp_current -= d;
-	print_stats();
+	print_stats(STAT_HP);
 }
 
 get_damage(ds, r)
 char *ds;
+boolean r;
 {
-	register short i = 0, j, n, d, total = 0;
+	register i = 0, j, n, d, total = 0;
 
 	while (ds[i]) {
 		n = get_number(ds+i);
@@ -132,15 +177,15 @@ get_w_damage(obj)
 object *obj;
 {
 	char new_damage[12];
-	register short to_hit, damage;
-	register short i = 0;
+	register to_hit, damage;
+	register i = 0;
 
-	if (!obj) {
+	if ((!obj) || (obj->what_is != WEAPON)) {
 		return(-1);
 	}
-	to_hit = get_number(obj->damage) + obj->to_hit_enchantment;
+	to_hit = get_number(obj->damage) + obj->hit_enchant;
 	while (obj->damage[i++] != 'd') ;
-	damage = get_number(obj->damage + i) + obj->damage_enchantment;
+	damage = get_number(obj->damage + i) + obj->d_enchant;
 
 	sprintf(new_damage, "%dd%d", to_hit, damage);
 
@@ -150,8 +195,22 @@ object *obj;
 get_number(s)
 register char *s;
 {
-	register short i = 0;
-	register short total = 0;
+	register i = 0;
+	register total = 0;
+
+	while ((s[i] >= '0') && (s[i] <= '9')) {
+		total = (10 * total) + (s[i] - '0');
+		i++;
+	}
+	return(total);
+}
+
+long
+lget_number(s)
+register char *s;
+{
+	register long i = 0;
+	register long total = 0;
 
 	while ((s[i] >= '0') && (s[i] <= '9')) {
 		total = (10 * total) + (s[i] - '0');
@@ -163,87 +222,85 @@ register char *s;
 to_hit(obj)
 object *obj;
 {
-	short tohit = 0;
-	short i = 0;
-
 	if (!obj) {
 		return(1);
 	}
-	return(get_number(obj->damage) + obj->to_hit_enchantment);
+	return(get_number(obj->damage) + obj->hit_enchant);
 }
 
-damage_for_strength(s)
+damage_for_strength()
 {
-	if (s <= 6) {
-		return(s-5);
+	short strength;
+
+	strength = rogue.str_current + add_strength;
+
+	if (strength <= 6) {
+		return(strength-5);
 	}
-	if (s <= 14) {
+	if (strength <= 14) {
 		return(1);
 	}
-	if (s <= 17) {
+	if (strength <= 17) {
 		return(3);
 	}
-	if (s <= 18) {
+	if (strength <= 18) {
 		return(4);
 	}
-	if (s <= 20) {
+	if (strength <= 20) {
 		return(5);
 	}
-	if (s <= 21) {
+	if (strength <= 21) {
 		return(6);
 	}
-	if (s <= 30) {
+	if (strength <= 30) {
 		return(7);
 	}
 	return(8);
 }
 
-monster_damage(monster, damage)
+mon_damage(monster, damage)
 object *monster;
 {
-	char *mn, *monster_name();
+	char *mn;
 	short row, col;
 
-	monster->quantity -= damage;
+	monster->hp_to_kill -= damage;
 
-	if (monster->quantity <= 0) {
+	if (monster->hp_to_kill <= 0) {
 		row = monster->row;
 		col = monster->col;
-		remove_mask(row, col, MONSTER);
-		mvaddch(row, col, get_room_char(screen[row][col]));
-		refresh();
+		dungeon[row][col] &= ~MONSTER;
+		mvaddch(row, col, (int) get_dungeon_char(row, col));
 
 		fight_monster = 0;
 		cough_up(monster);
-		mn = monster_name(monster);
+		mn = mon_name(monster);
 		sprintf(hit_message+strlen(hit_message), "defeated the %s", mn);
 		message(hit_message, 1);
 		hit_message[0] = 0;
-		add_exp(monster->kill_exp);
-		print_stats();
-		remove_from_pack(monster, &level_monsters);
+		add_exp(monster->kill_exp, 1);
+		take_from_pack(monster, &level_monsters);
 
-		if (monster->ichar == 'F') {
+		if (monster->m_flags & HOLDS) {
 			being_held = 0;
 		}
-		free(monster);
+		free_object(monster);
 		return(0);
 	}
 	return(1);
 }
 
 fight(to_the_death)
-short to_the_death;
+boolean to_the_death;
 {
-	short ch;
+	short ch, c;
 	short row, col;
-	short first_miss = 1;
+	boolean first_miss = 1;
 	short possible_damage;
-	object *object_at();
+	object *monster;
 
-	while (!is_direction(ch = getchar())) {
-		putchar(7);
-		fflush(stdout);
+	while (!is_direction(ch = rgetchar())) {
+		sound_bell();
 		if (first_miss) {
 			message("direction?", 0);
 			first_miss = 0;
@@ -254,75 +311,82 @@ short to_the_death;
 		return;
 	}
 	row = rogue.row; col = rogue.col;
-	get_dir_rc(ch, &row, &col);
+	get_dir_rc(ch, &row, &col, 0);
 
-	if (!(screen[row][col] & MONSTER) || blind || hiding_xeroc(row, col)) {
-NM:		message("I see no monster there", 0);
+	c = mvinch(row, col);
+	if (((c < 'A') || (c > 'Z')) ||
+		(!can_move(rogue.row, rogue.col, row, col))) {
+		message("I see no monster there", 0);
 		return;
 	}
-	fight_monster = object_at(&level_monsters, row, col);
-	if ((fight_monster->m_flags & IS_INVIS) && !detect_monster) {
-		goto NM;
+	if (!(fight_monster = object_at(&level_monsters, row, col))) {
+		return;
 	}
-
-	possible_damage = ((get_damage(fight_monster->damage, 0) * 2) / 3);
-
+	if (!(fight_monster->m_flags & STATIONARY)) {
+		possible_damage = ((get_damage(fight_monster->m_damage, 0) * 2) / 3);
+	} else {
+		possible_damage = fight_monster->stationary_damage - 1;
+	}
 	while (fight_monster) {
-		single_move_rogue(ch, 0);
-		if (!to_the_death && rogue.hp_current <= possible_damage) {
+		(void) one_move_rogue(ch, 0);
+		if (((!to_the_death) && (rogue.hp_current <= possible_damage)) ||
+			interrupted || (!(dungeon[row][col] & MONSTER))) {
 			fight_monster = 0;
-		}
-		if (!(screen[row][col] & MONSTER) || interrupted) {
-			fight_monster = 0;
+		} else {
+			monster = object_at(&level_monsters, row, col);
+			if (monster != fight_monster) {
+				fight_monster = 0;
+			}
 		}
 	}
 }
 
-get_dir_rc(dir, row, col)
+get_dir_rc(dir, row, col, allow_off_screen)
 short dir;
 short *row, *col;
+short allow_off_screen;
 {
 	switch(dir) {
 	case 'h':
-		if (*col > 0) {
+		if (allow_off_screen || (*col > 0)) {
 			(*col)--;
 		}
 		break;
 	case 'j':
-		if (*row < (LINES-2)) {
+		if (allow_off_screen || (*row < (DROWS-2))) {
 			(*row)++;
 		}
 		break;
 	case 'k':
-		if (*row > MIN_ROW) {
+		if (allow_off_screen || (*row > MIN_ROW)) {
 			(*row)--;
 		}
 		break;
 	case 'l':
-		if (*col < (COLS-1)) {
+		if (allow_off_screen || (*col < (DCOLS-1))) {
 			(*col)++;
 		}
 		break;
 	case 'y':
-		if ((*row > MIN_ROW) && (*col > 0)) {
+		if (allow_off_screen || ((*row > MIN_ROW) && (*col > 0))) {
 			(*row)--;
 			(*col)--;
 		}
 		break;
 	case 'u':
-		if ((*row > MIN_ROW) && (*col < (COLS-1))) {
+		if (allow_off_screen || ((*row > MIN_ROW) && (*col < (DCOLS-1)))) {
 			(*row)--;
 			(*col)++;
 		}
 		break;
 	case 'n':
-		if ((*row < (LINES-2)) && (*col < (COLS-1))) {
+		if (allow_off_screen || ((*row < (DROWS-2)) && (*col < (DCOLS-1)))) {
 			(*row)++;
 			(*col)++;
 		}
 		break;
 	case 'b':
-		if ((*row < (LINES-2)) && (*col > 0)) {
+		if (allow_off_screen || ((*row < (DROWS-2)) && (*col > 0))) {
 			(*row)++;
 			(*col)--;
 		}
@@ -337,8 +401,7 @@ object *weapon;
 
 	hit_chance = 40;
 	hit_chance += 3 * to_hit(weapon);
-	hit_chance += (rogue.exp + rogue.exp);
-	if (hit_chance > 100) hit_chance = 100;
+	hit_chance += (((2 * rogue.exp) + (2 * ring_exp)) - r_rings);
 	return(hit_chance);
 }
 
@@ -348,7 +411,7 @@ object *weapon;
 	short damage;
 
 	damage = get_w_damage(weapon);
-	damage += damage_for_strength(rogue.strength_current);
-	damage += ((rogue.exp + 1) / 2);
+	damage += damage_for_strength();
+	damage += ((((rogue.exp + ring_exp) - r_rings) + 1) / 2);
 	return(damage);
 }
