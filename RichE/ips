@@ -1,0 +1,306 @@
+.PH ""
+.PF ""
+.AF ""
+.MT 4
+.S 12
+.SA 1
+.nf
+.B "To: " "List"
+
+.B "From: " "Vincent R. Slyngstad EY2-01, x2405"
+
+.B "Date: " "\*(DT"
+
+.B "List:"
+.fi
+.ta 2.5i
+.VL 0 0 1
+.LI
+Al Beard	EY2-01
+.LI
+Bob Brown	HF2-50
+.LI
+George Heider	HF2-50
+.LI
+Bart Kessler	HF2-05
+.LI
+Kirk Leonard	EY2-14
+.LI
+David Robboy	EY2-01
+.LI
+Bob Rossi	EY2-01
+.EL
+.sp
+.P
+Attached please find a copy of the Rich Engineering IPS.  This document
+describes my adaptations of Rajiv Choudhary's initial design work.
+.P
+I would also like to hold a design/code review this week to determine
+whether the team can find anything Rajiv and I may have missed.  Toward
+that end, please circulate this to your reports as appropriate.
+.nr Cl 2
+.bp
+.BS
+.tl ''
+.tl 'INTEL\ PROPRIETARY'DOCUMENT\ NUMBER'SHEET\ \ REV.'
+.tl ' 'XXXXXX'\\nP\ \ \ \ \ A\ '
+.BE
+.nr % 3
+.nr P 3
+.bp
+.S 11
+.H 1 "LARGE MEMORY ENHANCEMENTS"
+This document describes the changes made to the Beta I System V/386 kernel
+to support up to 256 megabytes of RAM.  These changes will be tested with
+up to 128 megabytes for Rich Engineering.  The changes include:
+.AL
+.LI
+Changes to system configuration files to cause the virtual address map to
+reserve more virtual addresses for the mapping of physical memory.
+.LI
+A fix to a bug which caused the system to crash when user programs were loaded
+at physical addresses greater than 4 megabytes.
+.LI
+Changes to the 214 disk and tape drivers to support the existence of memory
+which the 214 controller cannot use for DMA transfers.
+.LI
+Changes to the 546 serial I/O driver to support a change in the location at
+which memory mapped I/O addresses appear.
+.LE
+.H 1 "RELATED DOCUMENTS"
+.BL
+.LI
+(manual for the 386/2x?)
+.LI
+(manual for the 214?)
+.LI
+iSBC\(tm 546/547/548 High Performance Terminal Controllers Hardware Reference
+Manual: Doc. No. 122704
+.LE
+.H 1 "SYSTEM CONFIGURATION CHANGES"
+The System V/386 kernel uses an area of virtual addresses called the
+\fBsysseg\fR area to map dynamic data structures.  Pages are allocated
+and deallocated from this area as needed by the kernel at run-time. 
+The kernel also uses an area of addresses to map all of physical
+memory contiguously into the virtual address space of the kernel.
+.P
+The virtual addresses of these areas are sufficiently close together
+in the Beta Release of System V/386 that attempting to map 256 megabytes
+of physical memory would conflict with virtual addresses assigned to the
+sysseg area.  The solution chosen for this problem was simply to add
+256 megabytes to the base address used by the linker for the sysseg area.
+This is done in \fBusr/src/uts/i386/vuifile\fR by changing origin for
+\fBKV_windows\fR and \fBKV_sysseg\fR from \fB0xC1400000\fR and \fB0xC1400000\fR
+to \fB0xD1400000\fR and \fB0xD1400000\fR respectively.
+.H 1 "PAGING BUG"
+A bug exists in the Beta Release of System V/386 which causes the system
+to crash using addresses over four megabytes.  Essentially, a macro designed
+to calculate offsets into page tables is used where the objective is to
+calculate the page from number for a virtual address.  This fails whenever
+the page frame number is larger than the size of one page table.
+.P
+The fix for this was developed by ISC.  It implements a macro to calculate
+the page frame number for a physical address, and uses this macro to implement
+the mapping function from virtual address, though physical address, to page
+frame number.
+.H 1 "214 DISK DRIVER CHANGES"
+The existing 214 disk driver assumes that the controller can DMA to any
+physical address available to the UNIX system.  This assumption does not
+hold for the large memory board set.  As a result, changes in the 214 disk
+driver initialization, IOPB initialization, and interrupt service routines
+have been made.
+.H 2 "214 Initialization Changes"
+The 214 configuration file now contains a new threshold value.  Addresses
+below this value are assumed to be valid for DMA transfers involving the
+214.  At initialization time, the driver determines if physical memory
+exists for which it cannot use direct DMA.  If so, a one page buffer is
+allocated (per board) for use during transfers as described below.  An
+inspection of the routine \fBdma_breakup()\fR shows that no transfer
+larger than one page is ever done to or from disk.
+.H 2 "214 IOPB Initialization"
+When the 214 I/O Parameter Block (IOPB) is filled out for a request, the
+driver now makes a check whether the 214 board can directly DMA to the
+desired physical address.  If so, the IOPB address is simply set to the
+desired physical address.  If not, the IOPB is set to the address of the
+one page buffer described above.  Also, if the operation is a write, the
+data is transferred from the desired address to the one page buffer via
+\fBbcopy()\fR, so that the correct data will be written.
+.P
+Note that all locking of pages and translation of virtual to physical
+addresses has been done well before the IOPB is filled out.
+.H 2 "214 Interrupt Service"
+When an I/O operation completes, an interrupt is generated by the 214
+controller.  If an interrupt represents the completion of a read operation,
+the desired physical address for the transfer is inspected.  If the board
+cannot DMA to this address, the IOPB will have pointed at the one page
+buffer for this board, as described for in \fI214 IOPB Initialization\fR.
+In this case, the driver uses \fBbcopy()\fR to transfer the data read by
+the controller from the internal buffer to the desired physical address.
+.P
+Note that the pages are still locked, so the physical addresses at interrupt
+time are the same ones used at IOPB initialization time.
+.H 1 "214 TAPE DRIVER CHANGES"
+The 214 tape driver is designed to support streamer tapes.  As such, it has
+very large intermediate buffers, which it uses to do DMA transfers to and
+from the tape drive.  The only change needed to the existing scheme is to
+insure that the intermediate buffers will have physical addresses to which
+the 214 can DMA.  Since the only time when we can guarantee an allocation of
+these buffers at such an address is at initialization time, this requires the
+addition of an \fBi214tpinit\fR routine and changes in \fBitpbufcmd\fR,
+\fBi214tpopen\fR, and \fBi214tpclose\fR.
+.H 2 "214 Tape Initialization"
+An \fBinit\fR routine has been added to the driver and configured in by
+\fBusr/src/uts/i386/master.d/i214tp/config\fR.  This routine checks the
+available physical memory.  If physical memory exists which is not suitable
+for dynamic buffer allocation, it allocates a one page buffer for
+read-to-file-mark operations and all the intermediate buffers, then sets 
+a flag to indicate that buffers were allocated by initialization, and should
+not be allocated and freed dynamically by \fBopen\fR and \fBclose\fR.
+.H 2 "214 Tape Buffer Commands"
+The 214 tape driver in the Beta Release of System V/386 uses a routine
+called \fBitpbufcmd()\fR to implement certain operations on intermediate
+buffers.  Among these are an allocation and initialization function
+(\fBTP_GETBUF\fR), and a function to free buffers (\fBTP_FREEBUF\fR).
+Allocation and initialization are done at \fBopen\fR time, and buffers
+are freed at \fBclose\fR time.  Since we may now need to initialize the
+buffers (at \fBopen\fR time) without allocating them (already done at
+\fBinit\fR time), these tape buffer commands no longer suffice.
+.P
+The basic design change here is to split the allocation and initialization
+functions.  The allocation function is still called \fBTP_GETBUF\fR, but no
+longer initializes the intermediate buffers it allocates.  A new function
+called \fBTP_INITBUF\fR is used to perform the initialization of each
+intermediate buffer previously done by \fBTP_GETBUF\fR.
+.H 2 "214 Tape Open"
+The tape \fBopen\fR routine now checks the flag set at \fBinit\fR time, and
+bypasses the allocation of the read-to-file-mark buffer and the intermediate
+tape buffers if it was done by \fBinit\fR.  The initialization of the
+read-to-file-mark buffer is still done, and the \fBTP_INITBUF\fR call is
+used to initialize intermediate buffers.
+.P
+In addition, the freeing of the read-to-file-mark buffer if an error occurs
+is no longer appropriate if allocation was done at \fBinit\fR time.
+.H 2 "214 Tape Close"
+The tape \fBclose\fR routine now only deallocates the intermediate buffers
+with \fBTP_FREEBUF\fR if the allocation was \fInot\fR done at \fBinit\fR
+time.  A bug was corrected prevented read-to-file-mark buffers from being
+freed properly.  The read-to-file-mark buffer is now correctly freed if
+it was allocated at \fBopen\fR time.  It is not freed if it was allocated
+at \fBinit\fR time.
+.P
+Another bug was fixed which caused spurious error indications unless a
+file mark had been found.  The lack of a file mark should only be an error
+if the tape was being read.
+.H 1 "546 TERMINAL DRIVER CHANGES"
+The bulk of the memory addresses which the processor generates are directed
+at the ``on-board'' RAM, and are not sent to the Multibus interface.  The
+addresses used by memory-mapped I/O devices are an exception.  On the standard
+386/20 addresses above 15.5 megabytes are reserved for I/O devices, and the
+RAM multimodules are not accessed.  Instead, the address is sent to the I/O
+device over Multibus.  On the large memory hardware, all addresses generated
+by the 386 which are less than 256 megabytes address the ``on-board'' RAM and
+are \fInot\fR sent over the bus.  To get an address sent over the bus, one
+must use an address in the range from 2.5 to 3 gigabytes.  This address is
+then truncated to 24 bits and sent over the bus.
+.P
+As a result, the address of the dual port RAM on the 546 controller moves
+(from the perspective of the 386 only) from \fB0xF90000\fR to \fB0xBFF90000\fR.
+Similarly, the address of the 547 (if installed) moves from \fB0xFA0000\fR to
+\fB0xBFFA0000\fR.
+.P
+At initialization time the 546 driver now looks at the available physical
+memory when it probes for each board.  If the available physical memory is
+more than 15.5 megabytes, the driver will conclude that the large memory
+board set is in use, and add \fB0xBF000000\fR to the address it will use to
+access the board.
+.H 1 "EXTENSIONS AND ISSUES"
+.H 2 "Swap Space"
+It is not immediately clear if a requirement exists that swap be as large
+as physical memory.  If so, an entire 140 megabyte drive will need to be
+available as a swap device.
+.H 2 "Networking"
+The work required to modify the 552 driver has not been investigated.
+.bp
+.S 18
+.DS C
+.B "APPENDIX A"
+.DE
+.S 12
+.H 1 "PHYSICAL MEMORY MAPS"
+.S +2
+.TS
+center tab(:);
+c c
+c | c |.
+:Multibus I
+:_
+00F8-00FF:I/O Memory
+:_
+0000-00F7:RAM
+:_
+.TE
+.SP 4
+.TS
+center tab(:);
+c c
+c | c |.
+:R.E. 386
+:_
+C000-FFFF:WEITEK & EPROM
+:_
+BF00-BFFF:Multibus I
+\.:\.
+\.:\.
+\.:\.
+A000-A0FF:Multibus I
+:_
+1000-9FFF:Unused
+:_
+00F8-0FFF:RAM - No DMA
+:_
+0000-00F7:RAM - DMA OK
+:_
+.TE
+.SP 4
+.TS
+center tab(:);
+c c
+c | c |.
+:Standard 386
+:_
+8000-FFFF:WEITEK & EPROM
+:_
+1000-7FFF:Unused
+:_
+00F8-00FF:I/O Memory
+:_
+0000-00F7:RAM - DMA OK
+:_
+.TE
+.bp
+.nr % 1
+.nr P 1
+.S 18
+.DS C
+.B "Large Memory Support for System V/386"
+
+.B "Internal Product Specification"
+
+Version 1.0
+
+\*(DT
+
+.DE
+.S 12
+.TS
+l s s s
+l lw(3i) l lw(1i).
+Approved By:
+
+SW Engineering Manager		Date	
+	_		_
+
+Software Development		Date	
+	_		_
+.TE
+.TC
