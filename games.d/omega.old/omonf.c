@@ -453,6 +453,7 @@ struct monster *m;
     mprint("Surrender in the name of the Law!");
     mprint("Do it? [yn]");
     if (ynq()=='y') {
+      m_status_reset(m, HOSTILE);
       Player.alignment++;
       mprint("Go directly to jail. Do not pass go, do not collect 200Au.");
       erase_level();
