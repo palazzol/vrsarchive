@@ -1,5 +1,5 @@
 #
-#	$Header: /home/Vince/cvs/local.d/ofiles.d/Makefile,v 1.2 1987-02-15 15:57:49 vrs Exp $
+#	$Header: /home/Vince/cvs/local.d/ofiles.d/Makefile,v 1.3 1987-12-26 20:19:34 vrs Exp $
 #	Ofiles %W%, %G% cspencer
 #
 ALL	= ofiles
@@ -13,7 +13,7 @@ all: ofiles
 ofiles:	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
-install: $(ALL)
+install: $(ALL) $(BINDIR) $(MAN8)
 	cp $(ALL) $(BINDIR)
 	cd $(BINDIR); chown root $(ALL)
 	cd $(BINDIR); chgrp root $(ALL)
