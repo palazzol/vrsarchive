@@ -1261,7 +1261,7 @@ pob o;
     i-='a';
     if (o->blessing < 0) {
       mprint("The stick glows black!");
-      Player.possessions[i]->charge == 0;
+      Player.possessions[i]->charge = 0;
     }
     else {
       mprint("The stick glows blue!");
@@ -1893,7 +1893,7 @@ pob o;
     mprint("Zap with white or black end [wb]");
     do response = mgetc(); while ((response != 'w') && (response != 'b'));
     mprint("The staff discharges!");
-    if (response = 'w') enchant(o->blessing*2+1);
+    if (response == 'w') enchant(o->blessing*2+1);
     else dispel(o->blessing);
   }
 }
