@@ -1,5 +1,5 @@
 #
-#	@(#)Makefile	1.2	3/30/85
+#	@(#)Makefile	1.3	3/30/85
 #
 # values for two defaults in "top"
 TOPN = 10

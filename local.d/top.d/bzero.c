@@ -1,5 +1,5 @@
 /*
- *	@(#)bzero.c	1.2	3/30/85
+ *	@(#)bzero.c	1.3	3/30/85
  *	Portable version - doesn't use any undocumented features.
 */
 bzero(memory, amount)
