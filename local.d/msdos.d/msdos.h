@@ -16,7 +16,7 @@
 #define	FLP_40_9_1	"/dev/rdsk/f0d9t"
 #define	FLP_40_9_2	"/dev/rdsk/f0d9dt"
 #define FLP_80_15_2	"/dev/rdsk/f0q15dt"
-#define FLP_80_9_2	"/dev/rdsk/f0q9dt"
+/*#define FLP_80_9_2	"/dev/rdsk/f0q9dt"*/
 
 struct directory {
 	unsigned char	name[8];	/* file name */
