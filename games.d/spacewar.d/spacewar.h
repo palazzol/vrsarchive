@@ -4,6 +4,14 @@
  * Copyright 1984 obo Systems, Inc.
  * Copyright 1984 Dan Rosenblatt
  */
+#ifdef __STDC__
+#define STR(x)		#x
+#define STRING(x)	STR(X)
+#define FILENM(x)	STRING(GAMEDIR) "/" STRING(x)
+#else
+#define STRING(x)	"x
+#define FILENM(x)	STRING(GAMEDIR)/x"
+#endif
 
 #ifdef VMS
 #define VOID
@@ -11,13 +19,13 @@
 #endif /* VMS */
 
 #ifdef BSD
-#	define SWPIDFILE	GAMEDIR/swpid"
-#	define SWLGNFILE	GAMEDIR/swlgn"
+#	define SWPIDFILE	FILENM(swpid)
+#	define SWLGNFILE	FILENM(swlgn)
 #else /* VMS SYSIII SYSV */
 #ifdef VMS
 #	define SWCOMFILE	"swmlbx"
 #else /* SYSIII SYSV */
-#	define SWCOMFILE	GAMEDIR/swcomm"
+#	define SWCOMFILE	FILENM(swcomm)
 #endif /* VMS SYSIII SYSV */
 #endif /* BSD VMS SYSIII SYSV */
 
@@ -29,12 +37,12 @@
 #	define SWERR		"$DISK2:[TSDIR.SW]swerr"
 #	define SWOBJ		"$DISK2:[TSDIR.SW]swobj"
 #else /* BSD SYSIII SYSV */
-#	define SWDATABASE	GAMEDIR/swdb"
-#	define SWGAME		GAMEDIR/sw"
-#	define SWREAD		GAMEDIR/rsw"
-#	define SWNEWS		GAMEDIR/swnews"
-#	define SWERR		GAMEDIR/swerr"
-#	define SWOBJ		GAMEDIR/swobj" /* see objupdate.c */
+#	define SWDATABASE	FILENM(swdb)
+#	define SWGAME		FILENM(sw)
+#	define SWREAD		FILENM(rsw)
+#	define SWNEWS		FILENM(swnews)
+#	define SWERR		FILENM(swerr)
+#	define SWOBJ		FILENM(swobj) /* see objupdate.c */
 #endif /* VMS BSD SYSIII SYSV */
 
 #define SWMASTER	"root"
