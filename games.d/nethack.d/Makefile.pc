@@ -15,7 +15,7 @@ GAME = hack.exe
 GAMEDIR = \h
 
 # All object modules
-OBJS = decl.obj apply.obj bones.obj cmd.obj do.obj \
+OBJS = decl.obj apply.obj bones.obj cmd.obj do.obj dothrow.obj \
 	do_name.obj do_wear.obj dog.obj dogmove.obj eat.obj end.obj \
 	engrave.obj fight.obj fountain.obj hack.obj invent.obj \
 	lev.obj main.obj makemon.obj mhitu.obj mklev.obj \
