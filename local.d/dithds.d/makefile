@@ -1,11 +1,11 @@
-ALL	= dithds
+ALL	= dithds$(EXE)
 OPTIONS	= -O
 MODEL	= -i
 include $(HOME)/CONFIG
 SRCS	= dithds.c dithds.lib.c
 OBJS	= $(SRCS:.c=.o)
 
-dithds:	$(OBJS)
+dithds$(EXE):	$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
 
 lint:	$(SRCS)

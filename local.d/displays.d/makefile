@@ -1,7 +1,7 @@
 #
-#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.5 2002-11-23 07:49:05 Vincent Exp $
+#	$Header: /home/Vince/cvs/local.d/displays.d/makefile,v 1.6 2002-11-24 05:18:36 Vincent Exp $
 #
-ALL	= displays
+ALL	= displays$(EXE)
 OPTIONS	= -O
 MODEL	= -i -F 2000
 include $(HOME)/CONFIG
