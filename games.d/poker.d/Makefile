@@ -1,5 +1,5 @@
 #
-#	@(#)Makefile	1.3 12/21/85
+#	@(#)Makefile	1.4 10/3/86
 #
 SHELL	= /bin/sh
 GAMEDIR	= $(DESTDIR)/usr/games
@@ -12,10 +12,10 @@ DAEMON	= cron
 #
 #CFLAGS	= -DMASSCOMP -DMAXRAND=32767 -DINET
 #CFLAGS	= -DVAX -DMAXRAND=2147483648 -DINET
-CFLAGS	= -DVAX -DMAXRAND=32767 -UINET -I /usr/local/berkeley/include -Ml
+CFLAGS	= -DVAX -DMAXRAND=32767 -UINET -I ../berkeley.d/h -Ml
 #LIBS	= -lsocket
 #LIBS	=
-LIBS	= /usr/local/berkeley/lib/Llibberkeley.a -lx
+LIBS	= ../berkeley.d/Llibberkeley.a -lx
 
 SRCS	= main.c players.c cards.c util.c showcards.c whowon.c poker.c \
 	  tellall.c payoff.c betting.c computer.c draw.c scores.c 
