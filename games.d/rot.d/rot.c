@@ -22,12 +22,16 @@
  *  Bill Randle (billr@tekred.TEK.COM)
  *  22 April 1987
  */
-
+#include <termcap.h>
 #include <stdio.h>
 #include "patchlvl.h"
 
-#ifdef SYSV
+#ifdef SYS5
+#ifdef __STDC__
+# include <termios.h>
+#else
 # include <termio.h>
+#endif
 #else
 # include <sgtty.h>
 #endif
@@ -70,11 +74,18 @@ int ac;
 char **av;
 {
 	/* set ospeed so padding works correctly */
-#ifdef SYSV
+#ifdef SYS5
+#ifdef __STDC__
+	struct termios	p;
+
+	tcgetattr(1, &p);
+	ospeed = p.c_ospeed;
+#else
 	struct termio	p;
 
 	if(ioctl(1, TCGETA, &p) != -1)
 		ospeed=p.c_cflag & CBAUD;
+#endif
 #else
 	struct sgttyb	p;
 
@@ -137,21 +148,19 @@ char c;
 	}
 }
 
-_at(x, y)
-int x, y;
-{
-	extern void	outc();
-
-	tputs(tgoto(cm, x, y), 1, outc);	 /* handle padding */
-	lastx = x;
-	lasty = y;
-}
-
-void
+int
 outc(c)
 register c;
 {
 	putc(c, stdout);
+}
+
+_at(x, y)
+int x, y;
+{
+	tputs(tgoto(cm, x, y), 1, outc);	 /* handle padding */
+	lastx = x;
+	lasty = y;
 }
 
 /* initialize terminal dependent variables */
@@ -269,8 +278,6 @@ FILE *fp;
 
 drawscreen()
 {
-	extern void	outc();
-
 	lastx = lasty = 0;
 	if (cl != NULL)
 		tputs(cl, li, outc);	/* for really slow terminals */

@@ -1,10 +1,10 @@
 #
 # Simple makefile for rot program
 #
-ALL	= rot
+ALL	= rot$(EXE)
 MODEL	= -i -F 2000
 OPTIONS	= -O
-include /etc/CONFIG
+include $(HOME)/CONFIG
 
 install: $(ALL)
 	cp $(ALL) $(GAMDIR)
