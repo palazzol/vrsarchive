@@ -30,7 +30,7 @@ $(LIBDIR):
 	chmod 755 $@
 	chown $(SAFEUID) $@
 
-install: $(GAMDIR) $(GAMLIB) $(LIBDIR)
+install: $(ALL) $(GAMDIR) $(GAMLIB) $(LIBDIR)
 	cp moria $(GAMDIR)
 	cp Moria_hours $(LIBDIR)
 	cp Moria_news $(LIBDIR)
