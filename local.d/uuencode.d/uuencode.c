@@ -110,8 +110,8 @@ extern errno;
 
 #ifndef unix
 		/* Error checking under UNIX?? You must be kidding! */
-		if (errno) {
-		    fprintf(stderr, "ERROR: error writing to output\n");
+		if (ferror(out)) {
+		    perror("error writing to output");
 			exit(12);
 		    }
 #endif
