@@ -18,7 +18,7 @@ C
 	CHARACTER*2 DBGCMD(38),CMD
 	INTEGER ARGTYP(38)
 	LOGICAL VALID1,VALID2,VALID3
-	character*2 ldbgcmd(38)
+	character*2 ldbgcm(38)
 #include "parser.h"
 #include "gamestate.h"
 #include "state.h"
@@ -52,7 +52,7 @@ C
 &		'AF','HE','NR','NT','NC','ND','RR','RT','RC','RD',
 &		'TK','EX','AR','AO','AA','AC','AX','AV','D2','DN',
 &		'AN','DM','DT','AH','DP','PD','DZ','AZ'/
-	DATA ldbgcmd/'dr','do','da','dc','dx','dh','dl','dv','df','ds',
+	DATA ldbgcm/'dr','do','da','dc','dx','dh','dl','dv','df','ds',
 &		'af','he','nr','nt','nc','nd','rr','rt','rc','rd',
 &		'tk','ex','ar','ao','aa','ac','ax','av','d2','dn',
 &		'an','dm','dt','ah','dp','pd','dz','az'/
@@ -91,7 +91,7 @@ C						!LOOK IT UP.
 	  IF(CMD.EQ.DBGCMD(I)) GO TO 2300
 C						!FOUND?
 C	  check for lower case command, as well
-	  if(cmd .eq. ldbgcmd(i)) go to 2300
+	  if(cmd .eq. ldbgcm(i)) go to 2300
 2100	CONTINUE
 2200	WRITE(OUTCH,220)
 C						!NO, LOSE.

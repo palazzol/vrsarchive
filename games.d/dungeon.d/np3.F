@@ -24,7 +24,7 @@ C
 	SYNMCH=.FALSE.
 #ifdef debug
 	DFLAG=and(PRSFLG, 16).NE.0
-	write(0,*) "synflags=",sdir,sind,sstd,sflip,sdriv,svmask
+	if(dflag) write(0,*) "synflags=",sdir,sind,sstd,sflip,sdriv,svmask
 #endif
 	J=ACT
 C						!SET UP PTR TO SYNTAX.

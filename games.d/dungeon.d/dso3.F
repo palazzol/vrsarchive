@@ -23,7 +23,9 @@ C
 100	I=TRAVEL(XI)
 C						!GET ENTRY.
 	XROOM1=and(I,XRMASK)
-	XTYPE=and((and(I,not(XLFLAG))/XFSHFT),XFMASK)+1
+c mask to 16-bits to get rid of sign extension problems with 32-bit ints
+	XXXFLG = and(not(XLFLAG), 65535)
+	XTYPE=and((and(I,XXXFLG)/XFSHFT),XFMASK)+1
 	GO TO (110,120,130,130),XTYPE
 C						!BRANCH ON ENTRY.
 	CALL BUG(10,XTYPE)

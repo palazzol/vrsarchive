@@ -43,7 +43,7 @@ C
 	do 275 j=2,length
 	  sysbuf(j-1:j-1) = buffer(j)
 275	continue
-	sysbuf(j:j) = char(0)
+	sysbuf(length:length) = char(0)
 	call system(sysbuf)
 	go to 5
 
@@ -148,13 +148,23 @@ C
 	LOGICAL FUNCTION LEX(INBUF,INLNT,OUTBUF,OP,VBFLAG)
 	IMPLICIT INTEGER(A-Z)
 	CHARACTER INBUF(78),J,DLIMIT(9)
-	INTEGER OUTBUF(40)
+	INTEGER OUTBUF(40),ZLIMIT(9)
 	LOGICAL VBFLAG
 #include "parser.h"
 C
 #include "debug.h"
 C
-	DATA DLIMIT/'A','Z',o'100','1','9',o'22','-','-',o'22'/
+c the System V compiler doesn't like octal initialization of character
+c arrays, so the following is done for its benefit
+c
+c	DATA DLIMIT/'A','Z',o'100','1','9',o'22','-','-',o'22'/
+c
+	DATA ZLIMIT/o'101',o'132',o'100',o'61',o'71',o'22',o'55',o'55',o'22'/
+c
+	do 99 i=1,9
+	  dlimit(i) = char(zlimit(i))
+c					! copy integers to chars
+99	continue
 C
 	DO 100 I=1,40
 C						!CLEAR OUTPUT BUF.

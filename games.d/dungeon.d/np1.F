@@ -867,7 +867,7 @@ C						!TWO WORDS/TOKEN.
 C						!GET CURRENT TOKEN.
 	  LBUF2=LBUF(I+1)
 #ifdef debug
-	  write(0,*) 'lbuf1=',lbuf1,' lbuf2=',lbuf2
+	  if (dflag) write(0,*) 'lbuf1=',lbuf1,' lbuf2=',lbuf2
 #endif
 	  IF(LBUF1.EQ.0) GO TO 1500
 C						!END OF BUFFER?
@@ -1023,9 +1023,9 @@ C
 C 6000--	UNIDENTIFIABLE OBJECT (INDEX INTO OVOC IS J)
 C
 6000	IF(OBJ.LT.0) GO TO 6100
-	I=579
-	IF(LIT(HERE)) I=618
-	IF(VBFLAG) CALL RSPEAK(I)
+	J=579
+	IF(LIT(HERE)) J=618
+	IF(VBFLAG) CALL RSPEAK(J)
 	RETURN
 C
 6100	IF(OBJ.NE.-10000) GO TO 6200

@@ -111,3 +111,25 @@ Dungeon consists of the following files:
 	History			-Some revision history notes
 	PDP.doc			-Notes on the PDP-11/Unix conversion
 	README			-This file
+-----
+Official patches 1 and 2 for net release of dungeon.   Oct. 9, 1987
+
+Patch1 contains the patches to the source files and Makefile.  Patch2
+contains the patches to the uuencoded text file (dtext.dat.uu).  I
+had to split this up into two patches because of the size of the
+context diffs to the text file.
+
+The Makefile has been split into three pre-configured makefiles for
+generic BSD systems, System V systems and Suns.  Copy the one that
+best matches your system into the file Makefile and edit the paths,
+etc. as needed.
+
+The sources patches fix a few logic bugs in the program, but mainly
+consist of cleanups for System V compatability.  Thanks to Dave
+Newkirk (ihnp4!ihlpm!dcn) and Randy (randy@peora.ccur.com) for their
+invaluable help in this area.
+
+	-Bill Randle
+	Moderator, comp.sources.games
+	Tektronix, Inc.
+	games-request@tekred.TEK.COM

@@ -82,6 +82,7 @@ C
 #else
 	OPEN (UNIT=1,file='dsave.dat',ACCESS='SEQUENTIAL',
 &		status='UNKNOWN',FORM='UNFORMATTED',ERR=100)
+	rewind (unit=1, err=100)
 C
 	CALL GTTIME(I)
 C						!GET TIME.
@@ -186,7 +187,12 @@ C						!OBSOLETE VERSION
 	RETURN
 #else
 	OPEN (UNIT=1,file='dsave.dat',ACCESS='SEQUENTIAL',
+#ifdef XELOS
+&		status='OLD',FORM='UNFORMATTED',ERR=100,recl=1)
+#else
 &		status='OLD',FORM='UNFORMATTED',ERR=100)
+#endif
+	rewind (unit=1, err=100)
 C
 	READ(1) I,J,K
 	IF(or((I.NE.VMAJ),(J.NE.VMIN))) GO TO 200
