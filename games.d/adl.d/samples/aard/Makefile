@@ -7,7 +7,7 @@ D = samples/aard/
 all		: aard
 
 aard		: *.adl ../../adlcomp/adlcomp ../standard.adl
-	adlcomp aard.adl -w -o aard -i..
+	../../adlcomp/adlcomp aard.adl -w -o aard -i..
 shar		: aard1.shar	aard2.shar
 
 clean		:

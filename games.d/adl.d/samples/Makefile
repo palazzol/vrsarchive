@@ -4,9 +4,9 @@ B = ..
 D = samples/
 
 all		:
-	(cd aard;	make all)
-	(cd mpu;	make all)
-	(cd demos;	make all)
+	@(cd aard;	make all)
+	@(cd mpu;	make all)
+	@(cd demos;	make all)
 
 touch		:
 	(cd aard;	make all -t)
@@ -25,7 +25,7 @@ samples.shar	: README Makefile standard.adl
 	> ${D}samples.shar )
 
 clean	:
-	(cd aard;	make clean)
-	(cd mpu;	make clean)
-	(cd demos;	make clean)
+	@(cd aard;	make clean)
+	@(cd mpu;	make clean)
+	@(cd demos;	make clean)
 	rm -f core samples.shar

@@ -7,7 +7,7 @@ D = samples/mpu/
 all		: mpu
 
 mpu		: *.adl ../../adlcomp/adlcomp ../standard.adl
-	adlcomp mpu.adl -i.. -o mpu
+	../../adlcomp/adlcomp mpu.adl -i.. -o mpu
 
 shar		: mpu1.shar	mpu2.shar
 
