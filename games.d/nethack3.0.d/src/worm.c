@@ -145,11 +145,16 @@ register unsigned int tmp;
 		}
 }
 
+#ifdef __STDC__
+void
+cutworm(struct monst *mtmp,xchar x,xchar y,uchar weptyp)
+#else
 void
 cutworm(mtmp, x, y, weptyp)
 register struct monst *mtmp;
 register xchar x,y;
-register unsigned weptyp;		/* uwep->otyp or 0 */
+register uchar weptyp;		/* uwep->otyp or 0 */
+#endif
 {
 	register struct wseg *wtmp, *wtmp2;
 	register struct monst *mtmp2;

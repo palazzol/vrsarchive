@@ -35,7 +35,7 @@ setworn(obj, mask)
 register struct obj *obj;
 long mask;
 {
-	register struct worn *wp;
+	register const struct worn *wp;
 	register struct obj *oobj;
 
 	for(wp = worn; wp->w_mask; wp++) if(wp->w_mask & mask) {
@@ -88,7 +88,7 @@ void
 setnotworn(obj)
 register struct obj *obj;
 {
-	register struct worn *wp;
+	register const struct worn *wp;
 
 	if (!obj) return;
 	for(wp = worn; wp->w_mask; wp++)
@@ -128,10 +128,15 @@ register struct obj *obj;
 	}
 }
 
+#ifdef __STDC__
+static void
+set_armor_intrinsic(struct obj *obj,boolean on)
+#else
 static void
 set_armor_intrinsic(obj,on)
 register struct obj *obj;
 boolean on;
+#endif
 {
 	long *mask;
 

@@ -194,10 +194,15 @@ register struct obj *obj;
  * the object name and others just used "weapon"/"sword".  This function
  * replaced all of those.  Which one we use is really arbitrary.
  */
+#ifdef __STDC__
+void
+weldmsg(struct obj *obj,boolean specific)
+#else
 void
 weldmsg(obj, specific)
 register struct obj *obj;
 boolean specific;
+#endif
 {
 	char buf[BUFSZ];
 

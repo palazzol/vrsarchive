@@ -56,10 +56,16 @@ register struct monst *mon;
 	pmon(mon);		/* display new appearance */
 }
 
+/* were-creature (even you) summons a horde */
+#ifdef __STDC__
 boolean
-were_summon(ptr,yours)	/* were-creature (even you) summons a horde */
+were_summon(struct permonst *ptr,boolean yours)
+#else
+boolean
+were_summon(ptr,yours)
 register struct permonst *ptr;
 register boolean yours;
+#endif
 {
 	register int i, typ, pm = monsndx(ptr);
 	register struct monst *mtmp;
