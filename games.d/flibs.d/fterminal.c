@@ -6,11 +6,17 @@
  *
  * The upper-left corner is labeled 0,0.
  */
+#include <fcntl.h>
 #include <curses.h>
+#ifndef A_REVERSE	/* No terminfo on this system */
+#define ungetch(c)	ungetc(c, stdin)
+#endif
 
 Tinit()			/* initialize */
 {
   initscr();
+  crmode();
+  noecho();
 }
 
 Tterminate()		/* terminate */
@@ -65,17 +71,22 @@ char c;
 
 int Tgetonekey()	/* get one key from the keyboard and return */
 {
-  return( getchar() );
+  return( getch() );
 }
 
 int Tkey_avail()	/* return true if a key has been pressed */
-{ int i;
-#ifdef FIONREAD
-  ioctl(0, FIONREAD, &i);
-#else
-  i = rdchk(0);
-#endif FIONREAD
-  return( i > 0 );
+{
+  int i, flags;
+
+  flags = fcntl(0, F_GETFL, 0);
+  (void) fcntl(0, F_SETFL, flags|O_NDELAY);
+  i = getch();
+  (void) fcntl(0, F_SETFL, flags);
+  if (i >= 0) {
+    ungetch(i);
+    return(1);
+  }
+  return(0);
 }
 
 Trefresh()		/* update the screen to reflect all changes */
