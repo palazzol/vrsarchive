@@ -7,7 +7,11 @@ in the file and remains intact.
 
 #include <stdio.h>
 #include <signal.h>
+#ifdef __STDC__
+#include <termios.h>
+#else
 #include <sgtty.h>
+#endif
 /*
 #define DEBUG 1	
 */
