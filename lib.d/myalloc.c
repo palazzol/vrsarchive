@@ -44,6 +44,8 @@ struct header {	/* free block header */
 };
 typedef struct header Header;
 
+/*static*/ Header *freelist = 0;		/* List of reusable segments	*/
+
 char *
 malloc(nbytes)	
 unsigned nbytes;
@@ -54,8 +56,14 @@ unsigned nbytes;
 	nbytes += sizeof *p;		/* Allocate header + data	*/
 	if(nbytes < nbytes-sizeof(*p))
 		return((char *) NULL);
-	p = (Header *)brkctl(BR_NEWSEG,(long)nbytes,p);
-					/* Create segment big enough	*/
+	if (freelist == NULL)		/* Create segment big enough	*/
+		p = (Header *)brkctl(BR_NEWSEG,(long)nbytes,p);
+	else {
+		p = freelist;
+		freelist = p->s.ptr;	/* Pop from freelist		*/
+		p = (Header *)brkctl(BR_ARGSEG,(long)nbytes-sizeof(*p),p);
+					/* Grow to new size		*/
+	}
 	p->s.ptr = p;
 	p->s.size = nbytes;
 	return(p == ERROR? NULL : (char *)(p+1));
@@ -78,10 +86,10 @@ char *ap;
 	 */
 	if (p->s.ptr != p)
 		abort();
-	p = (Header *)brkctl(BR_ARGSEG,(long)-p->s.size,p);
-					/* Make segment empty		*/
-	p = (Header *)brkctl(BR_IMPSEG,(long)0,p);
-					/* Free up empty segments	*/
+	p = (Header *)brkctl(BR_ARGSEG,(long)sizeof(Header)-p->s.size,p);
+					/* Shrink to just a header	*/
+	p->s.ptr = freelist;
+	freelist = p;			/* Link into freelist		*/
 }
 
 /*
