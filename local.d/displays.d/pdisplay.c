@@ -2,6 +2,9 @@
  *	These are routines to manage the physical display using curses.
 */
 #include <curses.h>
+#include <signal.h>
+
+extern void done();
 
 redraw_screen()
 {
@@ -26,6 +29,8 @@ pdisp_init()
 	initscr();
 	raw();
 	noecho();
+	signal(SIGHUP, done);
+	signal(SIGTERM, done);
 }
 
 /*
@@ -33,8 +38,8 @@ pdisp_init()
  */
 pwrapup()
 {
-	move(LINES-1, 0);
-	clrtoeol();
+	clear();
+	refresh();
 	endwin();
 }
 
