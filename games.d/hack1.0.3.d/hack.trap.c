@@ -155,7 +155,7 @@ mintrap(mtmp) register struct monst *mtmp; {
 	    mtmp->mtrapseen |= (1 << tt);
 	    switch (tt) {
 		case BEAR_TRAP:
-			if(index(mlarge, mtmp->data->mlet)) {
+			if(strchr(mlarge, mtmp->data->mlet)) {
 				if(in_sight)
 				  pline("%s is caught in a bear trap!",
 					Monnam(mtmp));
@@ -167,7 +167,7 @@ mintrap(mtmp) register struct monst *mtmp; {
 			break;
 		case PIT:
 			/* there should be a mtmp/data -> floating */
-			if(!index("EywBfk'& ", mtmp->data->mlet)) { /* ab */
+			if(!strchr("EywBfk'& ", mtmp->data->mlet)) { /* ab */
 				mtmp->mtrapped = 1;
 				if(in_sight)
 				  pline("%s falls in a pit!", Monnam(mtmp));
@@ -314,7 +314,8 @@ register int nux,nuy;
 	setsee();
 	if(Punished) placebc(1);
 	if(u.uswallow){
-		u.uswldtim = u.uswallow = 0;
+		u.uswallow = 0;
+		u.uswldtim = 0;
 		docrt();
 	}
 	nomul(0);
@@ -338,7 +339,7 @@ dotele() {
 	if(
 #ifdef WIZARD
 	   !wizard &&
-#endif WIZARD
+#endif
 		      (!Teleportation || u.ulevel < 6 ||
 			(pl_character[0] != 'W' && u.ulevel < 10))) {
 		pline("You are not able to teleport at will.");
