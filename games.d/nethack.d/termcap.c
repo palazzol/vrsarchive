@@ -298,12 +298,12 @@ delay_output() {
 	}
 #else
 	if(!flags.nonull)
+#ifndef TERMINFO
 		tputs("50", 1, xputc);
-
+#else
 		/* cbosgd!cbcephus!pds for SYS V R2 */
-		/* is this terminfo, or what? */
-		/* tputs("$<50>", 1, xputc); */
-
+		tputs("$<50>", 1, xputc);
+#endif
 	else if(ospeed > 0 || ospeed < SIZE(tmspc10)) if(CM) {
 		/* delay by sending cm(here) an appropriate number of times */
 		register int cmlen = strlen(tgoto(CM, curx-1, cury-1));
