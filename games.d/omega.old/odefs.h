@@ -7,11 +7,13 @@
 /* OMEGALIB is where all the data files reside. 
    note the final / is necessary 
    this might usually be "/usr/games/lib/omegalib/" */
-
-#define OMEGALIB "/u1/brothers/omega/lib/"
-
+#ifndef OMEGALIB
+#define OMEGALIB "/usr11/omega.d/src/"
+#endif
 /* set WIZARD to implementor's username */
-#define WIZARD "brothers"
+#ifndef WIZARD
+#define WIZARD "root"
+#endif
 
 /* If set to 0, this will allow players to make copies of saved games */
 /* If set to 1, only the implementor will be allowed to restore
