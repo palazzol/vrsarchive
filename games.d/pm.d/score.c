@@ -20,15 +20,15 @@ void	check_scrs ()
 
 	if (rwscore(0, scrs))
 	{
-		printf("No scores recorded at this time\n");
+		printw("No scores recorded at this time\n");
 		return;
 	}
-	printf("\nTop Ten Players:\n");
-	printf("Rank\tScore\tName\n");
+	printw("\nTop Ten Players:\n");
+	printw("Rank\tScore\tName\n");
 	for (i = 0; i < MAX_SCORES && scrs[i].sc_uid != -1; i++)
 	{
 		print_scrs(&scrs[i], i + 1);
-		printf(".\n");
+		printw(".\n");
 	}
 }
 
@@ -43,10 +43,10 @@ long	get_hi_scr ()
 		return(0L);
 	if (scrs[0].sc_uid == uid)
 	{	/* taunt the high scorer */
-		printf("\nWelcome back %s,\n", scrs[0].sc_name);
-		printf("do you think that you can do better than\n");
-		printf("last time?  Just a second while a think\n");
-		printf("of a better strategy!\n");
+		printw("\nWelcome back %s,\n", scrs[0].sc_name);
+		printw("do you think that you can do better than\n");
+		printw("last time?  Just a second while a think\n");
+		printw("of a better strategy!\n");
 		sleep(1);
 #ifdef	PATTERNS
 		/*
@@ -109,11 +109,11 @@ reg	int	rank;
 
 	if (scr->sc_uid < 0)
 		return;
-	printf("%d\t%6ld\t%s: %s after %d screens",
+	printw("%d\t%6ld\t%s: %s after %d screens",
 		rank, scr->sc_score, scr->sc_name,
 		reason[scr->sc_flags], scr->sc_level+1);
 	if (scr->sc_flags == FL_DIE)
-		printf(" by %s", mons_str(scr->sc_mons));
+		printw(" by %s", mons_str(scr->sc_mons));
 }
 
 /*
@@ -138,11 +138,11 @@ int	flags;
 		auto	score	newscr;
 		auto	char	buf[BUFSIZ];
 
-		printf("You made it on the pm roll with ");
-		printf("your score of %ld!\n", thescore);
-		printf("Your name please: ");
-		if (!gets(buf))
-			printf("Sorry, that is not acceptable!\n");
+		scrollok(stdscr, TRUE);
+		printw("You made it on the pm roll with ");
+		printw("your score of %ld!\n", thescore);
+		printw("Your name please: ");
+		(void) getstr(buf);
 		newscr.sc_score = thescore;
 		newscr.sc_uid = uid;
 		newscr.sc_level = level;
@@ -227,14 +227,14 @@ void	pmers ()
 			if (!((char) (1 << i) & buf[j]))
 				continue;
 			if (pw = getpwuid(puid = ((j * BYTE_SIZE) + i)))
-				printf("%s\n", pw->pw_name);
+				printw("%s\n", pw->pw_name);
 			else
 				fprintf(stderr, "%s: getpwuid(%d) error\n",
 					argv0, puid);
 		}
 	}
 #else
-	printf("%s: there is no pm user file\n", argv0);
+	printw("%s: there is no pm user file\n", argv0);
 #endif
 }
 

@@ -12,14 +12,14 @@
 void	die (mon)
 reg	char	mon;
 {
+	clear();
+	tombstone(thescore, mon);
+	printw("[Press return to continue]");
 	echo();
 	nocrmode();
-	_puts(CL);
-	tombstone(thescore, mon);
-	printf("[Press return to continue]");
-	getchar();
+	getch();
 	scores(mon, FL_DIE);
-	exit(0);
+	quit_it();
 }
 
 /*
@@ -29,13 +29,13 @@ void	quitit ()
 {
 	clear();
 	move(LINES - 1, 0);
+	printw("[Press return to continue]");
 	draw();
 	echo();
 	nocrmode();
-	printf("[Press return to continue]");
-	getchar();
+	getch();
 	scores(NULL, FL_QUIT);
-	exit(0);
+	quit_it();
 }
 
 /*
