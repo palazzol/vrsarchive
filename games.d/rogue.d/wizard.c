@@ -221,8 +221,8 @@ show_map()
 	register int y, x, real;
 
 	wclear(hw);
-	for (y = 1; y < LINES - 1; y++)
-		for (x = 0; x < COLS; x++)
+	for (y = 1; y < s_LINES - 1; y++)
+		for (x = 0; x < s_COLS; x++)
 			mvwaddch(hw, y, x, chat(y, x));
 	show_win(hw, "---More (level map)---");
 }

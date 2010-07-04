@@ -26,7 +26,7 @@ leave(dummy)
 {
 	if (end_win)
 	{
-		mvcur(0, COLS - 1, LINES - 1, 0);
+		mvcur(0, s_COLS - 1, s_LINES - 1, 0);
 		refresh();
 		endwin();
 		end_win = 0;
@@ -152,7 +152,7 @@ char **envp;
 	/*
 	 * Set up windows
 	 */
-	if ((hw = newwin(LINES, COLS, 0, 0)) == 0)
+	if ((hw = newwin(s_LINES, s_COLS, 0, 0)) == 0)
 				printf("Not enough memory"), endwin(), leave();
 #ifdef WIZARD
 	noscore = wizard;
@@ -186,7 +186,7 @@ fatal(s)
 char *s;
 {
 	clear();
-	move(LINES-2, 0);
+	move(s_LINES-2, 0);
 	printw("%s", s);
 	leave();
 }
@@ -226,7 +226,7 @@ tstp(dummy)
 	register int oy, ox;
 
 	getyx(curscr, oy, ox);
-	mvcur(0, COLS - 1, LINES - 1, 0);
+	mvcur(0, s_COLS - 1, s_LINES - 1, 0);
 	endwin();
 	fflush(stdout);
 	kill(0, SIGTSTP);
@@ -238,8 +238,10 @@ tstp(dummy)
 	getyx(curscr, y, x);
 	mvcur(y, x, oy, ox);
 	fflush(stdout);
+#ifndef CYGWIN
 	curscr->_cury = oy;
 	curscr->_curx = ox;
+#endif
 }
 #endif
 
@@ -303,8 +305,8 @@ quit(dummy)
 	{
 		signal(SIGINT, leave);
 		clear();
-		mvprintw(LINES - 2, 0, "You quit with %d gold pieces", purse);
-		move(LINES - 1, 0);
+		mvprintw(s_LINES - 2, 0, "You quit with %d gold pieces", purse);
+		move(s_LINES - 1, 0);
 		refresh();
 		score(purse, 1);
 		leave();
@@ -338,7 +340,7 @@ shell()
 	/*
 	 * Set the terminal back to original mode
 	 */
-	move(LINES-1, 0);
+	move(s_LINES-1, 0);
 	refresh();
 	(void) putchar('\n');
 	in_shell = TRUE;

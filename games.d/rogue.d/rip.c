@@ -237,7 +237,7 @@ register char monst;
 		mvaddstr(16, 33, vowelstr(killer));
 	sprintf(prbuf, "%2d", lt->tm_year);
 	mvaddstr(18, 28, prbuf);
-	move(LINES-1, 0);
+	move(s_LINES-1, 0);
 	refresh();
 	score(purse, 0, monst);
 	leave();
@@ -261,7 +261,7 @@ total_winner()
 	addstr("\nYou have joined the elite ranks of those who have escaped the\n");
 	addstr("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
 	addstr("a great profit and are admitted to the fighters guild.\n");
-	mvaddstr(LINES - 1, 0, "--Press space to continue--");
+	mvaddstr(s_LINES - 1, 0, "--Press space to continue--");
 	refresh();
 	wait_for(' ');
 	clear();

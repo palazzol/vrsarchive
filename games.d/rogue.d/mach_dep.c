@@ -86,10 +86,12 @@ setup()
 		 * make sure that large terminals don't overflow the bounds
 		 * of the program
 		 */
-		if (LINES > MAXLINES)
-				LINES = MAXLINES;
-		if (COLS > MAXCOLS)
-				COLS = MAXCOLS;
+                s_LINES = LINES;
+		if (s_LINES > MAXLINES)
+				s_LINES = MAXLINES;
+                s_COLS = COLS;
+		if (s_COLS > MAXCOLS)
+				s_COLS = MAXCOLS;
 
 		signal(SIGHUP, auto_save);
 #ifndef DUMP

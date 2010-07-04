@@ -67,7 +67,7 @@ over:
 	 * Check if he tried to move off the screen or make an illegal
 	 * diagonal move, and stop him if he did.
 	 */
-	if (nh.x < 0 || nh.x > COLS-1 || nh.y < 1 || nh.y > LINES - 2)
+	if (nh.x < 0 || nh.x > s_COLS-1 || nh.y < 1 || nh.y > s_LINES - 2)
 		goto hit_bound;
 	if (!diag_ok(&hero, &nh))
 	{
@@ -106,7 +106,7 @@ hit_bound:
 					case 'h':
 					case 'l':
 						b1 = (((flat(hero.y - 1, hero.x) & F_PASS) || chat(hero.y - 1, hero.x) == DOOR) && hero.y != 1);
-						b2 = (((flat(hero.y + 1, hero.x) & F_PASS) || chat(hero.y + 1, hero.x) == DOOR) && hero.y != LINES - 2);
+						b2 = (((flat(hero.y + 1, hero.x) & F_PASS) || chat(hero.y + 1, hero.x) == DOOR) && hero.y != s_LINES - 2);
 						if (!(b1 ^ b2))
 							break;
 						if (b1)
@@ -125,7 +125,7 @@ hit_bound:
 					case 'j':
 					case 'k':
 						b1 = (((flat(hero.y, hero.x - 1) & F_PASS) || chat(hero.y, hero.x - 1) == DOOR) && hero.x != 0);
-						b2 = (((flat(hero.y, hero.x + 1) & F_PASS) || chat(hero.y, hero.x + 1) == DOOR) && hero.x != COLS - 1);
+						b2 = (((flat(hero.y, hero.x + 1) & F_PASS) || chat(hero.y, hero.x + 1) == DOOR) && hero.x != s_COLS - 1);
 						if (!(b1 ^ b2))
 							break;
 						if (b1)
@@ -333,7 +333,7 @@ THING *who;
 	 */
 	if (y == who->t_pos.y && x == who->t_pos.x)
 		return &ret;
-	if ((y < 0 || y >= LINES - 1) || (x < 0 || x >= COLS))
+	if ((y < 0 || y >= s_LINES - 1) || (x < 0 || x >= s_COLS))
 		goto bad;
 	else if (!diag_ok(&who->t_pos, &ret))
 		goto bad;

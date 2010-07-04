@@ -305,8 +305,8 @@ add_pass()
 {
 	register int y, x, ch;
 
-	for (y = 1; y < LINES - 1; y++)
-		for (x = 0; x < COLS; x++)
+	for (y = 1; y < s_LINES - 1; y++)
+		for (x = 0; x < s_COLS; x++)
 			if ((ch = chat(y, x)) == DOOR || ch == PASSAGE)
 				mvaddch(y, x, ch);
 }
@@ -347,7 +347,7 @@ register int y, x;
 	register struct room *rp;
 	register char ch;
 
-	if (x >= COLS || x < 0 || y >= LINES || y < 1)
+	if (x >= s_COLS || x < 0 || y >= s_LINES || y < 1)
 		return;
 	fp = &flat(y, x);
 	if (*fp & F_PNUM)

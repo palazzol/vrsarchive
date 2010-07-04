@@ -63,9 +63,9 @@ read_scroll()
 
 			mcount = 0;
 			for (x = hero.x - 2; x <= hero.x + 2; x++)
-				if (x >= 0 && x < COLS)
+				if (x >= 0 && x < s_COLS)
 					for (y = hero.y - 2; y <= hero.y + 2; y++)
-						if (y >= 0 && y <= LINES - 1)
+						if (y >= 0 && y <= s_LINES - 1)
 							if ((op = moat(y, x)) != NULL && on(*op, ISRUN))
 							{
 								op->t_flags &= ~ISRUN;
@@ -153,8 +153,8 @@ read_scroll()
 			/*
 			 * Take all the things we want to keep hidden out of the window
 			 */
-			for (y = 1; y < LINES - 1; y++)
-				for (x = 0; x < COLS; x++)
+			for (y = 1; y < s_LINES - 1; y++)
+				for (x = 0; x < s_COLS; x++)
 				{
 					index = INDEX(y, x);
 					switch (ch = s_level[index])

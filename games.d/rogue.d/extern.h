@@ -38,6 +38,7 @@ extern int	a_chances[], a_class[], count, dnum, food_left,
 extern long	seed;
 
 extern WINDOW	*hw;
+extern int s_LINES, s_COLS;             /* Dimensions of used screen */
 
 /*
  * Function types

@@ -86,9 +86,9 @@ bool wakeup;
 	pfl = s_flags[index];
 	pch = s_level[index];
 	for (y = sy; y <= ey; y++)
-		if (y > 0 && y < LINES - 1) for (x = sx; x <= ex; x++)
+		if (y > 0 && y < s_LINES - 1) for (x = sx; x <= ex; x++)
 		{
-			if (x <= 0 || x >= COLS)
+			if (x <= 0 || x >= s_COLS)
 				continue;
 			if (!on(player, ISBLIND))
 			{

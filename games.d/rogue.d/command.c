@@ -439,7 +439,7 @@ help()
 		cnt++;
 		strp++;
 	}
-	wmove(hw, LINES-1, 0);
+	wmove(hw, s_LINES-1, 0);
 	wprintw(hw, "--Press space to continue--");
 	wrefresh(hw);
 	wait_for(' ');

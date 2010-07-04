@@ -7,7 +7,11 @@
 #include "curses.h"
 #include <ctype.h>
 #include "rogue.h"
+#ifdef CYGWIN
+#include <stdarg.h>
+#else
 #include <varargs.h>
+#endif
 
 /*
  * msg:
@@ -17,6 +21,15 @@
 static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
+#ifdef CYGWIN
+msg(const char *args, ...)
+{
+    va_list ap;
+    char *fmt;
+
+    va_start(ap, &args);
+    fmt = args;
+#else
 /*VARARGS1*/
 msg(va_alist)
 va_dcl
@@ -26,6 +39,7 @@ va_dcl
 
     va_start(ap);
     fmt = va_arg(ap, char *);
+#endif
     /*
      * if the string is "", just clear the line
      */
@@ -42,11 +56,26 @@ va_dcl
     vsprintf(msgbuf+newpos, fmt, ap);
     newpos = strlen(msgbuf);
     endmsg();
+#ifdef CYGWIN
+    va_end(ap);
 }
+#else
+}
+#endif
 
 /*
  * add things to the current message
  */
+#ifdef CYGWIN
+void
+addmsg(const char *args, ...)
+{
+	va_list ap;
+	char *fmt;
+
+	va_start(ap, &args);
+        fmt = args;
+#else
 /*VARARGS*/
 void
 addmsg(va_alist)
@@ -57,9 +86,15 @@ va_dcl
 
 	va_start(ap);
 	fmt = va_arg(ap, char *);
+#endif
 	vsprintf(msgbuf+newpos, fmt, ap);
 	newpos = strlen(msgbuf);
+#ifdef CYGWIN
+        va_end(ap);
 }
+#else
+}
+#endif
 
 /*
  * Display a new msg (giving him a chance to see the previous one if it
@@ -186,7 +221,7 @@ status()
     s_str = pstats.s_str;
     s_exp = pstats.s_exp; 
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
-    mvaddstr(LINES - 1, 0, buf);
+    mvaddstr(s_LINES - 1, 0, buf);
     switch (hungry_state)
     {
 	case 0: ;

@@ -99,7 +99,7 @@ option()
 	/*
 	 * Switch back to original screen
 	 */
-	mvwaddstr(hw, LINES-1, 0, "--Press space to continue--");
+	mvwaddstr(hw, s_LINES-1, 0, "--Press space to continue--");
 	wrefresh(hw);
 	wait_for(' ');
 	clearok(curscr, TRUE);

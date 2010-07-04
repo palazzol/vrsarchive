@@ -139,7 +139,7 @@ register FILE *savef;
 	 * close any open score file
 	 */
 	close(fd);
-	move(LINES-1, 0);
+	move(s_LINES-1, 0);
 	refresh();
 	fstat(fileno(savef), &sbuf);
 	/*

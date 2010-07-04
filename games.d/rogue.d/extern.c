@@ -69,6 +69,7 @@ char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
 char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
 char file_name[MAXSTR];			/* Save file name */
 char home[MAXSTR];			/* User's home directory */
+int s_LINES, s_COLS;                    /* Dimensions of used screen */
 char s_level[MAXLINES*MAXCOLS];		/* Level map */
 char s_flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
 char *inv_t_name[] = {

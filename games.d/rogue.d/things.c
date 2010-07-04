@@ -530,11 +530,11 @@ char *fmt, *arg;
 	}
 	else
 	{
-		if (line_cnt >= LINES - 1 || fmt == NULL)
+		if (line_cnt >= s_LINES - 1 || fmt == NULL)
 		{
 			if (fmt == NULL && !newpage && inv_type == INV_OVER)
 			{
-				tw = newwin(line_cnt + 1, COLS, 0, 0);
+				tw = newwin(line_cnt + 1, s_COLS, 0, 0);
 				if (tw == NULL) {
 					msg("No memory to show inventory");
 				} else {
@@ -551,7 +551,7 @@ char *fmt, *arg;
 			}
 			else
 			{
-				mvwaddstr(hw, LINES - 1, 0, prompt);
+				mvwaddstr(hw, s_LINES - 1, 0, prompt);
 				wrefresh(hw);
 				wait_for(' ');
 				clearok(curscr, TRUE);
