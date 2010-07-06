@@ -8403,7 +8403,7 @@ var	conflag,
 			writeln('**	and for non-local gotos');
 			writeln('*', '/');
 			writeln(define, 'Line __LINE__');
-			writeln(voidtyp, tab1, 'Caseerror();')
+			writeln(static, voidtyp, tab1, 'Caseerror();')
 		    end;
 		if usejmps then
 		    begin
@@ -8518,14 +8518,15 @@ var	conflag,
 			writeln(define, 'setbits ', setbits:1);
 			writeln(typdef, wordtype, tab1, setwtyp, ';');
 			writeln(typdef, setwtyp, ' *', tab1, setptyp, ';');
+			write(static);
 			printid(defnams[dboolean]^.lid);
 			writeln(tab1, 'Member(), Le(), Ge(), Eq(), Ne();');
-			writeln(setptyp, tab1, 'Union(), Diff();');
-			writeln(setptyp, tab1, 'Insmem(), Mksubr();');
-			writeln(setptyp, tab1, 'Currset(), Inter();');
+			writeln(static, setptyp, tab1, 'Union(), Diff();');
+			writeln(static, setptyp, tab1, 'Insmem(), Mksubr();');
+			writeln(static, setptyp, tab1, 'Currset(), Inter();');
 			writeln(static, setptyp, tab1, 'Tmpset;');
-			writeln(xtern, setptyp, tab1, 'Conset[];');
-			writeln(voidtyp, tab1, 'Setncpy();')
+			writeln(static, setptyp, tab1, 'Conset[];');
+			writeln(static, voidtyp, tab1, 'Setncpy();')
 		    end;
 		writeln(xtern, chartyp, ' *strncpy();');	(* LIB *)
 		if use(dargc) or use(dargv) then

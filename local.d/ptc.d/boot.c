@@ -77,7 +77,7 @@ static setptr	Union(), Diff();
 static setptr	Insmem(), Mksubr();
 static setptr	Currset(), Inter();
 static setptr	Tmpset;
-extern setptr	Conset[];
+static setptr	Conset[];
 static void	Setncpy();
 extern char *strncpy();
 /*
@@ -7535,7 +7535,7 @@ eprogram(tp)
 		(void)fprintf(output.fp, "**	and for non-local gotos\n"), Putl(output, 1);
 		(void)fprintf(output.fp, "*/\n"), Putl(output, 1);
 		(void)fprintf(output.fp, "%sLine __LINE__\n", C4_define), Putl(output, 1);
-		(void)fprintf(output.fp, "%s%cCaseerror();\n", voidtyp, tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "static %s%cCaseerror();\n", voidtyp, tab1), Putl(output, 1);
 	}
 	if (usejmps) {
 		(void)fprintf(output.fp, "%s<setjmp.h>\n", C24_include), Putl(output, 1);
@@ -7629,14 +7629,15 @@ eprogram(tp)
 		(void)fprintf(output.fp, "%ssetbits %1d\n", C4_define, C37_setbits), Putl(output, 1);
 		(void)fprintf(output.fp, "%s%s%c%s;\n", typdef, wordtype, tab1, setwtyp), Putl(output, 1);
 		(void)fprintf(output.fp, "%s%s *%c%s;\n", typdef, setwtyp, tab1, setptyp), Putl(output, 1);
+		(void)fprintf(output.fp, "static ");
 		printid(defnams.A[(int)(dboolean)]->U.V6.lid);
 		(void)fprintf(output.fp, "%cMember(), Le(), Ge(), Eq(), Ne();\n", tab1), Putl(output, 1);
-		(void)fprintf(output.fp, "%s%cUnion(), Diff();\n", setptyp, tab1), Putl(output, 1);
-		(void)fprintf(output.fp, "%s%cInsmem(), Mksubr();\n", setptyp, tab1), Putl(output, 1);
-		(void)fprintf(output.fp, "%s%cCurrset(), Inter();\n", setptyp, tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "static %s%cUnion(), Diff();\n", setptyp, tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "static %s%cInsmem(), Mksubr();\n", setptyp, tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "static %s%cCurrset(), Inter();\n", setptyp, tab1), Putl(output, 1);
 		(void)fprintf(output.fp, "%s%s%cTmpset;\n", C50_static, setptyp, tab1), Putl(output, 1);
-		(void)fprintf(output.fp, "%s%s%cConset[];\n", xtern, setptyp, tab1), Putl(output, 1);
-		(void)fprintf(output.fp, "%s%cSetncpy();\n", voidtyp, tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "%s%s%cConset[];\n", C50_static, setptyp, tab1), Putl(output, 1);
+		(void)fprintf(output.fp, "static %s%cSetncpy();\n", voidtyp, tab1), Putl(output, 1);
 	}
 	(void)fprintf(output.fp, "%s%s *strncpy();\n", xtern, chartyp), Putl(output, 1);
 	if (use(dargc) || use(dargv)) {
