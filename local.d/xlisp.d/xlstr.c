@@ -19,10 +19,11 @@ extern char buf[];
 extern char *strcat();
 
 /* forward declarations */
-FORWARD LVAL strcompare();
-FORWARD LVAL chrcompare();
-FORWARD LVAL changecase();
-FORWARD LVAL trim();
+LOCAL LVAL strcompare();
+LOCAL LVAL chrcompare();
+LOCAL LVAL changecase();
+LOCAL LVAL trim();
+LOCAL getbounds(), inbag();
 
 /* string comparision functions */
 LVAL xstrlss() { return (strcompare('<',FALSE)); } /* string< */

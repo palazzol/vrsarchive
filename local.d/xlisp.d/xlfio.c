@@ -15,9 +15,9 @@ extern int xlfsize;
 extern FILE *osaopen();
 
 /* forward declarations */
-FORWARD LVAL getstroutput();
-FORWARD LVAL printit();
-FORWARD LVAL flatsize();
+LOCAL   LVAL getstroutput();
+LOCAL   LVAL printit();
+LOCAL   LVAL flatsize();
 FORWARD LVAL openit();
 
 /* xread - read an expression */

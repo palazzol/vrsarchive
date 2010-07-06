@@ -88,7 +88,7 @@ LVAL xsave(),xrestore();
 #define F	FSUBR
 
 /* forward declarations */
-LVAL xnotimp();
+LOCAL LVAL xnotimp();
 
 /* the function table */
 FUNDEF funtab[] = {

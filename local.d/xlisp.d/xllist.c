@@ -6,9 +6,10 @@
 #include "xlisp.h"
 
 /* forward declarations */
-FORWARD LVAL cxr();
-FORWARD LVAL nth(),assoc();
-FORWARD LVAL subst(),sublis(),map();
+LOCAL   LVAL cxr();
+LOCAL   LVAL nth(),assoc(),remif(),delif(),delif(),sortlist(),gluelists();
+LOCAL   LVAL subst(),sublis(),map();
+LOCAL   splitlist();
 
 /* xcar - take the car of a cons cell */
 LVAL xcar()

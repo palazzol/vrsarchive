@@ -28,9 +28,10 @@ extern char *malloc();
 extern char *calloc();
 
 /* forward declarations */
-FORWARD LVAL newnode();
-FORWARD unsigned char *stralloc();
+LOCAL   LVAL newnode();
+LOCAL   unsigned char *stralloc();
 FORWARD SEGMENT *newsegment();
+LOCAL findmem(), mark(), sweep(), addseg();
 
 /* cons - construct a new cons node */
 LVAL cons(x,y)

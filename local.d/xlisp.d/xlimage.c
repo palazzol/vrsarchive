@@ -25,9 +25,10 @@ extern FILE *osbopen();
 extern char *malloc();
 
 /* forward declarations */
-OFFTYPE readptr();
-OFFTYPE cvoptr();
-LVAL cviptr();
+LOCAL OFFTYPE readptr();
+LOCAL writeptr(), setoffset(), readnode(), writenode(), freeimage();
+LOCAL OFFTYPE cvoptr();
+LOCAL LVAL cviptr();
 
 /* xlisave - save the memory image */
 int xlisave(fname)

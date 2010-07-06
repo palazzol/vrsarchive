@@ -10,7 +10,7 @@ extern LVAL obarray,s_unbound;
 extern LVAL xlenv,xlfenv,xldenv;
 
 /* forward declarations */
-FORWARD LVAL findprop();
+LOCAL LVAL findprop();
 
 /* xlenter - enter a symbol into the obarray */
 LVAL xlenter(name)

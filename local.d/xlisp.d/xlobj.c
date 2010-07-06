@@ -26,9 +26,10 @@ static LVAL class,object;
 #define CLASSSIZE	7
 
 /* forward declarations */
-FORWARD LVAL entermsg();
-FORWARD LVAL sendmsg();
-FORWARD LVAL evmethod();
+LOCAL LVAL entermsg();
+LOCAL LVAL sendmsg();
+LOCAL LVAL evmethod();
+LOCAL getivcnt(), listlength();
 
 /* xsend - send a message to an object */
 LVAL xsend()

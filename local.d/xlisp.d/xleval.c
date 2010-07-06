@@ -27,9 +27,10 @@ extern char buf[];
 
 /* forward declarations */
 FORWARD LVAL xlxeval();
-FORWARD LVAL evalhook();
-FORWARD LVAL evform();
-FORWARD LVAL evfun();
+LOCAL   LVAL evalhook();
+LOCAL   LVAL evform();
+LOCAL   LVAL evfun();
+LOCAL doenter(), doexit(), member(), evpushargs(), badarglist();
 
 /* xleval - evaluate an xlisp expression (checking for *evalhook*) */
 LVAL xleval(expr)

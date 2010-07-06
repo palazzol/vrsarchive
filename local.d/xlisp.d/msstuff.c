@@ -27,6 +27,8 @@ extern int errno;
 /* make sure we get a large stack */
 int _stklen = 32766;
 
+static xgetc(), xputc(), xcheck(), xflush(), xinfo();
+
 /* local variables */
 static char lbuf[LBSIZE];
 static int lpos[LBSIZE];

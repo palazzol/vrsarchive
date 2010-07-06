@@ -10,10 +10,12 @@
 extern LVAL true;
 
 /* forward declarations */
-FORWARD LVAL unary();
-FORWARD LVAL binary();
-FORWARD LVAL predicate();
-FORWARD LVAL compare();
+LOCAL LVAL unary();
+LOCAL LVAL binary();
+LOCAL LVAL predicate();
+LOCAL LVAL compare();
+LOCAL badfop();
+LOCAL badiop();
 
 /* binary functions */
 LVAL xadd()    { return (binary('+')); } /* + */

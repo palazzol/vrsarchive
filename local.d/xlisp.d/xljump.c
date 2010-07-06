@@ -9,6 +9,7 @@
 extern CONTEXT *xlcontext,*xltarget;
 extern LVAL xlvalue,xlenv,xlfenv,xldenv;
 extern int xlmask;
+LOCAL findandjump();
 
 /* xlbegin - beginning of an execution context */
 xlbegin(cptr,flags,expr)

@@ -11,6 +11,8 @@ extern LVAL s_printcase,k_downcase,k_const,k_nmacro;
 extern LVAL s_ifmt,s_ffmt;
 extern FUNDEF funtab[];
 extern char buf[];
+LOCAL putsymbol(), putstring(), putsubr(), putclosure();
+LOCAL putqstring(), putatm(), putfixnum(), putflonum(), putchcode(), putoct();
 
 /* xlprint - print an xlisp value */
 xlprint(fptr,vptr,flag)

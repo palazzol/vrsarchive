@@ -11,6 +11,7 @@ extern int xlfsize;
 /* local variables */
 static int pplevel,ppmargin,ppmaxlen;
 static LVAL ppfile;
+LOCAL pp(), pplist(), ppexpr(), ppputc(), ppterpri(), flatsize();
 
 /* xpp - pretty-print an expression */
 LVAL xpp()

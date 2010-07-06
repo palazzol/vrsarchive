@@ -28,6 +28,7 @@ extern LVAL a_fixnum,a_flonum,a_string,a_stream,a_object;
 extern LVAL a_vector,a_closure,a_char,a_ustream;
 extern LVAL s_gcflag,s_gchook;
 extern FUNDEF funtab[];
+LOCAL  initwks();
 
 /* xlinit - xlisp initialization routine */
 xlinit()

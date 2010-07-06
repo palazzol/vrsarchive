@@ -27,10 +27,11 @@ extern ITYPE;
 #define CONST2 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 /* forward declarations */
-FORWARD LVAL callmacro();
-FORWARD LVAL psymbol(),punintern();
-FORWARD LVAL pnumber(),pquote(),plist(),pvector(),pstruct();
-FORWARD LVAL readlist(),tentry();
+FORWARD LVAL callmacro(), tentry();
+LOCAL LVAL psymbol(),punintern();
+LOCAL LVAL pnumber(),pquote(),plist(),pvector(),pstruct();
+LOCAL LVAL readlist();
+LOCAL pcomment(), pname(), storech(), nextch(), checkeof(), badeof(), upcase();
 
 /* xlload - load a file of xlisp expressions */
 int xlload(fname,vflag,pflag)

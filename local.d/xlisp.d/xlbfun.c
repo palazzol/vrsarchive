@@ -21,7 +21,7 @@ extern LVAL xlxeval();
 /* forward declarations */
 FORWARD LVAL bquote1();
 FORWARD LVAL defun();
-FORWARD LVAL makesymbol();
+LOCAL LVAL makesymbol();
 
 /* xeval - the built-in function 'eval' */
 LVAL xeval()

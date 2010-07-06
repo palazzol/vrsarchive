@@ -10,6 +10,8 @@ extern LVAL xlenv,xlfenv;
 extern LVAL s_lambda,s_quote,lk_key,true;
 extern char buf[];
 
+LOCAL addslot(), updateslot();
+
 /* local variables */
 static prefix[STRMAX+1];
 

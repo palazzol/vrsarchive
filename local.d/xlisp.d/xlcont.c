@@ -18,15 +18,17 @@ extern LVAL true;
 extern LVAL makearglist();
 
 /* forward declarations */
-FORWARD LVAL bquote1();
-FORWARD LVAL let();
-FORWARD LVAL flet();
-FORWARD LVAL prog();
-FORWARD LVAL progx();
-FORWARD LVAL doloop();
-FORWARD LVAL evarg();
-FORWARD LVAL match();
-FORWARD LVAL evmatch();
+LOCAL   LVAL bquote1();
+LOCAL   LVAL let();
+LOCAL   LVAL flet();
+LOCAL   LVAL prog();
+LOCAL   LVAL progx();
+LOCAL   LVAL doloop();
+LOCAL   LVAL evarg();
+LOCAL   LVAL match();
+LOCAL   LVAL evmatch();
+LOCAL doupdates(), dobindings(), placeform(), setffunction(), keypresent();
+LOCAL breakloop(), tagbody(), toofew(), toomany();
 
 /* dummy node type for a list */
 #define LIST	-1

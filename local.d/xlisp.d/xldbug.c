@@ -18,6 +18,7 @@ extern char *malloc();
 
 /* forward declarations */
 FORWARD LVAL stacktop();
+LOCAL breakloop();
 
 /* xlabort - xlisp serious error handler */
 xlabort(emsg)
