@@ -111,6 +111,7 @@ FILE *fp;
 }
 
 static char smargin[] = "MARGIN";
+static gobble(), insert(), set_cursor(), scan_tab (), scan_char ();
 
 /* getcmd --- read a line from the terminal (for se) */
 
@@ -119,8 +120,7 @@ char *lin, *termchar;
 int col1, *curpos;
 {
 	int cursor, nlpos, prev_cursor, prev_status, status,
-	scan_pos, tab_pos, first, strlen (),
-	scan_tab (), scan_char (), cread ();
+	scan_pos, tab_pos, first, strlen (), cread ();
 	char c;
 
 	nlpos = strlen (lin) - 1;

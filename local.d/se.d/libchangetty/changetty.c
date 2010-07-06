@@ -76,6 +76,7 @@ static TTYINFO NewTtyInfo;	/* modified state for editing */
 
 static int first = YES;		/* first time anything called */
 
+static gttyinfo(), mttyinfo(), sttyinfo();
 
 static init()
 {

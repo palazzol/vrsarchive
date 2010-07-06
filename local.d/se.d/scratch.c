@@ -159,6 +159,7 @@ clrbuf ()
 	unlink (Scrname);
 }
 
+static seekf ();
 
 
 /* garbage_collect --- compress scratch file */

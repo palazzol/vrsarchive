@@ -52,6 +52,9 @@ static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/pat/pat.c,v 1.2 198
 #define MAXLINE         128
 #define MAXPAT          128
 
+static omatch(), locate(), patsiz(), getccl(), stclos(), dodash();
+static start_tag(), stop_tag();
+
 /* Pattern matching subroutines: */
 
 /* match () --- find match anywhere on line */

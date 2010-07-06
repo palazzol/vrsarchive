@@ -28,6 +28,7 @@ static char RCSid[] = "$Header: /home/Vince/cvs/local.d/se.d/edit.c,v 1.1 1987-0
 #include "extern.h"
 
 static char Savknm = DEFAULTNAME;	/* saved mark name for < and > */
+static serc ();
 
 /* edit --- main routine for screen editor */
 
