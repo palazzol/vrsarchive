@@ -13,7 +13,11 @@
 #ifdef MAC
 #	include "mac.h"
 #else
-#	include <varargs.h>
+#       ifdef CYGWIN
+#	    include <stdarg.h>
+#       else
+#	    include <varargs.h>
+#       endif
 #	ifdef F_COMPLETION
 #   	include <sys/stat.h>
 #	endif
@@ -256,8 +260,18 @@ cleanup:
 	return Minibuf;
 }
 
+#ifdef CYGWIN
 /* VARARGS2 */
+char *
+ask(char *def, char *fmt, ...)
+{
+	char	prompt[128];
+	char	*ans;
+	va_list	ap;
 
+	va_start(ap, fmt);
+#else
+/* VARARGS2 */
 char *
 ask(def, fmt, va_alist)
 char	*def,
@@ -269,6 +283,7 @@ va_dcl
 	va_list	ap;
 
 	va_start(ap);
+#endif
 	format(prompt, sizeof prompt, fmt, ap);
 	va_end(ap);
 	ans = real_ask("\r\n", (int (*)()) 0, def, prompt);
@@ -280,8 +295,17 @@ va_dcl
 	return ans;
 }
 
+#ifdef CYGWIN
 /* VARARGS1 */
+char *
+do_ask(char *delim, int (*d_proc)(), char *def, char *fmt, ...)
+{
+	char	prompt[128];
+	va_list	ap;
 
+	va_start(ap, fmt);
+#else
+/* VARARGS1 */
 char *
 do_ask(delim, d_proc, def, fmt, va_alist)
 char	*delim,
@@ -294,13 +318,24 @@ va_dcl
 	va_list	ap;
 
 	va_start(ap);
+#endif
 	format(prompt, sizeof prompt, fmt, ap);
 	va_end(ap);
 	return real_ask(delim, d_proc, def, prompt);
 }
 
+#ifdef CYGWIN
 /* VARARGS1 */
+int
+yes_or_no_p(char *fmt, ...)
+{
+	char	prompt[128];
+	int	c;
+	va_list	ap;
 
+	va_start(ap, fmt);
+#else
+/* VARARGS1 */
 int
 yes_or_no_p(fmt, va_alist)
 char	*fmt;
@@ -311,6 +346,7 @@ va_dcl
 	va_list	ap;
 
 	va_start(ap);
+#endif
 	format(prompt, sizeof prompt, fmt, ap);
 	va_end(ap);
 	for (;;) {
