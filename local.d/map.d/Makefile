@@ -4,7 +4,7 @@ LIBDIR	= $(LIB)/uucp
 SHELL=/bin/sh
 
 map:	region world makmap
-	makmap 
+	./makmap 
 
 makmap:	makmap.c
 	cc -O -o makmap makmap.c
