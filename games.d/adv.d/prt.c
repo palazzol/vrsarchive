@@ -45,7 +45,7 @@ prt(s)
 				 * Hope all curses implementations do this
 				 * the same way!
 				*/
-				if (y+1 == CurWin->_maxy) {
+				if (y+1 == ROWS) {
 					wmove(CurWin, 0, 0);
 					wdeleteln(CurWin);
 					wmove(CurWin, y-1, x);
