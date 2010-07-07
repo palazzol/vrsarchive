@@ -32,7 +32,7 @@ local()
 
 #ifndef GETHOSTNAME
 
-STATIC void
+void
 gethostname(name, len)
 char	*name;
 {

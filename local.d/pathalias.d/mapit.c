@@ -5,8 +5,9 @@ static char	*sccsid = "@(#)mapit.c	7.1 (down!honey) 85/08/06";
 
 #include "def.h"
 
-void	reheap(), insert(), setpath(), swap();
-node	*min_node();
+STATIC void reheap(), insert(), setpath(), swap();
+STATIC node *min_node();
+STATIC Cost setcost();
 
 STATIC int	Nheap;
 
@@ -14,7 +15,7 @@ mapit()
 {
 	node *n, *next;
 	link *l;
-	Cost	cost, setcost();
+	Cost	cost;
 	char	*sbrk();
 
 	vprintf(stderr, "%d vertices, %d edges\n", Ncount, Lcount);

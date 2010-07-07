@@ -147,7 +147,7 @@ netchar	:	NET		/* normal network operator */
 	;
 %%
 
-node	*revnetlist();
+STATIC node *revnetlist();
 
 yyerror(s)
 char *s;

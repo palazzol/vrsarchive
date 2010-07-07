@@ -5,8 +5,8 @@ static char	*sccsid = "@(#)addnode.c	7.1 (down!honey) 85/08/07";
 
 #include "def.h"
 
-void	lowercase();
-node	*isprivate();
+STATIC void lowercase();
+STATIC node *isprivate();
 
 /*
  * these numbers are chosen because:
@@ -24,6 +24,8 @@ STATIC int Primes[]	= {
 };
 STATIC int	Tabindex = -1;
 STATIC int	Collision;	/* mark host name collisions in hash() */
+
+STATIC hash(), rehash(), fold();
 
 int	Tabsize;	/* used later for the priority queue */
 node	**Table;	/* ditto */

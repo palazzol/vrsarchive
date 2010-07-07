@@ -123,7 +123,7 @@ struct link {
 node	*addnode(), *newnode(), **newtable(), *addprivate();
 link	*addlink(), *lmerge(), *newlink();
 char	*strsave(), *local();
-void	setpath(), pack();
+void	pack();
 
 #define STATIC static
 

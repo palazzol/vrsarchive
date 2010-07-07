@@ -13,7 +13,7 @@ extern	YYSTYPE yylval;
 #define RPAREN ')'
 #define QUOTE '"'
 
-Cost isacost();
+STATIC Cost isacost();
 
 int
 yylex()
