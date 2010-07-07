@@ -24,7 +24,7 @@ struct timeb
 #define daysec (24L*60L*60L)
 	static int timeflag, zoneflag, dateflag, dayflag, relflag;
 	static time_t relsec, relmonth;
-	static int hh, mm, ss, merid, daylight;
+	static int hh, mm, ss, merid, sdaylight;
 	static int dayord, dayreq;
 	static int month, day, year;
 	static int ourzone;
@@ -39,72 +39,72 @@ struct timeb
 timedate: 		/* empty */
 	| timedate item;
 
-item:	tspec =
+item:	tspec
 		{timeflag++;}
-	| zone =
+	| zone
 		{zoneflag++;}
-	| dtspec =
+	| dtspec
 		{dateflag++;}
-	| dyspec =
+	| dyspec
 		{dayflag++;}
-	| rspec =
+	| rspec
 		{relflag++;}
 	| nspec;
 
-nspec:	NUMBER =
+nspec:	NUMBER
 		{if (timeflag && dateflag && !relflag) year = $1;
 		else {timeflag++;hh = $1/100;mm = $1%100;ss = 0;merid = 24;}};
 
-tspec:	NUMBER MERIDIAN =
+tspec:	NUMBER MERIDIAN
 		{hh = $1; mm = 0; ss = 0; merid = $2;}
-	| NUMBER ':' NUMBER =
+	| NUMBER ':' NUMBER
 		{hh = $1; mm = $3; merid = 24;}
-	| NUMBER ':' NUMBER MERIDIAN =
+	| NUMBER ':' NUMBER MERIDIAN
 		{hh = $1; mm = $3; merid = $4;}
-	| NUMBER ':' NUMBER ':' NUMBER =
+	| NUMBER ':' NUMBER ':' NUMBER
 		{hh = $1; mm = $3; ss = $5; merid = 24;}
-	| NUMBER ':' NUMBER ':' NUMBER MERIDIAN =
+	| NUMBER ':' NUMBER ':' NUMBER MERIDIAN
 		{hh = $1; mm = $3; ss = $5; merid = $6;};
 
-zone:	ZONE =
-		{ourzone = $1; daylight = STANDARD;}
-	| DAYZONE =
-		{ourzone = $1; daylight = DAYLIGHT;};
+zone:	ZONE
+		{ourzone = $1; sdaylight = STANDARD;}
+	| DAYZONE
+		{ourzone = $1; sdaylight = DAYLIGHT;};
 
-dyspec:	DAY =
+dyspec:	DAY
 		{dayord = 1; dayreq = $1;}
-	| DAY ',' =
+	| DAY ','
 		{dayord = 1; dayreq = $1;}
-	| NUMBER DAY =
+	| NUMBER DAY
 		{dayord = $1; dayreq = $2;};
 
-dtspec:	NUMBER '/' NUMBER =
+dtspec:	NUMBER '/' NUMBER
 		{month = $1; day = $3;}
-	| NUMBER '/' NUMBER '/' NUMBER =
+	| NUMBER '/' NUMBER '/' NUMBER
 		{month = $1; day = $3; year = $5;}
-	| MONTH NUMBER =
+	| MONTH NUMBER
 		{month = $1; day = $2;}
-	| MONTH NUMBER ',' NUMBER =
+	| MONTH NUMBER ',' NUMBER
 		{month = $1; day = $2; year = $4;}
-	| NUMBER MONTH =
+	| NUMBER MONTH
 		{month = $2; day = $1;}
-	| NUMBER MONTH NUMBER =
+	| NUMBER MONTH NUMBER
 		{month = $2; day = $1; year = $3;};
 
 
-rspec:	NUMBER UNIT =
+rspec:	NUMBER UNIT
 		{relsec +=  60L * $1 * $2;}
-	| NUMBER MUNIT =
+	| NUMBER MUNIT
 		{relmonth += $1 * $2;}
-	| NUMBER SUNIT =
+	| NUMBER SUNIT
 		{relsec += $1;}
-	| UNIT =
+	| UNIT
 		{relsec +=  60L * $1;}
-	| MUNIT =
+	| MUNIT
 		{relmonth += $1;}
-	| SUNIT =
+	| SUNIT
 		{relsec++;}
-	| rspec AGO =
+	| rspec AGO
 		{relsec = -relsec; relmonth = -relmonth;};
 %%
 
@@ -474,7 +474,7 @@ time_t getdate(p, now) char *p; struct timeb *now;
 	relsec = 0; relmonth = 0;
 	timeflag=zoneflag=dateflag=dayflag=relflag=0;
 	ourzone = now->timezone;
-	daylight = MAYBE;
+	sdaylight = MAYBE;
 	hh = mm = ss = 0;
 	merid = 24;
 
@@ -488,7 +488,7 @@ time_t getdate(p, now) char *p; struct timeb *now;
 	if (err) return (-1);
 
 	if (dateflag || timeflag || dayflag) {
-		sdate = dateconv(month,day,year,hh,mm,ss,merid,ourzone,daylight);
+		sdate = dateconv(month,day,year,hh,mm,ss,merid,ourzone,sdaylight);
 		if (sdate < 0) return -1;
 	}
 	else {
