@@ -14,7 +14,7 @@
 #define input() (yytchar=yysptr>yysbuf?U(*--yysptr):getnextchar())
 #define unput(c) (*yysptr++=(c))
 #endif
-#define yywrap() 1
+static yywrap() { return 1; }
 
 %}
 star	\*
