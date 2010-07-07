@@ -10,6 +10,9 @@
 #include <dir.h>
 #include <sys/stat.h>
 
+static char *trygetwd();
+static prepend();
+
 /*
  * getwd - master control
  */
@@ -19,7 +22,6 @@ register char pathname[];
 {
 	register char *ret;
 	register FILE *pwd;
-	extern char *trygetwd();
 	extern FILE *popen();
 
 	ret = trygetwd(pathname);
