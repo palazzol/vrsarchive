@@ -51,10 +51,11 @@ TROFF	= nroff
 #DEFEXE	= a.out
 DEFEXE	= a.exe
 EXE	= .exe
-LINT	= gcc -Wall -W -fsyntax-only
+LINT	= gcc -Wall -W -fsyntax-only $(CFLAGS)
 FC	= g77 -ff77 -fugly-assumed -fugly-logint
 CC	= gcc
 YACC	= bison -y
+LEX     = flex -X
 #
 #	This keeps USG make from trying to use the user's shell.  We want to
 #	always use the Bourne Shell.
@@ -98,7 +99,7 @@ MAN8	= $(USRMAN)/man8
 # XENIX	- XENIX 286, System 3/5, Large Model, Big Stack.
 #
 CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
-CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) -Incurses
+CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) -I/usr/include/ncurses
 CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
 CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
 LBSD	= -lcurses -ltermcap -lm
