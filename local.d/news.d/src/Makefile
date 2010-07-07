@@ -25,11 +25,11 @@ DEFS =	-DRNEWS=\"$(BINDIR)/rnews\" -DSPOOLDIR=\"$(SPOOLDIR)\" \
 	-DBINDIR=\"$(BINDIR)\" -DNEWSUSR=\"$(NEWSUSR)\" \
 	-DNEWSGRP=\"$(NEWSGRP)\"
 CFLAGS = ${DEBUG} -O $(IBMFLAGS) -DUSG -Dindex=strchr -Drindex=strrchr ${DEFS}
-LFLAGS = -F 3000 -i $(IBMFLAGS)
-LIBS =
+LFLAGS = -i $(IBMFLAGS) # -F 3000
+LIBS = -lcurses -lcrypt
 LINTFLAGS = ${DEFS}
 
-MISC = ftime.o uname.o
+MISC = # ftime.o uname.o
 OBJECTS = funcs.o funcs2.o getdate.o header.o ndir.o $(MISC)
 IOBJECTS = inews.o ifuncs.o iextern.o control.o fullname.o \
 	ipathinit.o $(OBJECTS)
@@ -74,8 +74,6 @@ cp: all $(LIBDIR) $(BINDIR) help vnews.help
 
 defs.h:	defs.dist localize.sh
 	sh localize.sh
-
-makefile: Makefile
 
 Makefile: Makefile.$(OSTYPE) localize.sh defs.dist
 	sh localize.sh
@@ -157,7 +155,7 @@ checknews.o:  checknews.c defs.h header.h Makefile
 	$(CC) $(CFLAGS) -c checknews.c
 
 vnews:	$(VOBJECTS)
-	$(CC) $(LFLAGS) $(VOBJECTS) -ltermcap $(LIBS) -o $@
+	$(CC) $(LFLAGS) $(VOBJECTS) $(LIBS) -o $@
 
 visual.o:  visual.c rparams.h defs.h params.h ndir.h header.h
 	$(CC) $(CFLAGS) -c visual.c
