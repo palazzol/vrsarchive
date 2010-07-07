@@ -22,6 +22,9 @@ static struct dent *htab = NULL; /* Hash table for our stuff */
 static int hsize = 0;		/* Space available in hash table */
 static int hcount = 0;		/* Number of items in hash table */
 
+static struct dent *tinsert();
+static toutent(), toutword(), flagout();
+
 /*
  * Hash table sizes.  Prime is probably a good idea, though in truth I
  * whipped the algorithm up on the spot rather than looking it up, so
