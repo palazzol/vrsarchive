@@ -6,7 +6,6 @@
  ***************************************************************************/
 
 #include <signal.h>
-#include <varargs.h>
 #include "jove.h"
 #include "re.h"
 
@@ -175,22 +174,6 @@ ProcList()
 	TOstop();
 }
 
-ProcNewline()
-{
-#ifdef ABBREV
-	MaybeAbbrevExpand();
-#endif
-	SendData(YES);
-}
-
-ProcSendData()
-{
-#ifdef ABBREV
-	MaybeAbbrevExpand();
-#endif
-	SendData(NO);
-}
-
 private
 SendData(newlinep)
 {
@@ -264,6 +247,22 @@ SendData(newlinep)
 			ins_str(gp, NO);
 		}
 	}
+}
+
+ProcNewline()
+{
+#ifdef ABBREV
+	MaybeAbbrevExpand();
+#endif
+	SendData(YES);
+}
+
+ProcSendData()
+{
+#ifdef ABBREV
+	MaybeAbbrevExpand();
+#endif
+	SendData(NO);
 }
 
 ShellProc()
@@ -392,7 +391,6 @@ PushPBs()
 		p->pb_map[p->pb_key] = p->pb_cmd;
 	}
 }
-/* VARARGS0 */
 
 ProcBind()
 {

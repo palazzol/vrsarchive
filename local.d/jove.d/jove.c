@@ -18,7 +18,11 @@
 #ifdef MAC
 #	include "mac.h"
 #else
+#       ifdef CYGWIN
+#	include <stdarg.h>
+#       else
 #	include <varargs.h>
+#       endif
 #	include <sys/stat.h>
 #endif
 
@@ -937,46 +941,70 @@ char	*argv[];
 	}
 }
 
+#ifdef CYGWIN
 /* VARARGS1 */
+void
+error(char *fmt, ...)
+{
+	va_list	ap;
 
+	va_start(ap, fmt);
+#else
+/* VARARGS1 */
 void
 error(fmt, va_alist)
 char	*fmt;
 va_dcl
 {
 	va_list	ap;
-
+	va_start(ap);
+#endif
 	if (fmt) {
-		va_start(ap);
 		format(mesgbuf, sizeof mesgbuf, fmt, ap);
-		va_end(ap);
 		UpdMesg = YES;
 	}
+	va_end(ap);
 	rbell();
 	longjmp(mainjmp, ERROR);
 }
 
+#ifdef CYGWIN
 /* VARARGS1 */
-
+void
+complain(char *fmt, ...)
+{
+	va_list	ap;
+	va_start(ap, fmt);
+#else
+/* VARARGS1 */
 void
 complain(fmt, va_alist)
 char	*fmt;
 va_dcl
 {
 	va_list	ap;
-
+	va_start(ap);
+#endif
 	if (fmt) {
-		va_start(ap);
 		format(mesgbuf, sizeof mesgbuf, fmt, ap);
-		va_end(ap);
 		UpdMesg = YES;
 	}
+	va_end(ap);
 	rbell();
 	longjmp(mainjmp, COMPLAIN);
 }
 
+#ifdef CYGWIN
 /* VARARGS1 */
+void
+confirm(char *fmt, ...)
+{
+	char	*yorn;
+	va_list	ap;
 
+	va_start(ap, fmt);
+#else
+/* VARARGS1 */
 void
 confirm(fmt, va_alist)
 char	*fmt;
@@ -986,6 +1014,7 @@ va_dcl
 	va_list	ap;
 
 	va_start(ap);
+#endif
 	format(mesgbuf, sizeof mesgbuf, fmt, ap);
 	va_end(ap);
 	yorn = ask((char *) 0, mesgbuf);

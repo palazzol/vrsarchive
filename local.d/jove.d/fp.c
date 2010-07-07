@@ -5,8 +5,8 @@
  * included in all the files.                                              *
  ***************************************************************************/
 
-#include "jove.h"
 #include "io.h"
+#include "jove.h"
 #include "ctype.h"
 #include "termcap.h"
 
@@ -16,6 +16,9 @@
 #	include <sys/stat.h>
 #	ifndef MSDOS
 #		include <sys/file.h>
+#ifdef CYGWIN
+#		include <unistd.h>
+#endif
 #	else /* MSDOS */
 #		include <fcntl.h>
 #		include <io.h>

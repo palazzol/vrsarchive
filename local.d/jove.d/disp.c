@@ -13,7 +13,11 @@
 #ifdef MAC
 #	include "mac.h"
 #else
-#	include <varargs.h>
+#       ifdef CYGWIN
+#	    include <stdarg.h>
+#       else
+#	    include <varargs.h>
+#       endif
 #	include <sys/stat.h>
 #endif
 
@@ -32,6 +36,7 @@ private void
 	InsChar(int, int, int, char *),
 #endif
 	DoIDline(int),
+	dobell(int),
 	do_cl_eol(int),
 	ModeLine(Window *),
 	mode_app(char *),
@@ -42,6 +47,11 @@ private void
 private int
 	AddLines(int, int),
 	DelLines(int, int),
+	IDchar(char *, int, int),
+	IDcomp(char *, char *, int),
+	NumSimilar(char *, char *, int),
+	OkayDelete(int, int, int),
+	OkayInsert(int, int),
 	UntilEqual(int);
 #else
 private void
@@ -51,6 +61,7 @@ private void
 	InsChar(),
 #endif
 	DoIDline(),
+	dobell(),
 	do_cl_eol(),
 	GotoDot(),
 	ModeLine(),
@@ -60,6 +71,11 @@ private void
 private int
 	AddLines(),
 	DelLines(),
+	IDchar(),
+	IDcomp(),
+	NumSimilar(),
+	OkayDelete(),
+	OkayInsert(),
 	UntilEqual();
 #endif	/* LINT_ARGS */
 
@@ -1351,13 +1367,24 @@ char	*name;
 	DoAutoNL = auto_newline;
 }
 
-/* VARARGS1 */
+#ifdef CYGWIN
+void
+Typeout(char *fmt, ...)
+{
+        va_list ap;
 
+        va_start(ap, fmt);
+#else
+/* VARARGS1 */
 void
 Typeout(fmt, va_alist)
 char	*fmt;
 va_dcl
 {
+	va_list	ap;
+
+	va_start(ap);
+#endif
 	if (TOabort)
 		return;
 
@@ -1380,9 +1407,6 @@ va_dcl
 	if (fmt) {
 		extern int	i_col;
 		char	string[132];
-		va_list	ap;
-
-		va_start(ap);
 		format(string, sizeof string, fmt, ap);
 		va_end(ap);
 		if (UseBuffers)

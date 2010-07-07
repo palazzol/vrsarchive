@@ -14,6 +14,13 @@
 #	define private
 #endif
 
+struct chunk {
+	int	c_nlines;	/* Number of lines in this chunk (so they
+				   don't all have to be CHUNKSIZE long). */
+	Line	*c_block;	/* Chunk of memory */
+	struct chunk	*c_nextfree;	/* Next chunk of lines */
+};
+
 #ifdef	LINT_ARGS
 private int
 	newchunk(void);
@@ -494,13 +501,6 @@ YankPop()
    line->l_dline == 0, so freeline sets dline to 0. */
 
 #define CHUNKSIZE	300
-
-struct chunk {
-	int	c_nlines;	/* Number of lines in this chunk (so they
-				   don't all have to be CHUNKSIZE long). */
-	Line	*c_block;	/* Chunk of memory */
-	struct chunk	*c_nextfree;	/* Next chunk of lines */
-};
 
 private struct chunk	*fchunk = 0;
 private Line	*ffline = 0;	/* First free line */

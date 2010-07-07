@@ -15,8 +15,6 @@
 
 #ifdef MAC
 #	include "mac.h"
-#else
-#	include <varargs.h>
 #endif
 
 #ifdef MSDOS
@@ -77,8 +75,6 @@ MAutoExec()
 {
 	DefAutoExec(findmac);
 }
-
-/* VARARGS0 */
 
 void
 DefAutoExec(proc)
@@ -237,8 +233,6 @@ data_obj	**map,
 	}
 }
 
-/* VARARGS0 */
-
 void
 BindSomething(proc)
 #ifdef LINT_ARGS
@@ -336,7 +330,6 @@ outahere:
 void
 DescBindings()
 {
-	extern void	Typeout();
 
 	TOstart("Key Bindings", TRUE);
 	DescMap(mainmap, NullStr);

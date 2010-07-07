@@ -6,11 +6,15 @@
  ***************************************************************************/
 
 #include <signal.h>
+#ifdef CYGWIN
+#include <stdarg.h>
+#else
 #include <varargs.h>
+#endif
 
 #include <sys/ioctl.h>
-#include "jove.h"
 #include "io.h"
+#include "jove.h"
 #include "termcap.h"
 
 #ifdef MSDOS
@@ -535,13 +539,21 @@ int	pid,
    to fix everything up after we're done.  (Usually there's nothing to
    fix up.) */
 
+#ifdef CYGWIN
 /* VARARGS5 */
-
+int
+UnixToBuf(char *bufname, int disp, int wsize, int clobber, ...)
+{
+	va_list	ap;
+#else
+/* VARARGS5 */
 int
 UnixToBuf(bufname, disp, wsize, clobber, va_alist)
 char	*bufname;
 va_dcl
 {
+	va_list	ap;
+#endif
 #ifndef MSDOS
 	int	p[2],
 		pid,
@@ -553,13 +565,16 @@ va_dcl
 		retcode,
 #endif /* MSDOS */
 		eof;
-	va_list	ap;
 	char	*argv[32],
 		*mess;
 	File	*fp;
 	SIG_T	(*old_int)();
 
+#ifdef CYGWIN
+	va_start(ap, clobber);
+#else
 	va_start(ap);
+#endif
 	make_argv(argv, ap);
 	va_end(ap);
 	if (bufname != 0 && clobber == YES)
@@ -771,7 +786,7 @@ FilterRegion()
 
 void
 RegToUnix(outbuf, cmd)
-Buffer	*outbuf;
+struct buffer	*outbuf;
 char	*cmd;
 {
 	Mark	*m = CurMark();

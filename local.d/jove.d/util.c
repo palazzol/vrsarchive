@@ -13,7 +13,11 @@
 #ifdef MAC
 #	include "mac.h"
 #else
+#ifdef CYGWIN
+#	include <stdarg.h>
+#else
 #	include <varargs.h>
+#endif
 #endif
 
 #ifdef MSDOS

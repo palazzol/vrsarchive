@@ -54,7 +54,7 @@ private void
 #if defined(MSDOS) && defined(CHDIR)
 	abspath(char *, char *),
 #endif
-	fake_blkio(struct block *, int (*)()),
+	fake_blkio(struct block *, void (*)()),
 	LRUunlink(struct block *),
 	real_blkio(struct block *, int (*)());
 

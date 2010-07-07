@@ -8,6 +8,7 @@
 #ifdef BSD4_2
 #   include <sys/wait.h>
 #else
+#  include <stdarg.h>
 #  ifdef CYGWIN
 #   include <sys/wait.h>
 #  else
@@ -64,6 +65,8 @@ extern struct tchars tc1;
 #endif /*TIOCSLTC*/
 #endif /*TIOCGETA*/
 
+static proc_rec();
+
 char *
 pstate(p)
 Process	*p;
@@ -101,6 +104,22 @@ proc_pid(pid)
 			break;
 
 	return p;
+}
+
+private
+proc_close(p)
+Process *p;
+{
+	sighold(SIGCHLD);	/* be mutually exclusive */
+
+	if (p->p_fd >= 0) {
+		(void) close(p->p_fd);
+		global_fd &= ~(1L << p->p_fd);
+		NumProcs -= 1;
+		p->p_fd = -1;
+	}
+
+	sigrelse(SIGCHLD);
 }
 
 read_proc(fd)
@@ -232,22 +251,6 @@ char	c;
 	(void) write(p->p_fd, &c, 1);
 }
 
-private
-proc_close(p)
-Process *p;
-{
-	sighold(SIGCHLD);	/* be mutually exclusive */
-
-	if (p->p_fd >= 0) {
-		(void) close(p->p_fd);
-		global_fd &= ~(1L << p->p_fd);
-		NumProcs -= 1;
-		p->p_fd = -1;
-	}
-
-	sigrelse(SIGCHLD);
-}
-
 do_rtp(mp)
 register Mark	*mp;
 {
@@ -276,12 +279,18 @@ register Mark	*mp;
 	}
 }
 
+#ifdef CYGWIN
 /* VARARGS2 */
-
 private
-proc_strt(bufname, clobber, va_alist)
-char	*bufname;
+proc_strt(char *bufname, int clobber, ...)
+#else
+/* VARARGS2 */
+private
+proc_strt(bufname, clobber, va_list)
+char *bufname
+int clobber;
 va_dcl
+#endif
 {
 	va_list	ap;
 	char	*argv[32],
@@ -425,7 +434,11 @@ out:	if (s == 0 && t == 0)
 		(void) ioctl(0, TIOCSPGRP, (struct sgttyb *) &i);
 #endif
 		(void) setpgrp(0, i);
+#ifdef CYGWIN
+		va_start(ap, clobber);
+#else
 		va_start(ap);
+#endif
 		make_argv(argv, ap);
 		va_end(ap);
 		execv(argv[0], &argv[1]);
@@ -451,7 +464,11 @@ out:	if (s == 0 && t == 0)
 		LineInsert(1);
 
 	cmdbuf[0] = '\0';
+#ifdef CYGWIN
+	va_start(ap, clobber);
+#else
 	va_start(ap);
+#endif
 	while (cp = va_arg(ap, char *))
 		sprintf(&cmdbuf[strlen(cmdbuf)], "%s ", cp++);
 	va_end(ap);

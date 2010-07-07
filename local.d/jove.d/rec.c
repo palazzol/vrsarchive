@@ -11,6 +11,9 @@
 
 #ifndef MAC
 #	include <sys/file.h>
+#ifdef CYGWIN
+#	include <unistd.h>
+#endif
 #endif
 
 private int	rec_fd = -1;

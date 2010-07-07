@@ -12,7 +12,7 @@
 #ifdef MAC
 #	include  "mac.h"
 #else
-#	include <varargs.h>
+#	include <stdarg.h>
 #endif
 
 #ifdef MAC
@@ -22,7 +22,7 @@
 
 #ifdef	LINT_ARGS
 private void
-	doformat(File *, char *, ...),
+	doformat(File *, char *, va_list ap),
 	outld(long, int),
 	pad(int, int),
 	PPchar(int, char *),
@@ -47,7 +47,6 @@ private void
 char	mesgbuf[MESG_SIZE];
 
 /* VARARGS2 */
-
 void
 format(buf, len, fmt, ap)
 char	*buf,
@@ -323,31 +322,25 @@ va_list	ap;
 }
 
 /* VARARGS1 */
-
 char *
-sprint(fmt, va_alist)
-char	*fmt;
-va_dcl
+sprint(char *fmt, ...)
 {
 	va_list	ap;
 	static char	line[100];
 
-	va_start(ap);
+	va_start(ap, fmt);
 	format(line, sizeof line, fmt, ap);
 	va_end(ap);
 	return line;
 }
 
 /* VARARGS1 */
-
 void
-printf(fmt, va_alist)
-char	*fmt;
-va_dcl
+printf(char *fmt, ...)
 {
 	va_list	ap;
 
-	va_start(ap);
+	va_start(ap, fmt);
 #ifndef IBMPC
 	doformat(stdout, fmt, ap);
 #else /* IBMPC */
@@ -358,16 +351,12 @@ va_dcl
 }
 
 /* VARARGS1 */
-
 void
-fprintf(fp, fmt, va_alist)
-File	*fp;
-char	*fmt;
-va_dcl
+fprintf(File *fp, char *fmt, ...)
 {
 	va_list	ap;
 
-	va_start(ap);
+	va_start(ap, fmt);
 	doformat(fp, fmt, ap);
 	va_end(ap);
 }
@@ -375,45 +364,36 @@ va_dcl
 /* VARARGS2 */
 
 void
-sprintf(str, fmt, va_alist)
-char	*str,
-	*fmt;
-va_dcl
+sprintf(char *str, char *fmt, ...)
 {
 	va_list	ap;
 
-	va_start(ap);
+	va_start(ap, fmt);
 	format(str, 130, fmt, ap);
 	va_end(ap);
 }
 
 /* VARARGS1 */
-
 void
-s_mess(fmt, va_alist)
-char	*fmt;
-va_dcl
+s_mess(char *fmt, ...)
 {
 	va_list	ap;
 
 	if (InJoverc)
 		return;
-	va_start(ap);
+	va_start(ap, fmt);
 	format(mesgbuf, sizeof mesgbuf, fmt, ap);
 	va_end(ap);
 	message(mesgbuf);
 }
 
 /* VARARGS1 */
-
 void
-f_mess(fmt, va_alist)
-char	*fmt;
-va_dcl
+f_mess(char *fmt, ...)
 {
 	va_list	ap;
 
-	va_start(ap);
+	va_start(ap, fmt);
 	format(mesgbuf, sizeof mesgbuf, fmt, ap);
 	va_end(ap);
 	DrawMesg(NO);
@@ -421,18 +401,15 @@ va_dcl
 }
 
 /* VARARGS1 */
-
 void
-add_mess(fmt, va_alist)
-char	*fmt;
-va_dcl
+add_mess(char *fmt, ...)
 {
 	int	mesg_len = strlen(mesgbuf);
 	va_list	ap;
 
 	if (InJoverc)
 		return;
-	va_start(ap);
+	va_start(ap, fmt);
 	format(&mesgbuf[mesg_len], (sizeof mesgbuf) - mesg_len, fmt, ap);
 	va_end(ap);
 	message(mesgbuf);

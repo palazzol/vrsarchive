@@ -8,6 +8,9 @@
 #ifdef TXT_TO_C
 #define STDIO
 #endif
+#ifdef CYGWIN
+#define LINT_ARGS
+#endif
 #ifdef LINT_ARGS
 extern int
 	abs(int);
@@ -61,7 +64,6 @@ extern  int
 	TwoBlank(void),
 	UnixToBuf(char *,int ,int ,int , ...),
 	addgetc(void),
-	alphacomp(char * *a,char * *b),
 	arg_type(void),
 	arg_value(void),
 	ask_int(char *prompt,int base),
@@ -111,7 +113,6 @@ extern  int
 	pnt_line(void),
 	rawkey_ready(void),
 	re_lindex(struct line *line,int offset,char *expr,char * *alts,int lbuf_okay),
-	scandir(char *dir,char * * *nmptr,int (*qualify)(),int (*sorter)()),
 	sindex(char *pattern,char *string),
 	swrite(char *line,int inversep,int abortable),
 	unbind_aux(int c),
@@ -119,7 +120,6 @@ extern  int
 	yes_or_no_p(char *, ...);
 
 extern  disk_line 
-	f_getputl(struct line *line,struct File *fp),
 	putline(char *buf);
 
 extern  struct File 
@@ -446,7 +446,6 @@ extern  void
 	do_set_mark(struct line *l,int c),
 	do_sgtty(void),
 	do_space(void),
-	dobell(int x),
 	dofread(struct File *fp),
 	dword(int forward),
 	error(char *, ...),
@@ -454,7 +453,11 @@ extern  void
 	f_close(struct File *fp),
 	f_mess(char *, ...),
 	f_readn(struct File *fp,char *addr,int n),
+#ifdef CYGWIN
+	f_seek(struct File *fp,off_t offset),
+#else
 	f_seek(struct File *fp,long offset),
+#endif
 	f_toNL(struct File *fp),
 	f_word(int num),
 	file_backup(char *fname),
@@ -535,7 +538,6 @@ extern  void
 	setfname(struct buffer *b,char *name),
 	setsearch(char *str),
 	settout(char *ttbuf),
-	slowpoke(void),
 #ifndef STDIO
 	sprintf(char *,char *, ...),
 #endif
@@ -549,7 +551,6 @@ extern  void
 	ttyset(int n),
 	unmodify(void),
 	unwind_macro_stack(void),
-	updmode(void),
 	v_clear(int line1,int line2),
 	v_del_line(int num,int top,int bottom),
 	v_ins_line(int num,int top,int bottom),
@@ -1052,7 +1053,6 @@ extern  void
 	do_set_mark(),
 	do_sgtty(),
 	do_space(),
-	dobell(),
 	dofread(),
 	dword(),
 	error(),
@@ -1141,7 +1141,6 @@ extern  void
 	setfname(),
 	setsearch(),
 	settout(),
-	slowpoke(),
 #ifndef STDIO
 	sprintf(),
 #endif	
@@ -1155,7 +1154,6 @@ extern  void
 	ttyset(),
 	unmodify(),
 	unwind_macro_stack(),
-	updmode(),
 	v_clear(),
 	v_del_line(),
 	v_ins_line(),

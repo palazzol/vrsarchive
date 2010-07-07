@@ -5,6 +5,7 @@
  * included in all the files.                                              *
  ***************************************************************************/
 
+#include "io.h"
 #include "jove.h"
 
 #ifdef MSDOS
