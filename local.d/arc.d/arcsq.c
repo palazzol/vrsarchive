@@ -72,6 +72,15 @@ static INT curin;                      /* value currently being encoded */
 static INT cbitsrem;                   /* # of code string bits left */
 static unsigned INT ccode;             /* current code right justified */
 
+static INT scale();
+static INT heap();
+static INT bld_tree();
+static INT buildenc();
+static INT init_enc();
+static INT adjust();
+static INT cmptrees();
+static INT maxchar();
+
 INT init_sq()                          /* prepare for scanning pass */
 {
     INT i;                             /* node index */
@@ -117,11 +126,6 @@ long pred_sq()                         /* predict size of squeezed file */
     unsigned INT ceiling;              /* limit for scaling */
     long size = 0;                     /* predicted size */
     INT numnodes;                      /* # of nodes in simplified tree */
-    INT scale();
-    INT heap();
-    INT bld_tree();
-    INT buildenc();
-    INT init_enc();
 
     scan_sq(EOF);                      /* signal end of input */
 
@@ -254,7 +258,6 @@ static INT heap(list,length)
 INT list[], length;
 {
     register INT i;
-    INT adjust();
 
     for (i=(length-2)/2; i>=0; --i)
         adjust(list,i,length-1);
@@ -266,7 +269,6 @@ static INT adjust(list,top,bottom)
 INT list[], top, bottom;
 {
     register INT k, temp;
-    INT cmptrees();
 
     k = 2 * top + 1;                   /* left child of top */
     temp = list[top];                  /* remember root node of top tree */
@@ -331,7 +333,6 @@ INT len;
     register INT freenode;             /* next free node in tree */
     register struct nd *frnp;          /* free node pointer */
     INT lch, rch;                      /* temps for left, right children */
-    INT maxchar();
 
     /*
      * Initialize index to next available (non-leaf) node.

@@ -23,6 +23,8 @@
  
 #include "arc.h"
 
+static INT lstfile();
+
 INT lstarc(argc,argv)                  /* list files in archive */
 INT argc;                              /* number of arguments */
 char *argv[];                          /* pointers to arguments */
@@ -32,7 +34,6 @@ char *argv[];                          /* pointers to arguments */
     INT did[MAXARG];                   /* true when argument was used */
     long tnum, tlen, tsize;            /* totals */
     INT n;                             /* index */
-    INT lstfile();
 
     tnum = tlen = tsize = 0;           /* reset totals */
 

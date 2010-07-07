@@ -59,7 +59,7 @@ FILE *f;                               /* archive to read header from */
         }
 
         if (feof(f) && first)
-            abort("%s is not an archive",arcname);
+            arcabort("%s is not an archive",arcname);
 
         if (warn)
             printf("  %d bytes skipped.\n",try);
@@ -70,7 +70,7 @@ FILE *f;                               /* archive to read header from */
 
     hdrver = fgetc(f);                 /* get header version */
     if (hdrver<0)
-        abort("Invalid header in archive %s",arcname);
+        arcabort("Invalid header in archive %s",arcname);
     if (hdrver==0)
         return(0);                     /* note our end of archive marker */
     if (hdrver>ARCVER)
@@ -79,7 +79,7 @@ FILE *f;                               /* archive to read header from */
         printf("I don't know how to handle file %s in archive %s\n",
             name,arcname);
         printf("I think you need a newer version of ARC.\n");
-        abort("Archive error");
+        arcabort("Archive error");
     }
 
     /* amount to read depends on header type */
@@ -163,7 +163,7 @@ FILE *t;                               /* file to write to */
         if (ferror(t))
         {
             perror("system error:");
-            abort("Write failed");
+            arcabort("Write failed");
         }
     }
 }

@@ -141,7 +141,7 @@ char *argv[];                          /* pointers to arguments */
         case 'T':
         case 'C':
             if (opt)                    /* do we have one yet? */
-                abort("Cannot mix %c and %c",opt,*a);
+                arcabort("Cannot mix %c and %c",opt,*a);
             else
                 opt = *a;               /* else remember it */
             break;
@@ -169,13 +169,13 @@ char *argv[];                          /* pointers to arguments */
         case '-':                       /* UNIX option marker */
             break;
         default:
-            abort("%c is an unknown command",*a);
+            arcabort("%c is an unknown command",*a);
         }
     }
 
     /* get out if no option made it through */
     if (!opt)
-        abort("I don't know what to do!");
+        arcabort("I don't know what to do!");
 
     /* create archive names (arctemp, arcname, newname, bakname) */
     makenames(argv[2]);

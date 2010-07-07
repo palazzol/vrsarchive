@@ -126,11 +126,12 @@ static long checkpoint;
 #define FIRST   257                    /* first free entry */
 #define CLEAR   256                    /* table clear output code */
 
+static INT putcode();
+
 static INT cl_block(t)                 /* table clear for block compress */
 FILE *t;                               /* our output file */
 {
     long rat;
-    INT putcode();
 
     checkpoint = in_count + CHECK_GAP;
 
@@ -474,7 +475,7 @@ FILE *t;                               /* file to write text to */
     INT code, oldcode, incode;
 
     if ((code=getc_unp(f))!=BITS)
-        abort("File packed with %d bits, I can only handle %d",code,BITS);
+        arcabort("File packed with %d bits, I can only handle %d",code,BITS);
 
     n_bits = INIT_BITS;                /* set starting code size */
     clear_flg = 0;
@@ -740,7 +741,7 @@ INT c;                                 /* character to push */
     stack[sp] = ((char) c);            /* coerce integer into a char */
 
     if (++sp >= TABSIZE)
-        abort("Stack overflow\n");
+        arcabort("Stack overflow\n");
 }
 
 static INT pop()                       /* pop character from stack */

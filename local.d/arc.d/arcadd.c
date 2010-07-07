@@ -25,6 +25,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+static INT addfile();
+
 INT addarc(argc,argv,move,update,fresh)/* add files to archive */
 INT argc;                              /* number of arguments */
 char *argv[];                          /* pointers to arguments */
@@ -37,7 +39,6 @@ INT fresh;                             /* true if freshening */
     INT n;                             /* indices */
     struct stat fbuf;                  /* file information structure */
     struct heads hdr;                  /* file header data storage */
-    INT addfile();
 
     openarc(1);                        /* open archive for changes */
 
@@ -63,7 +64,7 @@ INT fresh;                             /* true if freshening */
     {
         fclose(arc);
         fclose(new);
-        abort("I have no work to do!");
+        arcabort("I have no work to do!");
     }
 
     /* now we must copy over all files that follow our additions */

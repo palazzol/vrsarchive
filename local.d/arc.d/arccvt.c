@@ -24,6 +24,7 @@
 #include "arc.h"
 
 static char tempname[STRLEN];          /* temp file name */
+static INT cvtfile();
 
 INT cvtarc(argc,argv)                  /* convert archive */
 INT argc;                              /* number of arguments */
@@ -33,7 +34,6 @@ char *argv[];                          /* pointers to arguments */
     INT cvt;                           /* true to convert current file */
     INT did[MAXARG];                   /* true when argument was used */
     INT n;                             /* index */
-    INT cvtfile();
 
     sprintf(tempname,"%s.cvt",arctemp);
 
@@ -95,7 +95,7 @@ struct heads *hdr;                     /* pointer to header data */
     FILE *tmp, *fopen();               /* temporary file */
 
     if (!(tmp=fopen(tempname,"w+")))
-        abort("Unable to create temporary file %s",tempname);
+        arcabort("Unable to create temporary file %s",tempname);
 
     if (note)
     {

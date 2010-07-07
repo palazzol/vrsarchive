@@ -125,7 +125,7 @@ char *pattern;
     }
 
     if (*pattern++ != ']')
-        abort("Character class error");
+        arcabort("Character class error");
     else
         if (ismatch)
             ismatch = match (++string, pattern);

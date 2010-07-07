@@ -74,7 +74,7 @@ INT size;
     for (i = 0; i < size; dest[i] = c, i++);
 }
 
-abort(s,arg1,arg2,arg3)                /* something went wrong...QUIT!! */
+arcabort(s,arg1,arg2,arg3)                /* something went wrong...QUIT!! */
 char *s;
 {
     char tmpnam1[STRLEN], tmpnam2[STRLEN];
@@ -136,7 +136,7 @@ char *rawfn;
 
 onintr()                               /* SIGNAL was caught */
 {
-    abort("User Requested Abort");
+    arcabort("User Requested Abort");
 }
 
 /*

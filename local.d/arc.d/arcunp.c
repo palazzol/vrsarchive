@@ -37,12 +37,13 @@ static INT state;                      /* repeat unpacking state */
 static INT crcval;                     /* CRC check value */
 static long size;                      /* bytes to read */
 
+static INT putc_unp();
+
 INT unpack(f,t,hdr)                    /* unpack an archive entry */
 FILE *f, *t;                           /* source, destination */
 struct heads *hdr;                     /* pointer to file header data */
 {
     INT c;                             /* one char of stream */
-    INT putc_unp();
     INT putc_ncr();
     INT getc_unp();
 
@@ -163,7 +164,7 @@ FILE *t;                               /* file to receive data */
         state = NOHIST;                /* back to no history */
         return;
     default:
-        abort("Bad NCR unpacking state (%d)",state);
+        arcabort("Bad NCR unpacking state (%d)",state);
     }
 }
 

@@ -59,7 +59,7 @@ FILE *f;                               /* file containing squeezed data */
     numnodes = get_int(f);
 
     if (numnodes<0 || numnodes>=NUMVALS)
-        abort("File has an invalid decode tree");
+        arcabort("File has an invalid decode tree");
 
     /* initialize for possible empty tree (SPEOF only) */
 

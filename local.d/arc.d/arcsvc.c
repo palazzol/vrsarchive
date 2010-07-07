@@ -32,12 +32,12 @@ INT chg;                               /* true to open for changes */
         if(chg)
             printf("Creating new archive: %s\n",arcname);
         else
-            abort("Cannot read archive: %s",arcname);
+            arcabort("Cannot read archive: %s",arcname);
     }
 
     if(chg)                            /* if opening for changes */
         if(!(new=fopen(newname,"w")))
-            abort("Cannot create archive copy: %s",newname);
+            arcabort("Cannot create archive copy: %s",newname);
 }
 
 INT closearc(chg)                      /* close an archive */
@@ -59,15 +59,15 @@ INT chg;                               /* true if archive was changed */
             {
                 unlink(bakname);       /* erase any old copies */
                 if(rename(arcname,bakname))
-                    abort("Cannot rename %s to %s",arcname,bakname);
+                    arcabort("Cannot rename %s to %s",arcname,bakname);
                 printf("Keeping backup archive: %s\n",bakname);
             }
             else if(unlink(arcname))
-                abort("Cannot delete old archive: %s",arcname);
+                arcabort("Cannot delete old archive: %s",arcname);
         }
 
         if(rename(newname,arcname))
-            abort("Cannot rename %s to %s",newname,arcname);
+            arcabort("Cannot rename %s to %s",newname,arcname);
     }
 }
 

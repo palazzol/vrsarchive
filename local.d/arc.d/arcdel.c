@@ -33,7 +33,7 @@ char *argv[];                          /* pointers to arguments */
     INT n;                             /* index */
 
     if (!argc)                         /* she must specify which */
-        abort("You must tell me which files to delete!");
+        arcabort("You must tell me which files to delete!");
 
     for (n=0; n<argc; n++)             /* for each argument */
         did[n] = 0;                    /* reset usage flag */

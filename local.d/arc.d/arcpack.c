@@ -40,7 +40,7 @@ static unsigned char state;            /* current packing state */
 
 static long stdlen;                    /* length for standard packing */
 static INT crcval;                     /* CRC check value */
-INT getch();
+static INT getch();
 
 INT pack(f,t,hdr)                      /* pack file into an archive */
 FILE *f, *t;                           /* source, destination */
@@ -229,7 +229,7 @@ FILE *f;                               /* file to get from */
         state = SENDNEWC;
         return(repcnt);
     default:
-        abort("Bug - bad ncr state\n");
+        arcabort("Bug - bad ncr state\n");
     }
 #ifdef lint
     return(EOF);
