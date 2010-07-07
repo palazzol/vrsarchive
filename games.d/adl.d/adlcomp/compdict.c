@@ -10,6 +10,8 @@
 char
     *calloc();
 
+static write_hash();
+
 /* Structure of a hash table entry */
 struct hash_entry {
     struct symbol
