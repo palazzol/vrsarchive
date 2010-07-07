@@ -51,6 +51,8 @@ FILE *mailhdr();
 char *any();
 char *genversion();
 
+extern log(char *fmt, ...);
+
 /*
  *	Authors:
  *		Matt Glickman	glickman@ucbarpa.Berkeley.ARPA

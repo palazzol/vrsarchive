@@ -21,6 +21,8 @@ FILE *popen(), *mhopen(), *mailhdr();
 
 char *senderof();
 
+extern log(char *fmt, ...);
+
 control(h)
 struct hbuf *h;
 {

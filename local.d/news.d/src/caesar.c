@@ -27,6 +27,8 @@ static char	*SccsId = "@(#)caesar.c	1.5	8/14/84";
 #include <math.h>
 extern char *calloc();
 
+static int rotate();
+
 main( argc, argv )
 int argc;
 char *argv[];

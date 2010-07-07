@@ -19,6 +19,8 @@ static struct srec srec;
 
 static struct hbuf h, hh;
 
+extern log(char *fmt, ...);
+
 broadcast()
 {
 	register char *nptr, *hptr;
