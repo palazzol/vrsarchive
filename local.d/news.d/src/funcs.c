@@ -11,6 +11,7 @@ static char	*SccsId = "@(#)funcs.c	2.19	8/28/84";
 #if defined(USG) || defined(BSD4_2) || defined(BSD4_1C)
 #include <fcntl.h>
 #endif !v7
+#include <stdarg.h>
 extern char *Progname;
 
 /*
@@ -261,7 +262,6 @@ register char *name, *fmode;
 	register FILE *fp;
 	char	*fname;
 	extern int errno, sys_nerr;
-	extern char *sys_errlist[];
 
 	if ((fp = fopen(name, fmode)) == NULL) {
 #ifdef IHCC
@@ -348,6 +348,22 @@ char *ngname;
 }
 
 /* VARARGS1 */
+log(char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	_dolog(0, fmt, ap);
+}
+
+/* VARARGS1 */
+logerr(char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	_dolog(1, fmt, ap);
+}
+
+/* VARARGS1 */
 xerror(message, arg1, arg2, arg3)
 char *message;
 int arg1, arg2, arg3;
@@ -358,20 +374,6 @@ int arg1, arg2, arg3;
 	sprintf(buffer, message, arg1, arg2, arg3);
 	logerr(buffer);
 	xxit(1);
-}
-
-/* VARARGS1 */
-log(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
-char *fmt;
-{
-	_dolog(0, fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9);
-}
-
-/* VARARGS1 */
-logerr(fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
-char *fmt;
-{
-	_dolog(1, fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9);
 }
 
 char *lfsuffix[] = {
@@ -387,7 +389,7 @@ char *lfsuffix[] = {
  * figuring out the remote system name are also logged.
  */
 /* VARARGS1 */
-_dolog(which, fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9)
+_dolog(which, fmt, ap)
 char *fmt;
 {
 	FILE *logfile;
@@ -436,7 +438,7 @@ crackpath:
 	logtime += 4;
 
 
-	sprintf(msg, fmt, a1, a2, a3, a4, a5, a6, a7, a8, a9);
+	vsprintf(msg, fmt, ap);
 
 	if (which)
 		fprintf(stderr,"%s: %s\n", Progname, msg);
