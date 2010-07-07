@@ -788,7 +788,7 @@ remember(article)
 #endif
 }
 
-#if !defined(BSD4_2) && !defined(BSD4_1C)
+#if !defined(BSD4_2) && !defined(BSD4_1C) && !defined(__CYGWIN__)
 rename(from,to)
 register char *from, *to;
 {

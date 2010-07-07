@@ -36,9 +36,6 @@ static char	*SccsId = "@(#)batch.c	1.11	8/23/84";
 
 struct stat sbuf;
 
-extern int errno;
-extern char *sys_errlist[];
-
 main(argc,argv)
 char **argv;
 {
@@ -180,7 +177,7 @@ char *fmt;
 	}
 }
 
-#if !defined(BSD4_2) && !defined(BSD4_1C)
+#if !defined(BSD4_2) && !defined(BSD4_1C) && !defined(__CYGWIN__)
 rename(from, to)
 register char *from, *to;
 {
