@@ -200,7 +200,7 @@ char *errf;
 	}
 	fclose(errfd);
 	if ((logn = getlogin()) == NULL && (logn = getenv("USER")) == NULL) {
-		if ((pwd = getpwent(getuid())) == NULL)
+		if ((pwd = getpwuid(getuid())) == NULL)
 			return;
 		logn = pwd->pw_name;
 	}
