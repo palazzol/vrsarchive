@@ -17,6 +17,8 @@
 #define	NUMBER		04	/* Numeric option */
 #define	NO_TOGGLE	0100	/* Option cannot be toggled with "-" cmd */
 
+static int getnum();
+
 /*
  * Variables controlled by command line options.
  */
