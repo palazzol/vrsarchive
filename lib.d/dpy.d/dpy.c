@@ -344,6 +344,42 @@ dpyinit(ttytype, modes)
 
 
 /*
+ * Subroutine to move to the given location on the screen.  The third argument
+ * is a pointer to beginning of the desired row in case we find it is faster
+ * to type the intervening characters.  If NULL, we must use addressing.
+ */
+static
+domove(row, col, cp)
+	register int	row;		/* desired row */
+	register int	col;		/* desired column */
+	register char	*cp;		/* data on desired row */
+{
+	register struct	window	*wp;	/* window structure */
+
+	wp = &window;
+	if (cp && (row == wp->currow) && (col >= wp->curcol)
+		&& (col < wp->curcol + 6)) {		/* a few ahead */
+			cp += wp->curcol;
+			while (wp->curcol < col) {
+				putchar(*cp);
+				cp++;
+				wp->curcol++;
+			}
+			return;
+	}
+	if ((col == 0) && (row == wp->currow + 1)) {	/* next row */
+		putchar('\n');
+		wp->currow++;
+		wp->curcol = 0;
+		return;
+	}
+	tputs(tgoto(wp->tc_cm, col, row), 1, dpytputs);	/* arbitrary */
+	wp->currow = row;
+	wp->curcol = col;
+}
+
+
+/*
  * Terminate the window, home down to the bottom of the screen, and reset
  * the terminal modes to their original state.
  */
@@ -516,6 +552,21 @@ dpyprintf(fmt, args)
 #endif	BSD
 #ifdef	USG
 
+#ifdef CYGWIN
+#include <stdarg.h>
+
+dpyprintf(char *format, ...)
+{
+	register int count;
+	va_list ap;
+	char	buf[5000];		/* data storage */
+
+	va_start(ap, &format);
+	count = vsprintf(buf, format, ap);
+	va_end(ap);
+	return(dpywrite(buf, count));
+}
+#else
 #include <varargs.h>
 
 dpyprintf(format, va_alist)
@@ -531,6 +582,7 @@ va_dcl
 	va_end(ap);
 	return(dpywrite(buf, count));
 }
+#endif
 #endif	USG
 
 
@@ -642,6 +694,37 @@ dpygetcol()
 }
 
 
+/*
+ * Set the terminal cursor at the current write location.
+ * If the window is full, the cursor is placed at the front of the
+ * last line in the window.  If lines are not being wrapped and the
+ * line is full, the cursor is placed at the end of the line.
+ * Otherwise, the cursor is placed at the location being written to next.
+ */
+static
+dpycursor()
+{
+	register struct	window	*wp;	/* window pointer */
+	register char	*cp;		/* current write location */
+	register char	*begrow;	/* beginning of current row */
+	register int	row;		/* row number */
+
+	wp = &window;
+	cp = wp->cp;
+	if (wp->full)
+		cp = wp->endwin;
+	else if (cp >= wp->endrow) {
+		if (wp->nocrlf || (wp->begrow >= wp->endwin))
+			cp = wp->endrow - 1;
+		else
+			cp = wp->begrow + wp->delta;
+	}
+	row = (cp - wp->begdata) / wp->delta;
+	begrow = wp->begdata + (row * wp->delta);
+	domove(row, cp - begrow, begrow);
+}
+
+
 /* Make the screen match the data as previously written by the user */
 dpyupdate()
 {
@@ -701,73 +784,6 @@ dpyupdate()
 	wp->endchange = wp->begdata;
 	if (wp->nomove == 0) dpycursor();
 	fflush(stdout);
-}
-
-
-/*
- * Set the terminal cursor at the current write location.
- * If the window is full, the cursor is placed at the front of the
- * last line in the window.  If lines are not being wrapped and the
- * line is full, the cursor is placed at the end of the line.
- * Otherwise, the cursor is placed at the location being written to next.
- */
-static
-dpycursor()
-{
-	register struct	window	*wp;	/* window pointer */
-	register char	*cp;		/* current write location */
-	register char	*begrow;	/* beginning of current row */
-	register int	row;		/* row number */
-
-	wp = &window;
-	cp = wp->cp;
-	if (wp->full)
-		cp = wp->endwin;
-	else if (cp >= wp->endrow) {
-		if (wp->nocrlf || (wp->begrow >= wp->endwin))
-			cp = wp->endrow - 1;
-		else
-			cp = wp->begrow + wp->delta;
-	}
-	row = (cp - wp->begdata) / wp->delta;
-	begrow = wp->begdata + (row * wp->delta);
-	domove(row, cp - begrow, begrow);
-}
-
-
-/*
- * Subroutine to move to the given location on the screen.  The third argument
- * is a pointer to beginning of the desired row in case we find it is faster
- * to type the intervening characters.  If NULL, we must use addressing.
- */
-static
-domove(row, col, cp)
-	register int	row;		/* desired row */
-	register int	col;		/* desired column */
-	register char	*cp;		/* data on desired row */
-{
-	register struct	window	*wp;	/* window structure */
-
-	wp = &window;
-	if (cp && (row == wp->currow) && (col >= wp->curcol)
-		&& (col < wp->curcol + 6)) {		/* a few ahead */
-			cp += wp->curcol;
-			while (wp->curcol < col) {
-				putchar(*cp);
-				cp++;
-				wp->curcol++;
-			}
-			return;
-	}
-	if ((col == 0) && (row == wp->currow + 1)) {	/* next row */
-		putchar('\n');
-		wp->currow++;
-		wp->curcol = 0;
-		return;
-	}
-	tputs(tgoto(wp->tc_cm, col, row), 1, dpytputs);	/* arbitrary */
-	wp->currow = row;
-	wp->curcol = col;
 }
 
 
