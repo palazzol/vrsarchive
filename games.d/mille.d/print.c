@@ -67,7 +67,7 @@ reg bool	for_real; {
 	reg int		x;
 	reg char	*Score_fmt = "%4d";
 
-	stdscr = Score;
+	overwrite(stdscr, Score);
 	for (pp = Player; pp < &Player[2]; pp++) {
 		x = (pp - Player) * 6 + 21;
 		mvprintw(1, x, Score_fmt, pp->mileage);
@@ -96,5 +96,5 @@ reg bool	for_real; {
 			mvprintw(9, x, Score_fmt, pp->games);
 		}
 	}
-	stdscr = Board;
+	overwrite(stdscr, Board);
 }

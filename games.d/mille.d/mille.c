@@ -42,7 +42,8 @@ reg char	*av[]; {
 	Play = PLAYER;
 	initscr();
 	delwin(stdscr);
-	stdscr = Board = newwin(BOARD_Y, BOARD_X, 0, 0);
+	Board = newwin(BOARD_Y, BOARD_X, 0, 0);
+	overwrite(stdscr, Board);
 	Score = newwin(SCORE_Y, SCORE_X, 0, 40);
 	Miles = newwin(MILES_Y, MILES_X, 17, 0);
 	leaveok(Score, TRUE);

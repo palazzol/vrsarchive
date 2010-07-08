@@ -5,12 +5,12 @@
 error(str, arg)
 char	*str;
 {
-	stdscr = Score;
+	overwrite(stdscr, Score);
 	mvprintw(ERR_Y, ERR_X, str, arg);
 	clrtoeol();
 	putchar('\0');
 	refresh();
-	stdscr = Board;
+	overwrite(stdscr, Board);
 	return FALSE;
 }
 

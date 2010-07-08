@@ -91,14 +91,14 @@ newboard() {
 		wclrtobot(Miles);
 	}
 	newscore();
-	stdscr = Board;
+	overwrite(stdscr, Board);
 }
 
 newscore() {
 
 	int	i;
 
-	stdscr = Score;
+	overwrite(stdscr, Score);
 	move(0, 22);
 	if (inch() != 'Y') {
 		erase();
@@ -152,5 +152,5 @@ newscore() {
 		mvaddstr(13, 21, "s: save");
 		mvaddstr(14, 21, "r: reprint");
 	}
-	stdscr = Board;
+	overwrite(stdscr, Board);
 }
