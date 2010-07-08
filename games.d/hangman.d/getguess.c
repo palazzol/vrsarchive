@@ -61,8 +61,10 @@ readch()
 				die();
 		}
 		else if (ch == MKCTRL('L')) {
+                        int y, x;
 			wrefresh(curscr);
-			mvcur(0, 0, curscr->_cury, curscr->_curx);
+                        getyx(curscr, y, x);
+			mvcur(0, 0, y, x);
 		}
 		else
 			return ch;
