@@ -143,7 +143,6 @@ int argc;
 char *argv[];
 {
     extern fputchar();
-    char *malloc();
     char *getenv();
     char *tgetstr(), *tgoto();
     float ranf();
