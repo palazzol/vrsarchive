@@ -373,14 +373,6 @@ register struct obj *otmph = some_armor();
 }
 
 static
-remarm(obj) register struct obj *obj; {
-	if(!obj || obj->olet != '[')
-		return(0);
-	(void) marmoroff(obj);
-	return(1);
-}
-
-static
 marmoroff(otmp) register struct obj *otmp; {
 register int delay = -objects[otmp->otyp].oc_delay;
 	if(cursed(otmp)) return(0);
@@ -389,6 +381,14 @@ register int delay = -objects[otmp->otyp].oc_delay;
 		nomul(delay);
 	off_msg(otmp);
 	nomovemsg = "You finished taking off your armor.";
+	return(1);
+}
+
+static
+remarm(obj) register struct obj *obj; {
+	if(!obj || obj->olet != '[')
+		return(0);
+	(void) marmoroff(obj);
 	return(1);
 }
 

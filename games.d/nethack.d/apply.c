@@ -12,6 +12,12 @@ extern int (*occupation)();
 extern char *occtxt;
 extern char quitchars[];
 extern char pl_character[];
+#ifdef WALKIES
+static use_leash();
+#endif
+#ifdef KAA
+static use_stethoscope();
+#endif
 
 #ifdef KAA
 extern boolean unweapon;

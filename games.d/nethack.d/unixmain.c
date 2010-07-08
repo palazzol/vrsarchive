@@ -12,6 +12,10 @@
 #define	gamename	"NetHack"
 #endif
 
+#ifdef CHDIR
+static chdirx();
+#endif
+
 extern char *getlogin(), *getenv();
 extern char plname[PL_NSIZ], pl_character[PL_CSIZ];
 
