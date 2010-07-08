@@ -143,7 +143,7 @@ char *argv[];
 					case 'H' :
 					case '?' :
 						print_help();
-						exit();
+						exit(0);
 					default	:
 						break;
 				}
