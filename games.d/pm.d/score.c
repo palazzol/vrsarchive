@@ -9,6 +9,8 @@
 #include <pwd.h>
 #include <stdio.h>
 
+static	int	madeit(), rwscore(), rwuser();
+
 /*
 ** check_scrs()	- print out the pm roll (only for score enquiries)
 */
@@ -134,7 +136,7 @@ int	flags;
 	}
 	if (madeit(thescore, scrs))
 	{
-		auto	score	newscr;
+		auto	score	newscore;
 		auto	char	buf[BUFSIZ];
 
 		scrollok(stdscr, TRUE);
@@ -142,13 +144,13 @@ int	flags;
 		printw("your score of %ld!\n", thescore);
 		printw("Your name please: ");
 		(void) getstr(buf);
-		newscr.sc_score = thescore;
-		newscr.sc_uid = uid;
-		newscr.sc_level = level;
-		newscr.sc_mons = mon;
-		newscr.sc_flags = flags;
-		strucpy(newscr.sc_name, buf, NAME_SIZE);
-		newscr.sc_name[NAME_SIZE - 1] = NULL;
+		newscore.sc_score = thescore;
+		newscore.sc_uid = uid;
+		newscore.sc_level = level;
+		newscore.sc_mons = mon;
+		newscore.sc_flags = flags;
+		strucpy(newscore.sc_name, buf, NAME_SIZE);
+		newscore.sc_name[NAME_SIZE - 1] = NULL;
 		/*
 		** find where to insert their score
 		*/
@@ -159,7 +161,7 @@ int	flags;
 			if (thescore < scrs[i].sc_score)
 				continue;
 			scrcpy(&scr, &(scrs[i]));
-			scrcpy(&(scrs[i]), &newscr);
+			scrcpy(&(scrs[i]), &newscore);
 			for (++i; i < MAX_SCORES; i++)
 			{
 				auto	score	tmp;
@@ -171,7 +173,7 @@ int	flags;
 			break;
 		}
 		if (scrs[i].sc_uid == -1)	/* add at end of roll */
-			scrcpy(&(scrs[i]), &newscr);
+			scrcpy(&(scrs[i]), &newscore);
 		if (rwscore(1, scrs))
 			fprintf(stderr, "%s: cannot write score file\n", argv0);
 	}
