@@ -6,7 +6,9 @@ static char *cpyrid = "@(#)Copyright (C) 1985 by D Bell";
 #ifdef SYS5
 #define BSD_COMP
 #include <sys/ioctl.h>
+#ifndef CYGWIN
 #define bcopy(f, t, n)	memcpy(t, f, n)
+#endif
 #define random()		rand()
 #endif
 #include "war.h"
