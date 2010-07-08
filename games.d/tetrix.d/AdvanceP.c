@@ -306,7 +306,7 @@ switch (Type) {
 
 	default : 
 		printf("Advance Piece: illegal piece Type=%d!!\n",Type); 
-		exit();
+		exit(1);
 	}
 badout:
 	return(0);

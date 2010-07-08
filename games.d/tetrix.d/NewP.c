@@ -84,7 +84,7 @@ switch (Type) {
 		}
 	    else return(0);
 	break;
-	default : printf("illegal piece Type=%d!!\n",Type); exit();
+	default : printf("illegal piece Type=%d!!\n",Type); exit(1);
 	}
 refresh();
 Row=STARTROW; Column=STARTCOL;	/* all pieces start at same point */

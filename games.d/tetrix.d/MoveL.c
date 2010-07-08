@@ -249,7 +249,7 @@ switch (Type) {
 		goto out;
 	default : 
 		printf("illegal piece Type=%d!!\n",Type); 
-		exit();
+		exit(1);
 	}
 beepout:
 	if (Beep) beep();
