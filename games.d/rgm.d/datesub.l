@@ -4,7 +4,7 @@
  * Copyright (C) 1985 by A. Appel, G. Jacobson, L. Hamey, and M. Mauldin
  */
 
-# define yywrap() 1
+yywrap() { return 1; }
 %}
 %%
 "Jan"				printf ("1"); 
