@@ -9,6 +9,10 @@
 # include "types.h"
 
 extern char *malloc();
+static initgene(), parsegene(), selectgene(), summgene(), writegene();
+static birth(), cross(), mutate(), printdna(), shift();
+static makeunique(), randompool(), unique(), untested(), youngest();
+static badgene(), triangle();
 
 # define TRIALS(g)		((g)->score.count)
 # define NONE		(-1)
