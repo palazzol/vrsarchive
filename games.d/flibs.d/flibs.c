@@ -57,6 +57,8 @@ static int run_mode;
 #define	R_RUN	1
 #define	R_STEP	2
 
+static init_graph(), init_pattern(), init_screen(), init_thresholds();
+
 /*
  * And here is the main body of the program.
  */
