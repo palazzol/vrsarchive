@@ -5,7 +5,11 @@
 */
 #include <signal.h>
 #include "pm.h"
+#ifdef CYGWIN
+#include <stdarg.h>
+#else
 #include <varargs.h>
+#endif
 
 /*
 ** strucpy()	- copy string using punctrl for things
@@ -33,16 +37,25 @@ reg	int	len;
 */
 static char msgbuf[BUFSIZ];
 
+#ifdef CYGWIN
+/*VARARGS*/
+void msg(char *fmt, ...)
+#else
 /*VARARGS*/
 void msg(va_alist)
 va_dcl
+#endif
 {
 	va_list ap;
+#ifdef CYGWIN
+	va_start(ap, fmt);
+#else
 	char *fmt;
 
-	alarm(0);
 	va_start(ap);
 	fmt = va_arg(ap, char *);
+#endif
+	alarm(0);
 	/*
 	 * if the string is "", just clear the line
 	 */
