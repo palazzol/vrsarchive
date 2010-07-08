@@ -19,6 +19,7 @@ struct ctabstr
 	short int *c_cod ;
 } ;
 
+static int GetCache(), PutCache(), ok2sav();
 static int full = NO ;
 static struct ctabstr ctab[CACHESIZE] ;
 static short int cache[MAXCACHE] ;
