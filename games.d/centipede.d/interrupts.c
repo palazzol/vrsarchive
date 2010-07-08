@@ -163,7 +163,11 @@ ladie()
 
 redrawscr()
 {
+#ifdef CYGWIN
+    redrawwin(stdscr);
+#else
     curscr->_clear = 1;
+#endif
     touchwin(stdscr);
     refresh();
 }

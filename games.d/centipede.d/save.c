@@ -210,7 +210,7 @@ char *fil;
     if (version != vers)
 	BADF("Saved game is for the wrong version.\n");
 #ifdef __STDC__
-    stdscr = getwin(fp);
+    overwrite(stdscr, getwin(fp));
     fread(mushw,24 * 57,1,fp);
 #else
     for (y = 0; y < 24; y++)
