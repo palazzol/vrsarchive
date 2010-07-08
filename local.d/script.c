@@ -101,7 +101,7 @@ done()
 
 	chmod(tty, mode);
 	chmod(fname, 0664);
-	exit();
+	exit(0);
 }
 
 main(argc,argv) int argc; char **argv; {
