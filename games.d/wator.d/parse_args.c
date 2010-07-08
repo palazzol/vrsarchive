@@ -66,7 +66,7 @@ parse_args(argc, argv)
 			if (num >= (L_MAX-2)*(W_MAX-2)) {
 				printf("Value too large.\n");
 				hmsg();
-				exit();
+				exit(1);
 			}
 			i++;
 			switch(n) {
