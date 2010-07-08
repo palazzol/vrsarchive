@@ -132,6 +132,6 @@ mailbill()
 				sleep(20);  sprintf(buf,"mail %s < %s",loginname,mail600);
 				system(buf);  unlink(mail600);
 				}
-		exit();
+		exit(0);
 		}
 	}
