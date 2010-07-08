@@ -17,7 +17,7 @@ main(argc, argv)
 
 	if (argc != 2) {
 		printf("Usage: %s filename\n", argv[0]);
-		exit();
+		exit(1);
 	}
 	if ((from = fopen(argv[1], "r")) == 0) {
 		perror(argv[1]);
