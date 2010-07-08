@@ -77,8 +77,10 @@ E long lseek P((int,off_t,int));
   /* Ultrix 3.0 man page mistakenly says it returns an int. */
 E int write P((int,char *,int));
 #else
+#ifndef CYGWIN
 E long lseek P((int,long,int));
 E int write P((int,genericptr_t,unsigned));
+#endif
 #ifdef MSDOS
 E int close P((int));
 E int read P((int,genericptr_t,unsigned int));
@@ -148,7 +150,9 @@ E int	strncmp P((const char *,const char *,size_t));
 #ifdef MSDOS
 E size_t strlen P((const char *));
 #else
+#ifndef CYGWIN
 E int	strlen();
+#endif
 #endif
 
 /* Old varieties of BSD have char *sprintf().
