@@ -1,13 +1,14 @@
 #include	"advgen.h"
 
+static char	*envval();
+static void	init_tabs();
+static void	print();
+
 void
 main(nargs, args)
     int		nargs;
     char	*args[];
 {
-    char	*envval();
-    void	print();
-    void	init_tabs();
 #ifdef lint
     char	*optarg = CNULL;
     int		optind = 0;

@@ -3,6 +3,8 @@
 static room	rooms[MAXROOMS];
 static int	nrooms;
 
+static int newroom();
+
 int
 decl_room(sym, darkness, nbrs, desc, flag)
     symbol	*sym;

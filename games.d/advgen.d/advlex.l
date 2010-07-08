@@ -11,7 +11,8 @@
 #define input() (((yytchar=yysptr>yysbuf?U(*--yysptr):nxtchr())==10?(yylineno++,yytchar):yytchar)==EOF?0:yytchar)
 #endif
 
-void	lexerror();
+static void lexerror();
+static int yywrap();
 %}
 %option lex-compat
 WSP	[ \t\n]

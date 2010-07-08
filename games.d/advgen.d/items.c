@@ -3,6 +3,8 @@
 static int	nitems = 0;
 static item	items[MAXITEMS];
 
+static int newitem();
+
 void
 decl_item(sym, itemname, location, desc)
     symbol	*sym;

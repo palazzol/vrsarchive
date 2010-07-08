@@ -85,11 +85,12 @@ init_nouns()
     }
 }
 
+static void	add_list();
+
 void
 init_verbs()
 {
     static bool	initted = FALSE;
-    void	add_list();
 
     if (initted)
     {
@@ -275,6 +276,8 @@ add_list(list, deflt)
 	addsym(wl->wl_word[i], 0);
     }
 }
+
+static int val();
 
 void
 checkspecials()

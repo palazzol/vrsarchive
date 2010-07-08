@@ -6,6 +6,10 @@
 
 static symbol	*nbrs[6];
 static int	lastnoun, lastverb;
+
+static void clear_nbrs();
+static void dupdir();
+static void yyerror();
 %}
 
 %union

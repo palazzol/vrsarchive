@@ -22,6 +22,8 @@ codebyte(b)
     *code_ptr++ = (char) b;
 }
 
+static int variable();
+
 int
 codereln(r, s, n)
     int		r;
@@ -210,12 +212,13 @@ typecheck(s, t)
     }
 }
 
+static char *writerule();
+
 void
 printcode(f)
     FILE	*f;
 {
     char	*cp = code;
-    char	*writerule();
 
    fprintf(f, "%d\n", ndaemons);
    while (cp < act_ptr)

@@ -16,12 +16,14 @@ set_verbs()
     cur_table = &verb_table;
 }
 
+static bool equivalent();
+static void toomanywords();
+
 void
 addword(sym, incr)
     symbol	*sym;
     int		incr;
 {
-    void	toomanywords();
     unsigned		i;
     bool	dup = FALSE;
     int		val = cur_table->wt_value + incr;
@@ -130,22 +132,24 @@ noun_name(i)
     return noun_table.wt_vocab[i].v_word;
 }
 
+static void printtable();
+
 void
 printvocab(f)
     FILE	*f;
 {
-    void	printtable();
 
     printtable(f, &verb_table);
     printtable(f, &noun_table);    
 }
+
+static char *upcase();
 
 static void
 printtable(f, table)
     FILE	*f;
     wordtable	*table;
 {
-    char	*upcase();
     int		count = 10, val = 0;
     unsigned		i;
     
