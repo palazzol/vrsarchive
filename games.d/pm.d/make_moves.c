@@ -455,7 +455,7 @@ void	status ()
 	printw("Tunn.:             %s\n",TF(pm_tunn));
 	printw("Screen dimension   %d x %d\n", LINES, COLS);
 	printw("High score:        %ld\n", hi_score);
-	printw("Max's:             %d,%d\n", stdscr->_maxy, stdscr->_maxx);
+	printw("Max's:             %d,%d\n", LINES, COLS);
 	printw("\n");
 	printw("\nHit return to continue\n");
 	trash(getch());
