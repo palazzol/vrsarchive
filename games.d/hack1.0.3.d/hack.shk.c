@@ -61,6 +61,12 @@ static char *shopnam[] = {
 	"used armor", "assorted antiques"
 };
 
+static dopayobj();
+static findshk();
+static getprice();
+static realhunger();
+static setpaid();
+
 char *
 shkname(mtmp)				/* called in do_name.c */
 register struct monst *mtmp;

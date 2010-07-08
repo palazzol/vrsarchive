@@ -4,7 +4,10 @@
 #include	"hack.h"
 #include	"def.edog.h"
 #include	"def.mkroom.h"
-extern struct monst *bchit();
+
+static use_camera(), use_ice_box(), use_pick_axe();
+static use_magic_whistle(), use_whistle();
+static struct monst *bchit();
 extern struct obj *addinv();
 extern struct trap *maketrap();
 extern int (*occupation)();

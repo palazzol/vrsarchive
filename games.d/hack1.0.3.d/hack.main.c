@@ -35,6 +35,9 @@ char obuf[BUFSIZ];	/* BUFSIZ is defined in stdio.h */
 extern char *nomovemsg;
 extern long wailmsg;
 extern struct monst *makemon();
+#ifdef CHDIR
+static chdirx();
+#endif
 
 main(argc,argv)
 int argc;

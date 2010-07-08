@@ -12,10 +12,6 @@ extern struct monst youmonst;
 extern char *Doname();
 extern char *nomovemsg;
 
-dodrop() {
-	return(drop(getobj("0$#", "drop")));
-}
-
 static
 drop(obj) register struct obj *obj; {
 	if(!obj) return(0);
@@ -47,6 +43,10 @@ drop(obj) register struct obj *obj; {
 	pline("You dropped %s.", doname(obj));
 	dropx(obj);
 	return(1);
+}
+
+dodrop() {
+	return(drop(getobj("0$#", "drop")));
 }
 
 /* Called in several places - should not produce texts */
