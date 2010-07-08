@@ -9,7 +9,7 @@ cheat(dummy){
 	pos(1, YZIZE + 2);
 	if(!slf)
 		printf("Cheater. I win on V.O.\n");
-	exit();
+	exit(0);
 }
 
 /* The main program which administrate who's on the move etc */
@@ -22,12 +22,12 @@ main(){
 	term = getenv("TERM");
 	if(getcap(term) == -1){
 		printf("Wrong or no TERM: %s\n", term);
-		exit();
+		exit(1);
 	}
 	if((height < 24) || (width < 80)){
 		printf("To smal screen (%d x %d). Min is (80 x 24)\n",
 			width, height);
-		exit();
+		exit(1);
 	}
 
 	for(x = 0; x < XZIZE; x++)
@@ -89,9 +89,10 @@ main(){
 	svar[0] = getchar(); emptyline();
 	if(svar[0] == 'y'){
 		save();
-		exit();
+		exit(0);
 	}
 	if(svar[0] == 'n')
-		exit();
+		exit(0);
 	printf("Hmmm. Asumes you don't.\n");
+	return 0;
 }
