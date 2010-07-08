@@ -1,7 +1,7 @@
 #	Hack Makefile.
 #	SCCS Id: @(#)Makefile.unix	3.0	88/10/17
 MODEL	= -Ml -Gt24
-OPTIONS	= -O -I../include -DHACKDIR=\"$(GAMLIB)/nethack3.0\" $(WSTRINGS)
+OPTIONS	= -O -I../include -DHACKDIR=\"$(GAMLIB)/nethack3.0\" #$(WSTRINGS)
 GAME	= nethack3.0
 ALL		= $(GAME)
 include $(HOME)/CONFIG
