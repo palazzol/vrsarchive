@@ -83,6 +83,9 @@ static char saveeof,saveeol;
 #include <sgtty.h>
 #endif
 
+#ifdef CYGWIN
+#include <stdarg.h>
+#else
 #ifndef NOVARARGS	/* if we have varargs */
 #include <varargs.h>
 #else
@@ -91,6 +94,7 @@ typedef char *va_list;
 #define va_start(plist) plist = (char *) &va_alist
 #define va_end(plist)
 #define va_arg(plist,mode) ((mode *)(plist += sizeof(mode)))[-1]
+#endif
 #endif
 
 #define LINBUFSIZE 128		/* size of the lgetw() and lgetl() buffer		*/
@@ -196,18 +200,28 @@ sprintf(str)
 	str = str2; /* to make lint happy */
 	}
 #else
+#ifdef CYGWIN
+/*VARARGS*/
+lprintf(char *fmt, ...)
+#else
 /*VARARGS*/
 lprintf(va_alist)
 va_dcl
+#endif
     {
 	va_list ap;	/* pointer for variable argument list */
-	register char *fmt;
 	register char *outb,*tmpb;
 	register long wide,left,cont,n;		/* data for lprintf	*/
 	char db[12];			/* %d buffer in lprintf	*/
+#ifdef CYGWIN
+
+	va_start(ap, fmt);	/* initialize the var args pointer */
+#else
+	register char *fmt;
 
 	va_start(ap);	/* initialize the var args pointer */
 	fmt = va_arg(ap, char *);	/* pointer to format string */
+#endif
 	if (lpnt >= lpend) lflush(); 
 	outb = lpnt;
 	for ( ; ; )
@@ -616,12 +630,12 @@ init_term()
 	switch (tgetent(termbuf, term = getenv("TERM")))
 		{
 		case -1: 
-			write(2, "Cannot open termcap file.\n", 26); exit();
+			write(2, "Cannot open termcap file.\n", 26); exit(1);
 		case 0: 
 			write(2, "Cannot find entry of ", 21);
 			write(2, term, strlen (term));
 			write(2, " in termcap\n", 12);
-			exit();
+			exit(1);
 		};
 
 	CM = tgetstr("cm", &capptr);  /* Cursor motion */
@@ -639,19 +653,19 @@ init_term()
 		{
 		write(2, "Sorry, for a ",13);		write(2, term, strlen(term));
 		write(2, ", I can't find the cursor motion entry in termcap\n",50);
-		exit();
+		exit(1);
 		}
 	if (!CE)	/* can't find clear to end of line entry */
 		{
 		write(2, "Sorry, for a ",13);		write(2, term, strlen(term));
 		write(2,", I can't find the clear to end of line entry in termcap\n",57);
-		exit();
+		exit(1);
 		}
 	if (!CL)	/* can't find clear entire screen entry */
 		{
 		write(2, "Sorry, for a ",13);		write(2, term, strlen(term));
 		write(2, ", I can't find the clear entire screen entry in termcap\n",56);
-		exit();
+		exit(1);
 		}
 	if ((outbuf=malloc(BUFBIG+16))==0) /* get memory for decoded output buffer*/
 		{
