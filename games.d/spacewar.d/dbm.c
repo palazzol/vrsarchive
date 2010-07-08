@@ -212,6 +212,8 @@ char *file;
 	return 0;
 }
 
+static int getitem(), putitem();
+
 datum
 fetch(key)
 datum key;
