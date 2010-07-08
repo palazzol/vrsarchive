@@ -97,18 +97,20 @@ getstart() {
     c = getch();
     while (c != 'q') {
 	switch(c) {
-	    case 'h': if (stdscr->_curx == 1) break;
-		      move(stdscr->_cury, stdscr->_curx-1); break;
-	    case 'j': if (stdscr->_cury >= LINES - 2) break;
-		      move(stdscr->_cury+1, stdscr->_curx); break;
-	    case 'k': if (stdscr->_cury == 1) break;
-		      move(stdscr->_cury-1, stdscr->_curx); break;
-	    case 'l': if (stdscr->_curx >= COLS - 2) break;
-		      move(stdscr->_cury, stdscr->_curx+1); break;
+            int y, x;
+            getyx(stdscr, y, x);
+	    case 'h': if (x == 1) break;
+		      move(y, x-1); break;
+	    case 'j': if (y >= LINES - 2) break;
+		      move(y+1, x); break;
+	    case 'k': if (y == 1) break;
+		      move(y-1, x); break;
+	    case 'l': if (x >= COLS - 2) break;
+		      move(y, x+1); break;
 	    case '?': help(); break;
-	    case 'x': if (stdscr->_curx >= COLS - 1) break;
+	    case 'x': if (x >= COLS - 1) break;
 		      addch('X'); break;
-	    case ' ': if (stdscr->_curx >= COLS - 1) break;
+	    case ' ': if (x >= COLS - 1) break;
 		      addch(' '); break;
 	    default: break;
 	    }
@@ -208,8 +210,7 @@ help()
 {
     int x, y, savex, savey;
 
-    savex = stdscr->_curx;
-    savey = stdscr->_cury;
+    getyx(stdscr, savey, savex);
     for (y = 1; y < LINES - 1; y++)
 	for (x = 1; x < COLS - 1; x++) {
 	    move(y, x);
@@ -229,9 +230,8 @@ help()
     refresh();
     getch();
     prboard();
-    stdscr->_curx = savex;
-    stdscr->_cury = savey;
-    move(stdscr->_cury, stdscr->_curx);
+    wmove(stdscr, savey, savex);
+    move(savey, savex);
     refresh();
     }
 
