@@ -274,11 +274,16 @@ extern	off_t	lseek();
 /*
 ** local functions
 */
+#ifdef CYGWIN
+extern	void	msg(char *, ...);
+#else
+extern	void	msg();
+#endif
 extern	void	add_fruit(), aggressive(), chg_lvl(), check_scrs(),
 		commands(), delay(), die(), directions(),
 		draw_screen(), eat_pm(), init(),
 		m_eat_pm(),
-		mons_init(), mons_move(), msg(), msg_erase(), msleep(),
+		mons_init(), mons_move(), msg_erase(), msleep(),
 		mv_mon(), new_screen(), old_screen(), p_barriers(), p_dots(),
 		p_energizers(), p_fruits(), p_info(), p_monsters(),
 		p_pm(), p_pms(), p_scores(), place_m(), pm_eat_m(),
