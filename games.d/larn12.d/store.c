@@ -3,6 +3,7 @@
 static int dndcount=0,dnditm=0;
 
 extern unsigned long readnum();
+static banktitle(), dnditem(), handsfull(), nogold(), outofstock();
 
 /*	this is the data for the stuff in the dnd store	*/
 int maxitm=83;	/* number of items in the dnd inventory table	*/

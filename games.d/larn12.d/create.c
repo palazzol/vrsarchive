@@ -3,6 +3,7 @@
 extern char spelknow[],larnlevels[];
 extern char beenhere[],wizard,level;
 extern short oldx,oldy;
+static fillroom();
 /*
 	makeplayer()
 

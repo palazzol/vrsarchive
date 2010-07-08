@@ -105,6 +105,8 @@ struct isave	/* used for altar reality */
 	short arg;	/* the type of item or hitpoints of monster */
 	};
 
+static dirsub();
+
 /*
  *	createmonster(monstno) 		Function to create a monster next to the player
  *		int monstno;

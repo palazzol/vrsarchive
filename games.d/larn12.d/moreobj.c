@@ -9,6 +9,8 @@
  */
 #include "header.h"
 
+static ohear(), fch();
+
 /*
  *	******
  *	OALTAR

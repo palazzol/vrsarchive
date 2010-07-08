@@ -5,6 +5,7 @@
 static int minx,maxx,miny,maxy,k,m;
 static char bot1f=0,bot2f=0,bot3f=0;
 char always=0;
+static botsub();
 /*
 	bottomline()
 
