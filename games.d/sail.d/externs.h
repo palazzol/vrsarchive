@@ -259,3 +259,5 @@ char *strcat();
 char *strncpy();
 char *getenv();
 char *gets();
+
+int log();
