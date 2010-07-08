@@ -36,7 +36,7 @@
 #else
 #  include <unistd.h>
 #  define flock(fd,flag)	0	/*lockf(fd,flag,0L)*/
-#  ifdef  F_LOCK
+#  ifndef  LOCK_EX
 #    define LOCK_EX		F_LOCK
 #    define LOCK_UN		F_ULOCK
 #  endif
@@ -82,7 +82,9 @@
 
 extern char *getlogin();
 extern struct passwd *getpwnam();
+#ifndef CYGWIN
 extern long lseek();
+#endif
 extern char *malloc();
 extern char *strcpy();
 extern char *strncpy();
