@@ -274,6 +274,6 @@ register char *string;
 	register int n;
 
 	for (n=0; string[n]; n++)
-		if (row >= 0 && row < win -> _maxy && col+n >= 0 && col+n < win -> _maxx)
+		if (row >= 0 && row < LINES && col+n >= 0 && col+n < COLS)
 			mvwaddch(win, row, col + n, string[n]);
 }
