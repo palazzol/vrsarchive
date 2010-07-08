@@ -263,8 +263,7 @@ save_screen()
 	char buf[DCOLS+2];
 	boolean found_non_blank;
 
-	row = curscr->_cury;
-	col = curscr->_curx;
+	getyx(curscr, row, col);
 
 	if ((fp = fopen("rogue.screen", "w")) != NULL) {
 		for (i = 0; i < DROWS; i++) {

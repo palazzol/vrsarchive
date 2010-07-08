@@ -123,8 +123,7 @@ boolean from_intrpt;
 
 	if (from_intrpt) {
 
-		orow = curscr->_cury;
-		ocol = curscr->_curx;
+		getyx(curscr, orow, ocol);
 		mc = msg_cleared;
 
 		for (i = 0; i < DCOLS; i++) {
