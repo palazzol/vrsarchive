@@ -16,6 +16,8 @@ static	char	*scores[] = {
 	"Nothing", "Pair", "Two Pair", "Three of a kind", "Straight", "Flush", 
 	"Full House", "Four of a kind", "Straight Flush", "Royal Flush" };
 
+static void	tie();
+
 int	whowon( player, n_players, test )
 
 PLAYER	player[];		/* all player information */
@@ -27,7 +29,7 @@ int	i;
 int	max=(-1);		/* highest score */
 int	winner=0;		/* which player won */
 char	temp[80];		/* tell everybody what everybody has */
-void	evaluate(),tie();
+void	evaluate();
 
 show_cards( player, n_players, TRUE, test );	/* show all hands everywhere */
 for( i=0; i<n_players; i++ )
