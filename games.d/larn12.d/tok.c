@@ -43,7 +43,7 @@ yylex()
 			savegame(ckpfile);
 #else
 			wait(0);	/* wait for other forks to finish */
-			if (fork() == 0) { savegame(ckpfile); exit(); }
+			if (fork() == 0) { savegame(ckpfile); exit(0); }
 #endif
 
 
@@ -77,7 +77,7 @@ yylex()
 			if ((ic=fork())==0) /* child */
 				{
 				setuid(getuid());
-				execl("/bin/csh",(char *)0);	exit();
+				execl("/bin/csh",(char *)0);	exit(0);
 				}
 			wait((int *)0);
 			if (ic<0) /* error */
