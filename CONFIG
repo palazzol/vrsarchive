@@ -107,7 +107,7 @@ LBSD	= -lcurses -ltermcap -lm
 LCYGWIN	= -lcurses $(DIRLIB) -lm -lcrypt
 LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW
 LXENIX	= -lcurses -ltermcap $(DIRLIB) -lm
-LLINUX	= -lncurses -lm
+LLINUX	= -lncurses -lm -lcrypt
 #WSTRINGS= -fwritable-strings
 #
 #	Default to make $(ALL)
