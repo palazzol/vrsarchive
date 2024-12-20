@@ -16,7 +16,7 @@
 #SYSNAME = `uuname -l`
 SYSNAME	= `hostname`
 DOMAIN	= .msn.com
-ROOT	= $(HOME)
+ROOT	= #//$(SYSNAME)
 #
 #	SAFEUID is the login name of a relatively safe login.
 #	SAFEGRP is the group name of a relatively safe group.
@@ -79,10 +79,10 @@ LIBUUCP	= $(ROOT)/usr/lib/uucp
 LIBMAIL	= $(ROOT)/usr/lib/mail
 LIBNEWS	= $(ROOT)/usr/lib/news
 LIBTMAC	= $(ROOT)/usr/lib/tmac
-GAMDIR	= $(ROOT)/usr/games
-GAMLIB	= $(ROOT)/usr/games/lib
+GAMDIR	= $(LOCAL)/games
+GAMLIB	= $(GAMDIR)/lib
 SPOOLN	= $(ROOT)/usr/spool/news
-USRMAN	= $(ROOT)/usr/man
+USRMAN	= $(LOCAL)/man
 MAN1	= $(USRMAN)/man1
 MAN2	= $(USRMAN)/man2
 MAN3	= $(USRMAN)/man3
@@ -138,4 +138,4 @@ $(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8): $(USRMAN)
 #
 .SUFFIXES: .d
 .d:
-	@cd $?; make
+	cd $?; make
