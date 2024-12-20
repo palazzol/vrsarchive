@@ -21,8 +21,8 @@ ROOT	= $(HOME)
 #	SAFEUID is the login name of a relatively safe login.
 #	SAFEGRP is the group name of a relatively safe group.
 #
-SAFEUID	= osboxes
-SAFEGRP	= osboxes
+SAFEUID	= Vince
+SAFEGRP	= Vince
 #
 #	XENIX often needs setuid to root because of limited setuid() semantics.
 #	On other systems this should be $(SAFEUID).
@@ -36,8 +36,8 @@ SETUID	= $(SAFEUID)
 #	If you don't have readdir(), set DIRLIB = -ldir else DIRLIB =
 #	If you don't need ranlib, set RANLIB = :, else RANLIB = ranlib
 #
-CFLAGS	= $(CLINUX)
-LIBS	= $(LLINUX)
+CFLAGS	= $(CCYGWIN)
+LIBS	= $(LCYGWIN)
 BERKLIB	= #-lberkeley
 DIRLIB	= #-ldir
 DPYLIB	= -L$(LIBDIR) -ldpy
@@ -48,9 +48,9 @@ PAGER	= less
 RANLIB	= ranlib
 NROFF	= nroff
 TROFF	= nroff
-DEFEXE	= a.out
-#DEFEXE	= a.exe
-#EXE	= .exe
+#DEFEXE	= a.out
+DEFEXE	= a.exe
+EXE	= .exe
 LINT	= gcc -Wall -W -fsyntax-only $(CFLAGS)
 FC	= g77 -ff77 -fugly-assumed -fugly-logint
 CC	= gcc
@@ -102,12 +102,10 @@ CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
 CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) -I/usr/include/ncurses
 CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
 CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
-CLINUX	= -m32 -DSIG_T=void $(OPTIONS)
 LBSD	= -lcurses -ltermcap -lm
 LCYGWIN	= -lcurses $(DIRLIB) -lm -lcrypt
 LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW
 LXENIX	= -lcurses -ltermcap $(DIRLIB) -lm
-LLINUX	= -lncurses -lm
 #WSTRINGS= -fwritable-strings
 #
 #	Default to make $(ALL)
@@ -130,12 +128,12 @@ $(MAN1) $(MAN2) $(MAN3) $(MAN4) $(MAN5) $(MAN6) $(MAN7) $(MAN8): $(USRMAN)
 #
 #	Fix the default rule to link against libraries
 #
-.c:
+.c$(EXE):
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LIBS) -o $@
 	-rm -f $*.o
 #
 #	Do the recursion rule
 #
-.SUFFIXES: .d
+.SUFFIXES: .d $(EXE)
 .d:
 	@cd $?; make
