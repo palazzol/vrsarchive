@@ -8,7 +8,7 @@
 
 struct uio {
 	struct login *uio_lgn;	/* user i/o pointer to login struct */
-	char	uio_chrs[16];	/* user i/o characters */
+	char	uio_chrs[20];	/* user i/o characters */
 };
 
 /*

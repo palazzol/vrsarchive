@@ -8,6 +8,6 @@
 
 struct uio2 {
 	int	uio2sig;	/* signal, 0 for logon */
-	short	uio2pid;	/* process-id of playsw */
-	char	uio2tty[14];	/* ttyname for logon (signal 0 only) */
+	int	uio2pid;	/* process-id of playsw */
+	char	uio2tty[16];	/* ttyname for logon (signal 0 only) */
 };

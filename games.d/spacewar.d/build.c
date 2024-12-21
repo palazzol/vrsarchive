@@ -7,7 +7,7 @@
 
 #ifndef VMS
 #include <sys/types.h>
-#include "dbm.h"
+#include <dbm.h>
 #else /* BSD SYSIII SYSV */
 #include <types.h>
 #include "dbm.h"
@@ -437,7 +437,7 @@ struct login *plogin;
 #endif
 	if (!dbmdata.dptr)
 		return(0);
-	bcopy((char *)&getcrdat,dbmdata.dptr,CRDATSIZ);
+	bytecopy((char *)&getcrdat,dbmdata.dptr,CRDATSIZ);
 	return(1);
 }
 
@@ -479,7 +479,7 @@ int styp;
 #endif
 	if (!dbmdata.dptr)
 		return(0);
-	bcopy((char *)&getsdat,dbmdata.dptr,sizeof(getsdat));
+	bytecopy((char *)&getsdat,dbmdata.dptr,sizeof(getsdat));
 	return(1);
 }
 

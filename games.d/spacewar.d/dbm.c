@@ -111,8 +111,8 @@ datum key, dat;
 
 	dbmrab.rab$b_rac = RAB$C_KEY;
 	binit(recdat,sizeof(reckey));
-	bcopy(recdat,key.dptr,key.dsize);
-	bcopy(recdat+sizeof(reckey),dat.dptr,dat.dsize);
+	bytecopy(recdat,key.dptr,key.dsize);
+	bytecopy(recdat+sizeof(reckey),dat.dptr,dat.dsize);
 	dbmrab.rab$l_kbf = recdat;
 	dbmrab.rab$b_ksz = sizeof(reckey);
 	dbmrab.rab$l_rbf = recdat;
@@ -173,6 +173,7 @@ datum xkey;
 	return(key);
 }
 #else /* !VMS */
+#if 0
 /*
  * Incredibly slow Uglix dbm simulation.
  */
@@ -324,4 +325,5 @@ FILE *fp;
 		return EOF;
 	return 0;
 }
+#endif
 #endif /* !VMS */

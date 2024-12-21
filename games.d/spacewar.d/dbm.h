@@ -2,6 +2,7 @@
  * NOTE: VMS only
  */
 
+#if 0
 typedef	struct
 {
 	char	*dptr;
@@ -11,3 +12,4 @@ typedef	struct
 datum	fetch();
 datum	firstkey();
 datum	nextkey();
+#endif

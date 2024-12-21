@@ -6,7 +6,7 @@
  */
 #ifdef __STDC__
 #define STR(x)		#x
-#define STRING(x)	STR(X)
+#define STRING(x)	STR(x)
 #define FILENM(x)	STRING(GAMEDIR) "/" STRING(x)
 #else
 #define STRING(x)	"x

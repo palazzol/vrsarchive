@@ -10,7 +10,7 @@
 
 #ifndef VMS
 #include <sys/types.h>
-#include "dbm.h"
+#include <dbm.h>
 #else /* BSD SYSIII SYSV */
 #include <types.h>
 #include "dbm.h"
@@ -149,7 +149,7 @@ getterm:	output(plogin,'C',0,"\nWhat (termcap) terminal type>");
 	    goto noplay;
 	}
 	binit((char *)&getcrdat,sizeof(getcrdat));
-	bcopy((char *)&getcrdat,dbmdata.dptr,dbmdata.dsize);
+	bytecopy((char *)&getcrdat,dbmdata.dptr,dbmdata.dsize);
 
 	/* must have a hull */
 	if (!getcrdat.cr_htyp) {
@@ -238,7 +238,7 @@ getterm:	output(plogin,'C',0,"\nWhat (termcap) terminal type>");
 	    getskey.s_type = i;
 	    dbmdata = fetch(dbmkey);
 	    if (dbmdata.dptr)
-		bcopy((char *)(pcrft->cr_sys+i),dbmdata.dptr,dbmdata.dsize);
+		bytecopy((char *)(pcrft->cr_sys+i),dbmdata.dptr,dbmdata.dsize);
 	}
 
 	/* et al */

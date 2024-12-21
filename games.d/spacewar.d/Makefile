@@ -6,8 +6,8 @@
 #
 ALL	= sw$(EXE) psw$(EXE) rsw$(EXE) dmpdbm$(EXE) upddbm$(EXE) tstsz$(EXE)
 GAMEDIR	= $(GAMLIB)/spacewar
-OPTIONS	= -I$(INCDIR) -O -DVOID=void -DGAMEDIR=\"$(GAMEDIR)\" # -DBSD -DNEEDFMOD
-DBM	= dbm.o
+OPTIONS	= -I$(INCDIR) -O -DVOID=void -DGAMEDIR=$(GAMEDIR) # -DBSD -DNEEDFMOD
+DBM	= -lgdbm -lgdbm_compat
 include $(HOME)/CONFIG
 SOURCES	= sw.c globals.c lckmsg.c proctrap.c shutdown.c alninit.c objinit.c \
 		  crftupdate.c objupdate.c logon.c logoff.c cmd.c prvcmd.c build.c \
@@ -20,7 +20,7 @@ OBJECTS	= $(SOURCES:.c=.o)
 #$(DBM):
 #	@cd dbm.d; make
 
-sw$(EXE): $(OBJECTS) $(DBM)
+sw$(EXE): $(OBJECTS) #$(DBM)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS) $(DBM) $(LIBS)
 
 psw$(EXE): psw.c spacewar.h uio2.h
@@ -30,11 +30,11 @@ rsw$(EXE): rsw.c login.h uio.h universe.h spacewar.h
 	$(CC) $(CFLAGS) rsw.c -o $@ $(LIBS)
 
 dmpdbm$(EXE): dmpdbm.c spacewar.h universe.h login.h sys.h crft.h mlbx.h \
-	plyr.h ucmd.h bfuncs.o $(DBM)
+	plyr.h ucmd.h bfuncs.o #$(DBM)
 	$(CC) $(CFLAGS) dmpdbm.c bfuncs.o -o $@ $(DBM) $(LIBS)
 
 upddbm$(EXE): upddbm.c spacewar.h universe.h login.h sys.h crft.h mlbx.h \
-	plyr.h ucmd.h bfuncs.o $(DBM)
+	plyr.h ucmd.h bfuncs.o #$(DBM)
 	$(CC) $(CFLAGS) upddbm.c bfuncs.o -o $@ $(DBM) $(LIBS)
 
 tstsz$(EXE): tstsz.c uio.h uio2.h spacewar.h
@@ -42,7 +42,7 @@ tstsz$(EXE): tstsz.c uio.h uio2.h spacewar.h
 	./$@
 
 $(GAMEDIR):
-	mkdir $@
+	mkdir -p $@
 	chmod 755 $@
 
 install: $(ALL) $(GAMDIR) $(GAMEDIR)

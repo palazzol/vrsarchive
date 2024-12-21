@@ -11,8 +11,8 @@ struct login {
 #ifdef VMS
 	int	ln_pid;
 #else /* BSD SYSIII SYSV */
-	short	ln_playpid;	/* login play process pid */
-	short	ln_readpid;	/* login read process pid */
+	int 	ln_playpid;	/* login play process pid */
+	int 	ln_readpid;	/* login read process pid */
 #endif /* VMS BSD SYSIII SYSV */
 	char	ln_name[8+1];	/* login name */
 	char	*ln_term;	/* login terminal name */
