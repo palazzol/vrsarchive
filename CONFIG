@@ -21,8 +21,8 @@ ROOT	= #//$(SYSNAME)
 #	SAFEUID is the login name of a relatively safe login.
 #	SAFEGRP is the group name of a relatively safe group.
 #
-SAFEUID	= osboxes
-SAFEGRP	= osboxes
+SAFEUID	= daemon
+SAFEGRP	= daemon
 #
 #	XENIX often needs setuid to root because of limited setuid() semantics.
 #	On other systems this should be $(SAFEUID).
