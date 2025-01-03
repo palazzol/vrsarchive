@@ -19,6 +19,8 @@ static char *msg;	/* NULL if normal locking applies */
 
 char *lckmsg()
 {
+	return NULL; // Always ok to run
+
 	time_t clock;
 	struct tm *curtm,*localtime();
 
