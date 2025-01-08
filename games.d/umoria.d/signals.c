@@ -23,7 +23,7 @@ extern struct ltchars save_special_chars;
 #ifndef SIG_T
 #define SIG_T int
 #endif
-typedef SIG_T (*sig_t)();
+//typedef SIG_T (*sig_t)();
 int error_sig, error_code;
 sig_t core_dump;
 #ifdef USG

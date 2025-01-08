@@ -20,7 +20,7 @@ ALL	= trek73$(EXE) printships$(EXE) shipyard$(EXE)
 #     than 43 points of actual damage would explode.  This led to
 #     much abuse of high-pod probes.  For more details, cf damage.c
 #
-OPTIONS	= -O -DPARSER #-DTRACE
+OPTIONS	= -DSYS5 -O -DPARSER #-DTRACE
 MODEL	= -i
 include $(HOME)/CONFIG
 #

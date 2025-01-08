@@ -3,7 +3,7 @@
 #
 ALL	= rot$(EXE)
 MODEL	= -i -F 2000
-OPTIONS	= -O
+OPTIONS	= -DSYS5 -O
 include $(HOME)/CONFIG
 
 install: $(ALL)

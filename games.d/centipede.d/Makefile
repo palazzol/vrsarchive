@@ -3,14 +3,14 @@
 # edit sys_dep.c to adjust pathnames for your system
 #
 ALL	= cent$(EXE)
-OPTIONS	= -O -DGAMLIB=$(GAMLIB)/cent
+OPTIONS	= -O -DGAMLIB=$(GAMLIB)/cent -DSYS5
 MODEL	= -i -F 2000
 include $(HOME)/CONFIG
 OBJECTS	= cent.o stuff.o input.o interrupts.o score.o move.o rand.o \
 		save.o shoot.o la.o extern.o options.o sys_dep.o
 
 cent$(EXE):   $(OBJECTS)
-	$(CC) $(OBJECTS) $(LIBS) -o $@
+	$(CC) -m32 $(OBJECTS) $(LIBS) -o $@
 
 $(GAMLIB)/cent:
 	mkdir $@

@@ -2,7 +2,7 @@
 #	$Header: /home/Vince/cvs/games.d/wator.d/Makefile,v 1.4 2002-11-23 04:09:49 Vincent Exp $
 #
 ALL	= wator$(EXE)
-OPTIONS	= -O
+OPTIONS	= -DSYS5 -O
 MODEL	= -i -F 2000
 include $(HOME)/CONFIG
 OBJS	= wator.o screen_ctl.o item_control.o init.o parse_args.o \

@@ -52,7 +52,10 @@ double *avenrun;        /* avenrun; should be declared double avenrun[3];  */
 syserror (str)
     char *str;
 {
-    fprintf(stderr, "%s (%s)\n", str, sys_errlist[errno]);
+    //fprintf(stderr, "%s (%s)\n", str, sys_errlist[errno]);
+    char buf[256];
+    sprintf(buf,"%s",str);
+    perror(buf);
 }
 
 error (str)

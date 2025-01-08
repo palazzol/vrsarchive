@@ -53,7 +53,7 @@ DEFEXE	= a.out
 #EXE	= .exe
 LINT	= gcc -Wall -W -fsyntax-only $(CFLAGS)
 FC	= g77 -ff77 -fugly-assumed -fugly-logint
-CC	= gcc
+CC	= gcc -m32
 YACC	= bison -y
 LEX     = flex -X
 #
@@ -102,7 +102,7 @@ CBSD	= -Dstrchr=index -Dstrrchr=rindex -Dfork=vfork $(OPTIONS)
 CCYGWIN	= -DSYS5 -DCYGWIN -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS) -I/usr/include/ncurses
 CSYS5	= -DSYS5 -DPAGER=\"$(PAGER)\" -DSIG_T=void $(OPTIONS)
 CXENIX	= -DSYS5 -DOLDUUX $(MODEL) $(OPTIONS)
-CLINUX	= -m32 -DSIG_T=void $(OPTIONS)
+CLINUX	= -m32 -DSIG_T=void $(OPTIONS) -fcommon
 LBSD	= -lcurses -ltermcap -lm
 LCYGWIN	= -lcurses $(DIRLIB) -lm -lcrypt
 LSYS5	= -lcurses $(DIRLIB) -lm -lc_s -lPW

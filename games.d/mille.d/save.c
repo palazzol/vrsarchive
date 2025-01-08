@@ -17,7 +17,7 @@ int	read(), write();
 #include <errno.h>
 #else
 extern int	errno;
-extern char	*sys_errlist[];
+//extern char	*sys_errlist[];
 #endif
 
 save() {
@@ -77,7 +77,7 @@ over:
 		return FALSE;
 
 	if ((outf = creat(buf, 0644)) < 0) {
-		error(sys_errlist[errno]);
+		error(0, errno);
 		return FALSE;
 	}
 	mvwaddstr(Score, ERR_Y, ERR_X, buf);

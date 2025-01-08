@@ -8,7 +8,7 @@ include $(HOME)/CONFIG
 OBJECT	= dam.o prbord.o prinfo.o readmove.o timeac.o
 
 dam$(EXE):	$(OBJECT)
-	$(CC) $(OBJECT) -o $@ $(LIBS)
+	$(CC) -m32 $(OBJECT) -o $@ $(LIBS)
 
 lint:
 	lint -lcurses -ltermcap $(OBJECT:.o=.c)

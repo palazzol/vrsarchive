@@ -2,7 +2,7 @@
 #	vtrek @(#)Makefile	1.4 10/3/86
 #
 OBJS	= main.o plot.o sub1.o sub2.o termio.o
-OPTIONS	= -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\"
+OPTIONS	= -DSYS5 -O -DVTREKINS=\"$(GAMLIB)/vtrek.doc\"
 MODEL	= -i -F 2000
 ALL	= vtrek$(EXE)
 include $(HOME)/CONFIG

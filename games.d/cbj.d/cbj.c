@@ -319,7 +319,7 @@ placebets()
     /* The house, of course, does not bet */
     BET: printf("\nYour bankroll is $%.2f.  Minimum bet is $%d.00.\nBet? $",
 	players[USER].bank_roll, min_bet);
-    getline(line);
+    getlinecbj(line);
     sscanf(line,"%s", response);
     if (not(is_a_number(response))) {
 	printf("Must enter a dollar amount (in numbers).\n");
@@ -332,7 +332,7 @@ placebets()
     players[USER].original_bet = players[USER].bet[0];
     if (players[USER].bank_roll < 0 && players[USER].credit == FALSE) {
 	printf("You are broke.  Play on credit? ");
-	getline(line); tolower(line);
+	getlinecbj(line); tolower(line);
 	sscanf(line, "%s", response);
 	if (response[0] == 'n') {
 	    printf("Wise choice.\n");
@@ -360,7 +360,7 @@ placebets()
     }
 
 /* Read until newline */
-getline(line)
+getlinecbj(line)
 char line[];
 {
     int i;
@@ -404,7 +404,7 @@ leave()
 
     signal(SIGINT, SIG_IGN);            /* Ignore rubouts */
     printf("Save game? ");
-    getline(line); tolower(line);
+    getlinecbj(line); tolower(line);
     sscanf(line, "%s", response);
     if (response[0] == 'y') {
 	while (savegame());
@@ -795,7 +795,7 @@ hit(who)
 	case USER:
 	    if (players[USER].no_hands > 1) {
 		printf("Which hand? (1 - %d)? ", players[USER].no_hands);
-		getline(line); tolower(line);
+		getlinecbj(line); tolower(line);
 		sscanf(line, "%d", &i);
 		i--;
 		}
@@ -840,7 +840,7 @@ double_down(who) {
 
     if (players[USER].no_hands > 1) {
 	printf("Which hand? (1 - %d)? ", players[USER].no_hands);
-	getline(line); tolower(line);
+	getlinecbj(line); tolower(line);
 	sscanf(line, "%d", &i);
 	i--;
 	}
@@ -946,7 +946,7 @@ split(who) {
 
     if (players[USER].no_hands > 1) {
 	printf("Which hand? (1 - %d)? ", players[USER].no_hands);
-	getline(line); tolower(line);
+	getlinecbj(line); tolower(line);
 	sscanf(line, "%d", &k);
 	k--;
 	}

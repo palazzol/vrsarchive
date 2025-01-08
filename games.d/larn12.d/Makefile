@@ -51,7 +51,7 @@ LARNHOME= $(GAMLIB)/larn12
 #		effect when casting missile type spells.
 #
 OPTIONS	= -DEXTRA -DVER=12 -DSUBVER=0 -DWIZID=-1 -DSAVEINHOME \
-	  -DLARNHOME=\"$(LARNHOME)/\"
+	  -DLARNHOME=\"$(LARNHOME)/\" -DSYS5
 include $(HOME)/CONFIG
 # End of configurable make options
 ########################################################################

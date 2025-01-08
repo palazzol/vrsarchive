@@ -8,7 +8,7 @@ SAVDIR	= $(HACKDIR)/save
 #
 # If you define HACKDIR, then this will be the default playground;
 # otherwise it will be the current directory.
-OPTIONS	= -DHACKDIR=\"$(HACKDIR)\" # -O
+OPTIONS	=  -DSYS5 -DHACKDIR=\"$(HACKDIR)\" # -O
 include $(HOME)/CONFIG
 HACKCSRC= hack.Decl.c\
 	  hack.apply.c hack.bones.c hack.c hack.cmd.c hack.do.c\
